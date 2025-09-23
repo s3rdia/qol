@@ -1,0 +1,50 @@
+###############################################################################
+# Suppressing some functions messages because they only output the information
+# on how much time they took.
+# Printing the output is always set to FALSE, so the overall code can be tested
+# but without drawing the whole outputs on screen.
+###############################################################################
+
+dummy_df <- suppressMessages(dummy_data(100))
+dummy_df[["weight_sum"]] <- dummy_df[["weight"]]
+
+
+test_that("Simplest form of export_with_style", {
+    result_df <- suppressMessages(dummy_df |>
+            export_with_style(print = FALSE))
+
+    expect_type(result_df, "environment")
+})
+
+
+test_that("export_with_style with full styling", {
+    result_df <- suppressMessages(dummy_df |>
+          export_with_style(titles     = "Hello world link: https://cran.r-project.org/",
+                            footnotes  = "This is a footnote link: https://cran.r-project.org/",
+                            var_labels = list(weight_sum = "Test label"),
+                            style      = excel_output_style(freeze_col_header = TRUE,
+                                                            freeze_row_header = TRUE),
+                            print = FALSE))
+
+    expect_type(result_df, "environment")
+})
+
+
+
+test_that("export_with_style with fixed row headers", {
+    result_df <- suppressMessages(dummy_df |>
+          export_with_style(style = excel_output_style(freeze_row_header = TRUE),
+                            print = FALSE))
+
+    expect_type(result_df, "environment")
+})
+
+
+
+test_that("export_with_style with fixed column headers", {
+    result_df <- suppressMessages(dummy_df |>
+          export_with_style(style = excel_output_style(freeze_col_header = TRUE),
+                            print = FALSE))
+
+    expect_type(result_df, "environment")
+})
