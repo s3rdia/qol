@@ -7,6 +7,7 @@ Description: The main goal is to make descriptive evaluations easier to create b
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
+URL: https://github.com/s3rdia/qol
 Imports:
 	data.table (>= 1.17.8),
 	collapse (>= 2.1.2),

@@ -109,6 +109,13 @@ snippet any
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/s3rdia/qol}
+}
+
+}
 \author{
 Tim Siebenmorgen
 }
