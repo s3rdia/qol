@@ -20,9 +20,6 @@ dummy_data <- function(no_obs, monitor = FALSE){
 
     monitor_df <- NULL |> monitor_start("Preparation")
 
-    # Every time a new random data frame
-    set.seed(123)
-
     # Prepare years
     current_year <- as.numeric(format(Sys.Date(), "%Y"))
     start_year   <- current_year - 2
