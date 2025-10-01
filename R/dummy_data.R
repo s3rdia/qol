@@ -26,6 +26,9 @@ dummy_data <- function(no_obs, monitor = FALSE){
 
     # Prepare household generation
     if (no_obs < 1000){
+        number_of_households <- max(1, no_obs)
+    }
+    else if (no_obs < 1000000){
         number_of_households <- max(1, as.integer(no_obs / 5))
     }
     else{
