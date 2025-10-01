@@ -3,7 +3,7 @@
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(100))
+dummy_df <- suppressMessages(dummy_data(1000))
 
 
 test_that("Get inverse variable namesfrom data frame works correct", {

@@ -5,7 +5,7 @@
 # but without drawing the whole outputs on screen.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(100))
+dummy_df <- suppressMessages(dummy_data(1000))
 
 
 test_that("Different way of passing variables in", {

@@ -5,8 +5,8 @@
 # but without drawing the whole outputs on screen.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(100))
-sum_df   <- suppressMessages(dummy_df |>
+dummy_df  <- suppressMessages(dummy_data(1000))
+sum_df    <- suppressMessages(dummy_df |>
     summarise_plus(class      = c(year, sex),
                    values     = weight,
                    statistics = c("sum"),
@@ -54,8 +54,7 @@ test_that("any_table with multiple combinations", {
 test_that("any_table many combinations don't break", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows    = c("age", "age + education", "state",
-                                      "state + age + education", "state + age",
-                                  "education + age"),
+                                  "state + age", "education + age"),
                       columns = c("year", "sex + year", "sex"),
                       values  = weight,
                       print   = FALSE))

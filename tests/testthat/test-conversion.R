@@ -3,7 +3,7 @@
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(100))
+dummy_df <- suppressMessages(dummy_data(1000))
 dummy_df[["age"]] <- as.character(dummy_df[["age"]])
 
 

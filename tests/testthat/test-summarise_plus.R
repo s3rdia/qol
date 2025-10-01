@@ -8,7 +8,7 @@ test_df <- data.frame(
     value  = c(0, 1, 2, 2, 3, 4, 4, 100, NA),
     weight = c(7, 8, 6, 5, 3, 7, 9, 2, NA))
 
-dummy_df <- suppressMessages(dummy_data(100))
+dummy_df <- suppressMessages(dummy_data(1000))
 
 ###############################################################################
 # Do statistics produce correct output (unweighted)

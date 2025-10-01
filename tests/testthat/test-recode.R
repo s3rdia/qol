@@ -3,7 +3,7 @@
 # on how much time they took.
 ###############################################################################
 
-test_df <- suppressMessages(dummy_data(100))
+test_df <- suppressMessages(dummy_data(1000))
 
 
 test_that("Recode discrete values into groups with all values covered", {
