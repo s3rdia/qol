@@ -158,7 +158,7 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      style      = my_style,
                      na.rm      = TRUE)
 ```
-<img src='man/figures/tabulation.png'/>
+<img src='man/figures/tabulation.PNG'/>
 
 ## Readability
 
