@@ -24,9 +24,11 @@ The main goal is to make descriptive evaluations easier to create bigger and mor
 
 ## Installation
 
-You can install the development version of qol like so:
-
 ```{r, eval = FALSE}
+# Official release
+install.packages("qol")
+
+# Development version
 devtools::install_github("s3rdia/qol")
 pak::pak("s3rdia/qol")
 ```

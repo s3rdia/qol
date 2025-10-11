@@ -50,3 +50,6 @@ rsconnect/
 
 #Mac
 .DS_Store
+
+#Other
+CRAN-SUBMISSION
