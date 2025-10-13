@@ -297,7 +297,8 @@ frequencies <- function(data_frame,
                             statistics = c("mean", "sd", "min", "max", "freq", "missing"),
                             weight     = weight_var,
                             notes      = FALSE,
-                            na.rm      = na.rm))
+                            na.rm      = na.rm) |>
+                 drop_type_vars())
     }
     # In case by variables are specified
     else{

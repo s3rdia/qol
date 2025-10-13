@@ -408,7 +408,7 @@ test_that("Simplest form without specifying statistics leads to sum and freq out
         summarise_plus(class  = year,
                        values = income))
 
-    expect_equal(ncol(result_df), 3)
+    expect_equal(ncol(result_df), 6)
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df)))
 })
 
@@ -423,8 +423,8 @@ test_that("Weighted vs. unweighted output", {
                        values = income,
                        weight = weight))
 
-    expect_equal(ncol(result_df1), 3)
-    expect_equal(ncol(result_df2), 3)
+    expect_equal(ncol(result_df1), 6)
+    expect_equal(ncol(result_df2), 6)
 
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)))
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)))
@@ -480,7 +480,7 @@ test_that("Specifying many statistics doesn't break function", {
                        weight     = weight)
 
     # 2 class vars + 17 statistics for both variables + sum_wgt
-    variable_count = 2 + (2 * 17) + 1
+    variable_count = 2 + (2 * 17) + 1 + 3
     expect_equal(ncol(result_df), variable_count)
 })
 
@@ -497,8 +497,8 @@ test_that("Specifying only one statistic puts out variable names without extensi
                        values     = weight,
                        statistics = c("mean", "sum_wgt"))
 
-    expect_equal(names(result_df1), c("year", "sex", "weight_sum"))
-    expect_equal(names(result_df2), c("year", "sex", "weight_mean", "sum_wgt"))
+    expect_equal(names(result_df1), c("year", "sex", "TYPE", "TYPE_NR", "DEPTH", "weight_sum"))
+    expect_equal(names(result_df2), c("year", "sex", "TYPE", "TYPE_NR", "DEPTH", "weight_mean", "sum_wgt"))
 })
 
 
@@ -509,7 +509,7 @@ test_that("Percentiles won't be calculated if value variable has NA values", {
                        statistics = c("p1", "p99"),
                        weight     = weight), " ! WARNING: To calculate percentiles there may be no NAs in the value variables")
 
-    expect_equal(ncol(result_df), 2)
+    expect_equal(ncol(result_df), 5)
 })
 
 
@@ -520,7 +520,7 @@ test_that("Percentiles above 100 not allowed", {
                                       statistics = c("p101"),
                                       weight     = weight), " ! WARNING: Percentiles are only possible from p0 to p100")
 
-    expect_equal(ncol(result_df), 2)
+    expect_equal(ncol(result_df), 5)
 })
 
 
@@ -531,7 +531,7 @@ test_that("None existent class variables will be omitted", {
                        statistics = "sum",
                        weight     = weight), "This variable will be omitted during computation")
 
-    expect_equal(ncol(result_df), 4)
+    expect_equal(ncol(result_df), 7)
 })
 
 
@@ -542,7 +542,7 @@ test_that("None existent analysis variable will be omitted", {
                       statistics = "sum",
                       weight     = weight), "This variable will be omitted during computation")
 
-    expect_equal(ncol(result_df), 4)
+    expect_equal(ncol(result_df), 7)
 })
 
 
@@ -553,7 +553,7 @@ test_that("Double class variables will be omitted", {
                       statistics = "sum",
                       weight     = weight), " ! WARNING: Some grouping variables are provided more than once")
 
-    expect_equal(ncol(result_df), 4)
+    expect_equal(ncol(result_df), 7)
 })
 
 
@@ -564,7 +564,7 @@ test_that("Double analysis variables will be omitted", {
                       statistics = "sum",
                       weight     = weight), " ! WARNING: Some analysis variables are provided more than once")
 
-    expect_equal(ncol(result_df), 4)
+    expect_equal(ncol(result_df), 7)
 })
 
 
@@ -575,7 +575,7 @@ test_that("Analysis variable will be omitted if also passed as class variable", 
                       statistics = "sum",
                       weight     = weight), "This variable will be omitted as analysis variable during computation")
 
-    expect_equal(ncol(result_df), 4)
+    expect_equal(ncol(result_df), 7)
 })
 
 
@@ -586,7 +586,7 @@ test_that("None existent statistics will be omitted", {
                        statistics = c("sum", "test"),
                        weight     = weight)
 
-    expect_equal(ncol(result_df), 3)
+    expect_equal(ncol(result_df), 6)
 })
 
 
@@ -598,7 +598,7 @@ test_that("Merging variables back to original data frame creates new column", {
                        weight     = weight,
                        merge_back = TRUE)
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
+    expect_equal(ncol(result_df), ncol(dummy_df) + 4)
     expect_equal(nrow(result_df), nrow(dummy_df))
 })
 
@@ -612,7 +612,7 @@ test_that("Merging variables back works if wrong nesting option ist provided", {
                        nesting    = "all",
                        merge_back = TRUE), " ! WARNING: Merging variables back only works with nesting = 'deepest'")
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
+    expect_equal(ncol(result_df), ncol(dummy_df) + 4)
     expect_equal(nrow(result_df), nrow(dummy_df))
 })
 
@@ -650,14 +650,7 @@ test_that("Drop auto generated variables after summarise", {
 
 test_that("Drop auto generated variables will be omitted if not in data frame", {
     expect_message(result_df <- dummy_df |>
-        summarise_plus(class      = c(year, sex),
-                       values     = c(income),
-                       statistics = "sum",
-                       weight     = weight,
-                       nesting    = "deepest") |>
         drop_type_vars(), " ! WARNING: The provided variable to drop")
-
-    expect_true(!all(c("TYPE", "TYPE_NR", "DEPTH") %in% names(result_df)))
 })
 
 
@@ -686,7 +679,7 @@ test_that("Generate only chosen combinations of class variables", {
                        values     = c(income),
                        statistics = c("sum", "mean", "pct_group", "pct_total"),
                        weight     = weight,
-                       type       = c("year + sex", "sex + age", "age"),
+                       type       = c("total", "year + sex", "sex + age", "age"),
                        nesting    = "all")
 
     expect_equal(min(result_df[["DEPTH"]]), 0)
@@ -706,7 +699,7 @@ test_that("Summarise possible with empty class vector", {
                        values = income,
                        statistics = "sum")
 
-    expect_equal(ncol(result_df), 1)
+    expect_equal(ncol(result_df), 4)
     expect_equal(nrow(result_df), 1)
 })
 
@@ -716,7 +709,7 @@ test_that("Summarise possible with no class variables provided", {
         summarise_plus(values = income,
                        statistics = "sum")
 
-    expect_equal(ncol(result_df), 1)
+    expect_equal(ncol(result_df), 4)
     expect_equal(nrow(result_df), 1)
 })
 

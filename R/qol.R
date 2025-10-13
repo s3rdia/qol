@@ -19,7 +19,7 @@
 #' maximum speed and on the wonderful openxlsx2 package for maximum style.
 #'
 #' @section Imports:
-#' data.table, collapse
+#' data.table, collapse, openxlsx2
 #'
 #' @section Minimal R Version:
 #' 4.1.0 or higher

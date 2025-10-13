@@ -23,7 +23,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.
 }
 \section{Imports}{
 
-data.table, collapse
+data.table, collapse, openxlsx2
 }
 
 \section{Minimal R Version}{
@@ -113,6 +113,7 @@ snippet any
 Useful links:
 \itemize{
   \item \url{https://github.com/s3rdia/qol}
+  \item \url{https://s3rdia.github.io/qol/}
 }
 
 }

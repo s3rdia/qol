@@ -219,7 +219,7 @@ summarise_plus <- function(data_frame,
         nesting <- "deepest"
     }
 
-    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
+    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight), width.cutoff = 500L)))
 
     # Create temporary weight column if none is provided.
     # Also get the name of the weight variable as string.
@@ -276,7 +276,7 @@ summarise_plus <- function(data_frame,
     list_of_statistics <- get_complete_statistics_list(statistics)
 
     # Convert to character vectors
-    class_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(class))))
+    class_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(class), width.cutoff = 500L)))
 
     if (substr(class_temp, 1, 2) == "c("){
         class <- as.character(substitute(class))
@@ -293,7 +293,7 @@ summarise_plus <- function(data_frame,
     class <- class[class != "c"]
 
     # Convert to character vectors
-    values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values))))
+    values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values), width.cutoff = 500L)))
 
     if (substr(values_temp, 1, 2) == "c("){
         values <- as.character(substitute(values))
@@ -521,6 +521,12 @@ summarise_plus <- function(data_frame,
         monitor_df <- result_list[[2]]
 
         monitor_df <- monitor_df |> monitor_start("Clean up", "Clean up")
+
+        # Generate TYPE variables
+        type <- paste(group_vars, collapse = "+")
+        result_df[["TYPE"]]    <- type
+        result_df[["TYPE_NR"]] <- 1
+        result_df[["DEPTH"]]   <- length(group_vars)
 
         # Reorder new variables in order of requested statistics
         result_df <- result_df |>
@@ -790,9 +796,9 @@ summarise_plus <- function(data_frame,
                     missing_vars <- setdiff(group_vars, combination)
                     group_df[missing_vars] <- NA
                     type <- paste(combination, collapse = "+")
-                    group_df[["TYPE"]] <- type
+                    group_df[["TYPE"]]    <- type
                     group_df[["TYPE_NR"]] <- as.integer(index)
-                    group_df[["DEPTH"]] <- as.integer(i)
+                    group_df[["DEPTH"]]   <- as.integer(i)
 
                     # Add data frame to list to add them together at the end
                     all_results[[type]] <- group_df
@@ -823,6 +829,11 @@ summarise_plus <- function(data_frame,
         if (tolower(nesting) == "single"){
             result_df <- result_df |>
                 fuse_variables("fused_vars", group_vars)
+        }
+
+        # If types are defined, remove total if not defined in types
+        if (length(types) > 0 & !"total" %in% types){
+            result_df <- result_df |> collapse::fsubset(TYPE != "total")
         }
 
         monitor_df <- monitor_df |> monitor_end()
@@ -930,6 +941,15 @@ matrix_summarise <- function(data_frame,
 
     monitor_df <- monitor_df |> monitor_start("Matrix conversion", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
 
+    # Temporarily rename "." in factor variable levels, if there are any. This is
+    # necessary because later the matrix row names need to be split by ".". If there
+    # are any additional dots in the level names, this leads to errors.
+    for (column in names(data_frame[, group_vars])){
+        if (is.factor(data_frame[[column]])){
+            levels(data_frame[[column]]) <- gsub("\\.", "!!!", levels(data_frame[[column]]))
+        }
+    }
+
     # Convert the value columns of the data frame into a matrix
     value_matrix  <- as.matrix(data_frame[, values, with = FALSE])
 
@@ -991,6 +1011,13 @@ matrix_summarise <- function(data_frame,
     # same grouping.
     restored_group  <- data.table::as.data.table(
         data.table::tstrsplit(rownames(sum_result), split = ".", fixed = TRUE))
+
+    # Restore temporarily renamed dots
+    for (column in names(restored_group)){
+        if (is.character(restored_group[[column]])){
+            restored_group[[column]] <- gsub("\\.", "!!!", restored_group[[column]])
+        }
+    }
 
     if (length(names(restored_group)) > length(group_vars)){
         message(" X ERROR: One of the grouping variables is not suited for grouping.")

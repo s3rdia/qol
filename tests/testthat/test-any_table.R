@@ -452,20 +452,20 @@ test_that("any_table aborts with only invalid pct_value statistic", {
 
 
 test_that("any_table aborts with missing statistic extension in pre summarised data", {
-    expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "age",
+    expect_message(result_list <- sum_df |>
+                       any_table(rows       = "year",
                                  columns    = "sex",
-                                 values     = weight,
+                                 values     = TYPE_NR,
                                  pre_summed = TRUE,
                                  print      = FALSE), " X ERROR: All value variables need to have the statistic extensions in their variable names")
 })
 
 
 test_that("any_table aborts with value variable having too many underscores in pre summarised data", {
-    dummy_df[["to_many_underscores"]] <- 1
+    sum_df[["to_many_underscores"]] <- 1
 
-    expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "age",
+    expect_message(result_list <- sum_df |>
+                       any_table(rows       = "year",
                                  columns    = "sex",
                                  values     = to_many_underscores,
                                  pre_summed = TRUE,

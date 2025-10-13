@@ -47,7 +47,7 @@ args_to_char <- function(...){
 #' @noRd
 single_args_to_char <- function(...){
     # First get all arguments as one string
-    arg_vector <- gsub("\"", "", deparse(substitute(c(...))))
+    arg_vector <- gsub("\"", "", deparse(substitute(c(...)), width.cutoff = 500L))
 
     # Split up the single arguments
     arguments  <- strsplit(sub("c\\(", "", sub(")", "", arg_vector)), ",")

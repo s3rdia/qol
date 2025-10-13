@@ -369,6 +369,7 @@ crosstabs <- function(data_frame,
                             nesting    = "deepest",
                             notes      = FALSE,
                             na.rm      = na.rm)) |>
+            drop_type_vars() |>
             collapse::frename(var_pct_group = var_pct_row)
 
         # Get the expressions of the column variable to use them later as column names
