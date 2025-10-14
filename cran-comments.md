@@ -1,3 +1,15 @@
+# Resubmission dd.mm.yyyy - qol 1.0.3
+
+Fixed
+* In any_table() the header and table row heights as well as the column widths set by the style option where 1 row/column to short.
+* In any_table() the row heights didn't catch the whole table.
+* any_table() ran into an error, if a variable was provided as pct_group, which was not part of the row and column variables.
+
+Additionally
+* Added missing functions export_with_style() and get_excel_range() to the ?qol overview page.
+* Added information to the startup message to use ?qol to get an overview.
+
+
 # Resubmission 13.10.2025 - qol 1.0.2
 
 This is a resubmission which fixes some problems I came across while further testing the package.

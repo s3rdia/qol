@@ -25,11 +25,11 @@ maximum speed and on the wonderful openxlsx2 package for maximum style."><meta p
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,10 @@ maximum speed and on the wonderful openxlsx2 package for maximum style."><meta p
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/SAS_compare.html">How Does qol Compare to SAS?</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -74,7 +78,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
     <h2 id="imports">Imports<a class="anchor" aria-label="anchor" href="#imports"></a></h2>
 
 
-<p>data.table, collapse</p>
+<p>data.table, collapse, openxlsx2</p>
     </div>
     <div class="section level2">
     <h2 id="minimal-r-version">Minimal R Version<a class="anchor" aria-label="anchor" href="#minimal-r-version"></a></h2>
@@ -87,7 +91,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
 
 
 <p>Creating formats: <code><a href="formats.html">discrete_format()</a></code>, <code><a href="formats.html">interval_format()</a></code>.</p>
-<p>Summarisation and tabulation: <code><a href="summarise_plus.html">summarise_plus()</a></code>, <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="crosstabs.html">crosstabs()</a></code>, <code><a href="any_table.html">any_table()</a></code>.</p>
+<p>Summarisation and tabulation: <code><a href="summarise_plus.html">summarise_plus()</a></code>, <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="crosstabs.html">crosstabs()</a></code>, <code><a href="any_table.html">any_table()</a></code>, <code><a href="export_with_style.html">export_with_style()</a></code>.</p>
 <p>Creating a custom table style: <code><a href="excel_output_style.html">excel_output_style()</a></code>, <code><a href="modify_output_style.html">modify_output_style()</a></code>,
 <code><a href="number_format_style.html">number_format_style()</a></code>, <code><a href="modify_number_formats.html">modify_number_formats()</a></code>.</p>
 <p>Recoding: <code><a href="recode.html">recode()</a></code>, <code><a href="recode.html">recode_multi()</a></code>.</p>
@@ -97,7 +101,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
 <p>Renaming: <code><a href="rename_pattern.html">rename_pattern()</a></code>, <code><a href="add_extension.html">add_extension()</a></code>, <code><a href="remove_stat_extension.html">remove_stat_extension()</a></code>.</p>
 <p>Generate dummy data: <code><a href="dummy_data.html">dummy_data()</a></code></p>
 <p>Small helpers: <code><a href="inverse.html">inverse()</a></code>, <code><a href="setcolorder_by_pattern.html">setcolorder_by_pattern()</a></code>, <code><a href="running_number.html">running_number()</a></code>,
-<code><a href="drop_type_vars.html">drop_type_vars()</a></code>, <code><a href="fuse_variables.html">fuse_variables()</a></code>.</p>
+<code><a href="drop_type_vars.html">drop_type_vars()</a></code>, <code><a href="fuse_variables.html">fuse_variables()</a></code>, <code><a href="get_excel_range.html">get_excel_range()</a></code>.</p>
 <p>Split data frame: <code><a href="split_by.html">split_by_var()</a></code>, <code><a href="split_by.html">split_by_condition()</a></code>.</p>
 <p>Other: <code><a href="args_to_char.html">args_to_char()</a></code>, <code><a href="convert_numeric.html">convert_numeric()</a></code>, <code><a href="convert_numeric.html">is_numeric()</a></code></p>
     </div>
@@ -155,6 +159,7 @@ snippet any
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://github.com/s3rdia/qol" class="external-link">https://github.com/s3rdia/qol</a></p></li>
+<li><p><a href="https://s3rdia.github.io/qol/">https://s3rdia.github.io/qol/</a></p></li>
 </ul></div>
     </div>
     <div class="section level2">

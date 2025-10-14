@@ -3,11 +3,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/SAS_compare.html">How Does qol Compare to SAS?</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -31,7 +35,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="creating-formats">Creating Formats<a class="anchor" aria-label="anchor" href="#creating-formats"></a></h2>
 
 
 
@@ -43,28 +47,33 @@
 
       <dl><dt>
 
-          <code><a href="add_extension.html">add_extension()</a></code>
+          <code><a href="formats.html">discrete_format()</a></code> <code><a href="formats.html">interval_format()</a></code>
 
         </dt>
-        <dd>Add Extensions to Variable Names</dd>
+        <dd>Create Format Container</dd>
+      </dl></div><div class="section level2">
+      <h2 id="summarisation-and-tabulation">Summarisation and Tabulation<a class="anchor" aria-label="anchor" href="#summarisation-and-tabulation"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="summarise_plus.html">summarise_plus()</a></code>
+
+        </dt>
+        <dd>Fast and Powerful yet Simple to Use Summarise</dd>
       </dl><dl><dt>
 
-          <code><a href="any_table.html">any_table()</a></code>
+          <code><a href="frequencies.html">frequencies()</a></code>
 
         </dt>
-        <dd>Compute Any Possible Table</dd>
-      </dl><dl><dt>
-
-          <code><a href="args_to_char.html">args_to_char()</a></code>
-
-        </dt>
-        <dd>Convert Ellipsis to Character Vector</dd>
-      </dl><dl><dt>
-
-          <code><a href="convert_numeric.html">is_numeric()</a></code> <code><a href="convert_numeric.html">convert_numeric()</a></code>
-
-        </dt>
-        <dd>Check and Convert to Numeric</dd>
+        <dd>Display Frequency Tables of Single Variables</dd>
       </dl><dl><dt>
 
           <code><a href="crosstabs.html">crosstabs()</a></code>
@@ -73,17 +82,28 @@
         <dd>Display Cross Table of Two Variables</dd>
       </dl><dl><dt>
 
-          <code><a href="drop_type_vars.html">drop_type_vars()</a></code>
+          <code><a href="any_table.html">any_table()</a></code>
 
         </dt>
-        <dd>Drop automatically generated Variables</dd>
+        <dd>Compute Any Possible Table</dd>
       </dl><dl><dt>
 
-          <code><a href="dummy_data.html">dummy_data()</a></code>
+          <code><a href="export_with_style.html">export_with_style()</a></code>
 
         </dt>
-        <dd>Dummy Data</dd>
-      </dl><dl><dt>
+        <dd>Export Data Frame With Style</dd>
+      </dl></div><div class="section level2">
+      <h2 id="creating-a-custom-table-style">Creating a Custom Table Style<a class="anchor" aria-label="anchor" href="#creating-a-custom-table-style"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="excel_output_style.html">excel_output_style()</a></code>
 
@@ -91,16 +111,171 @@
         <dd>Style for 'Excel' Table Outputs</dd>
       </dl><dl><dt>
 
-          <code><a href="export_with_style.html">export_with_style()</a></code>
+          <code><a href="modify_output_style.html">modify_output_style()</a></code>
 
         </dt>
-        <dd>Export Data Frame With Style</dd>
+        <dd>Modify Style for 'Excel' Table Outputs</dd>
       </dl><dl><dt>
 
-          <code><a href="frequencies.html">frequencies()</a></code>
+          <code><a href="number_format_style.html">number_format_style()</a></code>
 
         </dt>
-        <dd>Display Frequency Tables of Single Variables</dd>
+        <dd>Number Formats Used by <code><a href="../reference/any_table.html">any_table()</a></code></dd>
+      </dl><dl><dt>
+
+          <code><a href="modify_number_formats.html">modify_number_formats()</a></code>
+
+        </dt>
+        <dd>Modify Number Formats Used by <code><a href="../reference/any_table.html">any_table()</a></code></dd>
+      </dl></div><div class="section level2">
+      <h2 id="recoding">Recoding<a class="anchor" aria-label="anchor" href="#recoding"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="recode.html">recode()</a></code> <code><a href="recode.html">recode_multi()</a></code>
+
+        </dt>
+        <dd>Recode New Variables With Formats</dd>
+      </dl></div><div class="section level2">
+      <h2 id="selecting">Selecting<a class="anchor" aria-label="anchor" href="#selecting"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="keep_dropp.html">keep()</a></code> <code><a href="keep_dropp.html">dropp()</a></code>
+
+        </dt>
+        <dd>Keep and Drop Variables Inside a Data Frame</dd>
+      </dl></div><div class="section level2">
+      <h2 id="if-statements">If-Statements<a class="anchor" aria-label="anchor" href="#if-statements"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="if_else.html">if.()</a></code> <code><a href="if_else.html">else_if.()</a></code> <code><a href="if_else.html">else.()</a></code>
+
+        </dt>
+        <dd>If - Else if - Else Statements</dd>
+      </dl></div><div class="section level2">
+      <h2 id="monitoring">Monitoring<a class="anchor" aria-label="anchor" href="#monitoring"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="monitor.html">monitor_start()</a></code> <code><a href="monitor.html">monitor_end()</a></code> <code><a href="monitor.html">monitor_next()</a></code> <code><a href="monitor.html">monitor_plot()</a></code>
+
+        </dt>
+        <dd>Monitor Time Consumption</dd>
+      </dl></div><div class="section level2">
+      <h2 id="renaming">Renaming<a class="anchor" aria-label="anchor" href="#renaming"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="rename_pattern.html">rename_pattern()</a></code>
+
+        </dt>
+        <dd>Replace Patterns Inside Variable Names</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_extension.html">add_extension()</a></code>
+
+        </dt>
+        <dd>Add Extensions to Variable Names</dd>
+      </dl><dl><dt>
+
+          <code><a href="remove_stat_extension.html">remove_stat_extension()</a></code>
+
+        </dt>
+        <dd>Replace Statistic From Variable Names</dd>
+      </dl></div><div class="section level2">
+      <h2 id="generate-dummy-data">Generate Dummy Data<a class="anchor" aria-label="anchor" href="#generate-dummy-data"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="dummy_data.html">dummy_data()</a></code>
+
+        </dt>
+        <dd>Dummy Data</dd>
+      </dl></div><div class="section level2">
+      <h2 id="small-helpers">Small Helpers<a class="anchor" aria-label="anchor" href="#small-helpers"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="inverse.html">inverse()</a></code>
+
+        </dt>
+        <dd>Get Variable Names which are not Part of the Given Vector</dd>
+      </dl><dl><dt>
+
+          <code><a href="setcolorder_by_pattern.html">setcolorder_by_pattern()</a></code>
+
+        </dt>
+        <dd>Order Columns by Variable Name Patterns</dd>
+      </dl><dl><dt>
+
+          <code><a href="running_number.html">running_number()</a></code>
+
+        </dt>
+        <dd>Compute Running Numbers</dd>
+      </dl><dl><dt>
+
+          <code><a href="drop_type_vars.html">drop_type_vars()</a></code>
+
+        </dt>
+        <dd>Drop automatically generated Variables</dd>
       </dl><dl><dt>
 
           <code><a href="fuse_variables.html">fuse_variables()</a></code>
@@ -113,74 +288,49 @@
 
         </dt>
         <dd>Converts Numbers into 'Excel' Ranges</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="split-data-frame">Split Data Frame<a class="anchor" aria-label="anchor" href="#split-data-frame"></a></h2>
 
-          <code><a href="inverse.html">inverse()</a></code>
 
-        </dt>
-        <dd>Get Variable Names which are not Part of the Given Vector</dd>
-      </dl><dl><dt>
 
-          <code><a href="modify_number_formats.html">modify_number_formats()</a></code>
 
-        </dt>
-        <dd>Modify Number Formats Used by <code><a href="https://rdrr.io/pkg/qol/man/any_table.html" class="external-link">any_table()</a></code></dd>
-      </dl><dl><dt>
+    </div><div class="section level2">
 
-          <code><a href="modify_output_style.html">modify_output_style()</a></code>
 
-        </dt>
-        <dd>Modify Style for 'Excel' Table Outputs</dd>
-      </dl><dl><dt>
 
-          <code><a href="number_format_style.html">number_format_style()</a></code>
 
-        </dt>
-        <dd>Number Formats Used by <code><a href="https://rdrr.io/pkg/qol/man/any_table.html" class="external-link">any_table()</a></code></dd>
-      </dl><dl><dt>
-
-          <code><a href="recode.html">recode()</a></code> <code><a href="recode.html">recode_multi()</a></code>
-
-        </dt>
-        <dd>Recode New Variables With Formats</dd>
-      </dl><dl><dt>
-
-          <code><a href="remove_stat_extension.html">remove_stat_extension()</a></code>
-
-        </dt>
-        <dd>Replace Statistic From Variable Names</dd>
-      </dl><dl><dt>
-
-          <code><a href="rename_pattern.html">rename_pattern()</a></code>
-
-        </dt>
-        <dd>Replace Patterns Inside Variable Names</dd>
-      </dl><dl><dt>
-
-          <code><a href="running_number.html">running_number()</a></code>
-
-        </dt>
-        <dd>Compute Running Numbers</dd>
-      </dl><dl><dt>
-
-          <code><a href="setcolorder_by_pattern.html">setcolorder_by_pattern()</a></code>
-
-        </dt>
-        <dd>Order Columns by Variable Name Patterns</dd>
-      </dl><dl><dt>
+      <dl><dt>
 
           <code><a href="split_by.html">split_by_var()</a></code> <code><a href="split_by.html">split_by_condition()</a></code>
 
         </dt>
         <dd>Split Data Frame by Variable Expressions or Condition</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="other">Other<a class="anchor" aria-label="anchor" href="#other"></a></h2>
 
-          <code><a href="summarise_plus.html">summarise_plus()</a></code>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="args_to_char.html">args_to_char()</a></code>
 
         </dt>
-        <dd>Fast and Powerful yet Simple to Use Summarise</dd>
+        <dd>Convert Ellipsis to Character Vector</dd>
+      </dl><dl><dt>
+
+          <code><a href="convert_numeric.html">is_numeric()</a></code> <code><a href="convert_numeric.html">convert_numeric()</a></code>
+
+        </dt>
+        <dd>Check and Convert to Numeric</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

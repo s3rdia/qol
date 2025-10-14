@@ -75,7 +75,7 @@
 #' c("var1", "var2", "var3",...) means to put variables below (in case of the
 #' row variables) or besides (in case of the column variables) each other. Nesting variables
 #' is as easy as putting a plus sign between them, e.g. c("var1 + var2", "var2" + "var3" + "var4", etc.).
-#' And of course you can combine both both versions.
+#' And of course you can combine both versions.
 #'
 #' The real highlight is, that this function not only creates all the desired variable
 #' combinations and exports them to an 'Excel' file, it prints a fully custom styled
@@ -531,6 +531,20 @@ any_table <- function(data_frame,
         message(" ! WARNING: Order by option '", order_by, "' doesn't exist. Options 'values', 'stats' and 'interleaved'\n",
                 "            are available. Order by will be set to 'stats'.")
         order_by <- "stats"
+    }
+
+    # Remove missing variables from pct_group
+    if ("pct_group" %in% statistics){
+        invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
+
+        if (length(invalid_pct) > 0){
+            message(" ! WARNING: The variable '", invalid_pct, "' provided as pct_group is not part of the row and column variables.\n",
+                    "            The variable will be omitted.")
+
+            pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
+        }
+
+        rm(invalid_pct)
     }
 
     # In case of using a pre summarised data frame, underscores are only allowed if they carry
@@ -1348,7 +1362,7 @@ format_any_excel <- function(wb,
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
                                               ncol(any_tab) + (style[["start_column"]] - 1),
-                                              nrow(any_tab) + (style[["start_row"]] - 1),
+                                              nrow(any_tab) + nrow(multi_header) + (style[["start_row"]] - 1),
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)

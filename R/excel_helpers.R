@@ -1088,7 +1088,8 @@ handle_col_row_dimensions <- function(wb,
                                       number_of_rows,
                                       style = excel_output_style()){
     column_widths <- style[["column_widths"]]
-    start_column  <- 1
+    start_column  <- style[["start_column"]]
+    end_column    <- start_column + (number_of_columns - 1)
 
     # If specific column widths are specified
     if (length(column_widths) > 1){
@@ -1108,7 +1109,8 @@ handle_col_row_dimensions <- function(wb,
     }
 
     row_heights <- style[["row_heights"]]
-    start_row   <- 1
+    start_row   <- style[["start_row"]]
+    end_row     <- start_row + (number_of_rows - 1)
 
     # If specific column widths are specified
     if (length(row_heights) > 1){
@@ -1124,9 +1126,9 @@ handle_col_row_dimensions <- function(wb,
         row_heights <- NULL
     }
 
-    wb$set_col_widths(cols   = start_column:number_of_columns,
+    wb$set_col_widths(cols   = start_column:end_column,
                       widths = column_widths)
-    wb$set_row_heights(rows    = start_row:number_of_rows,
+    wb$set_row_heights(rows    = start_row:end_row,
                        heights = row_heights)
 
     wb
@@ -1238,7 +1240,7 @@ handle_header_table_dim <- function(wb,
     if (!is.null(header_heights)){
         number_of_rows <- max(ranges[["header.length"]], 1)
         start_row      <- ranges[["header.row"]]
-        end_row        <- start_row + max(ranges[["header.length"]], 0)
+        end_row        <- start_row + max((number_of_rows - 1), 0)
 
         header_heights <- fill_or_trim(header_heights,
                                        number_of_rows)
@@ -1251,9 +1253,9 @@ handle_header_table_dim <- function(wb,
     table_heights <- style[["table_heights"]]
 
     if (!is.null(table_heights)){
-        number_of_rows <- ranges[["table.length"]] - 1
+        number_of_rows <- ranges[["table.length"]]
         start_row      <- ranges[["table.row"]]
-        end_row        <- start_row + number_of_rows
+        end_row        <- start_row + (number_of_rows - 1)
 
         table_heights <- fill_or_trim(table_heights,
                                       number_of_rows)

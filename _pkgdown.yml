@@ -1,0 +1,73 @@
+url: https://s3rdia.github.io/qol/
+destination: docs
+
+template:
+  bootstrap: 5
+  bootswatch: darkly
+  theme: a11y-dark
+  bslib:
+    primary: "#048b3c"
+    code-color: "#05bc8c"
+  
+reference:
+- title: Creating Formats
+  contents:
+  - discrete_format
+  - interval_format
+- title: Summarisation and Tabulation
+  contents:
+  - summarise_plus
+  - frequencies
+  - crosstabs
+  - any_table
+  - export_with_style
+- title: Creating a Custom Table Style
+  contents:
+  - excel_output_style
+  - modify_output_style
+  - number_format_style
+  - modify_number_formats
+- title: Recoding
+  contents:
+  - recode
+  - recode_multi
+- title: Selecting
+  contents:
+  - keep
+  - dropp
+- title: If-Statements
+  contents:
+  - if.
+  - else_if.
+  - else.
+- title: Monitoring
+  contents:
+  - monitor_start
+  - monitor_end
+  - monitor_next
+  - monitor_plot
+- title: Renaming
+  contents:
+  - rename_pattern
+  - add_extension
+  - remove_stat_extension
+- title: Generate Dummy Data
+  contents:
+  - dummy_data
+- title: Small Helpers
+  contents:
+  - inverse
+  - setcolorder_by_pattern
+  - running_number
+  - drop_type_vars
+  - fuse_variables
+  - get_excel_range
+- title: Split Data Frame
+  contents:
+  - split_by_var
+  - split_by_condition
+- title: Other
+  contents:
+  - args_to_char
+  - convert_numeric
+  - is_numeric

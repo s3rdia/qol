@@ -35,7 +35,7 @@ data.table, collapse, openxlsx2
 
 Creating formats: \code{\link[=discrete_format]{discrete_format()}}, \code{\link[=interval_format]{interval_format()}}.
 
-Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}.
+Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}, \code{\link[=export_with_style]{export_with_style()}}.
 
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.
@@ -53,7 +53,7 @@ Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_exte
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
 Small helpers: \code{\link[=inverse]{inverse()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=running_number]{running_number()}},
-\code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}}.
+\code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}.
 
 Split data frame: \code{\link[=split_by_var]{split_by_var()}}, \code{\link[=split_by_condition]{split_by_condition()}}.
 

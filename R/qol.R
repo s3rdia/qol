@@ -27,7 +27,7 @@
 #' @section Functions:
 #' Creating formats: [discrete_format()], [interval_format()].
 #'
-#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()].
+#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()].
 #'
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].
@@ -45,7 +45,7 @@
 #' Generate dummy data: [dummy_data()]
 #'
 #' Small helpers: [inverse()], [setcolorder_by_pattern()], [running_number()],
-#' [drop_type_vars()], [fuse_variables()].
+#' [drop_type_vars()], [fuse_variables()], [get_excel_range()].
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].
 #'

@@ -12,5 +12,6 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 # Start up message
 .onAttach <- function(libname, pkgname) {
     packageStartupMessage("    The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier\n",
-                          "    and produce bigger and more complex outputs in less time with less code.")
+                          "    and produce bigger and more complex outputs in less time with less code.\n",
+                          "    -> Use ?qol to get an overview.")
 }

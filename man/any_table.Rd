@@ -134,7 +134,7 @@ the table rows and columns with a simple syntax. Listing variables in a vector l
 c("var1", "var2", "var3",...) means to put variables below (in case of the
 row variables) or besides (in case of the column variables) each other. Nesting variables
 is as easy as putting a plus sign between them, e.g. c("var1 + var2", "var2" + "var3" + "var4", etc.).
-And of course you can combine both both versions.
+And of course you can combine both versions.
 
 The real highlight is, that this function not only creates all the desired variable
 combinations and exports them to an 'Excel' file, it prints a fully custom styled

@@ -3,11 +3,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/SAS_compare.html">How Does qol Compare to SAS?</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -32,7 +36,57 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.1" id="qol-101---01102025">qol 1.0.1 - 01.10.2025<a class="anchor" aria-label="anchor" href="#qol-101---01102025"></a></h2><p class="text-muted">CRAN release: 2025-10-10</p>
+<h2 class="pkg-version" data-toc-text="1.0.3" id="qol-103---development">qol 1.0.3 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-103---development"></a></h2>
+<div class="section level4">
+<h4 id="fixed-1-0-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-0-3"></a></h4>
+<ul><li>In <code><a href="../reference/any_table.html">any_table()</a></code> the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)</li>
+<li>In <code><a href="../reference/any_table.html">any_table()</a></code> the row heights didn’t catch the whole table. (14.10.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code> ran into an error, if a variable was provided as pct_group, which was not part of the row and column variables. (14.10.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-0-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-0-3"></a></h4>
+<ul><li>Added missing functions <code><a href="../reference/export_with_style.html">export_with_style()</a></code> and <code><a href="../reference/get_excel_range.html">get_excel_range()</a></code> to the ?qol overview page. (14.10.2025)</li>
+<li>Added information to the startup message to use ?qol to get an overview. (14.10.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="github-related-1-0-3">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-0-3"></a></h4>
+<ul><li>Added article comparing this package with SAS. (14.10.2025)</li>
+<li>Changed GitHub Page style. (14.10.2025)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.2" id="qol-102">qol 1.0.2<a class="anchor" aria-label="anchor" href="#qol-102"></a></h2><p class="text-muted">CRAN release: 2025-10-14</p>
+<div class="section level4">
+<h4 id="description-file-1-0-2">DESCRIPTION file<a class="anchor" aria-label="anchor" href="#description-file-1-0-2"></a></h4>
+<ul><li>Fixed brackets in DESCRIPTION so that auto linking works.</li>
+<li>Added another URL.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="fixed-1-0-2">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-0-2"></a></h4>
+<ul><li>There could be an error in <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code> and <code><a href="../reference/args_to_char.html">args_to_char()</a></code>, if there where to many variables provided.</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> ran into an error, if a value label from a format contained a “.”.</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code> could lead to wrong results if the pre_summed option was used and a variable was part of multiple combinations in the summarised data.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="changed-functionality-1-0-2">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-0-2"></a></h4>
+<ul><li>In <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, when types are defined, the total row is now removed if not explicitly defined as type.</li>
+<li>In <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, when the nesting option “deepest” is used, the variables TYPE, TYPE_NR and DEPTHS are now also generated.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="unit-tests-1-0-2">Unit tests<a class="anchor" aria-label="anchor" href="#unit-tests-1-0-2"></a></h4>
+<ul><li>Adjusted tests according to changed functionalities</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-0-2">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-0-2"></a></h4>
+<ul><li>Added openxlsx2 as import in the qol main help file</li>
+<li>Corrected a typo in a warning message in <code><a href="../reference/any_table.html">any_table()</a></code> concerning variable order.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.1" id="qol-101">qol 1.0.1<a class="anchor" aria-label="anchor" href="#qol-101"></a></h2><p class="text-muted">CRAN release: 2025-10-10</p>
 <ul><li>Added references to specific SAS functions in the description field of the Description file where they are mentioned.</li>
 <li>Removed specific seed in R/dummy_data.R</li>
 <li>Fixed a bug in dummy_data where it could happen that not enough observations where generated.</li>
