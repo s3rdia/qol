@@ -68,6 +68,7 @@ reference:
   - split_by_condition
 - title: Other
   contents:
+  - build_master
   - args_to_char
   - convert_numeric
   - is_numeric

@@ -1,9 +1,13 @@
 # qol 1.0.3 - DEVELOPMENT
 
+### New functions
+* `build_master()`: Reads a given folder structure, which contains scripts, and builds a master script as a markdown file. (18.10.2025)
+
 ### Fixed
 * In `any_table()` the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)
 * In `any_table()` the row heights didn't catch the whole table. (14.10.2025)
 * `any_table()` ran into an error, if a variable was provided as pct_group, which was not part of the row and column variables. (14.10.2025)
+* Fixed typos in frequencies examples, where it said "frequency" instead of "frequencies". (18.10.2025)
 
 ### Additionally
 * Added missing functions `export_with_style()` and `get_excel_range()` to the ?qol overview page. (14.10.2025)

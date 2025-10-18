@@ -165,15 +165,15 @@ tables, you can also just output the tables in ASCII style format.</p>
 <span>               <span class="st">"This is footnote number 2"</span>,</span>
 <span>               <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Output frequency tables</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">education</span><span class="op">)</span>,</span>
-<span>                     weight <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
+<span><span class="co"># Output frequencies tables</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">education</span><span class="op">)</span>,</span>
+<span>                       weight <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Also works with characters</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"education"</span><span class="op">)</span>,</span>
-<span>                     weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"education"</span><span class="op">)</span>,</span>
+<span>                       weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Applying formats and titles</span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
@@ -181,27 +181,27 @@ tables, you can also just output the tables in ASCII style format.</p>
 <span>    <span class="st">"Male"</span>   <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, <span class="fu"><a href="formats.html">formats</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span>,</span>
-<span>                     titles    <span class="op">=</span> <span class="va">titles</span>,</span>
-<span>                     footnotes <span class="op">=</span> <span class="va">footnotes</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, <span class="fu"><a href="formats.html">formats</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span>,</span>
+<span>                       titles    <span class="op">=</span> <span class="va">titles</span>,</span>
+<span>                       footnotes <span class="op">=</span> <span class="va">footnotes</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Split frequencies by expressions of another variable</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, by <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, by <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get a list with two data tables for further usage</span></span>
-<span><span class="va">result_list</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, <span class="fu"><a href="formats.html">formats</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result_list</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, <span class="fu"><a href="formats.html">formats</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output in text file</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output to Excel</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># With individual styling</span></span>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0077B6"</span>,</span>
 <span>                               font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span>, style <span class="op">=</span> <span class="va">my_style</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span>, style <span class="op">=</span> <span class="va">my_style</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

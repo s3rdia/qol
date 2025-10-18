@@ -66,15 +66,15 @@
 #'                "This is footnote number 2",
 #'                "This is footnote number 3 link: https://cran.r-project.org/")
 #'
-#' # Output frequency tables
-#' my_data |> frequency(sex)
-#' my_data |> frequency(c(age, education),
-#'                      weight = weight)
+#' # Output frequencies tables
+#' my_data |> frequencies(sex)
+#' my_data |> frequencies(c(age, education),
+#'                        weight = weight)
 #'
 #' # Also works with characters
-#' my_data |> frequency("sex")
-#' my_data |> frequency(c("age", "education"),
-#'                      weight = "weight")
+#' my_data |> frequencies("sex")
+#' my_data |> frequencies(c("age", "education"),
+#'                        weight = "weight")
 #'
 #' # Applying formats and titles
 #' sex. <- discrete_format(
@@ -82,27 +82,27 @@
 #'     "Male"   = 1,
 #'     "Female" = 2)
 #'
-#' my_data |> frequency(sex, formats(sex = sex.),
-#'                      titles    = titles,
-#'                      footnotes = footnotes)
+#' my_data |> frequencies(sex, formats(sex = sex.),
+#'                        titles    = titles,
+#'                        footnotes = footnotes)
 #'
 #' # Split frequencies by expressions of another variable
-#' my_data |> frequency(sex, by = education)
+#' my_data |> frequencies(sex, by = education)
 #'
 #' # Get a list with two data tables for further usage
-#' result_list <- my_data |> frequency(sex, formats(sex = sex.))
+#' result_list <- my_data |> frequencies(sex, formats(sex = sex.))
 #'
 #' # Output in text file
-#' my_data |> frequency(sex, output = "text")
+#' my_data |> frequencies(sex, output = "text")
 #'
 #' # Output to Excel
-#' my_data |> frequency(sex, output = "excel")
+#' my_data |> frequencies(sex, output = "excel")
 #'
 #' # With individual styling
 #' my_style <- excel_output_style(header_back_color = "0077B6",
 #'                                font              = "Times New Roman")
 #'
-#' my_data |> frequency(sex, output = "excel", style = my_style)
+#' my_data |> frequencies(sex, output = "excel", style = my_style)
 #'
 #' @export
 frequencies <- function(data_frame,
@@ -465,7 +465,7 @@ frequencies <- function(data_frame,
     monitor_df |> monitor_plot(draw_plot = monitor)
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'frequency' execution time: ", end_time, " seconds\n")
+    message("\n- - - 'frequencies' execution time: ", end_time, " seconds\n")
 
     invisible(list("mean" = mean_tab,
                    "freq" = freq_tab))
