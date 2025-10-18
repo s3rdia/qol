@@ -30,24 +30,27 @@ get_excel_range <- function(row      = NULL, column      = NULL,
                             to_row   = NULL, to_column   = NULL) {
 
     # Get single cell
-    if (!is.null(row) && !is.null(column)){
+    if (!is.null(row) & !is.null(column)){
+        if (row <= 0 | column <= 0){
+            message(" X ERROR: Row and column must be greater than 0.")
+            return(NULL)
+        }
+
         return(openxlsx2::wb_dims(rows = row, cols = column))
     }
 
-    # else Get cell range
-    stopifnot(
-        !is.null(from_row) & !is.null(from_column) &
-        !is.null(to_row) & !is.null(to_column)
-    )
+    # Else get cell range
+    if (!is.null(from_row) & !is.null(from_column) &
+        !is.null(to_row) & !is.null(to_column)){
+            if (from_column <= 0 | from_row <= 0 | to_row <= 0 | to_column <= 0){
+                # No error message here because any_table runs into this regularly if
+                # e.g. there are no titles set.
+                return(NULL)
+            }
 
-    if (from_column == 0 || from_row == 0) {
-        return(NULL)
+        openxlsx2::wb_dims(rows = seq.int(from_row, to_row),
+                           cols = seq.int(from_column, to_column))
     }
-
-    openxlsx2::wb_dims(
-        rows = seq.int(from_row, to_row),
-        cols = seq.int(from_column, to_column)
-    )
 }
 
 ###############################################################################
@@ -125,7 +128,7 @@ get_any_table_ranges <- function(table,
                                    to_column = title.column)
 
     whole_tab_range <- get_excel_range(from_row  = header.row, from_column = header.column,
-                                       to_row    = table.row     + table.length + 1,
+                                       to_row    = table.row     + table.length - 1,
                                        to_column = header.column + (cat_col.width - 1) + header.width)
 
     header_range <- get_excel_range(from_row  = header.row, from_column = header.column,

@@ -3,7 +3,7 @@
 #' @description
 #' [any_table()] produces any possible descriptive table in 'Excel' format. Any number
 #' of variables can be nested and crossed. The output is an individually styled
-#' 'Excel' table.
+#' 'Excel' table, which also receives named ranges, making it easier to read the data back in.
 #'
 #' @param data_frame A data frame in which are the variables to tabulate.
 #' @param rows A vector that provides single variables or variable combinations that
@@ -1367,10 +1367,11 @@ format_any_excel <- function(wb,
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
 
-        wb$add_ignore_error(dims = any_ranges[["header_range"]], number_stored_as_text = TRUE)
+        wb$add_ignore_error(dims = any_ranges[["header_range"]],  number_stored_as_text = TRUE)
         wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
 
-        wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "data", local_sheet = TRUE)
+        wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+        wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()
