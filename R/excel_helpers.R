@@ -1,39 +1,6 @@
 ###############################################################################
 # Conversion
 ###############################################################################
-#' Converts Numbers to Letters
-#'
-#' @description
-#' Converts a number into the corresponding letter or if number is greater than 26
-#' a combination of letters.
-#'
-#' @param number Number which should be converted into a letter.
-#'
-#' @return
-#' Returns a single letter or combination of two or more letters.
-#'
-#' @noRd
-number_to_letter <- function(number){
-    # Get all letters
-    letters <- c(LETTERS)
-    letter  <- character()
-
-    # Translate given number to a single letter or letter combination
-    while (number > 0){
-        # Subtract one from number to make modulo operator put out correct value
-        # for edge case.
-        number <- number - 1
-        letter <- c(letters[number %% 26 + 1], letter)
-
-        # Check if a letter combination is needed (e.g. AA, AB) instead of a single
-        # letter. This is the case if a number higher than 26 was provided.
-        number <- number %/% 26
-    }
-
-    # Output letter or letter combination
-    paste0(letter, collapse = "")
-}
-
 
 #' Converts Numbers into 'Excel' Ranges
 #'
@@ -64,17 +31,23 @@ get_excel_range <- function(row      = NULL, column      = NULL,
 
     # Get single cell
     if (!is.null(row) && !is.null(column)){
-        return(paste0(number_to_letter(column), row))
+        return(openxlsx2::wb_dims(rows = row, cols = column))
     }
 
-    # Get range
-    if (!is.null(from_row) & !is.null(from_column) &
-        !is.null(to_row) & !is.null(to_column)){
-        from <- paste0(number_to_letter(from_column), from_row)
-        to   <- paste0(number_to_letter(to_column),   to_row)
+    # else Get cell range
+    stopifnot(
+        !is.null(from_row) & !is.null(from_column) &
+        !is.null(to_row) & !is.null(to_column)
+    )
 
-        return(paste0(from, ":", to))
+    if (from_column == 0 || from_row == 0) {
+        return(NULL)
     }
+
+    openxlsx2::wb_dims(
+        rows = seq.int(from_row, to_row),
+        cols = seq.int(from_column, to_column)
+    )
 }
 
 ###############################################################################
