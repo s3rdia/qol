@@ -1369,6 +1369,8 @@ format_any_excel <- function(wb,
 
         wb$add_ignore_error(dims = any_ranges[["header_range"]], number_stored_as_text = TRUE)
         wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+
+        wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "data", local_sheet = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()
