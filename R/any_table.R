@@ -1366,6 +1366,9 @@ format_any_excel <- function(wb,
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
+
+        wb$add_ignore_error(dims = any_ranges[["header_range"]], number_stored_as_text = TRUE)
+        wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()
