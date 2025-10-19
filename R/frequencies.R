@@ -797,6 +797,9 @@ format_mean_excel <- function(mean_tab,
                                   widths = 10)
             }
         }
+
+        wb$add_named_region(dims = mean_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+        wb$add_named_region(dims = mean_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
     }
 
     # Return workbook
@@ -1191,6 +1194,11 @@ format_freq_excel <- function(wb,
 
             wb <- wb |> handle_header_table_dim(freq_ranges,
                                                 style)
+
+            wb$add_ignore_error(dims = freq_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+
+            wb$add_named_region(dims = freq_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
         }
 
         monitor_df <- monitor_df |> monitor_end()

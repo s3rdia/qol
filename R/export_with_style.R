@@ -213,6 +213,11 @@ format_df_excel <- function(wb,
                                               style) |>
             handle_any_auto_dimensions(df_ranges, style) |>
             handle_header_table_dim(df_ranges, style)
+
+        wb$add_ignore_error(dims = df_ranges[["header_range"]], number_stored_as_text = TRUE)
+
+        wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()

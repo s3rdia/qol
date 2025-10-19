@@ -122,7 +122,7 @@ Returns a list with the data table containing the results for the table and the 
 \description{
 \code{\link[=any_table]{any_table()}} produces any possible descriptive table in 'Excel' format. Any number
 of variables can be nested and crossed. The output is an individually styled
-'Excel' table.
+'Excel' table, which also receives named ranges, making it easier to read the data back in.
 }
 \details{
 \code{\link[=any_table]{any_table()}} is based on the 'SAS' procedure Proc Tabulate, which provides

@@ -1,39 +1,6 @@
 ###############################################################################
 # Conversion
 ###############################################################################
-#' Converts Numbers to Letters
-#'
-#' @description
-#' Converts a number into the corresponding letter or if number is greater than 26
-#' a combination of letters.
-#'
-#' @param number Number which should be converted into a letter.
-#'
-#' @return
-#' Returns a single letter or combination of two or more letters.
-#'
-#' @noRd
-number_to_letter <- function(number){
-    # Get all letters
-    letters <- c(LETTERS)
-    letter  <- character()
-
-    # Translate given number to a single letter or letter combination
-    while (number > 0){
-        # Subtract one from number to make modulo operator put out correct value
-        # for edge case.
-        number <- number - 1
-        letter <- c(letters[number %% 26 + 1], letter)
-
-        # Check if a letter combination is needed (e.g. AA, AB) instead of a single
-        # letter. This is the case if a number higher than 26 was provided.
-        number <- number %/% 26
-    }
-
-    # Output letter or letter combination
-    paste0(letter, collapse = "")
-}
-
 
 #' Converts Numbers into 'Excel' Ranges
 #'
@@ -63,18 +30,29 @@ get_excel_range <- function(row      = NULL, column      = NULL,
                             to_row   = NULL, to_column   = NULL) {
 
     # Get single cell
-    if (!is.null(row) && !is.null(column)){
-        return(paste0(number_to_letter(column), row))
+    if (!is.null(row) & !is.null(column)){
+        if (row <= 0 | column <= 0){
+            message(" X ERROR: Row and column must be greater than 0.")
+            return(NULL)
+        }
+
+        return(openxlsx2::wb_dims(rows = row, cols = column))
     }
 
-    # Get range
+    # Else get cell range
     if (!is.null(from_row) & !is.null(from_column) &
         !is.null(to_row) & !is.null(to_column)){
-        from <- paste0(number_to_letter(from_column), from_row)
-        to   <- paste0(number_to_letter(to_column),   to_row)
+            if (from_column <= 0 | from_row <= 0 | to_row <= 0 | to_column <= 0){
+                # No error message here because any_table runs into this regularly if
+                # e.g. there are no titles set.
+                return(NULL)
+            }
 
-        return(paste0(from, ":", to))
+        return(openxlsx2::wb_dims(rows = seq.int(from_row, to_row),
+                                  cols = seq.int(from_column, to_column)))
     }
+
+    NULL
 }
 
 ###############################################################################
@@ -152,7 +130,7 @@ get_any_table_ranges <- function(table,
                                    to_column = title.column)
 
     whole_tab_range <- get_excel_range(from_row  = header.row, from_column = header.column,
-                                       to_row    = table.row     + table.length + 1,
+                                       to_row    = table.row     + table.length - 1,
                                        to_column = header.column + (cat_col.width - 1) + header.width)
 
     header_range <- get_excel_range(from_row  = header.row, from_column = header.column,

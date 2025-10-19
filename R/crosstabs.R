@@ -957,6 +957,12 @@ format_cross_excel <- function(wb,
 
             wb <- wb |> handle_header_table_dim(cross_ranges,
                                                 style)
+
+            wb$add_ignore_error(dims = cross_ranges[["header_range"]],  number_stored_as_text = TRUE)
+            wb$add_ignore_error(dims = cross_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+
+            wb$add_named_region(dims = cross_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
         }
     }
 
