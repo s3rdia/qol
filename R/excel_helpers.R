@@ -1066,18 +1066,18 @@ handle_col_row_dimensions <- function(wb,
                                       number_of_rows,
                                       style = excel_output_style()){
     column_widths <- style[["column_widths"]]
-    start_column  <- style[["start_column"]]
-    end_column    <- start_column + (number_of_columns - 1)
+    start_column  <- 1
+    end_column    <- style[["start_column"]] + (number_of_columns - 1)
 
     # If specific column widths are specified
     if (length(column_widths) > 1){
         column_widths <- fill_or_trim(column_widths,
-                                      number_of_columns)
+                                      end_column)
     }
     # If only one column width is specified
     else if (column_widths != "auto"){
         column_widths <- fill_or_trim(column_widths,
-                                      number_of_columns)
+                                      end_column)
     }
     # On auto format only format row header columns. On large workbooks this
     # is very slow so only make sure the text in front are readable.
@@ -1087,18 +1087,18 @@ handle_col_row_dimensions <- function(wb,
     }
 
     row_heights <- style[["row_heights"]]
-    start_row   <- style[["start_row"]]
-    end_row     <- start_row + (number_of_rows - 1)
+    start_row   <- 1
+    end_row     <- style[["start_row"]] + (number_of_rows - 1)
 
     # If specific column widths are specified
     if (length(row_heights) > 1){
         row_heights <- fill_or_trim(row_heights,
-                                    number_of_rows)
+                                    end_row)
     }
     # If only one row height is specified
     else if (row_heights != "auto"){
         row_heights <- fill_or_trim(row_heights,
-                                    number_of_rows)
+                                    end_row)
     }
     else{
         row_heights <- NULL

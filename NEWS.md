@@ -8,10 +8,18 @@
 * In `any_table()` the row heights didn't catch the whole table. (14.10.2025)
 * `any_table()` ran into an error, if a variable was provided as pct_group, which was not part of the row and column variables. (14.10.2025)
 * Fixed typos in frequencies examples, where it said "frequency" instead of "frequencies". (18.10.2025)
+* In Excel outputs the number stored as text error is now ignored. (19.10.2025, thanks to @JanMarvin)
+* Fixed table length captured with too many rows. (19.10.2025)
+
+### Changed functionality
+* In `excel_output_style()` the options `column_widths` and `row_heights` now start at the first column/row instead of the beginning of the table. (19.10.2025)
 
 ### Additionally
 * Added missing functions `export_with_style()` and `get_excel_range()` to the ?qol overview page. (14.10.2025)
 * Added information to the startup message to use ?qol to get an overview. (14.10.2025)
+* Now using openxlsx2 helper to convert row and column numbers to Excel ranges. (19.10.2025, thanks to @JanMarvin)
+* All Excel tables now have named ranges for the table and the values. (19.10.2025, thanks to @JanMarvin)
+* Added an example to the README showing how to save an Excel workbook to the filesystem. (19.10.2025)
 
 ### GitHub related
 * Added article comparing this package with SAS. (14.10.2025)
