@@ -48,9 +48,11 @@ get_excel_range <- function(row      = NULL, column      = NULL,
                 return(NULL)
             }
 
-        openxlsx2::wb_dims(rows = seq.int(from_row, to_row),
-                           cols = seq.int(from_column, to_column))
+        return(openxlsx2::wb_dims(rows = seq.int(from_row, to_row),
+                                  cols = seq.int(from_column, to_column)))
     }
+
+    NULL
 }
 
 ###############################################################################
