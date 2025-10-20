@@ -49,11 +49,21 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code> ran into an error, if a variable was provided as pct_group, which was not part of the row and column variables. (14.10.2025)</li>
 <li>Fixed typos in frequencies examples, where it said “frequency” instead of “frequencies”. (18.10.2025)</li>
+<li>In Excel outputs the number stored as text error is now ignored. (19.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
+<li>Fixed table length captured with too many rows. (19.10.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="changed-functionality-1-0-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-0-3"></a></h4>
+<ul><li>In <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code> the options <code>column_widths</code> and <code>row_heights</code> now start at the first column/row instead of the beginning of the table. (19.10.2025)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-0-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-0-3"></a></h4>
 <ul><li>Added missing functions <code><a href="../reference/export_with_style.html">export_with_style()</a></code> and <code><a href="../reference/get_excel_range.html">get_excel_range()</a></code> to the ?qol overview page. (14.10.2025)</li>
 <li>Added information to the startup message to use ?qol to get an overview. (14.10.2025)</li>
+<li>Now using openxlsx2 helper to convert row and column numbers to Excel ranges. (19.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
+<li>All Excel tables now have named ranges for the table and the values. (19.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
+<li>Added an example to the README showing how to save an Excel workbook to the filesystem. (19.10.2025)</li>
+<li>Used lintr package for some code cleanup. (20.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a> for the advise)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="github-related-1-0-3">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-0-3"></a></h4>

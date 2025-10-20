@@ -197,13 +197,47 @@
 <span>                     footnotes  <span class="op">=</span> <span class="va">footnotes</span>,</span>
 <span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/tabulation.PNG"></p>
+<p><img src="reference/figures/tabulation.png"></p>
+<p>You can also combine multiple tables in one workbook, each on a different sheet, and save the file, instead of just viewing it.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Capture the output of any_table() to get a list which contains the data frame</span></span>
+<span><span class="co"># as well as the formatted workbook.</span></span>
+<span><span class="co"># Note: You can set print to FALSE to prevent the workbook from opening.</span></span>
+<span><span class="va">result_list</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>           <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
+<span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     print      <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set a new sheet name and define where the final workbook should be saved</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span>,</span>
+<span>                                            file       <span class="op">=</span> <span class="st">"C:/My_folder/My_workbook.xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Pass on the workbook from before to the next any_table()</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span>workbook   <span class="op">=</span> <span class="va">result_list</span><span class="op">[[</span><span class="st">"workbook"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>                     rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span>,</span>
+<span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_group"</span><span class="op">)</span>,</span>
+<span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
+<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
+<span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                     </span>
+<span><span class="co"># For safety set file back to NULL at the end. Otherwise the next any_table() will overwrite</span></span>
+<span><span class="co"># the existing file.</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/modify_output_style.html">modify_output_style</a></span><span class="op">(</span>file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="readability">Readability<a class="anchor" aria-label="anchor" href="#readability"></a>
 </h2>
 <p>There are also some functions which enhance the readability of the code. For example if - else if - else statements like in other languages:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3rdia/qol" class="external-link">qol</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example data frame</span></span>

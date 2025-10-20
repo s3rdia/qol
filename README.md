@@ -175,7 +175,7 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      na.rm      = TRUE)
 ```
 
-<img src='man/figures/tabulation.PNG'/>
+<img src='man/figures/tabulation.png'/>
 
 
 You can also combine multiple tables in one workbook, each on a different sheet, and
