@@ -97,7 +97,7 @@ split_by_condition <- function(data_frame, ..., inverse = FALSE){
     conditions <- as.list(substitute(list(...)))[-1]
 
     # Inverse condition not wanted or multiple conditions specified
-    if (!inverse | length(conditions) > 1){
+    if (!inverse || length(conditions) > 1){
         if (inverse){
             message(" ! WARNING: Inverse condition only possible if only one condition is provided.")
         }

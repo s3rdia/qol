@@ -193,7 +193,7 @@ format_df_excel <- function(wb,
 
         # Freeze headers. If both options are true they have to be set together, otherwise one
         # option would overwrite the other.
-        if (style[["freeze_col_header"]] & style[["freeze_row_header"]]){
+        if (style[["freeze_col_header"]] && style[["freeze_row_header"]]){
             wb$freeze_pane(first_active_col = df_ranges[["header.column"]] + df_ranges[["cat_col.width"]],
                            first_active_row = df_ranges[["table.row"]])
         }
@@ -251,7 +251,7 @@ set_labels_as_names <- function(data_frame, var_labels){
         label <- var_labels[[i]]
 
         # Omit label with missing variable name
-        if (is.null(name) | name == ""){
+        if (is.null(name) || name == ""){
             next
         }
 

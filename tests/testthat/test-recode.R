@@ -221,4 +221,3 @@ test_that("Recode multiple variables at once", {
     expect_true(ncol(recode_df) == ncol(test_df))
     expect_true(nrow(recode_df) > nrow(test_df))
 })
-

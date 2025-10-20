@@ -205,10 +205,10 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
          lwd  = 2)                                         # Line thickness
 
     # Set up axis
-    graphics::axis(side   = 1,                  # x-Axis
-                   at     = 1:nrow(monitor_df), # How many ticks are shown
-                   labels = monitor_df[[by]])   # Labels
-    graphics::axis(side   = 2)                  # Show y-Axis as stated in plot
+    graphics::axis(side   = 1,                         # x-Axis
+                   at     = seq_len(nrow(monitor_df)), # How many ticks are shown
+                   labels = monitor_df[[by]])          # Labels
+    graphics::axis(side   = 2)                         # Show y-Axis as stated in plot
 
     # Stacked bar chart 100 %
     percentages <- monitor_df[["delta"]] / sum(monitor_df[["delta"]])

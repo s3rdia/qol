@@ -30,8 +30,8 @@ get_excel_range <- function(row      = NULL, column      = NULL,
                             to_row   = NULL, to_column   = NULL) {
 
     # Get single cell
-    if (!is.null(row) & !is.null(column)){
-        if (row <= 0 | column <= 0){
+    if (!is.null(row) && !is.null(column)){
+        if (row <= 0 || column <= 0){
             message(" X ERROR: Row and column must be greater than 0.")
             return(NULL)
         }
@@ -40,9 +40,9 @@ get_excel_range <- function(row      = NULL, column      = NULL,
     }
 
     # Else get cell range
-    if (!is.null(from_row) & !is.null(from_column) &
-        !is.null(to_row) & !is.null(to_column)){
-            if (from_column <= 0 | from_row <= 0 | to_row <= 0 | to_column <= 0){
+    if (!is.null(from_row) && !is.null(from_column) &&
+        !is.null(to_row) && !is.null(to_column)){
+            if (from_column <= 0 || from_row <= 0 || to_row <= 0 || to_column <= 0){
                 # No error message here because any_table runs into this regularly if
                 # e.g. there are no titles set.
                 return(NULL)
@@ -286,7 +286,7 @@ handle_col_header_merge <- function(wb, column_header, ranges){
                 }
 
                 # Merge cells
-                if (from_row == to_row & from_col == to_col){
+                if (from_row == to_row && from_col == to_col){
                     start_col <- start_col + space
                     next
                 }
@@ -373,7 +373,7 @@ handle_row_header_merge <- function(wb, row_header, ranges){
                 }
 
                 # Merge cells
-                if (from_row == to_row & from_col == to_col){
+                if (from_row == to_row && from_col == to_col){
                     start_row <- start_row + space
                     next
                 }
@@ -428,7 +428,7 @@ get_df_ranges <- function(data_frame,
 
     format_index <- 1
 
-    for (i in 1:ncol(data_frame)){
+    for (i in seq_len(ncol(data_frame))){
         # If a variable doesn't have a statistics extension, it is likely not
         # a variable that needs a number format.
         var_end <- sub("p[0-9]+$", "p", utils::tail(strsplit(names(data_frame)[[i]], "_")[[1]], 1))

@@ -480,7 +480,7 @@ test_that("Specifying many statistics doesn't break function", {
                        weight     = weight)
 
     # 2 class vars + 17 statistics for both variables + sum_wgt
-    variable_count = 2 + (2 * 17) + 1 + 3
+    variable_count <- 2 + (2 * 17) + 1 + 3
     expect_equal(ncol(result_df), variable_count)
 })
 

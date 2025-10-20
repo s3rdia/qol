@@ -430,7 +430,7 @@ any_table <- function(data_frame,
     # Also get the name of the weight variable as string.
     weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight), width.cutoff = 500L)))
 
-    if (weight_temp == "NULL" | substr(weight_temp, 1, 2) == "c("){
+    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
         weight_var <- ".temp_weight"
         data_frame[[".temp_weight"]] <- 1
 
@@ -561,10 +561,10 @@ any_table <- function(data_frame,
 
             # More than one underscore only allowed with percentages
             if (underscores > 1){
-                if (any(grepl("pct_", variable)) & underscores == 2){
+                if (any(grepl("pct_", variable)) && underscores == 2){
                     # Do nothing because in this case multiple underscores are okay
                 }
-                else if (any(grepl("freq_g0", variable)) & underscores == 2){
+                else if (any(grepl("freq_g0", variable)) && underscores == 2){
                     # Do nothing because in this case multiple underscores are okay
                 }
                 else{
@@ -614,12 +614,12 @@ any_table <- function(data_frame,
     group_vars <- c(by, variables)
 
     # In case of group percentages order group variable to the last position
-    if ("pct_group" %in% statistics & length(pct_group) > 0){
+    if ("pct_group" %in% statistics && length(pct_group) > 0){
         group_vars <- c(setdiff(group_vars, pct_group[1]), pct_group[1])
     }
     # If pct_group is specified in statistics but no group is provided set
     # last variable of group_vars as standard.
-    else if ("pct_group" %in% statistics & length(pct_group) == 0){
+    else if ("pct_group" %in% statistics && length(pct_group) == 0){
         pct_group <- group_vars[length(group_vars)]
     }
 
@@ -751,13 +751,13 @@ any_table <- function(data_frame,
     }
 
     # In case only pct_value was selected as statistic
-    if ("pct_value" %in% statistics & length(statistics) == 1){
+    if ("pct_value" %in% statistics && length(statistics) == 1){
         message(" X ERROR: pct_value can only be computed in combination with statistic\n",
                 "          'sum'. Since no other statistic is provided any table will be aborted.")
         return(invisible(NULL))
     }
     # In case percentages based on value variables should be computed
-    else if ("pct_value" %in% statistics & length(pct_value) > 0){
+    else if ("pct_value" %in% statistics && length(pct_value) > 0){
         for (i in seq_along(pct_value)){
             value <- pct_value[[i]]
             name  <- names(pct_value)[i]
@@ -766,7 +766,7 @@ any_table <- function(data_frame,
             eval_vars <- trimws(strsplit(value, split = "/")[[1]])
 
             # Compute percentages
-            if (paste0(eval_vars[1], "_sum") %in% names(any_tab) &
+            if (paste0(eval_vars[1], "_sum") %in% names(any_tab) &&
                 paste0(eval_vars[2], "_sum") %in% names(any_tab)){
                 any_tab[[paste0(name, "_pct_value")]] <-
                     any_tab[[paste0(eval_vars[1], "_sum")]] * 100 /
@@ -922,7 +922,7 @@ any_table <- function(data_frame,
             new_row_names <- paste0("var", seq_along(row_combi_vars))
 
             if (length(by) == 0){
-                names(combi_df)[1:length(row_combi_vars)] <- new_row_names
+                names(combi_df)[seq_along(row_combi_vars)] <- new_row_names
 
                 id_vars <- new_row_names
             }
@@ -938,7 +938,7 @@ any_table <- function(data_frame,
             # the pivoted variable names below only receive the column expressions
             # as names. The needed format is "value_stat_expression". In the mentioned
             # case this format is pre computed.
-            if (length(values) == 1 & length(statistics) == 1){
+            if (length(values) == 1 && length(statistics) == 1){
                 value_stat <- names(combi_df[ncol(combi_df)])
 
                 combi_df[[col_combi_vars[1]]] <-
@@ -965,8 +965,8 @@ any_table <- function(data_frame,
 
             # Replace NA values with text so that they can be differentiated from empty
             # row header columns later on.
-            row_var_cols <- 1:length(id_vars)
-            combi_df[,row_var_cols][is.na(combi_df[, row_var_cols])] <- style[["na_symbol"]]
+            row_var_cols <- seq_along(id_vars)
+            combi_df[, row_var_cols][is.na(combi_df[, row_var_cols])] <- style[["na_symbol"]]
 
             # Sort interleaved
             if (order_by == "interleaved"){
@@ -1103,7 +1103,7 @@ any_table <- function(data_frame,
 
     # Mark empty row header cells
     row_var_cols <- 1:length_row_header
-    any_tab[,row_var_cols][is.na(any_tab[, row_var_cols])] <- ""
+    any_tab[, row_var_cols][is.na(any_tab[, row_var_cols])] <- ""
 
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,
@@ -1248,7 +1248,7 @@ format_any_excel <- function(wb,
     column_header <- multi_header |> set_statistic_labels(stat_labels)
     column_header <- column_header[rowSums(column_header == "") != ncol(column_header), ]
 
-    stats_row <- multi_header[nrow(multi_header),]
+    stats_row <- multi_header[nrow(multi_header), ]
 
     # Get table ranges
     any_ranges <- get_any_tab_ranges(any_tab, column_header, stats_row,
@@ -1346,7 +1346,7 @@ format_any_excel <- function(wb,
 
         # Freeze headers. If both options are true they have to be set together, otherwise one
         # option would overwrite the other.
-        if (style[["freeze_col_header"]] & style[["freeze_row_header"]]){
+        if (style[["freeze_col_header"]] && style[["freeze_row_header"]]){
             wb$freeze_pane(first_active_col = any_ranges[["header.column"]] + any_ranges[["cat_col.width"]],
                            first_active_row = any_ranges[["table.row"]])
         }
@@ -1405,12 +1405,12 @@ set_statistic_labels <- function(column_header, stat_labels){
         label <- stat_labels[[i]]
 
         # Omit label with missing variable name
-        if (is.null(name) | name == ""){
+        if (is.null(name) || name == ""){
             next
         }
 
         # Replace stat texts with provided labels
-        column_header[nrow(column_header),] <- gsub(name, label, column_header[nrow(column_header),])
+        column_header[nrow(column_header), ] <- gsub(name, label, column_header[nrow(column_header), ])
     }
 
     column_header
@@ -1441,7 +1441,7 @@ set_col_variable_labels <- function(column_header, var_labels){
         label <- var_labels[[i]]
 
         # Omit label with missing variable name
-        if (is.null(name) | name == ""){
+        if (is.null(name) || name == ""){
             next
         }
 
@@ -1499,7 +1499,7 @@ build_multi_header <- function(var_names,
             # Identify different parts
             var_name    <- parts[1]
             stat        <- strsplit(parts[2], " ")[[1]][1]
-            expressions <- parts[-c(1,2)]
+            expressions <- parts[-c(1, 2)]
 
             # Put multi header together: variable name, expressions, stat
             multi_header[1] <- var_name
@@ -1696,11 +1696,11 @@ format_any_by_excel <- function(wb,
         # Loop through all unique values to generate frequency tables per expression
         for (value in values){
             # In case NAs are removed
-            if (is.na(value) & na.rm){
+            if (is.na(value) && na.rm){
                 next
             }
 
-            monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value,")"), "Format by")
+            monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
             message("   + ", paste0(by_var, " = ", value))
 
             # Put additional by info together with the information which by variable

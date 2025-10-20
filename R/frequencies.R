@@ -235,7 +235,7 @@ frequencies <- function(data_frame,
     # Also get the name of the weight variable as string.
     weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
 
-    if (weight_temp == "NULL" | substr(weight_temp, 1, 2) == "c("){
+    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
         weight_var <- ".temp_weight"
         data_frame[[".temp_weight"]] <- 1
 
@@ -387,7 +387,7 @@ frequencies <- function(data_frame,
         freq_tab[["TYPE"]]     <- sub(".*\\+", "", freq_tab[["TYPE"]])
     }
 
-    if (is.null(mean_tab) | is.null(freq_tab)){
+    if (is.null(mean_tab) || is.null(freq_tab)){
         message(" X ERROR: Frequencies could not be computed.")
         return(invisible(NULL))
     }
@@ -412,7 +412,7 @@ frequencies <- function(data_frame,
                                              formats, by, titles, footnotes, na.rm)
         }
     }
-    else if (output == "excel" | output == "excel_nostyle"){
+    else if (output == "excel" || output == "excel_nostyle"){
         wb <- openxlsx2::wb_workbook() |>
             prepare_styles(style)
 
@@ -451,7 +451,7 @@ frequencies <- function(data_frame,
             writeLines(complete_table, temp_file)
             file.show(temp_file)
         }
-        else if (output == "excel" | output == "excel_nostyle"){
+        else if (output == "excel" || output == "excel_nostyle"){
             if (is.null(style[["file"]])){
                 wb$open()
             }
@@ -770,8 +770,8 @@ format_mean_excel <- function(mean_tab,
         column_width <- style[["column_widths"]]
         row_heights  <- style[["row_heights"]]
 
-        if (length(column_width) == 1 & length(row_heights) == 1){
-            if (column_width != "auto" | row_heights != "auto"){
+        if (length(column_width) == 1 && length(row_heights) == 1){
+            if (column_width != "auto" || row_heights != "auto"){
                 wb <- wb |> handle_col_row_dimensions(mean_ranges,
                                                       ncol(mean_tab) + (style[["start_column"]] - 1),
                                                       nrow(mean_tab) + (style[["start_row"]] - 1),
@@ -1274,7 +1274,7 @@ format_by_text <- function(mean_tab,
         # Loop through all unique values to generate frequency tables per expression
         for (value in values){
             # In case NAs are removed
-            if (is.na(value) & na.rm){
+            if (is.na(value) && na.rm){
                 next
             }
 
@@ -1403,13 +1403,13 @@ format_by_excel <- function(mean_tab,
         # Loop through all unique values to generate frequency tables per expression
         for (value in values){
             # In case NAs are removed
-            if (is.na(value) & na.rm){
+            if (is.na(value) && na.rm){
                 next
             }
 
             message("   + ", paste0(by_var, " = ", value))
 
-            monitor_df <- monitor_df |> monitor_next(paste0("Excel mean (", by_var, "_", value,")"), "Format by")
+            monitor_df <- monitor_df |> monitor_next(paste0("Excel mean (", by_var, "_", value, ")"), "Format by")
 
             # Put additional by info together with the information which by variable
             # and which value is currently filtered.
@@ -1450,7 +1450,7 @@ format_by_excel <- function(mean_tab,
                 wb_list[[1]] <- wb
             }
 
-            monitor_df <- monitor_df |> monitor_next(paste0("Excel freq (", by_var, "_", value,")"), "Format by")
+            monitor_df <- monitor_df |> monitor_next(paste0("Excel freq (", by_var, "_", value, ")"), "Format by")
 
             # Generate frequency tables as normal but base is filtered data frame
             wb_list <- format_freq_excel(wb_list[[1]],

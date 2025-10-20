@@ -20,6 +20,7 @@
 * Now using openxlsx2 helper to convert row and column numbers to Excel ranges. (19.10.2025, thanks to @JanMarvin)
 * All Excel tables now have named ranges for the table and the values. (19.10.2025, thanks to @JanMarvin)
 * Added an example to the README showing how to save an Excel workbook to the filesystem. (19.10.2025)
+* Used lintr package for some code cleanup. (20.10.2025, thanks to @JanMarvin for the advise)
 
 ### GitHub related
 * Added article comparing this package with SAS. (14.10.2025)
