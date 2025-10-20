@@ -51,3 +51,18 @@ test_that("Create interval multilabel", {
     expect_equal(nrow(income.), 5)
     expect_equal(ncol(income.), 3)
 })
+
+
+test_that("Create interval format with low and high keywords", {
+    income. <- suppressMessages(interval_format(
+        "Total"              = c("low", "high"),
+        "below 500"          = c("low", 499),
+        "500 to under 1000"  = 500:999,
+        "1000 to under 2000" = 1000:1999,
+        "2000 and more"      = c(2000, "high")))
+
+    expect_true(all(c("from", "to", "label") %in% names(income.)))
+    expect_equal(income.[1, "from"], -1e20)
+    expect_equal(income.[1, "to"],    1e20)
+})
+

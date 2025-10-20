@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   articles/SAS_compare: SAS_compare.html
-last_built: 2025-10-20T18:30Z
+last_built: 2025-10-20T19:34Z
 urls:
   reference: https://s3rdia.github.io/qol/reference
   article: https://s3rdia.github.io/qol/articles

@@ -104,6 +104,16 @@ state. <- discrete_format(
     "Thuringia"                     = 16,
     "East"                          = 11:16)
 
+# With interval formats you can also use the keywords "low" and "high" to
+# catch everything from the lowest to the highest values, in case one doesn't
+# know exactly what the lowest and highest values are.
+income. <- interval_format(
+    "Total"              = c("low", "high"),
+    "below 500"          = c("low", 499),
+    "500 to under 1000"  = 500:999,
+    "1000 to under 2000" = 1000:1999,
+    "2000 and more"      = c(2000, "high"))
+
 }
 \seealso{
 Functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},

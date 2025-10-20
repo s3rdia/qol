@@ -3,6 +3,9 @@
 New functions
 * build_master(): Reads a given folder structure, which contains scripts, and builds a master script as a markdown file.
 
+New functionality
+* interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. 
+
 Fixed
 * In any_table() the header and table row heights as well as the column widths set by the style option where 1 row/column to short.
 * In any_table() the row heights didn't catch the whole table.
