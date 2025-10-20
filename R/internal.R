@@ -76,7 +76,7 @@ is_multilabel <- function(format_list, variable){
     format <- format_list[[variable]]
 
     # In case of discrete format a simple check for duplicated values is sufficient
-    if (names(format)[1] == "value" & any(duplicated(format[["value"]]))){
+    if (names(format)[1] == "value" && any(duplicated(format[["value"]]))){
         return(TRUE)
     }
 
@@ -102,7 +102,7 @@ is_multilabel <- function(format_list, variable){
     }
 
     # No multilabel detected
-    return(FALSE)
+    FALSE
 }
 
 

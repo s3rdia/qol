@@ -314,7 +314,7 @@ setcolorder_by_pattern <- function(data_frame, pattern){
 #'
 #' @export
 rename_pattern <- function(data_frame, old_pattern, new_pattern){
-    if (length(old_pattern) > 1 | length(new_pattern) > 1){
+    if (length(old_pattern) > 1 || length(new_pattern) > 1){
         message(" X ERROR: Only single pattern allowed. Rename pattern will be aborted.")
         return(data_frame)
     }
@@ -442,7 +442,7 @@ add_extension <- function(data_frame,
     extensions <- extensions[seq_len(min(n_extensions, n_target))]
 
     # Create the extended names
-    if (reuse == "last" & n_target - n_extensions > 0){
+    if (reuse == "last" && n_target - n_extensions > 0){
         # Repeat the last extension for the remaining columns
         extensions <- c(extensions, rep(extensions[n_extensions], n_target - n_extensions))
     }

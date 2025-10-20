@@ -197,7 +197,7 @@ check_types <- function(data_frame, variable, current){
     message(" ! WARNING: Type mismatch: Current value ", current[1], " is of type ", type_c, " but should be of\n",
             "            type ", type_d, ". ", variable, " will be converted to character.")
 
-    return(TRUE)
+    TRUE
 }
 
 

@@ -298,7 +298,7 @@ crosstabs <- function(data_frame,
     # Also get the name of the weight variable as string.
     weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
 
-    if (weight_temp == "NULL" | substr(weight_temp, 1, 2) == "c("){
+    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
         weight_var <- ".temp_weight"
         data_frame[[".temp_weight"]] <- 1
 
@@ -342,7 +342,7 @@ crosstabs <- function(data_frame,
 
     # If no valid statistics selected, default to sum
     if (length(statistics) == 0){
-        statistics  = "sum"
+        statistics <- "sum"
     }
 
     ###########################################################################
@@ -459,7 +459,7 @@ crosstabs <- function(data_frame,
                                                    statistics, formats, by, titles, footnotes, na.rm)
         }
     }
-    else if (output == "excel" | output == "excel_nostyle"){
+    else if (output == "excel" || output == "excel_nostyle"){
         wb <- openxlsx2::wb_workbook() |>
             prepare_styles(style)
 
@@ -497,7 +497,7 @@ crosstabs <- function(data_frame,
             writeLines(complete_table, temp_file)
             file.show(temp_file)
         }
-        else if (output == "excel" | output == "excel_nostyle"){
+        else if (output == "excel" || output == "excel_nostyle"){
             if (is.null(style[["file"]])){
                 wb$open()
             }
@@ -637,7 +637,7 @@ format_cross_text <- function(cross_tab,
                                                           stat  = names(var_tab[column + 1]))
             }
             # Unweighted frequencies
-            else if (stat %in% c("freq") |
+            else if (stat %in% c("freq") ||
                      identical(as.numeric(cross_tab[["var_sum_1"]]),
                                as.numeric(cross_tab[["var_freq_1"]]))){
                 formatted_cols[[column]] <- format_number(var_tab[column + 1],
@@ -654,7 +654,7 @@ format_cross_text <- function(cross_tab,
             }
 
             # Visually separate total column if there is one
-            if (column == length(formatted_cols) & total_col){
+            if (column == length(formatted_cols) && total_col){
                 formatted_cols[[column]] <- paste0(" | ", formatted_cols[[column]])
             }
         }
@@ -781,11 +781,11 @@ setup_print_table <- function(cross_tab, rows, stat){
     }
 
     # Compute row and column sums
-    var_tab[["total"]]    <- rowSums(var_tab[ , -1], na.rm = TRUE)
+    var_tab[["total"]]    <- rowSums(var_tab[, -1], na.rm = TRUE)
 
     column_totals         <- var_tab[1, ]
     column_totals[[rows]] <- "total"
-    column_totals[-1]     <- colSums(var_tab[ , -1], na.rm = TRUE)
+    column_totals[-1]     <- colSums(var_tab[, -1], na.rm = TRUE)
     var_tab               <- rbind(var_tab, column_totals)
 
     # Set unneeded totals to NA
@@ -934,7 +934,7 @@ format_cross_excel <- function(wb,
             monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
             wb <- wb |> handle_cell_styles(cross_ranges, style)
 
-            if (stat == "sum" | stat== "freq"){
+            if (stat == "sum" || stat== "freq"){
                 wb$add_cell_style(dims                = cross_ranges[["table_range"]],
                                   apply_number_format = TRUE,
                                   num_fmt_id          = wb$styles_mgr$get_numfmt_id(paste0(stat, "_numfmt")))
@@ -1035,7 +1035,7 @@ format_cross_by_text <- function(cross_tab,
         # Loop through all unique values to generate frequency tables per expression
         for (value in values){
             # In case NAs are removed
-            if (is.na(value) & na.rm){
+            if (is.na(value) && na.rm){
                 next
             }
 
@@ -1157,11 +1157,11 @@ format_cross_by_excel <- function(cross_tab,
         # Loop through all unique values to generate frequency tables per expression
         for (value in values){
             # In case NAs are removed
-            if (is.na(value) & na.rm){
+            if (is.na(value) && na.rm){
                 next
             }
 
-            monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value,")"), "Format by")
+            monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
             message("   + ", paste0(by_var, " = ", value))
 
             # Put additional by info together with the information which by variable

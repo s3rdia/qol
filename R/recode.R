@@ -119,7 +119,7 @@ recode <- function(data_frame,
         return(data_frame)
     }
 
-    if (names(format_df)[1] == "value" & any(duplicated(format_df[["value"]]))){
+    if (names(format_df)[1] == "value" && any(duplicated(format_df[["value"]]))){
         message(" ! WARNING: The format for '", current_var, "' is a multilabel. A multilabel can't be fully applied in recode.\n",
                 "            Only one of the matching categories will be applied.")
 

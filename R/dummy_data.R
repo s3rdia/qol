@@ -82,8 +82,8 @@ dummy_data <- function(no_obs, monitor = FALSE){
 
     age <-                                             stats::runif(no_obs, min = 0L,  max = 100L)
     age <- data.table::fifelse(person_ids == 1,        stats::runif(no_obs, min = 18L, max = 100L), age)
-    age <- data.table::fifelse(person_ids %in% c(3,4), stats::runif(no_obs, min = 0L,  max = 25L),  age)
-    age <- data.table::fifelse(person_ids %in% c(5,6), stats::runif(no_obs, min = 50L, max = 100L), age)
+    age <- data.table::fifelse(person_ids %in% c(3, 4), stats::runif(no_obs, min = 0L,  max = 25L),  age)
+    age <- data.table::fifelse(person_ids %in% c(5, 6), stats::runif(no_obs, min = 50L, max = 100L), age)
     age <- insert_nas(age)
 
     # Prepare personal income

@@ -55,7 +55,7 @@ build_master <- function(dir,
 
     # Check if folder exists
     if (!dir.exists(dir)){
-        message(" X ERROR: Directory '", dir,"' does not exist.")
+        message(" X ERROR: Directory '", dir, "' does not exist.")
         return(invisible(NULL))
     }
 

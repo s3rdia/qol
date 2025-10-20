@@ -20,6 +20,7 @@ Additionally
 * Now using openxlsx2 helper to convert row and column numbers to Excel ranges.
 * All Excel tables now have named ranges for the table and the values.
 * Added an example to the README showing how to save an Excel workbook to the filesystem.
+* Used lintr package for some code cleanup.
 
 
 # Resubmission 13.10.2025 - qol 1.0.2
