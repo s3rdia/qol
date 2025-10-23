@@ -49,7 +49,7 @@
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].
 #'
-#' Other: [build_master()], [args_to_char()], [convert_numeric()], [is_numeric()]
+#' Other: [build_master()], [build_rstheme()], [args_to_char()], [convert_numeric()], [is_numeric()]
 #'
 #' @section Snippets:
 #' \preformatted{

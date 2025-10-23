@@ -5,6 +5,13 @@
 
 <!-- badges: start -->
 
+[![SAS](https://img.shields.io/badge/SAS-R-orange%20.svg)](https://github.com/s3rdia/qol)
+[![CRAN
+Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
+[![DEVELOPMENT
+Version](https://img.shields.io/badge/GitHub-1.0.3-blue.svg)](https://github.com/s3rdia/qol)
+[![CRAN
+checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
 <!-- badges: end -->
 
 Bringing Powerful ‘SAS’ Inspired Concepts for more Efficient Bigger
@@ -177,9 +184,8 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
 
 <img src='man/figures/tabulation.png'/>
 
-
-You can also combine multiple tables in one workbook, each on a different sheet, and
-save the file, instead of just viewing it.
+You can also combine multiple tables in one workbook, each on a
+different sheet, and save the file, instead of just viewing it.
 
 ``` r
 my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
@@ -210,7 +216,7 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      formats    = list(education = education.),
                      style      = my_style,
                      na.rm      = TRUE)
-					 
+                     
 # For safety set file back to NULL at the end. Otherwise the next any_table() will overwrite
 # the existing file.
 my_style <- my_style |> modify_output_style(file = NULL)
@@ -259,3 +265,13 @@ monitoring functions. The heavier functions in this package already make
 use of them and can show how they work internally like this:
 
 <img src='man/figures/monitor.png'/>
+
+## Customizing Visual Appearance
+
+Don’t like the colors of the built-in in RStudio themes? Can’t find a
+theme online that fits your liking? No Problem. With a simple function
+you can create a full theme file and decide which parts of the editor
+receive which colors. The themes shown below and the corresponding code
+can be found on GitHub.
+
+<img src='man/figures/theme.png'/>

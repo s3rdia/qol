@@ -2,6 +2,7 @@
 
 New functions
 * build_master(): Reads a given folder structure, which contains scripts, and builds a master script as a markdown file.
+* build_rstheme(): Build a complete theme file, which can be used to change the visual appearance of RStudio.
 
 New functionality
 * interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. 
@@ -24,6 +25,7 @@ Additionally
 * All Excel tables now have named ranges for the table and the values.
 * Added an example to the README showing how to save an Excel workbook to the filesystem.
 * Used lintr package for some code cleanup.
+* Added custom theme section to the README.
 
 
 # Resubmission 13.10.2025 - qol 1.0.2

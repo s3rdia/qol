@@ -69,6 +69,8 @@ reference:
 - title: Other
   contents:
   - build_master
+  - build_rstheme
   - args_to_char
   - convert_numeric
   - is_numeric
+  

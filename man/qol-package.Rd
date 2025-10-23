@@ -57,7 +57,7 @@ Small helpers: \code{\link[=inverse]{inverse()}}, \code{\link[=setcolorder_by_pa
 
 Split data frame: \code{\link[=split_by_var]{split_by_var()}}, \code{\link[=split_by_condition]{split_by_condition()}}.
 
-Other: \code{\link[=build_master]{build_master()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}
+Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}
 }
 
 \section{Snippets}{

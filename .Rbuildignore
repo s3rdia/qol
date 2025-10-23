@@ -9,3 +9,4 @@
 ^CRAN-SUBMISSION$
 ^\.github$
 ^vignettes/articles$
+^themes

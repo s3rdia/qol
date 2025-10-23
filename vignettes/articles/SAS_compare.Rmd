@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-SAS is a flagship when it comes to creating massive deskriptive tables with little effort, because it offers the right tools. This package tries to adapt some of these to also make them available in R.
+SAS is a flagship when it comes to creating massive descriptive tables with little effort, because it offers the right tools. This package tries to adapt some of these to also make them available in R.
 
 # The Concept of Formats
 
