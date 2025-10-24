@@ -93,10 +93,12 @@ build_rstheme <- function(file_path,
     # Measure the time
     start_time <- Sys.time()
 
-    # Check if folder exists
-    if (!dir.exists(file_path)){
-        message(" X ERROR: Directory '", file_path, "' does not exist.")
-        return(invisible(NULL))
+    # Check if folder exists; ... is for testing
+    if (file_path != "..."){
+        if (!dir.exists(file_path)){
+            message(" X ERROR: Directory '", file_path, "' does not exist.")
+            return(invisible(NULL))
+        }
     }
 
     # Change main body to light theme if specified
@@ -161,7 +163,10 @@ build_rstheme <- function(file_path,
 
     # Save file
     path <- ifelse(grepl("/$", file_path), file_path, paste0(file_path, "/"))
-    writeLines(rstheme, paste0(path, theme_name, ".rstheme"))
+
+    if (file_path != "..."){
+        writeLines(rstheme, paste0(path, theme_name, ".rstheme"))
+    }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'build_rstheme' execution time: ", end_time, " seconds\n")

@@ -54,28 +54,35 @@ build_master <- function(dir,
     start_time <- Sys.time()
 
     # Check if folder exists
-    if (!dir.exists(dir)){
-        message(" X ERROR: Directory '", dir, "' does not exist.")
-        return(invisible(NULL))
-    }
-
-    # Get folders in provided directory
-    folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
-
-    # Get all .R scripts inside the folders
-    scripts <- lapply(folders, function(folder){
-        files <- list.files(folder, pattern = "\\.R$", full.names = TRUE)
-
-        if (length(files) == 0){
+    if (dir != "..."){
+        if (!dir.exists(dir)){
+            message(" X ERROR: Directory '", dir, "' does not exist.")
             return(invisible(NULL))
         }
-        else{
-            files
-        }
-    })
-    names(scripts) <- folders
-    scripts        <- Filter(Negate(is.null), scripts)
-    all_scripts    <- unlist(scripts)
+
+        # Get folders in provided directory
+        folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
+
+        # Get all .R scripts inside the folders
+        scripts <- lapply(folders, function(folder){
+            files <- list.files(folder, pattern = "\\.R$", full.names = TRUE)
+
+            if (length(files) == 0){
+                return(invisible(NULL))
+            }
+            else{
+                files
+            }
+        })
+        names(scripts) <- folders
+        scripts        <- Filter(Negate(is.null), scripts)
+    }
+    # ... is for testing
+    else{
+        scripts <- list("root:/folder/" = "root:/folder/script.R")
+    }
+
+    all_scripts <- unlist(scripts)
 
     # Setup header
     lines <- c(
@@ -151,7 +158,10 @@ build_master <- function(dir,
 
     # Write master file
     path <- ifelse(grepl("/$", dir), dir, paste0(dir, "/"))
-    writeLines(lines, con = paste0(path, master_name, ".Rmd"))
+
+    if (dir != "..."){
+        writeLines(lines, con = paste0(path, master_name, ".Rmd"))
+    }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'build_master' execution time: ", end_time, " seconds\n")
