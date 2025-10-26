@@ -50,3 +50,6 @@ rsconnect/
 
 #Other
 CRAN-SUBMISSION
+
+# A testplot
+tests/testthat/Rplots.pdf
