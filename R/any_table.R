@@ -285,6 +285,40 @@ any_table <- function(data_frame,
 
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
 
+    # check if format and column type match
+    chr_formats <- vapply(formats, is.character, NA)
+    sel <- names(chr_formats[chr_formats == TRUE])
+
+    if (any(vapply(data_frame[sel], FUN = is.character, FUN.VALUE = NA)))
+        warning("missmatch between format type and data class")
+
+    # --- Factor conversion cleanup ---
+
+    # Identify character vs numeric formats
+    is_char_fmt <- vapply(formats, function(x) is.character(x$value), NA)
+    char_cols <- names(formats)[is_char_fmt]
+    num_cols  <- names(formats)[!is_char_fmt]
+
+    # Detect which of those columns are factors
+    char_factors <- names(Filter(is.factor, data_frame[char_cols]))
+    num_factors  <- names(Filter(is.factor, data_frame[num_cols]))
+
+    # Optionally issue a conversion warning
+    if (length(char_factors) || length(num_factors)) {
+        warning("Converting factor columns to base types (character/integer).")
+    }
+
+    # Convert factor columns
+    if (length(char_factors)) {
+        data_frame[char_factors] <- lapply(data_frame[char_factors], as.character)
+    }
+
+    if (length(num_factors)) {
+        data_frame[num_factors] <- lapply(data_frame[num_factors], as.integer)
+    }
+
+    # --- End factor conversion ---
+
     # First convert data frame to data table
     if (!data.table::is.data.table(data_frame)){
         data_frame <- data.table::as.data.table(data_frame)
@@ -1161,7 +1195,7 @@ any_table <- function(data_frame,
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
         if (is.null(style[["file"]])){
-            wb$open()
+            if(interactive()) wb$open()
         }
         else{
             wb$save(file = style[["file"]], overwrite = TRUE)
