@@ -559,7 +559,7 @@ summarise_plus <- function(data_frame,
         index <- 1
 
         message("\n > Executing merge:\n",
-                "     + total")
+                "   + total")
 
         # The results of all the possible combinations are computed one after another
         # starting with the grand total (ungrouped)

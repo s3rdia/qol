@@ -111,13 +111,13 @@ carry the statistic extension (e.g. "_sum", "_pct") in the variable name.}
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the variables.}
 
 \item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
-if one only wants to catch the output data frame and workbook.}
+if one only wants to catch the output data frame and workbook with meta information.}
 
 \item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
 }
 \value{
-Returns a list with the data table containing the results for the table and the formatted
-'Excel' workbook.
+Returns a list with the data table containing the results for the table, the formatted
+'Excel' workbook and the meta information needed for styling the final table.
 }
 \description{
 \code{\link[=any_table]{any_table()}} produces any possible descriptive table in 'Excel' format. Any number

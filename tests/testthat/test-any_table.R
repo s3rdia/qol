@@ -22,7 +22,7 @@ test_that("Simplest form of any_table", {
                     print   = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -35,7 +35,7 @@ test_that("any_table with combinations", {
                     print   = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -47,7 +47,7 @@ test_that("any_table with multiple combinations", {
                     print   = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -60,7 +60,7 @@ test_that("any_table many combinations don't break", {
                       print   = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -74,7 +74,7 @@ test_that("any_table with titles and footnotes", {
                     print     = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -131,7 +131,7 @@ test_that("any_table with a lot of statistics doesn't break", {
                       print      = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -145,7 +145,7 @@ test_that("any_table with interleaved order", {
                       print      = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 
@@ -351,7 +351,7 @@ test_that("any_table with pre summarised data", {
                  print      = FALSE))
 
     expect_type(result_list, "list")
-    expect_equal(length(result_list), 2)
+    expect_equal(length(result_list), 3)
 })
 
 ###############################################################################
@@ -481,4 +481,28 @@ test_that("any_table aborts with column variable having underscores", {
                                  columns    = "to_many_underscores",
                                  values     = weight,
                                  print      = FALSE), " X ERROR: No underscores allowed in column variable names. Execution will be aborted.")
+})
+
+
+test_that("Combine tables into a single workbook", {
+    my_style <- excel_output_style(sheet_name = "tab1")
+
+    tab1 <- suppressMessages(dummy_df |>
+                 any_table(rows    = "age",
+                           columns = "sex",
+                           values  = weight,
+                           print   = FALSE))
+
+    my_style <- my_style |> modify_output_style(sheet_name = "tab2")
+
+    tab2 <- suppressMessages(dummy_df |>
+                 any_table(rows    = "age",
+                           columns = "sex",
+                           values  = weight,
+                           by      = education,
+                           print   = FALSE))
+
+    result <- combine_into_workbook(tab1, tab2, print = FALSE)
+
+    expect_type(result, "environment")
 })

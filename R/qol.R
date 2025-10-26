@@ -27,7 +27,7 @@
 #' @section Functions:
 #' Creating formats: [discrete_format()], [interval_format()].
 #'
-#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()].
+#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()], [combine_into_workbook()].
 #'
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].

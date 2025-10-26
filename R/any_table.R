@@ -62,7 +62,7 @@
 #' carry the statistic extension (e.g. "_sum", "_pct") in the variable name.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
-#' if one only wants to catch the output data frame and workbook.
+#' if one only wants to catch the output data frame and workbook with meta information.
 #' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
 #'
 #' @details
@@ -89,8 +89,8 @@
 #' a designed workbook.
 #'
 #' @return
-#' Returns a list with the data table containing the results for the table and the formatted
-#' 'Excel' workbook.
+#' Returns a list with the data table containing the results for the table, the formatted
+#' 'Excel' workbook and the meta information needed for styling the final table.
 #'
 #' @seealso
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
@@ -1111,6 +1111,13 @@ any_table <- function(data_frame,
        last_number_of_rows, name, new_row_names, row_combi, row_combi_vars, sorted_combi,
        subset_type, group_vars, length_row_header)
 
+    # Grab all information, which is necessary to format the workbook. This list will be
+    # returned at the end and can be grabbed by the workbook combine function.
+    meta <- mget(c("rows", "columns", "statistics",
+                   "by", "titles", "footnotes", "var_labels", "stat_labels",
+                   "box", "col_header_dimensions", "row_header_dimensions",
+                   "style", "na.rm"))
+
     # Prepare table format for output
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     message(" > Formatting tables.")
@@ -1168,7 +1175,8 @@ any_table <- function(data_frame,
     monitor_df |> monitor_plot(draw_plot = monitor)
 
     invisible(list("table"    = any_tab,
-                   "workbook" = wb))
+                   "workbook" = wb,
+                   "meta"     = meta))
 }
 
 
@@ -1760,4 +1768,190 @@ format_any_by_excel <- function(wb,
 
     # Return workbook
     list(wb, monitor_df)
+}
+
+
+###############################################################################
+# Combine multiple tables into one workbook
+###############################################################################
+#' Combine Multiple Tables Into One Workbook
+#'
+#' @description
+#' Combines any number of tables created with [any_table()] into one workbook
+#' and styles them according to their meta information.
+#'
+#' @param ... Provide any number of result lists output by [any_table()].
+#' @param file If NULL, opens the output as temporary file. If a filename with path
+#' is specified, saves the output to the specified path.
+#' @param output The following output formats are available: excel and excel_nostyle.
+#' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
+#' if one only wants to catch the combined workbook.
+#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
+#'
+#' @return
+#' A fully styled workbook containing the provided tables.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(1000)
+#' my_data[["person"]] <- 1
+#'
+#' # Formats
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
+#' sex. <- discrete_format(
+#'     "Total"  = 1:2,
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' education. <- discrete_format(
+#'     "Total"            = c("low", "middle", "high"),
+#'     "low education"    = "low",
+#'     "middle education" = "middle",
+#'     "high education"   = "high")
+#'
+#' # Define style
+#' my_style <- excel_output_style(column_widths = c(2, 15, 15, 15, 9))
+#'
+#' # Define titles and footnotes. If you want to add hyperlinks you can do so by
+#' # adding "link:" followed by the hyperlink to the main text.
+#' titles <- c("This is title number 1 link: https://cran.r-project.org/",
+#'             "This is title number 2",
+#'             "This is title number 3")
+#' footnotes <- c("This is footnote number 1",
+#'                "This is footnote number 2",
+#'                "This is footnote number 3 link: https://cran.r-project.org/")
+#'
+#' # Catch the output and additionally use the options:
+#' # pint = FALSE and output = "excel_nostyle".
+#' # This skips the styling and output part, so that the function runs faster.
+#' # The styling is done later on.
+#' my_style <- my_style |> modify_output_style(sheet_name = "big table")
+#'
+#' tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
+#'                              columns    = c("year", "education + year"),
+#'                              values     = weight,
+#'                              statistics = c("sum", "pct_group"),
+#'                              pct_group  = c("sex", "age", "education", "year"),
+#'                              formats    = list(sex = sex., age = age.,
+#'                                                education = education.),
+#'                              style      = my_style,
+#'                              na.rm      = TRUE,
+#'                              print      = FALSE,
+#'                              output     = "excel_nostyle")
+#'
+#' my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
+#'
+#' tab2 <- my_data |> any_table(rows       = c("age"),
+#'                              columns    = c("sex"),
+#'                              values     = weight,
+#'                              statistics = c("sum"),
+#'                              formats    = list(sex = sex., age = age.),
+#'                              style      = my_style,
+#'                              na.rm      = TRUE,
+#'                              print      = FALSE,
+#'                              output     = "excel_nostyle")
+#'
+#' my_style <- my_style |> modify_output_style(sheet_name = "edu_year")
+#'
+#' tab3 <- my_data |> any_table(rows       = c("education"),
+#'                              columns    = c("year"),
+#'                              values     = weight,
+#'                              statistics = c("pct_group"),
+#'                              formats    = list(education = education.),
+#'                              style      = my_style,
+#'                              na.rm      = TRUE,
+#'                              print      = FALSE,
+#'                              output     = "excel_nostyle")
+#'
+#' # Every of the above tabs is a list, which contains the data table, an unstyled
+#' # workbook and the meta information needed for the individual styling. These
+#' # tabs can be input into the following function, which reads the meta information,
+#' # styles each table individually and combines them as separate sheets into a single workbook.
+#' combine_into_workbook(tab1, tab2, tab3)
+#'
+#' @export
+combine_into_workbook <- function(...,
+                                  file    = NULL,
+                                  output  = "excel",
+                                  print   = TRUE,
+                                  monitor = FALSE){
+    monitor_df <- NULL |> monitor_start("Prepare combine", "Prepare")
+
+    # Measure the time
+    start_time <- Sys.time()
+
+    tables    <- list(...)
+    tab_names <- as.character(substitute(list(...)))[-1]
+    wb        <- openxlsx2::wb_workbook()
+
+    i <- 1
+
+    message(" > Formatting tables")
+
+    for (table in tables){
+        monitor_df <- monitor_df |> monitor_next(paste0("Format ", tab_names[i]), "Format tables")
+        message(paste0("   + ", tab_names[i]))
+
+        meta <- table[["meta"]]
+
+        wb <- wb |> prepare_styles(meta[["style"]])
+
+        # In case no by variables are provided
+        if (length(meta[["by"]]) == 0){
+            wb_list <- suppressMessages(
+                format_any_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
+                                 meta[["statistics"]], meta[["by"]], meta[["titles"]],
+                                 meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
+                                 meta[["box"]], meta[["col_header_dimensions"]],
+                                 meta[["row_header_dimensions"]],
+                                 meta[["style"]], output, monitor_df = monitor_df))
+
+            wb <- wb_list[[1]]
+        }
+        # In case there are  by variables are provided
+        else{
+            wb_list <- suppressMessages(
+                format_any_by_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
+                                    meta[["statistics"]], meta[["by"]], meta[["titles"]],
+                                    meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
+                                    meta[["box"]], meta[["col_header_dimensions"]],
+                                    meta[["row_header_dimensions"]],
+                                    meta[["style"]], output, meta[["na.rm"]], monitor_df))
+
+            wb <- wb_list[[1]]
+        }
+
+        i <- i + 1
+    }
+
+    # Output formatted table into different formats
+    if (print){
+        monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
+
+        if (is.null(file)){
+            wb$open()
+        }
+        else if (!dir.exists(dirname(file))){
+            message(" ! WARNING: Directory '", dirname(file), "' does not exist. File won't be saved.")
+            wb$open()
+        }
+        else{
+            wb$save(file = file, overwrite = TRUE)
+        }
+    }
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("\n- - - 'combine_into_workbook' execution time: ", end_time, " seconds\n")
+
+    monitor_df <- monitor_df |> monitor_end()
+    monitor_df |> monitor_plot(draw_plot = monitor)
+
+    invisible(wb)
 }

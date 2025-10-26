@@ -1,12 +1,14 @@
 # Resubmission qol 1.0.3
-Last CRAN release was on 14.10.2025. This release contains some additions and bug fixes:
+Last CRAN release was on 14.10.2025. This release contains some additions to further enhance the package and some bug fixes:
 
 New functions
 * build_master(): Reads a given folder structure, which contains scripts, and builds a master script as a markdown file.
 * build_rstheme(): Build a complete theme file, which can be used to change the visual appearance of RStudio.
+* combine_into_workbook(): Combines any number of tables created with `any_table()` into one workbook and styles them according to their meta information.
 
 New functionality
-* interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. 
+* interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is.
+* any_table(): Now returns styling meta information as a third list element. This meta information can be used by combine_into_workbook().
 
 Fixed
 * In any_table() the header and table row heights as well as the column widths set by the style option where 1 row/column to short.

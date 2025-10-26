@@ -35,7 +35,7 @@ data.table, collapse, openxlsx2
 
 Creating formats: \code{\link[=discrete_format]{discrete_format()}}, \code{\link[=interval_format]{interval_format()}}.
 
-Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}, \code{\link[=export_with_style]{export_with_style()}}.
+Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=combine_into_workbook]{combine_into_workbook()}}.
 
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.

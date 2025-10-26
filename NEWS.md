@@ -3,9 +3,11 @@
 ### New functions
 * `build_master()`: Reads a given folder structure, which contains scripts, and builds a master script as a markdown file. (18.10.2025)
 * `build_rstheme()`: Build a complete theme file, which can be used to change the visual appearance of RStudio. (23.10.2025)
+* `combine_into_workbook()`: Combines any number of tables created with `any_table()` into one workbook and styles them according to their meta information. (26.10.2025)
 
 ### New functionality
 * `interval_format()`: Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. (20.10.2025)
+* `any_table()`: Now returns styling meta information as a third list element. This meta information can be used by `combine_into_workbook()`. (26.10.2025)
 
 ### Fixed
 * In `any_table()` the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)

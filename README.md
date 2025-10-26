@@ -222,6 +222,46 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
 my_style <- my_style |> modify_output_style(file = NULL)
 ```
 
+In case you have a good amount of tables, you want to combine in a
+single workbook, you can also catch the outputs and combine them
+afterwards in one go:
+
+``` r
+my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
+
+# Catch the output as shown before, but additionally use the option -> output = "excel_nostyle".
+# This skips the styling part, so that the function runs faster. The styling is done later on.
+tab1 <- my_data |>
+       any_table(rows       = c("age"),
+                 columns    = c("sex"),
+                 values     = weight,
+                 statistics = c("sum"),
+                 formats    = list(sex = sex., age = age.),
+                 style      = my_style,
+                 na.rm      = TRUE,
+                 print      = FALSE,
+                 output     = "excel_nostyle")
+
+# Now let's asume you create a bunch of different tables
+my_style <- my_style |> modify_output_style(sheet_name = "sheet2")
+tab2     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+
+my_style <- my_style |> modify_output_style(sheet_name = "sheet3")
+tab3     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+
+my_style <- my_style |> modify_output_style(sheet_name = "sheet4")
+tab4     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+
+...
+
+# Every of the above tabs is a list, which contains the data table, an unstyled workbook and the meta
+# information needed for the individual styling. These tabs can be input into the following function,
+# which reads the meta information, styles each table individually and combines them as separate sheets
+# into a single workbook.
+combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8,
+                      file = "C:/My_folder/My_workbook.xlsx")
+```
+
 ## Readability
 
 There are also some functions which enhance the readability of the code.
