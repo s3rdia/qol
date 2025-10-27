@@ -136,6 +136,16 @@ discrete_format <- function(...){
     # Flatten to long format
     unwrapped_format <- data.table::rbindlist(unwrap_all_groupings)
 
+    # Convert "other" keyword to integer max. This should be a value no one would pick normally.
+    if ("other" %in% tolower(unwrapped_format[["value"]])){
+        unwrapped_format[["value"]] <- sub("other", .Machine[["integer.max"]], tolower(unwrapped_format[["value"]]))
+
+        # If value column is all numeric then convert it to numeric
+        if (is_numeric(unwrapped_format[["value"]])){
+            unwrapped_format[["value"]] <- as.integer(unwrapped_format[["value"]])
+        }
+    }
+
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("- - - 'discrete_format' execution time: ", end_time, " seconds")
 
@@ -161,25 +171,25 @@ interval_format <- function(...){
     # Insert pseudo low and high numbers for keywords
     if (is.character(to)){
         # First check if there are any other words than low and high in the format. If yes, abort.
-        if (!any(c("low", "high") %in% to)){
+        if (!any(c("low", "high") %in% tolower(to))){
             message(" X ERROR: Unknown keyword found. Creating interval format will be aborted.")
             return(NULL)
         }
 
         # Low always ends up in "to", because it is a character value and comes alphabetically after high
-        if ("low" %in% to){
+        if ("low" %in% tolower(to)){
             # Swap the real not "low" value to "to" and insert a pseudo low number in "from"
-            to[to == "low"]  <- from[to == "low"]
-            from[from == to] <- -1e20
+            to[tolower(to) == "low"]           <- from[tolower(to) == "low"]
+            from[tolower(from) == tolower(to)] <- -.Machine[["double.xmax"]]
 
             from <- as.numeric(from)
         }
 
         # If there is the "high" keyword, at this point it will always be in "to" either the same way as low,
         # just because it is character or because it is swapped here by the low code above.
-        if ("high" %in% to){
-            # Enter a pseude high number for "to"
-            to[to == "high"] <- 1e20
+        if ("high" %in% tolower(to)){
+            # Enter a pseudo high number for "to"
+            to[tolower(to) == "high"] <- .Machine[["double.xmax"]]
 
             from <- as.numeric(from)
         }
@@ -191,7 +201,7 @@ interval_format <- function(...){
     message("- - - 'interval_format' execution time: ", end_time, " seconds")
 
     # Put everything together in a data frame
-    data.table::data.table(from = from,
-                           to = to,
+    data.table::data.table(from  = from,
+                           to    = to,
                            label = labels)
 }

@@ -19,7 +19,7 @@
   --bracket-highlight: #595959;
   --active-line: #202324;
   --whitespace: #CCCCCC;
-  --debug-line: #F18889;
+  --debug-line: #C93F3F;
 
   --scrollbar: #3B3B3B;
   --scrollbar-hover: #595959;
@@ -158,7 +158,7 @@
 
 .ace_line .ace_fold::before {
   color: grey;
-  content: "⋯";
+  content: "...";
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

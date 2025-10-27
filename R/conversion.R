@@ -85,7 +85,7 @@ single_args_to_char <- function(...){
 #'
 #' @export
 is_numeric <- function(variable){
-    # Just try converting without errors surpressed
+    # Just try converting without errors suppressed
     result <- suppressWarnings(as.numeric(variable))
 
     # If NAs are equal before and after conversion was successful.

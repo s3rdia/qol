@@ -7,6 +7,7 @@
 
 ### New functionality
 * `interval_format()`: Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. (20.10.2025)
+* `discrete_format()`: Implemented keyword "other" with which one can catch any other value not covered by the explicitly specified values. (27.10.2025)
 * `any_table()`: Now returns styling meta information as a third list element. This meta information can be used by `combine_into_workbook()`. (26.10.2025)
 
 ### Fixed
@@ -28,6 +29,7 @@
 * Added an example to the README showing how to save an Excel workbook to the filesystem. (19.10.2025)
 * Used lintr package for some code cleanup. (20.10.2025, thanks to @JanMarvin for the advise)
 * Added custom theme section to the README. (23.10.2025)
+* Added message, if a format is applied to a factor variable. (27.10.2025)
 
 ### GitHub related
 * Added article comparing this package with SAS. (14.10.2025)

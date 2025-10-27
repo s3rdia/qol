@@ -31,6 +31,11 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             next
         }
 
+        if (is.factor(temp_data[[current_var]])){
+            message(" ~ NOTE: '", current_var, "' is a factor variable. Formats only work if the visible character values\n",
+                    "         are specified as input values and not the factor levels.")
+        }
+
         # Security checks to ensure types are right
         if (!is.null(group_vars)){
             if (!current_var %in% group_vars){
@@ -108,9 +113,17 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
 
             # If not all values are represented in the format container, check where there are gaps
             # and fill them at the affected positions
-            na_positions <- positions <- which(is.na(temp_data[["label"]]) & !is.na(temp_data[[current_var]]))
+            na_positions <- which(is.na(temp_data[["label"]]) & !is.na(temp_data[[current_var]]))
             if (length(na_positions) > 0){
-                temp_data[["label"]][na_positions] <- temp_data[[current_var]][na_positions]
+                if (as.character(.Machine[["integer.max"]]) %in% tolower(format_df[[current_var]])){
+                    temp_data[["label"]][na_positions] <- format_df[["label"]][tolower(format_df[[current_var]]) == as.character(.Machine[["integer.max"]])]
+                }
+                else if(.Machine[["integer.max"]] %in% format_df[[current_var]]){
+                    temp_data[["label"]][na_positions] <- format_df[["label"]][format_df[[current_var]] == .Machine[["integer.max"]]]
+                }
+                else{
+                    temp_data[["label"]][na_positions] <- temp_data[[current_var]][na_positions]
+                }
             }
 
             # Drop current variable and rename newly joined label to current variable name

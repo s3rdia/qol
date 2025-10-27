@@ -126,6 +126,11 @@ recode <- function(data_frame,
         format_df <- format_df |> unique(by = "value", fromLast = FALSE)
     }
 
+    if (is.factor(data_frame[[current_var]])){
+        message(" ~ NOTE: '", current_var, "' is a factor variable. Formats only work if the visible character values\n",
+                "         are specified as input values and not the factor levels.")
+    }
+
     # Look up variable names in format data frame to check whether it is an
     # interval or discrete format
     interval_variables <- c("from", "to")

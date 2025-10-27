@@ -8,6 +8,7 @@ New functions
 
 New functionality
 * interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is.
+* discrete_format(): Implemented keyword "other" with which one can catch any other value not covered by the explicitly specified values.
 * any_table(): Now returns styling meta information as a third list element. This meta information can be used by combine_into_workbook().
 
 Fixed
@@ -29,6 +30,7 @@ Additionally
 * Added an example to the README showing how to save an Excel workbook to the filesystem.
 * Used lintr package for some code cleanup.
 * Added custom theme section to the README.
+* Added message, if a format is applied to a factor variable.
 
 ## R CMD check results
 
