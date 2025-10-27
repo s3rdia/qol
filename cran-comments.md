@@ -1,4 +1,4 @@
-# Resubmission qol 1.0.3
+# Resubmission qol 1.1.0
 Last CRAN release was on 14.10.2025. This release contains some additions to further enhance the package and some bug fixes:
 
 New functions

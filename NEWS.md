@@ -1,4 +1,4 @@
-# qol 1.0.3 - DEVELOPMENT
+# qol 1.1.0 - DEVELOPMENT
 
 ### New functions
 * `build_master()`: Reads a given folder structure, which contains scripts, and builds a master script as a markdown file. (18.10.2025)
