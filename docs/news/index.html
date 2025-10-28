@@ -36,9 +36,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.3" id="qol-103---development">qol 1.0.3 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-103---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.1.0" id="qol-110---development">qol 1.1.0 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-110---development"></a></h2>
 <div class="section level4">
-<h4 id="new-functions-1-0-3">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-0-3"></a></h4>
+<h4 id="new-functions-1-1-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/build_master.html">build_master()</a></code>: Reads a given folder structure, which contains scripts, and builds a master script as a markdown file. (18.10.2025)</li>
 <li>
@@ -47,14 +47,16 @@
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Combines any number of tables created with <code><a href="../reference/any_table.html">any_table()</a></code> into one workbook and styles them according to their meta information. (26.10.2025)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="new-functionality-1-0-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-0-3"></a></h4>
+<h4 id="new-functionality-1-1-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/formats.html">interval_format()</a></code>: Implemented keywords “low”and “high” with which one can define pseudo low or high values, if one doesn’t know, what the minimum or maximum value of a variable is. (20.10.2025)</li>
+<li>
+<code><a href="../reference/formats.html">discrete_format()</a></code>: Implemented keyword “other” with which one can catch any other value not covered by the explicitly specified values. (27.10.2025)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Now returns styling meta information as a third list element. This meta information can be used by <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>. (26.10.2025)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="fixed-1-0-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-0-3"></a></h4>
+<h4 id="fixed-1-1-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-1-0"></a></h4>
 <ul><li>In <code><a href="../reference/any_table.html">any_table()</a></code> the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)</li>
 <li>In <code><a href="../reference/any_table.html">any_table()</a></code> the row heights didn’t catch the whole table. (14.10.2025)</li>
 <li>
@@ -64,11 +66,11 @@
 <li>Fixed table length captured with too many rows. (19.10.2025)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="changed-functionality-1-0-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-0-3"></a></h4>
+<h4 id="changed-functionality-1-1-0">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-1-0"></a></h4>
 <ul><li>In <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code> the options <code>column_widths</code> and <code>row_heights</code> now start at the first column/row instead of the beginning of the table. (19.10.2025)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="additionally-1-0-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-0-3"></a></h4>
+<h4 id="additionally-1-1-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-1-0"></a></h4>
 <ul><li>Added missing functions <code><a href="../reference/export_with_style.html">export_with_style()</a></code> and <code><a href="../reference/get_excel_range.html">get_excel_range()</a></code> to the ?qol overview page. (14.10.2025)</li>
 <li>Added information to the startup message to use ?qol to get an overview. (14.10.2025)</li>
 <li>Now using openxlsx2 helper to convert row and column numbers to Excel ranges. (19.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
@@ -76,9 +78,10 @@
 <li>Added an example to the README showing how to save an Excel workbook to the filesystem. (19.10.2025)</li>
 <li>Used lintr package for some code cleanup. (20.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a> for the advise)</li>
 <li>Added custom theme section to the README. (23.10.2025)</li>
+<li>Added message, if a format is applied to a factor variable. (27.10.2025)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="github-related-1-0-3">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-0-3"></a></h4>
+<h4 id="github-related-1-1-0">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-1-0"></a></h4>
 <ul><li>Added article comparing this package with SAS. (14.10.2025)</li>
 <li>Changed GitHub Page style. (14.10.2025)</li>
 <li>Added example themes with corresponding code. (23.10.2025)</li>
