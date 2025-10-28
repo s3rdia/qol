@@ -104,6 +104,13 @@ state. <- discrete_format(
     "Thuringia"                     = 16,
     "East"                          = 11:16)
 
+# With discrete formats you can specify the keyword "other" to
+# catch any other value not covered by the explicitly specified values.
+age. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = "other")
+
 # With interval formats you can also use the keywords "low" and "high" to
 # catch everything from the lowest to the highest values, in case one doesn't
 # know exactly what the lowest and highest values are.

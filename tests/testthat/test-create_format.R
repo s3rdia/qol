@@ -62,7 +62,7 @@ test_that("Create interval format with low and high keywords", {
         "2000 and more"      = c(2000, "high")))
 
     expect_true(all(c("from", "to", "label") %in% names(income.)))
-    expect_equal(income.[1, "from"], -1e20)
-    expect_equal(income.[1, "to"],    1e20)
+    expect_equal(income.[1, "from"], -Inf)
+    expect_equal(income.[1, "to"],    Inf)
 })
 
