@@ -98,7 +98,9 @@ export_with_style <- function(data_frame,
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
         if (is.null(style[["file"]])){
-            wb$open()
+            if(interactive()){
+                wb$open()
+            }
         }
         else{
             wb$save(file = style[["file"]], overwrite = TRUE)

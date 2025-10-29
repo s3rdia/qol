@@ -499,7 +499,9 @@ crosstabs <- function(data_frame,
         }
         else if (output == "excel" || output == "excel_nostyle"){
             if (is.null(style[["file"]])){
-                wb$open()
+                if(interactive()){
+                    wb$open()
+                }
             }
             else{
                 wb$save(file = style[["file"]], overwrite = TRUE)

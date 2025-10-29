@@ -45,7 +45,7 @@
 #' Generate dummy data: [dummy_data()]
 #'
 #' Small helpers: [inverse()], [setcolorder_by_pattern()], [running_number()],
-#' [drop_type_vars()], [fuse_variables()], [get_excel_range()].
+#' [drop_type_vars()], [fuse_variables()], [get_excel_range()], [replace_except()].
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].
 #'

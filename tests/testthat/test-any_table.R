@@ -403,15 +403,6 @@ test_that("any_table aborts with no valid column variables", {
 })
 
 
-test_that("any_table aborts with underscore in variable name", {
-    expect_message(result_list <- dummy_df |>
-           any_table(rows    = "age",
-                     columns = "first_person",
-                     values  = weight,
-                     print   = FALSE), " X ERROR: No underscores allowed in column variable names")
-})
-
-
 test_that("any_table aborts with invalid by variable", {
     expect_message(result_list <- dummy_df |>
            any_table(rows    = "age",
@@ -470,17 +461,6 @@ test_that("any_table aborts with value variable having too many underscores in p
                                  values     = to_many_underscores,
                                  pre_summed = TRUE,
                                  print      = FALSE), " X ERROR: Too many underscores in values variable names. Execution will be aborted.")
-})
-
-
-test_that("any_table aborts with column variable having underscores", {
-    dummy_df[["to_many_underscores"]] <- 1
-
-    expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "age",
-                                 columns    = "to_many_underscores",
-                                 values     = weight,
-                                 print      = FALSE), " X ERROR: No underscores allowed in column variable names. Execution will be aborted.")
 })
 
 

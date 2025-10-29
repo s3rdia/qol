@@ -161,6 +161,13 @@ complex outputs at the same time.</p>
 <span>    <span class="st">"Thuringia"</span>                     <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>    <span class="st">"East"</span>                          <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># With discrete formats you can specify the keyword "other" to</span></span>
+<span><span class="co"># catch any other value not covered by the explicitly specified values.</span></span>
+<span><span class="va">age.</span> <span class="op">&lt;-</span> <span class="fu">discrete_format</span><span class="op">(</span></span>
+<span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
+<span>    <span class="st">"18 to under 25"</span> <span class="op">=</span> <span class="fl">18</span><span class="op">:</span><span class="fl">24</span>,</span>
+<span>    <span class="st">"25 to under 55"</span> <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># With interval formats you can also use the keywords "low" and "high" to</span></span>
 <span><span class="co"># catch everything from the lowest to the highest values, in case one doesn't</span></span>
 <span><span class="co"># know exactly what the lowest and highest values are.</span></span>

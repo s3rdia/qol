@@ -63,6 +63,7 @@ reference:
   - drop_type_vars
   - fuse_variables
   - get_excel_range
+  - replace_except
 - title: Split Data Frame
   contents:
   - split_by_var

@@ -376,14 +376,6 @@ any_table <- function(data_frame,
         }
     }
 
-    # Underscores are not allowed in column variables because when constructing the
-    # table header later, the underscore is the sign by which the column names are split.
-    # Having additional underscores would mess up this part and lead to errors.
-    if (any(grepl("_", col_vars))){
-        message(" X ERROR: No underscores allowed in column variable names. Execution will be aborted.")
-        return(invisible(NULL))
-    }
-
     # Convert to character vectors
     by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by), width.cutoff = 500L)))
 
@@ -575,8 +567,8 @@ any_table <- function(data_frame,
         }
 
         # Check if value variables have statistics extension
-        extensions <- c("_sum", "_pct", "_pct_group", "_pct_total", "_pct_value", "_freq",
-                        "_freq_g0", "_mean", "_median", "_mode", "_min", "_max", "_first",
+        extensions <- c("_sum", "_pct_group", "_pct_total", "_pct_value", "_pct", "_freq_g0",
+                        "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
                         "_last", "_sum_wgt", "_p[0-9]+$", "_sd", "_variance", "_missing")
         pattern    <- paste0("(", paste(extensions, collapse = "|"), ")$")
 
@@ -858,6 +850,20 @@ any_table <- function(data_frame,
         by_division <- length(unique(any_tab[["by_vars"]]))
     }
 
+    # Underscores are not allowed in column and values variables, because when constructing the
+    # table header later, the underscore is the symbol by which the variable names are split.
+    # Having additional underscores would mess up this part and lead to errors. Therefor the
+    # additional underscores will be temporarily replaced.
+    extensions <- c("_sum", "_pct_group_", "_pct_total", "_pct_value", "_pct", "_freq_g0",
+                    "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
+                    "_last", "_p1", "_p2", "_p3", "_p4", "_p5", "_p6", "_p7", "_p8", "_p9",
+                    "sum_wgt", "_sd", "_variance", "_missing", "by_vars", "TYPE_NR")
+
+    rows       <- replace_except(rows,       "_", "!!!", extensions)
+    columns    <- replace_except(columns,    "_", "!!!", extensions)
+    value_vars <- replace_except(value_vars, "_", "!!!", extensions)
+    names(any_tab)    <- replace_except(names(any_tab),    "_", "!!!", extensions)
+    any_tab[["TYPE"]] <- replace_except(any_tab[["TYPE"]], "_", "!!!", extensions)
 
     # Sort type alphabetically to make finding the right combination easier
     any_tab[["TYPE"]] <- reorder_combination(any_tab[["TYPE"]])
@@ -979,6 +985,9 @@ any_table <- function(data_frame,
 
                 # Loop through all provided labels
                 for (variable in row_combi_vars){
+                    # Revert back underscores
+                    variable <- gsub("!!!", "_", variable)
+
                     # If there are no labels specified add the variable names as labels
                     if (!variable %in% names(var_labels)){
                         row_labels <- c(row_labels, variable)
@@ -1039,7 +1048,7 @@ any_table <- function(data_frame,
             # Column header dimensions only need to be captured once because
             # they are the same for every row iteration.
             if (index == 1){
-                name <- paste0("header_end_", paste(col_combi_vars, collapse = "_"))
+                name <- paste0("header_end_", paste(col_combi_vars, collapse = "%%%"))
                 if (length(by) == 0){
                     col_header_dimensions[[name]] <- ncol(combined_col_df) - length(new_row_names)
                 }
@@ -1047,7 +1056,7 @@ any_table <- function(data_frame,
                     col_header_dimensions[[name]] <- ncol(combined_col_df) - length(new_row_names) - 2
                 }
 
-                name <- paste0("header_size_", paste(col_combi_vars, collapse = "_"))
+                name <- paste0("header_size_", paste(col_combi_vars, collapse = "%%%"))
                 col_header_dimensions[[name]] <- length(col_combi_vars)
             }
         }
@@ -1056,11 +1065,11 @@ any_table <- function(data_frame,
         part_combi_list[[row_combi]] <- combined_col_df
 
         # Get table dimensions for later use during formatting.
-        name <- paste0("header_end_", paste(row_combi_vars, collapse = "_"))
+        name <- paste0("header_end_", paste(row_combi_vars, collapse = "%%%"))
         last_number_of_rows           <- (nrow(combined_col_df) / by_division) + last_number_of_rows
         row_header_dimensions[[name]] <- last_number_of_rows
 
-        name <- paste0("header_size_", paste(row_combi_vars, collapse = "_"))
+        name <- paste0("header_size_", paste(row_combi_vars, collapse = "%%%"))
         row_header_dimensions[[name]] <- length(row_combi_vars)
 
         index <- index + 1
@@ -1070,7 +1079,7 @@ any_table <- function(data_frame,
     any_tab <- data.table::rbindlist(part_combi_list, fill = TRUE)
 
     # After binding together the data frames it can happen, that some of the new var
-    # variables and up at the end of the data frame instead of the front. Therefor
+    # variables end up at the end of the data frame instead of the front. Therefor
     # these columns need to be ordered to the front for safety.
     ordered_cols <- grep("^var[0-9]+$", names(any_tab), value = TRUE)
     any_tab <- any_tab |> data.table::setcolorder(c("row.label", ordered_cols), before = 1)
@@ -1139,7 +1148,7 @@ any_table <- function(data_frame,
     if (length(by) == 0){
         wb_list <- format_any_excel(workbook, any_tab, rows, columns, statistics,
                                     by, titles, footnotes, var_labels, stat_labels,
-                                    box, col_header_dimensions, row_header_dimensions,
+                                    box, col_header_dimensions,
                                     style, output, monitor_df = monitor_df)
 
         wb         <- wb_list[[1]]
@@ -1149,7 +1158,7 @@ any_table <- function(data_frame,
     else{
         wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
                                        by, titles, footnotes, var_labels, stat_labels,
-                                       box, col_header_dimensions, row_header_dimensions,
+                                       box, col_header_dimensions,
                                        style, output, na.rm, monitor_df)
 
         wb         <- wb_list[[1]]
@@ -1161,7 +1170,9 @@ any_table <- function(data_frame,
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
         if (is.null(style[["file"]])){
-            wb$open()
+            if(interactive()){
+                wb$open()
+            }
         }
         else{
             wb$save(file = style[["file"]], overwrite = TRUE)
@@ -1203,8 +1214,6 @@ any_table <- function(data_frame,
 #' @param box The text that should appear in the upper left box of the table.
 #' @param col_header_dimensions A list containing the column variable names and the
 #' column header dimensions.
-#' @param row_header_dimensions A list containing the row variable names and the
-#' row header dimensions.
 #' @param style A list containing the styling elements.
 #' @param output Determines whether to style the output or to just quickly paste
 #' the data.
@@ -1231,7 +1240,6 @@ format_any_excel <- function(wb,
                              stat_labels,
                              box,
                              col_header_dimensions,
-                             row_header_dimensions,
                              style,
                              output,
                              by_info = NULL,
@@ -1251,7 +1259,7 @@ format_any_excel <- function(wb,
     # Build header from variable names
     multi_header <- build_multi_header(names(any_tab), col_header_dimensions, var_labels, style)
 
-    # Remove empty statistics rows, but keep multi_header with statistics becuase the information
+    # Remove empty statistics rows, but keep multi_header with statistics because the information
     # is needed below for applying the correct number formats.
     column_header <- multi_header |> set_statistic_labels(stat_labels)
     column_header <- column_header[rowSums(column_header == "") != ncol(column_header), ]
@@ -1260,13 +1268,11 @@ format_any_excel <- function(wb,
 
     # Get table ranges
     any_ranges <- get_any_tab_ranges(any_tab, column_header, stats_row,
-                                     col_header_dimensions,
-                                     row_header_dimensions,
                                      titles, footnotes, style)
 
     # Add empty columns to the header for the top left box at the beginning
     blank_columns <- matrix("", nrow = nrow(column_header), ncol = any_ranges[["cat_col.width"]])
-    column_header  <- cbind(blank_columns, column_header)
+    column_header <- cbind(blank_columns, column_header)
 
     # Add box text
     if (box != ""){
@@ -1274,7 +1280,7 @@ format_any_excel <- function(wb,
     }
     # If no box text provided put in variable names of row headers
     else{
-        column_header[1, 1] <- paste(rows, collapse = "\n")
+        column_header[1, 1] <- gsub("!!!", "_", paste(rows, collapse = "\n"))
     }
 
     # If function is called with by variables the sheet names have to be differentiated
@@ -1518,6 +1524,9 @@ build_multi_header <- function(var_names,
         multi_header
     })
 
+    # Revert back underscores
+    header_matrix   <- gsub("!!!", "_", header_matrix)
+
     # Replace variable texts with custom labels
     header_matrix <- header_matrix |>
         set_col_variable_labels(var_labels)
@@ -1577,12 +1586,15 @@ variable_header_rows <- function(col_header_dimensions, var_labels) {
     # Fill matrix with variable names
     for (i in seq_along(vars)){
         column    <- starts[i]:ends[i]
-        variables <- strsplit(vars[i], "_")[[1]]
+        variables <- strsplit(vars[i], "%%%")[[1]]
 
         for (row in seq_along(variables)){
             header_matrix[row, column] <- variables[row]
         }
     }
+
+    # Revert back underscores
+    header_matrix <- gsub("!!!", "_", header_matrix)
 
     # Replace variable texts with custom labels
     header_matrix <- header_matrix |>
@@ -1651,8 +1663,6 @@ merge_headers <- function(value_header, variable_header){
 #' @param box The text that should appear in the upper left box of the table.
 #' @param col_header_dimensions A list containing the column variable names and the
 #' column header dimensions.
-#' @param row_header_dimensions A list containing the row variable names and the
-#' row header dimensions.
 #' @param style A list containing the styling elements.
 #' @param output Determines whether to style the output or to just quickly paste
 #' the data.
@@ -1676,7 +1686,6 @@ format_any_by_excel <- function(wb,
                                 stat_labels,
                                 box,
                                 col_header_dimensions,
-                                row_header_dimensions,
                                 style,
                                 output,
                                 na.rm,
@@ -1749,7 +1758,6 @@ format_any_by_excel <- function(wb,
                                         stat_labels,
                                         box,
                                         col_header_dimensions,
-                                        row_header_dimensions,
                                         style,
                                         output,
                                         by_info,
@@ -1910,7 +1918,6 @@ combine_into_workbook <- function(...,
                                  meta[["statistics"]], meta[["by"]], meta[["titles"]],
                                  meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
                                  meta[["box"]], meta[["col_header_dimensions"]],
-                                 meta[["row_header_dimensions"]],
                                  meta[["style"]], output, monitor_df = monitor_df))
 
             wb <- wb_list[[1]]
@@ -1922,7 +1929,6 @@ combine_into_workbook <- function(...,
                                     meta[["statistics"]], meta[["by"]], meta[["titles"]],
                                     meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
                                     meta[["box"]], meta[["col_header_dimensions"]],
-                                    meta[["row_header_dimensions"]],
                                     meta[["style"]], output, meta[["na.rm"]], monitor_df))
 
             wb <- wb_list[[1]]

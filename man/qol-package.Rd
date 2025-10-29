@@ -53,7 +53,7 @@ Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_exte
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
 Small helpers: \code{\link[=inverse]{inverse()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=running_number]{running_number()}},
-\code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}.
+\code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=replace_except]{replace_except()}}.
 
 Split data frame: \code{\link[=split_by_var]{split_by_var()}}, \code{\link[=split_by_condition]{split_by_condition()}}.
 

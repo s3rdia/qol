@@ -66,10 +66,6 @@ get_excel_range <- function(row      = NULL, column      = NULL,
 #'
 #' @param table The data frame which holds the table information.
 #' @param multi_header The multi layered column header produced by any_table.
-#' @param col_header_dimensions A list containing the column variable names and the
-#' column header dimensions.
-#' @param row_header_dimensions A list containing the row variable names and the
-#' row header dimensions.
 #' @param titles Titles if there are any.
 #' @param footnotes Footnotes if there are any.
 #' @param style A list of style elements to format the table.
@@ -81,8 +77,6 @@ get_excel_range <- function(row      = NULL, column      = NULL,
 get_any_table_ranges <- function(table,
                                  multi_header,
                                  stats_row,
-                                 col_header_dimensions,
-                                 row_header_dimensions,
                                  titles     = NULL,
                                  footnotes  = NULL,
                                  style      = excel_output_style()){
@@ -186,14 +180,12 @@ get_any_table_ranges <- function(table,
 get_any_tab_ranges <- function(any_tab,
                                multi_header,
                                stats_row,
-                               col_header_dimensions,
-                               row_header_dimensions,
                                titles     = NULL,
                                footnotes  = NULL,
                                style      = excel_output_style()){
     # Get basic table ranges
-    table_ranges <- get_any_table_ranges(any_tab, multi_header, stats_row, col_header_dimensions,
-                                         row_header_dimensions, titles, footnotes, style)
+    table_ranges <- get_any_table_ranges(any_tab, multi_header, stats_row,
+                                         titles, footnotes, style)
 
     # Get specific parts of mean table
     any_col_ranges <- list()

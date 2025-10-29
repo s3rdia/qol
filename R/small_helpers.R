@@ -457,3 +457,55 @@ add_extension <- function(data_frame,
 
     data_frame
 }
+
+
+#' Replace Patterns While Protecting Exceptions
+#'
+#' @description
+#' Replaces a provided pattern with another, while protecting exceptions. Exceptions can
+#' contain the given pattern, but won't be changed during replacement.
+#'
+#' @param vector A vector containing the texts, where a pattern should be replaced.
+#' @param pattern The pattern that should be replaced.
+#' @param replacement The new pattern, which replaces the old one.
+#' @param exceptions A character vector containing exceptions, which should not be altered.
+#'
+#' @return
+#' Returns a vector with replaced pattern.
+#'
+#' @examples
+#' # Vector, where underscores hsould be replaced
+#' underscores <- c("my_variable", "var_with_underscores", "var_sum", "var_pct_total")
+#'
+#' # Extensions, where underscores shouldn't be replaced
+#' extensions <- c("_sum", "_pct_group", "_pct_total", "_pct_value", "_pct", "_freq_g0",
+#'                 "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
+#'                 "_last", "_p1", "_p2", "_p3", "_p4", "_p5", "_p6", "_p7", "_p8", "_p9",
+#'                 "sum_wgt", "_sd", "_variance", "_missing")
+#'
+#' # Replace
+#' new_vector <- underscores |> replace_except("_", ".", extensions)
+#'
+#' @export
+replace_except <- function(vector,
+                           pattern,
+                           replacement,
+                           exceptions = NULL) {
+    # Replace the pattern in the exceptions with a pseudo symbol
+    except_replace <- gsub(pattern, "&%!", exceptions)
+
+    # Protect exceptions in original vector
+    for (element in seq_along(vector)){
+        for (exception in seq_along(exceptions)){
+            vector[[element]] <- gsub(exceptions[[exception]],
+                                      except_replace[[exception]],
+                                      vector[[element]])
+        }
+    }
+
+    # Replace pattern safely
+    vector <- gsub(pattern, replacement, vector)
+
+    # Reestablish protected pattern
+    gsub("&%!", pattern, vector)
+}
