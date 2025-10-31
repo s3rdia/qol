@@ -45,6 +45,14 @@
 <code><a href="../reference/build_rstheme.html">build_rstheme()</a></code>: Build a complete theme file, which can be used to change the visual appearance of RStudio. (23.10.2025)</li>
 <li>
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Combines any number of tables created with <code><a href="../reference/any_table.html">any_table()</a></code> into one workbook and styles them according to their meta information. (26.10.2025)</li>
+<li>
+<code><a href="../reference/replace_except.html">replace_except()</a></code>: Replaces a provided pattern with another, while protecting exceptions. (29.10.2025)</li>
+<li>
+<code><a href="../reference/retain.html">mark_case()</a></code>: Marks first or last cases within a provided group. (31.10.2025)</li>
+<li>
+<code><a href="../reference/retain.html">retain_value()</a></code>: Retains the first value for all cases of the same group. (31.10.2025)</li>
+<li>
+<code><a href="../reference/retain.html">retain_sum()</a></code>: Retains the summarised values for all cases of the same group. (31.10.2025)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-1-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-1-0"></a></h4>
@@ -70,6 +78,7 @@
 <div class="section level4">
 <h4 id="changed-functionality-1-1-0">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-1-0"></a></h4>
 <ul><li>In <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code> the options <code>column_widths</code> and <code>row_heights</code> now start at the first column/row instead of the beginning of the table. (19.10.2025)</li>
+<li>In <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, if summarised values should be merged back, the variables TYPE, TYPE_NR and DEPTHS are now not merged back anymore. (31.10.2025)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-1-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-1-0"></a></h4>
@@ -81,6 +90,7 @@
 <li>Used lintr package for some code cleanup. (20.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a> for the advise)</li>
 <li>Added custom theme section to the README. (23.10.2025)</li>
 <li>Added message, if a format is applied to a factor variable. (27.10.2025)</li>
+<li>Excel workbooks will now only be opened in interactive sessions. (29.10.2025, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="github-related-1-1-0">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-1-0"></a></h4>

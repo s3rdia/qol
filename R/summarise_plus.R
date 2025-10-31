@@ -540,6 +540,9 @@ summarise_plus <- function(data_frame,
             message("\n > Merging back.")
             monitor_df <- monitor_df |> monitor_next("Merge back", "Merge back")
 
+            # Don't merge back type variables, only summarised variable
+            result_df <- result_df |> drop_type_vars()
+
             result_df <- original_df |>
                 collapse::fungroup() |>
                 collapse::join(result_df,

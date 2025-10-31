@@ -366,8 +366,9 @@ frequencies <- function(data_frame,
     }
     # In case by variables are specified
     else{
-        group_vars <- c(by, variables)
+        group_vars   <- c(by, variables)
         combinations <- as.vector(outer(by, variables, paste, sep = "+"))
+        combinations <- c("total", combinations)
 
         freq_tab <- suppressMessages(data_frame |>
              summarise_plus(class      = group_vars,
@@ -1022,9 +1023,9 @@ compute_cumulative <- function(freq_tab,
 
     var_tab[["fused_vars"]][nrow(var_tab)] <- "total"
 
-    var_tab[["var_cum_sum"]]  <- cumsum(var_tab[["var_sum"]])
-    var_tab[["var_cum_pct"]]  <- cumsum(var_tab[["var_pct_group"]])
-    var_tab[["var_cum_freq"]] <- cumsum(var_tab[["var_freq"]])
+    var_tab[["var_cum_sum"]]  <- collapse::fcumsum(var_tab[["var_sum"]])
+    var_tab[["var_cum_pct"]]  <- collapse::fcumsum(var_tab[["var_pct_group"]])
+    var_tab[["var_cum_freq"]] <- collapse::fcumsum(var_tab[["var_freq"]])
 
     # Erase total cumulative values
     var_tab[["var_cum_sum"]][nrow(var_tab)]  <- NA

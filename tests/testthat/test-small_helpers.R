@@ -17,13 +17,6 @@ test_that("Get inverse variable namesfrom data frame works correct", {
 })
 
 
-test_that("Get inverse variable namesfrom data frame works correct", {
-    run_df <- dummy_df |> running_number(by = year)
-
-    expect_true("run_nr" %in% names(run_df))
-})
-
-
 test_that("Add extensions to limited variables", {
     new_names_df <- dummy_df |> add_extension(5, c("sum", "pct"))
 

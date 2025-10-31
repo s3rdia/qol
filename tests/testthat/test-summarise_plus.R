@@ -598,7 +598,7 @@ test_that("Merging variables back to original data frame creates new column", {
                        weight     = weight,
                        merge_back = TRUE)
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 4)
+    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
     expect_equal(nrow(result_df), nrow(dummy_df))
 })
 
@@ -612,7 +612,7 @@ test_that("Merging variables back works if wrong nesting option ist provided", {
                        nesting    = "all",
                        merge_back = TRUE), " ! WARNING: Merging variables back only works with nesting = 'deepest'")
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 4)
+    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
     expect_equal(nrow(result_df), nrow(dummy_df))
 })
 

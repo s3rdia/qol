@@ -6,6 +6,9 @@ New functions
 * build_rstheme(): Build a complete theme file, which can be used to change the visual appearance of RStudio.
 * combine_into_workbook(): Combines any number of tables created with `any_table()` into one workbook and styles them according to their meta information.
 * replace_except(): Replaces a provided pattern with another, while protecting exceptions.
+* mark_case(): Marks first or last cases within a provided group.
+* retain_value(): Retains the first value for all cases of the same group.
+* retain_sum(): Retains the summarised values for all cases of the same group.
 
 New functionality
 * interval_format(): Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is.
@@ -23,6 +26,7 @@ Fixed
 
 Changed functionality
 * In excel_output_style() the options column_widths and row_heights now start at the first column/row instead of the beginning of the table.
+* In summarise_plus(), if summarised values should be merged back, the variables TYPE, TYPE_NR and DEPTHS are now not merged back anymore.
 
 Additionally
 * Added missing functions export_with_style() and get_excel_range() to the ?qol overview page.

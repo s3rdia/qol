@@ -411,7 +411,6 @@ crosstabs <- function(data_frame,
             collapse::frename(var_pct_group = var_pct_row) |>
             fuse_variables("by_vars", by)
 
-        cross_tab         <- cross_tab[-1, ]
         cross_tab[["BY"]] <- sub("\\+.*", "", cross_tab[["TYPE"]])
 
         # Get the expressions of the column variable to use them later as column names

@@ -170,67 +170,6 @@ inverse <- function(data_frame, var_names){
 }
 
 
-#' Compute Running Numbers
-#'
-#' @description
-#' Compute running numbers in a data frame. Without specifying a by variable
-#' results in the row number. With by variable computes the running number within
-#' each group of expressions.
-#'
-#' @param data_frame The data frame in which to compute the running number.
-#' @param var_name The variable name of the running number.
-#' @param by By group in which to compute the running number per expression.
-#'
-#' @return
-#' Returns the data frame with a new variable containing a running number.
-#'
-#' @examples
-#' # Example data frame
-#' my_data <- dummy_data(1000)
-#'
-#' # Get row numbers
-#' my_data <- my_data |> running_number()
-#' my_data <- my_data |> running_number("row_number")
-#'
-#' # Running number per variable expression
-#' my_data <- my_data |> running_number(by = year)
-#'
-#' @export
-running_number <- function(data_frame,
-                           var_name = "run_nr",
-                           by       = NULL){
-    # Convert to character vectors
-    by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by))))
-
-    if (substr(by_temp, 1, 2) == "c("){
-        by <- as.character(substitute(by))
-    }
-    else if (!is_error(by)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while variables_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        by <- by_temp
-    }
-
-    # Remove extra first character created with substitution
-    by <- by[by != "c"]
-
-    # In case of a by variable
-    if (length(by) == 1){
-        data_frame[[var_name]] <- stats::ave(seq_len(nrow(data_frame)),
-                                             data.table::rleid(data_frame[[by]]),
-                                             FUN = seq_along)
-    }
-    # In case of no by variable
-    else{
-        data_frame[[var_name]] <- seq_len(nrow(data_frame))
-    }
-
-    data_frame
-}
-
-
 #' Order Columns by Variable Name Patterns
 #'
 #' @description

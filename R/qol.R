@@ -42,9 +42,11 @@
 #'
 #' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()].
 #'
+#' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_sum()]
+#'
 #' Generate dummy data: [dummy_data()]
 #'
-#' Small helpers: [inverse()], [setcolorder_by_pattern()], [running_number()],
+#' Small helpers: [inverse()], [setcolorder_by_pattern()],
 #' [drop_type_vars()], [fuse_variables()], [get_excel_range()], [replace_except()].
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].

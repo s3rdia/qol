@@ -5,6 +5,9 @@
 * `build_rstheme()`: Build a complete theme file, which can be used to change the visual appearance of RStudio. (23.10.2025)
 * `combine_into_workbook()`: Combines any number of tables created with `any_table()` into one workbook and styles them according to their meta information. (26.10.2025)
 * `replace_except()`: Replaces a provided pattern with another, while protecting exceptions. (29.10.2025)
+* `mark_case()`: Marks first or last cases within a provided group. (31.10.2025)
+* `retain_value()`: Retains the first value for all cases of the same group. (31.10.2025)
+* `retain_sum()`: Retains the summarised values for all cases of the same group. (31.10.2025)
 
 ### New functionality
 * `interval_format()`: Implemented keywords "low "and "high" with which one can define pseudo low or high values, if one doesn't know, what the minimum or maximum value of a variable is. (20.10.2025)
@@ -22,6 +25,7 @@
 
 ### Changed functionality
 * In `excel_output_style()` the options `column_widths` and `row_heights` now start at the first column/row instead of the beginning of the table. (19.10.2025)
+* In `summarise_plus()`, if summarised values should be merged back, the variables TYPE, TYPE_NR and DEPTHS are now not merged back anymore. (31.10.2025)
 
 ### Additionally
 * Added missing functions `export_with_style()` and `get_excel_range()` to the ?qol overview page. (14.10.2025)
@@ -32,6 +36,7 @@
 * Used lintr package for some code cleanup. (20.10.2025, thanks to @JanMarvin for the advise)
 * Added custom theme section to the README. (23.10.2025)
 * Added message, if a format is applied to a factor variable. (27.10.2025)
+* Excel workbooks will now only be opened in interactive sessions. (29.10.2025, thanks to @JanMarvin)
 
 ### GitHub related
 * Added article comparing this package with SAS. (14.10.2025)

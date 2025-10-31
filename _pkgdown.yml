@@ -52,6 +52,12 @@ reference:
   - rename_pattern
   - add_extension
   - remove_stat_extension
+- title: Retaining
+  contents:
+  - running_number
+  - mark_case
+  - retain_value
+  - retain_sum
 - title: Generate Dummy Data
   contents:
   - dummy_data
@@ -59,7 +65,6 @@ reference:
   contents:
   - inverse
   - setcolorder_by_pattern
-  - running_number
   - drop_type_vars
   - fuse_variables
   - get_excel_range
