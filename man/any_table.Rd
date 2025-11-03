@@ -79,9 +79,10 @@ variables percentages should be computed.}
 
 \item{weight}{Put in a weight variable to compute weighted results.}
 
-\item{order_by}{Determine how the columns will be ordered. "value" orders the results by the
+\item{order_by}{Determine how the columns will be ordered. "values" orders the results by the
 order you provide the variables in values. "stats" orders them by the order under statistics.
-And "interleaved" alternates the stats.}
+"values_stats" is a combination of both. "columns" keeps the order as given in columns
+and "interleaved" alternates the stats.}
 
 \item{titles}{Specify one or more table titles.}
 

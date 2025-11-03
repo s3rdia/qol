@@ -41,9 +41,10 @@
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
-#' @param order_by Determine how the columns will be ordered. "value" orders the results by the
+#' @param order_by Determine how the columns will be ordered. "values" orders the results by the
 #' order you provide the variables in values. "stats" orders them by the order under statistics.
-#' And "interleaved" alternates the stats.
+#' "values_stats" is a combination of both. "columns" keeps the order as given in columns
+#' and "interleaved" alternates the stats.
 #' @param titles Specify one or more table titles.
 #' @param footnotes Specify one or more table footnotes.
 #' @param var_labels A list in which is specified which label should be printed for
@@ -519,9 +520,9 @@ any_table <- function(data_frame,
     }
 
     # Correct nesting option if not set right
-    if (!order_by %in% c("values", "stats", "interleaved")){
-        message(" ! WARNING: Order by option '", order_by, "' doesn't exist. Options 'values', 'stats' and 'interleaved'\n",
-                "            are available. Order by will be set to 'stats'.")
+    if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved")){
+        message(" ! WARNING: Order by option '", order_by, "' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'\n",
+                "            and 'interleaved' are available. Order by will be set to 'stats'.")
         order_by <- "stats"
     }
 
@@ -788,11 +789,6 @@ any_table <- function(data_frame,
     # can only be computed after summarise_plus and therefor isn't ordered.
     any_tab <- any_tab |> setcolorder_by_pattern(statistics)
 
-    # Reorder variables by provided values if option is TRUE
-    if (order_by == "values"){
-        any_tab <- any_tab |> setcolorder_by_pattern(values)
-    }
-
     # Get value variable names
     if (length(by) == 0){
         value_vars <- any_tab |> inverse(c(variables, "TYPE", "TYPE_NR", "DEPTH"))
@@ -918,7 +914,8 @@ any_table <- function(data_frame,
             combi_df <- combi_df |>
                 collapse::fsubset(TYPE == subset_type) |>
                 data.table::setcolorder(current_combi, before = 1) |>
-                data.table::setorderv(col_combi_vars, na.last = TRUE)
+                data.table::setorderv(col_combi_vars, na.last = TRUE) |>
+                data.table::setorderv(row_combi_vars)
 
             # Rename the row variables to something neutral. In the next steps the
             # data frame is puzzled back together, but the thing is, that the row
@@ -975,7 +972,7 @@ any_table <- function(data_frame,
             combi_df[, row_var_cols][is.na(combi_df[, row_var_cols])] <- style[["na_symbol"]]
 
             # Sort interleaved
-            if (order_by == "interleaved"){
+            if (tolower(order_by) == "interleaved"){
                 combi_df <- combi_df |> order_interleaved(statistics)
             }
 
@@ -1077,6 +1074,16 @@ any_table <- function(data_frame,
 
     # Put all computed data frames below each other to form a final result data frame
     any_tab <- data.table::rbindlist(part_combi_list, fill = TRUE)
+
+    # Reorder variables according to statistics
+    if (tolower(order_by) == "stats" || tolower(order_by) == "values_stats"){
+        any_tab <- any_tab |> setcolorder_by_pattern(statistics)
+    }
+
+    # Reorder variables by provided values
+    if (tolower(order_by) == "values" || tolower(order_by) == "values_stats"){
+        any_tab <- any_tab |> setcolorder_by_pattern(values)
+    }
 
     # After binding together the data frames it can happen, that some of the new var
     # variables end up at the end of the data frame instead of the front. Therefor

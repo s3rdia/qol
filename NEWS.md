@@ -14,6 +14,7 @@
 * `discrete_format()`: Implemented keyword "other" with which one can catch any other value not covered by the explicitly specified values. (27.10.2025)
 * `any_table()`: Now returns styling meta information as a third list element. This meta information can be used by `combine_into_workbook()`. (26.10.2025)
 * `any_table()`: Now supports underscores in variable names. (29.10.2025)
+* `any_table()`: Added new column ordering possibilities by "columns" or "values_stats". (03.11.2025)
 
 ### Fixed
 * In `any_table()` the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)
@@ -22,6 +23,8 @@
 * Fixed typos in frequencies examples, where it said "frequency" instead of "frequencies". (18.10.2025)
 * In Excel outputs the number stored as text error is now ignored. (19.10.2025, thanks to @JanMarvin)
 * Fixed table length captured with too many rows. (19.10.2025)
+* `any_table()`: Fixed order_by stats not working as intended in some cases. (03.11.2025)
+* `any_table()`: Fixed table rows not ordered correctly in some cases. (03.11.2025)
 
 ### Changed functionality
 * In `excel_output_style()` the options `column_widths` and `row_heights` now start at the first column/row instead of the beginning of the table. (19.10.2025)
@@ -37,6 +40,7 @@
 * Added custom theme section to the README. (23.10.2025)
 * Added message, if a format is applied to a factor variable. (27.10.2025)
 * Excel workbooks will now only be opened in interactive sessions. (29.10.2025, thanks to @JanMarvin)
+* Corrected typos in snippets. (03.11.2025)
 
 ### GitHub related
 * Added article comparing this package with SAS. (14.10.2025)

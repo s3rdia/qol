@@ -97,7 +97,7 @@ snippet cross
 snippet any
     any_table(rows        = c("var1 + var2 + ...", "var1"),
               columns     = c("var3", "var3 + var4 + ..."),
-              values.     = c("value_var1", "value_var2")
+              values      = c("value_var1", "value_var2"),
               statistics  = c("sum", "pct_group", "pct_value", "freq"),
               pct_group   = c("var1", "var2"),
               pct_value   = list(new_var = "numerator / denominator"),
@@ -106,7 +106,7 @@ snippet any
               footnotes   = c(),
               var_labels  = list("var1" = "My label", ...),
               stat_labels = list("pct" = "%"),
-              box         = ""
+              box         = "",
               weight      = weight_var)
 }
 }

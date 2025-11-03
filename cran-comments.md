@@ -15,6 +15,7 @@ New functionality
 * discrete_format(): Implemented keyword "other" with which one can catch any other value not covered by the explicitly specified values.
 * any_table(): Now returns styling meta information as a third list element. This meta information can be used by combine_into_workbook().
 * any_table(): Now supports underscores in variable names.
+* any_table(): Added new column ordering possibilities by "columns" or "values_stats".
 
 Fixed
 * In any_table() the header and table row heights as well as the column widths set by the style option where 1 row/column to short.
@@ -23,6 +24,8 @@ Fixed
 * Fixed typos in frequencies examples, where it said "frequency" instead of "frequencies".
 * In Excel outputs the number stored as text error is now ignored.
 * Fixed table length captured with too many rows.
+* any_table(): Fixed order_by stats not working as intended in some cases.
+* any_table(): Fixed table rows not ordered correctly in some cases.
 
 Changed functionality
 * In excel_output_style() the options column_widths and row_heights now start at the first column/row instead of the beginning of the table.
@@ -37,6 +40,7 @@ Additionally
 * Used lintr package for some code cleanup.
 * Added custom theme section to the README.
 * Added message, if a format is applied to a factor variable.
+* Corrected typos in snippets.
 
 ## R CMD check results
 
