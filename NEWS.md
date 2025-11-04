@@ -25,6 +25,7 @@
 * Fixed table length captured with too many rows. (19.10.2025)
 * `any_table()`: Fixed order_by stats not working as intended in some cases. (03.11.2025)
 * `any_table()`: Fixed table rows not ordered correctly in some cases. (03.11.2025)
+* `any_table()`: Depending on variable constellation and ordering of the column header it could happen, that the header wasn't merged correct in the Excel workbook. This was fixed. (04.11.2025)
 
 ### Changed functionality
 * In `excel_output_style()` the options `column_widths` and `row_heights` now start at the first column/row instead of the beginning of the table. (19.10.2025)
