@@ -354,6 +354,17 @@ test_that("any_table with pre summarised data", {
     expect_equal(length(result_list), 3)
 })
 
+
+test_that("any_table with no column variables", {
+    result_list <- suppressMessages(dummy_df |>
+           any_table(rows    = "age",
+                     values  = weight,
+                     print   = FALSE))
+
+    expect_type(result_list, "list")
+    expect_equal(length(result_list), 3)
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -391,15 +402,6 @@ test_that("any_table aborts with no valid row variables", {
                      columns = "sex",
                      values  = weight,
                      print   = FALSE), " X ERROR: No valid row variables provided")
-})
-
-
-test_that("any_table aborts with no valid column variables", {
-    expect_message(result_list <- dummy_df |>
-           any_table(rows    = "age",
-                     columns = "",
-                     values  = weight,
-                     print   = FALSE), " X ERROR: No valid column variables provided")
 })
 
 

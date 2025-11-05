@@ -7,7 +7,7 @@
 any_table(
   data_frame,
   rows,
-  columns,
+  columns = "",
   values,
   statistics = c("sum"),
   pct_group = c(),

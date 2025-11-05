@@ -259,7 +259,7 @@
 #' @export
 any_table <- function(data_frame,
                       rows,
-                      columns,
+                      columns        = "",
                       values,
                       statistics     = c("sum"),
                       pct_group      = c(),
@@ -372,8 +372,12 @@ any_table <- function(data_frame,
 
     if (length(columns) == 1){
         if (columns == ""){
-            message(" X ERROR: No valid column variables provided. Any table will be aborted.")
-            return(invisible(NULL))
+            # Create empty pseudo variable to let the rest of the program run as normal
+            data_frame[[".temp.var"]] <- 1
+            columns    <- ".temp.var"
+            col_vars   <- ".temp.var"
+            var_labels <- c(var_labels, ".temp.var" = "")
+            formats[[".temp.var"]] <- suppressMessages(discrete_format(" " = 1))
         }
     }
 
@@ -531,7 +535,7 @@ any_table <- function(data_frame,
         invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
 
         if (length(invalid_pct) > 0){
-            message(" ! WARNING: The variable '", invalid_pct, "' provided as pct_group is not part of the row and column variables.\n",
+            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as pct_group is not part of the row and column variables.\n",
                     "            The variable will be omitted.")
 
             pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
@@ -738,7 +742,7 @@ any_table <- function(data_frame,
             # Join percentages to the main data frame
             any_tab <- any_tab |>
                 collapse::join(group_tab, on = merge_vars, how = "left",
-                               verbose = FALSE)
+                               verbose = FALSE, overid = 2)
         }
         rm(group, group_tab)
     }
@@ -1079,7 +1083,7 @@ any_table <- function(data_frame,
                 if (is.null(any_header)){
                     # Remove row header columns from column header data frame
                     row_header_var_count <- length(id_vars) + 1
-                    any_header <- col_header_df[, -(1:row_header_var_count)]
+                    any_header <- col_header_df[, -(1:row_header_var_count), drop = FALSE]
                 }
                 # Following iterations
                 else{
@@ -1302,9 +1306,9 @@ format_any_excel <- function(wb,
     # Remove empty statistics rows, but keep multi_header with statistics because the information
     # is needed below for applying the correct number formats.
     column_header <- multi_header |> set_statistic_labels(stat_labels)
-    column_header <- column_header[rowSums(column_header == "") != ncol(column_header), ]
+    column_header <- column_header[rowSums(column_header == "") != ncol(column_header), , drop = FALSE]
 
-    stats_row <- multi_header[nrow(multi_header), ]
+    stats_row <- multi_header[nrow(multi_header), , drop = FALSE]
 
     # Get table ranges
     any_ranges <- get_any_tab_ranges(any_tab, column_header, stats_row,
@@ -1374,7 +1378,7 @@ format_any_excel <- function(wb,
         # Merge column and row headers
         monitor_df <- monitor_df |> monitor_next("Excel format col headers", "Format")
         wb <- wb |>
-            handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]])], any_ranges)
+            handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]]), drop = FALSE], any_ranges)
 
         monitor_df <- monitor_df |> monitor_next("Excel format row headers", "Format")
         wb <- wb |>
@@ -1585,11 +1589,12 @@ build_multi_header <- function(var_names,
     # Drop completely empty rows
     if (nrow(header_matrix) > 1){
         header_matrix <- data.table::as.data.table(
-            header_matrix[rowSums(header_matrix != "") > 0, colSums(header_matrix != "") > 0, drop = FALSE])
+            header_matrix[rowSums(header_matrix != "" & header_matrix != " ") > 0,
+                          colSums(header_matrix != "" & header_matrix != " ") > 0, drop = FALSE])
     }
     else{
         header_matrix <- data.table::as.data.table(
-            header_matrix[, colSums(header_matrix != "") > 0, drop = FALSE])
+            header_matrix[, colSums(header_matrix != "" & header_matrix != " "), drop = FALSE])
     }
 
     # Replace NA values

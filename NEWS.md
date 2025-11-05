@@ -15,6 +15,7 @@
 * `any_table()`: Now returns styling meta information as a third list element. This meta information can be used by `combine_into_workbook()`. (26.10.2025)
 * `any_table()`: Now supports underscores in variable names. (29.10.2025)
 * `any_table()`: Added new column ordering possibilities by "columns" or "values_stats". (03.11.2025)
+* `any_table()`: Can now output tables even though no column variables are specified. (05.11.2025)
 
 ### Fixed
 * In `any_table()` the header and table row heights as well as the column widths set by the style option where 1 row/column to short. (14.10.2025)
@@ -26,6 +27,7 @@
 * `any_table()`: Fixed order_by stats not working as intended in some cases. (03.11.2025)
 * `any_table()`: Fixed table rows not ordered correctly in some cases. (03.11.2025)
 * `any_table()`: Depending on variable constellation and ordering of the column header it could happen, that the header wasn't merged correct in the Excel workbook. This was fixed. (04.11.2025)
+* `any_table()`: Doesn't run into an error, if the table only consists of one value column. (05.11.2025)
 
 ### Changed functionality
 * In `excel_output_style()` the options `column_widths` and `row_heights` now start at the first column/row instead of the beginning of the table. (19.10.2025)
