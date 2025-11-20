@@ -1,4 +1,4 @@
-# qol 1.1.0 - DEVELOPMENT
+# qol 1.1.0 - CRAN release on 20.11.2025
 
 ### New functions
 * `build_master()`: Reads a given folder structure, which contains scripts, and builds a master script as a markdown file. (18.10.2025)
@@ -51,7 +51,7 @@
 * Added example themes with corresponding code. (23.10.2025)
 
 
-# qol 1.0.2 
+# qol 1.0.2 - CRAN release on 14.10.2025
 
 ### DESCRIPTION file
 * Fixed brackets in DESCRIPTION so that auto linking works.
