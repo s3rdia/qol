@@ -1504,7 +1504,7 @@ set_col_variable_labels <- function(column_header, var_labels){
         }
 
         # Replace variable texts with provided labels
-        column_header <- gsub(name, label, column_header)
+        column_header[,] <- gsub(name, label, as.matrix(column_header))
     }
 
     # If header only consists of one row it gets converted to a vector when using gsub above.

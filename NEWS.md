@@ -1,3 +1,9 @@
+# qol 1.1.1 - DEVELOPMENT
+
+### Fixed
+* `any_table()`: Fixed multi layerd column header labels where not applied correct. (28.11.2025)
+
+
 # qol 1.1.0 - CRAN release on 20.11.2025
 
 ### New functions
