@@ -241,6 +241,43 @@ combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8,
                       file = "C:/My_folder/My_workbook.xlsx")
 ```
 
+## One Function to Join Them All
+
+Join two or more data frames together in one operation with multiple different join methods and join on differently named variables.
+Available methods are: left, right, inner, full, outer, left_inner, right_inner.
+
+```{r join, eval = FALSE}
+library(qol)
+
+# Simple join
+df1 <- data.frame(key = c(1, 1, 1, 2, 2, 2),
+                  a   = c("a", "a", "a", "a", "a", "a"))
+
+df2 <- data.frame(key = c(2, 3),
+                  b   = c("b", "b"))
+
+left_joined <- multi_join(list(df1, df2), on = "key")
+
+# Joining more than two data frames on different variable names with different methods
+df1b <- data.frame(key1 = c(1, 1, 1, 2, 2, 2),
+                   key2 = c("a", "a", "a", "a", "a", "a"),
+                   a    = c("a", "a", "a", "a", "a", "a"))
+
+df2b <- data.frame(var1 = c(1, 2),
+                   var2 = c("a", "a"),
+                   c    = c("c", "c"))
+
+df3b <- data.frame(any  = c(2, 3),
+                   name = c("a", "a"),
+                   b    = c("b", "b"))
+
+multiple_joined3 <- multi_join(list(df1b, df2b, df3b),
+                               on = list(df1b = c("key1", "key2"),
+                                         df2b = c("var1", "var2"),
+                                         df3b = c("any", "name")),
+                               how = c("left", "right"))
+```
+
 ## Readability
 
 There are also some functions which enhance the readability of the code. For example if - else if - else statements like in other languages:

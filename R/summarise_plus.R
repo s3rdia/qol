@@ -42,7 +42,7 @@
 #' @param merge_back Newly summarised variables can be merged back to the original
 #' data frame if TRUE. Only works if nested = "deepest and no formats are defined.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the class variables.
-#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the
+#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the
 #' functions time consumption.
 #' @param notes TRUE by default. Prints notifications about NA values produced by
 #' class variables during summarise.

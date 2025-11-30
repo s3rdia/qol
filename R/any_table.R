@@ -64,7 +64,7 @@
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output data frame and workbook with meta information.
-#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
+#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
 #'
 #' @details
 #' [any_table()] is based on the 'SAS' procedure Proc Tabulate, which provides

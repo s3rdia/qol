@@ -114,7 +114,7 @@ carry the statistic extension (e.g. "_sum", "_pct") in the variable name.}
 \item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 if one only wants to catch the output data frame and workbook with meta information.}
 
-\item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.}
 }
 \value{
 Returns a list with the data table containing the results for the table, the formatted

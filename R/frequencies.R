@@ -20,7 +20,7 @@
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output data frame.
-#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
+#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
 #'
 #' @details
 #' [frequencies()] is based on the 'SAS' procedure Proc Freq, which provides

@@ -1,5 +1,8 @@
 # qol 1.1.1 - DEVELOPMENT
 
+### New functions
+* `multi_join()`: Join two or more data frames together in one operation. (30.11.2025)
+
 ### Fixed
 * `any_table()`: Fixed multi layerd column header labels where not applied correct. (28.11.2025)
 

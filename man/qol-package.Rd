@@ -44,6 +44,8 @@ Recoding: \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_mul
 
 Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}.
 
+Joining: \code{\link[=multi_join]{multi_join()}}
+
 If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}.
 
 Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}.

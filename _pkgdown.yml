@@ -36,6 +36,9 @@ reference:
   contents:
   - keep
   - dropp
+- title: Joining
+  contents:
+  - multi_join
 - title: If-Statements
   contents:
   - if.

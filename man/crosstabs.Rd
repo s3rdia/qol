@@ -58,7 +58,7 @@ excel and excel_nostyle.}
 \item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 if one only wants to catch the output data frame.}
 
-\item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.}
 }
 \value{
 Returns a data tables containing the results for the cross table.

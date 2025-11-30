@@ -36,6 +36,8 @@
 #'
 #' Selecting: [keep()], [dropp()].
 #'
+#' Joining: [multi_join()]
+#'
 #' If-statement: [if.()], [else_if.()], [else.()].
 #'
 #' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()].

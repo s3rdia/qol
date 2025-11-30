@@ -66,7 +66,7 @@ data frame if TRUE. Only works if nested = "deepest and no formats are defined.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the class variables.}
 
-\item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
 functions time consumption.}
 
 \item{notes}{TRUE by default. Prints notifications about NA values produced by
