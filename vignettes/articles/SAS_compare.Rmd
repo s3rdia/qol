@@ -13,7 +13,7 @@ SAS is a flagship when it comes to creating massive descriptive tables with litt
 
 # The Concept of Formats
 
-Formats are like molds or stencils to put the data through. In SAS formats are defined with the procedure Proc Formats, which is adapted with discrete_format() and interval_format(). Here you can define, which values should be transferred into which result categories. This is completely detached from the data your working with.
+Formats are like molds or stencils to put the data through. In SAS formats are defined with the procedure Proc Formats, which is adapted with `discrete_format()` and `interval_format()`. Here you can define, which values should be transferred into which result categories. This is completely detached from the data your working with.
 
 The great thing about this is, that one can not only label and recode values, but one can also define so called multilabels. Meaning, one original value can be transferred into multiple result categories.
 
@@ -40,9 +40,9 @@ Proc Format;
         00 - 11 = 'under 12'
         00 - 17 = 'under 18'
         18 - 24 = '18 to under 25'
-        25 - 49 = '25 to under 50'
-        50 - 64 = '50 to under 65'
-        65 - 95 = '65 and older'
+        25 - 54 = '25 to under 55'
+        55 - 64 = '55 to under 65'
+        65 - 99 = '65 and older'
         80 - 99 = '80 and older';
 
 Run;
@@ -181,7 +181,8 @@ In this function the way of writing things goes a bit apart, but the core mechan
 What should we do, if we wanted to produce the same table multiple times, but every time filtered by an expression of another variable? I need to write some fancy loops, right? ... right? Give me a second:
 
 ```{R, eval = FALSE}
-# Let's try it with the single states of Germany, Germany as a whole and eastern and western states.
+# Let's try it with the single states of Germany, Germany as a whole
+# and eastern and western states.
 state. <- discrete_format(
     "Germany"                       = 1:16,
     "Schleswig-Holstein"            = 1,
@@ -204,7 +205,8 @@ state. <- discrete_format(
     "East"                          = 11:16)
 
 # Now produce the same table as above for every expression of the format above. See the difference?
-# There is nothing more to it.
+# Now produce the same table as above for every expression of the format above.
+# See the difference? There is nothing more to it.
 my_data |> any_table(rows       = c("sex", "sex + age"),
                      columns    = "year",
 					 by         = state,

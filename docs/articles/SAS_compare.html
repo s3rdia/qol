@@ -38,7 +38,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/SAS_compare.html">How Does qol Compare to SAS?</a></li>
+<li><a class="dropdown-item" href="../articles/further_compare.html">A Further Comparison Of qol And SAS</a></li>
+    <li><a class="dropdown-item" href="../articles/SAS_compare.html">How Does qol Compare to SAS?</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -78,9 +79,10 @@ R.</p>
 </h2>
 <p>Formats are like molds or stencils to put the data through. In SAS
 formats are defined with the procedure Proc Formats, which is adapted
-with discrete_format() and interval_format(). Here you can define, which
-values should be transferred into which result categories. This is
-completely detached from the data your working with.</p>
+with <code><a href="../reference/formats.html">discrete_format()</a></code> and <code><a href="../reference/formats.html">interval_format()</a></code>.
+Here you can define, which values should be transferred into which
+result categories. This is completely detached from the data your
+working with.</p>
 <p>The great thing about this is, that one can not only label and recode
 values, but one can also define so called multilabels. Meaning, one
 original value can be transferred into multiple result categories.</p>
@@ -116,9 +118,9 @@ creating larger and more complex outputs at the same time.</p>
         00 - 11 = 'under 12'
         00 - 17 = 'under 18'
         18 - 24 = '18 to under 25'
-        25 - 49 = '25 to under 50'
-        50 - 64 = '50 to under 65'
-        65 - 95 = '65 and older'
+        25 - 54 = '25 to under 55'
+        55 - 64 = '55 to under 65'
+        65 - 99 = '65 and older'
         80 - 99 = '80 and older';
 
 Run;</code></pre>
@@ -280,7 +282,8 @@ get more complex than what you see above. Don’t believe me?</p>
 times, but every time filtered by an expression of another variable? I
 need to write some fancy loops, right? … right? Give me a second:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Let's try it with the single states of Germany, Germany as a whole and eastern and western states.</span></span>
+<code class="sourceCode R"><span><span class="co"># Let's try it with the single states of Germany, Germany as a whole</span></span>
+<span><span class="co"># and eastern and western states.</span></span>
 <span><span class="va">state.</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Germany"</span>                       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">16</span>,</span>
 <span>    <span class="st">"Schleswig-Holstein"</span>            <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -302,8 +305,8 @@ need to write some fancy loops, right? … right? Give me a second:</p>
 <span>    <span class="st">"Thuringia"</span>                     <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>    <span class="st">"East"</span>                          <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Now produce the same table as above for every expression of the format above. See the difference?</span></span>
-<span><span class="co"># There is nothing more to it.</span></span>
+<span><span class="co"># Now produce the same table as above for every expression of the format above.</span></span>
+<span><span class="co"># See the difference? There is nothing more to it.</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"sex + age"</span><span class="op">)</span>,</span>
 <span>                     columns    <span class="op">=</span> <span class="st">"year"</span>,</span>
 <span>                     by         <span class="op">=</span> <span class="va">state</span>,</span>

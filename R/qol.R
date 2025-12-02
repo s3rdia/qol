@@ -66,9 +66,9 @@
 #'                    nesting    = "deepest")
 #'
 #' snippet if.
-#'          if.(condition, var, value) |>
-#'     else_if.(condition, var, value) |>
-#'     else.   (           var, value)
+#'          if.(condition, var = value) |>
+#'     else_if.(condition, var = value) |>
+#'     else.   (           var = value)
 #'
 #' snippet freq
 #'     frequencies(variables = c(var1, var2, ...),
