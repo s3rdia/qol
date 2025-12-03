@@ -369,4 +369,36 @@ MyData |> frequencies(Age,
                       footnotes = "This is a footnote")
 ```
 
-These are just very basic examples. For further details you can look up the functions in the reference.
+# Export Data Frames With Style
+
+There are occasions when you don't want to tabulate your data, but just print out the data frame you put together. There are multiple ways to do this, Proc Export is probably the most straight forward one:
+
+```{sas, eval = FALSE}
+Proc Export Data = Work.MyData;
+
+    Outfile = "C:\MyFile.xlsx";
+    DBMS = xlsx;
+
+Run;
+```
+
+This in itself is no revolution, many R packages already can do this. But to combine the simplicity of this export with the simplicity of the already established styling options from the tabulation functions, offers new options:
+
+```{R, eval = FALSE}
+MyData |> export_with_style(titles    = "This is a title",
+                            footnotes = "This is a footnote",
+                            style     = excel_output_style(header_back_color = "0000FF",
+                                                           header_font_color = "FF0000",
+                                                           font              = "Times New Roman",
+                                                           title_font_size   = 20))
+```
+
+By the way: All tabulation functions and the above export function from the qol package generate the named regions 'table' and 'data' in the Excel output, which can easily be read back in with the help of the [openxlsx2](https://github.com/JanMarvin/openxlsx2) package:
+
+```{R, eval = FALSE}
+MyData <- wb_to_df(file  = "C:/MyFile.xlsx",
+                   sheet = 1,
+                   named_region = "data")
+```
+
+These are just very basic examples. For further details you can look up the functions in the [reference](https://s3rdia.github.io/qol/reference/index.html).
