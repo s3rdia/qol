@@ -1066,7 +1066,7 @@ any_table <- function(data_frame,
 
                 # Fill header rows with column variable names
                 for (var_index in seq_along(col_combi_vars)){
-                    col_header_df[var_index, ] <- col_combi_vars[[var_index]]
+                    col_header_df[var_index, ] <- gsub("!!!", "_", col_combi_vars[[var_index]])
                 }
 
                 # If the header has fewer rows than the maximum header rows, fill up the header

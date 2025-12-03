@@ -204,7 +204,6 @@ state. <- discrete_format(
     "Thuringia"                     = 16,
     "East"                          = 11:16)
 
-# Now produce the same table as above for every expression of the format above. See the difference?
 # Now produce the same table as above for every expression of the format above.
 # See the difference? There is nothing more to it.
 my_data |> any_table(rows       = c("sex", "sex + age"),
