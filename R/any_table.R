@@ -552,25 +552,6 @@ any_table <- function(data_frame,
             return(invisible(NULL))
         }
 
-        # Check for too many underscores
-        for (variable in values){
-            underscores <- lengths(gregexpr("_", variable, fixed = TRUE))
-
-            # More than one underscore only allowed with percentages
-            if (underscores > 1){
-                if (any(grepl("pct_", variable)) && underscores == 2){
-                    # Do nothing because in this case multiple underscores are okay
-                }
-                else if (any(grepl("freq_g0", variable)) && underscores == 2){
-                    # Do nothing because in this case multiple underscores are okay
-                }
-                else{
-                    message(" X ERROR: Too many underscores in values variable names. Execution will be aborted.")
-                    return(invisible(NULL))
-                }
-            }
-        }
-
         # Check if value variables have statistics extension
         extensions <- c("_sum", "_pct_group", "_pct_total", "_pct_value", "_pct", "_freq_g0",
                         "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
@@ -594,7 +575,7 @@ any_table <- function(data_frame,
         weight     <- NULL
         formats    <- list()
 
-        rm(underscores, extensions, pattern)
+        rm(extensions, pattern)
     }
 
     rm(invalid_by, invalid_class, invalid_columns, invalid_rows, invalid_values,
@@ -863,6 +844,7 @@ any_table <- function(data_frame,
     rows       <- replace_except(rows,       "_", "!!!", extensions)
     columns    <- replace_except(columns,    "_", "!!!", extensions)
     value_vars <- replace_except(value_vars, "_", "!!!", extensions)
+    value_sort <- replace_except(values,     "_", "!!!", extensions)
     names(any_tab)    <- replace_except(names(any_tab),    "_", "!!!", extensions)
     any_tab[["TYPE"]] <- replace_except(any_tab[["TYPE"]], "_", "!!!", extensions)
 
@@ -1118,8 +1100,8 @@ any_table <- function(data_frame,
 
     # Reorder variables by provided values
     if (tolower(order_by) == "values" || tolower(order_by) == "values_stats"){
-        any_tab    <- any_tab    |> setcolorder_by_pattern(values)
-        any_header <- any_header |> setcolorder_by_pattern(values)
+        any_tab    <- any_tab    |> setcolorder_by_pattern(value_sort)
+        any_header <- any_header |> setcolorder_by_pattern(value_sort)
     }
 
     # After binding together the data frames it can happen, that some of the new var

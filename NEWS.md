@@ -4,7 +4,9 @@
 * `multi_join()`: Join two or more data frames together in one operation. (30.11.2025)
 
 ### Fixed
-* `any_table()`: Fixed multi layerd column header labels where not applied correct. (28.11.2025)
+* `any_table()`: Fixed multi layered column header labels where not applied correct. (28.11.2025)
+* `any_table()`: Fixed incorrect column order when using order_by "values" while variable names have underscores. (04.12.2025)
+* `any_table()`: Using pre summed data now also works, if variable names carry underscores. (04.12.2025)
 
 ### GitHub related
 * Added article comparing this package with SAS even further. (02.12.2025)
