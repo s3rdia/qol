@@ -429,7 +429,7 @@ add_extension <- function(data_frame,
 replace_except <- function(vector,
                            pattern,
                            replacement,
-                           exceptions = NULL) {
+                           exceptions = NULL){
     # Replace the pattern in the exceptions with a pseudo symbol
     except_replace <- gsub(pattern, "&%!", exceptions)
 
@@ -447,4 +447,51 @@ replace_except <- function(vector,
 
     # Reestablish protected pattern
     gsub("&%!", pattern, vector)
+}
+
+
+#' Check If Path Exists And Retrieve Files
+#'
+#' @description
+#' Libname checks if a given path exists and writes a message in the console accordingly.
+#' Optional all files from the given path can be retrieved as a named character vector.
+#'
+#' @param path A folder path.
+#' @param get_files FALSE by default. If TRUE returns a named character vector containing file paths.
+#'
+#' @return
+#' Returns the given file path or a named character vector containing file paths.
+#'
+#' @examples
+#' my_path   <- libname("C:/My_Path/")
+#' file_list <- libname("C:/My_Path/", get_files = TRUE)
+#'
+#' @export
+libname <- function(path,
+                    get_files = FALSE){
+    if (!file.exists(path)){
+        message(" X ERROR: Path does not exist: ", path)
+        return(invisible(NULL))
+    }
+
+    if (get_files){
+        # Retrieve all file paths from provided path
+        files <- list.files(path, full.names = TRUE)
+
+        # Strip paths and only keep file names with extension
+        files <- files[!dir.exists(files)]
+
+        if (length(files) == 0){
+            message(" X ERROR: No files found in directory: ", path)
+            return(invisible(NULL))
+        }
+
+        # Return named character vector
+        message("Filepaths successfully retrieved: ", path)
+        return(setNames(files, basename(files)))
+    }
+
+    message("Path successfully assigned: ", path)
+
+    path
 }

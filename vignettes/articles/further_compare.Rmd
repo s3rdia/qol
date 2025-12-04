@@ -9,6 +9,24 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Checking File Paths
+
+In SAS you have to assign Libraries to have access to a file path. When assigning a Library SAS directly checks, if the given path is valid. Additionally you can view all the SAS data files in the user interface, which are available in a Library:
+
+```{sas, eval = FALSE}
+Libname MyData "C\:My_Path\";
+```
+
+qol also implements a `libname()` function, which basically does a little check on the given path and informs you with the result:
+
+```{R, eval = FALSE}
+# Check if path exists
+my_path <- libname("C/:My_Path/")
+
+# Retrieve a named character vector of full file paths
+my_path <- libname("C/:My_Path/", get_files = TRUE)
+```
+
 # More Than Just 'if'
 
 SAS makes use of if-statements like most other languages do. The most common use case should be to generate a new variable or to be more specific: to assign a value to a variable conditionally. Inside a Data-Step you can write single if-statements or connect multiple to a whole block. You can also make use of 'else if', which is only executed, if no other if-condition from before was true. And there is 'else' which is executed, if no other condition in a block became true.

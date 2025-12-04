@@ -66,6 +66,7 @@ reference:
   - dummy_data
 - title: Small Helpers
   contents:
+  - libname
   - inverse
   - setcolorder_by_pattern
   - drop_type_vars

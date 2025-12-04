@@ -2,6 +2,7 @@
 
 ### New functions
 * `multi_join()`: Join two or more data frames together in one operation. (30.11.2025)
+* `libname()`: Check if path exists and retrieve files. (04.12.2025)
 
 ### Fixed
 * `any_table()`: Fixed multi layered column header labels where not applied correct. (28.11.2025)
