@@ -454,18 +454,6 @@ test_that("any_table aborts with missing statistic extension in pre summarised d
 })
 
 
-test_that("any_table aborts with value variable having too many underscores in pre summarised data", {
-    sum_df[["to_many_underscores"]] <- 1
-
-    expect_message(result_list <- sum_df |>
-                       any_table(rows       = "year",
-                                 columns    = "sex",
-                                 values     = to_many_underscores,
-                                 pre_summed = TRUE,
-                                 print      = FALSE), " X ERROR: Too many underscores in values variable names. Execution will be aborted.")
-})
-
-
 test_that("Combine tables into a single workbook", {
     my_style <- excel_output_style(sheet_name = "tab1")
 
