@@ -69,7 +69,7 @@ sex. <- discrete_format(
 ## Massive Outputs: Simple and fast
 
 The package builds on the incredibly fast
-[collapse](https://github.com/SebKrantz/collapse) and
+[collapse](https://github.com/fastverse/collapse) and
 [data.table](https://github.com/Rdatatable/data.table) packages. In
 addition the code is optimized to handle big datasets efficiently with
 the format concept.
