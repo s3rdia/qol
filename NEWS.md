@@ -1,4 +1,4 @@
-# qol 1.1.1 - DEVELOPMENT
+# qol 1.1.1 - CRAN release on 13.12.2025
 
 ### New functions
 * `multi_join()`: Join two or more data frames together in one operation. (30.11.2025)
