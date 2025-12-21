@@ -27,6 +27,10 @@
 #' new_dt6 <- my_data |> keep(var_names)
 #' new_dt7 <- my_data |> dropp(var_names)
 #'
+#' # You can also keep or drop a range of variables
+#' new_dt8 <- my_data |> keep(year, state:income)
+#' new_dt9 <- my_data |> dropp(year, state:income)
+#'
 #' @rdname keep_dropp
 #'
 #' @keywords internal
@@ -42,10 +46,26 @@ NULL
 #' @export
 keep <- function(data_frame, ..., order_vars = FALSE){
     # Convert to character vectors
-    variables <- args_to_char(...)
+    variables_temp <- args_to_char(...)
 
-    if (length(variables) == 0){
+    if (length(variables_temp) == 0){
         return(data_frame)
+    }
+
+    original_order <- names(data_frame)
+    variables      <- character(0)
+
+    # Check if there are any "from":"to" selections and unwrap them
+    for (variable in variables_temp){
+        if (grepl(":", variable, fixed = TRUE)){
+            parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
+
+            variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+        }
+        # If element is just a single variable, add it to the new variable vector
+        else{
+            variables <- c(variables, variable)
+        }
     }
 
     # Check if all variables are part of the data frame
@@ -73,8 +93,8 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     data_frame <- data_frame |> collapse::fselect(variables)
 
     # Order variables
-    if (order_vars){
-        data.table::setcolorder(data_frame, variables)
+    if (!order_vars){
+        data.table::setcolorder(data_frame, original_order, skip_absent = TRUE)
     }
 
     data_frame
@@ -90,10 +110,25 @@ keep <- function(data_frame, ..., order_vars = FALSE){
 #' @export
 dropp <- function(data_frame, ...){
     # Convert to character vectors
-    variables <- args_to_char(...)
+    variables_temp <- args_to_char(...)
 
-    if (length(variables) == 0){
+    if (length(variables_temp) == 0){
         return(data_frame)
+    }
+
+    variables <- character(0)
+
+    # Check if there are any "from":"to" selections and unwrap them
+    for (variable in variables_temp){
+        if (grepl(":", variable, fixed = TRUE)){
+            parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
+
+            variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+        }
+        # If element is just a single variable, add it to the new variable vector
+        else{
+            variables <- c(variables, variable)
+        }
     }
 
     # Check if all variables are part of the data frame

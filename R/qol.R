@@ -34,7 +34,7 @@
 #'
 #' Recoding: [recode()], [recode_multi()].
 #'
-#' Selecting: [keep()], [dropp()].
+#' Selecting: [keep()], [dropp()], [inverse()], [vars_between()].
 #'
 #' Joining: [multi_join()]
 #'
@@ -42,14 +42,14 @@
 #'
 #' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()].
 #'
-#' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()].
+#' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()], [replace_except()].
 #'
 #' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_sum()]
 #'
 #' Generate dummy data: [dummy_data()]
 #'
-#' Small helpers: [libname()], [inverse()], [setcolorder_by_pattern()],
-#' [drop_type_vars()], [fuse_variables()], [get_excel_range()], [replace_except()].
+#' Small helpers: [libname()], [setcolorder_by_pattern()], [drop_type_vars()],
+#' [fuse_variables()], [get_excel_range()].
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].
 #'

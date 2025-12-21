@@ -1,3 +1,19 @@
+# qol 1.1.2 - DEVELOPMENT
+
+### New functions
+* `vars_between()`: Get variable names between two variables in a data frame. (21.12.2025)
+
+### New functionality
+* `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
+* `keep()`/`dropp()`: Now support variable ranges, like "state:income". (21.12.2025)
+
+### Fixed
+* `keep()`: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)
+
+### Additionally
+* Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)
+
+
 # qol 1.1.1 - CRAN release on 13.12.2025
 
 ### New functions

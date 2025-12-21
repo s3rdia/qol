@@ -41,6 +41,19 @@ test_that("Keep more than one variable", {
 })
 
 
+test_that("Keep range of variables", {
+    keep_df <- test_df |> keep(state:age)
+
+    expect_equal(ncol(keep_df), 3)
+
+    expect_true(all(c("state", "sex", "age") %in% names(keep_df)))
+
+    expect_identical(keep_df[["state"]], test_df[["state"]])
+    expect_identical(keep_df[["age"]], test_df[["age"]])
+    expect_identical(keep_df[["sex"]], test_df[["sex"]])
+})
+
+
 test_that("Variables to keep contain a variable name that isn't part of the data frame", {
     expect_message(keep_df1 <- test_df |> keep(year, age, sex, cats, dogs), " ! WARNING: The provided variable to keep")
     keep_df2 <- test_df |> keep(year, age, sex)
@@ -107,6 +120,15 @@ test_that("Drop more than one variable", {
     expect_equal(ncol(drop_df), ncol(test_df) - 3)
 
     expect_true(!all(c("year", "sex", "age") %in% names(drop_df)))
+})
+
+
+test_that("Drop range of variables", {
+    drop_df <- test_df |> dropp(state:age)
+
+    expect_equal(ncol(drop_df), ncol(test_df) - 3)
+
+    expect_true(!all(c("state", "sex", "age") %in% names(drop_df)))
 })
 
 

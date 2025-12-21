@@ -46,5 +46,9 @@ var_names <- c("age", "sex", "income", "weight")
 new_dt6 <- my_data |> keep(var_names)
 new_dt7 <- my_data |> dropp(var_names)
 
+# You can also keep or drop a range of variables
+new_dt8 <- my_data |> keep(year, state:income)
+new_dt9 <- my_data |> dropp(year, state:income)
+
 }
 \keyword{internal}

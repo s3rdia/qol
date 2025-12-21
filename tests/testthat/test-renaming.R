@@ -6,17 +6,6 @@
 dummy_df <- suppressMessages(dummy_data(1000))
 
 
-test_that("Get inverse variable namesfrom data frame works correct", {
-    var_names     <- c("state", "age", "sex", "education")
-    inverse_names <- dummy_df |> inverse(var_names)
-
-    var_count <- length(names(dummy_df))
-
-    expect_equal(length(var_names) + length((inverse_names)), var_count)
-    expect_true(!all(var_names %in% inverse_names))
-})
-
-
 test_that("Add extensions to limited variables", {
     new_names_df <- dummy_df |> add_extension(5, c("sum", "pct"))
 

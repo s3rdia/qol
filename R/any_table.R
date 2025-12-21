@@ -776,10 +776,12 @@ any_table <- function(data_frame,
 
     # Get value variable names
     if (length(by) == 0){
-        value_vars <- any_tab |> inverse(c(variables, "TYPE", "TYPE_NR", "DEPTH"))
+        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH")
+        value_vars <- any_tab |> inverse(var_vector)
     }
     else{
-        value_vars <- any_tab |> inverse(c(variables, "TYPE", "TYPE_NR", "DEPTH", "by_vars", "BY"))
+        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH", "by_vars", "BY")
+        value_vars <- any_tab |> inverse(var_vector)
     }
 
     # Round values according to number formats
@@ -1145,7 +1147,7 @@ any_table <- function(data_frame,
        combinations, current_combi, current_var, flag_interval, index,
        last_number_of_rows, name, new_row_names, row_combi, row_combi_vars, sorted_combi,
        subset_type, group_vars, length_row_header, col_header_df, header_diff,
-       row_header_var_count)
+       row_header_var_count, var_vector)
 
     # Grab all information, which is necessary to format the workbook. This list will be
     # returned at the end and can be grabbed by the workbook combine function.
