@@ -365,6 +365,15 @@ test_that("any_table with no column variables", {
     expect_equal(length(result_list), 3)
 })
 
+
+test_that("any_table throws a warning, if column contains a row variable", {
+    expect_message(result_list <- dummy_df |>
+                       any_table(rows       = "sex",
+                                 columns    = "sex",
+                                 statistics = c("sum"),
+                                 print      = FALSE), " ! WARNING: The provided column variable '")
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################

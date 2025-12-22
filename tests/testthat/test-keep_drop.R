@@ -86,11 +86,11 @@ test_that("Keep without any variables provided", {
 
 
 test_that("Keep with sorted variables", {
-    keep_df <- test_df |> keep(weight, income, age, order_vars = TRUE)
+    unsorted <- test_df |> keep(weight, age)
+    sorted   <- test_df |> keep(weight, age, order_vars = TRUE)
 
-    expect_equal(names(keep_df)[1], "weight")
-    expect_equal(names(keep_df)[2], "income")
-    expect_equal(names(keep_df)[3], "age")
+    expect_equal(names(unsorted)[1], "age")
+    expect_equal(names(sorted)[1], "weight")
 })
 
 ###############################################################################

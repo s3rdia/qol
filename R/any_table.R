@@ -284,7 +284,13 @@ any_table <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    #--------------------------------------------------------------------------
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
+    #--------------------------------------------------------------------------
+
+    ###########################################################################
+    # Early evaluations
+    ###########################################################################
 
     # First convert data frame to data table
     if (!data.table::is.data.table(data_frame)){
@@ -329,6 +335,10 @@ any_table <- function(data_frame,
     # Error handling
     ###########################################################################
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Row variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Get row variables from provided combinations
     row_vars <- unique(trimws(unlist(strsplit(rows, "\\+"))))
 
@@ -337,21 +347,25 @@ any_table <- function(data_frame,
 
     if (length(invalid_rows) > 0){
         message(" X ERROR: The provided row variable '", paste(invalid_rows, collapse = ", "), "' is not part of\n",
-                "          the data frame. Any table will be aborted.")
+                "          the data frame. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     if (length(rows) == 0){
-        message(" X ERROR: No valid row variables provided. Any table will be aborted.")
+        message(" X ERROR: No valid row variables provided. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     if (length(rows) == 1){
         if (rows == ""){
-            message(" X ERROR: No valid row variables provided. Any table will be aborted.")
+            message(" X ERROR: No valid row variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Column variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get row variables from provided combinations
     col_vars <- unique(trimws(unlist(strsplit(columns, "\\+"))))
@@ -361,17 +375,23 @@ any_table <- function(data_frame,
 
     if (length(invalid_columns) > 0){
         message(" X ERROR: The provided column variable '", paste(invalid_columns, collapse = ", "), "' is not part of\n",
-                "          the data frame. Any table will be aborted.")
+                "          the data frame. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
-    if (length(columns) == 0){
-        message(" X ERROR: No valid column variables provided. Any table will be aborted.")
-        return(invisible(NULL))
+    # Make sure there is no row variable that is also a column variable.
+    invalid_columns <- columns[columns %in% rows]
+    columns         <- columns[!columns %in% rows]
+
+    if (length(invalid_columns) > 0){
+        message(" ! WARNING: The provided column variable '", paste(invalid_columns, collapse = ", "), "' is also part of\n",
+                "            the row variables. This variable will be omitted as column variable.")
+
+        col_vars <- col_vars[!col_vars %in% row_vars]
     }
 
-    if (length(columns) == 1){
-        if (columns == ""){
+    if (length(columns) <= 1){
+        if (length(columns) == 0 || columns == ""){
             # Create empty pseudo variable to let the rest of the program run as normal
             data_frame[[".temp.var"]] <- 1
             columns    <- ".temp.var"
@@ -380,6 +400,10 @@ any_table <- function(data_frame,
             formats[[".temp.var"]] <- suppressMessages(discrete_format(" " = 1))
         }
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # By variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
     by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by), width.cutoff = 500L)))
@@ -412,16 +436,20 @@ any_table <- function(data_frame,
 
     if (length(invalid_by) > 0){
         message(" X ERROR: The provided by variable '", paste(invalid_by, collapse = ", "), "' is also part of\n",
-                "          the row and column variables which is not allowed. Any table will be aborted.")
+                "          the row and column variables which is not allowed. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     if (length(by) == 1){
         if (by == ""){
-            message(" X ERROR: No valid by variables provided. Any table will be aborted.")
+            message(" X ERROR: No valid by variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Weight
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Create temporary weight column if none is provided.
     # Also get the name of the weight variable as string.
@@ -454,6 +482,10 @@ any_table <- function(data_frame,
         data_frame[[".temp_weight"]] <- 1
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Values
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Convert to character vectors
     values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values), width.cutoff = 500L)))
 
@@ -473,12 +505,12 @@ any_table <- function(data_frame,
 
     # If no value variables are provided abort
     if (length(values) == 0){
-        message(" X ERROR: No values provided.")
+        message(" X ERROR: No values provided. Tabulation will be aborted.")
         return(invisible(NULL))
     }
     else if (length(values) == 1){
         if (values == ""){
-            message(" X ERROR: No values provided.")
+            message(" X ERROR: No values provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -489,7 +521,7 @@ any_table <- function(data_frame,
 
     if (length(invalid_class) > 0){
         message(" x ERROR: The provided row/column variable '", paste(invalid_class, collapse = ", "), "' is also part of\n",
-                "          the analysis variables. Any table will be aborted.")
+                "          the analysis variables. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
@@ -502,7 +534,7 @@ any_table <- function(data_frame,
     }
 
     if (length(values) == 0){
-        message(" X ERROR: No valid analysis variables provided. Any table will be aborted.")
+        message(" X ERROR: No valid analysis variables provided. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
@@ -512,6 +544,10 @@ any_table <- function(data_frame,
     if (length(provided_values) > length(values)){
         message(" ! WARNING: Some analysis variables are provided more than once. The doubled entries will be omitted.")
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Check for invalid output option
     if (!tolower(output) %in% c("excel", "excel_nostyle")){
@@ -530,6 +566,10 @@ any_table <- function(data_frame,
         order_by <- "stats"
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Percentages
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Remove missing variables from pct_group
     if ("pct_group" %in% tolower(statistics)){
         invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
@@ -544,11 +584,15 @@ any_table <- function(data_frame,
         rm(invalid_pct)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Pre summarised data
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # In case of using a pre summarised data frame, underscores are only allowed if they carry
     # the statistics extension afterwards.
     if (pre_summed){
         if (!"TYPE" %in% names(data_frame)){
-            message(" X ERROR: The pre summarised data needs the TYPE variable generated by summarise_plus. Any table will be aborted.")
+            message(" X ERROR: The pre summarised data needs the TYPE variable generated by summarise_plus. Tabulation will be aborted.")
             return(invisible(NULL))
         }
 
@@ -585,8 +629,14 @@ any_table <- function(data_frame,
     # Any tabulation starts
     ###########################################################################
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
+    #--------------------------------------------------------------------------
     message("\n > Computing stats.")
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Some preparations beforehand
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Put together vector of grouping variables
     group_vars <- c(by, variables)
@@ -610,6 +660,10 @@ any_table <- function(data_frame,
         combinations <- as.vector(outer(by, combinations, paste, sep = "+"))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Summarise data according to provided variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Compute statistics
     if (!pre_summed){
         any_tab <- suppressMessages(data_frame |>
@@ -631,7 +685,7 @@ any_table <- function(data_frame,
     }
 
     if (is.null(any_tab)){
-        message(" X ERROR: Any table could not be computed. Execution will be aborted.")
+        message(" X ERROR: Table could not be computed. Execution will be aborted.")
         return(invisible(NULL))
     }
 
@@ -647,6 +701,10 @@ any_table <- function(data_frame,
     if (pre_summed){
         any_tab <- any_tab |> dropp(".temp_weight")
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # In case of by variables fuse them into one
     if (length(by) > 0){
@@ -685,10 +743,16 @@ any_table <- function(data_frame,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle group percentages
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # In case multiple group percentages should be computed, evaluate them in a loop
     # and join them to the main data frame.
     if (length(pct_group) > 1){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Additional group pct", "Summary")
+        #----------------------------------------------------------------------
 
         for (group in seq_along(pct_group)){
             # First group was computed before so omit it here
@@ -728,10 +792,14 @@ any_table <- function(data_frame,
         rm(group, group_tab)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle percentages based on value variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # In case only pct_value was selected as statistic
     if ("pct_value" %in% tolower(statistics) && length(statistics) == 1){
         message(" X ERROR: pct_value can only be computed in combination with statistic\n",
-                "          'sum'. Since no other statistic is provided any table will be aborted.")
+                "          'sum'. Since no other statistic is provided tabulation will be aborted.")
         return(invisible(NULL))
     }
     # In case percentages based on value variables should be computed
@@ -769,6 +837,10 @@ any_table <- function(data_frame,
     }
 
     rm(data_frame)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Round values
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Reorder variables according to statistics. This is necessary because pct_value
     # can only be computed after summarise_plus and therefor isn't ordered.
@@ -818,10 +890,15 @@ any_table <- function(data_frame,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Tear apart the the summarised data frame by row and column combinations and
     # transpose columns to generate user defined combination. At the end put all
     # the pieces back together to form a fully printable result data frame.
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Transform table", "Transform")
+    #--------------------------------------------------------------------------
 
     part_combi_list       <- list()
     header_combi_list     <- list()
@@ -855,7 +932,7 @@ any_table <- function(data_frame,
 
     # Get number of column header variables by getting the maximum number of + signs in the
     # column variables.
-    max_plus <- max(sapply(gregexpr("\\+", columns), function(var_to_test) {
+    max_plus <- max(sapply(gregexpr("\\+", columns), function(var_to_test){
         if (var_to_test[1] == -1){
             1
         }
@@ -871,6 +948,11 @@ any_table <- function(data_frame,
 
         # Get current single variables from row combination
         row_combi_vars <- unique(trimws(unlist(strsplit(row_combi, "\\+"))))
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # For every combination of row variables loop through all column variable
+        # combinations
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         for (col_combi in columns){
             # Get current single variables from column combination
@@ -957,6 +1039,10 @@ any_table <- function(data_frame,
                     paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
             }
 
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # Main transposition
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
             # Pivot to wider format, which basically is the final format to print the data
             combi_df <- combi_df |>
                 collapse::pivot(id     = id_vars,
@@ -976,7 +1062,10 @@ any_table <- function(data_frame,
                 combi_df <- combi_df |> order_interleaved(statistics)
             }
 
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             # Join different column results together
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
             if (is.null(combined_col_df)){
                 row_labels <- c()
 
@@ -1041,9 +1130,12 @@ any_table <- function(data_frame,
                 combined_col_df <- cbind(combined_col_df, combi_df)
             }
 
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             # Build variable name table header for later use during formatting.
             # Column header only needs to be built once because other iterations
             # would just produce the same header.
+            #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
             if (index == 1){
                 # Get data frame variable names
                 col_header_df <- combi_df[0, ]
@@ -1077,6 +1169,10 @@ any_table <- function(data_frame,
             }
         }
 
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Combine data and store information
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         # Store combined column data frame in a list for later rbind
         part_combi_list[[row_combi]] <- combined_col_df
 
@@ -1090,6 +1186,10 @@ any_table <- function(data_frame,
 
         index <- index + 1
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Put results together
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Put all computed data frames below each other to form a final result data frame
     any_tab <- data.table::rbindlist(part_combi_list,   fill = TRUE)
@@ -1156,8 +1256,13 @@ any_table <- function(data_frame,
                    "box", "any_header", "row_header_dimensions",
                    "style", "na.rm"))
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
+    #--------------------------------------------------------------------------
     message(" > Formatting tables.")
 
     # Setup styling in new workbook if no other is provided
@@ -1194,7 +1299,10 @@ any_table <- function(data_frame,
         monitor_df <- wb_list[[2]]
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output formatted table into different formats
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (print){
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
@@ -1211,8 +1319,10 @@ any_table <- function(data_frame,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'any_table' execution time: ", end_time, " seconds\n")
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
+    #--------------------------------------------------------------------------
 
     invisible(list("table"    = any_tab,
                    "workbook" = wb,
@@ -1273,7 +1383,13 @@ format_any_excel <- function(wb,
                              by_info = NULL,
                              index   = NULL,
                              monitor_df){
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare", "Format")
+    #--------------------------------------------------------------------------
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Setup header
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Cut down percentage names to just "pct"
     names(any_tab) <- gsub("pct_group_", "pct group ", names(any_tab))
@@ -1301,6 +1417,10 @@ format_any_excel <- function(wb,
     # Add empty columns to the header for the top left box at the beginning
     blank_columns <- matrix("", nrow = nrow(column_header), ncol = any_ranges[["cat_col.width"]])
     column_header <- cbind(blank_columns, column_header)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Display additional table information
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Add box text
     if (box != ""){
@@ -1331,8 +1451,13 @@ format_any_excel <- function(wb,
     names(any_tab) <- gsub("sum.wgt", "sum_wgt", names(any_tab))
     names(any_tab) <- gsub("freq.g0", "freq_g0", names(any_tab))
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Add table data and format according to style options
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
+    #--------------------------------------------------------------------------
 
     wb$add_data(x          = any_tab,
                 start_col  = style[["start_column"]],
@@ -1347,8 +1472,14 @@ format_any_excel <- function(wb,
                 start_row  = any_ranges[["header.row"]],
                 col_names  = FALSE)
 
-    # Format titles and footnotes if there are any
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Table styling
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
+    #--------------------------------------------------------------------------
+    #Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, any_ranges, style, output)
 
@@ -1360,19 +1491,27 @@ format_any_excel <- function(wb,
         wb$merge_cells(dims = any_ranges[["box_range"]])
 
         # Merge column and row headers
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel format col headers", "Format")
+        #----------------------------------------------------------------------
         wb <- wb |>
             handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]]), drop = FALSE], any_ranges)
 
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel format row headers", "Format")
+        #----------------------------------------------------------------------
         wb <- wb |>
             handle_row_header_merge(any_tab[, 1:any_ranges[["cat_col.width"]]], any_ranges)
 
         # Style table
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
+        #----------------------------------------------------------------------
         wb <- wb |> handle_cell_styles(any_ranges, style)
 
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
+        #----------------------------------------------------------------------
 
         # Set up inner table number formats
         col_index <- 1
@@ -1400,7 +1539,9 @@ format_any_excel <- function(wb,
         }
 
         # Adjust table dimensions
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+        #----------------------------------------------------------------------
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
                                               ncol(any_tab) + (style[["start_column"]] - 1),
@@ -1674,11 +1815,17 @@ format_any_by_excel <- function(wb,
                                 output,
                                 na.rm,
                                 monitor_df){
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     index <- 1
 
     for (by_var in by){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_start(paste0("Excel prepare (", by_var, ")"), "Format by")
+        #----------------------------------------------------------------------
 
         # Select by variables one by one
         any_by <- any_tab |>
@@ -1694,14 +1841,19 @@ format_any_by_excel <- function(wb,
 
         monitor_df <- monitor_df |> monitor_end()
 
-        # Loop through all unique values to generate frequency tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Loop through all unique values to generate tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for (value in values){
             # In case NAs are removed
             if (is.na(value) && na.rm){
                 next
             }
 
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
+            #------------------------------------------------------------------
             message("   + ", paste0(by_var, " = ", value))
 
             # Put additional by info together with the information which by variable
@@ -1874,7 +2026,9 @@ combine_into_workbook <- function(...,
                                   output  = "excel",
                                   print   = TRUE,
                                   monitor = FALSE){
+    #--------------------------------------------------------------------------
     monitor_df <- NULL |> monitor_start("Prepare combine", "Prepare")
+    #--------------------------------------------------------------------------
 
     # Measure the time
     start_time <- Sys.time()
@@ -1888,7 +2042,9 @@ combine_into_workbook <- function(...,
     message(" > Formatting tables")
 
     for (table in tables){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next(paste0("Format ", tab_names[i]), "Format tables")
+        #----------------------------------------------------------------------
         message(paste0("   + ", tab_names[i]))
 
         meta <- table[["meta"]]
@@ -1923,7 +2079,9 @@ combine_into_workbook <- function(...,
 
     # Output formatted table into different formats
     if (print){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
+        #----------------------------------------------------------------------
 
         if (is.null(file)){
             wb$open()
@@ -1940,8 +2098,10 @@ combine_into_workbook <- function(...,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'combine_into_workbook' execution time: ", end_time, " seconds\n")
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
+    #--------------------------------------------------------------------------
 
     invisible(wb)
 }

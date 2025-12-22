@@ -9,9 +9,12 @@
 
 ### Fixed
 * `keep()`: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)
+* `any_table()`: Now checks if a column combination is also part of the row combinations. (22.12.2025)
 
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)
+* Adjusted some warning messages. (22.12.2025)
+* Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

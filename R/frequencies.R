@@ -121,7 +121,13 @@ frequencies <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    #--------------------------------------------------------------------------
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
+    #--------------------------------------------------------------------------
+
+    ###########################################################################
+    # Early evaluations
+    ###########################################################################
 
     # First convert data frame to data table
     if (!data.table::is.data.table(data_frame)){
@@ -166,6 +172,10 @@ frequencies <- function(data_frame,
     # Error handling
     ###########################################################################
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Convert to character vectors
     variables_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(variables))))
 
@@ -196,6 +206,10 @@ frequencies <- function(data_frame,
         message(" X ERROR: No valid analysis variables provided. Frequencies will be aborted.")
         return(invisible(NULL))
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # By variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
     by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by))))
@@ -231,6 +245,10 @@ frequencies <- function(data_frame,
         return(invisible(NULL))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Weight
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Create temporary weight column if none is provided.
     # Also get the name of the weight variable as string.
     weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
@@ -262,6 +280,10 @@ frequencies <- function(data_frame,
         data_frame[[".temp_weight"]] <- 1
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Check for invalid output option
     if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
         message(" ! WARNING: Output format '", output, "' not available. Using 'console' instead.")
@@ -276,8 +298,14 @@ frequencies <- function(data_frame,
     # Frequency starts
     ###########################################################################
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Mean summary", "Summary")
+    #--------------------------------------------------------------------------
     message("\n > Computing stats.")
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Summarise mean table according to provided variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # For mean tabulation only numeric variables are allowed. So here all character
     # variables are excluded temporarily.
@@ -347,8 +375,13 @@ frequencies <- function(data_frame,
 
     mean_tab <- data.table::rbindlist(all_rows, use.names = TRUE, fill = TRUE)
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Summarise results for a frequency output per variable
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Freq summary", "Summary")
+    #--------------------------------------------------------------------------
 
     data_frame[["var"]] <- 1
 
@@ -393,11 +426,16 @@ frequencies <- function(data_frame,
         return(invisible(NULL))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     message(" > Formatting tables.")
 
     if (output %in% c("console", "text")){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Format tables", "Format tables")
+        #----------------------------------------------------------------------
 
         # In case no by variables are provided
         if (length(by) == 0){
@@ -440,9 +478,14 @@ frequencies <- function(data_frame,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output formatted table into different formats
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (print){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
+        #----------------------------------------------------------------------
 
         if (output %in% c("console")){
             cat(paste(complete_table, collapse = "\n"), "\n\n")
@@ -703,7 +746,9 @@ format_mean_excel <- function(mean_tab,
                               wb    = NULL,
                               index = NULL,
                               monitor_df){
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare (mean)", "Format mean")
+    #--------------------------------------------------------------------------
 
     if (nrow(mean_tab) == 0){
         monitor_df <- monitor_df |> monitor_end()
@@ -741,7 +786,9 @@ format_mean_excel <- function(mean_tab,
     }
 
     # Add table data and format according to style options
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel data (mean)", "Format mean")
+    #--------------------------------------------------------------------------
 
     wb$add_data(x          = mean_tab,
                 start_col  = style[["start_column"]],
@@ -752,8 +799,9 @@ format_mean_excel <- function(mean_tab,
     # option this whole part gets omitted to get a very quick unformatted
     # excel output.
     if (output == "excel"){
-
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel cell styles (mean)", "Format mean")
+        #----------------------------------------------------------------------
         wb <- wb |> handle_cell_styles(mean_ranges, style)
 
         # Set up inner table number formats
@@ -768,7 +816,9 @@ format_mean_excel <- function(mean_tab,
         }
 
         # If there are width or heights defined
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights (mean)", "Format mean")
+        #----------------------------------------------------------------------
 
         column_width <- style[["column_widths"]]
         row_heights  <- style[["row_heights"]]
@@ -841,8 +891,15 @@ format_freq_text <- function(freq_tab,
                              footnotes){
     complete_tabs <- c()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate a separate frequency table for each variable
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (variable in variables){
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Prepare header
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         # Compute additional stats
         var_tab <- compute_cumulative(freq_tab, variable, formats)
 
@@ -908,9 +965,12 @@ format_freq_text <- function(freq_tab,
         complete_header <- c(header_row,
                              strrep("-", nchar(header_top_row)))
 
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Format table column by column. Basically concatenate first column text and
         # corresponding values together while keeping the individual maximum column
         # width in mind.
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         first_column <- paste0(format(var_tab[["fused_vars"]],
                                       width   = first_column_width,
                                       justify = "left"), "  |  ")
@@ -933,6 +993,10 @@ format_freq_text <- function(freq_tab,
                                                           stat  = names(var_tab[column + 1]))
             }
         }
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Put everything together
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         # Convert list to matrix
         formatted_matrix <- do.call(cbind, formatted_cols)
@@ -1080,9 +1144,14 @@ format_freq_excel <- function(wb,
                               by_info = NULL,
                               index   = NULL,
                               monitor_df){
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate a separate frequency table for each variable
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (variable in variables){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_start("Excel prepare (freq)", "Format freq")
+        #----------------------------------------------------------------------
 
         # Compute additional stats
         var_tab <- compute_cumulative(freq_tab, variable, formats)
@@ -1149,8 +1218,14 @@ format_freq_excel <- function(wb,
             wb$add_worksheet(variable, grid_lines = style[["grid_lines"]])
         }
 
-        # Format titles and footnotes if there are any
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Apply style
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes (freq)", "Format freq")
+        #----------------------------------------------------------------------
+        # Format titles and footnotes if there are any
         wb <- wb |>
             format_titles_foot_excel(titles, footnotes, freq_ranges, style, output)
 
@@ -1166,7 +1241,9 @@ format_freq_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next("Excel cell styles (freq)", "Format freq")
+            #------------------------------------------------------------------
             wb <- wb |> handle_cell_styles(freq_ranges, style)
 
             # Set up inner table number formats
@@ -1186,7 +1263,9 @@ format_freq_excel <- function(wb,
             }
 
             # Adjust table dimensions
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights (freq)", "Format freq")
+            #------------------------------------------------------------------
             wb <- wb |> handle_col_row_dimensions(freq_ranges,
                                                   ncol(var_tab) + (style[["start_column"]] - 1),
                                                   nrow(var_tab) + (style[["start_row"]] - 1),
@@ -1257,7 +1336,10 @@ format_by_text <- function(mean_tab,
 
     complete_tabs <- c()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (by_var in by){
         # Select by variables one by one
         mean_by <- mean_tab |>
@@ -1274,7 +1356,10 @@ format_by_text <- function(mean_tab,
             values <- unique(freq_by[["by_vars"]])
         }
 
-        # Loop through all unique values to generate frequency tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Loop through all unique values to generate tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for (value in values){
             # In case NAs are removed
             if (is.na(value) && na.rm){
@@ -1372,7 +1457,9 @@ format_by_excel <- function(mean_tab,
                             na.rm,
                             wb,
                             monitor_df){
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare (by)", "Format by")
+    #--------------------------------------------------------------------------
 
     # Print message if multilabels are applied
     for (variable in variables){
@@ -1382,11 +1469,16 @@ format_by_excel <- function(mean_tab,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Loop through all by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     index <- 1
 
-    # Loop through all by variables
     for (by_var in by){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next(paste0("Excel prepare (", by_var, ")"), "Format by")
+        #----------------------------------------------------------------------
 
         # Select by variables one by one
         mean_by <- mean_tab |>
@@ -1403,7 +1495,10 @@ format_by_excel <- function(mean_tab,
             values <- unique(freq_by[["by_vars"]])
         }
 
-        # Loop through all unique values to generate frequency tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Loop through all unique values to generate tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for (value in values){
             # In case NAs are removed
             if (is.na(value) && na.rm){
@@ -1412,7 +1507,9 @@ format_by_excel <- function(mean_tab,
 
             message("   + ", paste0(by_var, " = ", value))
 
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next(paste0("Excel mean (", by_var, "_", value, ")"), "Format by")
+            #------------------------------------------------------------------
 
             # Put additional by info together with the information which by variable
             # and which value is currently filtered.
@@ -1453,7 +1550,9 @@ format_by_excel <- function(mean_tab,
                 wb_list[[1]] <- wb
             }
 
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next(paste0("Excel freq (", by_var, "_", value, ")"), "Format by")
+            #------------------------------------------------------------------
 
             # Generate frequency tables as normal but base is filtered data frame
             wb_list <- format_freq_excel(wb_list[[1]],

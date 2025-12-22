@@ -70,8 +70,13 @@ export_with_style <- function(data_frame,
                               monitor    = FALSE){
     start_time <- Sys.time()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- NULL |> monitor_start("Excel prepare", "Format")
+    #--------------------------------------------------------------------------
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
@@ -93,9 +98,14 @@ export_with_style <- function(data_frame,
     wb         <- wb_list[[1]]
     monitor_df <- wb_list[[2]]
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output formatted table into different formats
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (print){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
+        #----------------------------------------------------------------------
 
         if (is.null(style[["file"]])){
             if(interactive()){
@@ -110,8 +120,10 @@ export_with_style <- function(data_frame,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'export_with_style' execution time: ", end_time, " seconds\n")
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
+    #--------------------------------------------------------------------------
 
     invisible(wb)
 }
@@ -149,7 +161,14 @@ format_df_excel <- function(wb,
                             style,
                             output,
                             monitor_df){
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Add data
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare", "Format")
+    #--------------------------------------------------------------------------
 
     # Get table ranges
     df_ranges <- get_df_ranges(data_frame, titles, footnotes, style)
@@ -160,7 +179,9 @@ format_df_excel <- function(wb,
     wb$add_worksheet(style[["sheet_name"]], grid_lines = style[["grid_lines"]])
 
     # Add table data and format according to style options
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
+    #--------------------------------------------------------------------------
 
     wb$add_data(x           = data_frame,
                 start_col   = style[["start_column"]],
@@ -169,8 +190,14 @@ format_df_excel <- function(wb,
                 with_filter = style[["filters"]],
                 na.strings  = style[["na_symbol"]])
 
-    # Format titles and footnotes if there are any
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Apply style
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
+    #--------------------------------------------------------------------------
+    # Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, df_ranges, style, output)
 
@@ -179,11 +206,15 @@ format_df_excel <- function(wb,
     # excel output.
     if (output == "excel"){
         # Style table
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
+        #----------------------------------------------------------------------
         wb <- wb |> handle_cell_styles(df_ranges, style)
 
         if (df_ranges[["num_format.length"]] > 0){
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
+            #------------------------------------------------------------------
 
             # Set up inner table number formats
             for (i in 1:df_ranges[["num_format.length"]]){
@@ -207,7 +238,9 @@ format_df_excel <- function(wb,
         }
 
         # Adjust table dimensions
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+        #----------------------------------------------------------------------
 
         wb <- wb |> handle_col_row_dimensions(df_ranges,
                                               ncol(data_frame) + (style[["start_column"]] - 1),

@@ -77,6 +77,10 @@ recode <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    ###########################################################################
+    # Early evaluations
+    ###########################################################################
+
     # Convert to character
     new_var <- gsub("\"", "", deparse(substitute(new_var)))
 
@@ -105,6 +109,10 @@ recode <- function(data_frame,
         }),
         names(formats_list))
 
+    ###########################################################################
+    # Error handling
+    ###########################################################################
+
     # Get information from ... list
     current_var <- names(formats)[1]
     format_df   <- formats[[current_var]]
@@ -131,12 +139,19 @@ recode <- function(data_frame,
                 "         are specified as input values and not the factor levels.")
     }
 
+    ###########################################################################
+    # Recode
+    ###########################################################################
+
     # Look up variable names in format data frame to check whether it is an
     # interval or discrete format
     interval_variables <- c("from", "to")
     actual_variables   <- names(format_df)[1:2]
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # In case of interval format
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (identical(interval_variables, actual_variables)){
         # Remove NA values
         if (any(is.na(data_frame[[current_var]]))){
@@ -180,7 +195,11 @@ recode <- function(data_frame,
                     "            doubling observations.")
         }
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # In case of discrete format
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     else{
         # Rename label column to be specific to the variable
         format_df <- format_df |>

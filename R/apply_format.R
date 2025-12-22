@@ -21,8 +21,11 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
     temp_data <- data_frame
     arguments <- formats
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all given variables and join each format with the data frame
     # at a time
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (current_var in names(arguments)){
         format_df <- arguments[[current_var]]
 
@@ -63,7 +66,10 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
         interval_variables <- c("from", "to")
         actual_variables <- names(format_df)[1:2]
 
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # In case of interval format
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         if (identical(interval_variables, actual_variables)){
             # Separate NAs from rest of the data frame because the used join
             # can't handle them
@@ -99,7 +105,11 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
                 unique() |>
                 stats::na.omit()
         }
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # In case of discrete format
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         else{
             # Rename label column to be specific to the variable
             format_df <- format_df |> collapse::frename("value" = current_var, .nse = FALSE)

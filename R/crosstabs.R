@@ -142,7 +142,13 @@ crosstabs <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    #--------------------------------------------------------------------------
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
+    #--------------------------------------------------------------------------
+
+    ###########################################################################
+    # Early evaluations
+    ###########################################################################
 
     # First convert data frame to data table
     if (!data.table::is.data.table(data_frame)){
@@ -187,6 +193,10 @@ crosstabs <- function(data_frame,
     # Error handling
     ###########################################################################
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Row variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Convert to character vectors
     rows_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(rows))))
 
@@ -222,6 +232,10 @@ crosstabs <- function(data_frame,
         message(" X ERROR: Only one variable for rows allowed. Crosstabs will be aborted.")
         return(invisible(NULL))
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Column variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
     columns_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(columns))))
@@ -259,6 +273,10 @@ crosstabs <- function(data_frame,
         return(invisible(NULL))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # By variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Convert to character vectors
     by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by))))
 
@@ -294,6 +312,10 @@ crosstabs <- function(data_frame,
         return(invisible(NULL))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Weight
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Create temporary weight column if none is provided.
     # Also get the name of the weight variable as string.
     weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
@@ -325,6 +347,10 @@ crosstabs <- function(data_frame,
         data_frame[[".temp_weight"]] <- 1
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Check for invalid output option
     if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
         message(" ! WARNING: Output format '", output, "' not available. Using 'console' instead.")
@@ -349,8 +375,14 @@ crosstabs <- function(data_frame,
     # Cross tabulation starts
     ###########################################################################
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
+    #--------------------------------------------------------------------------
     message("\n > Computing stats.")
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Summarise data according to provided variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Summarise results for a crosstabs output
     data_frame[["var"]] <- 1
@@ -441,11 +473,16 @@ crosstabs <- function(data_frame,
         return(invisible(NULL))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     message(" > Formatting tables.")
 
     if (output %in% c("console", "text")){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Format tables", "Format tables")
+        #----------------------------------------------------------------------
 
         # In case no by variables are provided
         if (length(by) == 0){
@@ -484,9 +521,14 @@ crosstabs <- function(data_frame,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output formatted table into different formats
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (print){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
+        #----------------------------------------------------------------------
 
         if (output %in% c("console")){
             cat(paste(complete_table, collapse = "\n"), "\n\n")
@@ -511,8 +553,10 @@ crosstabs <- function(data_frame,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'crosstabs' execution time: ", end_time, " seconds\n")
 
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
+    #--------------------------------------------------------------------------
 
     invisible(cross_tab)
 }
@@ -558,8 +602,15 @@ format_cross_text <- function(cross_tab,
     longest_value    <- nchar(format(sum_tab[nrow(sum_tab), "total"], scientific = FALSE))
     max_column_width <- max(8, longest_value + 7)
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Compute individual cross tables for each operation
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (stat in statistics){
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Prepare header
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         # Setup cross table for formatting
         var_tab <- setup_print_table(cross_tab, rows, stat)
 
@@ -622,9 +673,12 @@ format_cross_text <- function(cross_tab,
             }
         }
 
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Format table column by column. Basically concatenate first column text and
         # corresponding values together while keeping the individual maximum column
         # width in mind.
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         first_column <- paste0(format(var_tab[[rows]],
                                       width   = first_column_width,
                                       justify = "left"), " | ")
@@ -659,6 +713,10 @@ format_cross_text <- function(cross_tab,
                 formatted_cols[[column]] <- paste0(" | ", formatted_cols[[column]])
             }
         }
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Put everything together
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         # Convert list to matrix
         formatted_matrix <- do.call(cbind, formatted_cols)
@@ -850,11 +908,18 @@ format_cross_excel <- function(wb,
                                by_info = NULL,
                                index   = NULL,
                                monitor_df){
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare", "Format")
+    #--------------------------------------------------------------------------
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Compute individual cross tables for each operation
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (stat in statistics){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
+        #----------------------------------------------------------------------
 
         # Setup cross table for formatting
         var_tab <- setup_print_table(cross_tab, rows, stat)
@@ -915,14 +980,22 @@ format_cross_excel <- function(wb,
             wb$add_worksheet(stat, grid_lines = style[["grid_lines"]])
         }
 
-        # Format titles and footnotes if there are any
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Apply style
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
+        #----------------------------------------------------------------------
+        # Format titles and footnotes if there are any
         wb <- wb |>
             format_titles_foot_excel(titles, footnotes, cross_ranges, style, output)
 
-        # Add table data and format according to style options
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
+        #----------------------------------------------------------------------
 
+        # Add table data and format according to style options
         wb$add_data(x          = var_tab,
                     start_col  = style[["start_column"]],
                     start_row  = cross_ranges[["header.row"]],
@@ -932,7 +1005,9 @@ format_cross_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
+            #------------------------------------------------------------------
             wb <- wb |> handle_cell_styles(cross_ranges, style)
 
             if (stat == "sum" || stat== "freq"){
@@ -947,7 +1022,9 @@ format_cross_excel <- function(wb,
             }
 
             # Adjust table dimensions
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+            #------------------------------------------------------------------
             wb <- wb |> handle_col_row_dimensions(cross_ranges,
                                                   ncol(var_tab) + (style[["start_column"]] - 1),
                                                   nrow(var_tab) + (style[["start_row"]] - 1),
@@ -1019,7 +1096,10 @@ format_cross_by_text <- function(cross_tab,
 
     complete_tabs <- c()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     for (by_var in by){
         # Select by variables one by one
         cross_by <- cross_tab |>
@@ -1033,7 +1113,10 @@ format_cross_by_text <- function(cross_tab,
             values <- unique(cross_by[["by_vars"]])
         }
 
-        # Loop through all unique values to generate frequency tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Loop through all unique values to generate tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for (value in values){
             # In case NAs are removed
             if (is.na(value) && na.rm){
@@ -1123,7 +1206,9 @@ format_cross_by_excel <- function(cross_tab,
                                   na.rm,
                                   wb,
                                   monitor_df){
+    #--------------------------------------------------------------------------
     monitor_df <- monitor_df |> monitor_start("Excel prepare (by)", "Format by")
+    #--------------------------------------------------------------------------
 
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
@@ -1133,13 +1218,18 @@ format_cross_by_excel <- function(cross_tab,
         }
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Loop through all by variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     index <- 1
 
-    # Loop through all by variables
     monitor_df <- monitor_df |> monitor_end()
 
     for (by_var in by){
+        #----------------------------------------------------------------------
         monitor_df <- monitor_df |> monitor_start(paste0("Excel prepare (", by_var, ")"), "Format by")
+        #----------------------------------------------------------------------
 
         # Select by variables one by one
         cross_by <- cross_tab |>
@@ -1155,14 +1245,19 @@ format_cross_by_excel <- function(cross_tab,
 
         monitor_df <- monitor_df |> monitor_end()
 
-        # Loop through all unique values to generate frequency tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Loop through all unique values to generate tables per expression
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for (value in values){
             # In case NAs are removed
             if (is.na(value) && na.rm){
                 next
             }
 
+            #------------------------------------------------------------------
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
+            #------------------------------------------------------------------
             message("   + ", paste0(by_var, " = ", value))
 
             # Put additional by info together with the information which by variable
