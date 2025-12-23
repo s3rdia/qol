@@ -12,6 +12,12 @@ sum_df    <- suppressMessages(dummy_df |>
                    statistics = c("sum"),
                    nesting    = "deepest",
                    na.rm      = TRUE))
+sum_df2   <- suppressMessages(dummy_df |>
+    summarise_plus(class      = c(year, sex, age),
+                   values     = weight,
+                   statistics = c("sum"),
+                   nesting    = "deepest",
+                   na.rm      = TRUE))
 
 
 test_that("Simplest form of any_table", {
@@ -347,8 +353,20 @@ test_that("any_table with pre summarised data", {
        any_table(rows       = "year",
                  columns    = "sex",
                  values     = weight_sum,
-                 pre_summed = TRUE,
                  print      = FALSE))
+
+    expect_type(result_list, "list")
+    expect_equal(length(result_list), 3)
+})
+
+
+test_that("any_table with pre summarised data and by variables", {
+    result_list <- suppressMessages(sum_df2 |>
+                any_table(rows       = "year",
+                          columns    = "age",
+                          by         = "sex",
+                          values     = weight_sum,
+                          print      = FALSE))
 
     expect_type(result_list, "list")
     expect_equal(length(result_list), 3)
@@ -444,22 +462,30 @@ test_that("any_table aborts with row/column variable part of values", {
 
 test_that("any_table aborts with only invalid pct_value statistic", {
     expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "age",
-                                 columns    = "sex",
-                                 values     = weight,
-                                 statistics = c("pct_value"),
-                                 pct_value  = list(rate = "Test1 / Test2"),
-                                 print      = FALSE), " X ERROR: pct_value can only be computed in combination with statistic")
+           any_table(rows       = "age",
+                     columns    = "sex",
+                     values     = weight,
+                     statistics = c("pct_value"),
+                     pct_value  = list(rate = "Test1 / Test2"),
+                     print      = FALSE), " X ERROR: pct_value can only be computed in combination with statistic")
 })
 
 
 test_that("any_table aborts with missing statistic extension in pre summarised data", {
     expect_message(result_list <- sum_df |>
-                       any_table(rows       = "year",
-                                 columns    = "sex",
-                                 values     = TYPE_NR,
-                                 pre_summed = TRUE,
-                                 print      = FALSE), " X ERROR: All value variables need to have the statistic extensions in their variable names")
+           any_table(rows       = "year",
+                     columns    = "sex",
+                     values     = TYPE_NR,
+                     print      = FALSE), " X ERROR: All value variables need to have the statistic extensions in their variable names")
+})
+
+
+test_that("any_table aborts with missing variable combination in pre summarised data", {
+    expect_message(result_list <- sum_df2 |>
+           any_table(rows       = c("year", "age"),
+                     columns    = "sex",
+                     values     = weight_sum,
+                     print      = FALSE), " X ERROR: The variable combination of '")
 })
 
 

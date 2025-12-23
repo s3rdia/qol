@@ -24,7 +24,6 @@ any_table(
   workbook = NULL,
   style = excel_output_style(),
   output = "excel",
-  pre_summed = FALSE,
   na.rm = FALSE,
   print = TRUE,
   monitor = FALSE
@@ -103,11 +102,6 @@ creating a new file.}
 Styles can be created with \code{\link[=excel_output_style]{excel_output_style()}}.}
 
 \item{output}{The following output formats are available: excel and excel_nostyle.}
-
-\item{pre_summed}{FALSE by default. If TRUE this function works with pre summarised data. This can be
-used, if not all the needed results can be calculated by \code{\link[=any_table]{any_table()}} and need to be prepared in
-advance. Enabling you to still make use of the styled tabulation. For this to work, the values have to
-carry the statistic extension (e.g. "_sum", "_pct") in the variable name.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the variables.}
 

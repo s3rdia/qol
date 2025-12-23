@@ -67,8 +67,7 @@ single_args_to_char <- function(...){
 #'
 #' @param variable A vector with values to check.
 #' @param data_frame A data frame containing variables to convert.
-#' @param variables Variables from the data frame which should be converted
-#' to numeric.
+#' @param variables Variables from the data frame which should be converted.
 #'
 #' @return
 #' [is_numeric()] returns TRUE if all none NA values are numerical, otherwise FALSE.
@@ -117,6 +116,43 @@ convert_numeric <- function(data_frame, variables){
         # Only convert if all none NA values are numeric
         if (is_numeric(data_frame[[variable]])){
             data_frame[[variable]] <- as.numeric(data_frame[[variable]])
+        }
+    }
+
+    data_frame
+}
+
+
+#' @description
+#' [convert_factor()] converts all given variables to factor.
+#'
+#' @return
+#' [convert_factor()] returns the same data frame with converted variables.
+#'
+#' @examples
+#' # Convert variables in a data frame to factor
+#' test_df <- data.frame(var_a = c(1, 2, 3, 4, 5),
+#'                       var_b = c("e", "c", "a", "d", "b"))
+#'
+#' convert_df <- test_df |> convert_factor("var_b")
+#'
+#' @rdname convert_numeric
+#'
+#' @export
+convert_factor <- function(data_frame, variables){
+    for (variable in variables){
+        if (is.character(data_frame[[variable]])){
+            # Extract the number of labels from variable
+            label_levels <- data_frame[[variable]] |>
+                unlist(use.names = FALSE) |>
+                unique() |>
+                stats::na.omit()
+
+            # Convert variable to factor
+            data_frame[[variable]] <- factor(
+                data_frame[[variable]],
+                levels  = label_levels,
+                ordered = TRUE)
         }
     }
 

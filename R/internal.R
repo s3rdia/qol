@@ -112,7 +112,7 @@ is_multilabel <- function(format_list, variable){
 #' In [any_table()] the table columns can be ordered in different ways. Interleaved
 #' means that columns of different statistics appear alternated in the table.
 #'
-#' @param data_frame The data frame which contains the colums to be ordered.
+#' @param data_frame The data frame which contains the columns to be ordered.
 #' @param patterns The statistics in the order they should be interleaved.
 #'
 #' @return
@@ -137,4 +137,23 @@ order_interleaved <- function(data_frame, patterns) {
 
     # Order columns
     data_frame |> data.table::setcolorder(interleaved, after = ncol(data_frame))
+}
+
+
+#' Check If Data Frame Is Already Summarised
+#'
+#' @description
+#' [any_table()] can be used to tabulate individual data but also pre summarised
+#' data. This check is used to determine which route to use.
+#'
+#' @param data_frame The data frame which contains the columns to be checked.
+#' @param group_vars The grouping variables which potentially form unique combinations.
+#'
+#' @return
+#' Returns TRUE or FALSE depending on the result.
+#'
+#' @noRd
+is_pre_summed <- function(data_frame, group_vars) {
+    group_df <- data_frame |> collapse::fselect(group_vars)
+    !any(duplicated(group_df))
 }

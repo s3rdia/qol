@@ -3,24 +3,28 @@
 \name{convert_numeric}
 \alias{convert_numeric}
 \alias{is_numeric}
+\alias{convert_factor}
 \title{Check and Convert to Numeric}
 \usage{
 is_numeric(variable)
 
 convert_numeric(data_frame, variables)
+
+convert_factor(data_frame, variables)
 }
 \arguments{
 \item{variable}{A vector with values to check.}
 
 \item{data_frame}{A data frame containing variables to convert.}
 
-\item{variables}{Variables from the data frame which should be converted
-to numeric.}
+\item{variables}{Variables from the data frame which should be converted.}
 }
 \value{
 \code{\link[=is_numeric]{is_numeric()}} returns TRUE if all none NA values are numerical, otherwise FALSE.
 
 \code{\link[=convert_numeric]{convert_numeric()}} returns the same data frame with converted variables where possible.
+
+\code{\link[=convert_factor]{convert_factor()}} returns the same data frame with converted variables.
 }
 \description{
 \code{\link[=is_numeric]{is_numeric()}} checks whether all values of the given variable, that are not
@@ -29,6 +33,8 @@ NA, are numerical.
 \code{\link[=convert_numeric]{convert_numeric()}} converts all given variables to numeric if possible. If
 a variable contains none numerical values (not including NAs), the variable
 will not be converted.
+
+\code{\link[=convert_factor]{convert_factor()}} converts all given variables to factor.
 }
 \examples{
 # Check if vectors contain only numeric values
@@ -43,5 +49,11 @@ test_df <- data.frame(var_a = c(1, 2, 3, NA, 4, 5),
                       var_b = c(1, 2, "Hello", NA, 4, 5))
 
 convert_df <- test_df |> convert_numeric(c("var_a", "var_b"))
+
+# Convert variables in a data frame to factor
+test_df <- data.frame(var_a = c(1, 2, 3, 4, 5),
+                      var_b = c("e", "c", "a", "d", "b"))
+
+convert_df <- test_df |> convert_factor("var_b")
 
 }

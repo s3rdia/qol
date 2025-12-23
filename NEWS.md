@@ -2,19 +2,23 @@
 
 ### New functions
 * `vars_between()`: Get variable names between two variables in a data frame. (21.12.2025)
+* `convert_factor()`: Converts all given variables to factor. (23.12.2025)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
 * `keep()`/`dropp()`: Now support variable ranges, like "state:income". (21.12.2025)
+* `any_table()`: Removed `pre_summed` parameter. Instead the function now checks on it's own, whether the provided data frame is pre summarised or not. (23.12.2025)
 
 ### Fixed
 * `keep()`: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)
 * `any_table()`: Now checks if a column combination is also part of the row combinations. (22.12.2025)
+* `any_table()`: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)
 
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)
 * Adjusted some warning messages. (22.12.2025)
 * Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
+* `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

@@ -57,10 +57,6 @@
 #' @param style A list of options can be passed to control the appearance of excel outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: excel and excel_nostyle.
-#' @param pre_summed FALSE by default. If TRUE this function works with pre summarised data. This can be
-#' used, if not all the needed results can be calculated by [any_table()] and need to be prepared in
-#' advance. Enabling you to still make use of the styled tabulation. For this to work, the values have to
-#' carry the statistic extension (e.g. "_sum", "_pct") in the variable name.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output data frame and workbook with meta information.
@@ -276,7 +272,6 @@ any_table <- function(data_frame,
                       workbook       = NULL,
                       style          = excel_output_style(),
                       output         = "excel",
-                      pre_summed     = FALSE,
                       na.rm          = FALSE,
                       print          = TRUE,
                       monitor        = FALSE){
@@ -588,7 +583,9 @@ any_table <- function(data_frame,
     # Pre summarised data
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # In case of using a pre summarised data frame, underscores are only allowed if they carry
+    pre_summed <- data_frame |> is_pre_summed(c(by, variables))
+
+    # In case of using a pre summarised data frame, underscores are only allowed, if they carry
     # the statistics extension afterwards.
     if (pre_summed){
         if (!"TYPE" %in% names(data_frame)){
@@ -606,7 +603,7 @@ any_table <- function(data_frame,
         # If one of the value variables hasn't got any of the above extension abort
         if (!all(grepl(pattern, values))){
             message(" X ERROR: All value variables need to have the statistic extensions in their variable names.\n",
-                    "          Execution will be aborted.")
+                    "          You can use the function 'add_extension' to achieve this. Execution will be aborted.")
             return(invisible(NULL))
         }
 
@@ -696,6 +693,9 @@ any_table <- function(data_frame,
         message(" X ERROR: No underscores allowed in column variable values. Execution will be aborted.")
         return(invisible(NULL))
     }
+
+    # Convert grouping variables to factor to retain value order after sorting later on
+    any_tab <- any_tab |> convert_factor(group_vars)
 
     # In case of pre summarised data frame remove the temporary weight variable
     if (pre_summed){
@@ -974,30 +974,22 @@ any_table <- function(data_frame,
             # current combination
             subset_type <- paste(sorted_combi, collapse = "+")
 
-            # Convert column variables to factor if necessary to retain value order
-            # after sorting
-            for (col_var in col_combi_vars){
-                if (is.character(combi_df[[col_var]])){
-                    # Extract the number of labels from variable
-                    label_levels <- combi_df[[col_var]] |>
-                        unlist(use.names = FALSE) |>
-                        unique() |>
-                        stats::na.omit()
-
-                    # Convert variable to factor
-                    combi_df[[col_var]] <- factor(
-                        combi_df[[col_var]],
-                        levels  = label_levels,
-                        ordered = TRUE)
-                }
-            }
-
             # Sort to have the correct order after pivoting
             combi_df <- combi_df |>
                 collapse::fsubset(TYPE == subset_type) |>
                 data.table::setcolorder(current_combi, before = 1) |>
                 data.table::setorderv(col_combi_vars, na.last = TRUE) |>
                 data.table::setorderv(row_combi_vars)
+
+            # When pre summarised data is used, it is possible to select types which
+            # aren't present in the data frame. This leads to the data frame having no
+            # observations at this point, which leads to an error down below. If this
+            # happens, abort.
+            if (nrow(combi_df) == 0){
+                message(" X ERROR: The variable combination of '", subset_type, "' is not part of the provided data frame.\n",
+                        "          Tabulation will be aborted.")
+                return(invisible(NULL))
+            }
 
             # Rename the row variables to something neutral. In the next steps the
             # data frame is puzzled back together, but the thing is, that the row
