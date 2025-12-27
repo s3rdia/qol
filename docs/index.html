@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,9 +84,7 @@
 </h2>
 <p>Create a format container independent from any data frame. Define which values should be recoded into which new categories, if the format is applied to a variable in a data frame. It is possible to assign a single value to multiple new categories to create a multilabel. With these format containers, you just keep a small reference of original values and result categories. Formats and data find their way together only just before computing the results. This method is very memory efficient, readable and user friendly for creating larger and more complex outputs at the same time.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3rdia/qol" class="external-link">qol</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Creating format containers</span></span>
+<code class="sourceCode R"><span><span class="co"># Creating format containers</span></span>
 <span><span class="va">age.</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Total"</span>          <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">100</span>,</span>
 <span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
@@ -150,9 +148,7 @@
 </h2>
 <p>Using the wonderful <a href="https://github.com/JanMarvin/openxlsx2" class="external-link">openxlsx2</a> package for maximum style, you can basically output any table fully styled with little effort. Combine any number of variables in any possible way, all at once. Setting up a custom, reusable style is as easy as setting up options like: provide a color for the table header, set the font size for the row header, should borders be drawn for the table cells yes/no, and so on. You can fully concentrate on designing a table, instead of thinking hard about how to calculate where to put a border or to even manually prepare a designed workbook.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3rdia/qol" class="external-link">qol</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">100000</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">100000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create format containers</span></span>
 <span><span class="va">age.</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
@@ -274,9 +270,7 @@
 </h2>
 <p>Join two or more data frames together in one operation with multiple different join methods and join on differently named variables. Available methods are: left, right, inner, full, outer, left_inner, right_inner.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3rdia/qol" class="external-link">qol</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simple join</span></span>
+<code class="sourceCode R"><span><span class="co"># Simple join</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                  a   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -305,13 +299,56 @@
 <span>                               how <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="st">"right"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="transpose-like-never-before">Transpose like never before<a class="anchor" aria-label="anchor" href="#transpose-like-never-before"></a>
+</h2>
+<p>Transpose, weight results and generate additional categories all in one operation. Put variables side by side or nest them or both, just as you need it. And of course you can transpose multiple variables from wide into long format in one go.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Transpose from long to wide and use a multilabel to generate additional categories</span></span>
+<span><span class="va">long_to_wide</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex + education"</span>, <span class="st">"sex"</span>, <span class="st">"education"</span><span class="op">)</span>,</span>
+<span>                   values   <span class="op">=</span> <span class="va">income</span>,</span>
+<span>                   formats  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                   weight   <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                   na.rm    <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Transpose back from wide to long</span></span>
+<span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
+<span>                                   education <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"middle"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="sorting-with-additions">Sorting with additions<a class="anchor" aria-label="anchor" href="#sorting-with-additions"></a>
+</h2>
+<p>Sort cases while preserving the order of certain variables or make use of formats to sort in format order, which can be used to e.g. sort a character variable in another than alphabetical order without creating a temporary variable just for sorting.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">education.</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
+<span>    <span class="st">"1"</span> <span class="op">=</span> <span class="st">"low"</span>,</span>
+<span>    <span class="st">"2"</span> <span class="op">=</span> <span class="st">"middle"</span>,</span>
+<span>    <span class="st">"3"</span> <span class="op">=</span> <span class="st">"high"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Simple sorting</span></span>
+<span><span class="va">sort_df1</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/sort_plus.html">sort_plus</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, <span class="va">age</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sort_df2</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/sort_plus.html">sort_plus</a></span><span class="op">(</span>by    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, <span class="va">age</span><span class="op">)</span>,</span>
+<span>                                 order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ascending"</span>, <span class="st">"descending"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Character variables will normally be sorted alphabetically. With the help</span></span>
+<span><span class="co"># of a format this variable can be sorted in a completely different way.</span></span>
+<span><span class="va">sort_df3</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/sort_plus.html">sort_plus</a></span><span class="op">(</span>by      <span class="op">=</span> <span class="va">education</span>,</span>
+<span>                                 formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Preserve the order of the character variable, otherwise it couldn't stay in</span></span>
+<span><span class="co"># it's current order.</span></span>
+<span><span class="va">sort_df4</span> <span class="op">&lt;-</span> <span class="va">sort_df3</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/sort_plus.html">sort_plus</a></span><span class="op">(</span>by       <span class="op">=</span> <span class="va">age</span>,</span>
+<span>                                  preserve <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="readability">Readability<a class="anchor" aria-label="anchor" href="#readability"></a>
 </h2>
 <p>There are also some functions which enhance the readability of the code. For example if - else if - else statements like in other languages:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3rdia/qol" class="external-link">qol</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Example data frame</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Call function</span></span>
@@ -387,7 +424,7 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/SAS-R-orange%20.svg" alt="SAS"></a></li>
 <li><a href="https://cran.r-project.org/package=qol" class="external-link"><img src="https://www.r-pkg.org/badges/version/qol?color=green" alt="CRAN Version"></a></li>
-<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/GitHub-1.1.1-blue.svg" alt="DEVELOPMENT Version"></a></li>
+<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/GitHub-1.2.0-blue.svg" alt="DEVELOPMENT Version"></a></li>
 <li><a href="https://cran.r-project.org/web/checks/check_results_qol.html" class="external-link"><img src="https://badges.cranchecks.info/summary/qol.svg" alt="CRAN checks"></a></li>
 </ul>
 </div>

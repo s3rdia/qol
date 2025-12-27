@@ -36,9 +36,16 @@ reference:
   contents:
   - keep
   - dropp
+  - vars_between
 - title: Joining
   contents:
   - multi_join
+- title: Transposing
+  contents:
+  - transpose_plus
+- title: Sorting
+  contents:
+  - sort_plus
 - title: If-Statements
   contents:
   - if.
@@ -84,4 +91,5 @@ reference:
   - args_to_char
   - convert_numeric
   - is_numeric
+  - convert_factor
   

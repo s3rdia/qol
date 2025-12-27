@@ -11,7 +11,7 @@ of variables can be nested and crossed. The output is an individually styled
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,6 @@ of variables can be nested and crossed. The output is an individually styled
 <span>  workbook <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  output <span class="op">=</span> <span class="st">"excel"</span>,</span>
-<span>  pre_summed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  monitor <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -189,13 +188,6 @@ Styles can be created with <code><a href="excel_output_style.html">excel_output_
 <dd><p>The following output formats are available: excel and excel_nostyle.</p></dd>
 
 
-<dt id="arg-pre-summed">pre_summed<a class="anchor" aria-label="anchor" href="#arg-pre-summed"></a></dt>
-<dd><p>FALSE by default. If TRUE this function works with pre summarised data. This can be
-used, if not all the needed results can be calculated by <code>any_table()</code> and need to be prepared in
-advance. Enabling you to still make use of the styled tabulation. For this to work, the values have to
-carry the statistic extension (e.g. "_sum", "_pct") in the variable name.</p></dd>
-
-
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>FALSE by default. If TRUE removes all NA values from the variables.</p></dd>
 
@@ -243,7 +235,7 @@ a designed workbook.</p>
 <p>Functions that can handle formats and styles: <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="crosstabs.html">crosstabs()</a></code>.</p>
 <p>Additional functions that can handle styles: <code><a href="export_with_style.html">export_with_style()</a></code></p>
 <p>Additional functions that can handle formats: <code><a href="summarise_plus.html">summarise_plus()</a></code>, <code><a href="recode.html">recode()</a></code>,
-<code><a href="recode.html">recode_multi()</a></code></p></div>
+<code><a href="recode.html">recode_multi()</a></code>, <code><a href="transpose_plus.html">transpose_plus()</a></code>, <code><a href="sort_plus.html">sort_plus()</a></code></p></div>
     </div>
 
     <div class="section level2">

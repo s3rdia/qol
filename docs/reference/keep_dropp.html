@@ -13,7 +13,7 @@ from the given data frame. All other variables are kept."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,6 +97,10 @@ from the given data frame. All other variables are kept.</p>
 <span></span>
 <span><span class="va">new_dt6</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">keep</span><span class="op">(</span><span class="va">var_names</span><span class="op">)</span></span>
 <span><span class="va">new_dt7</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">dropp</span><span class="op">(</span><span class="va">var_names</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># You can also keep or drop a range of variables</span></span>
+<span><span class="va">new_dt8</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">keep</span><span class="op">(</span><span class="va">year</span>, <span class="va">state</span><span class="op">:</span><span class="va">income</span><span class="op">)</span></span>
+<span><span class="va">new_dt9</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">dropp</span><span class="op">(</span><span class="va">year</span>, <span class="va">state</span><span class="op">:</span><span class="va">income</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

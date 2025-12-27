@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,49 @@
       <small>Source: <a href="https://github.com/s3rdia/qol/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120---development">qol 1.2.0 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-120---development"></a></h2>
+<div class="section level4">
+<h4 id="new-functions-1-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-0"></a></h4>
+<ul><li>
+<code><a href="../reference/vars_between.html">vars_between()</a></code>: Get variable names between two variables in a data frame. (21.12.2025)</li>
+<li>
+<code><a href="../reference/convert_numeric.html">convert_factor()</a></code>: Converts all given variables to factor. (23.12.2025)</li>
+<li>
+<code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Format driven transposition, which is able to do more than just transpose values. (27.12.2025)</li>
+<li>
+<code><a href="../reference/sort_plus.html">sort_plus()</a></code>: Sort data frame observations with some additions. (27.12.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
+<ul><li>
+<code><a href="../reference/inverse.html">inverse()</a></code>: Now supports variable names written without quotation marks. (21.12.2025)</li>
+<li>
+<code><a href="../reference/keep_dropp.html">keep()</a></code>/<code><a href="../reference/keep_dropp.html">dropp()</a></code>: Now support variable ranges, like “state:income”. (21.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Removed <code>pre_summed</code> parameter. Instead the function now checks on it’s own, whether the provided data frame is pre summarised or not. (23.12.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="fixed-1-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-0"></a></h4>
+<ul><li>
+<code><a href="../reference/keep_dropp.html">keep()</a></code>: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Now checks if a column combination is also part of the row combinations. (22.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-2-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-0"></a></h4>
+<ul><li>Restructured some “Small Helpers” into “Renaming” and “Variable Selection”. (21.12.2025)</li>
+<li>Adjusted some warning messages. (22.12.2025)</li>
+<li>Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses faster <code><a href="https://rdrr.io/pkg/collapse/man/efficient-programming.html" class="external-link">collapse::na_omit</a></code> for NA removal. (27.12.2025)</li>
+<li>Added <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code> and <code><a href="../reference/sort_plus.html">sort_plus()</a></code> examples to the README. (27.12.2025)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.1" id="qol-111---cran-release-on-13122025">qol 1.1.1 - CRAN release on 13.12.2025<a class="anchor" aria-label="anchor" href="#qol-111---cran-release-on-13122025"></a></h2><p class="text-muted">CRAN release: 2025-12-13</p>
 <div class="section level4">
