@@ -89,7 +89,7 @@ get_group_missings <- function(group_vars, notes, na.rm){
 
     # Count combined missings of group variables. To count as missings only
     # one of the variables has to be NA in a position.
-    missings <- collapse::fsum(!stats::complete.cases(group_vars))
+    missings <- collapse::fsum(collapse::missing_cases(group_vars))
 
     # If there are missings calculate percentage and output a message
     if (missings > 0){

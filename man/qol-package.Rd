@@ -46,6 +46,10 @@ Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}, \code{\li
 
 Joining: \code{\link[=multi_join]{multi_join()}}
 
+Transposing: \code{\link[=transpose_plus]{transpose_plus()}}
+
+Sorting: \code{\link[=sort_plus]{sort_plus()}}
+
 If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}.
 
 Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}.
@@ -61,7 +65,7 @@ Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=setcolorder_by_pa
 
 Split data frame: \code{\link[=split_by_var]{split_by_var()}}, \code{\link[=split_by_condition]{split_by_condition()}}.
 
-Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}
+Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
 }
 
 \section{Snippets}{

@@ -49,7 +49,7 @@
 #'
 #' @seealso
 #' Functions that can handle formats: [summarise_plus()], [frequencies()], [crosstabs()],
-#' [any_table()], [recode_multi()].
+#' [any_table()], [recode_multi()], [transpose_plus()], [sort_plus()].
 #'
 #' @examples
 #' age. <- discrete_format(

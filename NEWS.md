@@ -1,8 +1,10 @@
-# qol 1.1.2 - DEVELOPMENT
+# qol 1.2.0 - DEVELOPMENT
 
 ### New functions
 * `vars_between()`: Get variable names between two variables in a data frame. (21.12.2025)
 * `convert_factor()`: Converts all given variables to factor. (23.12.2025)
+* `transpose_plus()`: Format driven transposition, which is able to do more than just transpose values. (27.12.2025)
+* `sort_plus()`: Sort data frame observations with some additions. (27.12.2025)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
@@ -19,6 +21,8 @@
 * Adjusted some warning messages. (22.12.2025)
 * Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
 * `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
+* `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)
+* Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

@@ -1,4 +1,4 @@
-#' Fast and Powerful yet Simple to Use Summarise
+#' Fast And Powerful Yet Simple To Use Summarise
 #'
 #' @description
 #' [summarise_plus()] creates a new aggregated data table with the desired grouping.
@@ -75,7 +75,7 @@
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that also make use of formats: [frequencies()], [crosstabs()],
-#' [any_table()], [recode()], [recode_multi()].
+#' [any_table()], [recode()], [recode_multi()], [transpose_plus()], [sort_plus()].
 #'
 #' @examples
 #' # Example formats
@@ -123,7 +123,7 @@
 #'                    nesting    = "all",
 #'                    na.rm      = TRUE)
 #'
-#'# Formats can also be passed as characters
+#' # Formats can also be passed as characters
 #' single <- my_data |>
 #'     summarise_plus(class      = c(year, age, sex),
 #'                    values     = weight,
@@ -165,9 +165,9 @@ summarise_plus <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     ###########################################################################
     # Early evaluations
@@ -419,9 +419,9 @@ summarise_plus <- function(data_frame,
     # Summarisation starts
     ###########################################################################
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Pre compute", "Preparation")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Some preparations beforehand
@@ -489,9 +489,9 @@ summarise_plus <- function(data_frame,
         values <- data_frame |> inverse(group_vars)
     }
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Apply formats", "Apply formats")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Nesting crossroad
@@ -501,7 +501,7 @@ summarise_plus <- function(data_frame,
     if (tolower(nesting) == "deepest"){
         # Remove NAs from grouping variables
         if (na.rm){
-            data_frame <- data_frame[stats::complete.cases(data_frame[class]), ]
+            data_frame <- collapse::na_omit(data_frame, cols = class)
         }
 
         message("\n > Executing nested merge.")
@@ -584,9 +584,9 @@ summarise_plus <- function(data_frame,
         result_df  <- result_list[[1]]
         monitor_df <- result_list[[2]]
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start("Clean up", "Clean up")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         #  Clean up
@@ -611,9 +611,9 @@ summarise_plus <- function(data_frame,
 
         if (merge_back){
             message("\n > Merging back.")
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Merge back", "Merge back")
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
 
             # Don't merge back type variables, only summarised variable
             result_df <- result_df |> drop_type_vars()
@@ -627,10 +627,10 @@ summarise_plus <- function(data_frame,
                 dropp(".temp_weight")
         }
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_end()
         monitor_plot(monitor_df, by = "section", draw_plot = monitor)
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
     }
     # If every possible combination of the given grouping variables should be evaluated
@@ -682,9 +682,9 @@ summarise_plus <- function(data_frame,
         total_df   <- total_list[[1]]
         monitor_df <- total_list[[2]]
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start("pct_group(total)", "Calc(total)")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Total percentages
@@ -708,9 +708,9 @@ summarise_plus <- function(data_frame,
             }
         }
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("pct_total(total)", "Calc(total)")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         if ("pct_total" %in% statistics){
             # For compute percentages for every variable
@@ -761,11 +761,11 @@ summarise_plus <- function(data_frame,
                 for (combination in combinations){
                     # If types are specified check first if combination is of the right type
                     if (length(types) > 0){
-                        #------------------------------------------------------
+                        #-----------------------------------------------------#
                         monitor_df <- monitor_df |>
                             monitor_start(paste0("Drop Combo(", paste(combination, collapse = " + "), ")"),
                                           "Drop Combo")
-                        #------------------------------------------------------
+                        #-----------------------------------------------------#
 
                         # Order current combination alphabetically
                         reordered_combo <- paste(sort(combination), collapse = "+")
@@ -779,11 +779,11 @@ summarise_plus <- function(data_frame,
                         monitor_df <- monitor_df |> monitor_end()
                     }
 
-                    #----------------------------------------------------------
+                    #---------------------------------------------------------#
                     monitor_df <- monitor_df |>
                         monitor_start(paste0("Formats(", paste(combination, collapse = " + "), ")"),
                                       paste0("Formats(", paste(combination, collapse = " + "), ")"))
-                    #----------------------------------------------------------
+                    #---------------------------------------------------------#
 
                     # Remove NAs from grouping variables
                     if (na.rm){
@@ -901,11 +901,11 @@ summarise_plus <- function(data_frame,
                     group_df   <- group_list[[1]]
                     monitor_df <- group_list[[2]]
 
-                    #----------------------------------------------------------
+                    #---------------------------------------------------------#
                     monitor_df <- monitor_df |>
                         monitor_start(paste0("Finish(", paste(combination, collapse = " + "), ")"),
                                       paste0("Finish(", paste(combination, collapse = " + "), ")"))
-                    #----------------------------------------------------------
+                    #---------------------------------------------------------#
 
                     # Every grouping variable which was not part of the current grouping
                     # gets set to a missing value
@@ -932,9 +932,9 @@ summarise_plus <- function(data_frame,
 
         message("\n > Putting results together.")
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start("Clean up", "Clean up")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         # Put all computed data frames one below the other and sort the variables
         # in the order: groups -> types -> results
@@ -958,10 +958,10 @@ summarise_plus <- function(data_frame,
             result_df <- result_df |> collapse::fsubset(TYPE != "total")
         }
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_end()
         monitor_df |> monitor_plot(by = "group", draw_plot = monitor)
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
     }
 
     # Drop pseudo group variable if there is one
@@ -1066,9 +1066,9 @@ matrix_summarise <- function(data_frame,
     # Preparation
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_start("Matrix conversion", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     # Temporarily rename "." in factor variable levels, if there are any. This is
     # necessary because later the matrix row names need to be split by ".". If there
@@ -1103,9 +1103,9 @@ matrix_summarise <- function(data_frame,
     result_list <- lapply(names(statistics), function(single_stat){
         # Skip sum and do it separately to keep group text information.
         if (single_stat != "sum"){
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_start(single_stat, paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
 
             # Get functions one by one from the global list
             stat_function <- list_of_statistics[[single_stat]]
@@ -1134,9 +1134,9 @@ matrix_summarise <- function(data_frame,
     monitor_df   <- rbind(monitor_df,
                           do.call(rbind, monitor_list))
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df  <- monitor_df |> monitor_start("sum", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     result_list <- lapply(result_list, `[[`, 1)
 
@@ -1173,9 +1173,9 @@ matrix_summarise <- function(data_frame,
 
     # Do weight of sums separately because this only needs to be computed once
     # and not per value variable.
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("sum_wgt", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     sum_wgt <- data.table::as.data.table(
         sum_wgt_qol(values = weight, group = grouping))
@@ -1183,9 +1183,9 @@ matrix_summarise <- function(data_frame,
     data.table::setnames(sum_wgt, "sum_wgt")
 
     # Combine grouping variables with results to a full data table
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Combine evaluations", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     if (!"pseudo_group" %in% names(restored_group)){
         # Normal case with grouping variables

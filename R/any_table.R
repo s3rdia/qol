@@ -100,7 +100,7 @@
 #' Additional functions that can handle styles: [export_with_style()]
 #'
 #' Additional functions that can handle formats: [summarise_plus()], [recode()],
-#' [recode_multi()]
+#' [recode_multi()], [transpose_plus()], [sort_plus()]
 #'
 #' @examples
 #' # Example data frame
@@ -279,9 +279,9 @@ any_table <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     ###########################################################################
     # Early evaluations
@@ -310,21 +310,6 @@ any_table <- function(data_frame,
             }
         }),
         names(formats_list))
-
-    # Look up variable names in format data frame to check whether there is an
-    # interval or discrete format
-    flag_interval <- FALSE
-
-    for (current_var in names(formats)){
-        format_df          <- formats[[current_var]]
-        interval_variables <- c("from", "to")
-        actual_variables   <- names(format_df)[1:2]
-
-        if (identical(interval_variables, actual_variables)){
-            flag_interval <- TRUE
-            break
-        }
-    }
 
     ###########################################################################
     # Error handling
@@ -626,9 +611,9 @@ any_table <- function(data_frame,
     # Any tabulation starts
     ###########################################################################
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     message("\n > Computing stats.")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -750,9 +735,9 @@ any_table <- function(data_frame,
     # In case multiple group percentages should be computed, evaluate them in a loop
     # and join them to the main data frame.
     if (length(pct_group) > 1){
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Additional group pct", "Summary")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         for (group in seq_along(pct_group)){
             # First group was computed before so omit it here
@@ -896,9 +881,9 @@ any_table <- function(data_frame,
     # the pieces back together to form a fully printable result data frame.
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Transform table", "Transform")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     part_combi_list       <- list()
     header_combi_list     <- list()
@@ -1236,10 +1221,9 @@ any_table <- function(data_frame,
 
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,
-       combinations, current_combi, current_var, flag_interval, index,
-       last_number_of_rows, name, new_row_names, row_combi, row_combi_vars, sorted_combi,
-       subset_type, group_vars, length_row_header, col_header_df, header_diff,
-       row_header_var_count, var_vector)
+       combinations, current_combi, index, last_number_of_rows, name, new_row_names,
+       row_combi, row_combi_vars, sorted_combi, subset_type, group_vars,
+       length_row_header, col_header_df, header_diff, row_header_var_count, var_vector)
 
     # Grab all information, which is necessary to format the workbook. This list will be
     # returned at the end and can be grabbed by the workbook combine function.
@@ -1252,9 +1236,9 @@ any_table <- function(data_frame,
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     message(" > Formatting tables.")
 
     # Setup styling in new workbook if no other is provided
@@ -1311,10 +1295,10 @@ any_table <- function(data_frame,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'any_table' execution time: ", end_time, " seconds\n")
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     invisible(list("table"    = any_tab,
                    "workbook" = wb,
@@ -1375,9 +1359,9 @@ format_any_excel <- function(wb,
                              by_info = NULL,
                              index   = NULL,
                              monitor_df){
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_start("Excel prepare", "Format")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Setup header
@@ -1447,9 +1431,9 @@ format_any_excel <- function(wb,
     # Add table data and format according to style options
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     wb$add_data(x          = any_tab,
                 start_col  = style[["start_column"]],
@@ -1468,9 +1452,9 @@ format_any_excel <- function(wb,
     # Table styling
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     #Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, any_ranges, style, output)
@@ -1483,27 +1467,27 @@ format_any_excel <- function(wb,
         wb$merge_cells(dims = any_ranges[["box_range"]])
 
         # Merge column and row headers
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel format col headers", "Format")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         wb <- wb |>
             handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]]), drop = FALSE], any_ranges)
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel format row headers", "Format")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         wb <- wb |>
             handle_row_header_merge(any_tab[, 1:any_ranges[["cat_col.width"]]], any_ranges)
 
         # Style table
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         wb <- wb |> handle_cell_styles(any_ranges, style)
 
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         # Set up inner table number formats
         col_index <- 1
@@ -1531,9 +1515,9 @@ format_any_excel <- function(wb,
         }
 
         # Adjust table dimensions
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
                                               ncol(any_tab) + (style[["start_column"]] - 1),
@@ -1815,9 +1799,9 @@ format_any_by_excel <- function(wb,
     index <- 1
 
     for (by_var in by){
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start(paste0("Excel prepare (", by_var, ")"), "Format by")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         # Select by variables one by one
         any_by <- any_tab |>
@@ -1843,9 +1827,9 @@ format_any_by_excel <- function(wb,
                 next
             }
 
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
-            #------------------------------------------------------------------
+            #-----------------------------------------------------------------#
             message("   + ", paste0(by_var, " = ", value))
 
             # Put additional by info together with the information which by variable
@@ -2018,9 +2002,9 @@ combine_into_workbook <- function(...,
                                   output  = "excel",
                                   print   = TRUE,
                                   monitor = FALSE){
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Prepare combine", "Prepare")
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     # Measure the time
     start_time <- Sys.time()
@@ -2034,9 +2018,9 @@ combine_into_workbook <- function(...,
     message(" > Formatting tables")
 
     for (table in tables){
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next(paste0("Format ", tab_names[i]), "Format tables")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         message(paste0("   + ", tab_names[i]))
 
         meta <- table[["meta"]]
@@ -2071,9 +2055,9 @@ combine_into_workbook <- function(...,
 
     # Output formatted table into different formats
     if (print){
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
-        #----------------------------------------------------------------------
+        #---------------------------------------------------------------------#
 
         if (is.null(file)){
             wb$open()
@@ -2090,10 +2074,10 @@ combine_into_workbook <- function(...,
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'combine_into_workbook' execution time: ", end_time, " seconds\n")
 
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------#
 
     invisible(wb)
 }

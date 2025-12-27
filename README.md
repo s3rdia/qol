@@ -9,7 +9,7 @@
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
 [![DEVELOPMENT
-Version](https://img.shields.io/badge/GitHub-1.1.2-blue.svg)](https://github.com/s3rdia/qol)
+Version](https://img.shields.io/badge/GitHub-1.2.0-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
 <!-- badges: end -->
@@ -49,8 +49,6 @@ readable and user friendly for creating larger and more complex outputs
 at the same time.
 
 ``` r
-library(qol)
-
 # Creating format containers
 age. <- discrete_format(
     "Total"          = 0:100,
@@ -132,8 +130,6 @@ table, instead of thinking hard about how to calculate where to put a
 border or to even manually prepare a designed workbook.
 
 ``` r
-library(qol)
-
 my_data <- dummy_data(100000)
 
 # Create format containers
@@ -270,8 +266,6 @@ Available methods are: left, right, inner, full, outer, left_inner,
 right_inner.
 
 ``` r
-library(qol)
-
 # Simple join
 df1 <- data.frame(key = c(1, 1, 1, 2, 2, 2),
                   a   = c("a", "a", "a", "a", "a", "a"))
@@ -301,14 +295,65 @@ multiple_joined3 <- multi_join(list(df1b, df2b, df3b),
                                how = c("left", "right"))
 ```
 
+## Transpose like never before
+
+Transpose, weight results and generate additional categories all in one
+operation. Put variables side by side or nest them or both, just as you
+need it. And of course you can transpose multiple variables from wide
+into long format in one go.
+
+``` r
+# Transpose from long to wide and use a multilabel to generate additional categories
+long_to_wide <- my_data |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = c("sex + education", "sex", "education"),
+                   values   = income,
+                   formats  = list(sex = sex., age = age.),
+                   weight   = weight,
+                   na.rm    = TRUE)
+
+# Transpose back from wide to long
+wide_to_long <- long_to_wide |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = list(sex       = c("Total", "Male", "Female"),
+                                   education = c("low", "middle", "high")))
+```
+
+## Sorting with additions
+
+Sort cases while preserving the order of certain variables or make use
+of formats to sort in format order, which can be used to e.g. sort a
+character variable in another than alphabetical order without creating a
+temporary variable just for sorting.
+
+``` r
+education. <- discrete_format(
+    "1" = "low",
+    "2" = "middle",
+    "3" = "high")
+
+# Simple sorting
+sort_df1 <- my_data |> sort_plus(by = c(state, sex, age))
+sort_df2 <- my_data |> sort_plus(by    = c(state, sex, age),
+                                 order = c("ascending", "descending"))
+
+# Character variables will normally be sorted alphabetically. With the help
+# of a format this variable can be sorted in a completely different way.
+sort_df3 <- my_data |> sort_plus(by      = education,
+                                 formats = list(education = education.))
+
+# Preserve the order of the character variable, otherwise it couldn't stay in
+# it's current order.
+sort_df4 <- sort_df3 |> sort_plus(by       = age,
+                                  preserve = education)
+```
+
 ## Readability
 
 There are also some functions which enhance the readability of the code.
 For example if - else if - else statements like in other languages:
 
 ``` r
-library(qol)
-
 # Example data frame
 my_data <- dummy_data(1000)
 

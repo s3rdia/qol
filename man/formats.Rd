@@ -124,6 +124,6 @@ income. <- interval_format(
 }
 \seealso{
 Functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},
-\code{\link[=any_table]{any_table()}}, \code{\link[=recode_multi]{recode_multi()}}.
+\code{\link[=any_table]{any_table()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}.
 }
 \keyword{internal}

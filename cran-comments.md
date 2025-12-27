@@ -1,9 +1,11 @@
-# Resubmission qol 1.1.2
+# Resubmission qol 1.2.0
 Last CRAN release was on 13.12.2025.
 
 New functions
 * vars_between(): Get variable names between two variables in a data frame.
 * convert_factor(): Converts all given variables to factor.
+* transpose_plus(): Format driven transposition, which is able to do more than just transpose values.
+* sort_plus(): Sort data frame observations with some additions.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -17,6 +19,7 @@ Fixed
 
 Additionally
 * any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
+* summarise_plus(): Now uses faster collapse::na_omit for NA removal.
 
 ## R CMD check results
 

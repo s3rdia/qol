@@ -6,7 +6,7 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                          "across", ":=", "TYPE", "DEPTH",
                          "var_sum", "var_cum_sum", "pct_group", "var_cum_pct",
                          "mean", "sd", "min", "max",
-                         "var_pct_row"))
+                         "var_pct_row", ".pseudo_preserve", "BY", "VALUE"))
 
 
 # Start up message

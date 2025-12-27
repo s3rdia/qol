@@ -153,7 +153,8 @@ order_interleaved <- function(data_frame, patterns) {
 #' Returns TRUE or FALSE depending on the result.
 #'
 #' @noRd
-is_pre_summed <- function(data_frame, group_vars) {
-    group_df <- data_frame |> collapse::fselect(group_vars)
-    !any(duplicated(group_df))
+is_pre_summed <- function(data_frame, group_vars){
+    unique_values <- nrow(collapse::fndistinct(data_frame[group_vars],
+                                               g = data_frame[group_vars]))
+    unique_values == nrow(data_frame)
 }

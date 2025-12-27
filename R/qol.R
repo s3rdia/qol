@@ -38,6 +38,10 @@
 #'
 #' Joining: [multi_join()]
 #'
+#' Transposing: [transpose_plus()]
+#'
+#' Sorting: [sort_plus()]
+#'
 #' If-statement: [if.()], [else_if.()], [else.()].
 #'
 #' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()].
@@ -53,7 +57,7 @@
 #'
 #' Split data frame: [split_by_var()], [split_by_condition()].
 #'
-#' Other: [build_master()], [build_rstheme()], [args_to_char()], [convert_numeric()], [is_numeric()]
+#' Other: [build_master()], [build_rstheme()], [args_to_char()], [convert_numeric()], [is_numeric()], [convert_factor()]
 #'
 #' @section Snippets:
 #' \preformatted{

@@ -257,7 +257,7 @@ recode_multi <- function(data_frame, ...){
         data.table::setcolorder(var_order)
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'recode' execution time: ", end_time, " seconds")
+    message("- - - 'recode_multi' execution time: ", end_time, " seconds")
 
     data_frame
 }
