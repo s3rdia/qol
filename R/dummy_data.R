@@ -18,7 +18,9 @@ dummy_data <- function(no_obs, monitor = FALSE){
     # Measure the time
     start_time <- Sys.time()
 
+    #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Preparation")
+    #-------------------------------------------------------------------------#
 
     # Prepare years
     current_year <- as.numeric(format(Sys.Date(), "%Y"))
@@ -40,7 +42,9 @@ dummy_data <- function(no_obs, monitor = FALSE){
     state_probs <- c(3.5, 2.2, 9.6, 0.8, 21.6, 7.6, 5.0, 13.5, 15.8, 1.2, 4.4, 3.0, 1.9, 4.9, 2.6, 2.5)
     sample(1:16, 1, replace = TRUE, prob = state_probs)
 
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate households")
+    #-------------------------------------------------------------------------#
 
     years         <- numeric()
     household_ids <- numeric()
@@ -53,7 +57,7 @@ dummy_data <- function(no_obs, monitor = FALSE){
         household_id_current <- rep(1:number_of_households,
                             times = persons_per_household)
 
-        person_id_current <- unlist(lapply(persons_per_household, function(n) 1:n))
+        person_id_current <- sequence(persons_per_household)
 
         state_temp     <- sample(1:16, number_of_households, replace = TRUE, prob = state_probs)
         states_current <- rep(state_temp, times = persons_per_household)
@@ -71,36 +75,54 @@ dummy_data <- function(no_obs, monitor = FALSE){
     first_person <- data.table::fifelse(person_ids == 1, 1, 0)
 
     # Prepare weight per household
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate weights")
+    #-------------------------------------------------------------------------#
 
     household_weights <- stats::runif(number_of_households, 0.15, 0.35)
     weight <- rep(household_weights,
                   times = persons_per_household)
 
     #Prepare age
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate age")
+    #-------------------------------------------------------------------------#
 
-    age <-                                             stats::runif(no_obs, min = 0L,  max = 100L)
-    age <- data.table::fifelse(person_ids == 1,        stats::runif(no_obs, min = 18L, max = 100L), age)
-    age <- data.table::fifelse(person_ids %in% c(3, 4), stats::runif(no_obs, min = 0L,  max = 25L),  age)
-    age <- data.table::fifelse(person_ids %in% c(5, 6), stats::runif(no_obs, min = 50L, max = 100L), age)
-    age <- insert_nas(age)
+    age <- stats::runif(no_obs, min = 0L,  max = 100L)
+
+    id_1  <- which(person_ids == 1)
+    id_34 <- which(person_ids %in% c(3, 4))
+    id_56 <- which(person_ids %in% c(5, 6))
+
+    age[id_1]  <- stats::runif(length(id_1),  min = 18, max = 100)
+    age[id_34] <- stats::runif(length(id_34), min =  0, max =  25)
+    age[id_56] <- stats::runif(length(id_56), min = 50, max = 100)
+
+    age <- collapse::na_insert(age, prop = 0.05)
 
     # Prepare personal income
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate income")
+    #-------------------------------------------------------------------------#
 
     income <- stats::runif(no_obs, 0, 5000)
     income <- data.table::fifelse(age < 18, 0, income)
-    income <- insert_nas(income)
+    income <- collapse::na_insert(income, prop = 0.05)
 
     # Prepare a probability variable with values between 0 and 1 (including both)
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate probability")
+    #-------------------------------------------------------------------------#
 
     prob_temp <- sample(0:2, no_obs, replace = TRUE)
-    prob_temp[prob_temp == 2] <- stats::runif(sum(prob_temp == 2), 0, 1)
+
+    id_2 <- which(prob_temp == 2)
+    prob_temp[id_2] <- stats::runif(length(id_2), 0, 1)
 
     # Put data frame together with some basic variables to play with
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Create data table")
+    #-------------------------------------------------------------------------#
 
     new_dummy_data <- data.table::data.table(
         year = as.integer(years),
@@ -108,9 +130,9 @@ dummy_data <- function(no_obs, monitor = FALSE){
         person_id = as.integer(person_ids),
         first_person = as.integer(first_person),
         state = as.integer(states),
-        sex = as.integer(insert_nas(sample(1:2, no_obs, replace = TRUE))),
+        sex = as.integer(collapse::na_insert(sample(1:2, no_obs, replace = TRUE), prop = 0.05)),
         age = as.integer(age),
-        education = insert_nas(sample(c("low", "middle", "high"), no_obs, replace = TRUE)),
+        education = collapse::na_insert(sample(c("low", "middle", "high"), no_obs, replace = TRUE), prop = 0.05),
         income = income,
         probability = prob_temp,
         weight = weight) |>
@@ -119,33 +141,10 @@ dummy_data <- function(no_obs, monitor = FALSE){
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'dummy_data' execution time: ", end_time, " seconds\n")
 
+    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
+    #-------------------------------------------------------------------------#
 
     utils::head(new_dummy_data, orig_obs)
-
-}
-
-
-#' Randomly Insert NA Values
-#'
-#' @description
-#' Randomly insert NA values into variable.
-#'
-#' @param values Variable in which to insert NA values.
-#'
-#' @return
-#' Returns a variable with randomly inserted NA values.
-#'
-#' @noRd
-insert_nas <- function(values) {
-    # Get random positions to inject NAs
-    nobs <- length(values)
-    ratio <- stats::runif(1, 0.01, 0.1)
-
-    na_position <- sample(seq_len(nobs), size = as.integer(ratio * nobs))
-
-    # Inject NAs at random positions
-    values[na_position] <- NA
-    values
 }

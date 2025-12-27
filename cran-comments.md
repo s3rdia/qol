@@ -20,6 +20,7 @@ Fixed
 Additionally
 * any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
 * summarise_plus(): Now uses faster collapse::na_omit for NA removal.
+* dummy_data(): Optimized and now just takes half the time to generate data.
 
 ## R CMD check results
 

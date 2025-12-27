@@ -23,6 +23,7 @@
 * `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
 * `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
+* `dummy_data()`: Optimized and now just takes half the time to generate data. (27.12.2025)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025
