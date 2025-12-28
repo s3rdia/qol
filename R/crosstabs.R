@@ -604,7 +604,7 @@ format_cross_text <- function(cross_tab,
         first_column_width <- nchar(paste0(rows, " / ", columns))
 
         first_column_width <- max(first_column_width,
-                                  nchar(stats::na.omit(as.character(var_tab[[rows]]))))
+                                  nchar(collapse::na_omit(as.character(var_tab[[rows]]))))
 
         # Use the max column width to evenly spread the columns.
         # Wrap the column headers according to this width.
@@ -1092,7 +1092,7 @@ format_cross_by_text <- function(cross_tab,
 
         # Extract unique values
         if (anyNA(cross_by[["by_vars"]])){
-            values <- c(unique(stats::na.omit(cross_by[["by_vars"]])), NA)
+            values <- c(unique(collapse::na_omit(cross_by[["by_vars"]])), NA)
         }
         else{
             values <- unique(cross_by[["by_vars"]])
@@ -1222,7 +1222,7 @@ format_cross_by_excel <- function(cross_tab,
 
         # Extract unique values
         if (anyNA(cross_by[["by_vars"]])){
-            values <- c(unique(stats::na.omit(cross_by[["by_vars"]])), NA)
+            values <- c(unique(collapse::na_omit(cross_by[["by_vars"]])), NA)
         }
         else{
             values <- unique(cross_by[["by_vars"]])

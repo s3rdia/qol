@@ -278,7 +278,7 @@ sort_plus <- function(data_frame,
             label_levels <- formats[[variable]] |>
                 unlist(use.names = FALSE) |>
                 unique() |>
-                stats::na.omit()
+                collapse::na_omit()
 
             # Convert variable to factor
             data_frame[[new_column]] <- factor(

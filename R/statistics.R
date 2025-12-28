@@ -177,7 +177,7 @@ compute_group_percentages <- function(original_df,
         super_df <- super_df |>
             convert_numeric(super_group) |>
             apply_format(formats, super_group) |>
-            dropp("sum_wgt")
+            collapse::fselect(-sum_wgt)
 
         # Catch new variable names
         values <- super_df |> inverse(group_vars)
@@ -205,27 +205,29 @@ compute_group_percentages <- function(original_df,
         collapse::fgroup_by(super_group) |>
         collapse::fsummarise(across(values, collapse::fsum)) |>
         collapse::frename(stats::setNames(old_names, new_names)) |>
-        keep(super_group, new_names)
+        collapse::fselect(super_group, new_names)
 
     # Join super_df to summarized data frame
     if (is.null(super_group)){
         # In case of only totals
-        joined_df <- merge(summary_df, super_df,
-                           by = ".temp_key",
-                           allow.cartesian = TRUE)
+        joined_df <- collapse::join(summary_df, super_df,
+                                    on       = ".temp_key",
+                                    how      = "left",
+                                    multiple = TRUE,
+                                    verbose  = FALSE)
     }
     else{
         # In case there is at least one grouping variable
         joined_df <- collapse::join(summary_df, super_df,
-                                    on = super_group,
-                                    how = "left",
+                                    on      = super_group,
+                                    how     = "left",
                                     verbose = FALSE)
     }
 
     # Return finished data frame
     joined_df <- joined_df |>
         calculate_percentages(values, "pct_group", cut_off_var) |>
-        dropp(".temp_key")
+        collapse::fselect(-.temp_key)
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -274,13 +276,13 @@ compute_group_percentages_short <- function(summary_df,
     new_names <- paste0(values, "_qol")
 
     super_df <- super_df |>
-        keep(super_group, old_names) |>
+        collapse::fselect(super_group, old_names) |>
         collapse::frename(stats::setNames(old_names, new_names))
 
     # Join data frames by super group
     joined_df <- collapse::join(summary_df, super_df,
-                                on = super_group,
-                                how = "left",
+                                on      = super_group,
+                                how     = "left",
                                 verbose = FALSE)
 
     # Return finished data frame
@@ -332,8 +334,7 @@ compute_total_percentages <- function(original_df,
     new_names <- paste0(values, "_qol")
 
     # Compute the data frame with summaries of the super groups
-    super_df <- original_df |>
-        collapse::fungroup()
+    super_df <- original_df |> collapse::fungroup()
 
     # If no fast percentage (means original_df is the full data frame)
     if (!fast_pct){
@@ -350,7 +351,7 @@ compute_total_percentages <- function(original_df,
 
         # Catch new variable names
         values <- super_df |>
-            dropp("sum_wgt") |>
+            collapse::fselect(-sum_wgt) |>
             inverse(group_vars)
     }
     # If fast percentage (means original_df is already summarised)
@@ -368,20 +369,22 @@ compute_total_percentages <- function(original_df,
 
     super_df <- super_df |>
         collapse::frename(stats::setNames(old_names, new_names)) |>
-        keep(new_names)
+        collapse::fselect(new_names)
 
     # Join super_df to summarized data frame
     summary_df[[".temp_key"]] <- 1
     super_df[[".temp_key"]]   <- 1
 
-    joined_df <- merge(summary_df, super_df,
-                       by = ".temp_key",
-                       allow.cartesian = TRUE)
+    joined_df <- collapse::join(summary_df, super_df,
+                                on       = ".temp_key",
+                                how      = "left",
+                                multiple = TRUE,
+                                verbose  = FALSE)
 
     # Return finished data frame
     joined_df <- joined_df |>
         calculate_percentages(values, "pct_total", ".temp_key") |>
-        dropp(".temp_key")
+        collapse::fselect(-.temp_key)
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -425,21 +428,23 @@ compute_total_percentages_short <- function(summary_df,
     summary_df[[".temp_key"]] <- 1
     total_df[[".temp_key"]]   <- 1
 
-    joined_df <- merge(summary_df, total_df,
-                       by = ".temp_key",
-                       allow.cartesian = TRUE)
+    joined_df <- collapse::join(summary_df, total_df,
+                                on       = ".temp_key",
+                                how      = "left",
+                                multiple = TRUE,
+                                verbose  = FALSE)
 
     # Return finished data frame
     if (pct_name == "pct_total"){
         joined_df <- joined_df |>
             calculate_percentages(values, pct_name, ".temp_key") |>
-            dropp(".temp_key")
+            collapse::fselect(-.temp_key)
     }
     else{
         # For group percentages with depth 1
         joined_df <- joined_df |>
             calculate_percentages(values, pct_name, last_group_var) |>
-            dropp(".temp_key")
+            collapse::fselect(-.temp_key)
     }
 
     monitor_df <- monitor_df |> monitor_end()
@@ -477,8 +482,8 @@ calculate_percentages <- function(joined_df, values, pct_name, last_group_var){
 
     # Compute percentages for every variable
     for (i in seq_along(numerator)) {
-        current_num <- numerator[i]
-        current_den <- denominator[i]
+        current_num     <- numerator[i]
+        current_den     <- denominator[i]
         current_new_var <- new_values[i]
 
         # Evaluate percentage and set division by 0 to NA
@@ -488,6 +493,5 @@ calculate_percentages <- function(joined_df, values, pct_name, last_group_var){
         joined_df[[current_new_var]] <- result
     }
 
-    joined_df |>
-        dropp(denominator)
+    joined_df |> dropp(denominator)
 }

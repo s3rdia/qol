@@ -146,7 +146,7 @@ convert_factor <- function(data_frame, variables){
             label_levels <- data_frame[[variable]] |>
                 unlist(use.names = FALSE) |>
                 unique() |>
-                stats::na.omit()
+                collapse::na_omit()
 
             # Convert variable to factor
             data_frame[[variable]] <- factor(

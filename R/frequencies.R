@@ -913,7 +913,7 @@ format_freq_text <- function(freq_tab,
         first_column_width <- max(nchar(variable), nchar("total"))
 
         first_column_width <- max(first_column_width,
-                                  nchar(stats::na.omit(var_tab[["fused_vars"]])))
+                                  nchar(collapse::na_omit(var_tab[["fused_vars"]])))
 
         # Set header row formatting. Loop through all header columns and give
         # each column the optimal width.
@@ -1335,7 +1335,7 @@ format_by_text <- function(mean_tab,
 
         # Extract unique values
         if (anyNA(freq_by[["by_vars"]])){
-            values <- c(unique(stats::na.omit(freq_by[["by_vars"]]))[-1], NA)
+            values <- c(unique(collapse::na_omit(freq_by[["by_vars"]]))[-1], NA)
         }
         else{
             values <- unique(freq_by[["by_vars"]])
@@ -1474,7 +1474,7 @@ format_by_excel <- function(mean_tab,
 
         # Extract unique values
         if (anyNA(freq_by[["by_vars"]])){
-            values <- c(unique(stats::na.omit(freq_by[["by_vars"]]))[-1], NA)
+            values <- c(unique(collapse::na_omit(freq_by[["by_vars"]]))[-1], NA)
         }
         else{
             values <- unique(freq_by[["by_vars"]])

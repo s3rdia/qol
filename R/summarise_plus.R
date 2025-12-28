@@ -464,6 +464,9 @@ summarise_plus <- function(data_frame,
     # Determine whether shortcut is possible
     flag_shortcut <- FALSE
 
+    # Determine when a faster route can be taken to compute the results. Basically
+    # this is possible with operations based on sums. The !na.rm is needed because
+    # any_table needs to take the longer route, otherwise there will be errors.
     if (length(only_sums) == 0 && !flag_interval && !na.rm){
         flag_shortcut <- TRUE
     }
@@ -479,7 +482,8 @@ summarise_plus <- function(data_frame,
                              data_frame[[weight_var]],
                              selected_stats,
                              list_of_statistics,
-                             monitor_df)
+                             monitor_df,
+                             !flag_shortcut)
 
         data_frame  <- result_list[[1]]
         monitor_df  <- result_list[[2]]
@@ -550,7 +554,8 @@ summarise_plus <- function(data_frame,
                                  result_df[[weight_var]],
                                  selected_stats,
                                  list_of_statistics,
-                                 monitor_df)
+                                 monitor_df,
+                                 !flag_shortcut)
 
             fast_pct <- FALSE
         }
@@ -671,7 +676,8 @@ summarise_plus <- function(data_frame,
                                  data_frame[[weight_var]],
                                  selected_stats,
                                  list_of_statistics,
-                                 monitor_df)
+                                 monitor_df,
+                                 !flag_shortcut)
 
             sum_columns   <- paste0(values, "_sum")
             new_group_pct <- paste0(values, "_pct_group")
@@ -723,10 +729,10 @@ summarise_plus <- function(data_frame,
 
         # Every grouping variable which was not part of the current grouping
         # gets set to a missing value
-        total_df[group_vars] <- NA
-        total_df[["TYPE"]] <- "total"
+        total_df[group_vars]  <- NA
+        total_df[["TYPE"]]    <- "total"
         total_df[["TYPE_NR"]] <- as.integer(index)
-        total_df[["DEPTH"]] <- as.integer(0)
+        total_df[["DEPTH"]]   <- as.integer(0)
 
         # Add data frame to list to add them together at the end
         all_results[["total"]] <- total_df
@@ -787,7 +793,7 @@ summarise_plus <- function(data_frame,
 
                     # Remove NAs from grouping variables
                     if (na.rm){
-                        data_frame <- original_df[stats::complete.cases(original_df[combination]), ]
+                        data_frame <- original_df[!collapse::missing_cases(original_df[combination]), ]
                     }
 
                     message("   + ", paste(combination, collapse = " + "))
@@ -817,9 +823,8 @@ summarise_plus <- function(data_frame,
                     }
                     else{
                         # Apply formats first
-                        group_df <- data_frame |>
-                            keep(combination, values, weight_var) |>
-                            apply_format(formats, combination)
+                        group_df <- data_frame |> collapse::fselect(combination, values, weight_var)
+                        group_df <- group_df |> apply_format(formats, combination)
 
                         monitor_df <- monitor_df |> monitor_end()
 
@@ -833,7 +838,8 @@ summarise_plus <- function(data_frame,
                                              group_df[[weight_var]],
                                              selected_stats,
                                              list_of_statistics,
-                                             monitor_df)
+                                             monitor_df,
+                                             !flag_shortcut)
 
                         fast_pct <- FALSE
                     }
@@ -1060,7 +1066,8 @@ matrix_summarise <- function(data_frame,
                              weight,
                              statistics,
                              list_of_statistics,
-                             monitor_df){
+                             monitor_df,
+                             flag_shortcut = TRUE){
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Preparation
@@ -1080,18 +1087,18 @@ matrix_summarise <- function(data_frame,
     }
 
     # Convert the value columns of the data frame into a matrix
-    value_matrix  <- as.matrix(data_frame[, values, with = FALSE])
+    value_matrix <- collapse::qM(data_frame |> collapse::fselect(values))
 
     # Create group
     if (is.null(group_vars)){
         # In case there is no grouping (e.g. total percentages) create pseudo group
         group_vars <- "pseudo_group"
         data_frame[[group_vars]] <- 1
-        grouping <- collapse::GRP(data_frame, group_vars)
+        grouping <- collapse::GRP(data_frame, group_vars, sort = flag_shortcut)
 
     }
     else{
-        grouping <- collapse::GRP(data_frame, group_vars)
+        grouping <- collapse::GRP(data_frame, group_vars, sort = flag_shortcut)
     }
 
     monitor_df <- monitor_df |> monitor_end()

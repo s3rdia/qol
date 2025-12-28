@@ -73,8 +73,9 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
         if (identical(interval_variables, actual_variables)){
             # Separate NAs from rest of the data frame because the used join
             # can't handle them
-            temp_na   <- temp_data[is.na(temp_data[[current_var]]), ]
-            temp_data <- temp_data[!is.na(temp_data[[current_var]]), ]
+            na_positions <- is.na(temp_data[[current_var]])
+            temp_na      <- temp_data |> collapse::fsubset(na_positions)
+            temp_data    <- temp_data |> collapse::fsubset(!na_positions)
 
             # Generate pseudo variables for range merging
             temp_data[["qol_from"]] <- temp_data[[current_var]]
@@ -87,15 +88,15 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             format_dt <- data.table::copy(format_df)
 
             # Set key variables
-            data.table::setkey(temp_data, qol_from, qol_to)
             data.table::setkey(format_dt, from, to)
 
             # Merge data frame with format by range
             temp_data <- data.table::foverlaps(temp_data, format_dt,
                                                by.x = c("qol_from", "qol_to"),
-                                               by.y = c("from", "to")) |>
-                dropp(current_var, "qol_from", "qol_to", "from", "to") |>
-                collapse::frename("label" = current_var, .nse = FALSE)
+                                               by.y = c("from", "to"))
+
+            temp_data |> collapse::fselect(current_var, "qol_from", "qol_to", "from", "to") <- NULL
+            temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
 
             # Put NAs back into full data frame
             temp_data <- data.table::rbindlist(list(temp_data, temp_na), fill = TRUE)
@@ -103,7 +104,7 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             all_levels <- format_df[3] |>
                 unlist(use.names = FALSE) |>
                 unique() |>
-                stats::na.omit()
+                collapse::na_omit()
         }
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -122,7 +123,7 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
                                         verbose  = FALSE)
 
             # If not all values are represented in the format container, check where there are gaps
-            # and fill them at the affected positions
+            # and fill them at the affected positions. This implements the "other" keyword in formats.
             na_positions <- which(is.na(temp_data[["label"]]) & !is.na(temp_data[[current_var]]))
             if (length(na_positions) > 0){
                 if (as.character(.Machine[["integer.max"]]) %in% tolower(format_df[[current_var]])){
@@ -137,15 +138,14 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             }
 
             # Drop current variable and rename newly joined label to current variable name
-            temp_data <- temp_data |>
-                dropp(current_var) |>
-                collapse::frename(stats::setNames("label", current_var))
+            temp_data |> collapse::fselect(current_var) <- NULL
+            temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
 
             # Extract the number of labels from format
             label_levels <- format_df[-1] |>
                 unlist(use.names = FALSE) |>
                 unique() |>
-                stats::na.omit()
+                collapse::na_omit()
 
             all_levels <- union(label_levels, temp_data[[current_var]])
         }

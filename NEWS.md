@@ -16,14 +16,18 @@
 * `any_table()`: Now checks if a column combination is also part of the row combinations. (22.12.2025)
 * `any_table()`: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)
 
+### Optimisation
+* `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)
+* `dummy_data()`: Optimized and now just takes half the time to generate data. (27.12.2025)
+* `summarise_plus()`: Swapped in more collapse functions. Turned off sorting of "collapse::GRP" when using the shortcut route. (28.12.2025)
+* `apply_formats()`: NA value subsetting is now only done once and not twice with interval formats. "data.table::setkey" is now only called on the format data frame. (28.12.2025)
+
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)
 * Adjusted some warning messages. (22.12.2025)
 * Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
 * `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
-* `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
-* `dummy_data()`: Optimized and now just takes half the time to generate data. (27.12.2025)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025
