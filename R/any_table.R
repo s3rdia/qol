@@ -764,6 +764,26 @@ any_table <- function(data_frame,
         monitor_df <- monitor_df |> monitor_next("Additional group pct", "Summary")
         #---------------------------------------------------------------------#
 
+        # Pre summarise data frame in order to compute additional group percentages faster.
+        # This basically is the same approach as in the shortcut route of summarise_plus.
+        current_values <- paste0(values, "_sum")
+
+        result_list <- data_frame |>
+            matrix_summarise(values,
+                             group_vars,
+                             data_frame[[weight_var]],
+                             "sum",
+                             get_complete_statistics_list("sum"),
+                             monitor_df,
+                             FALSE)
+
+        group_df <- result_list[[1]] |>
+            collapse::fselect(-sum_wgt) |>
+            collapse::frename(stats::setNames(current_values, values))
+
+        group_df[[".temp_weight"]] <- 1
+
+        # Compute additional group percentages one by one
         for (group in seq_along(pct_group)){
             # First group was computed before so omit it here
             if (group == 1){
@@ -774,7 +794,7 @@ any_table <- function(data_frame,
             group_vars <- c(setdiff(group_vars, pct_group[group]), pct_group[group])
 
             # Compute group percentages
-            group_tab <- suppressMessages(data_frame |>
+            group_tab <- suppressMessages(group_df |>
                 summarise_plus(class      = group_vars,
                                values     = values,
                                statistics = "pct_group",
@@ -802,7 +822,7 @@ any_table <- function(data_frame,
                                verbose = FALSE,
                                overid  = 2)
         }
-        rm(group, group_tab)
+        rm(group, group_tab, group_df, result_list, current_values)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

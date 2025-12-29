@@ -23,6 +23,7 @@
 * `apply_formats()`: NA value subsetting is now only done once and not twice with interval formats. `data.table::setkey` is now only called on the format data frame. (28.12.2025)
 * `summarise_plus()`: When na.rm option is TRUE and only statistics based on sums are selected, `summarise_plus()` is now able to take the shortcut route. This also gives `any_table()` a huge performance boost when na.rm option is TRUE. (29.12.2025)
 * In general: Swapped in more `collapse` functions. (29.12.2025)
+* `any_table()`: If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame. (29.12.2025)
 
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)

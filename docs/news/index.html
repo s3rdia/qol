@@ -68,17 +68,31 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="optimization-1-2-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-0"></a></h4>
+<ul><li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses faster <code><a href="https://rdrr.io/pkg/collapse/man/efficient-programming.html" class="external-link">collapse::na_omit</a></code> for NA removal. (27.12.2025)</li>
+<li>
+<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Optimized and now just takes half the time to generate data. (27.12.2025)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Swapped in more <code>collapse</code> functions. Turned off sorting of <code><a href="https://rdrr.io/pkg/collapse/man/GRP.html" class="external-link">collapse::GRP</a></code> when using the shortcut route. (28.12.2025)</li>
+<li>
+<code>apply_formats()</code>: NA value subsetting is now only done once and not twice with interval formats. <code><a href="https://rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">data.table::setkey</a></code> is now only called on the format data frame. (28.12.2025)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When na.rm option is TRUE and only statistics based on sums are selected, <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> is now able to take the shortcut route. This also gives <code><a href="../reference/any_table.html">any_table()</a></code> a huge performance boost when na.rm option is TRUE. (29.12.2025)</li>
+<li>In general: Swapped in more <code>collapse</code> functions. (29.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame. (29.12.2025)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="additionally-1-2-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-0"></a></h4>
 <ul><li>Restructured some “Small Helpers” into “Renaming” and “Variable Selection”. (21.12.2025)</li>
 <li>Adjusted some warning messages. (22.12.2025)</li>
 <li>Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)</li>
-<li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses faster <code><a href="https://rdrr.io/pkg/collapse/man/efficient-programming.html" class="external-link">collapse::na_omit</a></code> for NA removal. (27.12.2025)</li>
 <li>Added <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code> and <code><a href="../reference/sort_plus.html">sort_plus()</a></code> examples to the README. (27.12.2025)</li>
 <li>
-<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Optimized and now just takes half the time to generate data. (27.12.2025)</li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> and <code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case an invalid statistic is provided. (29.12.2025)</li>
 </ul></div>
 </div>
     <div class="section level2">
