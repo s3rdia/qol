@@ -3,9 +3,9 @@
 # are used in a data.table context which doesn't support the rlang .data
 # keyword.
 utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
-                         "across", ":=", "TYPE", "DEPTH",
+                         "across", ":=", "TYPE", "TYPE_NR", "DEPTH",
                          "var_sum", "var_cum_sum", "pct_group", "var_cum_pct",
-                         "mean", "sd", "min", "max", "sum_wgt", ".temp_key",
+                         "mean", "sd", "min", "max", "sum_wgt", ".temp_key", ".temp_weight",
                          "var_pct_row", ".pseudo_preserve", "BY", "VALUE"))
 
 

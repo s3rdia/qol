@@ -348,7 +348,7 @@ crosstabs <- function(data_frame,
 
     # Get the intersection of the requested statistics to make sure
     # only valid actions are passed down
-    statistics <- statistics[unique(statistics) %in%
+    statistics <- statistics[collapse::funique(statistics) %in%
                              c("sum", "freq", "pct_row", "pct_column", "pct_total")]
 
     # If no valid statistics selected, default to sum
@@ -390,7 +390,7 @@ crosstabs <- function(data_frame,
             collapse::frename(var_pct_group = var_pct_row)
 
         # Get the expressions of the column variable to use them later as column names
-        column_names <- unique(as.character(cross_tab[[columns]]))
+        column_names <- collapse::funique(as.character(cross_tab[[columns]]))
 
         # Add unique ids to column variables so that the pivoted variable names receive
         # running numbers instead of the values or labels.
@@ -1092,10 +1092,10 @@ format_cross_by_text <- function(cross_tab,
 
         # Extract unique values
         if (anyNA(cross_by[["by_vars"]])){
-            values <- c(unique(collapse::na_omit(cross_by[["by_vars"]])), NA)
+            values <- c(collapse::funique(collapse::na_omit(cross_by[["by_vars"]])), NA)
         }
         else{
-            values <- unique(cross_by[["by_vars"]])
+            values <- collapse::funique(cross_by[["by_vars"]])
         }
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1222,10 +1222,10 @@ format_cross_by_excel <- function(cross_tab,
 
         # Extract unique values
         if (anyNA(cross_by[["by_vars"]])){
-            values <- c(unique(collapse::na_omit(cross_by[["by_vars"]])), NA)
+            values <- c(collapse::funique(collapse::na_omit(cross_by[["by_vars"]])), NA)
         }
         else{
-            values <- unique(cross_by[["by_vars"]])
+            values <- collapse::funique(cross_by[["by_vars"]])
         }
 
         monitor_df <- monitor_df |> monitor_end()

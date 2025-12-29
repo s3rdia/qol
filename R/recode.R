@@ -127,7 +127,7 @@ recode <- function(data_frame,
         return(data_frame)
     }
 
-    if (names(format_df)[1] == "value" && any(duplicated(format_df[["value"]]))){
+    if (names(format_df)[1] == "value" && collapse::any_duplicated(format_df[["value"]])){
         message(" ! WARNING: The format for '", current_var, "' is a multilabel. A multilabel can't be fully applied in recode.\n",
                 "            Only one of the matching categories will be applied.")
 
@@ -172,7 +172,7 @@ recode <- function(data_frame,
         data_frame[["qol_ID"]] <- seq_len(nrow(data_frame))
 
         # Set key variables
-        temp_dt <- data.table::as.data.table(data_frame)
+        temp_dt   <- data.table::as.data.table(data_frame)
         format_dt <- data.table::copy(format_df)
 
         data.table::setkey(temp_dt, qol_from, qol_to)

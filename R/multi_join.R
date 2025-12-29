@@ -182,7 +182,7 @@ multi_join <- function(data_frames,
         # On equal names there is just one combination which needs to be checked
         if (!unequal_names){
             # Check for duplicate combinations
-            if (any(duplicated(data_frames[[i]][on]))){
+            if (collapse::any_duplicated(data_frames[[i]][on])){
                 message(" X ERROR: The second and all following data frames need to have unique combinations\n",
                         "          in the provided 'on' variables. Join will be aborted.")
                 return(invisible(NULL))
@@ -190,7 +190,7 @@ multi_join <- function(data_frames,
         }
         # On unequal names each individual variable combination has to be checked on the corresponding data frame
         else{
-            if (any(duplicated(data_frames[[i]][on[[i]]]))){
+            if (collapse::any_duplicated(data_frames[[i]][on[[i]]])){
                 message(" X ERROR: The second and all following data frames need to have unique combinations\n",
                         "          in the provided 'on' variables. Join will be aborted.")
                 return(invisible(NULL))

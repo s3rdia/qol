@@ -85,7 +85,7 @@ remove_stat_extension <- function(data_frame, statistics){
 
     # Check if unique new names still have the same length as the original names.
     # Only if this is true the new names can be applied.
-    if (length(var_names) == length(unique(new_names))){
+    if (length(var_names) == length(collapse::funique(new_names))){
         names(data_frame) <- new_names
     }
     # If there are duplicate names abort

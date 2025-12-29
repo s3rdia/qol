@@ -145,7 +145,7 @@ convert_factor <- function(data_frame, variables){
             # Extract the number of labels from variable
             label_levels <- data_frame[[variable]] |>
                 unlist(use.names = FALSE) |>
-                unique() |>
+                collapse::funique() |>
                 collapse::na_omit()
 
             # Convert variable to factor

@@ -150,8 +150,42 @@ test_that("any_table with interleaved order", {
                       order_by   = "interleaved",
                       print      = FALSE))
 
-    expect_type(result_list, "list")
-    expect_equal(length(result_list), 3)
+    expect_equal(names(result_list[[1]]),
+                       c("row.label", "var1", "weight_sum_1", "weight_freq_1", "weight_missing_1",
+                         "weight_sum_2", "weight_freq_2", "weight_missing_2", "weight_sum_NA", "weight_freq_NA",
+                         "weight_missing_NA"))
+})
+
+
+test_that("any_table with values order", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows       = "age",
+                      columns    = c("sex", "year"),
+                      values     = c(weight, income),
+                      statistics = "sum",
+                      order_by   = "values",
+                      print      = FALSE))
+
+    expect_equal(names(result_list[[1]]),
+                 c("row.label", "var1", "weight_sum_1", "weight_sum_2", "weight_sum_NA",
+                   "weight_sum_2023", "weight_sum_2024", "income_sum_1", "income_sum_2",
+                   "income_sum_NA", "income_sum_2023", "income_sum_2024"))
+})
+
+
+test_that("any_table with columns order", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows       = "age",
+                      columns    = c("sex", "year"),
+                      values     = c(weight, income),
+                      statistics = "sum",
+                      order_by   = "columns",
+                      print      = FALSE))
+
+    expect_equal(names(result_list[[1]]),
+                 c("row.label", "var1", "weight_sum_1", "weight_sum_2", "weight_sum_NA",
+                   "income_sum_1", "income_sum_2", "income_sum_NA", "weight_sum_2023",
+                   "weight_sum_2024", "income_sum_2023", "income_sum_2024"))
 })
 
 
@@ -386,10 +420,30 @@ test_that("any_table with no column variables", {
 
 test_that("any_table throws a warning, if column contains a row variable", {
     expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "sex",
-                                 columns    = "sex",
-                                 statistics = c("sum"),
-                                 print      = FALSE), " ! WARNING: The provided column variable '")
+               any_table(rows       = "sex",
+                         columns    = "sex",
+                         statistics = c("sum"),
+                         print      = FALSE), " ! WARNING: The provided column variable '")
+})
+
+
+test_that("any_table throws a warning, if invalid statistic specified", {
+    expect_message(result_list <- dummy_df |>
+               any_table(rows       = "age",
+                         columns    = "sex",
+                         values     = weight,
+                         statistics = c("test", "sum"),
+                         print      = FALSE), " ! WARNING: Statistic 'test' is invalid and will be omitted.")
+})
+
+
+test_that("any_table throws a warning, if no valid statistic specified", {
+    expect_message(result_list <- dummy_df |>
+               any_table(rows       = "age",
+                         columns    = "sex",
+                         values     = weight,
+                         statistics = "test",
+                         print      = FALSE), " ! WARNING: No valid statistic selected. 'sum' will be used.")
 })
 
 ###############################################################################

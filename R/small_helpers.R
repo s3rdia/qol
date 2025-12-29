@@ -181,7 +181,7 @@ setcolorder_by_pattern <- function(data_frame, pattern){
              value = TRUE, ignore.case = TRUE)
     }))
 
-    ordered_cols <- unique(ordered_cols)
+    ordered_cols <- collapse::funique(ordered_cols)
 
     # Put the ordered columns at the end of the data frame
     data_frame |> data.table::setcolorder(ordered_cols, after = ncol(data_frame))

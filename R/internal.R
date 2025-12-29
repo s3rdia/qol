@@ -96,7 +96,7 @@ is_multilabel <- function(format_list, variable){
                                               by.x = c("from", "to"),
                                               by.y = c("from", "to"))
 
-        if (nrow(format_check) > nrow(format)){
+        if (collapse::fnrow(format_check) > collapse::fnrow(format)){
             return(TRUE)
         }
     }
@@ -154,7 +154,5 @@ order_interleaved <- function(data_frame, patterns) {
 #'
 #' @noRd
 is_pre_summed <- function(data_frame, group_vars){
-    unique_values <- nrow(collapse::fndistinct(data_frame[group_vars],
-                                               g = data_frame[group_vars]))
-    unique_values == nrow(data_frame)
+    !collapse::any_duplicated(data_frame[group_vars])
 }

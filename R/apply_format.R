@@ -103,7 +103,7 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
 
             all_levels <- format_df[3] |>
                 unlist(use.names = FALSE) |>
-                unique() |>
+                collapse::funique() |>
                 collapse::na_omit()
         }
 
@@ -144,7 +144,7 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             # Extract the number of labels from format
             label_levels <- format_df[-1] |>
                 unlist(use.names = FALSE) |>
-                unique() |>
+                collapse::funique() |>
                 collapse::na_omit()
 
             all_levels <- union(label_levels, temp_data[[current_var]])

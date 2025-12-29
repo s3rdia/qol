@@ -292,10 +292,10 @@ transpose_plus <- function(data_frame,
 
     # Get pivot variables from provided combinations
     if (long_to_wide){
-        pivot_vars <- unique(trimws(unlist(strsplit(pivot, "\\+"))))
+        pivot_vars <- collapse::funique(trimws(unlist(strsplit(pivot, "\\+"))))
     }
     else{
-        pivot_vars <- unique(unlist(pivot, use.names = FALSE))
+        pivot_vars <- collapse::funique(unlist(pivot, use.names = FALSE))
     }
 
     invalid_pivot <- pivot_vars[!pivot_vars %in% names(data_frame)]
@@ -400,7 +400,7 @@ transpose_plus <- function(data_frame,
 
     # Make sure provided variable list has no double entries
     provided_preserve <- preserve
-    preserve          <- unique(preserve)
+    preserve          <- collapse::funique(preserve)
 
     if (length(provided_preserve) > length(preserve)){
         message(" ! WARNING: Some preserve variables are provided more than once. The doubled entries will be omitted.")
@@ -408,14 +408,14 @@ transpose_plus <- function(data_frame,
 
     if (long_to_wide){
         provided_pivot <- pivot
-        pivot          <- unique(pivot)
+        pivot          <- collapse::funique(pivot)
 
         if (length(provided_pivot) > length(pivot)){
             message(" ! WARNING: Some pivot variables are provided more than once. The doubled entries will be omitted.")
         }
 
         provided_values <- values
-        values          <- unique(values)
+        values          <- collapse::funique(values)
 
         if (length(provided_values) > length(values)){
             message(" ! WARNING: Some value variables are provided more than once. The doubled entries will be omitted.")

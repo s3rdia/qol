@@ -291,7 +291,41 @@ summarise_plus <- function(data_frame,
         formats <- list()
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     list_of_statistics <- get_complete_statistics_list(statistics)
+
+    # Get the intersection of the requested statistics to make sure
+    # only valid actions are passed down
+    statistics     <- tolower(statistics)
+    requested      <- collapse::funique(unlist(list(statistics)))
+    valid_stats    <- requested[requested %in% names(list_of_statistics)]
+    selected_stats <- list_of_statistics[valid_stats]
+
+    # Check if there are any statistics selected which aren't any kind of sums.
+    # If only sums are selected then it is faster to summarise first without formats
+    # and then apply the formats to a much smaller data frame.
+    only_sums <- valid_stats[!valid_stats %in% c("sum", "sum_wgt", "freq", "freq_g0",
+                                                 "missing", "pct_group", "pct_total")]
+
+    # Check for invalid statistics
+    invalid_stats <- requested[!requested %in% c(names(list_of_statistics), "sum_wgt",
+                                                 "pct_group", "pct_total", paste0("p", 1:100))]
+
+    if (length(invalid_stats) > 0){
+        message(" ! WARNING: Statistic '", invalid_stats, "' is invalid and will be omitted.")
+
+        if (length(selected_stats) == 0){
+            message(" ! WARNING: No valid statistic selected. 'sum' will be used.")
+
+            statistics     <- "sum"
+            requested      <- "sum"
+            valid_stats    <- "sum"
+            selected_stats <- "sum"
+        }
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Class
@@ -400,14 +434,14 @@ summarise_plus <- function(data_frame,
 
     # Make sure provided variable list has no double entries
     provided_class <- class
-    class          <- unique(class)
+    class          <- collapse::funique(class)
 
     if (length(provided_class) > length(class)){
         message(" ! WARNING: Some grouping variables are provided more than once. The doubled entries will be omitted.")
     }
 
     provided_values <- values
-    values          <- unique(values)
+    values          <- collapse::funique(values)
 
     if (length(provided_values) > length(values)){
         message(" ! WARNING: Some analysis variables are provided more than once. The doubled entries will be omitted.")
@@ -432,19 +466,6 @@ summarise_plus <- function(data_frame,
         reordered_types <- reorder_combination(types)
     }
 
-    # Get the intersection of the requested statistics to make sure
-    # only valid actions are passed down
-    statistics     <- tolower(statistics)
-    requested      <- unique(unlist(list(statistics)))
-    valid_stats    <- requested[requested %in% names(list_of_statistics)]
-    selected_stats <- list_of_statistics[valid_stats]
-
-    # Check if there are any statistics selected which aren't any kind of sums.
-    # If only sums are selected then it is faster to summarise first without formats
-    # and then apply the formats to a much smaller data frame.
-    only_sums <- valid_stats[!valid_stats %in% c("sum", "sum_wgt", "freq", "freq_g0",
-                                                 "missing", "pct_group", "pct_total")]
-
     # Get the group vars first
     group_vars <- class
 
@@ -465,9 +486,8 @@ summarise_plus <- function(data_frame,
     flag_shortcut <- FALSE
 
     # Determine when a faster route can be taken to compute the results. Basically
-    # this is possible with operations based on sums. The !na.rm is needed because
-    # any_table needs to take the longer route, otherwise there will be errors.
-    if (length(only_sums) == 0 && !flag_interval && !na.rm){
+    # this is possible with operations based on sums.
+    if (length(only_sums) == 0 && !flag_interval){
         flag_shortcut <- TRUE
     }
 
@@ -652,6 +672,9 @@ summarise_plus <- function(data_frame,
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if (flag_shortcut){
+            # Create a new original data frame to be able to remove NA values
+            original_df_shortcut <- data_frame
+
             # Final summarise
             total_df <- data_frame |>
                 convert_numeric(group_vars) |>
@@ -791,9 +814,18 @@ summarise_plus <- function(data_frame,
                                       paste0("Formats(", paste(combination, collapse = " + "), ")"))
                     #---------------------------------------------------------#
 
-                    # Remove NAs from grouping variables
+                    # Remove NAs from grouping variables. This has to be done individually, because
+                    # if otherwise done before in general, too many observations would be removed.
+                    # E.g. two of three variables don't have NA values, then the removal of NA values in
+                    # the third variable would also effect the first two variables. To get the maximum
+                    # out of each combination this is done for every combination separately.
                     if (na.rm){
-                        data_frame <- original_df[!collapse::missing_cases(original_df[combination]), ]
+                        if (flag_shortcut){
+                            data_frame <- original_df_shortcut[!collapse::missing_cases(original_df_shortcut[combination]), ]
+                        }
+                        else{
+                            data_frame <- original_df[!collapse::missing_cases(original_df[combination]), ]
+                        }
                     }
 
                     message("   + ", paste(combination, collapse = " + "))
@@ -1273,7 +1305,7 @@ reorder_summarised_columns <- function(data_frame, requested_stats){
              value = TRUE)
     }))
 
-    ordered_cols <- unique(ordered_cols)
+    ordered_cols <- collapse::funique(ordered_cols)
 
     # Put the ordered columns at the end of the data frame
     data_frame |> data.table::setcolorder(ordered_cols, after = ncol(data_frame))

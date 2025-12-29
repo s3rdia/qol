@@ -153,7 +153,7 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
     if (by == "group"){
         label_levels <- monitor_df[["group"]] |>
             unlist(use.names = FALSE) |>
-            unique() |>
+            collapse::funique() |>
             collapse::na_omit()
 
         monitor_df[["group"]] <- factor(
@@ -170,7 +170,7 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
 
         label_levels <- monitor_df[["section"]] |>
             unlist(use.names = FALSE) |>
-            unique() |>
+            collapse::funique() |>
             collapse::na_omit()
 
         monitor_df[["section"]] <- factor(

@@ -193,14 +193,14 @@ sort_plus <- function(data_frame,
 
     # Make sure provided variable list has no double entries
     provided_preserve <- preserve
-    preserve          <- unique(preserve)
+    preserve          <- collapse::funique(preserve)
 
     if (length(provided_preserve) > length(preserve)){
         message(" ! WARNING: Some preserve variables are provided more than once. The doubled entries will be omitted.")
     }
 
     provided_by <- by
-    by          <- unique(by)
+    by          <- collapse::funique(by)
 
     if (length(provided_by) > length(by)){
         message(" ! WARNING: Some by variables are provided more than once. The doubled entries will be omitted.")
@@ -277,7 +277,7 @@ sort_plus <- function(data_frame,
             # Extract the number of labels from variable
             label_levels <- formats[[variable]] |>
                 unlist(use.names = FALSE) |>
-                unique() |>
+                collapse::funique() |>
                 collapse::na_omit()
 
             # Convert variable to factor

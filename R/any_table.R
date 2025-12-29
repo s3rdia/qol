@@ -320,7 +320,7 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get row variables from provided combinations
-    row_vars <- unique(trimws(unlist(strsplit(rows, "\\+"))))
+    row_vars <- collapse::funique(trimws(unlist(strsplit(rows, "\\+"))))
 
     invalid_rows <- row_vars[!row_vars %in% names(data_frame)]
     row_vars     <- row_vars[row_vars %in% names(data_frame)]
@@ -348,7 +348,7 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get row variables from provided combinations
-    col_vars <- unique(trimws(unlist(strsplit(columns, "\\+"))))
+    col_vars <- collapse::funique(trimws(unlist(strsplit(columns, "\\+"))))
 
     invalid_columns <- col_vars[!col_vars %in% names(data_frame)]
     col_vars        <- col_vars[col_vars %in% names(data_frame)]
@@ -519,7 +519,7 @@ any_table <- function(data_frame,
     }
 
     provided_values <- values
-    values          <- unique(values)
+    values          <- collapse::funique(values)
 
     if (length(provided_values) > length(values)){
         message(" ! WARNING: Some analysis variables are provided more than once. The doubled entries will be omitted.")
@@ -604,6 +604,31 @@ any_table <- function(data_frame,
         rm(extensions, pattern)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    if (!pre_summed){
+        list_of_statistics <- get_complete_statistics_list(statistics)
+
+        # Check for invalid statistics
+        valid_stats   <- statistics[statistics %in% c(names(list_of_statistics), "sum_wgt", "pct_value",
+                                                      "pct_group", "pct_total", paste0("p", 1:100))]
+        invalid_stats <- statistics[!statistics %in% c(names(list_of_statistics), "sum_wgt", "pct_value",
+                                                       "pct_group", "pct_total", paste0("p", 1:100))]
+
+        if (length(invalid_stats) > 0){
+            message(" ! WARNING: Statistic '", invalid_stats, "' is invalid and will be omitted.")
+
+            if (length(valid_stats) == 0){
+                message(" ! WARNING: No valid statistic selected. 'sum' will be used.")
+
+                statistics <- "sum"
+            }
+        }
+        rm(list_of_statistics, invalid_stats)
+    }
+
     rm(invalid_by, invalid_class, invalid_columns, invalid_rows, invalid_values,
        provided_by, provided_values, weight_temp, values_temp, by_temp)
 
@@ -684,7 +709,7 @@ any_table <- function(data_frame,
 
     # In case of pre summarised data frame remove the temporary weight variable
     if (pre_summed){
-        any_tab <- any_tab |> dropp(".temp_weight")
+        any_tab <- any_tab |> collapse::fselect(-.temp_weight)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -771,8 +796,11 @@ any_table <- function(data_frame,
 
             # Join percentages to the main data frame
             any_tab <- any_tab |>
-                collapse::join(group_tab, on = merge_vars, how = "left",
-                               verbose = FALSE, overid = 2)
+                collapse::join(group_tab,
+                               on      = merge_vars,
+                               how     = "left",
+                               verbose = FALSE,
+                               overid  = 2)
         }
         rm(group, group_tab)
     }
@@ -893,7 +921,7 @@ any_table <- function(data_frame,
     by_division           <- 1
 
     if (length(by) > 0){
-        by_division <- length(unique(any_tab[["by_vars"]]))
+        by_division <- length(collapse::funique(any_tab[["by_vars"]]))
     }
 
     # Underscores are not allowed in column and values variables, because when constructing the
@@ -932,7 +960,7 @@ any_table <- function(data_frame,
         combined_col_df <- NULL
 
         # Get current single variables from row combination
-        row_combi_vars <- unique(trimws(unlist(strsplit(row_combi, "\\+"))))
+        row_combi_vars <- collapse::funique(trimws(unlist(strsplit(row_combi, "\\+"))))
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # For every combination of row variables loop through all column variable
@@ -941,7 +969,7 @@ any_table <- function(data_frame,
 
         for (col_combi in columns){
             # Get current single variables from column combination
-            col_combi_vars <- unique(trimws(unlist(strsplit(col_combi, "\\+"))))
+            col_combi_vars <- collapse::funique(trimws(unlist(strsplit(col_combi, "\\+"))))
 
             current_combi <- c(row_combi_vars, col_combi_vars)
 
@@ -963,8 +991,7 @@ any_table <- function(data_frame,
             combi_df <- combi_df |>
                 collapse::fsubset(TYPE == subset_type) |>
                 data.table::setcolorder(current_combi, before = 1) |>
-                data.table::setorderv(col_combi_vars, na.last = TRUE) |>
-                data.table::setorderv(row_combi_vars)
+                data.table::setorderv(c(row_combi_vars, col_combi_vars), na.last = TRUE)
 
             # When pre summarised data is used, it is possible to select types which
             # aren't present in the data frame. This leads to the data frame having no
@@ -1809,10 +1836,10 @@ format_any_by_excel <- function(wb,
 
         # Extract unique values
         if (anyNA(any_by[["by_vars"]])){
-            values <- c(unique(stats::na.omit(any_by[["by_vars"]])), NA)
+            values <- c(collapse::funique(collapse::na_omit(any_by[["by_vars"]])), NA)
         }
         else{
-            values <- unique(any_by[["by_vars"]])
+            values <- collapse::funique(any_by[["by_vars"]])
         }
 
         monitor_df <- monitor_df |> monitor_end()

@@ -60,7 +60,7 @@ split_by_var <- function(data_frame, variable){
     }
 
     # Get unique expressions
-    expressions <- unique(data_frame[[variable]])
+    expressions <- collapse::funique(data_frame[[variable]])
 
     # Pre define list
     data_list        <- vector("list", length(expressions))
