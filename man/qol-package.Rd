@@ -63,7 +63,7 @@ Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
 \code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}.
 
-Split data frame: \code{\link[=split_by_var]{split_by_var()}}, \code{\link[=split_by_condition]{split_by_condition()}}.
+Split data frame: \link{split_by}.
 
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
 }

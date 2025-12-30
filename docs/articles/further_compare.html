@@ -310,16 +310,15 @@ times at once:</p>
         Else If Sex = 2 Then Output Work.MyData_Female;
 
 Run;</code></pre>
-<p>qol offers two functions <code><a href="../reference/split_by.html">split_by_var()</a></code> and
-<code><a href="../reference/split_by.html">split_by_condition()</a></code> which split up data frames into a list
-of multiple new ones:</p>
+<p>qol offers the function <code><a href="../reference/split_by.html">split_by()</a></code> which split up data
+frames into a list of multiple new ones:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using just the expressions of a single variable</span></span>
-<span><span class="va">MyData_List</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/split_by.html">split_by_var</a></span><span class="op">(</span><span class="va">Sex</span><span class="op">)</span></span>
+<span><span class="va">MyData_List</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/split_by.html">split_by</a></span><span class="op">(</span><span class="va">Sex</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Or using conditions</span></span>
-<span><span class="va">MyData_List</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/split_by.html">split_by_condition</a></span><span class="op">(</span><span class="va">Sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">Age</span> <span class="op">&lt;</span>  <span class="fl">18</span>,</span>
-<span>                                            <span class="va">Sex</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">Age</span> <span class="op">&gt;=</span> <span class="fl">18</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">MyData_List</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/split_by.html">split_by</a></span><span class="op">(</span><span class="va">Sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">Age</span> <span class="op">&lt;</span>  <span class="fl">18</span>,</span>
+<span>                                  <span class="va">Sex</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">Age</span> <span class="op">&gt;=</span> <span class="fl">18</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="keepdrop">Keep/Drop<a class="anchor" aria-label="anchor" href="#keepdrop"></a>

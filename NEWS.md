@@ -5,16 +5,21 @@
 * `convert_factor()`: Converts all given variables to factor. (23.12.2025)
 * `transpose_plus()`: Format driven transposition, which is able to do more than just transpose values. (27.12.2025)
 * `sort_plus()`: Sort data frame observations with some additions. (27.12.2025)
+* `split_by()`: Since `split_by_var()` didn't have any benefit, `split_by_var()` and `split_by_condition()` are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
 * `keep()`/`dropp()`: Now support variable ranges, like "state:income". (21.12.2025)
 * `any_table()`: Removed `pre_summed` parameter. Instead the function now checks on it's own, whether the provided data frame is pre summarised or not. (23.12.2025)
 
+### Removed
+* `split_by_var()` and `split_by_condition()`: See comment under 'New functions'. (30.12.2025)
+
 ### Fixed
 * `keep()`: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)
 * `any_table()`: Now checks if a column combination is also part of the row combinations. (22.12.2025)
 * `any_table()`: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)
+* `any_table()`: Fixed by variables could be sorted in the wrong order. (30.12.2025)
 
 ### Optimization
 * `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)

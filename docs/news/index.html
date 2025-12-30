@@ -48,6 +48,8 @@
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Format driven transposition, which is able to do more than just transpose values. (27.12.2025)</li>
 <li>
 <code><a href="../reference/sort_plus.html">sort_plus()</a></code>: Sort data frame observations with some additions. (27.12.2025)</li>
+<li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> didn’t have any benefit, <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
@@ -59,6 +61,11 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Removed <code>pre_summed</code> parameter. Instead the function now checks on it’s own, whether the provided data frame is pre summarised or not. (23.12.2025)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
+<ul><li>
+<code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code>: See comment under ‘New functions’. (30.12.2025)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="fixed-1-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-0"></a></h4>
 <ul><li>
 <code><a href="../reference/keep_dropp.html">keep()</a></code>: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)</li>
@@ -66,6 +73,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Now checks if a column combination is also part of the row combinations. (22.12.2025)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Fixed by variables could be sorted in the wrong order. (30.12.2025)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-0"></a></h4>

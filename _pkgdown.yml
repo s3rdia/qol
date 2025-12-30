@@ -82,8 +82,7 @@ reference:
   - replace_except
 - title: Split Data Frame
   contents:
-  - split_by_var
-  - split_by_condition
+  - split_by
 - title: Other
   contents:
   - build_master

@@ -2,37 +2,31 @@
 % Please edit documentation in R/split_by.R
 \name{split_by}
 \alias{split_by}
-\alias{split_by_var}
-\alias{split_by_condition}
-\title{Split Data Frame by Variable Expressions or Condition}
+\title{Split Data Frame By Variable Expressions Or Condition}
 \usage{
-split_by_var(data_frame, variable)
-
-split_by_condition(data_frame, ..., inverse = FALSE)
+split_by(data_frame, ..., formats = list(), inverse = FALSE, monitor = FALSE)
 }
 \arguments{
 \item{data_frame}{A data frame which should be split up into multiple data frames.}
 
-\item{variable}{In \code{\link[=split_by_var]{split_by_var()}} pass in a variable name which expressions
-are used for splitting up the data frame.}
+\item{...}{Pass in one or multiple variables and/or conditions on which the provided
+data frame should be splitted.}
 
-\item{...}{In \code{\link[=split_by_condition]{split_by_condition()}} pass in one or multiple conditions on which
-the provided data frame should be splitted.}
+\item{formats}{A list in which is specified which formats should be applied to which
+variables.}
 
-\item{inverse}{In \code{\link[=split_by_condition]{split_by_condition()}} if only one condition is provided, the
-data frame can be split into two parts. The second returned data frame will be the
-inverse group of the first.}
+\item{inverse}{Uses the inverse conditions to split up the data frame.}
+
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
+functions time consumption.}
 }
 \value{
-\code{\link[=split_by_var]{split_by_var()}}: Returns a list of data frames split by variable expressions.
-The lists names are the variable expressions.
-
-\code{\link[=split_by_condition]{split_by_condition()}}: Returns a list of data frames split conditionally.
-The lists names are the conditions.
+Returns a list of data frames split by variable expressions and/or conditions.
+The lists names are the variable expressions or conditions.
 }
 \description{
 Split up a data frame based on variable expressions or on conditions to receive
-multiple smaller data frames.
+multiple smaller data frames. Both possibilities can be used at the same time.
 }
 \details{
 \code{\link[=split_by]{split_by()}} is based on the explicit Output from 'SAS'. With the Output function
@@ -48,13 +42,42 @@ multiple times at once with this function.
 my_data <- dummy_data(1000)
 
 # Split by variable expressions
-split_var_df <- my_data |> split_by_var(sex)
+split_var_df <- my_data |> split_by(sex)
 
 # Split by conditions
-split_cond_df <- my_data |> split_by_condition(sex == 1 & age <  18,
-                                               sex == 2 & age >= 18)
+split_cond_df <- my_data |> split_by(sex == 1 & age <  18,
+                                     sex == 2 & age >= 18)
 
 # Split by condition with inverse group
-split_inv_df <- my_data |> split_by_condition(sex == 1, inverse = TRUE)
+split_inv_df <- my_data |> split_by(sex == 1, inverse = TRUE)
+
+# Split by variables and conditions
+split_combi_df <- my_data |> split_by(state, education,
+                                      sex == 1, age < 18)
+
+# Split by variable expressions using formats
+state. <- discrete_format(
+    "Germany"                       = 1:16,
+    "Schleswig-Holstein"            = 1,
+    "Hamburg"                       = 2,
+    "Lower Saxony"                  = 3,
+    "Bremen"                        = 4,
+    "North Rhine-Westphalia"        = 5,
+    "Hesse"                         = 6,
+    "Rhineland-Palatinate"          = 7,
+    "Baden-Württemberg"             = 8,
+    "Bavaria"                       = 9,
+    "Saarland"                      = 10,
+    "West"                          = 1:10,
+    "Berlin"                        = 11,
+    "Brandenburg"                   = 12,
+    "Mecklenburg-Western Pomerania" = 13,
+    "Saxony"                        = 14,
+    "Saxony-Anhalt"                 = 15,
+    "Thuringia"                     = 16,
+    "East"                          = 11:16)
+
+split_format_df <- my_data |> split_by(state,
+                                       formats = list(state = state.))
 
 }

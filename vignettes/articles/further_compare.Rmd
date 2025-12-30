@@ -265,15 +265,15 @@ Data Work.MyData_Male
 Run;
 ```
 
-qol offers two functions `split_by_var()` and `split_by_condition()` which split up data frames into a list of multiple new ones:
+qol offers the function `split_by()` which split up data frames into a list of multiple new ones:
 
 ```{R, eval = FALSE}
 # Using just the expressions of a single variable
-MyData_List <- MyData |> split_by_var(Sex)
+MyData_List <- MyData |> split_by(Sex)
 
 # Or using conditions
-MyData_List <- MyData |> split_by_condition(Sex == 1 & Age <  18,
-                                            Sex == 2 & Age >= 18)
+MyData_List <- MyData |> split_by(Sex == 1 & Age <  18,
+                                  Sex == 2 & Age >= 18)
 ```
 
 # Keep/Drop

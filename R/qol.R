@@ -55,7 +55,7 @@
 #' Small helpers: [libname()], [setcolorder_by_pattern()], [drop_type_vars()],
 #' [fuse_variables()], [get_excel_range()].
 #'
-#' Split data frame: [split_by_var()], [split_by_condition()].
+#' Split data frame: [split_by].
 #'
 #' Other: [build_master()], [build_rstheme()], [args_to_char()], [convert_numeric()], [is_numeric()], [convert_factor()]
 #'

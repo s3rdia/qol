@@ -751,6 +751,9 @@ any_table <- function(data_frame,
                 paste(obs[!obs %in% by], collapse = "+")
             }, character(1L))
         }
+
+        # Convert to factor to keep them in order when sorting later
+        any_tab <- any_tab |> convert_factor(c("BY", "by_vars"))
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1011,7 +1014,7 @@ any_table <- function(data_frame,
             combi_df <- combi_df |>
                 collapse::fsubset(TYPE == subset_type) |>
                 data.table::setcolorder(current_combi, before = 1) |>
-                data.table::setorderv(c(row_combi_vars, col_combi_vars), na.last = TRUE)
+                data.table::setorderv(current_combi, na.last = TRUE)
 
             # When pre summarised data is used, it is possible to select types which
             # aren't present in the data frame. This leads to the data frame having no
