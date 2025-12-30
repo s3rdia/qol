@@ -191,7 +191,7 @@ setcolorder_by_pattern <- function(data_frame, pattern){
 #' Check If Path Exists And Retrieve Files
 #'
 #' @description
-#' Libname checks if a given path exists and writes a message in the console accordingly.
+#' [libname()] checks if a given path exists and writes a message in the console accordingly.
 #' Optional all files from the given path can be retrieved as a named character vector.
 #'
 #' @param path A folder path.
@@ -232,4 +232,48 @@ libname <- function(path,
     message("Path successfully assigned: ", path)
 
     path
+}
+
+
+#' Stack Multiple Data Frames
+#'
+#' @description
+#' Stacks multiple data frames and matches column names.
+#'
+#' @param ... Put in multiple data frames to stack them in the provided order.
+#' @param id Adds an ID column to indicate the different data frames.
+#' @param compress FALSE by default. If TRUE converts character variables to factors.
+#'
+#' @return
+#' Returns a stacked data frame.
+#'
+#' @examples
+#' # Example data frames
+#' my_data1 <- dummy_data(100)
+#' my_data2 <- dummy_data(100)
+#' my_data3 <- dummy_data(100)
+#' my_data4 <- dummy_data(100)
+#' my_data5 <- dummy_data(100)
+#'
+#' # Stack data frames
+#' stacked_df <- set(my_data1,
+#'                   my_data2,
+#'                   my_data3,
+#'                   my_data4,
+#'                   my_data5)
+#'
+#' @export
+set <- function(..., id = FALSE, compress = FALSE){
+    # Generate an ID variable and order it to the last position which indicates the single data frame
+    if (id){
+        data_frame <- data.table::rbindlist(list(...), use.names = TRUE, fill = TRUE, idcol = "ID")
+        data_frame <- data_frame |> data.table::setcolorder("ID", after = ncol(data_frame))
+    }
+    # Stack without ID variable
+    else{
+        data_frame <- data.table::rbindlist(list(...), use.names = TRUE, fill = TRUE)
+    }
+
+    # Compress numeric values to integers if possible and conditionally convert characters to factors
+    data_frame |> utils::type.convert(as.is = !compress)
 }

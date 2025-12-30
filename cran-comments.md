@@ -7,6 +7,7 @@ New functions
 * transpose_plus(): Format driven transposition, which is able to do more than just transpose values.
 * sort_plus(): Sort data frame observations with some additions.
 * split_by(): Since split_by_var() didn't have any benefit, split_by_var() and split_by_condition() are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly.
+* set(): Stack data frames by column names with optional character compression.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.

@@ -15,7 +15,7 @@ libname(path, get_files = FALSE)
 Returns the given file path or a named character vector containing file paths.
 }
 \description{
-Libname checks if a given path exists and writes a message in the console accordingly.
+\code{\link[=libname]{libname()}} checks if a given path exists and writes a message in the console accordingly.
 Optional all files from the given path can be retrieved as a named character vector.
 }
 \examples{

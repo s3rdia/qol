@@ -52,7 +52,7 @@
 #'
 #' Generate dummy data: [dummy_data()]
 #'
-#' Small helpers: [libname()], [setcolorder_by_pattern()], [drop_type_vars()],
+#' Small helpers: [libname()], [set()], [setcolorder_by_pattern()], [drop_type_vars()],
 #' [fuse_variables()], [get_excel_range()].
 #'
 #' Split data frame: [split_by].

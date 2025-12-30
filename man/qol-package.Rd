@@ -60,7 +60,7 @@ Retaining: \code{\link[=running_number]{running_number()}}, \code{\link[=mark_ca
 
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
-Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
+Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
 \code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}.
 
 Split data frame: \link{split_by}.

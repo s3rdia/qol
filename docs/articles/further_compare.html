@@ -89,6 +89,21 @@ result:</p>
 <span><span class="va">my_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/libname.html">libname</a></span><span class="op">(</span><span class="st">"C/:My_Path/"</span>, get_files <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="stacking-datasets">Stacking datasets<a class="anchor" aria-label="anchor" href="#stacking-datasets"></a>
+</h2>
+<p>Stacking up datasets can be as easy and readable as this in SAS:</p>
+<pre class="sas"><code>Data Work.NewDataSet;
+    Set Work.MyData1
+        Work.MyData2
+        Work.MyData3;
+Run;</code></pre>
+<p>qol does it just as readable:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">NewDataSet</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set.html">set</a></span><span class="op">(</span><span class="va">MyData1</span>,</span>
+<span>                  <span class="va">MyData2</span>,</span>
+<span>                  <span class="va">MyData3</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="more-than-just-if">More Than Just ‘if’<a class="anchor" aria-label="anchor" href="#more-than-just-if"></a>
 </h2>
 <p>SAS makes use of if-statements like most other languages do. The most
@@ -111,7 +126,7 @@ generate groups of ages:</p>
 
 Run;</code></pre>
 <p>The equivalent in R looks like this:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_AgeGr</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> </span>
 <span>         <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">&lt;</span> <span class="fl">18</span>,             AgeGr <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/if_else.html">else_if.</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">&gt;=</span> <span class="fl">18</span> <span class="op">&amp;</span> <span class="va">Age</span> <span class="op">&lt;</span> <span class="fl">25</span>, AgeGr <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -134,7 +149,7 @@ you can generate multiple variables like this:</p>
 
 Run;</code></pre>
 <p>With the qol-Package you can write:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_Do</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> </span>
 <span>         <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">a</span> <span class="op">&lt;</span> <span class="fl">100</span>, b <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                      c <span class="op">=</span> <span class="st">"Hello"</span>,</span>
@@ -152,7 +167,7 @@ only the condition without any ‘Then’ is provided like this:</p>
 
 Run;</code></pre>
 <p>The new <code><a href="../reference/if_else.html">if.()</a></code> makes this possible, too:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_If</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span></span></code></pre></div>
 <p>Simple, readable and multi-functional.</p>
 </div>
@@ -181,7 +196,7 @@ Data Work.MyData_Recode;
 Run;</code></pre>
 <p>Now you can do the same in R with <code><a href="../reference/recode.html">recode()</a></code> just as
 easy:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AgeGroup.</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
 <span>    <span class="st">"18 to under 25"</span> <span class="op">=</span> <span class="fl">18</span><span class="op">:</span><span class="fl">24</span>,</span>
@@ -212,7 +227,7 @@ number or adding different values can create a cumulative sum:</p>
 Run;</code></pre>
 <p>qol doesn’t mimic the behavior of ‘Retain’, but rather the
 result:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_Retain</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/retain.html">running_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="../reference/retain.html">retain_sum</a></span><span class="op">(</span>var_name <span class="op">=</span> <span class="st">"CumulativeIncome"</span>, value <span class="op">=</span> <span class="va">income</span><span class="op">)</span></span></code></pre></div>
@@ -227,7 +242,7 @@ observation and transfer it to all other observations:</p>
 
 Run;</code></pre>
 <p>qol does it like this:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_Running</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/retain.html">retain_value</a></span><span class="op">(</span>var_name <span class="op">=</span> <span class="st">"MyValue"</span>, value <span class="op">=</span> <span class="va">income</span><span class="op">)</span></span></code></pre></div>
 <p>Not directly ‘Retain’ related, but also useful: If an observation
 knows the value of the previous one, it can check whether it is of the
@@ -243,7 +258,7 @@ group.</p>
 
 Run;</code></pre>
 <p>qol creates this effect like this:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_FirstLast</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/retain.html">mark_case</a></span><span class="op">(</span>var_name <span class="op">=</span> <span class="st">"FirstCase"</span>, by <span class="op">=</span> <span class="va">AgeGr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="../reference/retain.html">mark_case</a></span><span class="op">(</span>var_name <span class="op">=</span> <span class="st">"LastCase"</span>,  by <span class="op">=</span> <span class="va">AgeGr</span>, first <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -282,17 +297,17 @@ simplicity, while giving the user the power, to do more joins at the
 same time. Additionally to what Merge can do, this function also makes
 use of the Proc SQL possibility to join datasets on different variable
 names:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>MyData_Merged <span class="ot">&lt;-</span> <span class="fu">multi_join</span>(<span class="at">data_frames =</span> <span class="fu">list</span>(MyData_A, MyData_B, MyData_C),</span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>                            <span class="at">on  =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>                            <span class="at">how =</span> <span class="st">"left"</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co"># Instead of "left" you can assign any of the above join methods.</span></span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co"># To join on differently named variables, you can write the function like this:</span></span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>MyData_Merged <span class="ot">&lt;-</span> <span class="fu">multi_join</span>(<span class="fu">list</span>(MyData_A, MyData_B, MyData_C),</span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>                            <span class="at">on =</span> <span class="fu">list</span>(<span class="at">MyData_A =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>),</span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>                                      <span class="at">MyData_B =</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>),</span>
-<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>                                      <span class="at">MyData_C =</span> <span class="fu">c</span>(<span class="st">"key1"</span>, <span class="st">"key2"</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>MyData_Merged <span class="ot">&lt;-</span> <span class="fu">multi_join</span>(<span class="at">data_frames =</span> <span class="fu">list</span>(MyData_A, MyData_B, MyData_C),</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                            <span class="at">on  =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>                            <span class="at">how =</span> <span class="st">"left"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="co"># Instead of "left" you can assign any of the above join methods.</span></span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="co"># To join on differently named variables, you can write the function like this:</span></span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a>MyData_Merged <span class="ot">&lt;-</span> <span class="fu">multi_join</span>(<span class="fu">list</span>(MyData_A, MyData_B, MyData_C),</span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a>                            <span class="at">on =</span> <span class="fu">list</span>(<span class="at">MyData_A =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>),</span>
+<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a>                                      <span class="at">MyData_B =</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>),</span>
+<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a>                                      <span class="at">MyData_C =</span> <span class="fu">c</span>(<span class="st">"key1"</span>, <span class="st">"key2"</span>)))</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="splitting-datasets">Splitting Datasets<a class="anchor" aria-label="anchor" href="#splitting-datasets"></a>
@@ -312,7 +327,7 @@ times at once:</p>
 Run;</code></pre>
 <p>qol offers the function <code><a href="../reference/split_by.html">split_by()</a></code> which split up data
 frames into a list of multiple new ones:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using just the expressions of a single variable</span></span>
 <span><span class="va">MyData_List</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/split_by.html">split_by</a></span><span class="op">(</span><span class="va">Sex</span><span class="op">)</span></span>
 <span></span>
@@ -336,7 +351,7 @@ Run;</code></pre>
 <p>The qol <code><a href="../reference/keep_dropp.html">keep()</a></code> and <code><a href="../reference/keep_dropp.html">dropp()</a></code> (drop was
 already taken, so the additional p is intentional ;-) ), are written
 alike:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, <span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, <span class="va">d</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -353,7 +368,7 @@ variables. The code is as straight forward as this:</p>
 
 Run;</code></pre>
 <p>The function <code><a href="../reference/frequencies.html">frequencies()</a></code> does the same like this:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># You can just output a quick ASCII style table in the console</span></span>
 <span><span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/frequencies.html">frequencies</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span></span>
 <span></span>
@@ -368,7 +383,7 @@ between two variables is neccessary:</p>
 Run;</code></pre>
 <p>To reproduce this, the function <code><a href="../reference/crosstabs.html">crosstabs()</a></code> comes into
 play:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Again in ASCII style</span></span>
 <span><span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/crosstabs.html">crosstabs</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Sex</span><span class="op">)</span></span>
 <span></span>
@@ -404,7 +419,7 @@ Proc Freq Data = Work.MyData;
 
 Run;</code></pre>
 <p>And in R you do it like this:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AgeGroup.</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
 <span>    <span class="st">"18 to under 25"</span> <span class="op">=</span> <span class="fl">18</span><span class="op">:</span><span class="fl">24</span>,</span>
@@ -433,7 +448,7 @@ Run;</code></pre>
 But to combine the simplicity of this export with the simplicity of the
 already established styling options from the tabulation functions,
 offers new options:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/export_with_style.html">export_with_style</a></span><span class="op">(</span>titles    <span class="op">=</span> <span class="st">"This is a title"</span>,</span>
 <span>                            footnotes <span class="op">=</span> <span class="st">"This is a footnote"</span>,</span>
 <span>                            style     <span class="op">=</span> <span class="fu"><a href="../reference/excel_output_style.html">excel_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0000FF"</span>,</span>
@@ -445,7 +460,7 @@ from the qol package generate the named regions ‘table’ and ‘data’ in
 the Excel output, which can easily be read back in with the help of the
 <a href="https://github.com/JanMarvin/openxlsx2" class="external-link">openxlsx2</a>
 package:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData</span> <span class="op">&lt;-</span> <span class="fu">wb_to_df</span><span class="op">(</span>file  <span class="op">=</span> <span class="st">"C:/MyFile.xlsx"</span>,</span>
 <span>                   sheet <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                   named_region <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span></code></pre></div>

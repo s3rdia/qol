@@ -74,6 +74,7 @@ reference:
 - title: Small Helpers
   contents:
   - libname
+  - set
   - inverse
   - setcolorder_by_pattern
   - drop_type_vars

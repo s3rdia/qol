@@ -27,6 +27,26 @@ my_path <- libname("C/:My_Path/")
 my_path <- libname("C/:My_Path/", get_files = TRUE)
 ```
 
+# Stacking datasets
+
+Stacking up datasets can be as easy and readable as this in SAS:
+
+```{sas, eval = FALSE}
+Data Work.NewDataSet;
+	Set Work.MyData1
+		Work.MyData2
+		Work.MyData3;
+Run;
+```
+
+qol does it just as readable:
+
+```{R, eval = FALSE}
+NewDataSet <- set(MyData1,
+				  MyData2,
+				  MyData3)
+```
+
 # More Than Just 'if'
 
 SAS makes use of if-statements like most other languages do. The most common use case should be to generate a new variable or to be more specific: to assign a value to a variable conditionally. Inside a Data-Step you can write single if-statements or connect multiple to a whole block. You can also make use of 'else if', which is only executed, if no other if-condition from before was true. And there is 'else' which is executed, if no other condition in a block became true.
