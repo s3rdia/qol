@@ -216,8 +216,20 @@ recode_multi <- function(data_frame, ...){
     # Measure the time
     start_time <- Sys.time()
 
-    # Translate ... into separately controllable arguments
-    formats <- list(...)
+    # Translate ... into a list if possible
+    formats <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(formats)){
+        message('X ERROR: Unknown object found. Provide recode arguments in the form: variable_name = format_df.\n",
+                "         Recoding will be aborted.')
+        return(data_frame)
+    }
 
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){

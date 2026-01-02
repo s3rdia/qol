@@ -62,6 +62,7 @@ reference:
   - rename_pattern
   - add_extension
   - remove_stat_extension
+  - rename_multi
 - title: Retaining
   contents:
   - running_number

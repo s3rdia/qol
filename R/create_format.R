@@ -143,14 +143,15 @@ discrete_format <- function(...){
     # Flatten to long format
     unwrapped_format <- data.table::rbindlist(unwrap_all_groupings)
 
+    # If label column is all numeric then convert it to numeric
+    unwrapped_format <- unwrapped_format |> convert_numeric("label")
+
     # Convert "other" keyword to integer max. This should be a value no one would pick normally.
     if ("other" %in% tolower(unwrapped_format[["value"]])){
         unwrapped_format[["value"]] <- sub("other", .Machine[["integer.max"]], tolower(unwrapped_format[["value"]]))
 
         # If value column is all numeric then convert it to numeric
-        if (is.numeric(unwrapped_format[["value"]])){
-            unwrapped_format[["value"]] <- as.integer(unwrapped_format[["value"]])
-        }
+        unwrapped_format <- unwrapped_format |> convert_numeric("value")
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
@@ -210,7 +211,7 @@ interval_format <- function(...){
     # Put everything together in a data frame
     data.table::data.table(from  = from,
                            to    = to,
-                           label = labels)
+                           label = labels) |> convert_numeric("label")
 }
 
 

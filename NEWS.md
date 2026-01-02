@@ -12,6 +12,7 @@
 	* `part_of_df()`: Check if variable names are part of a data frame. (02.01.2026)
 	* `remove_doubled_values()`: Remove values from a vector that appear more than once. (02.01.2026)
 	* `check_weight()`: Check whether a suitable weight variable was provided. (02.01.2026)
+* `rename_multi()`: Rename one or more variables. (02.01.2026)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
@@ -43,14 +44,18 @@
 * `any_table()`: If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame. (29.12.2025)
 * In general: Error handling has been generalized in many places to make it more robust and get a better overview. (02.01.2026)
 
+### New Error Checks
+* `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
+* `summarise_plus()` and `any_table()`: Added an error check in case an invalid statistic is provided. (29.12.2025)
+* `summarise_plus()` and `any_table()`: Added an error check in case an invalid type is provided. (02.01.2026)
+* `recode_multi()`: Added an error check in case an unknown object is provided. (02.01.2026)
+
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)
 * Adjusted some warning messages. (22.12.2025)
 * Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
-* `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
-* `summarise_plus()` and `any_table()`: Added an error check in case an invalid statistic is provided. (29.12.2025)
-* `summarise_plus()` and `any_table()`: Added an error check in case an invalid type is provided. (02.01.2026)
+* `discrete_format()` and `interval_format()`: Labels will now be converted to numeric if they are all numeric. (02.01.2026)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

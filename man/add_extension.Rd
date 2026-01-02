@@ -29,7 +29,7 @@ the value variables to have the statistic extensions.
 }
 \examples{
 # Example data frame
-my_data <- dummy_data(1000)
+my_data <- dummy_data(10)
 
 # Add extensions to variable names
 new_names1 <- my_data |> add_extension(5, c("sum", "pct"))

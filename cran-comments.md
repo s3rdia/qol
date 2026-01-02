@@ -13,6 +13,7 @@ New functions
 	* part_of_df(): Check if variable names are part of a data frame.
 	* remove_doubled_values(): Remove values from a vector that appear more than once.
 	* check_weight(): Check whether a suitable weight variable was provided.
+* rename_multi(): Rename one or more variables.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -42,13 +43,17 @@ Optimization
 * any_table(): If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame.
 * In general: Error handling has been generalized in many places.
 
-Additionally
-* any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
+New Error Checks
 * summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
-* any_table(): Added missing format for variable 'state' in examples.
-* Added transpose_plus() and sort_plus() examples to the README.
 * summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
 * summarise_plus() and any_table(): Added an error check in case an invalid type is provided.
+* recode_multi(): Added an error check in case an unknown object is provided.
+
+Additionally
+* any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
+* any_table(): Added missing format for variable 'state' in examples.
+* Added transpose_plus() and sort_plus() examples to the README.
+* discrete_format() and interval_format(): Labels will now be converted to numeric if they are all numeric.
 
 ## R CMD check results
 

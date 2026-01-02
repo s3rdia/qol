@@ -49,7 +49,7 @@
 <li>
 <code><a href="../reference/sort_plus.html">sort_plus()</a></code>: Sort data frame observations with some additions. (27.12.2025)</li>
 <li>
-<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code>split_by_var()</code> didn’t have any benefit, <code>split_by_var()</code> and <code>split_by_condition()</code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> didn’t have any benefit, <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 <li>
 <code><a href="../reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
 <li>Error handling functions:
@@ -62,6 +62,8 @@
 <li>
 <code><a href="../reference/error_handling.html">check_weight()</a></code>: Check whether a suitable weight variable was provided. (02.01.2026)</li>
 </ul></li>
+<li>
+<code><a href="../reference/rename_multi.html">rename_multi()</a></code>: Rename one or more variables. (02.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
@@ -79,9 +81,9 @@
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
 <ul><li>
-<code>split_by_var()</code> and <code>split_by_condition()</code>: See comment under ‘New functions’. (30.12.2025)</li>
+<code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code>: See comment under ‘New functions’. (30.12.2025)</li>
 <li>
-<code>is_numeric()</code>: There was simply no benefit. (02.01.2026)</li>
+<code><a href="https://rdrr.io/pkg/qol/man/convert_numeric.html" class="external-link">is_numeric()</a></code>: There was simply no benefit. (02.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-0"></a></h4>
@@ -118,15 +120,24 @@
 <li>In general: Error handling has been generalized in many places to make it more robust and get a better overview. (02.01.2026)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="new-error-checks-1-2-0">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-0"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> and <code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case an invalid statistic is provided. (29.12.2025)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> and <code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case an invalid type is provided. (02.01.2026)</li>
+<li>
+<code><a href="../reference/recode.html">recode_multi()</a></code>: Added an error check in case an unknown object is provided. (02.01.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="additionally-1-2-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-0"></a></h4>
 <ul><li>Restructured some “Small Helpers” into “Renaming” and “Variable Selection”. (21.12.2025)</li>
 <li>Adjusted some warning messages. (22.12.2025)</li>
 <li>Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)</li>
-<li>
-<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)</li>
 <li>Added <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code> and <code><a href="../reference/sort_plus.html">sort_plus()</a></code> examples to the README. (27.12.2025)</li>
 <li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> and <code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case an invalid statistic is provided. (29.12.2025)</li>
+<code><a href="../reference/formats.html">discrete_format()</a></code> and <code><a href="../reference/formats.html">interval_format()</a></code>: Labels will now be converted to numeric if they are all numeric. (02.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

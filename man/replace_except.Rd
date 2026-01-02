@@ -23,7 +23,7 @@ Replaces a provided pattern with another, while protecting exceptions. Exception
 contain the given pattern, but won't be changed during replacement.
 }
 \examples{
-# Vector, where underscores hsould be replaced
+# Vector, where underscores should be replaced
 underscores <- c("my_variable", "var_with_underscores", "var_sum", "var_pct_total")
 
 # Extensions, where underscores shouldn't be replaced

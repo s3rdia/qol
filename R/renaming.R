@@ -118,7 +118,7 @@ remove_stat_extension <- function(data_frame, statistics){
 #'
 #' @examples
 #' # Example data frame
-#' my_data <- dummy_data(1000)
+#' my_data <- dummy_data(10)
 #'
 #' # Add extensions to variable names
 #' new_names1 <- my_data |> add_extension(5, c("sum", "pct"))
@@ -193,7 +193,7 @@ add_extension <- function(data_frame,
 #' Returns a vector with replaced pattern.
 #'
 #' @examples
-#' # Vector, where underscores hsould be replaced
+#' # Vector, where underscores should be replaced
 #' underscores <- c("my_variable", "var_with_underscores", "var_sum", "var_pct_total")
 #'
 #' # Extensions, where underscores shouldn't be replaced
@@ -227,4 +227,76 @@ replace_except <- function(vector,
 
     # Reestablish protected pattern
     gsub("&%!", pattern, vector)
+}
+
+
+#' Rename One Or More Variables
+#'
+#' @description
+#' Can rename one or more existing variable names into the corresponding new variable
+#' names in one go.
+#'
+#' @param data_frame The data frame which contains the variable names to be renamed.
+#' @param ... Pass in variables to be renamed in the form: "old_var" = "new_var".
+#'
+#' @return
+#' Returns a data_frame with renamed variables.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(10)
+#'
+#' # Rename multiple variables at once
+#' new_names_df <- my_data |> rename_multi("sex"   = "var1",
+#'                                         "age"   = "var2",
+#'                                         "state" = "var3")
+#'
+#' @export
+rename_multi <- function(data_frame, ...){
+    # Measure the time
+    start_time <- Sys.time()
+
+    # Translate ... into a list if possible
+    rename_list <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(rename_list)){
+        message('X ERROR: Unknown object found. Provide variables in quotation marks, like: "old_var" = "new_var".\n",
+                "         Renaming will be aborted.')
+        return(data_frame)
+    }
+
+    # Get old and new names in separate vectors to rename them in one go
+    old_names <- names(rename_list)
+    new_names <- unlist(rename_list, use.names = FALSE)
+
+    # Make sure that the variables provided are part of the data frame.
+    old_names <- data_frame |> part_of_df(old_names, check_only = TRUE)
+
+    if (is.list(old_names)){
+        message(" X ERROR: The provided <old name> '", paste(old_names[[1]], collapse = ", "), "' is not part of\n",
+                "          the data frame. Renaming will be aborted.")
+        return(data_frame)
+    }
+
+    # If any of the new variable names is already part of the data frame abort
+    invalid_new_names <- new_names[new_names %in% names(data_frame)]
+
+    # If not all old names are part of the data frame abort
+    if (length(invalid_new_names) > 0){
+        message(" X ERROR: The provided <new name> '", paste(invalid_new_names, collapse = ", "), "' is already part of\n",
+                "          the data frame. Renaming will be aborted.")
+        return(data_frame)
+    }
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("- - - 'rename_multi' execution time: ", end_time, " seconds")
+
+    # Rename all variables in one go
+    data_frame |> collapse::frename(stats::setNames(old_names, new_names))
 }
