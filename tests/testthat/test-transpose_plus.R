@@ -115,38 +115,31 @@ test_that("Wide to long transposition doesn't support value parameter transposit
     expect_message(wide_df <- dummy_wide_df |>
         transpose_plus(preserve = year,
                        pivot    = list(sex = c("Male", "Female")),
-                       values   = "Total"), " ~ NOTE: Values parameter has no effect in wide to long transposition.")
+                       values   = "Total"), " ~ NOTE: <Values> parameter has no effect in wide to long transposition.")
 })
 
 
 test_that("Wide to long transposition doesn't support weight parameter transposition", {
     expect_message(wide_df <- dummy_wide_df |>
-                       transpose_plus(preserve = year,
-                                      pivot    = list(sex = c("Male", "Female")),
-                                      weight   = "Total"), " ~ NOTE: Weight parameter has no effect in wide to long transposition.")
+       transpose_plus(preserve = year,
+                      pivot    = list(sex = c("Male", "Female")),
+                      weight   = "Total"), " ~ NOTE: <Weight> parameter has no effect in wide to long transposition.")
 })
 
 
 test_that("Preserve variable in transposition is not part of the data frame", {
     expect_message(wide_df <- dummy_df |>
-                       transpose_plus(preserve = "test",
-                                      pivot    = "sex",
-                                      value    = income), " ! WARNING: The provided preserve variable")
-})
-
-
-test_that("Value variable in transposition is not part of the data frame", {
-    expect_message(wide_df <- dummy_df |>
-                       transpose_plus(pivot    = "sex",
-                                      value    = test), " ! WARNING: The provided value to transpose")
+       transpose_plus(preserve = "test",
+                      pivot    = "sex",
+                      value    = income), " ! WARNING: The provided <preserve> variable")
 })
 
 
 test_that("Value variable in transposition is also part of preserve", {
     expect_message(wide_df <- dummy_df |>
-                       transpose_plus(preserve = sex,
-                                      pivot    = "age",
-                                      value    = sex), " ! WARNING: The provided value variable")
+       transpose_plus(preserve = sex,
+                      pivot    = "age",
+                      value    = sex), " ! WARNING: The provided <values> variable")
 })
 
 ###############################################################################
@@ -157,7 +150,7 @@ test_that("Wide to long transposition doesn't support nesting variables", {
     expect_message(wide_df <- dummy_wide_df |>
                        transpose_plus(preserve = year,
                                       pivot    = list(sex = "Male + Female")),
-                   " X ERROR: Nesting pivot variables in a wide to long transposition is not possible.")
+                   " X ERROR: Nesting <pivot> variables in a wide to long transposition is not possible.")
 })
 
 
@@ -165,21 +158,28 @@ test_that("Abort transposition if pivot variable is part of preserve", {
     expect_message(wide_df <- dummy_wide_df |>
                        transpose_plus(preserve = year,
                                       pivot    = "year",
-                                      value    = income), " X ERROR: The provided pivot variable")
+                                      value    = income), " X ERROR: The provided <pivot> variable")
 })
 
 
 test_that("Abort transposition if no valid value variable is provided", {
     expect_message(wide_df <- dummy_df |>
                        transpose_plus(preserve = year,
-                                      pivot    = "sex"), " X ERROR: No values provided. Transposition will be aborted.")
+                                      pivot    = "sex"), " X ERROR: No <values> provided. Transposition will be aborted.")
+})
+
+
+test_that("Abort transposition if value variable is not part of the data frame", {
+    expect_message(wide_df <- dummy_df |>
+                       transpose_plus(pivot    = "sex",
+                                      value    = test), " X ERROR: No valid <values> to transpose provided. Transposition will be aborted.")
 })
 
 
 test_that("Abort if value variable in transposition is also part of pivot", {
     expect_message(wide_df <- dummy_df |>
                        transpose_plus(pivot    = "sex",
-                                      value    = sex), " X ERROR: The provided value variable")
+                                      value    = sex), " X ERROR: The provided <values> variable")
 })
 
 
@@ -194,5 +194,5 @@ test_that("Abort on duplicate variable names after transposition", {
 test_that("Abort if no valid pivot variable is provided in transposition", {
     expect_message(wide_df <- dummy_df |>
                        transpose_plus(pivot = "test",
-                                      value = income), " X ERROR: The provided pivot variable")
+                                      value = income), " X ERROR: The provided <pivot> variable")
 })

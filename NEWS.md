@@ -7,20 +7,31 @@
 * `sort_plus()`: Sort data frame observations with some additions. (27.12.2025)
 * `split_by()`: Since `split_by_var()` didn't have any benefit, `split_by_var()` and `split_by_condition()` are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)
 * `set()`: Stack data frames by column names with optional character compression. (30.12.2025)
+* Error handling functions:
+	* `resolve_intersection()`: Compares if two vectors have intersecting values. (02.01.2026)
+	* `part_of_df()`: Check if variable names are part of a data frame. (02.01.2026)
+	* `remove_doubled_values()`: Remove values from a vector that appear more than once. (02.01.2026)
+	* `check_weight()`: Check whether a suitable weight variable was provided. (02.01.2026)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
 * `keep()`/`dropp()`: Now support variable ranges, like "state:income". (21.12.2025)
 * `any_table()`: Removed `pre_summed` parameter. Instead the function now checks on it's own, whether the provided data frame is pre summarised or not. (23.12.2025)
+* `dots_to_char()`: Renamed from `args_to_char()` and is now able to get the original argument from up the environment tree and return it as character vector. (02.01.2026)
+* `args_to_char()`: Now converts the contents of a given argument to a character vector. (02.01.2026)
 
 ### Removed
 * `split_by_var()` and `split_by_condition()`: See comment under 'New functions'. (30.12.2025)
+* `is_numeric()`: There was simply no benefit. (02.01.2026)
 
 ### Fixed
 * `keep()`: Variables where always output in provided order. order_vars = FALSE (default) will now output variables in order of appearance. (21.12.2025)
 * `any_table()`: Now checks if a column combination is also part of the row combinations. (22.12.2025)
 * `any_table()`: Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1. (23.12.2025)
 * `any_table()`: Fixed by variables could be sorted in the wrong order. (30.12.2025)
+* `any_table()`: Added missing format for variable 'state' in examples. (02.01.2026)
+* `frequencies()`: 'formats' parameter was missing a '=' in examples. (02.01.2026)
+* `summarise_plus()`: Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended. (02.01.2026)
 
 ### Optimization
 * `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)
@@ -30,6 +41,7 @@
 * `summarise_plus()`: When na.rm option is TRUE and only statistics based on sums are selected, `summarise_plus()` is now able to take the shortcut route. This also gives `any_table()` a huge performance boost when na.rm option is TRUE. (29.12.2025)
 * In general: Swapped in more `collapse` functions. (29.12.2025)
 * `any_table()`: If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame. (29.12.2025)
+* In general: Error handling has been generalized in many places to make it more robust and get a better overview. (02.01.2026)
 
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)

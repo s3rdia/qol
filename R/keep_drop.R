@@ -46,7 +46,7 @@ NULL
 #' @export
 keep <- function(data_frame, ..., order_vars = FALSE){
     # Convert to character vectors
-    variables_temp <- args_to_char(...)
+    variables_temp <- dots_to_char(...)
 
     if (length(variables_temp) == 0){
         return(data_frame)
@@ -110,7 +110,7 @@ keep <- function(data_frame, ..., order_vars = FALSE){
 #' @export
 dropp <- function(data_frame, ...){
     # Convert to character vectors
-    variables_temp <- args_to_char(...)
+    variables_temp <- dots_to_char(...)
 
     if (length(variables_temp) == 0){
         return(data_frame)

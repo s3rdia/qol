@@ -127,6 +127,27 @@
 #'     "middle education" = "middle",
 #'     "high education"   = "high")
 #'
+#' state. <- discrete_format(
+#'     "Germany"                       = 1:16,
+#'     "Schleswig-Holstein"            = 1,
+#'     "Hamburg"                       = 2,
+#'     "Lower Saxony"                  = 3,
+#'     "Bremen"                        = 4,
+#'     "North Rhine-Westphalia"        = 5,
+#'     "Hesse"                         = 6,
+#'     "Rhineland-Palatinate"          = 7,
+#'     "Baden-Württemberg"             = 8,
+#'     "Bavaria"                       = 9,
+#'     "Saarland"                      = 10,
+#'     "West"                          = 1:10,
+#'     "Berlin"                        = 11,
+#'     "Brandenburg"                   = 12,
+#'     "Mecklenburg-Western Pomerania" = 13,
+#'     "Saxony"                        = 14,
+#'     "Saxony-Anhalt"                 = 15,
+#'     "Thuringia"                     = 16,
+#'     "East"                          = 11:16)
+#'
 #' # Define style
 #' my_style <- excel_output_style(column_widths = c(2, 15, 15, 15, 9))
 #'
@@ -292,24 +313,11 @@ any_table <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    formats <- stats::setNames(
-        lapply(formats_list, function(expression){
-            # Catch expression if passed as string
-            if (is.character(expression)) {
-                tryCatch(get(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-            # Catch expression if passed as symbol
-            else{
-                tryCatch(eval(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-        }),
-        names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
+    }
 
     ###########################################################################
     # Error handling
@@ -320,25 +328,24 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get row variables from provided combinations
-    row_vars <- collapse::funique(trimws(unlist(strsplit(rows, "\\+"))))
+    row_vars <- unlist_variables(rows)
 
-    invalid_rows <- row_vars[!row_vars %in% names(data_frame)]
-    row_vars     <- row_vars[row_vars %in% names(data_frame)]
+    if (is.null(row_vars)){
+        message(" X ERROR: <Rows> variables must be provided in quotation marks. Tabulation will be aborted.")
+        return(invisible(NULL))
+    }
 
-    if (length(invalid_rows) > 0){
-        message(" X ERROR: The provided row variable '", paste(invalid_rows, collapse = ", "), "' is not part of\n",
+    row_vars <- data_frame |> part_of_df(row_vars, check_only = TRUE)
+
+    if (is.list(row_vars)){
+        message(" X ERROR: The provided <rows> variable '", paste(row_vars[[1]], collapse = ", "), "' is not part of\n",
                 "          the data frame. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
-    if (length(rows) == 0){
-        message(" X ERROR: No valid row variables provided. Tabulation will be aborted.")
-        return(invisible(NULL))
-    }
-
-    if (length(rows) == 1){
-        if (rows == ""){
-            message(" X ERROR: No valid row variables provided. Tabulation will be aborted.")
+    if (length(rows) <= 1){
+        if (length(rows) == 0 || rows == ""){
+            message(" X ERROR: No valid <rows> variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -348,26 +355,28 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get row variables from provided combinations
-    col_vars <- collapse::funique(trimws(unlist(strsplit(columns, "\\+"))))
+    col_vars <- unlist_variables(columns)
 
-    invalid_columns <- col_vars[!col_vars %in% names(data_frame)]
-    col_vars        <- col_vars[col_vars %in% names(data_frame)]
+    if (is.null(col_vars)){
+        message(" X ERROR: <Columns> variables must be provided in quotation marks. Tabulation will be aborted.")
+        return(invisible(NULL))
+    }
 
-    if (length(invalid_columns) > 0){
-        message(" X ERROR: The provided column variable '", paste(invalid_columns, collapse = ", "), "' is not part of\n",
+    col_vars <- data_frame |> part_of_df(col_vars, check_only = TRUE)
+
+    if (is.list(col_vars)){
+        message(" X ERROR: The provided <columns> variable '", paste(col_vars[[1]], collapse = ", "), "' is not part of\n",
                 "          the data frame. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
-    # Make sure there is no row variable that is also a column variable.
-    invalid_columns <- columns[columns %in% rows]
-    columns         <- columns[!columns %in% rows]
+    # Make sure there is no column variable that is also a row variable.
+    col_vars <- resolve_intersection(col_vars, row_vars, check_only = TRUE)
 
-    if (length(invalid_columns) > 0){
-        message(" ! WARNING: The provided column variable '", paste(invalid_columns, collapse = ", "), "' is also part of\n",
-                "            the row variables. This variable will be omitted as column variable.")
-
-        col_vars <- col_vars[!col_vars %in% row_vars]
+    if (is.list(col_vars)){
+        message(" X ERROR: The provided <columns> variable '", paste(col_vars[[1]], collapse = ", "), "' is also part of\n",
+                "          the <rows> variables. Tabulation will be aborted.")
+        return(invisible(NULL))
     }
 
     if (length(columns) <= 1){
@@ -386,43 +395,24 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
-    by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by), width.cutoff = 500L)))
+    by <- get_origin_as_char(by, substitute(by))
 
-    if (substr(by_temp, 1, 2) == "c("){
-        by <- as.character(substitute(by))
-    }
-    else if (!is_error(by)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while variables_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        by <- by_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    by <- data_frame |> part_of_df(by)
 
-    # Remove extra first character created with substitution
-    by <- by[by != "c"]
-
-    provided_by <- by
-    invalid_by  <- by[!by %in% names(data_frame)]
-    by          <- by[by %in% names(data_frame)]
-
-    if (length(invalid_by) > 0){
-        message(" ! WARNING: The provided by variable '", paste(invalid_by, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
+    # Make sure there is no row/column variable that is also a by variable.
     variables  <- c(row_vars, col_vars)
-    invalid_by <- by[by %in% variables]
+    by <- resolve_intersection(by, variables, check_only = TRUE)
 
-    if (length(invalid_by) > 0){
-        message(" X ERROR: The provided by variable '", paste(invalid_by, collapse = ", "), "' is also part of\n",
-                "          the row and column variables which is not allowed. Tabulation will be aborted.")
+    if (is.list(by)){
+        message(" X ERROR: The provided <by> variable '", paste(by[[1]], collapse = ", "), "' is also part of\n",
+                "          the <rows> or <columns> variables which is not allowed. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     if (length(by) == 1){
         if (by == ""){
-            message(" X ERROR: No valid by variables provided. Tabulation will be aborted.")
+            message(" X ERROR: No valid <by> variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -431,99 +421,43 @@ any_table <- function(data_frame,
     # Weight
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Create temporary weight column if none is provided.
-    # Also get the name of the weight variable as string.
-    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight), width.cutoff = 500L)))
-
-    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        if (substr(weight_temp, 1, 2) == "c("){
-            message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
-        }
-    }
-    else if (!is_numeric(data_frame[[weight_temp]])){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
-    }
-    else{
-        weight_var <- weight_temp
-
-        # NA values in weight lead to errors therefor convert them to 0
-        if (anyNA(data_frame[[weight_temp]])){
-            message(" ~ NOTE: Missing values in weight variable '", weight_temp, "' will be converted to 0.")
-        }
-        data_frame[[weight_temp]] <- data.table::fifelse(is.na(data_frame[[weight_temp]]), 0, data_frame[[weight_temp]])
-
-        # @Hack: so I don't have to check if .temp_weight exists later on
-        data_frame[[".temp_weight"]] <- 1
-    }
+    weight     <- get_origin_as_char(weight, substitute(weight))
+    data_frame <- data_frame |> check_weight(weight)
+    weight_var <- ".temp_weight"
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
-    values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values), width.cutoff = 500L)))
-
-    if (substr(values_temp, 1, 2) == "c("){
-        values <- as.character(substitute(values))
-    }
-    else if (!is_error(values)){
-        # Do nothing. In this case values already contains the substituted variable names
-        # while values_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        values <- values_temp
-    }
-
-    # Remove extra first character created with substitution
-    values <- values[values != "c"]
+    values <- get_origin_as_char(values, substitute(values))
 
     # If no value variables are provided abort
-    if (length(values) == 0){
-        message(" X ERROR: No values provided. Tabulation will be aborted.")
-        return(invisible(NULL))
-    }
-    else if (length(values) == 1){
-        if (values == ""){
-            message(" X ERROR: No values provided. Tabulation will be aborted.")
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            message(" X ERROR: No <values> provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
 
-    # Make sure there is no class variable that is also a value variable.
-    invalid_class <- values[values %in% c(row_vars, col_vars)]
-    values        <- values[!values %in% c(row_vars, col_vars)]
+    # Make sure there is no row/column variable that is also a value variable.
+    values <- resolve_intersection(values, variables, check_only = TRUE)
 
-    if (length(invalid_class) > 0){
-        message(" x ERROR: The provided row/column variable '", paste(invalid_class, collapse = ", "), "' is also part of\n",
-                "          the analysis variables. Tabulation will be aborted.")
+    if (is.list(values)){
+        message(" x ERROR: The provided <rows>/<columns> variable '", paste(values[[1]], collapse = ", "), "' is also part of\n",
+                "          the <values> variables. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
-    invalid_values <- values[!values %in% names(data_frame)]
-    values         <- values[values %in% names(data_frame)]
-
-    if (length(invalid_values) > 0){
-        message(" ! WARNING: The provided analysis variable '", paste(invalid_values, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
+    # Make sure that the variables provided are part of the data frame.
+    values <- data_frame |> part_of_df(values)
 
     if (length(values) == 0){
-        message(" X ERROR: No valid analysis variables provided. Tabulation will be aborted.")
+        message(" X ERROR: No valid <values> variables provided. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
-    provided_values <- values
-    values          <- collapse::funique(values)
-
-    if (length(provided_values) > length(values)){
-        message(" ! WARNING: Some analysis variables are provided more than once. The doubled entries will be omitted.")
-    }
+    values <- remove_doubled_values(values)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output
@@ -531,7 +465,7 @@ any_table <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("excel", "excel_nostyle")){
-        message(" ! WARNING: Output format '", output, "' not available. Using 'excel' instead.")
+        message(" ! WARNING: <Output> format '", output, "' not available. Using 'excel' instead.")
 
         output <- "excel"
     }
@@ -541,8 +475,8 @@ any_table <- function(data_frame,
 
     # Correct nesting option if not set right
     if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved")){
-        message(" ! WARNING: Order by option '", order_by, "' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'\n",
-                "            and 'interleaved' are available. Order by will be set to 'stats'.")
+        message(" ! WARNING: <Order by> option '", order_by, "' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'\n",
+                "            and 'interleaved' are available. <Order by> will be set to 'stats'.")
         order_by <- "stats"
     }
 
@@ -555,8 +489,8 @@ any_table <- function(data_frame,
         invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
 
         if (length(invalid_pct) > 0){
-            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as pct_group is not part of the row and column variables.\n",
-                    "            The variable will be omitted.")
+            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
+                    "            of the <rows> and <columns> variables. The variable will be omitted.")
 
             pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
         }
@@ -574,7 +508,7 @@ any_table <- function(data_frame,
     # the statistics extension afterwards.
     if (pre_summed){
         if (!"TYPE" %in% names(data_frame)){
-            message(" X ERROR: The pre summarised data needs the TYPE variable generated by summarise_plus. Tabulation will be aborted.")
+            message(" X ERROR: The pre summarised data needs the 'TYPE' variable generated by <summarise_plus>. Tabulation will be aborted.")
             return(invisible(NULL))
         }
 
@@ -584,10 +518,9 @@ any_table <- function(data_frame,
                         "_last", "_sum_wgt", "_p[0-9]+$", "_sd", "_variance", "_missing")
         pattern    <- paste0("(", paste(extensions, collapse = "|"), ")$")
 
-
         # If one of the value variables hasn't got any of the above extension abort
         if (!all(grepl(pattern, values))){
-            message(" X ERROR: All value variables need to have the statistic extensions in their variable names.\n",
+            message(" X ERROR: All <values> variables need to have the <statistic> extensions in their variable names.\n",
                     "          You can use the function 'add_extension' to achieve this. Execution will be aborted.")
             return(invisible(NULL))
         }
@@ -618,19 +551,16 @@ any_table <- function(data_frame,
                                                        "pct_group", "pct_total", paste0("p", 1:100))]
 
         if (length(invalid_stats) > 0){
-            message(" ! WARNING: Statistic '", invalid_stats, "' is invalid and will be omitted.")
+            message(" ! WARNING: <Statistic> '", invalid_stats, "' is invalid and will be omitted.")
 
             if (length(valid_stats) == 0){
-                message(" ! WARNING: No valid statistic selected. 'sum' will be used.")
+                message(" ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 
                 statistics <- "sum"
             }
         }
         rm(list_of_statistics, invalid_stats)
     }
-
-    rm(invalid_by, invalid_class, invalid_columns, invalid_rows, invalid_values,
-       provided_by, provided_values, weight_temp, values_temp, by_temp)
 
     ###########################################################################
     # Any tabulation starts
@@ -700,7 +630,7 @@ any_table <- function(data_frame,
     # table header later, the underscore is the sign by which the column names are split.
     # Having additional underscores would mess up this part and lead to errors.
     if (any(grepl("_", unlist(any_tab[col_vars])))){
-        message(" X ERROR: No underscores allowed in column variable values. Execution will be aborted.")
+        message(" X ERROR: No underscores allowed in <columns> variable values. Execution will be aborted.")
         return(invisible(NULL))
     }
 
@@ -834,8 +764,8 @@ any_table <- function(data_frame,
 
     # In case only pct_value was selected as statistic
     if ("pct_value" %in% tolower(statistics) && length(statistics) == 1){
-        message(" X ERROR: pct_value can only be computed in combination with statistic\n",
-                "          'sum'. Since no other statistic is provided tabulation will be aborted.")
+        message(" X ERROR: <pct_value> can only be computed in combination with <statistic>\n",
+                "          'sum'. Since no other <statistic> is provided tabulation will be aborted.")
         return(invisible(NULL))
     }
     # In case percentages based on value variables should be computed
@@ -856,7 +786,7 @@ any_table <- function(data_frame,
             }
             # Without sum percentages can't be computed
             else{
-                message(" ! WARNING: pct_value can only be computed in combination with statistic\n",
+                message(" ! WARNING: <pct_value> can only be computed in combination with <statistic>\n",
                         "            'sum'. Percentages for '", name, "' could not be evaluated.")
 
                 # Additional warnings for missing variables
@@ -1147,8 +1077,8 @@ any_table <- function(data_frame,
                 # Check for duplicate variable names. If any duplicate is found abort.
                 duplicates <- intersect(names(combined_col_df), names(combi_df))
 
-                if (length(duplicates) > 0) {
-                    message(" X ERROR: Duplicate column names found: ", paste(duplicates, collapse = ", "), ".\n",
+                if (length(duplicates) > 0){
+                    message(" X ERROR: Duplicate <columns> names found: ", paste(duplicates, collapse = ", "), ".\n",
                             "          If you are working with original values, consider making them unique by using formats.")
                     return(invisible(NULL))
                 }

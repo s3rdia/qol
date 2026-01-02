@@ -82,7 +82,8 @@
 #'     "Male"   = 1,
 #'     "Female" = 2)
 #'
-#' my_data |> frequencies(sex, formats(sex = sex.),
+#' my_data |> frequencies(sex,
+#'                        formats   = (sex = sex.),
 #'                        titles    = titles,
 #'                        footnotes = footnotes)
 #'
@@ -90,7 +91,7 @@
 #' my_data |> frequencies(sex, by = education)
 #'
 #' # Get a list with two data tables for further usage
-#' result_list <- my_data |> frequencies(sex, formats(sex = sex.))
+#' result_list <- my_data |> frequencies(sex, formats = (sex = sex.))
 #'
 #' # Output in text file
 #' my_data |> frequencies(sex, output = "text")
@@ -134,24 +135,11 @@ frequencies <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    formats <- stats::setNames(
-        lapply(formats_list, function(expression){
-            # Catch expression if passed as string
-            if (is.character(expression)) {
-                tryCatch(get(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-            # Catch expression if passed as symbol
-            else{
-                tryCatch(eval(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-        }),
-        names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
+    }
 
     ###########################################################################
     # Error handling
@@ -161,109 +149,36 @@ frequencies <- function(data_frame,
     # Variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    variables_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(variables))))
+    variables <- get_origin_as_char(variables, substitute(variables))
 
-    if (substr(variables_temp, 1, 2) == "c("){
-        variables <- as.character(substitute(variables))
-    }
-    else if (!is_error(variables)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while variables_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        variables <- variables_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    variables <- data_frame |> part_of_df(variables)
 
-    # Remove extra first character created with substitution
-    variables <- variables[variables != "c"]
-
-    provided_variables <- variables
-    invalid_variables  <- variables[!variables %in% names(data_frame)]
-    variables          <- variables[variables %in% names(data_frame)]
-
-    if (length(invalid_variables) > 0){
-        message(" ! WARNING: The provided analysis variable '", paste(invalid_variables, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
-    if (length(variables) == 0){
-        message(" X ERROR: No valid analysis variables provided. Frequencies will be aborted.")
-        return(invisible(NULL))
+    if (length(variables) <= 1){
+        if (length(variables) == 0 || variables == ""){
+            message(" X ERROR: No valid <variables> provided. Frequencies will be aborted.")
+            return(invisible(NULL))
+        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # By variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by))))
+    by <- get_origin_as_char(by, substitute(by))
 
-    if (substr(by_temp, 1, 2) == "c("){
-        by <- as.character(substitute(by))
-    }
-    else if (!is_error(by)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while variables_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        by <- by_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    by <- data_frame |> part_of_df(by)
 
-    # Remove extra first character created with substitution
-    by <- by[by != "c"]
-
-    provided_by <- by
-    invalid_by  <- by[!by %in% names(data_frame)]
-    by          <- by[by %in% names(data_frame)]
-
-    if (length(invalid_by) > 0){
-        message(" ! WARNING: The provided by variable '", paste(invalid_by, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
-    invalid_by <- by[by %in% variables]
-
-    if (length(invalid_by) > 0){
-        message(" X ERROR: The provided by variable '", paste(invalid_by, collapse = ", "), "' is also part of\n",
-                "          the frequency variables which is not allowed. Frequencies will be aborted.")
-        return(invisible(NULL))
-    }
+    by <- resolve_intersection(by, variables)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Create temporary weight column if none is provided.
-    # Also get the name of the weight variable as string.
-    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
-
-    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        if (substr(weight_temp, 1, 2) == "c("){
-            message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
-        }
-    }
-    else if (!is_numeric(data_frame[[weight_temp]])){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
-    }
-    else{
-        weight_var <- weight_temp
-
-        # NA values in weight lead to errors therefor convert them to 0
-        if (anyNA(data_frame[[weight_temp]])){
-            message(" ~ NOTE: Missing values in weight variable '", weight_temp, "' will be converted to 0.")
-        }
-        data_frame[[weight_temp]] <- data.table::fifelse(is.na(data_frame[[weight_temp]]), 0, data_frame[[weight_temp]])
-
-        # @Hack: so I don't have to check if .temp_weight exists later on
-        data_frame[[".temp_weight"]] <- 1
-    }
+    weight     <- get_origin_as_char(weight, substitute(weight))
+    data_frame <- data_frame |> check_weight(weight)
+    weight_var <- ".temp_weight"
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output
@@ -271,7 +186,7 @@ frequencies <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
-        message(" ! WARNING: Output format '", output, "' not available. Using 'console' instead.")
+        message(" ! WARNING: <Output> format '", output, "' not available. Using 'console' instead.")
 
         output <- "console"
     }
@@ -339,11 +254,9 @@ frequencies <- function(data_frame,
 
     for (variable in vars_mean){
         # Extract all stats for a single variable and give them uniform names
+        var_columns <- grep(variable, names(mean_tab), value = TRUE)
         var_row <- suppressMessages(mean_tab |>
-            keep("TYPE", "by_vars",
-                 grep(variable,
-                      names(mean_tab),
-                      value = TRUE)))
+            keep("TYPE", "by_vars", var_columns))
 
         if (length(by) == 0){
             names(var_row) <- mean_columns

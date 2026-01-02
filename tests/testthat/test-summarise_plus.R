@@ -587,22 +587,21 @@ test_that("Summarise possible with no class variables provided", {
 ###############################################################################
 
 test_that("Apply single discrete labels", {
-    # NOTE: The user doesn't pass the formats in like this but it's the only way
-    #       to test the functionality because test_that otherwise has no access
-    #       to the formats if declared outside the function to test.
+    sex. <- suppressMessages(discrete_format(
+        "Male"   = 1,
+        "Female" = 2))
+    age. <- suppressMessages(discrete_format(
+        "under 18"       = 0:17,
+        "18 to under 25" = 18:24,
+        "25 to under 55" = 25:54,
+        "55 to under 65" = 55:64,
+        "65 and older"   = 65:100))
+
     format_df <- dummy_df |>
         summarise_plus(class      = c(sex, age),
                        values     = income,
                        statistics = "sum",
-                       formats    = list(sex = suppressMessages(discrete_format(
-                                           "Male"   = 1,
-                                           "Female" = 2)),
-                                         age = suppressMessages(discrete_format(
-                                           "under 18"       = 0:17,
-                                           "18 to under 25" = 18:24,
-                                           "25 to under 55" = 25:54,
-                                           "55 to under 65" = 55:64,
-                                           "65 and older"   = 65:100))),
+                       formats    = list(sex = sex., age = age.),
                        weight     = weight,
                        nesting    = "deepest")
 
@@ -625,22 +624,23 @@ test_that("Apply single discrete labels", {
 
 
 test_that("Apply discrete multilabels", {
-    # See comments above
+    sex. <- suppressMessages(discrete_format(
+        "Total"  = 1:2,
+        "Male"   = 1,
+        "Female" = 2))
+    age. <- suppressMessages(discrete_format(
+        "Total"          = 0:100,
+        "under 18"       = 0:17,
+        "18 to under 25" = 18:24,
+        "25 to under 55" = 25:54,
+        "55 to under 65" = 55:64,
+        "65 and older"   = 65:100))
+
     format_df <- dummy_df |>
         summarise_plus(class      = c(sex, age),
                        values     = weight,
                        statistics = "sum",
-                       formats    = list(sex = suppressMessages(discrete_format(
-                                           "Total"  = 1:2,
-                                           "Male"   = 1,
-                                           "Female" = 2)),
-                           age = suppressMessages(discrete_format(
-                                           "Total"          = 0:100,
-                                           "under 18"       = 0:17,
-                                           "18 to under 25" = 18:24,
-                                           "25 to under 55" = 25:54,
-                                           "55 to under 65" = 55:64,
-                                           "65 and older"   = 65:100))),
+                       formats    = list(sex = sex., age = age.),
                        nesting    = "deepest",
                        na.rm      = TRUE) |>
         remove_stat_extension("sum")
@@ -666,16 +666,17 @@ test_that("Apply discrete multilabels", {
 
 
 test_that("Apply single interval label", {
-    # See comments above
+    income. <- suppressMessages(interval_format(
+        "below 500"          = 0:499,
+        "500 to under 1000"  = 500:999,
+        "1000 to under 2000" = 1000:1999,
+        "2000 and more"      = 2000:99999))
+
     format_df <- dummy_df |>
         summarise_plus(class      = c(income),
                        values     = weight,
                        statistics = "sum",
-                       formats    = list(income = suppressMessages(interval_format(
-                                           "below 500"          = 0:499,
-                                           "500 to under 1000"  = 500:999,
-                                           "1000 to under 2000" = 1000:1999,
-                                           "2000 and more"      = 2000:99999))),
+                       formats    = list(income = income.),
                        nesting    = "deepest") |>
         remove_stat_extension("sum")
 
@@ -689,17 +690,18 @@ test_that("Apply single interval label", {
 
 
 test_that("Apply interval multilabel", {
-    # See comments above
+    income. <- suppressMessages(interval_format(
+        "Total"              = 0:99999,
+        "below 500"          = 0:499,
+        "500 to under 1000"  = 500:999,
+        "1000 to under 2000" = 1000:1999,
+        "2000 and more"      = 2000:99999))
+
     format_df <- dummy_df |>
         summarise_plus(class      = c(income),
                        values     = weight,
                        statistics = "sum",
-                       formats    = list(income = suppressMessages(interval_format(
-                           "Total"              = 0:99999,
-                           "below 500"          = 0:499,
-                           "500 to under 1000"  = 500:999,
-                           "1000 to under 2000" = 1000:1999,
-                           "2000 and more"      = 2000:99999))),
+                       formats    = list(income = income.),
                        nesting    = "deepest",
                        na.rm      = TRUE) |>
         remove_stat_extension("sum")
@@ -804,7 +806,7 @@ test_that("Double class variables will be omitted", {
                summarise_plus(class      = c(year, sex, sex),
                               values     = c(income, probability),
                               statistics = "sum",
-                              weight     = weight), " ! WARNING: Some grouping variables are provided more than once")
+                              weight     = weight), " ! WARNING: Some <class> variables are provided more than once")
 
     expect_equal(ncol(result_df), 7)
 })
@@ -815,7 +817,7 @@ test_that("Double analysis variables will be omitted", {
                summarise_plus(class      = c(year, sex),
                               values     = c(income, probability, income),
                               statistics = "sum",
-                              weight     = weight), " ! WARNING: Some analysis variables are provided more than once")
+                              weight     = weight), " ! WARNING: Some <values> variables are provided more than once")
 
     expect_equal(ncol(result_df), 7)
 })
@@ -826,7 +828,7 @@ test_that("Analysis variable will be omitted if also passed as class variable", 
                summarise_plus(class      = c(year, sex, age),
                               values     = c(age, probability),
                               statistics = "sum",
-                              weight     = weight), "This variable will be omitted as analysis variable during computation")
+                              weight     = weight), "This variable will be omitted as <values> variable during computation")
 
     expect_equal(ncol(result_df), 7)
 })
@@ -856,7 +858,7 @@ test_that("Invalid statistic will be omitted", {
     expect_message(result_df <- dummy_df |>
                summarise_plus(class      = year,
                               values     = income,
-                              statistics = c("test", "sum")), " ! WARNING: Statistic 'test' is invalid and will be omitted.")
+                              statistics = c("test", "sum")), " ! WARNING: <Statistic> 'test' is invalid and will be omitted.")
 
     expect_equal(ncol(result_df), 5)
 })
@@ -866,7 +868,7 @@ test_that("'Invalid statistic will be omitted 'sum' will be chosen as statistic 
     expect_message(result_df <- dummy_df |>
                summarise_plus(class      = year,
                               values     = income,
-                              statistics = "test"), " ! WARNING: No valid statistic selected. 'sum' will be used.")
+                              statistics = "test"), " ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 
     expect_equal(ncol(result_df), 5)
 })
@@ -878,7 +880,7 @@ test_that("'Invalid statistic will be omitted 'sum' will be chosen as statistic 
 
 test_that("Summarise errors when no analysis variable is provided", {
     expect_message(result_df <- dummy_df |>
-               summarise_plus(statistics = "sum"), " X ERROR: No values provided")
+               summarise_plus(statistics = "sum"), " X ERROR: No <values> provided")
 
     expect_equal(result_df, NULL)
 })

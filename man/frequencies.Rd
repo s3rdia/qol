@@ -100,7 +100,8 @@ sex. <- discrete_format(
     "Male"   = 1,
     "Female" = 2)
 
-my_data |> frequencies(sex, formats(sex = sex.),
+my_data |> frequencies(sex,
+                       formats   = (sex = sex.),
                        titles    = titles,
                        footnotes = footnotes)
 
@@ -108,7 +109,7 @@ my_data |> frequencies(sex, formats(sex = sex.),
 my_data |> frequencies(sex, by = education)
 
 # Get a list with two data tables for further usage
-result_list <- my_data |> frequencies(sex, formats(sex = sex.))
+result_list <- my_data |> frequencies(sex, formats = (sex = sex.))
 
 # Output in text file
 my_data |> frequencies(sex, output = "text")

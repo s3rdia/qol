@@ -178,25 +178,10 @@ summarise_plus <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    if (length(formats_list) > 0){
-        formats <- stats::setNames(
-            lapply(formats_list, function(expression){
-                # Catch expression if passed as string
-                if (is.character(expression)) {
-                    tryCatch(get(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-                # Catch expression if passed as symbol
-                else{
-                    tryCatch(eval(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-            }),
-            names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
     }
 
     # Look up variable names in format data frame to check whether there is an
@@ -224,8 +209,8 @@ summarise_plus <- function(data_frame,
 
     # Correct nesting option if not set right
     if (!nesting %in% c("deepest", "all", "single")){
-        message(" ! WARNING: Nested option '", nesting, "' doesn't exist. Options 'deepest', 'all' and 'single'\n",
-                "            are available. Nested will be set to 'deepest'.")
+        message(" ! WARNING: <Nested> option '", nesting, "' doesn't exist. Options 'deepest', 'all' and 'single'\n",
+                "            are available. <Nested> will be set to 'deepest'.")
         nesting <- "deepest"
     }
 
@@ -233,47 +218,9 @@ summarise_plus <- function(data_frame,
     # Weight
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight), width.cutoff = 500L)))
-
-    # Create temporary weight column if none is provided.
-    # Also get the name of the weight variable as string.
-    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        if (substr(weight_temp, 1, 2) == "c("){
-            message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
-        }
-    }
-    else if (!is_error(weight)){
-        # In this case weight already contains the substituted variable name
-        # while weight_temp is evaluated to the symbol passed into the function.
-        weight_var <- weight
-    }
-    else if (!weight_temp %in% names(data_frame)){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        message(" ! WARNING: Provided weight variable is not part of the data frame. Unweighted results will be computed.")
-    }
-    else if (!is_numeric(data_frame[[weight_temp]])){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
-    }
-    else{
-        weight_var <- weight_temp
-
-        # NA values in weight lead to errors therefor convert them to 0
-        if (anyNA(data_frame[[weight_temp]])){
-            message(" ~ NOTE: Missing values in weight variable '", weight_temp, "' will be converted to 0.")
-        }
-        data_frame[[weight_temp]] <- data.table::fifelse(is.na(data_frame[[weight_temp]]), 0, data_frame[[weight_temp]])
-
-        # @Hack: so I don't have to check if .temp_weight exists later on
-        data_frame[[".temp_weight"]] <- 1
-    }
+    weight     <- get_origin_as_char(weight, substitute(weight))
+    data_frame <- data_frame |> check_weight(weight)
+    weight_var <- ".temp_weight"
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Merge back
@@ -315,10 +262,10 @@ summarise_plus <- function(data_frame,
                                                  "pct_group", "pct_total", paste0("p", 1:100))]
 
     if (length(invalid_stats) > 0){
-        message(" ! WARNING: Statistic '", invalid_stats, "' is invalid and will be omitted.")
+        message(" ! WARNING: <Statistic> '", invalid_stats, "' is invalid and will be omitted.")
 
         if (length(selected_stats) == 0){
-            message(" ! WARNING: No valid statistic selected. 'sum' will be used.")
+            message(" ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 
             statistics     <- "sum"
             requested      <- "sum"
@@ -331,78 +278,10 @@ summarise_plus <- function(data_frame,
     # Class
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    class_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(class), width.cutoff = 500L)))
-
-    if (substr(class_temp, 1, 2) == "c("){
-        class <- as.character(substitute(class))
-    }
-    else if (!is_error(class)){
-        # Do nothing. In this case class already contains the substituted variable names
-        # while class_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        class <- class_temp
-    }
-
-    # Remove extra first character created with substitution
-    class <- class[class != "c"]
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Values
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Convert to character vectors
-    values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values), width.cutoff = 500L)))
-
-    if (substr(values_temp, 1, 2) == "c("){
-        values <- as.character(substitute(values))
-    }
-    else if (!is_error(values)){
-        # Do nothing. In this case values already contains the substituted variable names
-        # while values_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        values <- values_temp
-    }
-
-    # Remove extra first character created with substitution
-    values <- values[values != "c"]
-
-    # If no value variables are provided abort
-    if (length(values) == 0){
-        message(" X ERROR: No values provided. Summarise will be aborted.")
-        return(NULL)
-    }
-    else if (length(values) == 1){
-        if (values == ""){
-            message(" X ERROR: No values provided. Summarise will be aborted.")
-            return(NULL)
-        }
-    }
-
-    # Make sure there is no class variable that is also a value variable.
-    invalid_class <- class[class %in% values]
-    values        <- values[!values %in% class]
-
-    if (length(invalid_class) > 0){
-        message(" ! WARNING: The provided class variable '", paste(invalid_class, collapse = ", "), "' is also part of\n",
-                "            the analysis variables. This variable will be omitted as analysis variable during computation.")
-    }
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Additional class
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    class <- get_origin_as_char(class, substitute(class))
 
     # Make sure that the variables provided are part of the data frame.
-    provided_class <- class
-    invalid_class  <- class[!class %in% names(data_frame)]
-    class          <- class[class %in% names(data_frame)]
-
-    if (length(invalid_class) > 0){
-        message(" ! WARNING: The provided class variable '", paste(invalid_class, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
+    class <- data_frame |> part_of_df(class)
 
     # If no grouping variables are provided create a pseudo grouping variable
     if (length(class) == 0){
@@ -411,43 +290,36 @@ summarise_plus <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Additional values
+    # Values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    provided_values <- values
-    invalid_values  <- values[!values %in% names(data_frame)]
-    values          <- values[values %in% names(data_frame)]
+    values <- get_origin_as_char(values, substitute(values))
 
-    if (length(invalid_values) > 0){
-        message(" ! WARNING: The provided analysis variable '", paste(invalid_values, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
+    # If no value variables are provided abort
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            message(" X ERROR: No <values> provided. Summarise will be aborted.")
+            return(invisible(NULL))
+        }
     }
 
+    # Make sure there is no class variable that is also a value variable.
+    values <- resolve_intersection(values, class)
+
+    # Make sure that the variables provided are part of the data frame.
+    values <- data_frame |> part_of_df(values)
+
     if (length(values) == 0){
-        message(" X ERROR: No valid analysis variables provided. Summarise will be aborted.")
-        return(NULL)
+        message(" X ERROR: No <values> variables provided. Summarise will be aborted.")
+        return(invisible(NULL))
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Double entries
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Make sure provided variable list has no double entries
-    provided_class <- class
-    class          <- collapse::funique(class)
-
-    if (length(provided_class) > length(class)){
-        message(" ! WARNING: Some grouping variables are provided more than once. The doubled entries will be omitted.")
-    }
-
-    provided_values <- values
-    values          <- collapse::funique(values)
-
-    if (length(provided_values) > length(values)){
-        message(" ! WARNING: Some analysis variables are provided more than once. The doubled entries will be omitted.")
-    }
-
-    rm(class_temp, provided_class, invalid_class, values_temp, provided_values, invalid_values)
+    class  <- remove_doubled_values(class)
+    values <- remove_doubled_values(values)
 
     ###########################################################################
     # Summarisation starts
@@ -881,32 +753,66 @@ summarise_plus <- function(data_frame,
                     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                     if (length(types) == 0){
+                        # Single variable combinations
                         if (length(combination) == 1){
-                            # If there is only one grouping variable the super group will be
-                            # NULL and therefore can't be grouped. The super total therefore
-                            # is simply the grand total.
-                            group_list <- compute_total_percentages_short(group_list[[1]],
-                                                                          total_df_copy,
-                                                                          statistics,
-                                                                          sum_columns,
-                                                                          combination,
-                                                                          "pct_group",
-                                                                          group_list[[2]])
+                            if (!na.rm){
+                                # If there is only one grouping variable the super group will be
+                                # NULL and therefore can't be grouped. The super total therefore
+                                # is simply the grand total.
+                                group_list <- compute_total_percentages_short(group_list[[1]],
+                                                                              total_df_copy,
+                                                                              statistics,
+                                                                              sum_columns,
+                                                                              combination,
+                                                                              "pct_group",
+                                                                              group_list[[2]])
+                            }
+                            else{
+                                # If NA values should be removed, the group percentages are computed
+                                # as usual so that each variable can be 100 % individually.
+                                group_list <- compute_group_percentages(data_frame,
+                                                                        group_list[[1]],
+                                                                        statistics,
+                                                                        combination,
+                                                                        formats,
+                                                                        values,
+                                                                        weight_var,
+                                                                        list_of_statistics,
+                                                                        group_list[[2]],
+                                                                        fast_pct)
+                            }
                         }
+                        # Combinations of more than one variable
                         else{
-                            # Evaluate the group percentages based on the super group.
-                            # Since the depending super group is already computed
-                            # in one of the previous iterations we can make use of
-                            # that and simply join the super_df accordingly.
-                            super_group <- paste(combination[-length(combination)], collapse = "+")
+                            if (!na.rm){
+                                # Evaluate the group percentages based on the super group.
+                                # Since the depending super group is already computed
+                                # in one of the previous iterations we can make use of
+                                # that and simply join the super_df accordingly.
+                                super_group <- paste(combination[-length(combination)], collapse = "+")
 
-                            group_list <- compute_group_percentages_short(group_list[[1]],
-                                                                          all_results[[super_group]],
-                                                                          statistics,
-                                                                          combination,
-                                                                          sum_columns,
-                                                                          group_list[[2]],
-                                                                          fast_pct)
+                                group_list <- compute_group_percentages_short(group_list[[1]],
+                                                                              all_results[[super_group]],
+                                                                              statistics,
+                                                                              combination,
+                                                                              sum_columns,
+                                                                              group_list[[2]],
+                                                                              fast_pct)
+                            }
+                            else{
+                                # If NA values should be removed, the group percentages are computed
+                                # as usual so that each variable combination can be 100 % individually.
+                                group_list <- compute_group_percentages(data_frame,
+                                                                        group_list[[1]],
+                                                                        statistics,
+                                                                        combination,
+                                                                        formats,
+                                                                        values,
+                                                                        weight_var,
+                                                                        list_of_statistics,
+                                                                        group_list[[2]],
+                                                                        fast_pct)
+                            }
                         }
                     }
                     # When types are specified

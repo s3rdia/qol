@@ -75,25 +75,10 @@ sort_plus <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    if (length(formats_list) > 0){
-        formats <- stats::setNames(
-            lapply(formats_list, function(expression){
-                # Catch expression if passed as string
-                if (is.character(expression)) {
-                    tryCatch(get(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-                # Catch expression if passed as symbol
-                else{
-                    tryCatch(eval(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-            }),
-            names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
     }
 
     ###########################################################################
@@ -104,86 +89,33 @@ sort_plus <- function(data_frame,
     # Preserve variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    preserve_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(preserve), width.cutoff = 500L)))
-
-    if (substr(preserve_temp, 1, 2) == "c("){
-        preserve <- as.character(substitute(preserve))
-    }
-    else if (!is_error(preserve)){
-        # Do nothing. In this case preserve already contains the substituted variable names
-        # while preserve_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        preserve <- preserve_temp
-    }
-
-    # Remove extra first character created with substitution
-    preserve <- preserve[preserve != "c"]
+    preserve <- get_origin_as_char(preserve, substitute(preserve))
 
     # Make sure that the variables provided are part of the data frame.
-    provided_preserve <- preserve
-    invalid_preserve  <- preserve[!preserve %in% names(data_frame)]
-    preserve          <- preserve[preserve %in% names(data_frame)]
-
-    if (length(invalid_preserve) > 0){
-        message(" ! WARNING: The provided preserve variable '", paste(invalid_preserve, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during sorting.")
-    }
+    preserve <- data_frame |> part_of_df(preserve)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # By variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by), width.cutoff = 500L)))
-
-    if (substr(by_temp, 1, 2) == "c("){
-        by <- as.character(substitute(by))
-    }
-    else if (!is_error(by)){
-        # Do nothing. In this case by already contains the substituted variable names
-        # while by_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        by <- by_temp
-    }
-
-    # Remove extra first character created with substitution
-    by <- by[by != "c"]
+    by <- get_origin_as_char(by, substitute(by))
 
     # If no value variables are provided abort
-    if (length(by) == 0){
-        message(" X ERROR: No by variables provided. Sorting will be aborted.")
-        return(invisible(NULL))
-    }
-    else if (length(by) == 1){
-        if (by == ""){
-            message(" X ERROR: No by variables provided. Sorting will be aborted.")
+    if (length(by) <= 1){
+        if (length(by) == 0 || by == ""){
+            message(" X ERROR: No <by> variables provided. Sorting will be aborted.")
             return(invisible(NULL))
         }
     }
 
-    # Make sure there is no preserve variable that is also a value variable.
-    invalid_by <- by[by %in% preserve]
-    by         <- by[!by %in% preserve]
+    # Make sure there is no column variable that is also a row variable.
+    by <- resolve_intersection(by, preserve)
 
-    if (length(invalid_by) > 0){
-        message(" ! WARNING: The provided by variable '", paste(invalid_by, collapse = ", "), "' is also part of\n",
-                "            the preserve variables. This variable will be omitted as by variable.")
-    }
-
-    provided_by <- by
-    invalid_by  <- by[!by %in% names(data_frame)]
-    by          <- by[by %in% names(data_frame)]
-
-    if (length(invalid_by) > 0){
-        message(" ! WARNING: The provided by variable '", paste(invalid_by, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted as by variable.")
-    }
+    # Make sure that the variables provided are part of the data frame.
+    by <- data_frame |> part_of_df(by)
 
     if (length(by) == 0){
-        message(" X ERROR: No valid by variable provided. Sorting will be aborted.")
+        message(" X ERROR: No valid <by> variable provided. Sorting will be aborted.")
         return(invisible(NULL))
     }
 
@@ -191,23 +123,8 @@ sort_plus <- function(data_frame,
     # Double entries
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Make sure provided variable list has no double entries
-    provided_preserve <- preserve
-    preserve          <- collapse::funique(preserve)
-
-    if (length(provided_preserve) > length(preserve)){
-        message(" ! WARNING: Some preserve variables are provided more than once. The doubled entries will be omitted.")
-    }
-
-    provided_by <- by
-    by          <- collapse::funique(by)
-
-    if (length(provided_by) > length(by)){
-        message(" ! WARNING: Some by variables are provided more than once. The doubled entries will be omitted.")
-    }
-
-    rm(preserve_temp, provided_preserve, invalid_preserve,
-       by_temp, provided_by, invalid_by)
+    preserve <- remove_doubled_values(preserve)
+    by       <- remove_doubled_values(by)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Order
@@ -217,7 +134,7 @@ sort_plus <- function(data_frame,
     invalid_order <- any(!tolower(order) %in% c("ascending", "descending", "a", "d"))
 
     if (invalid_order){
-        message(" ! WARNING: Order other than 'ascending'/'a' or 'descending'/'d' specified, which is\n",
+        message(" ! WARNING: <Order> other than 'ascending'/'a' or 'descending'/'d' specified, which is\n",
                 "            not allowed. 'ascending' will be used instead.")
     }
 
@@ -254,7 +171,7 @@ sort_plus <- function(data_frame,
 
             if (!variable %in% by){
                 message(" ~ NOTE: Format for variable '", variable, "' is provided, but the variable itself.\n",
-                        "         is not part of the by-variables. Format won't be applied. Variable is skipped.")
+                        "         is not part of the <by> variables. Format won't be applied. Variable is skipped.")
                 next
             }
 

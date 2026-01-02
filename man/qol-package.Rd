@@ -33,16 +33,16 @@ data.table, collapse, openxlsx2
 
 \section{Functions}{
 
-Creating formats: \code{\link[=discrete_format]{discrete_format()}}, \code{\link[=interval_format]{interval_format()}}.
+Creating formats: \code{\link[=discrete_format]{discrete_format()}}, \code{\link[=interval_format]{interval_format()}}
 
-Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=combine_into_workbook]{combine_into_workbook()}}.
+Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=combine_into_workbook]{combine_into_workbook()}}
 
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
-\code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.
+\code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}
 
-Recoding: \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_multi()}}.
+Recoding: \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_multi()}}
 
-Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}, \code{\link[=inverse]{inverse()}}, \code{\link[=vars_between]{vars_between()}}.
+Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}, \code{\link[=inverse]{inverse()}}, \code{\link[=vars_between]{vars_between()}}
 
 Joining: \code{\link[=multi_join]{multi_join()}}
 
@@ -50,22 +50,26 @@ Transposing: \code{\link[=transpose_plus]{transpose_plus()}}
 
 Sorting: \code{\link[=sort_plus]{sort_plus()}}
 
-If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}.
+If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 
-Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}.
+Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}
 
-Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_extension]{add_extension()}}, \code{\link[=remove_stat_extension]{remove_stat_extension()}}, \code{\link[=replace_except]{replace_except()}}.
+Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_extension]{add_extension()}}, \code{\link[=remove_stat_extension]{remove_stat_extension()}}, \code{\link[=replace_except]{replace_except()}}
 
 Retaining: \code{\link[=running_number]{running_number()}}, \code{\link[=mark_case]{mark_case()}}, \code{\link[=retain_value]{retain_value()}}, \code{\link[=retain_sum]{retain_sum()}}
 
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
+Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
+
 Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
-\code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}.
+\code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}
 
-Split data frame: \link{split_by}.
+Split data frame: \link{split_by}
 
-Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=is_numeric]{is_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
+Error handling: \code{\link[=resolve_intersection]{resolve_intersection()}}, \code{\link[=part_of_df]{part_of_df()}}, \code{\link[=remove_doubled_values]{remove_doubled_values()}}, \code{\link[=check_weight]{check_weight()}}
+
+Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}
 }
 
 \section{Snippets}{

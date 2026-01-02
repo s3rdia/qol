@@ -90,24 +90,12 @@ recode <- function(data_frame,
     }
 
     # Translate ... into separately controllable arguments
-    formats_list <- list(...)
+    formats <- list(...)
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats <- stats::setNames(
-        lapply(formats_list, function(expression){
-            # Catch expression if passed as string
-            if (is.character(expression)) {
-                tryCatch(get(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-            # Catch expression if passed as symbol
-            else{
-                tryCatch(eval(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-        }),
-        names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats <- evaluate_formats(formats)
+    }
 
     ###########################################################################
     # Error handling
@@ -229,24 +217,12 @@ recode_multi <- function(data_frame, ...){
     start_time <- Sys.time()
 
     # Translate ... into separately controllable arguments
-    formats_list <- list(...)
+    formats <- list(...)
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats <- stats::setNames(
-        lapply(formats_list, function(expression){
-            # Catch expression if passed as string
-            if (is.character(expression)) {
-                tryCatch(get(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-            # Catch expression if passed as symbol
-            else{
-                tryCatch(eval(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-        }),
-        names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats <- evaluate_formats(formats)
+    }
 
     # Get information from ... list
     variables <- names(formats)

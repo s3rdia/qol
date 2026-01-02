@@ -97,7 +97,7 @@ test_that("frequencies where by is also part of freq variables is aborted", {
     expect_message(result_list <- dummy_df |>
         frequencies(variables = c(age, sex),
                     by        = c(sex, year),
-                    print     = FALSE), " X ERROR: The provided by variable 'sex' is also part of")
+                    print     = FALSE), " ! WARNING: The provided <by> variable '")
 })
 
 
@@ -326,5 +326,5 @@ test_that("Invalid output format leads to console output", {
                         by        = sex,
                         output    = "test",
                         print     = FALSE),
-            " ! WARNING: Output format 'test' not available. Using 'console' instead.")
+            " ! WARNING: <Output> format 'test' not available. Using 'console' instead.")
 })

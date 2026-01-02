@@ -25,16 +25,16 @@
 #' 4.1.0 or higher
 #'
 #' @section Functions:
-#' Creating formats: [discrete_format()], [interval_format()].
+#' Creating formats: [discrete_format()], [interval_format()]
 #'
-#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()], [combine_into_workbook()].
+#' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()], [combine_into_workbook()]
 #'
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
-#' [number_format_style()], [modify_number_formats()].
+#' [number_format_style()], [modify_number_formats()]
 #'
-#' Recoding: [recode()], [recode_multi()].
+#' Recoding: [recode()], [recode_multi()]
 #'
-#' Selecting: [keep()], [dropp()], [inverse()], [vars_between()].
+#' Selecting: [keep()], [dropp()], [inverse()], [vars_between()]
 #'
 #' Joining: [multi_join()]
 #'
@@ -42,22 +42,26 @@
 #'
 #' Sorting: [sort_plus()]
 #'
-#' If-statement: [if.()], [else_if.()], [else.()].
+#' If-statement: [if.()], [else_if.()], [else.()]
 #'
-#' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()].
+#' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()]
 #'
-#' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()], [replace_except()].
+#' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()], [replace_except()]
 #'
 #' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_sum()]
 #'
 #' Generate dummy data: [dummy_data()]
 #'
+#' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()]
+#'
 #' Small helpers: [libname()], [set()], [setcolorder_by_pattern()], [drop_type_vars()],
-#' [fuse_variables()], [get_excel_range()].
+#' [fuse_variables()], [get_excel_range()]
 #'
-#' Split data frame: [split_by].
+#' Split data frame: [split_by]
 #'
-#' Other: [build_master()], [build_rstheme()], [args_to_char()], [convert_numeric()], [is_numeric()], [convert_factor()]
+#' Error handling: [resolve_intersection()], [part_of_df()], [remove_doubled_values()], [check_weight()]
+#'
+#' Other: [build_master()], [build_rstheme()]
 #'
 #' @section Snippets:
 #' \preformatted{

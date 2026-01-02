@@ -8,7 +8,7 @@ template:
   bslib:
     primary: "#048b3c"
     code-color: "#05bc8c"
-  
+
 reference:
 - title: Creating Formats
   contents:
@@ -71,6 +71,13 @@ reference:
 - title: Generate Dummy Data
   contents:
   - dummy_data
+- title: Conversion
+  contents:
+  - args_to_char
+  - dots_to_char
+  - get_origin_as_char
+  - convert_numeric
+  - convert_factor
 - title: Small Helpers
   contents:
   - libname
@@ -84,12 +91,13 @@ reference:
 - title: Split Data Frame
   contents:
   - split_by
+- title: Error Handling
+  contents:
+  - resolve_intersection
+  - part_of_df
+  - remove_doubled_values
+  - check_weight
 - title: Other
   contents:
   - build_master
   - build_rstheme
-  - args_to_char
-  - convert_numeric
-  - is_numeric
-  - convert_factor
-  

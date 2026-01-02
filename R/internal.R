@@ -156,3 +156,26 @@ order_interleaved <- function(data_frame, patterns) {
 is_pre_summed <- function(data_frame, group_vars){
     !collapse::any_duplicated(data_frame[group_vars])
 }
+
+
+#' Unlist Variables
+#'
+#' @description
+#' Unlists variables concatenated by + signs. This is used to get the single variables
+#' in e.g. [any_table()], where rows and columns are passed like c("sex", "sex + age").
+#'
+#' @param var_names A character vector of variable names.
+#'
+#' @return
+#' Character vector.
+#'
+#' @noRd
+unlist_variables <- function(var_names){
+    # This errors if a value without quotation marks is passed. In this case return NULL
+    # so that the function using this check can abort.
+    tryCatch({
+        collapse::funique(trimws(unlist(strsplit(var_names, "\\+"))))
+    }, error = function(e) {
+        NULL
+    })
+}

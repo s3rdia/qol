@@ -167,6 +167,27 @@ education. <- discrete_format(
     "middle education" = "middle",
     "high education"   = "high")
 
+state. <- discrete_format(
+    "Germany"                       = 1:16,
+    "Schleswig-Holstein"            = 1,
+    "Hamburg"                       = 2,
+    "Lower Saxony"                  = 3,
+    "Bremen"                        = 4,
+    "North Rhine-Westphalia"        = 5,
+    "Hesse"                         = 6,
+    "Rhineland-Palatinate"          = 7,
+    "Baden-Württemberg"             = 8,
+    "Bavaria"                       = 9,
+    "Saarland"                      = 10,
+    "West"                          = 1:10,
+    "Berlin"                        = 11,
+    "Brandenburg"                   = 12,
+    "Mecklenburg-Western Pomerania" = 13,
+    "Saxony"                        = 14,
+    "Saxony-Anhalt"                 = 15,
+    "Thuringia"                     = 16,
+    "East"                          = 11:16)
+
 # Define style
 my_style <- excel_output_style(column_widths = c(2, 15, 15, 15, 9))
 

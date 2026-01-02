@@ -59,7 +59,7 @@ test_that("crosstabs not allowed with multiple row variables", {
     expect_message(result_df <- dummy_df |>
         crosstabs(rows    = c(age, state),
                   columns = sex,
-                  print   = FALSE), " X ERROR: Only one variable for rows allowed. Crosstabs will be aborted.")
+                  print   = FALSE), " X ERROR: Only one variable for <rows> allowed. Crosstabs will be aborted.")
 })
 
 
@@ -67,7 +67,7 @@ test_that("crosstabs not allowed with multiple column variables", {
     expect_message(result_df <- dummy_df |>
          crosstabs(rows    = sex,
                    columns = c(age, state),
-                   print   = FALSE), " X ERROR: Only one variable for columns allowed. Crosstabs will be aborted.")
+                   print   = FALSE), " X ERROR: Only one variable for <columns> allowed. Crosstabs will be aborted.")
 })
 
 
@@ -100,7 +100,7 @@ test_that("crosstabs where by is also part of rows or columns is aborted", {
            crosstabs(rows    = age,
                      columns = sex,
                      by      = c(sex, year),
-                     print   = FALSE), " X ERROR: The provided by variable 'sex' is also part of")
+                     print   = FALSE), " ! WARNING: The provided <by> variable '")
 })
 
 
@@ -374,5 +374,5 @@ test_that("Invalid output format leads to console output", {
                      by      = education,
                      output  = "test",
                      print   = FALSE),
-       " ! WARNING: Output format 'test' not available. Using 'console' instead.")
+       " ! WARNING: <Output> format 'test' not available. Using 'console' instead.")
 })

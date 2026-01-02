@@ -137,7 +137,7 @@ multi_join <- function(data_frames,
         if (!is.null(names(on)) && all(nzchar(names(on)))){
             # Check if number of list entries matches number of data frames
             if (length(data_frames) != length(on)){
-                message(" X ERROR: Length of 'on' doesn't match the number of provided data frames. Join will be aborted.")
+                message(" X ERROR: Length of <on> doesn't match the number of provided data frames. Join will be aborted.")
                 return(invisible(NULL))
             }
 
@@ -145,7 +145,7 @@ multi_join <- function(data_frames,
         }
         # If a list entry is missing a name abort
         else{
-            message(" X ERROR: If all data frames have the same variable names for the 'on' variables,\n",
+            message(" X ERROR: If all data frames have the same variable names for the <on> variables,\n",
                     "          provide them as a vector instead of a list. For unequal names provide a\n",
                     "          named list. Join will be aborted.")
             return(invisible(NULL))
@@ -161,14 +161,14 @@ multi_join <- function(data_frames,
         # Check if provided variable names are in the base data frame
         if (!unequal_names){
             if (!all(on %in% names(data_frames[[i]]))){
-                message(" X ERROR: Not all 'on' variables (", paste(on, collapse = ", "), ") appear in data frame ", i, ".\n",
+                message(" X ERROR: Not all <on> variables (", paste(on, collapse = ", "), ") appear in data frame ", i, ".\n",
                         "          Join will be aborted.")
                 return(invisible(NULL))
             }
         }
         else{
             if (!all(on[[i]] %in% names(data_frames[[i]]))){
-                message(" X ERROR: Not all 'on' variables (", paste(on[[i]], collapse = ", "), ") appear in data frame ", i, ".\n",
+                message(" X ERROR: Not all <on> variables (", paste(on[[i]], collapse = ", "), ") appear in data frame ", i, ".\n",
                         "          Join will be aborted.")
                 return(invisible(NULL))
             }
@@ -184,7 +184,7 @@ multi_join <- function(data_frames,
             # Check for duplicate combinations
             if (collapse::any_duplicated(data_frames[[i]][on])){
                 message(" X ERROR: The second and all following data frames need to have unique combinations\n",
-                        "          in the provided 'on' variables. Join will be aborted.")
+                        "          in the provided <on> variables. Join will be aborted.")
                 return(invisible(NULL))
             }
         }
@@ -192,7 +192,7 @@ multi_join <- function(data_frames,
         else{
             if (collapse::any_duplicated(data_frames[[i]][on[[i]]])){
                 message(" X ERROR: The second and all following data frames need to have unique combinations\n",
-                        "          in the provided 'on' variables. Join will be aborted.")
+                        "          in the provided <on> variables. Join will be aborted.")
                 return(invisible(NULL))
             }
         }
@@ -231,7 +231,7 @@ multi_join <- function(data_frames,
         # Cut elements down to number of data frames minus one
         how <- utils::head(how, length(data_frames) - 1)
 
-        message(" ~ NOTE: Too many join methods given in 'how'. Excess methods will remain unused.")
+        message(" ~ NOTE: Too many join methods given in <how>. Excess methods will remain unused.")
     }
 
     ###########################################################################
@@ -280,7 +280,7 @@ multi_join <- function(data_frames,
         else{
             # Check if the same number of 'on' variables are provided
             if (length(on[[1]]) != length(on[[i]])){
-                message(" X ERROR: Unequal number of 'on' variables provided. ", paste(on[[1]], collapse = ", "), " vs. " , paste(on[[i]], collapse = ", "), ".\n",
+                message(" X ERROR: Unequal number of <on> variables provided. ", paste(on[[1]], collapse = ", "), " vs. " , paste(on[[i]], collapse = ", "), ".\n",
                         "          Join will be aborted.")
                 return(invisible(NULL))
             }
@@ -320,7 +320,8 @@ multi_join <- function(data_frames,
 
         # Drop indicator of joined data frame
         if (!keep_indicators){
-            joined_df <- joined_df |> dropp(join_keys[[i]])
+            key_to_drop <- as.character(join_keys[[i]])
+            joined_df   <- joined_df |> dropp(key_to_drop)
         }
     }
 
@@ -334,7 +335,8 @@ multi_join <- function(data_frames,
 
     # Drop indicator of base data frame
     if (!keep_indicators){
-        joined_df <- joined_df |> dropp(join_keys[[1]])
+        key_to_drop <- as.character(join_keys[[1]])
+        joined_df <- joined_df |> dropp(key_to_drop)
     }
     # If join indicators should stay in the data frame, sort them to the back
     else{

@@ -57,17 +57,17 @@ test_that("Sort with format", {
 ###############################################################################
 
 test_that("Sort warning with invalid by variable", {
-    expect_message(sort_df <- small_df |> sort_plus(by = var3), " ! WARNING: The provided by variable")
+    expect_message(sort_df <- small_df |> sort_plus(by = var3), " ! WARNING: The provided <by> variable")
 })
 
 
 test_that("Sort warning when by variable is also part of preserve, sort normal", {
-    expect_message(sort_df <- small_df |> sort_plus(by = var1, preserve = var1), " ! WARNING: The provided by variable")
+    expect_message(sort_df <- small_df |> sort_plus(by = var1, preserve = var1), " ! WARNING: The provided <by> variable")
 })
 
 
 test_that("Sort warning when wrong order is specified, sorting in ascending order instead", {
-    expect_message(sort_df <- small_df |> sort_plus(by = var1, order = "test"), " ! WARNING: Order other than 'ascending'/'a' or 'descending'/'d' specified, which is")
+    expect_message(sort_df <- small_df |> sort_plus(by = var1, order = "test"), " ! WARNING: <Order> other than 'ascending'/'a' or 'descending'/'d' specified, which is")
 
     expect_equal(sort_df[["var1"]], c(1, 2, 2, 3))
 })
@@ -124,5 +124,5 @@ test_that("Sort warning when trying to apply a format to a variable which is not
 ###############################################################################
 
 test_that("Sort aborts without by variables", {
-    expect_message(sort_df <- small_df |> sort_plus(), " X ERROR: No by variables provided. Sorting will be aborted.")
+    expect_message(sort_df <- small_df |> sort_plus(), " X ERROR: No <by> variables provided. Sorting will be aborted.")
 })

@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# qol - Quality of Life <img src='man/figures/logo.png' width="150px" align="right"/>
+# qol - Quality of Life <img src='man/figures/logo.png' width="150px" align="right" alt='Logo'/>
 
 <!-- badges: start -->
 
-[![SAS](https://img.shields.io/badge/SAS-R-orange%20.svg)](https://github.com/s3rdia/qol)
+[![SAS](https://img.shields.io/badge/SAS-R-orange.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
 [![DEVELOPMENT
@@ -112,7 +112,7 @@ summary_df <- my_data |>
                    notes      = FALSE)
 ```
 
-<img src='man/figures/output.png'/>
+<img src='man/figures/output.png' alt="Example output data frame"/>
 
 The operations based on summarisation are the fastest. Other operations
 take a bit longer but still work fast with big datasets.
@@ -178,7 +178,7 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      na.rm      = TRUE)
 ```
 
-<img src='man/figures/tabulation.png'/>
+<img src='man/figures/tabulation.png' alt="Example output table"/>
 
 You can also combine multiple tables in one workbook, each on a
 different sheet, and save the file, instead of just viewing it.
@@ -388,7 +388,7 @@ This package also includes some basic yet very effective performance
 monitoring functions. The heavier functions in this package already make
 use of them and can show how they work internally like this:
 
-<img src='man/figures/monitor.png'/>
+<img src='man/figures/monitor.png' alt='Monitoring example'/>
 
 ## Customizing Visual Appearance
 
@@ -398,4 +398,4 @@ you can create a full theme file and decide which parts of the editor
 receive which colors. The themes shown below and the corresponding code
 can be found on GitHub.
 
-<img src='man/figures/theme.png'/>
+<img src='man/figures/theme.png' alt='Theme examples'/>

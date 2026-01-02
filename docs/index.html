@@ -140,7 +140,7 @@
 <span>                   weight     <span class="op">=</span> <span class="st">"weight"</span>,</span>
 <span>                   nesting    <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>                   notes      <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/output.png"></p>
+<p><img src="reference/figures/output.png" alt="Example output data frame"></p>
 <p>The operations based on summarisation are the fastest. Other operations take a bit longer but still work fast with big datasets.</p>
 </div>
 <div class="section level2">
@@ -194,7 +194,7 @@
 <span>                     footnotes  <span class="op">=</span> <span class="va">footnotes</span>,</span>
 <span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/tabulation.png"></p>
+<p><img src="reference/figures/tabulation.png" alt="Example output table"></p>
 <p>You can also combine multiple tables in one workbook, each on a different sheet, and save the file, instead of just viewing it.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
@@ -379,13 +379,13 @@
 <h2 id="monitoring">Monitoring<a class="anchor" aria-label="anchor" href="#monitoring"></a>
 </h2>
 <p>This package also includes some basic yet very effective performance monitoring functions. The heavier functions in this package already make use of them and can show how they work internally like this:</p>
-<p><img src="reference/figures/monitor.png"></p>
+<p><img src="reference/figures/monitor.png" alt="Monitoring example"></p>
 </div>
 <div class="section level2">
 <h2 id="customizing-visual-appearance">Customizing Visual Appearance<a class="anchor" aria-label="anchor" href="#customizing-visual-appearance"></a>
 </h2>
 <p>Don’t like the colors of the built-in in RStudio themes? Can’t find a theme online that fits your liking? No Problem. With a simple function you can create a full theme file and decide which parts of the editor receive which colors. The themes shown below and the corresponding code can be found on GitHub.</p>
-<p><img src="reference/figures/theme.png"></p>
+<p><img src="reference/figures/theme.png" alt="Theme examples"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -422,7 +422,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/SAS-R-orange%20.svg" alt="SAS"></a></li>
+<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/SAS-R-orange.svg" alt="SAS"></a></li>
 <li><a href="https://cran.r-project.org/package=qol" class="external-link"><img src="https://www.r-pkg.org/badges/version/qol?color=green" alt="CRAN Version"></a></li>
 <li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/GitHub-1.2.0-blue.svg" alt="DEVELOPMENT Version"></a></li>
 <li><a href="https://cran.r-project.org/web/checks/check_results_qol.html" class="external-link"><img src="https://badges.cranchecks.info/summary/qol.svg" alt="CRAN checks"></a></li>

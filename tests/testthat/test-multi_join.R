@@ -93,7 +93,7 @@ test_that("Warning on invalid join method", {
 test_that("Note on too many join methods provided", {
     expect_message(left_joined <- multi_join(list(df1, df2),
                                              on  = "key",
-                                             how = c("left", "right")), " ~ NOTE: Too many join methods given in 'how'. Excess methods will remain unused.")
+                                             how = c("left", "right")), " ~ NOTE: Too many join methods given in <how>. Excess methods will remain unused.")
 
     expect_true("b" %in% names(left_joined))
 })
@@ -112,30 +112,30 @@ test_that("Abort join, if only one data frames provided", {
 })
 
 
-test_that("Abort join, if 'on' variables are provided as unnamed list", {
-    expect_message(left_joined <- multi_join(list(df1, df2), on = list("key")), " X ERROR: If all data frames have the same variable names for the 'on' variables")
+test_that("Abort join, if <on> variables are provided as unnamed list", {
+    expect_message(left_joined <- multi_join(list(df1, df2), on = list("key")), " X ERROR: If all data frames have the same variable names for the <on> variables")
 })
 
 
-test_that("Abort join, if 'on' variables are not provided for every data frame", {
+test_that("Abort join, if <on> variables are not provided for every data frame", {
     expect_message(multiple_joined <-
                        multi_join(list(df1c, df2c, df3c),
                                   on = list(df1c = c("key1", "key2"),
-                                            df2c = c("var1", "var2"))), " X ERROR: Length of 'on' doesn't match the number of provided data frames. Join will be aborted.")
+                                            df2c = c("var1", "var2"))), " X ERROR: Length of <on> doesn't match the number of provided data frames. Join will be aborted.")
 })
 
 
-test_that("Abort join, if 'on' variables are missing in data frame (equal names)", {
-    expect_message(left_joined <- multi_join(list(df1, df2), on = "var"), " X ERROR: Not all 'on' variables")
+test_that("Abort join, if <on> variables are missing in data frame (equal names)", {
+    expect_message(left_joined <- multi_join(list(df1, df2), on = "var"), " X ERROR: Not all <on> variables")
 })
 
 
-test_that("Abort join, if 'on' variables are missing in data frame (unequal names)", {
+test_that("Abort join, if <on> variables are missing in data frame (unequal names)", {
     expect_message(multiple_joined <-
                        multi_join(list(df1c, df2c, df3c),
                                   on = list(df1c = c("var1", "key2"),
                                             df2c = c("var1", "var2"),
-                                            df3c = c("any", "name"))), " X ERROR: Not all 'on' variables")
+                                            df3c = c("any", "name"))), " X ERROR: Not all <on> variables")
 })
 
 
@@ -153,9 +153,9 @@ test_that("Abort join, if second of following data frame doesn't consist of only
 })
 
 
-test_that("Abort join, if 'on' variables have unequal length", {
+test_that("Abort join, if <on> variables have unequal length", {
     expect_message(multiple_joined <- multi_join(list(df1c, df2c, df3c),
                                   on = list(df1c = c("key1", "key2"),
                                             df2c = c("var1"),
-                                            df3c = c("any", "name"))), " X ERROR: Unequal number of 'on' variables provided")
+                                            df3c = c("any", "name"))), " X ERROR: Unequal number of <on> variables provided")
 })

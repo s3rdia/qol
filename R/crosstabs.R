@@ -155,24 +155,11 @@ crosstabs <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    formats <- stats::setNames(
-        lapply(formats_list, function(expression){
-            # Catch expression if passed as string
-            if (is.character(expression)) {
-                tryCatch(get(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-            # Catch expression if passed as symbol
-            else{
-                tryCatch(eval(expression, envir = parent.frame()),
-                         error = function(e) NULL)
-            }
-        }),
-        names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
+    }
 
     ###########################################################################
     # Error handling
@@ -182,39 +169,20 @@ crosstabs <- function(data_frame,
     # Row variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    rows_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(rows))))
+    rows <- get_origin_as_char(rows, substitute(rows))
 
-    if (substr(rows_temp, 1, 2) == "c("){
-        rows <- as.character(substitute(rows))
-    }
-    else if (!is_error(rows)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while rows_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        rows <- rows_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    rows <- data_frame |> part_of_df(rows)
 
-    # Remove extra first character created with substitution
-    rows <- rows[rows != "c"]
-
-    provided_rows <- rows
-    invalid_rows  <- rows[!rows %in% names(data_frame)]
-    rows          <- rows[rows %in% names(data_frame)]
-
-    if (length(invalid_rows) > 0){
-        message(" ! WARNING: The provided row variable '", paste(invalid_rows, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
-    if (length(rows) == 0){
-        message(" X ERROR: No valid row variable provided. Crosstabs will be aborted.")
-        return(invisible(NULL))
+    if (length(rows) <= 1){
+        if (length(rows) == 0 || rows == ""){
+            message(" X ERROR: No valid <rows> variable provided. Crosstabs will be aborted.")
+            return(invisible(NULL))
+        }
     }
 
     if (length(rows) > 1){
-        message(" X ERROR: Only one variable for rows allowed. Crosstabs will be aborted.")
+        message(" X ERROR: Only one variable for <rows> allowed. Crosstabs will be aborted.")
         return(invisible(NULL))
     }
 
@@ -222,39 +190,29 @@ crosstabs <- function(data_frame,
     # Column variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    columns_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(columns))))
+    columns <- get_origin_as_char(columns, substitute(columns))
 
-    if (substr(columns_temp, 1, 2) == "c("){
-        columns <- as.character(substitute(columns))
-    }
-    else if (!is_error(columns)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while columns_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        columns <- columns_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    columns <- data_frame |> part_of_df(columns)
 
-    # Remove extra first character created with substitution
-    columns <- columns[columns != "c"]
+    # Make sure there is no column variable that is also a row variable.
+    columns <- resolve_intersection(columns, rows, check_only = TRUE)
 
-    provided_columns <- columns
-    invalid_columns  <- columns[!columns %in% names(data_frame)]
-    columns          <- columns[columns %in% names(data_frame)]
-
-    if (length(invalid_columns) > 0){
-        message(" ! WARNING: The provided column variable '", paste(invalid_columns, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
-    if (length(columns) == 0){
-        message(" X ERROR: No valid column variable provided. Crosstabs will be aborted.")
+    if (is.list(columns)){
+        message(" X ERROR: The provided <columns> variable '", paste(columns[[1]], collapse = ", "), "' is also part of\n",
+                "          the <rows> variables. Crosstabs will be aborted.")
         return(invisible(NULL))
     }
 
+    if (length(columns) <= 1){
+        if (length(columns) == 0 || columns == ""){
+            message(" X ERROR: No valid <columns> variable provided. Crosstabs will be aborted.")
+            return(invisible(NULL))
+        }
+    }
+
     if (length(columns) > 1){
-        message(" X ERROR: Only one variable for columns allowed. Crosstabs will be aborted.")
+        message(" X ERROR: Only one variable for <columns> allowed. Crosstabs will be aborted.")
         return(invisible(NULL))
     }
 
@@ -262,75 +220,22 @@ crosstabs <- function(data_frame,
     # By variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    by_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(by))))
+    by <- get_origin_as_char(by, substitute(by))
 
-    if (substr(by_temp, 1, 2) == "c("){
-        by <- as.character(substitute(by))
-    }
-    else if (!is_error(by)){
-        # Do nothing. In this case variables already contains the substituted variable names
-        # while variables_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        by <- by_temp
-    }
+    # Make sure that the variables provided are part of the data frame.
+    by <- data_frame |> part_of_df(by)
 
-    # Remove extra first character created with substitution
-    by <- by[by != "c"]
-
-    provided_by <- by
-    invalid_by  <- by[!by %in% names(data_frame)]
-    by          <- by[by %in% names(data_frame)]
-
-    if (length(invalid_by) > 0){
-        message(" ! WARNING: The provided by variable '", paste(invalid_by, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
-
-    variables  <- c(rows, columns)
-    invalid_by <- by[by %in% variables]
-
-    if (length(invalid_by) > 0){
-        message(" X ERROR: The provided by variable '", paste(invalid_by, collapse = ", "), "' is also part of\n",
-                "          the row and column variables which is not allowed. Crosstabs will be aborted.")
-        return(invisible(NULL))
-    }
+    # Make sure there is no class variable that is also a value variable.
+    variables <- c(rows, columns)
+    by        <- resolve_intersection(by, variables)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Create temporary weight column if none is provided.
-    # Also get the name of the weight variable as string.
-    weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight))))
-
-    if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        if (substr(weight_temp, 1, 2) == "c("){
-            message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
-        }
-    }
-    else if (!is_numeric(data_frame[[weight_temp]])){
-        weight_var <- ".temp_weight"
-        data_frame[[".temp_weight"]] <- 1
-
-        message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
-    }
-    else{
-        weight_var <- weight_temp
-
-        # NA values in weight lead to errors therefor convert them to 0
-        if (anyNA(data_frame[[weight_temp]])){
-            message(" ~ NOTE: Missing values in weight variable '", weight_temp, "' will be converted to 0.")
-        }
-        data_frame[[weight_temp]] <- data.table::fifelse(is.na(data_frame[[weight_temp]]), 0, data_frame[[weight_temp]])
-
-        # @Hack: so I don't have to check if .temp_weight exists later on
-        data_frame[[".temp_weight"]] <- 1
-    }
+    weight     <- get_origin_as_char(weight, substitute(weight))
+    data_frame <- data_frame |> check_weight(weight)
+    weight_var <- ".temp_weight"
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output
@@ -338,7 +243,7 @@ crosstabs <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
-        message(" ! WARNING: Output format '", output, "' not available. Using 'console' instead.")
+        message(" ! WARNING: <Output> format '", output, "' not available. Using 'console' instead.")
 
         output <- "console"
     }

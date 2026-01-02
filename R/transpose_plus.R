@@ -143,25 +143,10 @@ transpose_plus <- function(data_frame,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Evaluate formats early, otherwise apply formats can't evaluate them in unit
-    # test situation.
-    formats_list <- as.list(substitute(formats))[-1]
-
-    if (length(formats_list) > 0){
-        formats <- stats::setNames(
-            lapply(formats_list, function(expression){
-                # Catch expression if passed as string
-                if (is.character(expression)) {
-                    tryCatch(get(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-                # Catch expression if passed as symbol
-                else{
-                    tryCatch(eval(expression, envir = parent.frame()),
-                             error = function(e) NULL)
-                }
-            }),
-            names(formats_list))
+    # Evaluate formats early
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats      <- evaluate_formats(formats_list)
     }
 
     # If all pivot list/vector entries have a name, transposition will be wide to long
@@ -185,7 +170,7 @@ transpose_plus <- function(data_frame,
         # listed, abort.
         for (variables in pivot){
             if (any(grepl("+", variables, fixed = TRUE))){
-                message(" X ERROR: Nesting pivot variables in a wide to long transposition is not possible.\n",
+                message(" X ERROR: Nesting <pivot> variables in a wide to long transposition is not possible.\n",
                         "          Transposition will be aborted.")
                 return(invisible(NULL))
             }
@@ -193,11 +178,11 @@ transpose_plus <- function(data_frame,
 
         # Values and weight has no effect in wide to long transposition
         if (!is.null(values)){
-            message(" ~ NOTE: Values parameter has no effect in wide to long transposition.")
+            message(" ~ NOTE: <Values> parameter has no effect in wide to long transposition.")
         }
 
         if (!is.null(weight)){
-            message(" ~ NOTE: Weight parameter has no effect in wide to long transposition.")
+            message(" ~ NOTE: <Weight> parameter has no effect in wide to long transposition.")
         }
     }
 
@@ -206,79 +191,19 @@ transpose_plus <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     if (long_to_wide){
-        weight_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(weight), width.cutoff = 500L)))
-
-        # Create temporary weight column if none is provided.
-        # Also get the name of the weight variable as string.
-        if (weight_temp == "NULL" || substr(weight_temp, 1, 2) == "c("){
-            weight_var <- ".temp_weight"
-            data_frame[[".temp_weight"]] <- 1
-
-            if (substr(weight_temp, 1, 2) == "c("){
-                message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
-            }
-        }
-        else if (!is_error(weight)){
-            # In this case weight already contains the substituted variable name
-            # while weight_temp is evaluated to the symbol passed into the function.
-            weight_var <- weight
-        }
-        else if (!weight_temp %in% names(data_frame)){
-            weight_var <- ".temp_weight"
-            data_frame[[".temp_weight"]] <- 1
-
-            message(" ! WARNING: Provided weight variable is not part of the data frame. Unweighted results will be computed.")
-        }
-        else if (!is_numeric(data_frame[[weight_temp]])){
-            weight_var <- ".temp_weight"
-            data_frame[[".temp_weight"]] <- 1
-
-            message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
-        }
-        else{
-            weight_var <- weight_temp
-
-            # NA values in weight lead to errors therefor convert them to 0
-            if (anyNA(data_frame[[weight_temp]])){
-                message(" ~ NOTE: Missing values in weight variable '", weight_temp, "' will be converted to 0.")
-            }
-            data_frame[[weight_temp]] <- data.table::fifelse(is.na(data_frame[[weight_temp]]), 0, data_frame[[weight_temp]])
-
-            # @Hack: so I don't have to check if .temp_weight exists later on
-            data_frame[[".temp_weight"]] <- 1
-        }
+        weight     <- get_origin_as_char(weight, substitute(weight))
+        data_frame <- data_frame |> check_weight(weight)
+        weight_var <- ".temp_weight"
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Preserve variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Convert to character vectors
-    preserve_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(preserve), width.cutoff = 500L)))
-
-    if (substr(preserve_temp, 1, 2) == "c("){
-        preserve <- as.character(substitute(preserve))
-    }
-    else if (!is_error(preserve)){
-        # Do nothing. In this case preserve already contains the substituted variable names
-        # while preserve_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        preserve <- preserve_temp
-    }
-
-    # Remove extra first character created with substitution
-    preserve <- preserve[preserve != "c"]
+    preserve <- get_origin_as_char(preserve, substitute(preserve))
 
     # Make sure that the variables provided are part of the data frame.
-    provided_preserve <- preserve
-    invalid_preserve  <- preserve[!preserve %in% names(data_frame)]
-    preserve          <- preserve[preserve %in% names(data_frame)]
-
-    if (length(invalid_preserve) > 0){
-        message(" ! WARNING: The provided preserve variable '", paste(invalid_preserve, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during transposition")
-    }
+    preserve <- data_frame |> part_of_df(preserve)
 
     # If no preserve variables are provided, create a pseudo preserve variable
     if (length(preserve) == 0){
@@ -292,39 +217,38 @@ transpose_plus <- function(data_frame,
 
     # Get pivot variables from provided combinations
     if (long_to_wide){
-        pivot_vars <- collapse::funique(trimws(unlist(strsplit(pivot, "\\+"))))
+        pivot_vars <- unlist_variables(pivot)
     }
     else{
         pivot_vars <- collapse::funique(unlist(pivot, use.names = FALSE))
     }
 
-    invalid_pivot <- pivot_vars[!pivot_vars %in% names(data_frame)]
-    pivot_vars    <- pivot_vars[pivot_vars %in% names(data_frame)]
+    if (is.null(pivot_vars)){
+        message(" X ERROR: <Pivot> variables must be provided in quotation marks. Transposition will be aborted.")
+        return(invisible(NULL))
+    }
 
-    if (length(invalid_pivot) > 0){
-        message(" X ERROR: The provided pivot variable '", paste(invalid_pivot, collapse = ", "), "' is not part of\n",
+    pivot_vars <- data_frame |> part_of_df(pivot_vars, check_only = TRUE)
+
+    if (is.list(pivot_vars)){
+        message(" X ERROR: The provided <pivot> variable '", paste(pivot_vars[[1]], collapse = ", "), "' is not part of\n",
                 "          the data frame. Transposition will be aborted.")
         return(invisible(NULL))
     }
 
-    if (length(pivot) == 0){
-        message(" X ERROR: No valid pivot variables provided. Transposition will be aborted.")
-        return(invisible(NULL))
-    }
-
-    if (length(pivot) == 1){
-        if (pivot == ""){
-            message(" X ERROR: No valid pivot variables provided. Transposition will be aborted.")
+    if (length(pivot_vars) <= 1){
+        if (length(pivot_vars) == 0 || pivot_vars == ""){
+            message(" X ERROR: No valid <pivot> variables provided. Transposition will be aborted.")
             return(invisible(NULL))
         }
     }
 
     # Make sure there is no pivot variable that is also a preserve variable.
-    invalid_pivot <- pivot_vars[pivot_vars %in% preserve]
+    pivot_vars <- resolve_intersection(pivot_vars, preserve, check_only = TRUE)
 
-    if (length(invalid_pivot) > 0){
-        message(" X ERROR: The provided pivot variable '", paste(invalid_pivot, collapse = ", "), "' is also part of\n",
-                "          the preserve variables, which is not allowed. Transposition will be aborted.")
+    if (is.list(pivot_vars)){
+        message(" X ERROR: The provided <pivot> variable '", paste(pivot_vars[[1]], collapse = ", "), "' is also part of\n",
+                "          the <preserve> variables, which is not allowed. Transposition will be aborted.")
         return(invisible(NULL))
     }
 
@@ -333,64 +257,38 @@ transpose_plus <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     if (long_to_wide){
-        # Convert to character vectors
-        values_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(values), width.cutoff = 500L)))
-
-        if (substr(values_temp, 1, 2) == "c("){
-            values <- as.character(substitute(values))
-        }
-        else if (!is_error(values)){
-            # Do nothing. In this case values already contains the substituted variable names
-            # while values_temp is evaluated to the symbol passed into the function.
-        }
-        else{
-            values <- values_temp
-        }
-
-        # Remove extra first character created with substitution
-        values <- values[values != "c"]
+        values <- get_origin_as_char(values, substitute(values))
 
         # If no value variables are provided abort
-        if (length(values) == 0){
-            message(" X ERROR: No values provided. Transposition will be aborted.")
-            return(NULL)
-        }
-        else if (length(values) == 1){
-            if (values == ""){
-                message(" X ERROR: No values provided. Transposition will be aborted.")
-                return(NULL)
+        if (length(values) <= 1){
+            if (length(values) == 0 || values == ""){
+                message(" X ERROR: No <values> provided. Transposition will be aborted.")
+                return(invisible(NULL))
             }
         }
 
-        # Make sure there is no preserve variable that is also a value variable.
-        invalid_values <- values[values %in% preserve]
-        values         <- values[!values %in% preserve]
+        # Make sure there is no values variable that is also a preserve variable.
+        values <- resolve_intersection(values, preserve)
 
-        if (length(invalid_values) > 0){
-            message(" ! WARNING: The provided value variable '", paste(invalid_values, collapse = ", "), "' is also part of\n",
-                    "            the preserve variables. This variable will be omitted as value to transpose.")
+        # Make sure there is no values variable that is also a pivot variable.
+        values <- resolve_intersection(values, pivot_vars, check_only = TRUE)
+
+        if (is.list(values)){
+            message(" X ERROR: The provided <values> variable '", paste(values[[1]], collapse = ", "), "' is also part of\n",
+                    "          the <pivot> variables, which is not allowed. Transposition will be aborted.")
+            return(invisible(NULL))
         }
 
-        # Make sure there is no pivot variable that is also a value variable.
-        invalid_values <- values[values %in% pivot]
+        values <- data_frame |> part_of_df(values, check_only = TRUE)
 
-        if (length(invalid_values) > 0){
-            message(" X ERROR: The provided value variable '", paste(invalid_values, collapse = ", "), "' is also part of\n",
-                    "          the pivot variables, which is not allowed. Transposition will be aborted.")
-        }
-
-        provided_values <- values
-        invalid_values  <- values[!values %in% names(data_frame)]
-        values          <- values[values %in% names(data_frame)]
-
-        if (length(invalid_values) > 0){
-            message(" ! WARNING: The provided value to transpose '", paste(invalid_values, collapse = ", "), "' is not part of\n",
-                    "            the data frame. This variable will be omitted as value to transpose.")
+        if (is.list(values)){
+            message(" X ERROR: No valid <values> to transpose provided. Transposition will be aborted.")
+            return(invisible(NULL))
         }
 
         if (length(values) == 0){
-            message(" X ERROR: No valid value to transpose provided. Transposition will be aborted.")
-            return(NULL)
+            message(" X ERROR: No <values> variables provided. Summarise will be aborted.")
+            return(invisible(NULL))
         }
     }
 
@@ -398,35 +296,11 @@ transpose_plus <- function(data_frame,
     # Double entries
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Make sure provided variable list has no double entries
-    provided_preserve <- preserve
-    preserve          <- collapse::funique(preserve)
-
-    if (length(provided_preserve) > length(preserve)){
-        message(" ! WARNING: Some preserve variables are provided more than once. The doubled entries will be omitted.")
-    }
+    preserve <- remove_doubled_values(preserve)
 
     if (long_to_wide){
-        provided_pivot <- pivot
-        pivot          <- collapse::funique(pivot)
-
-        if (length(provided_pivot) > length(pivot)){
-            message(" ! WARNING: Some pivot variables are provided more than once. The doubled entries will be omitted.")
-        }
-
-        provided_values <- values
-        values          <- collapse::funique(values)
-
-        if (length(provided_values) > length(values)){
-            message(" ! WARNING: Some value variables are provided more than once. The doubled entries will be omitted.")
-        }
-
-        rm(preserve_temp, provided_preserve, invalid_preserve,
-           provided_pivot, invalid_pivot,
-           values_temp, provided_values, invalid_values)
-    }
-    else{
-        rm(preserve_temp, provided_preserve, invalid_preserve, invalid_pivot)
+        pivot_vars <- remove_doubled_values(pivot_vars)
+        values     <- remove_doubled_values(values)
     }
 
     ###########################################################################

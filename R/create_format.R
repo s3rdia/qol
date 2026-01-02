@@ -148,7 +148,7 @@ discrete_format <- function(...){
         unwrapped_format[["value"]] <- sub("other", .Machine[["integer.max"]], tolower(unwrapped_format[["value"]]))
 
         # If value column is all numeric then convert it to numeric
-        if (is_numeric(unwrapped_format[["value"]])){
+        if (is.numeric(unwrapped_format[["value"]])){
             unwrapped_format[["value"]] <- as.integer(unwrapped_format[["value"]])
         }
     }
@@ -180,7 +180,7 @@ interval_format <- function(...){
         # First check if there are any other words than low and high in the format. If yes, abort.
         if (!any(c("low", "high") %in% tolower(to))){
             message(" X ERROR: Unknown keyword found. Creating interval format will be aborted.")
-            return(NULL)
+            return(invisible(NULL))
         }
 
         # Low always ends up in "to", because it is a character value and comes alphabetically after high
@@ -211,4 +211,54 @@ interval_format <- function(...){
     data.table::data.table(from  = from,
                            to    = to,
                            label = labels)
+}
+
+
+#' Evaluate Formats
+#'
+#' @description
+#' Get the list of formats with their corresponding data frames.
+#'
+#' @param formats_list A list containing format names.
+#'
+#' @return
+#' Returns a list of format data frames.
+#'
+#' @noRd
+evaluate_formats <- function(formats_list){
+    if (length(formats_list) == 0){
+        return(c())
+    }
+
+    # Fetch all the provided formats and get the original data frames and store them into a list
+    formats <- lapply(formats_list, function(format){
+        if (length(format) > 1){
+            message(" ! WARNING: Formats not passed correctly. Create format object first and then\n",
+                    "            pass it to the function parameter like: list(my_variable = my_format)")
+            return(c())
+        }
+        dynGet(as.character(format), ifnotfound = NULL, inherits = TRUE)
+    })
+
+    names(formats) <- names(formats_list)
+
+    formats
+}
+
+
+#' Check If Format List Is Provided
+#'
+#' @description
+#' Check if the provided list is a list of data frames.
+#'
+#' @param formats_list A list containing format data frames.
+#'
+#' @return
+#' Returns TRUE or FALSE.
+#'
+#' @noRd
+is_list_of_dfs <- function(formats_list){
+      (is.list(formats_list)
+    && length(formats_list) > 0
+    && all(vapply(formats_list, data.table::is.data.table, logical(1))))
 }

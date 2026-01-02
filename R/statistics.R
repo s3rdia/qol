@@ -180,7 +180,7 @@ compute_group_percentages <- function(original_df,
             collapse::fselect(-sum_wgt)
 
         # Catch new variable names
-        values <- super_df |> inverse(group_vars)
+        values <- super_df |> inverse(super_group)
     }
     # If fast percentage (means original_df is already summarised)
     else{
@@ -478,7 +478,7 @@ calculate_percentages <- function(joined_df, values, pct_name, last_group_var){
     }
 
     denominator <- paste0(values, "_qol")
-    new_values <- paste0(gsub("_sum$", "", values), "_", pct_name)
+    new_values  <- paste0(gsub("_sum$", "", values), "_", pct_name)
 
     # Compute percentages for every variable
     for (i in seq_along(numerator)) {
