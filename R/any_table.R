@@ -562,6 +562,45 @@ any_table <- function(data_frame,
         rm(list_of_statistics, invalid_stats)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Types
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Get row variables from provided combinations
+    type_vars <- unlist_variables(types)
+
+    # If there are type provided
+    if (is.null(type_vars)){
+        message(" ! WARNING: <Types> must be provided in quotation marks. Types will be ignored.")
+        types <- NULL
+    }
+    else if (length(type_vars) > 0){
+        # Exclude total because it will most likely not be part of the data frame
+        type_vars <- type_vars[type_vars != "total"]
+        type_vars <- data_frame |> part_of_df(type_vars, check_only = TRUE)
+
+        if (is.list(type_vars)){
+            message(" ! WARNING: The provided <type> '", paste(type_vars[[1]], collapse = ", "), "' is not part of\n",
+                    "            the data frame. Types will be ignored.")
+            types <- NULL
+        }
+
+        invalid_types <- type_vars[!type_vars %in% class]
+
+        if (length(invalid_types) > 0){
+            message(" ! WARNING: The provided <type> '", paste(type_vars[[1]], collapse = ", "), "' is not part of\n",
+                    "            the <class> variables. Types will be ignored.")
+            types <- NULL
+        }
+
+        rm(invalid_types)
+    }
+    else{
+        types <- NULL
+    }
+
+    rm(type_vars)
+
     ###########################################################################
     # Any tabulation starts
     ###########################################################################

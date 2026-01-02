@@ -46,6 +46,9 @@ Additionally
 * any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
 * summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
 * any_table(): Added missing format for variable 'state' in examples.
+* Added transpose_plus() and sort_plus() examples to the README.
+* summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
+* summarise_plus() and any_table(): Added an error check in case an invalid type is provided.
 
 ## R CMD check results
 

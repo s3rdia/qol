@@ -100,30 +100,10 @@ fuse_variables <- function(data_frame,
     }
 
     # Convert to character vectors
-    fuse_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(variables_to_fuse))))
-
-    if (fuse_temp == "group_vars"){
-    }
-    else if (!is_error(fuse_temp)){
-        # Do nothing. In this case values already contains the substituted variable names
-        # while values_temp is evaluated to the symbol passed into the function.
-    }
-    else if (substr(fuse_temp, 1, 2) == "c("){
-        variables_to_fuse  <- as.character(substitute(variables_to_fuse))[-1]
-    }
-    else{
-        variables_to_fuse <- fuse_temp
-    }
+    variables_to_fuse <- get_origin_as_char(variables_to_fuse, substitute(variables_to_fuse))
 
     # Make sure that the variables provided are part of the data frame.
-    provided_fuse     <- variables_to_fuse
-    invalid_fuse      <- variables_to_fuse[!variables_to_fuse %in% names(data_frame)]
-    variables_to_fuse <- variables_to_fuse[variables_to_fuse %in% names(data_frame)]
-
-    if (length(invalid_fuse) > 0){
-        message(" ! WARNING: The provided variable to fuse '", paste(invalid_fuse, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted during computation.")
-    }
+    variables_to_fuse <- data_frame |> part_of_df(variables_to_fuse)
 
     # Convert the group columns to character so coalesce works properly
     selected_data   <- data_frame[variables_to_fuse]

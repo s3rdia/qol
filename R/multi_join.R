@@ -204,8 +204,9 @@ multi_join <- function(data_frames,
 
     # Only keep valid join methods
     valid_join_methods <- c("left", "right", "inner", "full", "outer", "left_inner", "right_inner")
-    invalid_how        <- how[!tolower(how) %in% valid_join_methods]
-    how                <- how[tolower(how) %in% valid_join_methods]
+    valid_methods <- tolower(how) %in% valid_join_methods
+    invalid_how   <- how[!valid_methods]
+    how           <- how[valid_methods]
 
     if (length(invalid_how) > 0){
         message(" ! WARNING: The provided join method '", paste(invalid_how, collapse = ", "), "' is not valid.")
@@ -213,9 +214,9 @@ multi_join <- function(data_frames,
 
     # If length of provided joins is lesser than number of data frames minus one
     if (length(how) == 0){
-        how <- "left"
-
         message(" ! WARNING: No valid join method provided, 'left' will be used.")
+
+        how <- "left"
     }
     # If length of provided joins is lesser than number of data frames minus one
     else if (length(how) < length(data_frames) - 1){

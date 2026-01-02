@@ -50,6 +50,7 @@
 * `any_table()`: Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame. (23.12.2025)
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
 * `summarise_plus()` and `any_table()`: Added an error check in case an invalid statistic is provided. (29.12.2025)
+* `summarise_plus()` and `any_table()`: Added an error check in case an invalid type is provided. (02.01.2026)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

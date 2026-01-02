@@ -10,7 +10,7 @@ summarise_plus(
   values,
   statistics = c("sum", "freq"),
   formats = list(),
-  types = c(),
+  types = "",
   weight = NULL,
   nesting = "deepest",
   merge_back = FALSE,
