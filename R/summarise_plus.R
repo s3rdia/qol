@@ -439,7 +439,7 @@ summarise_plus <- function(data_frame,
             data_frame <- collapse::na_omit(data_frame, cols = class)
         }
 
-        message("\n > Executing nested merge.")
+        message("\n > Executing nested merge")
         get_group_missings(original_df[group_vars], notes, na.rm)
 
         if (!merge_back){
@@ -546,7 +546,7 @@ summarise_plus <- function(data_frame,
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if (merge_back){
-            message("\n > Merging back.")
+            message("\n > Merging back")
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Merge back", "Merge back")
             #-----------------------------------------------------------------#
@@ -913,7 +913,7 @@ summarise_plus <- function(data_frame,
         # Additional clean up
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        message("\n > Putting results together.")
+        message("\n > Putting results together")
 
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start("Clean up", "Clean up")

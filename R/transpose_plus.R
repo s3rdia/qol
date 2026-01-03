@@ -336,6 +336,7 @@ transpose_plus <- function(data_frame,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Summarise", "Long to wide")
             #-----------------------------------------------------------------#
+            message("\n > Summarising data.")
 
             group_vars <- c(preserve, pivot_vars)
 
@@ -361,7 +362,11 @@ transpose_plus <- function(data_frame,
         # 'names'. If a variable combination is provided, the variables will be crossed but
         # if they are provided separately, they will be put beside each other. Therefore
         # each pivot has to be done sequentially.
+        message("\n > Transposing long to wide.")
+
         for (method in transpose_methods){
+            message("   + ", paste(method, collapse = " + "))
+
             transpose_df <- data_frame |>
                 collapse::pivot(id     = preserve,
                                 names  = method,
@@ -400,6 +405,8 @@ transpose_plus <- function(data_frame,
     }
     # Wide to long
     else{
+        message("\n > Transposing wide to long")
+
         combined_df <- NULL
 
         # Each given list entry will be transposed sequentially
@@ -407,11 +414,12 @@ transpose_plus <- function(data_frame,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Transpose", "Wide to long")
             #-----------------------------------------------------------------#
-
             # Only keep the necessary variables because otherwise all variables will be transposed.
             # Since it should be possible to transpose multiple variables into multiple categories,
             # this step is essential.
             vars_to_keep <- c(preserve, pivot[[variable]])
+
+            message("   + ", paste0(variable, " = "), paste(vars_to_keep[!vars_to_keep %in% preserve], collapse = ", "))
 
             # Determine new variable name. If only one new variable provided take the name from
             # the named list, otherwise use a general name.

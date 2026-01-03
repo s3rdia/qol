@@ -54,6 +54,7 @@ Additionally
 * any_table(): Added missing format for variable 'state' in examples.
 * Added transpose_plus() and sort_plus() examples to the README.
 * discrete_format() and interval_format(): Labels will now be converted to numeric if they are all numeric.
+* In general: Added more messages to display what functions do.
 
 ## R CMD check results
 

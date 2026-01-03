@@ -56,6 +56,7 @@
 * Added some comments to the heavier functions, to enhance visual code structure. (22.12.2025)
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
 * `discrete_format()` and `interval_format()`: Labels will now be converted to numeric if they are all numeric. (02.01.2026)
+* In general: Added more messages to display what functions do. (03.01.2026)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

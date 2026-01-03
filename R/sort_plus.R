@@ -154,6 +154,8 @@ sort_plus <- function(data_frame,
     # If formats are provided, they will be used to temporarily recode new variables,
     # which are used to order the data frame in format order first.
     if (!is.null(formats)){
+        message("\n > Preparing formats")
+
         extended_by <- c()
 
         for (variable in names(formats)){
@@ -210,6 +212,8 @@ sort_plus <- function(data_frame,
     }
 
     if (!is.null(preserve)){
+        message("\n > Preserving: ", paste(preserve, collapse = ", "))
+
         # If there are variables to preserve, they will be converted into factor
         # variables before sorting. To restore them afterwards, to there original
         # format, grab it here.

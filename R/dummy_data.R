@@ -21,12 +21,16 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Preparation")
     #-------------------------------------------------------------------------#
+    message(" > Generating dummy file. Computing ...\n",
+            "   + years")
 
     # Prepare years
     current_year <- as.numeric(format(Sys.Date(), "%Y"))
     start_year   <- current_year - 2
 
     # Prepare household generation
+    message("   + households and states")
+
     if (no_obs < 1000){
         number_of_households <- max(1, no_obs)
     }
@@ -78,6 +82,7 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate weights")
     #-------------------------------------------------------------------------#
+    message("   + weights")
 
     household_weights <- stats::runif(number_of_households, 0.15, 0.35)
     weight <- rep(household_weights,
@@ -87,6 +92,7 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate age")
     #-------------------------------------------------------------------------#
+    message("   + age")
 
     age <- stats::runif(no_obs, min = 0L,  max = 100L)
 
@@ -104,6 +110,7 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate income")
     #-------------------------------------------------------------------------#
+    message("   + income")
 
     income <- stats::runif(no_obs, 0, 5000)
     income <- data.table::fifelse(age < 18, 0, income)
@@ -113,6 +120,7 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate probability")
     #-------------------------------------------------------------------------#
+    message("   + probability")
 
     prob_temp <- sample(0:2, no_obs, replace = TRUE)
 
@@ -123,6 +131,8 @@ dummy_data <- function(no_obs, monitor = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Create data table")
     #-------------------------------------------------------------------------#
+    message("   + sex\n",
+            "\n > Putting data together")
 
     new_dummy_data <- data.table::data.table(
         year = as.integer(years),

@@ -259,7 +259,14 @@ evaluate_formats <- function(formats_list){
 #'
 #' @noRd
 is_list_of_dfs <- function(formats_list){
-      (is.list(formats_list)
-    && length(formats_list) > 0
-    && all(vapply(formats_list, data.table::is.data.table, logical(1))))
+    # This errors if formats_list can't be evaluated because of a missing object.
+    # In this case return FALSE so that the function using this check can evaluate to NULL.
+    tryCatch({
+        (is.list(formats_list)
+         && length(formats_list) > 0
+         && all(vapply(formats_list, data.table::is.data.table, logical(1))))
+    }, error = function(e) {
+        FALSE
+    })
+
 }

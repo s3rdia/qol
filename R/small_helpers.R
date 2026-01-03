@@ -205,11 +205,12 @@ libname <- function(path,
         }
 
         # Return named character vector
-        message("Filepaths successfully retrieved: ", path)
+        message(" > Filepaths successfully retrieved: ", path)
+        message(paste("   + ", basename(files), collapse = "\n"))
         return(stats::setNames(files, basename(files)))
     }
 
-    message("Path successfully assigned: ", path)
+    message(" > Path successfully assigned: ", path)
 
     path
 }

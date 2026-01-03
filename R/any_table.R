@@ -608,7 +608,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
     #-------------------------------------------------------------------------#
-    message("\n > Computing stats.")
+    message("\n > Computing stats")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Some preparations beforehand
@@ -904,6 +904,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Transform table", "Transform")
     #-------------------------------------------------------------------------#
+    message("\n > Rearranging data for output table")
 
     part_combi_list       <- list()
     header_combi_list     <- list()
@@ -1258,7 +1259,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
-    message(" > Formatting tables.")
+    message(" > Formatting tables")
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){

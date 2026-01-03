@@ -106,6 +106,7 @@ export_with_style <- function(data_frame,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#
+        message(" > Output")
 
         if (is.null(style[["file"]])){
             if(interactive()){
@@ -182,6 +183,7 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
     #-------------------------------------------------------------------------#
+    message(" > Writing data to workbook")
 
     wb$add_data(x           = data_frame,
                 start_col   = style[["start_column"]],
@@ -197,6 +199,8 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
+    message(" > Formatting data")
+
     # Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, df_ranges, style, output)

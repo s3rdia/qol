@@ -97,11 +97,15 @@ build_master <- function(dir,
 
     # Generate tree view folder structure
     if (with_structure){
+        message(" > Write folder structure")
+
         lines <- c(lines, print_folder_structure(scripts), "")
     }
 
     # Run all scripts in all folders
     if (with_run_all){
+        message(" > Write all scripts execution")
+
         run_all_folders <- c(
             "################################################################################",
             "# Run All Scripts in All Folders",
@@ -119,6 +123,8 @@ build_master <- function(dir,
         lines <- c(lines, run_all_folders)
     }
 
+    message(" > Write script execution")
+
     # Run folders and files separate
     for (folder in names(scripts)){
         # Run all scripts in current folder
@@ -126,6 +132,8 @@ build_master <- function(dir,
         all_scripts_in_folder <- unlist(scripts[[folder]])
 
         if (with_run_folder){
+            message("   + folder: ", folder)
+
             lines <- c(lines, c("#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
                                 paste0("# Run All Scripts in Folder: ", basename(folder)),
                                 "#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
@@ -144,17 +152,21 @@ build_master <- function(dir,
         files <- scripts[[folder]]
 
         for (file in files){
+            message("     + file: ", file)
+
             file_name <- gsub("[^a-zA-Z0-9_]", "_", paste0("run_", basename(file)))
 
-            lines <- c(lines, c("#--------------------------------------------------------------------------------",
+            lines <- c(lines, c("#-------------------------------------------------------------------------------#",
                                 paste0("# Run Script: ", basename(file)),
-                                "#--------------------------------------------------------------------------------"),
+                                "#-------------------------------------------------------------------------------#"),
                               paste0("```{r ", file_name, ", echo = TRUE}"),
                               paste0('source("', file, '", local = FALSE)'),
                               "```",
                               "\n")
         }
     }
+
+    message(" > Putting together master file")
 
     # Write master file
     path <- ifelse(grepl("/$", dir), dir, paste0(dir, "/"))
