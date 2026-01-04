@@ -1540,8 +1540,8 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
-                                              ncol(any_tab) + (style[["start_column"]] - 1),
-                                              nrow(any_tab) + nrow(multi_header) + (style[["start_row"]] - 1),
+                                              ncol(any_tab),
+                                              nrow(any_tab) + nrow(multi_header),
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
