@@ -294,9 +294,11 @@ rename_multi <- function(data_frame, ...){
         return(data_frame)
     }
 
+    # Rename all variables in one go
+    data_frame <- data_frame |> collapse::frename(stats::setNames(old_names, new_names))
+
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("- - - 'rename_multi' execution time: ", end_time, " seconds")
 
-    # Rename all variables in one go
-    data_frame |> collapse::frename(stats::setNames(old_names, new_names))
+    data_frame
 }

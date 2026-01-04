@@ -69,6 +69,7 @@ reference:
   - mark_case
   - retain_value
   - retain_sum
+  - retain_variables
 - title: Generate Dummy Data
   contents:
   - dummy_data
@@ -89,6 +90,8 @@ reference:
   - fuse_variables
   - get_excel_range
   - replace_except
+  - replace_except
+  - add_variable_range
 - title: Split Data Frame
   contents:
   - split_by

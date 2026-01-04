@@ -14,6 +14,8 @@ New functions
 	* remove_doubled_values(): Remove values from a vector that appear more than once.
 	* check_weight(): Check whether a suitable weight variable was provided.
 * rename_multi(): Rename one or more variables.
+* retain_variables(): Order variables to the front or back of a data frame. Can also add empty variables.
+* add_variable_range(): Add empty variables to a data frame in the provided range.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.

@@ -96,7 +96,7 @@ fuse_variables <- function(data_frame,
 
     if (length(new_variable_name) > 1){
         message(" X ERROR: No vector allowed. Only one new variable can be generated.")
-        return(data_frame)
+        return(invisible(data_frame))
     }
 
     # Convert to character vectors
@@ -223,7 +223,11 @@ libname <- function(path,
 #'
 #' @param ... Put in multiple data frames to stack them in the provided order.
 #' @param id Adds an ID column to indicate the different data frames.
-#' @param compress FALSE by default. If TRUE converts character variables to factors.
+#' @param compress No compression by default. If compression receives any value, [set()]
+#' will convert character variables to numeric or integer where possible. If set to "factor"
+#' all non numeric character variables will be converted to factors.
+#' @param guessing_rows 100 by default. [set()] takes a sample of rows to determine of
+#' which type variables are.
 #'
 #' @return
 #' Returns a stacked data frame.
@@ -244,17 +248,153 @@ libname <- function(path,
 #'                   my_data5)
 #'
 #' @export
-set <- function(..., id = FALSE, compress = FALSE){
+set <- function(..., id = FALSE, compress = NULL, guessing_rows = 100){
+    # Measure the time
+    start_time <- Sys.time()
+
+    # Translate ... into a list if possible
+    df_list <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(df_list)){
+        message('X ERROR: Unknown object found. Retaining will be aborted.')
+        return(invisible(NULL))
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Row binding
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Generate an ID variable and order it to the last position which indicates the single data frame
     if (id){
-        data_frame <- data.table::rbindlist(list(...), use.names = TRUE, fill = TRUE, idcol = "ID")
+        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE, idcol = "ID")
         data_frame <- data_frame |> data.table::setcolorder("ID", after = ncol(data_frame))
     }
     # Stack without ID variable
     else{
-        data_frame <- data.table::rbindlist(list(...), use.names = TRUE, fill = TRUE)
+        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Compression
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Compress numeric values to integers if possible and conditionally convert characters to factors
-    data_frame |> utils::type.convert(as.is = !compress)
+    if (!is.null(compress)){
+        columns <- names(data_frame)
+
+        for (column in columns){
+            single_column <- data_frame[[column]]
+
+            # Check all character columns
+            if (is.character(single_column)){
+                # Take a sample of the first x non-NA values to guess type
+                sample_column <- single_column |>
+                    collapse::na_omit() |>
+                    collapse::fsubset(1:min(guessing_rows))
+
+                if (length(sample_column) == 0){
+                    next
+                }
+
+                # Try to convert to check whether it is numeric
+                is_numeric <- suppressWarnings(!any(is.na(as.numeric(sample_column))))
+
+                if (is_numeric){
+                    # Check for decimals to decide between integer or double
+                    has_decimals <- any(grepl("\\.", sample_column))
+
+                    # Convert
+                    if (!has_decimals){
+                        data.table::set(data_frame, j = column, value = as.integer(single_column))
+                    }
+                    else{
+                        data.table::set(data_frame, j = column, value = as.numeric(single_column))
+                    }
+                }
+                # Convert character values to factors
+                else if (compress == "factor"){
+                    data.table::set(data_frame, j = column, value = as.factor(single_column))
+                }
+            }
+            # Check if numeric columns can be converted to integer
+            else if (is.numeric(single_column) && !is.integer(single_column) && !is.factor(single_column)){
+                # Only convert to integer if it doesn't result in data loss
+                if (all(single_column == floor(single_column), na.rm = TRUE)){
+                    data.table::set(data_frame, j = column, value = as.integer(single_column))
+                }
+            }
+        }
+    }
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("- - - 'set' execution time: ", end_time, " seconds")
+
+    data_frame
+}
+
+
+#' Add Empty Variables In A Given Range
+#'
+#' @description
+#' Add empty variables to a data frame in the provided range. Basically does in a
+#' data frame, what paste0("age", 1:10) does for a vector.
+#'
+#' @param data_frame A data frame to add variables to.
+#' @param var_range A range of variables to add, provided in the form: var_name1:var_name10.
+#'
+#' @return
+#' Returns a data frame with added variables.
+#'
+#' @examples
+#' # Example data frames
+#' my_data <- dummy_data(100)
+#'
+#' # Add variable range
+#' my_data <- my_data |> add_variable_range(status1:status12)
+#'
+#' @export
+add_variable_range <- function(data_frame, var_range){
+    var_range <- get_origin_as_char(var_range, substitute(var_range))
+
+    # Using regex to capture prefix, start number, and end number
+    # Meaning: (prefix)(start):(prefix)(end)
+    pattern <- "^([A-Za-z_.]+)([0-9]+):\\1([0-9]+)$"
+
+    if (!grepl(pattern, var_range)){
+        message(" X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.\n",
+                "          Variable names must match. No variables will be added.")
+        return(invisible(data_frame))
+    }
+
+    # Put together variable names
+    prefix <- gsub(pattern, "\\1", var_range)
+    start  <- as.numeric(gsub(pattern, "\\2", var_range))
+    end    <- as.numeric(gsub(pattern, "\\3", var_range))
+
+    var_names <- paste0(prefix, start:end)
+
+    # If variable names are already part of the data frame, abort
+    invalid_variables <- var_names[var_names %in% names(data_frame)]
+
+    if (length(invalid_variables) > 0){
+        message(" X ERROR: Some variables are already part of the data frame: ", paste(invalid_variables, collapse = ", "), "\n",
+                "          No variables will be added.")
+        return(invisible(data_frame))
+    }
+
+    # Create new variables in their own data frame first
+    new_columns <- collapse::qDF(matrix(NA_integer_,
+                                        nrow = collapse::fnrow(data_frame),
+                                        ncol = end))
+
+    names(new_columns) <- paste0(prefix, start:end)
+
+    # Add new empty variables to data frame
+    collapse::add_vars(data_frame, new_columns)
 }

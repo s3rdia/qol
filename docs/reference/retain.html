@@ -9,7 +9,10 @@ mark_case() sets a flag for the first or last case within the provided by group.
 retain_value() retains the first value for all cases of the same group and saves
 it into a new variable.
 retain_sum() retains the summarised values for all cases of the same group and saves
-it into a new variable."><meta property="og:description" content="These retain functions all have one thing in common: transferring a value from one case
+it into a new variable.
+retain_variables() orders the provided variables to the front or back of the
+data frame. If a variable is not part of the data frame it will be added with
+all NA values at the desired position."><meta property="og:description" content="These retain functions all have one thing in common: transferring a value from one case
 to the next. What they make out of this functionality can be quiet different. Therefor
 there is a function for each different use case.
 running_number() computes running numbers in a data frame. Without specifying
@@ -19,7 +22,10 @@ mark_case() sets a flag for the first or last case within the provided by group.
 retain_value() retains the first value for all cases of the same group and saves
 it into a new variable.
 retain_sum() retains the summarised values for all cases of the same group and saves
-it into a new variable."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
+it into a new variable.
+retain_variables() orders the provided variables to the front or back of the
+data frame. If a variable is not part of the data frame it will be added with
+all NA values at the desired position."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -69,6 +75,9 @@ number within each group of expressions.</p>
 it into a new variable.</p>
 <p><code>retain_sum()</code> retains the summarised values for all cases of the same group and saves
 it into a new variable.</p>
+<p><code>retain_variables()</code> orders the provided variables to the front or back of the
+data frame. If a variable is not part of the data frame it will be added with
+all NA values at the desired position.</p>
     </div>
 
     <div class="section level2">
@@ -79,7 +88,9 @@ it into a new variable.</p>
 <span></span>
 <span><span class="fu">retain_value</span><span class="op">(</span><span class="va">data_frame</span>, var_name <span class="op">=</span> <span class="st">"retain_value"</span>, <span class="va">value</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">retain_sum</span><span class="op">(</span><span class="va">data_frame</span>, var_name <span class="op">=</span> <span class="st">"retain_sum"</span>, <span class="va">value</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">retain_sum</span><span class="op">(</span><span class="va">data_frame</span>, var_name <span class="op">=</span> <span class="st">"retain_sum"</span>, <span class="va">value</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">retain_variables</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span>, order_last <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -107,12 +118,25 @@ the last case.</p></dd>
 <dd><p>retain_value: One or multiple variables of which a value should be retained.</p>
 <p>retain_sum: One or multiple variables of which the sum should be retained.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p><code>retain_variables()</code>: Put in single variable names or variable ranges
+(var_name1:var_name10) which should be ordered to the front or back of the data frame.
+It is also possible to provide none existent variable names which will then be added
+to the data frame.</p></dd>
+
+
+<dt id="arg-retain-variables">retain_variables<a class="anchor" aria-label="anchor" href="#arg-retain-variables"></a></dt>
+<dd><p><code>retain_variables()</code>: FALSE by default. If TRUE puts the
+variables at the end of the data frame instead of the beginning.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>running_number()</code>: Returns the data frame with a new variable containing a running number.</p>
 <p><code>mark_case()</code>: Returns the data frame with a new variable marking first or last cases.</p>
 <p><code>retain_value()</code>: Return the data frame with a new variable containing a retained value.</p>
+<p><code>retain_sum()</code>: Return the data frame with a new variable containing a retained sum.</p>
 <p><code>retain_sum()</code>: Return the data frame with a new variable containing a retained sum.</p>
     </div>
     <div class="section level2">
@@ -128,7 +152,7 @@ cases within a group.</p>
 <p>In it's simplest form it can remember a value from the first observation and transfer it to all
 other observations.</p>
 <p>All of these functions work on the whole data frame as well as on groups, e.g. to transfer
-a value from the first person in a household to all other persons of the same household.</p>
+a value from the first person in a household to all other persons of the same household.ame retain</p>
     </div>
 
     <div class="section level2">
@@ -159,6 +183,16 @@ a value from the first person in a household to all other persons of the same ho
 <span>    <span class="fu">retain_sum</span><span class="op">(</span>var_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weight_hh_sum"</span>, <span class="st">"icome_hh_sum"</span><span class="op">)</span>,</span>
 <span>               value    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">weight</span>, <span class="va">income</span><span class="op">)</span>,</span>
 <span>               by       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">household_id</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retain columns inside data frame, which orders them to the front</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_variables</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, <span class="va">income</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retain columns inside data frame, but order them to the end.</span></span>
+<span><span class="co"># Variable ranges can also be used.</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_variables</span><span class="op">(</span><span class="va">age</span><span class="op">:</span><span class="va">income</span>, order_last <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retain columns inside data frame and add new variables with all NA values</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_variables</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, <span class="va">income</span>, <span class="va">status1</span><span class="op">:</span><span class="va">status5</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

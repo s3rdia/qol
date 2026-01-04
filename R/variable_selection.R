@@ -24,21 +24,7 @@
 #' @export
 inverse <- function(data_frame, var_names){
     # Convert to character vectors
-    vars_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(var_names), width.cutoff = 500L)))
-
-    if (substr(vars_temp, 1, 2) == "c("){
-        var_names <- as.character(substitute(var_names))
-    }
-    else if (!is_error(var_names)){
-        # Do nothing. In this case class already contains the substituted variable names
-        # while vars_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        var_names <- vars_temp
-    }
-
-    # Remove extra first character created with substitution
-    var_names <- var_names[var_names != "c"]
+    var_names <- get_origin_as_char(var_names, substitute(var_names))
 
     names(data_frame)[!names(data_frame) %in% var_names]
 }
@@ -78,38 +64,8 @@ inverse <- function(data_frame, var_names){
 #' @export
 vars_between <- function(data_frame, from, to){
     # Convert to character vectors
-    from_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(from), width.cutoff = 500L)))
-
-    if (substr(from_temp, 1, 2) == "c("){
-        from <- as.character(substitute(from))
-    }
-    else if (!is_error(from)){
-        # Do nothing. In this case class already contains the substituted variable names
-        # while from_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        from <- from_temp
-    }
-
-    # Remove extra first character created with substitution
-    from <- from[from != "c"]
-
-    # Convert to character vectors
-    to_temp <- sub("^list\\(", "c(", gsub("\"", "", deparse(substitute(to), width.cutoff = 500L)))
-
-    if (substr(to_temp, 1, 2) == "c("){
-        to <- as.character(substitute(to))
-    }
-    else if (!is_error(to)){
-        # Do nothing. In this case class already contains the substituted variable names
-        # while to_temp is evaluated to the symbol passed into the function.
-    }
-    else{
-        to <- to_temp
-    }
-
-    # Remove extra first character created with substitution
-    to <- to[to != "c"]
+    from <- get_origin_as_char(from, substitute(from))
+    to   <- get_origin_as_char(to, substitute(to))
 
     # Check if a vector and not a single variable name was given. If a vector was
     # given, only consider the first element.

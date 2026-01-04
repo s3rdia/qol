@@ -56,7 +56,7 @@ Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_
 
 Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_extension]{add_extension()}}, \code{\link[=remove_stat_extension]{remove_stat_extension()}}, \code{\link[=replace_except]{replace_except()}}
 
-Retaining: \code{\link[=running_number]{running_number()}}, \code{\link[=mark_case]{mark_case()}}, \code{\link[=retain_value]{retain_value()}}, \code{\link[=retain_sum]{retain_sum()}}
+Retaining: \code{\link[=running_number]{running_number()}}, \code{\link[=mark_case]{mark_case()}}, \code{\link[=retain_value]{retain_value()}}, \code{\link[=retain_sum]{retain_sum()}}, \code{\link[=retain_variables]{retain_variables()}}
 
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 

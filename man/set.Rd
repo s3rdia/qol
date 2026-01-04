@@ -4,14 +4,19 @@
 \alias{set}
 \title{Stack Multiple Data Frames}
 \usage{
-set(..., id = FALSE, compress = FALSE)
+set(..., id = FALSE, compress = NULL, guessing_rows = 100)
 }
 \arguments{
 \item{...}{Put in multiple data frames to stack them in the provided order.}
 
 \item{id}{Adds an ID column to indicate the different data frames.}
 
-\item{compress}{FALSE by default. If TRUE converts character variables to factors.}
+\item{compress}{No compression by default. If compression receives any value, \code{\link[=set]{set()}}
+will convert character variables to numeric or integer where possible. If set to "factor"
+all non numeric character variables will be converted to factors.}
+
+\item{guessing_rows}{100 by default. \code{\link[=set]{set()}} takes a sample of rows to determine of
+which type variables are.}
 }
 \value{
 Returns a stacked data frame.
