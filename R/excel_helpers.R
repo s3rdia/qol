@@ -826,17 +826,39 @@ handle_cell_styles <- function(wb,
                                style = excel_output_style()){
     # Apply individual styles for each table part
     for (type in c("header", "box", "cat_col", "table")){
+
+        apply_font <- NULL
+        font_id <- NULL
+        if (paste0(type, "_font") %in% wb$styles_mgr$font$name) {
+            apply_font <- TRUE
+            font_id <- wb$styles_mgr$get_font_id(paste0(type, "_font"))
+        }
+
+        apply_border <- NULL
+        border_id <- NULL
+        if (paste0(type, "_borders") %in% wb$styles_mgr$border$name) {
+            apply_border <- TRUE
+            border_id <- wb$styles_mgr$get_border_id(paste0(type, "_borders"))
+        }
+
+        apply_fill <- NULL
+        fill_id <- NULL
+        if (paste0(type, "_fill") %in% wb$styles_mgr$fill$name) {
+            apply_fill <- TRUE
+            fill_id <- wb$styles_mgr$get_fill_id(paste0(type, "_fill"))
+        }
+
         wb$add_cell_style(dims         = ranges[[paste0(type, "_range")]],
                           horizontal   = style[[paste0(type, "_alignment")]],
                           vertical     = "center",
                           wrap_text    = style[[paste0(type, "_wrap")]],
                           indent       = style[[paste0(type, "_indent")]],
-                          apply_font   = TRUE,
-                          font_id      = wb$styles_mgr$get_font_id(paste0(type, "_font")),
-                          apply_border = TRUE,
-                          border_id    = wb$styles_mgr$get_border_id(paste0(type, "_borders")),
-                          apply_fill   = TRUE,
-                          fill_id      = wb$styles_mgr$get_fill_id(paste0(type, "_fill")))
+                          apply_font   = apply_font,
+                          font_id      = font_id,
+                          apply_border = apply_border,
+                          border_id    = border_id,
+                          apply_fill   = apply_fill,
+                          fill_id      = fill_id)
     }
 
     wb
