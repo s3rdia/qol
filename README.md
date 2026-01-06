@@ -216,7 +216,7 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      
 # For safety set file back to NULL at the end. Otherwise the next any_table() will overwrite
 # the existing file.
-set_style_options(file = NULL)
+close_file()
 ```
 
 In case you have a good amount of tables, you want to combine in a

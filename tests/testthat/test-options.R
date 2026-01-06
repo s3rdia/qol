@@ -1,8 +1,13 @@
-default_options <- get_style_options()
+default_style_options <- get_style_options()
+default_var_labels    <- get_variable_labels()
+default_stat_labels   <- get_stat_labels()
+default_print         <- get_print()
+default_monitor       <- get_monitor()
+default_na            <- get_na.rm()
 
 
 test_that("Get global style options", {
-  expect_equal(default_options, get_style_options())
+  expect_equal(default_style_options, get_style_options())
 })
 
 
@@ -11,7 +16,7 @@ test_that("Set global style options", {
 
     new_options <- get_style_options()
 
-    expect_equal(default_options[["save_path"]], NULL)
+    expect_equal(default_style_options[["save_path"]], NULL)
     expect_equal(new_options[["save_path"]], "C:/MyPath/")
 })
 
@@ -27,6 +32,103 @@ test_that("Reset global style options", {
 
     reset_options <- get_style_options()
     expect_equal(reset_options[["save_path"]], NULL)
+})
+
+
+test_that("Close file in global options", {
+    set_style_options(file = "MyFile.xlsx")
+
+    new_options <- get_style_options()
+
+    expect_equal(new_options[["file"]], "MyFile.xlsx")
+
+    close_file()
+
+    closed_file <- get_style_options()
+    expect_equal(closed_file[["file"]], NULL)
+})
+
+
+test_that("Get global variable labels", {
+    expect_equal(default_var_labels, list())
+})
+
+
+test_that("Get global statistic labels", {
+    expect_equal(default_stat_labels, list())
+})
+
+
+test_that("Get global print option", {
+    expect_equal(default_print, TRUE)
+})
+
+
+test_that("Get global monitor option", {
+    expect_equal(default_monitor, FALSE)
+})
+
+
+test_that("Get global na.rm option", {
+    expect_equal(default_na, FALSE)
+})
+
+
+test_that("Set global variable labels", {
+    set_variable_labels(var1 = "Variable 1")
+
+    new_options <- get_variable_labels()
+
+    expect_equal(new_options[["var1"]], "Variable 1")
+})
+
+
+test_that("Set global statistic labels", {
+    set_stat_labels(pct = "Percent")
+
+    new_options <- get_stat_labels()
+
+    expect_equal(new_options[["pct"]], "Percent")
+})
+
+
+test_that("Set global print option", {
+    set_print(FALSE)
+
+    new_options <- get_print()
+
+    expect_true(default_print == !new_options)
+})
+
+
+test_that("Set global monitor option", {
+    set_monitor(TRUE)
+
+    new_options <- get_monitor()
+
+    expect_true(default_monitor == !new_options)
+})
+
+
+test_that("Set global na.rm option", {
+    set_na.rm(TRUE)
+
+    new_options <- get_na.rm()
+
+    expect_true(default_na == !new_options)
+})
+
+
+test_that("Reset global options", {
+    reset_qol_options()
+
+    new_print   <- get_print()
+    new_monitor <- get_monitor()
+    new_na      <- get_na.rm()
+
+    expect_true(new_print   == new_print)
+    expect_true(new_monitor == new_monitor)
+    expect_true(default_na  == new_na)
 })
 
 ###############################################################################
@@ -64,5 +166,14 @@ test_that("Warning on setting non existent style in global options", {
 
 
 test_that("Abort setting global style options on empty list", {
-    expect_message(set_style_options(), " X ERROR: Empty list found. See")
+    expect_message(set_style_options(),   " X ERROR: Empty list found.")
+    expect_message(set_variable_labels(), " X ERROR: Empty list found.")
+    expect_message(set_stat_labels(),     " X ERROR: Empty list found.")
+})
+
+
+test_that("Abort setting global options on empty list", {
+    expect_message(set_print(1),   " X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_monitor(1), " X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_na.rm(1),   " X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
 })

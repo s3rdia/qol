@@ -159,8 +159,8 @@ summarise_plus <- function(data_frame,
                            weight     = NULL,
                            nesting    = "deepest",
                            merge_back = FALSE,
-                           na.rm      = FALSE,
-                           monitor    = FALSE,
+                           na.rm      = .qol_options[["na.rm"]],
+                           monitor    = .qol_options[["monitor"]],
                            notes      = TRUE){
     # Measure the time
     start_time <- Sys.time()
@@ -451,11 +451,7 @@ summarise_plus <- function(data_frame,
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if (flag_shortcut){
-            # Convert numeric variables back which have become characters during summarisation
-            # and apply formats
-            result_df <- data_frame |>
-                convert_numeric(group_vars) |>
-                apply_format(formats, group_vars)
+            result_df <- data_frame |> apply_format(formats, group_vars)
 
             # Final summarise with formatted data frame
             result_df <- result_df |>
@@ -588,7 +584,6 @@ summarise_plus <- function(data_frame,
 
             # Final summarise
             total_df <- data_frame |>
-                convert_numeric(group_vars) |>
                 collapse::fsummarise(across(values, collapse::fsum))
 
             sum_columns   <- values[grepl("_sum$", values)]
@@ -747,11 +742,7 @@ summarise_plus <- function(data_frame,
                     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                     if (flag_shortcut){
-                        # Convert numeric variables back which have become characters
-                        # during summarisation and apply formats
-                        group_df <- data_frame |>
-                            convert_numeric(combination) |>
-                            apply_format(formats, combination)
+                        group_df <- data_frame |> apply_format(formats, combination)
 
                         # Final summarise with formatted data frame
                         group_df <- group_df |>

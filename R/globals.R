@@ -20,3 +20,8 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 # Internal environment to store global options
 .qol_options <- new.env(parent = emptyenv())
 .qol_options[["excel_style"]] <- excel_output_style()
+.qol_options[["var_labels"]]  <- list()
+.qol_options[["stat_labels"]] <- list()
+.qol_options[["print"]]       <- TRUE
+.qol_options[["monitor"]]     <- FALSE
+.qol_options[["na.rm"]]       <- FALSE

@@ -14,7 +14,7 @@
 #' my_data <- dummy_data(1000)
 #'
 #' @export
-dummy_data <- function(no_obs, monitor = FALSE){
+dummy_data <- function(no_obs, monitor = .qol_options[["monitor"]]){
     # Measure the time
     start_time <- Sys.time()
 

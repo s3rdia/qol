@@ -9,7 +9,7 @@ multi_join(
   on,
   how = "left",
   keep_indicators = FALSE,
-  monitor = FALSE
+  monitor = .qol_options[["monitor"]]
 )
 }
 \arguments{

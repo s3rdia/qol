@@ -61,7 +61,9 @@
 #'
 #' Error handling: [resolve_intersection()], [part_of_df()], [remove_doubled_values()], [check_weight()]
 #'
-#' Global options: [set_style_options()], [reset_style_options()], [get_style_options()]
+#' Global options: [set_style_options()], [reset_style_options()], [get_style_options()], [close_file()],
+#' [set_variable_labels()], [get_variable_labels()], [set_stat_labels()], [get_stat_labels()],
+#' [set_print()], [get_print()], [set_monitor()], [get_monitor()], [set_na.rm()], [get_na.rm()]
 #'
 #' Other: [build_master()], [build_rstheme()]
 #'
@@ -71,8 +73,8 @@
 #'     summarise_plus(class      = c(var1, var2, ...),
 #'                    values     = c(var1, var2, ...),
 #'                    statistics = c("pct_group", "sum", "sum_wgt", "freq"),
-#'                    formats    = list(var = format., ...),
 #'                    weight     = weight_var,
+#'                    formats    = list(var = format., ...),
 #'                    nesting    = "deepest")
 #'
 #' snippet if.
@@ -82,19 +84,19 @@
 #'
 #' snippet freq
 #'     frequencies(variables = c(var1, var2, ...),
+#'                 weight    = weight_var,
 #'                 formats   = list(var = "format.", ...),
 #'                 titles    = c(),
-#'                 footnotes = c(),
-#'                 weight    = weight_var)
+#'                 footnotes = c())
 #'
 #' snippet cross
 #'     crosstabs(rows       = row_var,
 #'               columns    = col_var,
 #'               statistics = c("sum", "pct_row", "pct_column", "pct_total", "freq"),
+#'               weight    = weight_var,
 #'               formats   = list(var = format., ...),
 #'               titles    = c(),
-#'               footnotes = c(),
-#'               weight    = weight_var)
+#'               footnotes = c())
 #'
 #' snippet any
 #'     any_table(rows        = c("var1 + var2 + ...", "var1"),
@@ -103,13 +105,13 @@
 #'               statistics  = c("sum", "pct_group", "pct_value", "freq"),
 #'               pct_group   = c("var1", "var2"),
 #'               pct_value   = list(new_var = "numerator / denominator"),
+#'               weight    = weight_var,
 #'               formats     = list(var = format., ...),
 #'               titles      = c(),
 #'               footnotes   = c(),
 #'               var_labels  = list("var1" = "My label", ...),
 #'               stat_labels = list("pct" = "%"),
-#'               box         = "",
-#'               weight      = weight_var)
+#'               box         = "")
 #' }
 #'
 #' @keywords internal

@@ -125,8 +125,8 @@ transpose_plus <- function(data_frame,
                            values     = NULL,
                            formats    = c(),
                            weight     = NULL,
-                           na.rm      = FALSE,
-                           monitor    = FALSE){
+                           na.rm      = .qol_options[["na.rm"]],
+                           monitor    = .qol_options[["monitor"]]){
     # Measure the time
     start_time <- Sys.time()
 

@@ -115,9 +115,9 @@ frequencies <- function(data_frame,
                         footnotes = c(),
                         style     = .qol_options[["excel_style"]],
                         output    = "console",
-                        na.rm     = FALSE,
-                        print     = TRUE,
-                        monitor   = FALSE){
+                        na.rm     = .qol_options[["na.rm"]],
+                        print     = .qol_options[["print"]],
+                        monitor   = .qol_options[["monitor"]]){
 
     # Measure the time
     start_time <- Sys.time()

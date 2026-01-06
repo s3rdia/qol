@@ -69,7 +69,9 @@ Split data frame: \link{split_by}
 
 Error handling: \code{\link[=resolve_intersection]{resolve_intersection()}}, \code{\link[=part_of_df]{part_of_df()}}, \code{\link[=remove_doubled_values]{remove_doubled_values()}}, \code{\link[=check_weight]{check_weight()}}
 
-Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=reset_style_options]{reset_style_options()}}, \code{\link[=get_style_options]{get_style_options()}}
+Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=reset_style_options]{reset_style_options()}}, \code{\link[=get_style_options]{get_style_options()}}, \code{\link[=close_file]{close_file()}},
+\code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=get_variable_labels]{get_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}, \code{\link[=get_stat_labels]{get_stat_labels()}},
+\code{\link[=set_print]{set_print()}}, \code{\link[=get_print]{get_print()}}, \code{\link[=set_monitor]{set_monitor()}}, \code{\link[=get_monitor]{get_monitor()}}, \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=get_na.rm]{get_na.rm()}}
 
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}
 }
@@ -81,8 +83,8 @@ snippet splus
     summarise_plus(class      = c(var1, var2, ...),
                    values     = c(var1, var2, ...),
                    statistics = c("pct_group", "sum", "sum_wgt", "freq"),
-                   formats    = list(var = format., ...),
                    weight     = weight_var,
+                   formats    = list(var = format., ...),
                    nesting    = "deepest")
 
 snippet if.
@@ -92,19 +94,19 @@ snippet if.
 
 snippet freq
     frequencies(variables = c(var1, var2, ...),
+                weight    = weight_var,
                 formats   = list(var = "format.", ...),
                 titles    = c(),
-                footnotes = c(),
-                weight    = weight_var)
+                footnotes = c())
 
 snippet cross
     crosstabs(rows       = row_var,
               columns    = col_var,
               statistics = c("sum", "pct_row", "pct_column", "pct_total", "freq"),
+              weight    = weight_var,
               formats   = list(var = format., ...),
               titles    = c(),
-              footnotes = c(),
-              weight    = weight_var)
+              footnotes = c())
 
 snippet any
     any_table(rows        = c("var1 + var2 + ...", "var1"),
@@ -113,13 +115,13 @@ snippet any
               statistics  = c("sum", "pct_group", "pct_value", "freq"),
               pct_group   = c("var1", "var2"),
               pct_value   = list(new_var = "numerator / denominator"),
+              weight    = weight_var,
               formats     = list(var = format., ...),
               titles      = c(),
               footnotes   = c(),
               var_labels  = list("var1" = "My label", ...),
               stat_labels = list("pct" = "%"),
-              box         = "",
-              weight      = weight_var)
+              box         = "")
 }
 }
 

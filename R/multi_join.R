@@ -96,7 +96,7 @@ multi_join <- function(data_frames,
                        on,
                        how             = "left",
                        keep_indicators = FALSE,
-                       monitor         = FALSE){
+                       monitor         = .qol_options[["monitor"]]){
     # Measure the time
     start_time <- Sys.time()
 

@@ -77,7 +77,7 @@
 <span></span>
 <span><span class="co"># Development version</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"s3rdia/qol"</span><span class="op">)</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"s3rdia/qol"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"s3rdia/qol"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="format-containers">Format Containers<a class="anchor" aria-label="anchor" href="#format-containers"></a>
@@ -198,7 +198,7 @@
 <p>You can also combine multiple tables in one workbook, each on a different sheet, and save the file, instead of just viewing it.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set output and style options globally</span></span>
-<span><span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>save_path  <span class="op">=</span> <span class="st">"C:/My_folder/"</span>,</span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>save_path  <span class="op">=</span> <span class="st">"C:/My_folder/"</span>,</span>
 <span>                  file       <span class="op">=</span> <span class="st">"My_workbook.xlsx"</span>,</span>
 <span>                  sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
 <span></span>
@@ -215,7 +215,7 @@
 <span>                     print      <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Set a new sheet name for the next table</span></span>
-<span><span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Pass on the workbook from before to the next any_table()</span></span>
 <span><span class="co"># print is now TRUE so the workbook will be saved.</span></span>
@@ -229,11 +229,11 @@
 <span>                     </span>
 <span><span class="co"># For safety set file back to NULL at the end. Otherwise the next any_table() will overwrite</span></span>
 <span><span class="co"># the existing file.</span></span>
-<span><span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/style_options.html">close_file</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>In case you have a good amount of tables, you want to combine in a single workbook, you can also catch the outputs and combine them afterwards in one go:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set output and style options globally</span></span>
-<span><span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Catch the output as shown before, but additionally use the option -&gt; output = "excel_nostyle".</span></span>
 <span><span class="co"># This skips the styling part, so that the function runs faster. The styling is done later on.</span></span>
@@ -248,13 +248,13 @@
 <span>                 output     <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now let's asume you create a bunch of different tables</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet2"</span><span class="op">)</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet2"</span><span class="op">)</span></span>
 <span><span class="va">tab2</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet3"</span><span class="op">)</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet3"</span><span class="op">)</span></span>
 <span><span class="va">tab3</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/qol_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet4"</span><span class="op">)</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet4"</span><span class="op">)</span></span>
 <span><span class="va">tab4</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">...</span></span>

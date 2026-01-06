@@ -8,12 +8,12 @@ export_with_style(
   data_frame,
   titles = c(),
   footnotes = c(),
-  var_labels = list(),
+  var_labels = .qol_options[["var_labels"]],
   workbook = NULL,
   style = .qol_options[["excel_style"]],
   output = "excel",
-  print = TRUE,
-  monitor = FALSE
+  print = .qol_options[["print"]],
+  monitor = .qol_options[["monitor"]]
 )
 }
 \arguments{

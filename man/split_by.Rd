@@ -4,7 +4,13 @@
 \alias{split_by}
 \title{Split Data Frame By Variable Expressions Or Condition}
 \usage{
-split_by(data_frame, ..., formats = list(), inverse = FALSE, monitor = FALSE)
+split_by(
+  data_frame,
+  ...,
+  formats = list(),
+  inverse = FALSE,
+  monitor = .qol_options[["monitor"]]
+)
 }
 \arguments{
 \item{data_frame}{A data frame which should be split up into multiple data frames.}

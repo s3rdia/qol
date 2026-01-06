@@ -106,6 +106,17 @@ reference:
   - set_style_options
   - reset_style_options
   - get_style_options
+  - close_file
+  - set_variable_labels
+  - get_variable_labels
+  - set_stat_labels
+  - get_stat_labels
+  - set_print
+  - get_print
+  - set_monitor
+  - get_monitor
+  - set_na.rm
+  - get_na.rm
 - title: Other
   contents:
   - build_master

@@ -4,7 +4,7 @@
 \alias{dummy_data}
 \title{Dummy Data}
 \usage{
-dummy_data(no_obs, monitor = FALSE)
+dummy_data(no_obs, monitor = .qol_options[["monitor"]])
 }
 \arguments{
 \item{no_obs}{Number of observations.}

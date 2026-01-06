@@ -20,6 +20,8 @@ New functions
 	* set_style_options(): Sets the options from excel_output_style() and number_format_style() to a global environment so that every function which is capable of outputting styled Excel workbooks can use them without passing the style parameter every time individually.
 	* get_style_options(): Print the currently set global options.
 	* reset_style_options(): Set global style options to default values of excel_output_style() and number_format_style().
+	* close_file(): A simple, more readable wrapper for setting file parameter to NULL.
+	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(): Additional global setters and getters.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -28,7 +30,9 @@ New functionality
 * dots_to_char(): Renamed from args_to_char() and is now able to get the original argument from up the environment tree and return it as character vector.
 * args_to_char(): Now converts the contents of a given argument to a character vector.
 * excel_output_style(): Parameter file is now split up into save_path and file (meaning just the file name + extension).
-* any_table(), frequencies(), crosstabs(), export_with_style(): The style parameter is now set to the new global styling options as default instead of excel_output_style() .
+* any_table(), frequencies(), crosstabs(), export_with_style(): The style parameter is now set to the new global styling options as default instead of excel_output_style().
+* any_table(), frequencies(), crosstabs(): The var_labels and stat_labels parameter is now set to the new global options as default.
+* In general: New global options for print, monitor and na.rm have been implemented into the functions capable of using them.
 
 Removed
 * split_by_var() and split_by_condition(): See comment under 'New functions'.
@@ -41,6 +45,7 @@ Fixed
 * any_table(): Fixed by variables could be sorted in the wrong order.
 * summarise_plus(): Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended.
 * handle_cell_styles(): Set apply_font and font_id in a save way to prevent warnings.
+* summarise_plus(): Removed conversion to numeric values before applying formats, which could lead to not matching formats, if a numeric value was intentionally stored as character value.
 
 Optimization
 * summarise_plus(): Now uses faster collapse::na_omit for NA removal.

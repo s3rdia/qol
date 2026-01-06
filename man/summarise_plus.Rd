@@ -14,8 +14,8 @@ summarise_plus(
   weight = NULL,
   nesting = "deepest",
   merge_back = FALSE,
-  na.rm = FALSE,
-  monitor = FALSE,
+  na.rm = .qol_options[["na.rm"]],
+  monitor = .qol_options[["monitor"]],
   notes = TRUE
 )
 }

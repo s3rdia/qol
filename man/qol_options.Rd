@@ -2,46 +2,72 @@
 % Please edit documentation in R/options.R
 \name{qol_options}
 \alias{qol_options}
-\alias{set_style_options}
-\alias{reset_style_options}
-\alias{get_style_options}
-\title{Set Global Styling Options For Excel Workbooks}
+\alias{set_print}
+\alias{get_print}
+\alias{set_monitor}
+\alias{get_monitor}
+\alias{set_na.rm}
+\alias{get_na.rm}
+\title{Set Global Print Option}
 \usage{
-set_style_options(...)
+set_print(...)
 
-reset_style_options()
+get_print()
 
-get_style_options()
+set_monitor(...)
+
+get_monitor()
+
+set_na.rm(...)
+
+get_na.rm()
 }
 \arguments{
-\item{...}{Put in any styling option from \code{\link[=excel_output_style]{excel_output_style()}} or \code{\link[=number_format_style]{number_format_style()}}
-with the new value.}
+\item{...}{Put in TRUE or FALSE to activate or deactivate the option.}
 }
 \value{
-\code{\link[=set_style_options]{set_style_options()}}: Returns modified global styling options.
+\code{\link[=set_print]{set_print()}}: Changed global print option.
 
-\code{\link[=reset_style_options]{reset_style_options()}}: Returns default global styling options.
+\code{\link[=get_print]{get_print()}}: TRUE or FALSE.
 
-\code{\link[=get_style_options]{get_style_options()}}: Printed output.
+\code{\link[=set_monitor]{set_monitor()}}: Changed global monitor option.
+
+\code{\link[=get_monitor]{get_monitor()}}: TRUE or FALSE.
+
+\code{\link[=set_na.rm]{set_na.rm()}}: Changed global na.rm option.
+
+\code{\link[=get_na.rm]{get_na.rm()}}: TRUE or FALSE.
 }
 \description{
-Modify Styling options for Excel workbooks. Available parameters can be seen in
-\code{\link[=excel_output_style]{excel_output_style()}} or \code{\link[=number_format_style]{number_format_style()}}.
+\code{\link[=set_print]{set_print()}}: Set the print option globally for the tabulation and export to
+Excel functions.
 
-\code{\link[=set_style_options]{set_style_options()}} sets the styling options for Excel workbooks globally.These
-options are used by all tabulation and output functions, which are capable of
-exporting styled outputs.
+\code{\link[=get_print]{get_print()}}: Get the globally stored print option.
 
-\code{\link[=reset_style_options]{reset_style_options()}} resets global style options to the default parameters.
+\code{\link[=set_monitor]{set_monitor()}}: Set the monitor option globally for the heavier functions which are
+able to show how they work internally.
 
-\code{\link[=get_style_options]{get_style_options()}} prints out the currently set global styling options.
+\code{\link[=get_monitor]{get_monitor()}}: Get the globally stored monitor option.
+
+\code{\link[=set_na.rm]{set_na.rm()}}: Set the na.rm option globally for each function which can remove
+NA values.
+
+\code{\link[=get_na.rm]{get_na.rm()}}: Get the globally stored na.rm option.
 }
 \examples{
-set_style_options(save_path    = "C:/My Projects/",
-                  sum_decimals = 8)
+set_print(FALSE)
+set_print(TRUE)
 
-reset_style_options()
+get_print()
 
-get_style_options()
+set_monitor(TRUE)
+set_monitor(FALSE)
+
+get_monitor()
+
+set_na.rm(TRUE)
+set_na.rm(FALSE)
+
+get_na.rm()
 
 }

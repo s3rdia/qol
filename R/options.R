@@ -1,6 +1,6 @@
 #' Set Global Styling Options For Excel Workbooks
 #'
-#' @name qol_options
+#' @name style_options
 #'
 #' @description
 #' Modify Styling options for Excel workbooks. Available parameters can be seen in
@@ -16,11 +16,17 @@
 #' @return
 #' [set_style_options()]: Returns modified global styling options.
 #'
+#' @seealso
+#' Functions that use global styling optionss: [any_table()], [frequencies()],
+#' [crosstabs()].
+#'
+#' Functions that also use global variable labels: [export_with_style()].
+#'
 #' @examples
 #' set_style_options(save_path    = "C:/My Projects/",
 #'                   sum_decimals = 8)
 #'
-#' @rdname qol_options
+#' @rdname style_options
 #'
 #' @export
 set_style_options <- function(...){
@@ -127,13 +133,15 @@ set_style_options <- function(...){
 #' @examples
 #' reset_style_options()
 #'
-#' @rdname qol_options
+#' @rdname style_options
 #'
 #' @export
 reset_style_options <- function(){
     .qol_options[["excel_style"]] <- excel_output_style()
+    .qol_options[["var_labels"]]  <- list()
+    .qol_options[["stat_labels"]] <- list()
 
-    invisible(.qol_options[["excel_style"]])
+    invisible(.qol_options)
 }
 
 
@@ -143,14 +151,373 @@ reset_style_options <- function(){
 #' [get_style_options()] prints out the currently set global styling options.
 #'
 #' @return
-#' [get_style_options()]: Printed output.
+#' [get_style_options()]: List of global styling options.
 #'
 #' @examples
 #' get_style_options()
 #'
-#' @rdname qol_options
+#' @rdname style_options
 #'
 #' @export
 get_style_options <- function(){
-    print(.qol_options[["excel_style"]])
+    .qol_options[["excel_style"]]
+}
+
+
+#' Set File To NULL In Global Styling Options For Excel Workbooks
+#'
+#' @description
+#' [close_file()] is a simple, more readable wrapper for setting file parameter to NULL.
+#'
+#' @return
+#' [close_file()]: List of global styling options with file = NULL.
+#'
+#' @examples
+#' close_file()
+#'
+#' @rdname style_options
+#'
+#' @export
+close_file <- function(){
+    .qol_options[["excel_style"]][["file"]] <- NULL
+
+    invisible(.qol_options[["excel_style"]][["file"]])
+}
+
+
+#' Set Global Variable Labels
+#'
+#' @description
+#' [set_variable_labels()]: Can set variable labels globally so that they don't
+#' have to be provided in every output function separately.
+#'
+#' @return
+#' [set_variable_labels()]: List of variable labels.
+#'
+#' @seealso
+#' Functions that use global variable and statistic labels: [any_table()], [frequencies()],
+#' [crosstabs()].
+#'
+#' Functions that also use global variable labels: [export_with_style()].
+#'
+#' @examples
+#' set_variable_labels(age_gr = "Group of ages",
+#'                     status = "Current status")
+#'
+#' @rdname style_options
+#'
+#' @export
+set_variable_labels <- function(...){
+    # Translate ... into a list if possible
+    label_list <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(label_list)){
+        message(" X ERROR: Unknown object found. Global style remains unchanged.")
+        return(invisible(.qol_options[["var_labels"]]))
+    }
+
+    if (length(label_list) == 0){
+        message(" X ERROR: Empty list found. Global style remains unchanged.")
+        return(invisible(.qol_options[["var_labels"]]))
+    }
+
+    .qol_options[["var_labels"]] <- label_list
+
+    invisible(.qol_options[["var_labels"]])
+}
+
+
+#' Get Global Variable Labels
+#'
+#' @description
+#' [get_variable_labels()]: Get the globally stored variable labels.
+#'
+#' @return
+#' [get_variable_labels()]: List of variable labels.
+#'
+#' @examples
+#' get_variable_labels()
+#'
+#' @rdname style_options
+#'
+#' @export
+get_variable_labels <- function(){
+    .qol_options[["var_labels"]]
+}
+
+
+#' Set Global Statistic Labels
+#'
+#' @description
+#' [set_stat_labels()]: Can set statistic labels globally so that they don't
+#' have to be provided in every output function separately.
+#'
+#' @return
+#' [set_stat_labels()]: List of statistic labels.
+#'
+#' @examples
+#' set_stat_labels(pct  = "%",
+#'                 freq = "Count")
+#'
+#' @rdname style_options
+#'
+#' @export
+set_stat_labels <- function(...){
+    # Translate ... into a list if possible
+    statistic_list <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(statistic_list)){
+        message(" X ERROR: Unknown object found. Global style remains unchanged.")
+        return(invisible(.qol_options[["stat_labels"]]))
+    }
+
+    if (length(statistic_list) == 0){
+        message(" X ERROR: Empty list found. Global style remains unchanged.")
+        return(invisible(.qol_options[["stat_labels"]]))
+    }
+
+    .qol_options[["stat_labels"]] <- statistic_list
+
+    invisible(.qol_options[["stat_labels"]])
+}
+
+
+#' Get Global Statistic Labels
+#'
+#' @description
+#' [get_stat_labels()]: Get the globally stored statistic labels.
+#'
+#' @return
+#' [get_stat_labels()]: List of statistic labels.
+#'
+#' @examples
+#' get_stat_labels()
+#'
+#' @rdname style_options
+#'
+#' @export
+get_stat_labels <- function(){
+    .qol_options[["stat_labels"]]
+}
+
+
+#' Set Global Print Option
+#'
+#' @name qol_options
+#'
+#' @description
+#' [set_print()]: Set the print option globally for the tabulation and export to
+#' Excel functions.
+#'
+#' @param ... Put in TRUE or FALSE to activate or deactivate the option.
+#'
+#' @return
+#' [set_print()]: Changed global print option.
+#'
+#' @examples
+#' set_print(FALSE)
+#' set_print(TRUE)
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_print <- function(...){
+    # Translate ... into a list if possible
+    print_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(print_option)){
+        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        return(invisible(.qol_options[["print"]]))
+    }
+
+    if (!is.logical(print_option)){
+        message(" X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.")
+        return(invisible(.qol_options[["print"]]))
+    }
+
+    .qol_options[["print"]] <- print_option
+
+    invisible(.qol_options[["print"]])
+}
+
+
+#' Get Global Print Option
+#'
+#' @description
+#' [get_print()]: Get the globally stored print option.
+#'
+#' @return
+#' [get_print()]: TRUE or FALSE.
+#'
+#' @examples
+#' get_print()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_print <- function(){
+    .qol_options[["print"]]
+}
+
+
+#' Set Global Monitor Option
+#'
+#' @description
+#' [set_monitor()]: Set the monitor option globally for the heavier functions which are
+#' able to show how they work internally.
+#'
+#' @return
+#' [set_monitor()]: Changed global monitor option.
+#'
+#' @examples
+#' set_monitor(TRUE)
+#' set_monitor(FALSE)
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_monitor <- function(...){
+    # Translate ... into a list if possible
+    monitor_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(monitor_option)){
+        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        return(invisible(.qol_options[["monitor"]]))
+    }
+
+    if (!is.logical(monitor_option)){
+        message(" X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
+        return(invisible(.qol_options[["monitor"]]))
+    }
+
+    .qol_options[["monitor"]] <- monitor_option
+
+    invisible(.qol_options[["monitor"]])
+}
+
+
+#' Get Global Monitor Option
+#'
+#' @description
+#' [get_monitor()]: Get the globally stored monitor option.
+#'
+#' @return
+#' [get_monitor()]: TRUE or FALSE.
+#'
+#' @examples
+#' get_monitor()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_monitor <- function(){
+    .qol_options[["monitor"]]
+}
+
+
+#' Set Global NA Removal Option
+#'
+#' @description
+#' [set_na.rm()]: Set the na.rm option globally for each function which can remove
+#' NA values.
+#'
+#' @return
+#' [set_na.rm()]: Changed global na.rm option.
+#'
+#' @examples
+#' set_na.rm(TRUE)
+#' set_na.rm(FALSE)
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_na.rm <- function(...){
+    # Translate ... into a list if possible
+    na_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(na_option)){
+        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        return(invisible(.qol_options[["na.rm"]]))
+    }
+
+    if (!is.logical(na_option)){
+        message(" X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
+        return(invisible(.qol_options[["na.rm"]]))
+    }
+
+    .qol_options[["na.rm"]] <- na_option
+
+    invisible(.qol_options[["na.rm"]])
+}
+
+
+#' Get Global NA Removal Option
+#'
+#' @description
+#' [get_na.rm()]: Get the globally stored na.rm option.
+#'
+#' @return
+#' [get_na.rm()]: TRUE or FALSE.
+#'
+#' @examples
+#' get_na.rm()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_na.rm <- function(){
+    .qol_options[["na.rm"]]
+}
+
+
+#' Reset Global Options
+#'
+#' @description
+#' [reset_qol_options()] resets global options to the default parameters.
+#'
+#' @return
+#' [reset_qol_options()]: Returns default global options.
+#'
+#' @examples
+#' reset_qol_options()
+#'
+#' @rdname style_options
+#'
+#' @export
+reset_qol_options <- function(){
+    .qol_options[["print"]]   <- TRUE
+    .qol_options[["monitor"]] <- FALSE
+    .qol_options[["na.rm"]]   <- FALSE
+
+    invisible(.qol_options)
 }

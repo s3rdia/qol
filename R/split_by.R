@@ -73,7 +73,7 @@ split_by <- function(data_frame,
                      ...,
                      formats = list(),
                      inverse = FALSE,
-                     monitor = FALSE){
+                     monitor = .qol_options[["monitor"]]){
     # Measure the time
     start_time <- Sys.time()
 

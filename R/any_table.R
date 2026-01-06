@@ -287,15 +287,15 @@ any_table <- function(data_frame,
                       order_by       = "stats",
                       titles         = c(),
                       footnotes      = c(),
-                      var_labels     = list(),
+                      var_labels     = .qol_options[["var_labels"]],
                       stat_labels    = list(),
                       box            = "",
                       workbook       = NULL,
                       style          = .qol_options[["excel_style"]],
                       output         = "excel",
-                      na.rm          = FALSE,
-                      print          = TRUE,
-                      monitor        = FALSE){
+                      na.rm          = .qol_options[["na.rm"]],
+                      print          = .qol_options[["print"]],
+                      monitor        = .qol_options[["monitor"]]){
 
     # Measure the time
     start_time <- Sys.time()
