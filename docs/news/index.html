@@ -49,7 +49,7 @@
 <li>
 <code><a href="../reference/sort_plus.html">sort_plus()</a></code>: Sort data frame observations with some additions. (27.12.2025)</li>
 <li>
-<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> didn’t have any benefit, <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code>split_by_var()</code> didn’t have any benefit, <code>split_by_var()</code> and <code>split_by_condition()</code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 <li>
 <code><a href="../reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
 <li>Error handling functions:
@@ -68,6 +68,14 @@
 <code><a href="../reference/retain.html">retain_variables()</a></code>: Order variables to the front or back of a data frame. Can also add empty variables. (04.01.2026)</li>
 <li>
 <code><a href="../reference/add_variable_range.html">add_variable_range()</a></code>: Add empty variables to a data frame in the provided range. (04.01.2026)</li>
+<li>Global style options:
+<ul><li>
+<code><a href="../reference/qol_options.html">set_style_options()</a></code>: Sets the options from <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code> and <code><a href="../reference/number_format_style.html">number_format_style()</a></code> to a global environment so that every function which is capable of outputting styled Excel workbooks can use them without passing the <code>style</code> parameter every time individually. (06.01.2026)</li>
+<li>
+<code><a href="../reference/qol_options.html">get_style_options()</a></code>: Print the currently set global options. (06.01.2026)</li>
+<li>
+<code><a href="../reference/qol_options.html">reset_style_options()</a></code>: Set global style options to default values of <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code> and <code><a href="../reference/number_format_style.html">number_format_style()</a></code>. (06.01.2026)</li>
+</ul></li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
@@ -81,13 +89,17 @@
 <code><a href="../reference/convert_arguments.html">dots_to_char()</a></code>: Renamed from <code><a href="../reference/convert_arguments.html">args_to_char()</a></code> and is now able to get the original argument from up the environment tree and return it as character vector. (02.01.2026)</li>
 <li>
 <code><a href="../reference/convert_arguments.html">args_to_char()</a></code>: Now converts the contents of a given argument to a character vector. (02.01.2026)</li>
+<li>
+<code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: Parameter <code>file</code> is now split up into <code>save_path</code> and <code>file</code> (meaning just the file name + extension). (06.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: The <code>style</code> parameter is now set to the new global styling options as default instead of <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>. (06.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
 <ul><li>
-<code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code>: See comment under ‘New functions’. (30.12.2025)</li>
+<code>split_by_var()</code> and <code>split_by_condition()</code>: See comment under ‘New functions’. (30.12.2025)</li>
 <li>
-<code><a href="https://rdrr.io/pkg/qol/man/convert_numeric.html" class="external-link">is_numeric()</a></code>: There was simply no benefit. (02.01.2026)</li>
+<code>is_numeric()</code>: There was simply no benefit. (02.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-0"></a></h4>
@@ -105,6 +117,8 @@
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: ‘formats’ parameter was missing a ‘=’ in examples. (02.01.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Group percentages with nesting = “all” or “single” and na.rm = TRUE are now computed as intended. (02.01.2026)</li>
+<li>
+<code>handle_cell_styles()</code>: Set apply_font and font_id in a save way to prevent warnings. (04.01.2026, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-0"></a></h4>

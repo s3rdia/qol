@@ -164,45 +164,47 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
 You can also combine multiple tables in one workbook, each on a different sheet, and save the file, instead of just viewing it.
 
 ```{r save_file, eval = FALSE}
-my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
+# Set output and style options globally
+set_style_options(save_path  = "C:/My_folder/",
+                  file       = "My_workbook.xlsx",
+                  sheet_name = "age_sex")
 
 # Capture the output of any_table() to get a list which contains the data frame
 # as well as the formatted workbook.
-# Note: You can set print to FALSE to prevent the workbook from opening.
+# Note: Set print to FALSE to prevent the workbook from being saved to early.
 result_list <- my_data |>
            any_table(rows       = c("age"),
                      columns    = c("sex"),
                      values     = weight,
                      statistics = c("sum"),
                      formats    = list(sex = sex., age = age.),
-                     style      = my_style,
                      na.rm      = TRUE,
                      print      = FALSE)
 
-# Set a new sheet name and define where the final workbook should be saved
-my_style <- my_style |> modify_output_style(sheet_name = "edu_year",
-                                            file       = "C:/My_folder/My_workbook.xlsx")
+# Set a new sheet name for the next table
+set_style_options(sheet_name = "edu_year")
 
 # Pass on the workbook from before to the next any_table()
+# print is now TRUE so the workbook will be saved.
 my_data |> any_table(workbook   = result_list[["workbook"]],
                      rows       = c("education"),
                      columns    = c("year"),
                      values     = weight,
                      statistics = c("pct_group"),
                      formats    = list(education = education.),
-                     style      = my_style,
                      na.rm      = TRUE)
 					 
 # For safety set file back to NULL at the end. Otherwise the next any_table() will overwrite
 # the existing file.
-my_style <- my_style |> modify_output_style(file = NULL)
+set_style_options(file = NULL)
 ```
 
 
 In case you have a good amount of tables, you want to combine in a single workbook, you can also catch the outputs and combine them afterwards in one go:
 
 ```{r combine_file, eval = FALSE}
-my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
+# Set output and style options globally
+set_style_options(sheet_name = "age_sex")
 
 # Catch the output as shown before, but additionally use the option -> output = "excel_nostyle".
 # This skips the styling part, so that the function runs faster. The styling is done later on.
@@ -212,19 +214,18 @@ tab1 <- my_data |>
                  values     = weight,
                  statistics = c("sum"),
                  formats    = list(sex = sex., age = age.),
-                 style      = my_style,
                  na.rm      = TRUE,
                  print      = FALSE,
                  output     = "excel_nostyle")
 
 # Now let's asume you create a bunch of different tables
-my_style <- my_style |> modify_output_style(sheet_name = "sheet2")
+my_style <- my_style |> set_style_options(sheet_name = "sheet2")
 tab2     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> modify_output_style(sheet_name = "sheet3")
+my_style <- my_style |> set_style_options(sheet_name = "sheet3")
 tab3     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> modify_output_style(sheet_name = "sheet4")
+my_style <- my_style |> set_style_options(sheet_name = "sheet4")
 tab4     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
 ...

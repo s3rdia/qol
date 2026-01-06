@@ -1,12 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://s3rdia.github.io/qol/404.html</loc></url>
-<url><loc>https://s3rdia.github.io/qol/articles/further_compare.html</loc></url>
-<url><loc>https://s3rdia.github.io/qol/articles/index.html</loc></url>
-<url><loc>https://s3rdia.github.io/qol/articles/SAS_compare.html</loc></url>
-<url><loc>https://s3rdia.github.io/qol/authors.html</loc></url>
-<url><loc>https://s3rdia.github.io/qol/index.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/LICENSE-text.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/LICENSE.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/articles/SAS_compare.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/articles/further_compare.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/articles/index.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/authors.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/index.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/news/index.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/add_extension.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/add_variable_range.html</loc></url>
@@ -38,6 +38,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/multi_join.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/number_format_style.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/qol-package.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/qol_options.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/recode.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/remove_stat_extension.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/rename_multi.html</loc></url>
