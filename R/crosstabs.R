@@ -133,7 +133,7 @@ crosstabs <- function(data_frame,
                       weight     = NULL,
                       titles     = c(),
                       footnotes  = c(),
-                      style      = excel_output_style(),
+                      style      = .qol_options[["excel_style"]],
                       output     = "console",
                       na.rm      = FALSE,
                       print      = TRUE,
@@ -429,13 +429,13 @@ crosstabs <- function(data_frame,
             file.show(temp_file)
         }
         else if (output == "excel" || output == "excel_nostyle"){
-            if (is.null(style[["file"]])){
+            if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
                 if(interactive()){
                     wb$open()
                 }
             }
             else{
-                wb$save(file = style[["file"]], overwrite = TRUE)
+                wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
             }
         }
     }

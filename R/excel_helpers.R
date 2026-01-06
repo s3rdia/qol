@@ -828,24 +828,24 @@ handle_cell_styles <- function(wb,
     for (type in c("header", "box", "cat_col", "table")){
 
         apply_font <- NULL
-        font_id <- NULL
+        font_id    <- NULL
         if (paste0(type, "_font") %in% wb$styles_mgr$font$name) {
             apply_font <- TRUE
-            font_id <- wb$styles_mgr$get_font_id(paste0(type, "_font"))
+            font_id    <- wb$styles_mgr$get_font_id(paste0(type, "_font"))
         }
 
         apply_border <- NULL
-        border_id <- NULL
+        border_id    <- NULL
         if (paste0(type, "_borders") %in% wb$styles_mgr$border$name) {
             apply_border <- TRUE
-            border_id <- wb$styles_mgr$get_border_id(paste0(type, "_borders"))
+            border_id    <- wb$styles_mgr$get_border_id(paste0(type, "_borders"))
         }
 
         apply_fill <- NULL
-        fill_id <- NULL
+        fill_id    <- NULL
         if (paste0(type, "_fill") %in% wb$styles_mgr$fill$name) {
             apply_fill <- TRUE
-            fill_id <- wb$styles_mgr$get_fill_id(paste0(type, "_fill"))
+            fill_id    <- wb$styles_mgr$get_fill_id(paste0(type, "_fill"))
         }
 
         wb$add_cell_style(dims         = ranges[[paste0(type, "_range")]],
@@ -1300,8 +1300,8 @@ fill_or_trim <- function(format_vector,
 #' Set different options which define the visual output of 'Excel' tables produced
 #' by [frequencies()], [crosstabs()] and [any_table()].
 #'
-#' @param file If NULL, opens the output as temporary file. If a filename with path
-#' is specified, saves the output to the specified path.
+#' @param save_path If NULL, opens the output as temporary file. Otherwise specify an output path.
+#' @param file If NULL, opens the output as temporary file. Otherwise specify a filename with extension.
 #' @param sheet_name Name of the sheet inside the workbook to which the output shall be written.
 #' If multiple outputs are produced in one go, the sheet name additionally receives a running number.
 #' @param font Set the font to be used for the entire output.
@@ -1406,7 +1406,8 @@ fill_or_trim <- function(format_vector,
 #' excel_style <- excel_output_style(table_back_color = "")
 #'
 #' @export
-excel_output_style <- function(file                 = NULL,
+excel_output_style <- function(save_path			= NULL,
+							   file                 = NULL,
                                sheet_name           = "Table",
                                font                 = "Arial",
                                column_widths        = "auto",

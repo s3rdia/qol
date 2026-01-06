@@ -14,7 +14,7 @@ crosstabs(
   weight = NULL,
   titles = c(),
   footnotes = c(),
-  style = excel_output_style(),
+  style = .qol_options[["excel_style"]],
   output = "console",
   na.rm = FALSE,
   print = TRUE,

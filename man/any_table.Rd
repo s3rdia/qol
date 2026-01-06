@@ -22,7 +22,7 @@ any_table(
   stat_labels = list(),
   box = "",
   workbook = NULL,
-  style = excel_output_style(),
+  style = .qol_options[["excel_style"]],
   output = "excel",
   na.rm = FALSE,
   print = TRUE,

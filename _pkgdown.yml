@@ -101,6 +101,11 @@ reference:
   - part_of_df
   - remove_doubled_values
   - check_weight
+- title: Global Options
+  contents:
+  - set_style_options
+  - reset_style_options
+  - get_style_options
 - title: Other
   contents:
   - build_master

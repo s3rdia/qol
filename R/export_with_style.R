@@ -64,7 +64,7 @@ export_with_style <- function(data_frame,
                               footnotes  = c(),
                               var_labels = list(),
                               workbook   = NULL,
-                              style      = excel_output_style(),
+                              style      = .qol_options[["excel_style"]],
                               output     = "excel",
                               print      = TRUE,
                               monitor    = FALSE){
@@ -108,13 +108,13 @@ export_with_style <- function(data_frame,
         #---------------------------------------------------------------------#
         message(" > Output")
 
-        if (is.null(style[["file"]])){
+        if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
             if(interactive()){
                 wb$open()
             }
         }
         else{
-            wb$save(file = style[["file"]], overwrite = TRUE)
+            wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
         }
     }
 

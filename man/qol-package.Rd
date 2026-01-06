@@ -69,6 +69,8 @@ Split data frame: \link{split_by}
 
 Error handling: \code{\link[=resolve_intersection]{resolve_intersection()}}, \code{\link[=part_of_df]{part_of_df()}}, \code{\link[=remove_doubled_values]{remove_doubled_values()}}, \code{\link[=check_weight]{check_weight()}}
 
+Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=reset_style_options]{reset_style_options()}}, \code{\link[=get_style_options]{get_style_options()}}
+
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}
 }
 

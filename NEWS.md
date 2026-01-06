@@ -15,6 +15,10 @@
 * `rename_multi()`: Rename one or more variables. (02.01.2026)
 * `retain_variables()`: Order variables to the front or back of a data frame. Can also add empty variables. (04.01.2026)
 * `add_variable_range()`: Add empty variables to a data frame in the provided range. (04.01.2026)
+* Global style options:
+	* `set_style_options()`: Sets the options from `excel_output_style()` and `number_format_style()` to a global environment so that every function which is capable of outputting styled Excel workbooks can use them without passing the `style` parameter every time individually. (06.01.2026)
+	* `get_style_options()`: Print the currently set global options. (06.01.2026)
+	* `reset_style_options()`: Set global style options to default values of `excel_output_style()` and `number_format_style()`. (06.01.2026)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
@@ -22,6 +26,8 @@
 * `any_table()`: Removed `pre_summed` parameter. Instead the function now checks on it's own, whether the provided data frame is pre summarised or not. (23.12.2025)
 * `dots_to_char()`: Renamed from `args_to_char()` and is now able to get the original argument from up the environment tree and return it as character vector. (02.01.2026)
 * `args_to_char()`: Now converts the contents of a given argument to a character vector. (02.01.2026)
+* `excel_output_style()`: Parameter `file` is now split up into `save_path` and `file` (meaning just the file name + extension). (06.01.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The `style` parameter is now set to the new global styling options as default instead of `excel_output_style()`. (06.01.2026)
 
 ### Removed
 * `split_by_var()` and `split_by_condition()`: See comment under 'New functions'. (30.12.2025)
@@ -35,6 +41,7 @@
 * `any_table()`: Added missing format for variable 'state' in examples. (02.01.2026)
 * `frequencies()`: 'formats' parameter was missing a '=' in examples. (02.01.2026)
 * `summarise_plus()`: Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended. (02.01.2026)
+* `handle_cell_styles()`: Set apply_font and font_id in a save way to prevent warnings. (04.01.2026, thanks to @JanMarvin)
 
 ### Optimization
 * `summarise_plus()`: Now uses faster `collapse::na_omit` for NA removal. (27.12.2025)

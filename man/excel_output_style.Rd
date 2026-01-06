@@ -5,6 +5,7 @@
 \title{Style for 'Excel' Table Outputs}
 \usage{
 excel_output_style(
+  save_path = NULL,
   file = NULL,
   sheet_name = "Table",
   font = "Arial",
@@ -68,8 +69,9 @@ excel_output_style(
 )
 }
 \arguments{
-\item{file}{If NULL, opens the output as temporary file. If a filename with path
-is specified, saves the output to the specified path.}
+\item{save_path}{If NULL, opens the output as temporary file. Otherwise specify an output path.}
+
+\item{file}{If NULL, opens the output as temporary file. Otherwise specify a filename with extension.}
 
 \item{sheet_name}{Name of the sheet inside the workbook to which the output shall be written.
 If multiple outputs are produced in one go, the sheet name additionally receives a running number.}

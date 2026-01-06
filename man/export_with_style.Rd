@@ -10,7 +10,7 @@ export_with_style(
   footnotes = c(),
   var_labels = list(),
   workbook = NULL,
-  style = excel_output_style(),
+  style = .qol_options[["excel_style"]],
   output = "excel",
   print = TRUE,
   monitor = FALSE

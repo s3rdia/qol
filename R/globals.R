@@ -15,3 +15,8 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                           "    and produce bigger and more complex outputs in less time with less code.\n",
                           "    -> Use ?qol to get an overview.")
 }
+
+
+# Internal environment to store global options
+.qol_options <- new.env(parent = emptyenv())
+.qol_options[["excel_style"]] <- excel_output_style()

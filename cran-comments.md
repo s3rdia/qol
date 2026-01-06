@@ -16,6 +16,10 @@ New functions
 * rename_multi(): Rename one or more variables.
 * retain_variables(): Order variables to the front or back of a data frame. Can also add empty variables.
 * add_variable_range(): Add empty variables to a data frame in the provided range.
+* Global style options:
+	* set_style_options(): Sets the options from excel_output_style() and number_format_style() to a global environment so that every function which is capable of outputting styled Excel workbooks can use them without passing the style parameter every time individually.
+	* get_style_options(): Print the currently set global options.
+	* reset_style_options(): Set global style options to default values of excel_output_style() and number_format_style().
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -23,6 +27,8 @@ New functionality
 * any_table(): Removed pre_summed parameter. Instead the function now checks on it's own, whether the provided data frame is pre summarised or not.
 * dots_to_char(): Renamed from args_to_char() and is now able to get the original argument from up the environment tree and return it as character vector.
 * args_to_char(): Now converts the contents of a given argument to a character vector.
+* excel_output_style(): Parameter file is now split up into save_path and file (meaning just the file name + extension).
+* any_table(), frequencies(), crosstabs(), export_with_style(): The style parameter is now set to the new global styling options as default instead of excel_output_style() .
 
 Removed
 * split_by_var() and split_by_condition(): See comment under 'New functions'.
@@ -33,10 +39,11 @@ Fixed
 * any_table(): Now checks if a column combination is also part of the row combinations.
 * any_table(): Fixed row header variables where sorted alphabetically instead of in provided order. Bug was introduced in version 1.1.1.
 * any_table(): Fixed by variables could be sorted in the wrong order.
-* summarise_plus(): Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended. 
+* summarise_plus(): Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended.
+* handle_cell_styles(): Set apply_font and font_id in a save way to prevent warnings.
 
 Optimization
-* summarise_plus(): Now uses faster `collapse::na_omit` for NA removal.
+* summarise_plus(): Now uses faster collapse::na_omit for NA removal.
 * dummy_data(): Optimized and now just takes half the time to generate data.
 * summarise_plus(): Swapped in more collapse functions. Turned off sorting of "collapse::GRP" when using the shortcut route.
 * apply_formats(): NA value subsetting is now only done once and not twice with interval formats. "data.table::setkey" is now only called on the format data frame.

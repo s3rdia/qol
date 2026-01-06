@@ -61,6 +61,8 @@
 #'
 #' Error handling: [resolve_intersection()], [part_of_df()], [remove_doubled_values()], [check_weight()]
 #'
+#' Global options: [set_style_options()], [reset_style_options()], [get_style_options()]
+#'
 #' Other: [build_master()], [build_rstheme()]
 #'
 #' @section Snippets:
