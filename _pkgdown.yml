@@ -80,10 +80,15 @@ reference:
   - get_origin_as_char
   - convert_numeric
   - convert_factor
-- title: Small Helpers
+- title: Loading
   contents:
   - libname
   - set
+- title: Reporting
+  contents:
+  - content_report
+- title: Small Helpers
+  contents:
   - inverse
   - setcolorder_by_pattern
   - drop_type_vars
@@ -92,6 +97,7 @@ reference:
   - replace_except
   - replace_except
   - add_variable_range
+  - get_integer_length
 - title: Split Data Frame
   contents:
   - split_by

@@ -19,7 +19,7 @@ any_table(
   titles = c(),
   footnotes = c(),
   var_labels = .qol_options[["var_labels"]],
-  stat_labels = list(),
+  stat_labels = .qol_options[["stat_labels"]],
   box = "",
   workbook = NULL,
   style = .qol_options[["excel_style"]],

@@ -54,8 +54,12 @@
 #'
 #' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()]
 #'
-#' Small helpers: [libname()], [set()], [setcolorder_by_pattern()], [drop_type_vars()],
-#' [fuse_variables()], [get_excel_range()]
+#' Loading: [libname()], [set()]
+#'
+#' Reporting: [content_report()]
+#'
+#' Small helpers: [setcolorder_by_pattern()], [drop_type_vars()],
+#' [fuse_variables()], [get_excel_range()], [get_integer_length()]
 #'
 #' Split data frame: [split_by]
 #'

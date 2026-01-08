@@ -108,13 +108,25 @@ export_with_style <- function(data_frame,
         #---------------------------------------------------------------------#
         message(" > Output")
 
+        # If no save path or file provided just open workbook
         if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
             if(interactive()){
                 wb$open()
             }
         }
         else{
-            wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+            # If no save path or file provided just open workbook
+            if (!file.exists(style[["save_path"]])){
+                message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+
+                if(interactive()){
+                    wb$open()
+                }
+            }
+            # Save file
+            else{
+                wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+            }
         }
     }
 

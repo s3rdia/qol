@@ -288,7 +288,7 @@ any_table <- function(data_frame,
                       titles         = c(),
                       footnotes      = c(),
                       var_labels     = .qol_options[["var_labels"]],
-                      stat_labels    = list(),
+                      stat_labels    = .qol_options[["stat_labels"]],
                       box            = "",
                       workbook       = NULL,
                       style          = .qol_options[["excel_style"]],
@@ -1263,13 +1263,25 @@ any_table <- function(data_frame,
     if (print){
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
+        # If no save path or file provided just open workbook
         if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
             if(interactive()){
                 wb$open()
             }
         }
         else{
-            wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+            # If save path doesn't exist, just open workbook
+            if (!file.exists(style[["save_path"]])){
+                message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+
+                if(interactive()){
+                    wb$open()
+                }
+            }
+            # Save file
+            else{
+                wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+            }
         }
     }
 

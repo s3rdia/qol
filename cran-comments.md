@@ -22,6 +22,7 @@ New functions
 	* reset_style_options(): Set global style options to default values of excel_output_style() and number_format_style().
 	* close_file(): A simple, more readable wrapper for setting file parameter to NULL.
 	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(): Additional global setters and getters.
+* content_report(): Collects and prints global and per variable information about the provided data frame.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -62,6 +63,7 @@ New Error Checks
 * summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
 * summarise_plus() and any_table(): Added an error check in case an invalid type is provided.
 * recode_multi(): Added an error check in case an unknown object is provided.
+* any_table(), frequencies(), crosstabs(), export_with_style(): Added check if specified save path exists.
 
 Additionally
 * any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.

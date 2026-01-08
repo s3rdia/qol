@@ -62,8 +62,12 @@ Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
 Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
 
-Small helpers: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
-\code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}
+Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}
+
+Reporting: \code{\link[=content_report]{content_report()}}
+
+Small helpers: \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}},
+\code{\link[=fuse_variables]{fuse_variables()}}, \code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=get_integer_length]{get_integer_length()}}
 
 Split data frame: \link{split_by}
 

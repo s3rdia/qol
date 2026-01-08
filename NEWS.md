@@ -21,6 +21,7 @@
 	* `reset_style_options()`: Set global style options to default values of `excel_output_style()` and `number_format_style()`. (06.01.2026)
 	* `close_file()`: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)
 	* `set_variable_labels()`, `get_variable_labels()`, `set_statistic_labels()`, `get_statistic_labels()`, `set_print()`, `get_print()`, `set_monitor()`, `get_monitor()`, `set_na.rm()`, `get_na.rm()`: Additional global setters and getters. (07.01.2026)
+* `content_report()`: Collects and prints global and per variable information about the provided data frame. (08.01.2026)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
@@ -63,6 +64,7 @@
 * `summarise_plus()` and `any_table()`: Added an error check in case an invalid statistic is provided. (29.12.2025)
 * `summarise_plus()` and `any_table()`: Added an error check in case an invalid type is provided. (02.01.2026)
 * `recode_multi()`: Added an error check in case an unknown object is provided. (02.01.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added check if specified save path exists. (08.01.2026)
 
 ### Additionally
 * Restructured some "Small Helpers" into "Renaming" and "Variable Selection". (21.12.2025)

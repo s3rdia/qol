@@ -388,19 +388,32 @@ frequencies <- function(data_frame,
         if (output %in% c("console")){
             cat(paste(complete_table, collapse = "\n"), "\n\n")
         }
+        # Open in text editor
         else if (output == "text"){
             temp_file <- tempfile(fileext = ".txt")
             writeLines(complete_table, temp_file)
             file.show(temp_file)
         }
         else if (output == "excel" || output == "excel_nostyle"){
+            # If no save path or file provided just open workbook
             if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
                 if(interactive()){
                     wb$open()
                 }
             }
             else{
-                wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+                # If save path doesn't exist, just open workbook
+                if (!file.exists(style[["save_path"]])){
+                    message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+
+                    if(interactive()){
+                        wb$open()
+                    }
+                }
+                # Save file
+                else{
+                    wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+                }
             }
         }
     }

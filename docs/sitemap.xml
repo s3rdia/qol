@@ -14,6 +14,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/build_master.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/build_rstheme.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/combine_into_workbook.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/content_report.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/convert_arguments.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/convert_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/crosstabs.html</loc></url>
@@ -26,6 +27,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/frequencies.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/fuse_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/get_excel_range.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/get_integer_length.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/if_else.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/index.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/inverse.html</loc></url>
