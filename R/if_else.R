@@ -91,7 +91,25 @@ if. <- function(data_frame, condition, ...) {
         }
     }
     else{
-        data_frame <- data_frame |> collapse::fsubset(condition)
+        # Evaluate normal condition
+        if (is.logical(condition)){
+            data_frame <- data_frame |> collapse::fsubset(condition)
+        }
+        # If a single variable name is given like 'age' this will be evaluated as:
+        # !is.na(age). So it is basically a short form like 'If age;' in SAS.
+        else{
+            # Evaluate condition
+            if (is.character(condition) && length(condition) == 1){
+                data_frame <- data_frame |> collapse::fsubset(!is.na(data_frame[[condition]]))
+            }
+            else if (length(condition) > nrow(data_frame) || (is.character(condition) && length(condition) > 1)){
+                message(" X ERROR: Only single variables and conditions allowed. Data frames remeains as is.")
+            }
+            # Evaluate single variable
+            else{
+                data_frame <- data_frame |> collapse::fsubset(!is.na(condition))
+            }
+        }
     }
 
     data_frame

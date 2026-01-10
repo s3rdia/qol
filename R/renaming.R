@@ -302,3 +302,44 @@ rename_multi <- function(data_frame, ...){
 
     data_frame
 }
+
+
+#' Set First Data Frame Row As Variable Names
+#'
+#' @description
+#' Sets the first row of a data frame as variable names and deletes it. In case
+#' of NA, numeric values or empty characters in the first row, the old names are kept.
+#'
+#' @param data_frame A data frame for which to set new variable names.
+#'
+#' @return
+#' Returns a data frame with renamed variables.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- data.frame(
+#'               var1 = c("id", 1, 2, 3),
+#'               var2 = c(NA, "a", "b", "c"),
+#'               var3 = c("value", 1, 2, 3),
+#'               var4 = c("", "a", "b", "c"),
+#'               var5 = c(1, 2, 3, 4))
+#'
+#' my_data <- my_data |> first_row_as_names()
+#'
+#' @export
+first_row_as_names <- function(data_frame) {
+    # Extract first row and current names
+    new_names <- as.character(data_frame[1, ])
+    old_names <- names(data_frame)
+
+    # Set up condition on when to keep the old names
+    keep_old <- is.na(new_names) |
+                new_names == "" |
+                !is.na(suppressWarnings(as.numeric(new_names)))
+
+    # Rename conditionally
+    names(data_frame) <- data.table::fifelse(keep_old, old_names, new_names)
+
+    # Delete first row and return
+    data_frame[-1, , drop = FALSE]
+}

@@ -89,8 +89,8 @@ args_to_char <- function(argument){
     }
 
     stop(" X ERROR: Something went wrong with the argument conversion.\n",
-         "          Only single character and symbols, als well as vectors and flat lists are allowed.\n",
-         "          Function wil be aborted.")
+         "          Only single character and symbols, as well as vectors and flat lists are allowed.\n",
+         "          Function will be aborted.")
 }
 
 

@@ -29,7 +29,7 @@ which variable instead of the variable name.}
 \item{workbook}{Insert a previously created workbook to expand the sheets instead of
 creating a new file.}
 
-\item{style}{A list of options can be passed to control the appearance of excel outputs.
+\item{style}{A list of options can be passed to control the appearance of 'Excel' outputs.
 Styles can be created with \code{\link[=excel_output_style]{excel_output_style()}}.}
 
 \item{output}{The following output formats are available: excel and excel_nostyle.}
@@ -81,6 +81,8 @@ wb <- my_data |>
 \seealso{
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.
+
+Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}.
 
 Functions that can handle styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}.
 }

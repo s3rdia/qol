@@ -13,7 +13,7 @@
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param titles Specify one or more table titles.
 #' @param footnotes Specify one or more table footnotes.
-#' @param style A list of options can be passed to control the appearance of excel outputs.
+#' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: console (default), text,
 #' excel and excel_nostyle.
@@ -43,6 +43,8 @@
 #' @seealso
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].
+#'
+#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
 #'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
@@ -397,7 +399,7 @@ frequencies <- function(data_frame,
         else if (output == "excel" || output == "excel_nostyle"){
             # If no save path or file provided just open workbook
             if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
-                if(interactive()){
+                if (interactive()){
                     wb$open()
                 }
             }
@@ -406,7 +408,7 @@ frequencies <- function(data_frame,
                 if (!file.exists(style[["save_path"]])){
                     message(" ! WARNING: Path does not exist: ", style[["save_path"]])
 
-                    if(interactive()){
+                    if (interactive()){
                         wb$open()
                     }
                 }

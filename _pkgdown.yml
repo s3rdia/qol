@@ -28,6 +28,10 @@ reference:
   - modify_output_style
   - number_format_style
   - modify_number_formats
+- title: Import And Export CSV and XLSX
+  contents:
+  - import_data
+  - export_data
 - title: Recoding
   contents:
   - recode
@@ -63,6 +67,7 @@ reference:
   - add_extension
   - remove_stat_extension
   - rename_multi
+  - first_row_as_names 
 - title: Retaining
   contents:
   - running_number

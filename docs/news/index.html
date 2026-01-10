@@ -82,6 +82,10 @@
 </ul></li>
 <li>
 <code><a href="../reference/content_report.html">content_report()</a></code>: Collects and prints global and per variable information about the provided data frame. (08.01.2026)</li>
+<li>
+<code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">export_data()</a></code>: Lightweight import and export for csv and xlsx files. (10.01.2026)</li>
+<li>
+<code><a href="../reference/first_row_as_names.html">first_row_as_names()</a></code>: Sets the values of the first data frame row as variable names and deletes first row. (10.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
@@ -100,8 +104,12 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: The <code>style</code> parameter is now set to the new global styling options as default instead of <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>. (06.01.2026)</li>
 <li>
-<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The <code>var_labels</code> and <code>stat_labels</code> parameter is now set to the new global options as default. (07.01.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The <code>var_labels</code> and <code>stat_labels</code> parameter is now set to the new global options as default. (07.01.2026)</li>
 <li>In general: New global options for <code>print</code>, <code>monitor</code> and <code>na.rm</code> have been implemented into the functions capable of using them. (07.01.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>: If only a single variable name is provided, it is now evaluated as !is.na(var_name). (10.01.2026)</li>
+<li>
+<code><a href="../reference/retain.html">retain_value()</a></code>: Reworked iternally, can now also handle character variables. (10.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
@@ -170,6 +178,10 @@
 <li>
 <code><a href="../reference/formats.html">discrete_format()</a></code> and <code><a href="../reference/formats.html">interval_format()</a></code>: Labels will now be converted to numeric if they are all numeric. (02.01.2026)</li>
 <li>In general: Added more messages to display what functions do. (03.01.2026)</li>
+<li>
+<code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: <code>value</code> parameter is now called <code>values</code>. (10.01.2026)</li>
+<li>
+<code>mark_cases()</code>, <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: Adjusted unit tests to something that actually makes sense. (10.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

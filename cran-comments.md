@@ -23,6 +23,8 @@ New functions
 	* close_file(): A simple, more readable wrapper for setting file parameter to NULL.
 	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(): Additional global setters and getters.
 * content_report(): Collects and prints global and per variable information about the provided data frame.
+* import_data(), export_data(): Lightweight import and export for csv and xlsx files.
+* first_row_as_names(): Sets the values of the first data frame row as variable names and deletes first row.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -32,8 +34,10 @@ New functionality
 * args_to_char(): Now converts the contents of a given argument to a character vector.
 * excel_output_style(): Parameter file is now split up into save_path and file (meaning just the file name + extension).
 * any_table(), frequencies(), crosstabs(), export_with_style(): The style parameter is now set to the new global styling options as default instead of excel_output_style().
-* any_table(), frequencies(), crosstabs(): The var_labels and stat_labels parameter is now set to the new global options as default.
+* any_table(): The var_labels and stat_labels parameter is now set to the new global options as default.
 * In general: New global options for print, monitor and na.rm have been implemented into the functions capable of using them.
+* if.(): If only a single variable name is provided, it is now evaluated as !is.na(var_name).
+* retain_value(): Reworked iternally, can now also handle character variables.
 
 Removed
 * split_by_var() and split_by_condition(): See comment under 'New functions'.
@@ -71,6 +75,8 @@ Additionally
 * Added transpose_plus() and sort_plus() examples to the README.
 * discrete_format() and interval_format(): Labels will now be converted to numeric if they are all numeric.
 * In general: Added more messages to display what functions do.
+* retain_value(), retain_sum(): value parameter is now called values.
+* mark_cases(), retain_value(), retain_sum(): Adjusted unit tests to something that actually makes sense.
 
 ## R CMD check results
 

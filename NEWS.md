@@ -22,6 +22,8 @@
 	* `close_file()`: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)
 	* `set_variable_labels()`, `get_variable_labels()`, `set_statistic_labels()`, `get_statistic_labels()`, `set_print()`, `get_print()`, `set_monitor()`, `get_monitor()`, `set_na.rm()`, `get_na.rm()`: Additional global setters and getters. (07.01.2026)
 * `content_report()`: Collects and prints global and per variable information about the provided data frame. (08.01.2026)
+* `import_data()`, `export_data()`: Lightweight import and export for csv and xlsx files. (10.01.2026)
+* `first_row_as_names()`: Sets the values of the first data frame row as variable names and deletes first row. (10.01.2026)
 
 ### New functionality
 * `inverse()`: Now supports variable names written without quotation marks. (21.12.2025)
@@ -31,8 +33,10 @@
 * `args_to_char()`: Now converts the contents of a given argument to a character vector. (02.01.2026)
 * `excel_output_style()`: Parameter `file` is now split up into `save_path` and `file` (meaning just the file name + extension). (06.01.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The `style` parameter is now set to the new global styling options as default instead of `excel_output_style()`. (06.01.2026)
-* `any_table()`, `frequencies()`, `crosstabs()`: The `var_labels` and `stat_labels` parameter is now set to the new global options as default. (07.01.2026)
+* `any_table()`: The `var_labels` and `stat_labels` parameter is now set to the new global options as default. (07.01.2026)
 * In general: New global options for `print`, `monitor` and `na.rm` have been implemented into the functions capable of using them. (07.01.2026)
+* `if.()`: If only a single variable name is provided, it is now evaluated as !is.na(var_name). (10.01.2026)
+* `retain_value()`: Reworked iternally, can now also handle character variables. (10.01.2026)
 
 ### Removed
 * `split_by_var()` and `split_by_condition()`: See comment under 'New functions'. (30.12.2025)
@@ -73,6 +77,8 @@
 * Added `transpose_plus()` and `sort_plus()` examples to the README. (27.12.2025)
 * `discrete_format()` and `interval_format()`: Labels will now be converted to numeric if they are all numeric. (02.01.2026)
 * In general: Added more messages to display what functions do. (03.01.2026)
+* `retain_value()`, `retain_sum()`: `value` parameter is now called `values`. (10.01.2026)
+* `mark_cases()`, `retain_value()`, `retain_sum()`: Adjusted unit tests to something that actually makes sense. (10.01.2026)
 
 
 # qol 1.1.1 - CRAN release on 13.12.2025

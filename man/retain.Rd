@@ -13,25 +13,27 @@ running_number(data_frame, var_name = "run_nr", by = NULL)
 
 mark_case(data_frame, var_name = "first", by = NULL, first = TRUE)
 
-retain_value(data_frame, var_name = "retain_value", value, by = NULL)
+retain_value(data_frame, values, var_name = "retain_value", by = NULL)
 
-retain_sum(data_frame, var_name = "retain_sum", value, by = NULL)
+retain_sum(data_frame, values, var_name = "retain_sum", by = NULL)
 
 retain_variables(data_frame, ..., order_last = FALSE)
 }
 \arguments{
 \item{data_frame}{The data frame in which to compute retained variables.}
 
-\item{var_name}{The name of the newly created variable.}
+\item{var_name}{The name of the newly created variable.
+
+\link{retain_sum}: One or multiple variables of which the sum should be retained.}
 
 \item{by}{By group in which to compute the retained variable.}
 
 \item{first}{\code{\link[=mark_case]{mark_case()}}: If TRUE marks the first case within a group, otherwise
 the last case.}
 
-\item{value}{\link{retain_value}: One or multiple variables of which a value should be retained.
+\item{values}{\link{retain_value}: One or multiple variables of which a value should be retained.
 
-\link{retain_sum}: One or multiple variables of which the sum should be retained.}
+\link{retain_sum}: One or multiple variables of which their sum should be retained.}
 
 \item{...}{\code{\link[=retain_variables]{retain_variables()}}: Put in single variable names or variable ranges
 (var_name1:var_name10) which should be ordered to the front or back of the data frame.
@@ -115,7 +117,7 @@ my_data <- my_data |>
 # Retain sum inside a group
 my_data <- my_data |>
     retain_sum(var_name = c("weight_hh_sum", "icome_hh_sum"),
-               value    = c(weight, income),
+               values    = c(weight, income),
                by       = c(state, household_id))
 
 # Retain columns inside data frame, which orders them to the front

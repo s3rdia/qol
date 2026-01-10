@@ -48,6 +48,8 @@ excel_style <- excel_output_style(number_formats = format_list)
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}.
 
+Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}.
+
 Functions that can handle styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}},
 \code{\link[=export_with_style]{export_with_style()}}.
 }

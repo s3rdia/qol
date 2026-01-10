@@ -9,10 +9,12 @@
 #'
 #' @param data_frame The data frame in which to compute retained variables.
 #' @param var_name The name of the newly created variable.
-#' @param value [retain_value]: One or multiple variables of which a value should be retained.
 #'
 #' [retain_sum]: One or multiple variables of which the sum should be retained.
 #' @param by By group in which to compute the retained variable.
+#' @param values [retain_value]: One or multiple variables of which a value should be retained.
+#'
+#' [retain_sum]: One or multiple variables of which their sum should be retained.
 #'
 #' @details
 #' The functions listed here are based on the 'SAS' function retain. On a very basic level retain
@@ -65,11 +67,19 @@ running_number <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    ###########################################################################
+    # Error handling
+    ###########################################################################
+
     # Convert to character vectors
     by <- get_origin_as_char(by, substitute(by))
 
     # Make sure that the variables provided are part of the data frame.
     by <- data_frame |> part_of_df(by)
+
+    ###########################################################################
+    # Retain
+    ###########################################################################
 
     # If the user specified a vector of by variables, only take the last one, as this is
     # most likely the group in which the running number should be generated.
@@ -123,6 +133,10 @@ mark_case <- function(data_frame,
     # Measure the time
     start_time <- Sys.time()
 
+    ###########################################################################
+    # Error handling
+    ###########################################################################
+
     # Convert to character vectors
     by <- get_origin_as_char(by, substitute(by))
 
@@ -137,6 +151,13 @@ mark_case <- function(data_frame,
 
         by <- by[length(by)]
     }
+
+    # Convert to character vectors
+    var_name <- get_origin_as_char(var_name, substitute(var_name))
+
+    ###########################################################################
+    # Retain
+    ###########################################################################
 
     # In case by variable is specified, mark first/last case per group in current order
     if (length(by) == 1){
@@ -193,11 +214,15 @@ mark_case <- function(data_frame,
 #'
 #' @export
 retain_value <- function(data_frame,
+                         values,
                          var_name = "retain_value",
-                         value,
                          by       = NULL){
     # Measure the time
     start_time <- Sys.time()
+
+    ###########################################################################
+    # Error handling
+    ###########################################################################
 
     # Convert to character vectors
     by <- get_origin_as_char(by, substitute(by))
@@ -212,37 +237,48 @@ retain_value <- function(data_frame,
     }
 
     # Convert to character vectors
-    value <- get_origin_as_char(value, substitute(value))
+    values <- get_origin_as_char(values, substitute(values))
 
     # Make sure that the variables provided are part of the data frame.
-    value <- data_frame |> part_of_df(value)
+    values <- data_frame |> part_of_df(values)
 
     # Abort if no value provided
-    if (length(value) <= 1){
-        if (length(value) == 0 || value == ""){
-            message(" X ERROR: Must provide a <value> to retain. Retain will be aborted.")
-            return(data_frame)
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            message(" X ERROR: Must provide <values> to retain. Retain will be aborted.")
+            return(invisible(data_frame))
         }
     }
 
-    # In case by variable is specified, mark first/last case per group in current order
-    data_frame <- suppressMessages(data_frame |>
-            summarise_plus(class      = by,
-                           values     = value,
-                           statistics = c("first"),
-                           nesting    = "deepest",
-                           merge_back = TRUE) |>
-            dropp(".pseudo_by"))
+    # Convert to character vectors
+    var_name <- get_origin_as_char(var_name, substitute(var_name))
+
+    ###########################################################################
+    # Retain
+    ###########################################################################
+
+    group <- collapse::GRP(data_frame, by)
 
     # If there are as much new variable names provided, as there are values given, then rename them
-    if (length(value) == length(var_name)){
-        data_frame <- data_frame |> collapse::frename(stats::setNames(var_name, paste0(value, "_first")))
+    if (length(values) == length(var_name)){
+        # In case original variable should be overwritten
+        if (identical(values, var_name)){
+            data_frame[values] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
+        }
+        # Otherwise add new variable
+        else{
+            data_frame[var_name] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
+        }
+    }
+    # On unequal names give the variable name an extension
+    else{
+        data_frame[paste0(values, "_first")] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'retain_value' execution time: ", end_time, " seconds\n")
 
-    data_frame
+    suppressMessages(data_frame |> dropp(".pseudo_by"))
 }
 
 
@@ -254,7 +290,7 @@ retain_value <- function(data_frame,
 #' # Retain sum inside a group
 #' my_data <- my_data |>
 #'     retain_sum(var_name = c("weight_hh_sum", "icome_hh_sum"),
-#'                value    = c(weight, income),
+#'                values    = c(weight, income),
 #'                by       = c(state, household_id))
 #'
 #' @return
@@ -264,11 +300,15 @@ retain_value <- function(data_frame,
 #'
 #' @export
 retain_sum <- function(data_frame,
+                       values,
                        var_name = "retain_sum",
-                       value,
                        by       = NULL){
     # Measure the time
     start_time <- Sys.time()
+
+    ###########################################################################
+    # Error handling
+    ###########################################################################
 
     # Convert to character vectors
     by <- get_origin_as_char(by, substitute(by))
@@ -283,31 +323,44 @@ retain_sum <- function(data_frame,
     }
 
     # Convert to character vectors
-    value <- get_origin_as_char(value, substitute(value))
+    values <- get_origin_as_char(values, substitute(values))
 
     # Make sure that the variables provided are part of the data frame.
-    value <- data_frame |> part_of_df(value)
+    values <- data_frame |> part_of_df(values)
 
     # Abort if no value provided
-    if (length(value) <= 1){
-        if (length(value) == 0 || value == ""){
-            message(" X ERROR: Must provide a <value> to retain. Retain will be aborted.")
-            return(data_frame)
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            message(" X ERROR: Must provide a <values> to retain. Retain will be aborted.")
+            return(invisible(data_frame))
         }
     }
 
-    # In case by variable is specified, mark first/last case per group in current order
+    # Abort if non-numeric value provided
+    if (!all(collapse::vtypes(data_frame[values]) %in% c("numeric", "integer", "double"))){
+        message(" X ERROR: <Values> must be numeric. Retain will be aborted.")
+        return(invisible(data_frame))
+    }
+
+    # Convert to character vectors
+    var_name <- get_origin_as_char(var_name, substitute(var_name))
+
+    ###########################################################################
+    # Retain
+    ###########################################################################
+
+    # In case by variable is specified, compute sum per group
     data_frame <- suppressMessages(data_frame |>
            summarise_plus(class      = by,
-                          values     = value,
+                          values     = values,
                           statistics = "sum",
                           nesting    = "deepest",
                           merge_back = TRUE) |>
            dropp(".pseudo_by"))
 
     # If there are as much new variable names provided, as there are values given, then rename them
-    if (length(value) == length(var_name)){
-        data_frame <- data_frame |> collapse::frename(stats::setNames(var_name, paste0(value, "_sum")))
+    if (length(values) == length(var_name)){
+        data_frame <- data_frame |> collapse::frename(stats::setNames(var_name, paste0(values, "_sum")))
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
@@ -355,14 +408,14 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
     retain_list <- tryCatch({
         # Force evaluation to see if it exists
         dots_to_char(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(retain_list)){
         message('X ERROR: Unknown object found. Retaining will be aborted.')
-        return(data_frame)
+        return(invisible(data_frame))
     }
 
     # Check if there are any "from":"to" selections and unwrap them

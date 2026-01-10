@@ -54,7 +54,7 @@
 #' @param box Provide a text for the upper left box of the table.
 #' @param workbook Insert a previously created workbook to expand the sheets instead of
 #' creating a new file.
-#' @param style A list of options can be passed to control the appearance of excel outputs.
+#' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: excel and excel_nostyle.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
@@ -92,6 +92,8 @@
 #' @seealso
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].
+#'
+#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
 #'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
@@ -1265,7 +1267,7 @@ any_table <- function(data_frame,
 
         # If no save path or file provided just open workbook
         if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
-            if(interactive()){
+            if (interactive()){
                 wb$open()
             }
         }
@@ -1274,7 +1276,7 @@ any_table <- function(data_frame,
             if (!file.exists(style[["save_path"]])){
                 message(" ! WARNING: Path does not exist: ", style[["save_path"]])
 
-                if(interactive()){
+                if (interactive()){
                     wb$open()
                 }
             }
