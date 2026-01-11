@@ -114,6 +114,7 @@ reference:
   - check_weight
 - title: Global Options
   contents:
+  - qol_news
   - set_style_options
   - reset_style_options
   - get_style_options

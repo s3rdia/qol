@@ -51,6 +51,15 @@ providing basic import functionality with minimal code.
 \code{\link[=export_data]{export_data()}}: A wrapper for \code{\link[data.table:fwrite]{data.table::fwrite()}} and \code{\link[openxlsx2:wb_save]{openxlsx2::wb_save()}},
 providing basic export functionality with minimal code.
 }
+\details{
+\code{\link[=import_data]{import_data()}} and \code{\link[=export_data]{export_data()}} are based on the 'SAS' procedures Proc Import and Proc Export,
+which provide a very straight forward syntax. While 'SAS' can import many different formats with
+these procedures, these 'R' versions concentrate on importing CSV and XLSX files.
+
+The main goal here is to just provide as few as possible parameters to tackle most of the imports
+and exports. These error handling also tries to let an import and export happen, even though
+a parameter wasn't provided in the correct way.
+}
 \examples{
 # Example files
 csv_file  <- system.file("extdata", "qol_example_data.csv",  package = "qol")
@@ -77,6 +86,9 @@ export_xlsx <- tempfile(fileext = ".xlsx")
 # Export: Provide full file path
 my_data |> export_data(export_csv)
 my_data |> export_data(export_xlsx)
+
+# Manual cleanup for example
+unlink(c(export_csv, export_xlsx))
 
 }
 \seealso{

@@ -1,29 +1,3 @@
-#' Check If Variable Length Throws an Error
-#'
-#' @description
-#' This try catch check is used for error handling in some functions. It enables a
-#' function to react to a none existing variable in a way, that let's the code flow
-#' instead of stopping with an error.
-#'
-#' @param variable The variable whose length should be checked.
-#'
-#' @return
-#' Returns the result of a try catch check.
-#'
-#' @noRd
-is_error <- function(variable) {
-    # Check if the variable can be evaluated or if it throws an error
-    result <- tryCatch({
-        length(variable) == 1
-        FALSE
-    }, error = function(e){
-        TRUE
-    })
-
-    result
-}
-
-
 #' Reorder Variable Combination Alphabetically
 #'
 #' @description

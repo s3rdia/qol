@@ -100,14 +100,14 @@ get_any_table_ranges <- function(table,
     }
 
     # Get the basic starting cells, as well as table dimensions
-    header.width  <- ncol(multi_header)
-    header.length <- nrow(multi_header)
+    header.width  <- collapse::fncol(multi_header)
+    header.length <- collapse::fnrow(multi_header)
 
     table.row     <- header.row + header.length
-    table.length  <- nrow(table)
-    table.width   <- ncol(table)
+    table.length  <- collapse::fnrow(table)
+    table.width   <- collapse::fncol(table)
     table.end     <- header.column + table.width - 1
-    cat_col.width <- ncol(table) - ncol(multi_header)
+    cat_col.width <- collapse::fncol(table) - collapse::fncol(multi_header)
 
     footnote.row <- table.row + table.length + 1
 
@@ -231,7 +231,7 @@ get_any_tab_ranges <- function(any_tab,
 #' @noRd
 handle_col_header_merge <- function(wb, column_header, ranges){
     # Get all values in order of appearance with their respective lengths
-    row_values <- lapply(seq_len(nrow(column_header)), function(row){
+    row_values <- lapply(seq_len(collapse::fnrow(column_header)), function(row){
         rle(as.character(column_header[row, ]))
     })
 
@@ -318,7 +318,7 @@ handle_row_header_merge <- function(wb, row_header, ranges){
     }
 
     # Get all values in order of appearance with their respective lengths (per column)
-    col_values <- lapply(seq_len(ncol(row_header)), function(column){
+    col_values <- lapply(seq_len(collapse::fncol(row_header)), function(column){
         rle(as.character(row_header[, column]))
     })
 
@@ -420,7 +420,7 @@ get_df_ranges <- function(data_frame,
 
     format_index <- 1
 
-    for (i in seq_len(ncol(data_frame))){
+    for (i in seq_len(collapse::fncol(data_frame))){
         # If a variable doesn't have a statistics extension, it is likely not
         # a variable that needs a number format.
         var_end <- sub("p[0-9]+$", "p", utils::tail(strsplit(names(data_frame)[[i]], "_")[[1]], 1))
@@ -496,11 +496,11 @@ get_table_ranges <- function(table,
     }
 
     # Get the basic starting cells, as well as table dimensions
-    header.width  <- ncol(table) - 1
+    header.width  <- collapse::fncol(table) - 1
 
     table.row     <- header.row + 1
-    table.length  <- nrow(table)
-    table.width   <- ncol(table)
+    table.length  <- collapse::fnrow(table)
+    table.width   <- collapse::fncol(table)
     table.end     <- header.column + table.width - 1
     cat_col.width <- 1
 
@@ -1351,6 +1351,10 @@ fill_or_trim <- function(format_vector,
 #' @param table_indent Indentation level of the inner table cells.
 #' @param table_borders Whether to draw borders around the inner table cells.
 #' @param table_border_color Borders colors of the inner table cells.
+#' @param as_heatmap Whether to lay a conditional formatting over the values.
+#' @param heatmap_low_color The color for lower values in the conditional formatting.
+#' @param heatmap_middle_color The color for middle values in the conditional formatting.
+#' @param heatmap_high_color The color for high values in the conditional formatting.
 #' @param box_back_color Background color of the left box in table header.
 #' @param box_font_color Font color of the left box in table header.
 #' @param box_font_size Font size of the left box in table header.
@@ -1450,6 +1454,10 @@ excel_output_style <- function(save_path			= NULL,
                                table_indent         = 1,
                                table_borders        = FALSE,
                                table_border_color   = "000000",
+							   as_heatmap           = FALSE,
+							   heatmap_low_color    = "F8696B",
+							   heatmap_middle_color = "FFFFFF",
+							   heatmap_high_color   = "63BE7B",
                                box_back_color       = "FFFFFF",
                                box_font_color       = "000000",
                                box_font_size        = 10,

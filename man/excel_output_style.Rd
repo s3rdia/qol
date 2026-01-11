@@ -47,6 +47,10 @@ excel_output_style(
   table_indent = 1,
   table_borders = FALSE,
   table_border_color = "000000",
+  as_heatmap = FALSE,
+  heatmap_low_color = "F8696B",
+  heatmap_middle_color = "FFFFFF",
+  heatmap_high_color = "63BE7B",
   box_back_color = "FFFFFF",
   box_font_color = "000000",
   box_font_size = 10,
@@ -161,6 +165,14 @@ while scrolling sideways in the document.}
 \item{table_borders}{Whether to draw borders around the inner table cells.}
 
 \item{table_border_color}{Borders colors of the inner table cells.}
+
+\item{as_heatmap}{Whether to lay a conditional formatting over the values.}
+
+\item{heatmap_low_color}{The color for lower values in the conditional formatting.}
+
+\item{heatmap_middle_color}{The color for middle values in the conditional formatting.}
+
+\item{heatmap_high_color}{The color for high values in the conditional formatting.}
 
 \item{box_back_color}{Background color of the left box in table header.}
 

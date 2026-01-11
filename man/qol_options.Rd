@@ -8,6 +8,8 @@
 \alias{get_monitor}
 \alias{set_na.rm}
 \alias{get_na.rm}
+\alias{set_output}
+\alias{get_output}
 \title{Set Global Print Option}
 \usage{
 set_print(...)
@@ -21,22 +23,30 @@ get_monitor()
 set_na.rm(...)
 
 get_na.rm()
+
+set_output(...)
+
+get_output()
 }
 \arguments{
 \item{...}{Put in TRUE or FALSE to activate or deactivate the option.}
 }
 \value{
-\code{\link[=set_print]{set_print()}}: Changed global print option.
+\code{\link[=set_print]{set_print()}}: Change global print option.
 
 \code{\link[=get_print]{get_print()}}: TRUE or FALSE.
 
-\code{\link[=set_monitor]{set_monitor()}}: Changed global monitor option.
+\code{\link[=set_monitor]{set_monitor()}}: Change global monitor option.
 
 \code{\link[=get_monitor]{get_monitor()}}: TRUE or FALSE.
 
-\code{\link[=set_na.rm]{set_na.rm()}}: Changed global na.rm option.
+\code{\link[=set_na.rm]{set_na.rm()}}: Change global na.rm option.
 
 \code{\link[=get_na.rm]{get_na.rm()}}: TRUE or FALSE.
+
+\code{\link[=set_output]{set_output()}}: Change global output option.
+
+\code{\link[=get_output]{get_output()}}: Current output option as character.
 }
 \description{
 \code{\link[=set_print]{set_print()}}: Set the print option globally for the tabulation and export to
@@ -53,6 +63,11 @@ able to show how they work internally.
 NA values.
 
 \code{\link[=get_na.rm]{get_na.rm()}}: Get the globally stored na.rm option.
+
+\code{\link[=set_output]{set_output()}}: Set the output option globally for each function that can output
+results to "console", "text", "excel" or "excel_nostyle".
+
+\code{\link[=get_output]{get_output()}}: Get the globally stored output option.
 }
 \examples{
 set_print(FALSE)
@@ -69,5 +84,9 @@ set_na.rm(TRUE)
 set_na.rm(FALSE)
 
 get_na.rm()
+
+set_output("excel")
+
+get_output()
 
 }

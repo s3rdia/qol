@@ -116,7 +116,7 @@ frequencies <- function(data_frame,
                         titles    = c(),
                         footnotes = c(),
                         style     = .qol_options[["excel_style"]],
-                        output    = "console",
+                        output    = .qol_options[["output"]],
                         na.rm     = .qol_options[["na.rm"]],
                         print     = .qol_options[["print"]],
                         monitor   = .qol_options[["monitor"]]){
@@ -394,7 +394,10 @@ frequencies <- function(data_frame,
         else if (output == "text"){
             temp_file <- tempfile(fileext = ".txt")
             writeLines(complete_table, temp_file)
-            file.show(temp_file)
+
+            if (interactive()){
+                file.show(temp_file)
+            }
         }
         else if (output == "excel" || output == "excel_nostyle"){
             # If no save path or file provided just open workbook
@@ -514,24 +517,24 @@ get_column_width <- function(data_frame,
     # Get the maximum column width by looking up which is the largest number
     # individually in each column.
     for (column in columns_to_format){
-        max_width <- nchar(column)
+        max_width <- collapse::vlengths(column)
 
         if (column %in% c("freq", "miss", "var_freq", "var_cum_freq")){
             max_width <- max(max_width,
-                             nchar(format(data_frame[[column]],
-                                          format     = "d",
-                                          big.mark   = ",",
-                                          scientific = FALSE,
-                                          nsmall     = 0)))
+                             collapse::vlengths(format(data_frame[[column]],
+                                                      format     = "d",
+                                                      big.mark   = ",",
+                                                      scientific = FALSE,
+                                                      nsmall     = 0)))
         }
         # Any other stat with decimal numbers
         else{
             max_width <- max(max_width,
-                             nchar(format(round(data_frame[[column]], decimals),
-                                          format     = "f",
-                                          big.mark   = ",",
-                                          scientific = FALSE,
-                                          nsmall     = decimals)))
+                             collapse::vlengths(format(round(data_frame[[column]], decimals),
+                                                      format     = "f",
+                                                      big.mark   = ",",
+                                                      scientific = FALSE,
+                                                      nsmall     = decimals)))
         }
 
         all_widths <- c(all_widths, max_width)
@@ -561,7 +564,7 @@ get_column_width <- function(data_frame,
 format_mean_text <- function(mean_tab,
                              variables,
                              mean_columns){
-    if (nrow(mean_tab) == 0){
+    if (collapse::fnrow(mean_tab) == 0){
         return(c())
     }
 
@@ -572,11 +575,11 @@ format_mean_text <- function(mean_tab,
 
     # Get the maximum width of the provided variable names to determine the width
     # of the first column.
-    first_column_width <- nchar("variable")
+    first_column_width <- collapse::vlengths("variable")
 
     for (variable in variables){
         first_column_width <- max(first_column_width,
-                                  nchar(mean_tab[["variable"]]))
+                                  collapse::vlengths(mean_tab[["variable"]]))
     }
 
     # Set header row formatting. Loop through all header columns and give
@@ -598,7 +601,7 @@ format_mean_text <- function(mean_tab,
                          paste(header_columns, collapse = "   "))
 
     complete_header <- c(header_row,
-                         strrep("-", nchar(header_row)))
+                         strrep("-", collapse::vlengths(header_row)))
 
     # Format table column by column. Basically concatenate first column text and
     # corresponding values together while keeping the individual maximum column
@@ -663,7 +666,7 @@ format_mean_excel <- function(mean_tab,
     monitor_df <- monitor_df |> monitor_start("Excel prepare (mean)", "Format mean")
     #-------------------------------------------------------------------------#
 
-    if (nrow(mean_tab) == 0){
+    if (collapse::fnrow(mean_tab) == 0){
         monitor_df <- monitor_df |> monitor_end()
 
         return(list(wb, monitor_df))
@@ -739,8 +742,8 @@ format_mean_excel <- function(mean_tab,
         if (length(column_width) == 1 && length(row_heights) == 1){
             if (column_width != "auto" || row_heights != "auto"){
                 wb <- wb |> handle_col_row_dimensions(mean_ranges,
-                                                      ncol(mean_tab) + (style[["start_column"]] - 1),
-                                                      nrow(mean_tab) + (style[["start_row"]] - 1),
+                                                      collapse::fncol(mean_tab) + (style[["start_column"]] - 1),
+                                                      collapse::fnrow(mean_tab) + (style[["start_row"]] - 1),
                                                       style)
             }
         }
@@ -748,7 +751,7 @@ format_mean_excel <- function(mean_tab,
         else{
             wb <- wb |> handle_col_row_dimensions(mean_ranges,
                                                   style[["start_column"]],
-                                                  nrow(mean_tab) + (style[["start_row"]] - 1),
+                                                  collapse::fnrow(mean_tab) + (style[["start_row"]] - 1),
                                                   style)
         }
 
@@ -838,10 +841,10 @@ format_freq_text <- function(freq_tab,
 
         # Get the maximum width of the provided variable names to determine the width
         # of the first column.
-        first_column_width <- max(nchar(variable), nchar("total"))
+        first_column_width <- max(collapse::vlengths(variable), collapse::vlengths("total"))
 
         first_column_width <- max(first_column_width,
-                                  nchar(collapse::na_omit(var_tab[["fused_vars"]])))
+                                  collapse::vlengths(collapse::na_omit(var_tab[["fused_vars"]])))
 
         # Set header row formatting. Loop through all header columns and give
         # each column the optimal width.
@@ -876,7 +879,7 @@ format_freq_text <- function(freq_tab,
                              paste(header_bottom_columns, collapse = "  "))
 
         complete_header <- c(header_row,
-                             strrep("-", nchar(header_top_row)))
+                             strrep("-", collapse::vlengths(header_top_row)))
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Format table column by column. Basically concatenate first column text and
@@ -923,7 +926,7 @@ format_freq_text <- function(freq_tab,
             rows <- length(all_rows)
 
             all_rows <- c(all_rows[1:(rows - 1)],
-                          strrep("-", nchar(header_top_row)),
+                          strrep("-", collapse::vlengths(header_top_row)),
                           all_rows[rows])
         }
         # If multilabel formats are applied remove total row
@@ -998,16 +1001,16 @@ compute_cumulative <- function(freq_tab,
             collapse::fsubset(TYPE %in% c(variable, NA))
     }
 
-    var_tab[["fused_vars"]][nrow(var_tab)] <- "total"
+    var_tab[["fused_vars"]][collapse::fnrow(var_tab)] <- "total"
 
     var_tab[["var_cum_sum"]]  <- collapse::fcumsum(var_tab[["var_sum"]])
     var_tab[["var_cum_pct"]]  <- collapse::fcumsum(var_tab[["var_pct_group"]])
     var_tab[["var_cum_freq"]] <- collapse::fcumsum(var_tab[["var_freq"]])
 
     # Erase total cumulative values
-    var_tab[["var_cum_sum"]][nrow(var_tab)]  <- NA
-    var_tab[["var_cum_pct"]][nrow(var_tab)]  <- NA
-    var_tab[["var_cum_freq"]][nrow(var_tab)] <- NA
+    var_tab[["var_cum_sum"]][collapse::fnrow(var_tab)]  <- NA
+    var_tab[["var_cum_pct"]][collapse::fnrow(var_tab)]  <- NA
+    var_tab[["var_cum_freq"]][collapse::fnrow(var_tab)] <- NA
 
     # Order columns in order of freq table
     var_tab |> collapse::frename("var_pct_group" = "pct_group")
@@ -1100,7 +1103,11 @@ format_freq_excel <- function(wb,
         # Only do this step with no by variables here otherwise the separate
         # by function down below will handle this message, so that it appears only
         # once and not for each loop.
+        var_is_multilabel <- FALSE
+
         if (is_multilabel(formats, variable)){
+            var_is_multilabel <- TRUE
+
             if (length(by) == 0){
                 message(" ~ NOTE: The format for variable '", variable, "' is a multilabel.
          In this case cumulative results aren't computed properly.")
@@ -1175,13 +1182,36 @@ format_freq_excel <- function(wb,
                 col_index <- col_index + 1
             }
 
+            # Draw inner table cells as heat map with conditional formatting
+            if (style[["as_heatmap"]]){
+                #-----------------------------------------------------------------#
+                monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
+                #-----------------------------------------------------------------#
+
+                # First exclude the total value, if present, otherwise heat map won't
+                # work, because total will always be the highest value.
+                if (!var_is_multilabel){
+                    old_number <- max(2, as.numeric(sub(".*(\\d+)$", "\\1", freq_ranges[["freq_col_ranges1"]])))
+                    new_range  <- sub(paste0(old_number, "$"), old_number - 1, freq_ranges[["freq_col_ranges1"]])
+                }
+                else{
+                    new_range <- freq_ranges[["freq_col_ranges1"]]
+                }
+
+                wb$add_conditional_formatting(dims  = new_range,
+                                              style = c(style[["heatmap_low_color"]],
+                                                        style[["heatmap_middle_color"]],
+                                                        style[["heatmap_high_color"]]),
+                                              type  = "colorScale")
+            }
+
             # Adjust table dimensions
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights (freq)", "Format freq")
             #-----------------------------------------------------------------#
             wb <- wb |> handle_col_row_dimensions(freq_ranges,
-                                                  ncol(var_tab) + (style[["start_column"]] - 1),
-                                                  nrow(var_tab) + (style[["start_row"]] - 1),
+                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
+                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
                                                   style)
 
             wb <- wb |> handle_auto_dimensions(freq_ranges,
@@ -1283,9 +1313,9 @@ format_by_text <- function(mean_tab,
             # and which value is currently filtered.
             header <- paste0("| ", by_var, " = ", value, " |")
 
-            complete_header <- c("\n", strrep("-", nchar(header)),
+            complete_header <- c("\n", strrep("-", collapse::vlengths(header)),
                                  header,
-                                 strrep("-", nchar(header)))
+                                 strrep("-", collapse::vlengths(header)))
 
             # Filter table by current by variable and value
             if (!is.na(value)){
@@ -1445,7 +1475,7 @@ format_by_excel <- function(mean_tab,
             }
 
             # Generate mean table as normal but base is filtered data frame
-            if (nrow(mean_temp) > 0){
+            if (collapse::fnrow(mean_temp) > 0){
                 wb_list <- format_mean_excel(mean_temp,
                                              mean_columns,
                                              style,

@@ -5,14 +5,22 @@
 # but without drawing the whole outputs on screen.
 ###############################################################################
 
-dummy_df  <- suppressMessages(dummy_data(1000))
-sum_df    <- suppressMessages(dummy_df |>
+set_style_options(as_heatmap = TRUE)
+
+dummy_df <- suppressMessages(dummy_data(1000))
+
+dummy_df[["binary"]] <- replicate(nrow(dummy_df), {
+    paste0(sample(0:1, 2, replace = TRUE), collapse = "")
+})
+
+sum_df   <- suppressMessages(dummy_df |>
     summarise_plus(class      = c(year, sex),
                    values     = weight,
                    statistics = c("sum"),
                    nesting    = "deepest",
                    na.rm      = TRUE))
-sum_df2   <- suppressMessages(dummy_df |>
+
+sum_df2  <- suppressMessages(dummy_df |>
     summarise_plus(class      = c(year, sex, age),
                    values     = weight,
                    statistics = c("sum"),
@@ -29,6 +37,9 @@ test_that("Simplest form of any_table", {
 
     expect_type(result_list, "list")
     expect_equal(length(result_list), 3)
+    expect_equal(names(result_list[[1]]), c("row.label", "var1", "weight_sum_1",
+                                            "weight_sum_2", "weight_sum_NA"))
+    expect_equal(result_list[[1]][["var1"]], c(paste0(0:99), "."))
 })
 
 
@@ -315,6 +326,33 @@ test_that("any_table with applied interval multilabels", {
 })
 
 
+test_that("any_table able to apply format on numeric values stored as character", {
+    binary. <- discrete_format(
+        "binary1" = c("00", "01"),
+        "binary2" = c("10", "11"))
+
+    result_list <- suppressMessages(dummy_df |>
+        any_table(rows    = "binary",
+                  columns = "sex",
+                  values  = weight,
+                  formats = list(binary = binary.),
+                  print   = FALSE))
+
+    expect_equal(result_list[[1]][["var1"]], c("binary1", "binary2"))
+})
+
+
+test_that("any_table converts numeric values stored as character to numeric, if no format is applied", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows    = "binary",
+                      columns = "sex",
+                      values  = weight,
+                      print   = FALSE))
+
+    expect_equal(result_list[[1]][["var1"]], c("0", "1", "10", "11"))
+})
+
+
 test_that("any_table with fixed column headers", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows    = "age",
@@ -441,6 +479,21 @@ test_that("any_table throws a warning, if no valid statistic specified", {
                          print      = FALSE), " ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 })
 
+
+test_that("Save any_table as Excel file", {
+    temp_file <- tempfile(fileext = ".xlsx")
+    on.exit(unlink(temp_file), add = TRUE)
+
+    suppressMessages(dummy_df |>
+        any_table(rows    = "age",
+                  columns = "sex",
+                  values  = weight,
+                  style   = excel_output_style(save_path = dirname(temp_file),
+                                               file      = basename(temp_file))))
+
+    expect_true(file.exists(temp_file))
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -564,7 +617,13 @@ test_that("Combine tables into a single workbook", {
                            by      = education,
                            print   = FALSE))
 
-    result <- combine_into_workbook(tab1, tab2, print = FALSE)
+    temp_file <- tempfile(fileext = ".xlsx")
+    on.exit(unlink(temp_file), add = TRUE)
+
+    result <- combine_into_workbook(tab1, tab2, file = temp_file)
 
     expect_type(result, "environment")
+    expect_true(file.exists(temp_file))
 })
+
+set_style_options(as_heatmap = FALSE)

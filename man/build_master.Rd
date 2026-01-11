@@ -60,6 +60,17 @@ root/
 }\if{html}{\out{</div>}}
 }
 \examples{
-build_master(dir = "C:/My Projects/Code", master_name = "Master Script")
+# Example export file paths
+# NOTE: These tempfiles are only for the examples. In reality you just call the
+# main function and put in your desired path and name directly.
+temp_file <- tempfile(fileext = ".rstheme")
+file_name <- basename(tools::file_path_sans_ext(temp_file))
+
+# Example master
+build_master(dir         = dirname(temp_file),
+             master_name = file_name)
+
+# Manual cleanup for example
+unlink(temp_file)
 
 }

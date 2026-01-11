@@ -13,7 +13,7 @@ frequencies(
   titles = c(),
   footnotes = c(),
   style = .qol_options[["excel_style"]],
-  output = "console",
+  output = .qol_options[["output"]],
   na.rm = .qol_options[["na.rm"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]

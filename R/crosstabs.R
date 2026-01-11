@@ -7,6 +7,7 @@
 #' @param data_frame A data frame in which are the variables to tabulate.
 #' @param rows The variable that appears in the table rows.
 #' @param columns The variable that appears in the table columns.
+#' @param show_total TRUE by default. Whether to print row and column totals or not.
 #' @param statistics The user requested statistics.Available functions:
 #' - "sum"        -> Weighted and unweighted sum
 #' - "freq"       -> Unweighted frequency
@@ -129,6 +130,7 @@
 crosstabs <- function(data_frame,
                       rows,
                       columns,
+                      show_total = TRUE,
                       statistics = c("sum"),
                       formats    = c(),
                       by         = c(),
@@ -136,7 +138,7 @@ crosstabs <- function(data_frame,
                       titles     = c(),
                       footnotes  = c(),
                       style      = .qol_options[["excel_style"]],
-                      output     = "console",
+                      output     = .qol_options[["output"]],
                       na.rm      = .qol_options[["na.rm"]],
                       print      = .qol_options[["print"]],
                       monitor    = .qol_options[["monitor"]]){
@@ -379,12 +381,12 @@ crosstabs <- function(data_frame,
         # In case no by variables are provided
         if (length(by) == 0){
             complete_table  <- format_cross_text(cross_tab, rows, columns, column_names,
-                                                 statistics, formats, by, titles, footnotes)
+                                                 statistics, formats, by, titles, footnotes, show_total)
         }
         # In case there are  by variables are provided
         else{
             complete_table <- format_cross_by_text(cross_tab, rows, columns, column_names,
-                                                   statistics, formats, by, titles, footnotes, na.rm)
+                                                   statistics, formats, by, titles, footnotes, na.rm, show_total)
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
@@ -396,7 +398,7 @@ crosstabs <- function(data_frame,
         # In case no by variables are provided
         if (length(by) == 0){
             wb_list <- format_cross_excel(wb, cross_tab, rows, columns, column_names,
-                                          statistics, formats, by, titles, footnotes, style, output,
+                                          statistics, formats, by, titles, footnotes, style, output, show_total,
                                           monitor_df = monitor_df)
 
             wb         <- wb_list[[1]]
@@ -406,7 +408,7 @@ crosstabs <- function(data_frame,
         else{
             wb_list <- format_cross_by_excel(cross_tab, rows, columns, column_names,
                                              statistics, formats, by, titles, footnotes,
-                                             style, output, na.rm, wb, monitor_df)
+                                             style, output, show_total, na.rm, wb, monitor_df)
 
             wb         <- wb_list[[1]]
             monitor_df <- wb_list[[2]]
@@ -429,7 +431,10 @@ crosstabs <- function(data_frame,
         else if (output == "text"){
             temp_file <- tempfile(fileext = ".txt")
             writeLines(complete_table, temp_file)
-            file.show(temp_file)
+
+            if (interactive()){
+                file.show(temp_file)
+            }
         }
         else if (output == "excel" || output == "excel_nostyle"){
             # If no save path or file provided just open workbook
@@ -499,12 +504,13 @@ format_cross_text <- function(cross_tab,
                               formats,
                               by,
                               titles,
-                              footnotes){
+                              footnotes,
+                              show_total){
     complete_tabs <- c()
 
     # Set equal number of maximum column width
     sum_tab          <- setup_print_table(cross_tab, rows, "sum")
-    longest_value    <- nchar(format(sum_tab[nrow(sum_tab), "total"], scientific = FALSE))
+    longest_value    <- collapse::vlengths(format(sum_tab[collapse::fnrow(sum_tab), "total"], scientific = FALSE))
     max_column_width <- max(8, longest_value + 7)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -521,24 +527,24 @@ format_cross_text <- function(cross_tab,
 
         # Get the maximum width of the provided variable names to determine the width
         # of the first column.
-        first_column_width <- nchar(paste0(rows, " / ", columns))
+        first_column_width <- collapse::vlengths(paste0(rows, " / ", columns))
 
         first_column_width <- max(first_column_width,
-                                  nchar(collapse::na_omit(as.character(var_tab[[rows]]))))
+                                  collapse::vlengths(collapse::na_omit(as.character(var_tab[[rows]]))))
 
-        # Use the max column width to evenly spread the columns.
-        # Wrap the column headers according to this width.
-        if (!is_multilabel(formats, columns)){
-            multi_header   <- wrap_header(c(column_names, "total"), max_column_width)
-
-            formatted_cols <- vector("list", length(c(column_names, "total")))
-        }
         # In case of multilabels don't add total column
-        else{
+        if(is_multilabel(formats, columns) || !show_total){
             multi_header   <- wrap_header(column_names, max_column_width)
 
             var_tab        <- var_tab |> dropp("total")
             formatted_cols <- vector("list", length(column_names))
+        }
+        # Use the max column width to evenly spread the columns.
+        # Wrap the column headers according to this width.
+        else{
+            multi_header   <- wrap_header(c(column_names, "total"), max_column_width)
+
+            formatted_cols <- vector("list", length(c(column_names, "total")))
         }
 
         # Format the first column and connect it with the rest of the header
@@ -548,25 +554,25 @@ format_cross_text <- function(cross_tab,
                           rep(paste0(format("",
                                             width   = first_column_width,
                                             justify = "left"), " |"),
-                              nrow(multi_header) - 1))
+                              collapse::fnrow(multi_header) - 1))
         multi_header <- cbind(first_column, multi_header)
 
         # Visually separate total column if there is one
         total_col <- FALSE
 
-        if (trimws(multi_header[1, ncol(multi_header)]) == "total"){
+        if (trimws(multi_header[1, collapse::fncol(multi_header)]) == "total"){
             total_col <- TRUE
 
-            multi_header[1, ncol(multi_header)] <-
-                paste0(" | ", multi_header[1, ncol(multi_header)])
+            multi_header[1, collapse::fncol(multi_header)] <-
+                paste0(" | ", multi_header[1, collapse::fncol(multi_header)])
         }
 
         # Convert header matrix into character vector with single lines
         complete_header <- apply(multi_header, 1, paste, collapse = " ")
-        complete_header <- c(complete_header, strrep("-", nchar(complete_header[1])))
+        complete_header <- c(complete_header, strrep("-", collapse::vlengths(complete_header[1])))
 
         # If row multilabel, remove automatically computed total observation
-        if (is_multilabel(formats, rows)){
+        if (is_multilabel(formats, rows) || !show_total){
             var_tab <- var_tab |>
                 collapse::fsubset(var_tab[[rows]] != "total")
 
@@ -631,11 +637,11 @@ format_cross_text <- function(cross_tab,
                            apply(formatted_matrix, 1, paste, collapse = " "))
 
         # If no multilabel formats are applied separate total row at the bottom from the rest
-        if (!is_multilabel(formats, rows)){
+        if (!is_multilabel(formats, rows) && show_total){
             rows_temp <- length(all_rows)
 
             all_rows <- c(all_rows[1:(rows_temp - 1)],
-                          strrep("-", nchar(complete_header[1])),
+                          strrep("-", collapse::vlengths(complete_header[1])),
                           all_rows[rows_temp])
         }
 
@@ -757,7 +763,7 @@ setup_print_table <- function(cross_tab, rows, stat){
         var_tab[["total"]] <- NA
     }
     else if (stat == "pct_row"){
-        var_tab[nrow(var_tab), -1] <- NA
+        var_tab[collapse::fnrow(var_tab), -1] <- NA
     }
 
     var_tab
@@ -810,6 +816,7 @@ format_cross_excel <- function(wb,
                                footnotes,
                                style,
                                output,
+                               show_total,
                                by_info = NULL,
                                index   = NULL,
                                monitor_df){
@@ -842,7 +849,7 @@ format_cross_excel <- function(wb,
         }
 
         # If row multilabel, remove automatically computed total observation
-        if (is_multilabel(formats, rows)){
+        if (is_multilabel(formats, rows) || !show_total){
             var_tab <- var_tab |>
                 collapse::fsubset(var_tab[[rows]] != "total")
 
@@ -858,7 +865,7 @@ format_cross_excel <- function(wb,
 
         # If column multilabel, remove automatically computed total column.
         # Set the real column names according to number of columns.
-        if (is_multilabel(formats, columns)){
+        if (is_multilabel(formats, columns) || !show_total){
             var_tab <- var_tab |> dropp("total")
 
             names(var_tab) <- c(paste0(rows, " / ", columns), column_names)
@@ -926,13 +933,26 @@ format_cross_excel <- function(wb,
                                   num_fmt_id          = wb$styles_mgr$get_numfmt_id("pct_numfmt"))
             }
 
+            # Draw inner table cells as heat map with conditional formatting
+            if (style[["as_heatmap"]]){
+                #-----------------------------------------------------------------#
+                monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
+                #-----------------------------------------------------------------#
+
+                wb$add_conditional_formatting(dims  = cross_ranges[["table_range"]],
+                                              style = c(style[["heatmap_low_color"]],
+                                                        style[["heatmap_middle_color"]],
+                                                        style[["heatmap_high_color"]]),
+                                              type  = "colorScale")
+            }
+
             # Adjust table dimensions
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
             #-----------------------------------------------------------------#
             wb <- wb |> handle_col_row_dimensions(cross_ranges,
-                                                  ncol(var_tab) + (style[["start_column"]] - 1),
-                                                  nrow(var_tab) + (style[["start_row"]] - 1),
+                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
+                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
                                                   style)
 
             wb <- wb |> handle_auto_dimensions(cross_ranges,
@@ -990,7 +1010,8 @@ format_cross_by_text <- function(cross_tab,
                                  by,
                                  titles,
                                  footnotes,
-                                 na.rm){
+                                 na.rm,
+                                 show_total){
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
         if ("pct_row" %in% statistics){
@@ -1032,9 +1053,9 @@ format_cross_by_text <- function(cross_tab,
             # and which value is currently filtered.
             header <- paste0("| ", by_var, " = ", value, " |")
 
-            complete_header <- c("\n", strrep("-", nchar(header)),
+            complete_header <- c("\n", strrep("-", collapse::vlengths(header)),
                                  header,
-                                 strrep("-", nchar(header)))
+                                 strrep("-", collapse::vlengths(header)))
 
             # Filter table by current by variable and value
             if (!is.na(value)){
@@ -1055,7 +1076,8 @@ format_cross_by_text <- function(cross_tab,
                                                formats,
                                                by,
                                                titles,
-                                               footnotes)
+                                               footnotes,
+                                               show_total)
 
             # Output formatted result
             complete_tabs <- c(complete_tabs, complete_header, current_cross)
@@ -1108,6 +1130,7 @@ format_cross_by_excel <- function(cross_tab,
                                   footnotes,
                                   style,
                                   output,
+                                  show_total,
                                   na.rm,
                                   wb,
                                   monitor_df){
@@ -1192,6 +1215,7 @@ format_cross_by_excel <- function(cross_tab,
                                           footnotes,
                                           style,
                                           output,
+                                          show_total,
                                           by_info,
                                           index,
                                           NULL)

@@ -6,10 +6,21 @@
 #' observations and variables present in the data frame, memory usage and the number
 #' of duplicate observations.
 #'
-#' @param data_frame The data frame to get the cointent information from.
+#' @param data_frame The data frame to get the content information from.
 #' @param output The following output formats are available: console (default) or text.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the
 #' functions time consumption.
+#'
+#' @details
+#' [content_report()] is based on the 'SAS' procedure Proc Contents, which provides
+#' a summary of global information one one hand like number of observations and variables among
+#' many others and on the other hand shows per variable information like type and length.
+#'
+#' 'R' doesn't store the same information in a data frame like 'SAS', but there are many
+#' useful information to get a quick overview of a data frame. With this function you don't
+#' need to look at each variable individually. You can simply run it over a data frame and
+#' get values for: number of unique values, missing values (absolute and relative), min and
+#' max value as well as the top value.
 #'
 #' @return
 #' Returns a list containing the global information as well as a data table containing
@@ -151,7 +162,10 @@ content_report <- function(data_frame,
         # Write texts to file and open editor
         temp_file <- tempfile(fileext = ".txt")
         writeLines(c(global_text, variable_text), temp_file, sep = "\n")
-        file.show(temp_file)
+
+        if (interactive()){
+            file.show(temp_file)
+        }
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)

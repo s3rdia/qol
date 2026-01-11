@@ -22,9 +22,11 @@ New functions
 	* reset_style_options(): Set global style options to default values of excel_output_style() and number_format_style().
 	* close_file(): A simple, more readable wrapper for setting file parameter to NULL.
 	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(): Additional global setters and getters.
+	* set_output(), get_output(): Additional global setters and getters.
 * content_report(): Collects and prints global and per variable information about the provided data frame.
 * import_data(), export_data(): Lightweight import and export for csv and xlsx files.
 * first_row_as_names(): Sets the values of the first data frame row as variable names and deletes first row.
+* qol_news(): Opens changelog GitHub Page.
 
 New functionality
 * inverse(): Now supports variable names written without quotation marks.
@@ -38,6 +40,8 @@ New functionality
 * In general: New global options for print, monitor and na.rm have been implemented into the functions capable of using them.
 * if.(): If only a single variable name is provided, it is now evaluated as !is.na(var_name).
 * retain_value(): Reworked iternally, can now also handle character variables.
+* excel_output_style(): New parameters as_heatmap, heatmap_low_color, heatmap_middle_color and heatmap_high_color. These can also be set as global options. If as_heatmap is TRUE the tables from any_table(), frequencies(), crosstabs() and export_with_style() receive a conditional formatting.
+* crosstabs(): Now has a new parameter `show_total` to control output of row and column totals.
 
 Removed
 * split_by_var() and split_by_condition(): See comment under 'New functions'.
@@ -51,6 +55,7 @@ Fixed
 * summarise_plus(): Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended.
 * handle_cell_styles(): Set apply_font and font_id in a save way to prevent warnings.
 * summarise_plus(): Removed conversion to numeric values before applying formats, which could lead to not matching formats, if a numeric value was intentionally stored as character value.
+* any_table(): When na.rm was TRUE and many table cells where generated while only having few observations, it could happen that some combinations weren't generated and a result mismatch happend. Results are now joined instead of cbind together to be safe.
 
 Optimization
 * summarise_plus(): Now uses faster collapse::na_omit for NA removal.
@@ -61,6 +66,7 @@ Optimization
 * In general: Swapped in more collapse functions.
 * any_table(): If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame.
 * In general: Error handling has been generalized in many places.
+* apply_format(): Removed redundant data.table transformations.
 
 New Error Checks
 * summarise_plus() and any_table(): Added an error check in case an invalid statistic is provided.
@@ -68,6 +74,7 @@ New Error Checks
 * summarise_plus() and any_table(): Added an error check in case an invalid type is provided.
 * recode_multi(): Added an error check in case an unknown object is provided.
 * any_table(), frequencies(), crosstabs(), export_with_style(): Added check if specified save path exists.
+* export_with_style(): Added check for output.
 
 Additionally
 * any_table(): Added an error check in case a variable combination was provided, which is not part of a pre summarised data frame.
@@ -77,6 +84,7 @@ Additionally
 * In general: Added more messages to display what functions do.
 * retain_value(), retain_sum(): value parameter is now called values.
 * mark_cases(), retain_value(), retain_sum(): Adjusted unit tests to something that actually makes sense.
+* In general: Added some unit tests on file saving and retreiving.
 
 ## R CMD check results
 

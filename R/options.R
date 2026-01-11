@@ -63,7 +63,7 @@ set_style_options <- function(...){
 
     logicals <- c("freeze_col_header", "freeze_row_header", "filters", "grid_lines", "header_font_bold",
                   "header_borders", "cat_col_font_bold", "cat_col_borders", "table_font_bold", "table_borders",
-                  "box_font_bold", "box_borders", "title_font_bold", "footnote_font_bold")
+                  "box_font_bold", "box_borders", "title_font_bold", "footnote_font_bold", "as_heatmap")
 
     numerics <- c("start_row", "start_column", "header_font_size", "header_indent",
                   "cat_col_font_size", "cat_col_indent", "table_font_size", "table_indent",
@@ -77,7 +77,8 @@ set_style_options <- function(...){
 
     colors <- c("header_back_color", "header_font_color", "header_border_color", "cat_col_back_color", "cat_col_font_color",
                 "cat_col_border_color", "table_back_color", "table_font_color", "table_border_color",
-                "box_back_color", "box_font_color", "box_border_color", "title_font_color", "footnote_font_color")
+                "box_back_color", "box_font_color", "box_border_color", "title_font_color", "footnote_font_color",
+                "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color")
 
     # Loop through passed arguments and check if they are of valid type
     for (style_option in names(style_list)){
@@ -324,7 +325,7 @@ get_stat_labels <- function(){
 #' @param ... Put in TRUE or FALSE to activate or deactivate the option.
 #'
 #' @return
-#' [set_print()]: Changed global print option.
+#' [set_print()]: Change global print option.
 #'
 #' @examples
 #' set_print(FALSE)
@@ -385,7 +386,7 @@ get_print <- function(){
 #' able to show how they work internally.
 #'
 #' @return
-#' [set_monitor()]: Changed global monitor option.
+#' [set_monitor()]: Change global monitor option.
 #'
 #' @examples
 #' set_monitor(TRUE)
@@ -446,7 +447,7 @@ get_monitor <- function(){
 #' NA values.
 #'
 #' @return
-#' [set_na.rm()]: Changed global na.rm option.
+#' [set_na.rm()]: Change global na.rm option.
 #'
 #' @examples
 #' set_na.rm(TRUE)
@@ -500,6 +501,71 @@ get_na.rm <- function(){
 }
 
 
+#' Set Global Output Option
+#'
+#' @description
+#' [set_output()]: Set the output option globally for each function that can output
+#' results to "console", "text", "excel" or "excel_nostyle".
+#'
+#' @return
+#' [set_output()]: Change global output option.
+#'
+#' @examples
+#' set_output("excel")
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_output <- function(...){
+    # Translate ... into a list if possible
+    output_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(output_option)){
+        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        return(invisible(.qol_options[["output"]]))
+    }
+
+    if (!is.character(output_option)){
+        message(" X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
+        return(invisible(.qol_options[["output"]]))
+    }
+
+    if (!tolower(output_option) %in% c("console", "text", "excel", "excel_nostyle")){
+        message(" X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
+        return(invisible(.qol_options[["output"]]))
+    }
+
+    .qol_options[["output"]] <- tolower(output_option)
+
+    invisible(.qol_options[["output"]])
+}
+
+
+#' Get Global Output Option
+#'
+#' @description
+#' [get_output()]: Get the globally stored output option.
+#'
+#' @return
+#' [get_output()]: Current output option as character.
+#'
+#' @examples
+#' get_output()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_output <- function(){
+    .qol_options[["output"]]
+}
+
+
 #' Reset Global Options
 #'
 #' @description
@@ -518,6 +584,21 @@ reset_qol_options <- function(){
     .qol_options[["print"]]   <- TRUE
     .qol_options[["monitor"]] <- FALSE
     .qol_options[["na.rm"]]   <- FALSE
+    .qol_options[["output"]]  <- "console"
 
     invisible(.qol_options)
+}
+
+
+#' Go To GitHub NEWS Page
+#'
+#' @description
+#' Opens browser and goes to the Github NEWS page
+#'
+#' @return
+#' URL.
+#'
+#' @export
+qol_news <- function() {
+    utils::browseURL("https://s3rdia.github.io/qol/news/index.html")
 }

@@ -67,17 +67,40 @@ export_with_style <- function(data_frame,
                               var_labels = .qol_options[["var_labels"]],
                               workbook   = NULL,
                               style      = .qol_options[["excel_style"]],
-                              output     = "excel",
+                              output     = .qol_options[["output"]],
                               print      = .qol_options[["print"]],
                               monitor    = .qol_options[["monitor"]]){
     start_time <- Sys.time()
+
+    #-------------------------------------------------------------------------#
+    monitor_df <- NULL |> monitor_start("Error handling", "Error handling")
+    #-------------------------------------------------------------------------#
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Output
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Silent conversion of global options, which are invalid for any_table
+    if (!tolower(output) %in% c("console", "text")){
+        output <- "excel"
+    }
+
+    # Check for invalid output option
+    if (!tolower(output) %in% c("excel", "excel_nostyle")){
+        message(" ! WARNING: <Output> format '", output, "' not available. Using 'excel' instead.")
+
+        output <- "excel"
+    }
+    else{
+        output <- tolower(output)
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     #-------------------------------------------------------------------------#
-    monitor_df <- NULL |> monitor_start("Excel prepare", "Format")
+    monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
 
     # Setup styling in new workbook if no other is provided
@@ -242,6 +265,19 @@ format_df_excel <- function(wb,
             }
         }
 
+        # Draw inner table cells as heat map with conditional formatting
+        if (style[["as_heatmap"]]){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
+            #-----------------------------------------------------------------#
+
+            wb$add_conditional_formatting(dims  = df_ranges[["table_range"]],
+                                          style = c(style[["heatmap_low_color"]],
+                                                    style[["heatmap_middle_color"]],
+                                                    style[["heatmap_high_color"]]),
+                                          type  = "colorScale")
+        }
+
         # Freeze headers. If both options are true they have to be set together, otherwise one
         # option would overwrite the other.
         if (style[["freeze_col_header"]] && style[["freeze_row_header"]]){
@@ -261,8 +297,8 @@ format_df_excel <- function(wb,
         #---------------------------------------------------------------------#
 
         wb <- wb |> handle_col_row_dimensions(df_ranges,
-                                              ncol(data_frame) + (style[["start_column"]] - 1),
-                                              nrow(data_frame) + (style[["start_row"]] - 1),
+                                              collapse::fncol(data_frame) + (style[["start_column"]] - 1),
+                                              collapse::fnrow(data_frame) + (style[["start_row"]] - 1),
                                               style) |>
             handle_any_auto_dimensions(df_ranges, style) |>
             handle_header_table_dim(df_ranges, style)

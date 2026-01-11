@@ -42,7 +42,18 @@
 #' Returns the script as character vector and saves it as markdown file.
 #'
 #' @examples
-#' build_master(dir = "C:/My Projects/Code", master_name = "Master Script")
+#' # Example export file paths
+#' # NOTE: These tempfiles are only for the examples. In reality you just call the
+#' # main function and put in your desired path and name directly.
+#' temp_file <- tempfile(fileext = ".rstheme")
+#' file_name <- basename(tools::file_path_sans_ext(temp_file))
+#'
+#' # Example master
+#' build_master(dir         = dirname(temp_file),
+#'              master_name = file_name)
+#'
+#' # Manual cleanup for example
+#' unlink(temp_file)
 #'
 #' @export
 build_master <- function(dir,
@@ -54,33 +65,27 @@ build_master <- function(dir,
     start_time <- Sys.time()
 
     # Check if folder exists
-    if (dir != "..."){
-        if (!dir.exists(dir)){
-            message(" X ERROR: Directory '", dir, "' does not exist.")
+    if (!dir.exists(dir) || dirname(dir) == "."){
+        message(" X ERROR: Directory '", dir, "' does not exist.")
+        return(invisible(NULL))
+    }
+
+    # Get folders in provided directory
+    folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
+
+    # Get all .R scripts inside the folders
+    scripts <- lapply(folders, function(folder){
+        files <- list.files(folder, pattern = "\\.R$", full.names = TRUE)
+
+        if (length(files) == 0){
             return(invisible(NULL))
         }
-
-        # Get folders in provided directory
-        folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
-
-        # Get all .R scripts inside the folders
-        scripts <- lapply(folders, function(folder){
-            files <- list.files(folder, pattern = "\\.R$", full.names = TRUE)
-
-            if (length(files) == 0){
-                return(invisible(NULL))
-            }
-            else{
-                files
-            }
-        })
-        names(scripts) <- folders
-        scripts        <- Filter(Negate(is.null), scripts)
-    }
-    # ... is for testing
-    else{
-        scripts <- list("root:/folder/" = "root:/folder/script.R")
-    }
+        else{
+            files
+        }
+    })
+    names(scripts) <- folders
+    scripts        <- Filter(Negate(is.null), scripts)
 
     all_scripts <- unlist(scripts)
 
@@ -171,9 +176,7 @@ build_master <- function(dir,
     # Write master file
     path <- ifelse(grepl("/$", dir), dir, paste0(dir, "/"))
 
-    if (dir != "..."){
-        writeLines(lines, con = paste0(path, master_name, ".Rmd"))
-    }
+    writeLines(lines, con = paste0(path, master_name, ".Rmd"))
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'build_master' execution time: ", end_time, " seconds\n")

@@ -98,12 +98,20 @@ if. <- function(data_frame, condition, ...) {
         # If a single variable name is given like 'age' this will be evaluated as:
         # !is.na(age). So it is basically a short form like 'If age;' in SAS.
         else{
-            # Evaluate condition
+            # If it is a single character variable it has to be checked first if it is part
+            # of the data frame. If not, no subsetting will take place.
             if (is.character(condition) && length(condition) == 1){
-                data_frame <- data_frame |> collapse::fsubset(!is.na(data_frame[[condition]]))
+                condition <- data_frame |> part_of_df(condition)
+
+                if (length(condition) == 0){
+                    message(" X ERROR: No variable for subsetting provided. Data frame remains as is.")
+                }
+                else{
+                    data_frame <- data_frame |> collapse::fsubset(!is.na(data_frame[[condition]]))
+                }
             }
-            else if (length(condition) > nrow(data_frame) || (is.character(condition) && length(condition) > 1)){
-                message(" X ERROR: Only single variables and conditions allowed. Data frames remeains as is.")
+            else if (length(condition) > collapse::fnrow(data_frame) || (is.character(condition) && length(condition) > 1)){
+                message(" X ERROR: Only single variables and conditions allowed. Data frame remains as is.")
             }
             # Evaluate single variable
             else{

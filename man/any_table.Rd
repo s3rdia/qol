@@ -23,7 +23,7 @@ any_table(
   box = "",
   workbook = NULL,
   style = .qol_options[["excel_style"]],
-  output = "excel",
+  output = .qol_options[["output"]],
   na.rm = .qol_options[["na.rm"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]

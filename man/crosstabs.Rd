@@ -8,6 +8,7 @@ crosstabs(
   data_frame,
   rows,
   columns,
+  show_total = TRUE,
   statistics = c("sum"),
   formats = c(),
   by = c(),
@@ -15,7 +16,7 @@ crosstabs(
   titles = c(),
   footnotes = c(),
   style = .qol_options[["excel_style"]],
-  output = "console",
+  output = .qol_options[["output"]],
   na.rm = .qol_options[["na.rm"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]
@@ -27,6 +28,8 @@ crosstabs(
 \item{rows}{The variable that appears in the table rows.}
 
 \item{columns}{The variable that appears in the table columns.}
+
+\item{show_total}{TRUE by default. Whether to print row and column totals or not.}
 
 \item{statistics}{The user requested statistics.Available functions:
 \itemize{

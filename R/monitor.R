@@ -92,9 +92,9 @@ monitor_start <- function(monitor_df, section, group = "Total"){
     }
 
     # Set up starting time in a new row of monitoring data frame
-    monitor_df[nrow(monitor_df) + 1, "group"]   <- as.character(group)
-    monitor_df[nrow(monitor_df),     "section"] <- as.character(section)
-    monitor_df[nrow(monitor_df),     "start"]   <- as.numeric(Sys.time())
+    monitor_df[collapse::fnrow(monitor_df) + 1, "group"]   <- as.character(group)
+    monitor_df[collapse::fnrow(monitor_df),     "section"] <- as.character(section)
+    monitor_df[collapse::fnrow(monitor_df),     "start"]   <- as.numeric(Sys.time())
 
     monitor_df
 }
@@ -108,8 +108,8 @@ monitor_start <- function(monitor_df, section, group = "Total"){
 #' @export
 monitor_end <- function(monitor_df){
     # Set end time in last timed row
-    monitor_df[nrow(monitor_df), "end"]   <- as.numeric(Sys.time())
-    monitor_df[nrow(monitor_df), "delta"] <- monitor_df[nrow(monitor_df), "end"] - monitor_df[nrow(monitor_df), "start"]
+    monitor_df[collapse::fnrow(monitor_df), "end"]   <- as.numeric(Sys.time())
+    monitor_df[collapse::fnrow(monitor_df), "delta"] <- monitor_df[collapse::fnrow(monitor_df), "end"] - monitor_df[collapse::fnrow(monitor_df), "start"]
 
     monitor_df
 }
@@ -206,7 +206,7 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
 
     # Set up axis
     graphics::axis(side   = 1,                         # x-Axis
-                   at     = seq_len(nrow(monitor_df)), # How many ticks are shown
+                   at     = seq_len(collapse::fnrow(monitor_df)), # How many ticks are shown
                    labels = monitor_df[[by]])          # Labels
     graphics::axis(side   = 2)                         # Show y-Axis as stated in plot
 
@@ -214,7 +214,7 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
     percentages <- monitor_df[["delta"]] / sum(monitor_df[["delta"]])
 
     # Setup plot dimensions
-    color_palette <- grDevices::rainbow(nrow(monitor_df))
+    color_palette <- grDevices::rainbow(collapse::fnrow(monitor_df))
 
     graphics::par(mar = c(5, 1, 2, 1))              # Margins: bottom, left, top, right
 

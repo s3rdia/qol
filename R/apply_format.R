@@ -60,15 +60,6 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             next
         }
 
-        # Convert provided data frames to data table for speed
-        if (!data.table::is.data.table(temp_data)){
-            temp_data <- data.table::as.data.table(temp_data)
-        }
-
-        if (!data.table::is.data.table(format_df)){
-            temp_data <- data.table::as.data.table(format_df)
-        }
-
         # Look up variable names in format data frame to check whether it is an
         # interval or discrete format
         interval_variables <- c("from", "to")
@@ -89,7 +80,7 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             temp_data[["qol_from"]] <- temp_data[[current_var]]
             temp_data[["qol_to"]]   <- temp_data[[current_var]]
 
-            data_frame[["qol_ID"]] <- seq_len(nrow(data_frame))
+            data_frame[["qol_ID"]] <- seq_len(collapse::fnrow(data_frame))
 
             # Make a copy of format data frame or otherwise the original will be
             # altered by the following key sorting

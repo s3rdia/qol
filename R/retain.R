@@ -92,13 +92,13 @@ running_number <- function(data_frame,
 
     # In case of a by variable
     if (length(by) == 1){
-        data_frame[[var_name]] <- stats::ave(seq_len(nrow(data_frame)),
+        data_frame[[var_name]] <- stats::ave(seq_len(collapse::fnrow(data_frame)),
                                              data.table::rleid(data_frame[[by]]),
                                              FUN = seq_along)
     }
     # In case of no by variable
     else{
-        data_frame[[var_name]] <- seq_len(nrow(data_frame))
+        data_frame[[var_name]] <- seq_len(collapse::fnrow(data_frame))
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
@@ -167,12 +167,12 @@ mark_case <- function(data_frame,
         # Mark first cases by placing the missing TRUE value at the front, meaning: Shift down the whole
         # vector by one.
         if (first){
-            data_frame[[var_name]] <- c(TRUE, data_frame[[by]][-1] != data_frame[[by]][-nrow(data_frame)])
+            data_frame[[var_name]] <- c(TRUE, data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)])
         }
         # Mark last cases by placing the missing TRUE value at the back, meaning: Shift up the whole
         # vector by one.
         else{
-            data_frame[[var_name]] <- c(data_frame[[by]][-1] != data_frame[[by]][-nrow(data_frame)], TRUE)
+            data_frame[[var_name]] <- c(data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)], TRUE)
         }
     }
     # In case no by variable is specified, mark first/last of whole data frame
@@ -185,7 +185,7 @@ mark_case <- function(data_frame,
         # Mark last cases
         else{
             data_frame[[var_name]] <- FALSE
-            data_frame[nrow(data_frame), var_name] <- TRUE
+            data_frame[collapse::fnrow(data_frame), var_name] <- TRUE
         }
     }
 
@@ -462,7 +462,7 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
     else{
         ordered_df <- data.table::copy(data_frame) |>
             data.table::setcolorder(variables,
-                                    after = ncol(data_frame))
+                                    after = collapse::fncol(data_frame))
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)

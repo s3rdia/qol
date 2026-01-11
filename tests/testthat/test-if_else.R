@@ -106,3 +106,35 @@ test_that("Subset data frame with if.", {
     expect_true(nrow(test_df) < nrow(dummy_df))
     expect_true(!2 %in% test_df[["sex"]])
 })
+
+
+test_that("Subset data frame with if., when only providing single variable", {
+    test_df <- dummy_df |> if.(sex)
+
+    expect_true(nrow(test_df) < nrow(dummy_df))
+    expect_true(!NA %in% test_df[["sex"]])
+})
+
+
+test_that("Subset data frame with if., when only providing single variable as character", {
+    test_df <- dummy_df |> if.("sex")
+
+    expect_true(nrow(test_df) < nrow(dummy_df))
+    expect_true(!NA %in% test_df[["sex"]])
+})
+
+
+test_that("Abort subset with if., if variable is not part of the data frame", {
+    expect_message(test_df <- dummy_df |> if.("test"),
+                   " X ERROR: No variable for subsetting provided. Data frame remains as is.")
+
+    expect_equal(test_df, dummy_df)
+})
+
+
+test_that("Abort subset with if., if multiple variables are provided", {
+    expect_message(test_df <- dummy_df |> if.(c("age", "sex")),
+                   " X ERROR: Only single variables and conditions allowed. Data frame remains as is.")
+
+    expect_equal(test_df, dummy_df)
+})

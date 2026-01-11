@@ -17,7 +17,7 @@
 #' @export
 libname <- function(path,
                     get_files = FALSE){
-    if (!file.exists(path)){
+    if (!file.exists(path) || dirname(path) == "."){
         message(" X ERROR: Path does not exist: ", path)
         return(invisible(NULL))
     }

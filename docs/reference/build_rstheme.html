@@ -236,11 +236,21 @@ to choose them by yourself.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example function</span></span>
-<span><span class="fu">build_rstheme</span><span class="op">(</span><span class="st">"C:/My Path/"</span>, <span class="st">"My theme"</span>,</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example export file paths</span></span>
+<span><span class="co"># NOTE: These tempfiles are only for the examples. In reality you just call the</span></span>
+<span><span class="co"># main function and put in your desired path and name directly.</span></span>
+<span><span class="va">temp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".rstheme"</span><span class="op">)</span></span>
+<span><span class="va">file_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html" class="external-link">file_path_sans_ext</a></span><span class="op">(</span><span class="va">temp_file</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example theme</span></span>
+<span><span class="fu">build_rstheme</span><span class="op">(</span>file_path         <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">temp_file</span><span class="op">)</span>,</span>
+<span>              theme_name        <span class="op">=</span> <span class="va">file_name</span>,</span>
 <span>              editor_background <span class="op">=</span> <span class="st">"#417291"</span>,</span>
 <span>              editor_headline   <span class="op">=</span> <span class="st">"#602BCA"</span>,</span>
 <span>              editor_font       <span class="op">=</span> <span class="st">"#C75C48"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manual cleanup for example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">temp_file</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

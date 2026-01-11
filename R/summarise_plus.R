@@ -1090,13 +1090,13 @@ matrix_summarise <- function(data_frame,
                 stat_function(value_matrix, w = weight, g = grouping))
 
             # Put stat name at the end of variable name
-            if (nrow(stat_result) > 0){
+            if (collapse::fnrow(stat_result) > 0){
                 data.table::setnames(stat_result, paste0(values, "_", single_stat))
             }
 
             monitor_df <- monitor_df |> monitor_end()
 
-            list(stat_result, monitor_df[nrow(monitor_df), ])
+            list(stat_result, monitor_df[collapse::fnrow(monitor_df), ])
         }
     })
 
@@ -1244,5 +1244,5 @@ reorder_summarised_columns <- function(data_frame, requested_stats){
     ordered_cols <- collapse::funique(ordered_cols)
 
     # Put the ordered columns at the end of the data frame
-    data_frame |> data.table::setcolorder(ordered_cols, after = ncol(data_frame))
+    data_frame |> data.table::setcolorder(ordered_cols, after = collapse::fncol(data_frame))
 }

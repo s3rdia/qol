@@ -60,7 +60,7 @@ of duplicate observations.</p>
 
 
 <dl><dt id="arg-data-frame">data_frame<a class="anchor" aria-label="anchor" href="#arg-data-frame"></a></dt>
-<dd><p>The data frame to get the cointent information from.</p></dd>
+<dd><p>The data frame to get the content information from.</p></dd>
 
 
 <dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
@@ -76,6 +76,17 @@ functions time consumption.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a list containing the global information as well as a data table containing
 the per variable information.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p><code>content_report()</code> is based on the 'SAS' procedure Proc Contents, which provides
+a summary of global information one one hand like number of observations and variables among
+many others and on the other hand shows per variable information like type and length.</p>
+<p>'R' doesn't store the same information in a data frame like 'SAS', but there are many
+useful information to get a quick overview of a data frame. With this function you don't
+need to look at each variable individually. You can simply run it over a data frame and
+get values for: number of unique values, missing values (absolute and relative), min and
+max value as well as the top value.</p>
     </div>
 
     <div class="section level2">

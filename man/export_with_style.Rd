@@ -11,7 +11,7 @@ export_with_style(
   var_labels = .qol_options[["var_labels"]],
   workbook = NULL,
   style = .qol_options[["excel_style"]],
-  output = "excel",
+  output = .qol_options[["output"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]
 )

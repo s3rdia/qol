@@ -151,13 +151,13 @@ recode <- function(data_frame,
             collapse::fsubset(!is.na(data_frame[[current_var]]))
 
         # Get number of rows from data frame to compare after the merge to check for multilabel
-        original_rows <- nrow(data_frame)
+        original_rows <- collapse::fnrow(data_frame)
 
         # Generate pseudo variables for range merging
         data_frame[["qol_from"]] <- data_frame[[as.character(current_var)]]
         data_frame[["qol_to"]]   <- data_frame[[as.character(current_var)]]
 
-        data_frame[["qol_ID"]] <- seq_len(nrow(data_frame))
+        data_frame[["qol_ID"]] <- seq_len(collapse::fnrow(data_frame))
 
         # Set key variables
         temp_dt   <- data.table::as.data.table(data_frame)
@@ -178,7 +178,7 @@ recode <- function(data_frame,
         data_frame <- data_frame |>
             data.table::setcolorder(new_var, after = ncol(data_frame))
 
-        if (nrow(data_frame) > original_rows){
+        if (collapse::fnrow(data_frame) > original_rows){
             message(" ! WARNING: The format for '", current_var, "' is a multilabel. For interval formats this leads to\n",
                     "            doubling observations.")
         }

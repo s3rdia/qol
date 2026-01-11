@@ -123,10 +123,20 @@ has a different taste of what colors look pleasing to the eyes, so you should be
 to choose them by yourself.
 }
 \examples{
-# Example function
-build_rstheme("C:/My Path/", "My theme",
+# Example export file paths
+# NOTE: These tempfiles are only for the examples. In reality you just call the
+# main function and put in your desired path and name directly.
+temp_file <- tempfile(fileext = ".rstheme")
+file_name <- basename(tools::file_path_sans_ext(temp_file))
+
+# Example theme
+build_rstheme(file_path         = dirname(temp_file),
+              theme_name        = file_name,
               editor_background = "#417291",
               editor_headline   = "#602BCA",
               editor_font       = "#C75C48")
+
+# Manual cleanup for example
+unlink(temp_file)
 
 }

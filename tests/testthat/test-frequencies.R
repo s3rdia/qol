@@ -5,6 +5,8 @@
 # but without drawing the whole outputs on screen.
 ###############################################################################
 
+set_style_options(as_heatmap = TRUE)
+
 dummy_df <- suppressMessages(dummy_data(1000))
 
 
@@ -328,3 +330,20 @@ test_that("Invalid output format leads to console output", {
                         print     = FALSE),
             " ! WARNING: <Output> format 'test' not available. Using 'console' instead.")
 })
+
+
+test_that("Save frequencies as Excel file", {
+    temp_file <- tempfile(fileext = ".xlsx")
+    on.exit(unlink(temp_file), add = TRUE)
+
+    suppressMessages(dummy_df |>
+         frequencies(variables = age,
+                     output    = "excel",
+                     style     = excel_output_style(save_path = dirname(temp_file),
+                                                    file      = basename(temp_file))))
+
+    expect_true(file.exists(temp_file))
+})
+
+
+set_style_options(as_heatmap = FALSE)

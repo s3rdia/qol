@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120---development">qol 1.2.0 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-120---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120">qol 1.2.0<a class="anchor" aria-label="anchor" href="#qol-120"></a></h2>
 <div class="section level4">
 <h4 id="new-functions-1-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-0"></a></h4>
 <ul><li>
@@ -79,6 +79,8 @@
 <code><a href="../reference/style_options.html">close_file()</a></code>: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)</li>
 <li>
 <code><a href="../reference/style_options.html">set_variable_labels()</a></code>, <code><a href="../reference/style_options.html">get_variable_labels()</a></code>, <code>set_statistic_labels()</code>, <code>get_statistic_labels()</code>, <code><a href="../reference/qol_options.html">set_print()</a></code>, <code><a href="../reference/qol_options.html">get_print()</a></code>, <code><a href="../reference/qol_options.html">set_monitor()</a></code>, <code><a href="../reference/qol_options.html">get_monitor()</a></code>, <code><a href="../reference/qol_options.html">set_na.rm()</a></code>, <code><a href="../reference/qol_options.html">get_na.rm()</a></code>: Additional global setters and getters. (07.01.2026)</li>
+<li>
+<code><a href="../reference/qol_options.html">set_output()</a></code>, <code><a href="../reference/qol_options.html">get_output()</a></code>: Additional global setters and getters. (11.01.2026)</li>
 </ul></li>
 <li>
 <code><a href="../reference/content_report.html">content_report()</a></code>: Collects and prints global and per variable information about the provided data frame. (08.01.2026)</li>
@@ -86,6 +88,8 @@
 <code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">export_data()</a></code>: Lightweight import and export for csv and xlsx files. (10.01.2026)</li>
 <li>
 <code><a href="../reference/first_row_as_names.html">first_row_as_names()</a></code>: Sets the values of the first data frame row as variable names and deletes first row. (10.01.2026)</li>
+<li>
+<code><a href="../reference/qol_news.html">qol_news()</a></code>: Opens changelog GitHub Page. (11.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-0"></a></h4>
@@ -110,6 +114,10 @@
 <code><a href="../reference/if_else.html">if.()</a></code>: If only a single variable name is provided, it is now evaluated as !is.na(var_name). (10.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_value()</a></code>: Reworked iternally, can now also handle character variables. (10.01.2026)</li>
+<li>
+<code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: New parameters <code>as_heatmap</code>, <code>heatmap_low_color</code>, <code>heatmap_middle_color</code> and <code>heatmap_high_color</code>. These can also be set as global options. If <code>as_heatmap</code> is TRUE the tables from <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code> and <code><a href="../reference/export_with_style.html">export_with_style()</a></code> receive a conditional formatting. (11.01.2026)</li>
+<li>
+<code><a href="../reference/crosstabs.html">crosstabs()</a></code>: Now has a new parameter <code>show_total</code> to control output of row and column totals. (11.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
@@ -138,6 +146,8 @@
 <code>handle_cell_styles()</code>: Set apply_font and font_id in a save way to prevent warnings. (04.01.2026, thanks to <a href="https://github.com/JanMarvin" class="external-link">@JanMarvin</a>)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Removed conversion to numeric values before applying formats, which could lead to not matching formats, if a numeric value was intentionally stored as character value. (07.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When na.rm was TRUE and many table cells where generated while only having few observations, it could happen that some combinations weren’t generated and a result mismatch happend. Results are now joined instead of cbind together to be safe. (11.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-0"></a></h4>
@@ -155,6 +165,8 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: If more than two group percentages have to be computed, any additional one gets computed faster, because they are computed on a smaller data frame. (29.12.2025)</li>
 <li>In general: Error handling has been generalized in many places to make it more robust and get a better overview. (02.01.2026)</li>
+<li>
+<code>apply_format()</code>: Removed redundant data.table transformations. (11.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-error-checks-1-2-0">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-0"></a></h4>
@@ -168,6 +180,8 @@
 <code><a href="../reference/recode.html">recode_multi()</a></code>: Added an error check in case an unknown object is provided. (02.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added check if specified save path exists. (08.01.2026)</li>
+<li>
+<code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added check for output. (11.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-2-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-0"></a></h4>
@@ -182,10 +196,12 @@
 <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: <code>value</code> parameter is now called <code>values</code>. (10.01.2026)</li>
 <li>
 <code>mark_cases()</code>, <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: Adjusted unit tests to something that actually makes sense. (10.01.2026)</li>
+<li>In general: Added some unit tests on file saving and retrieving. (10.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.1" id="qol-111---cran-release-on-13122025">qol 1.1.1 - CRAN release on 13.12.2025<a class="anchor" aria-label="anchor" href="#qol-111---cran-release-on-13122025"></a></h2><p class="text-muted">CRAN release: 2025-12-13</p>
+<h2 class="pkg-version" data-toc-text="1.1.1" id="qol-111">qol 1.1.1<a class="anchor" aria-label="anchor" href="#qol-111"></a></h2><p class="text-muted">CRAN release: 2025-12-13</p>
+<p>CRAN release on 13.12.2025</p>
 <div class="section level4">
 <h4 id="new-functions-1-1-1">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-1"></a></h4>
 <ul><li>
@@ -208,7 +224,8 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.0" id="qol-110---cran-release-on-20112025">qol 1.1.0 - CRAN release on 20.11.2025<a class="anchor" aria-label="anchor" href="#qol-110---cran-release-on-20112025"></a></h2><p class="text-muted">CRAN release: 2025-11-20</p>
+<h2 class="pkg-version" data-toc-text="1.1.0" id="qol-110">qol 1.1.0<a class="anchor" aria-label="anchor" href="#qol-110"></a></h2><p class="text-muted">CRAN release: 2025-11-20</p>
+<p>CRAN release on 20.11.2025</p>
 <div class="section level4">
 <h4 id="new-functions-1-1-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-0"></a></h4>
 <ul><li>
@@ -285,7 +302,8 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.2" id="qol-102---cran-release-on-14102025">qol 1.0.2 - CRAN release on 14.10.2025<a class="anchor" aria-label="anchor" href="#qol-102---cran-release-on-14102025"></a></h2><p class="text-muted">CRAN release: 2025-10-14</p>
+<h2 class="pkg-version" data-toc-text="1.0.2" id="qol-102">qol 1.0.2<a class="anchor" aria-label="anchor" href="#qol-102"></a></h2><p class="text-muted">CRAN release: 2025-10-14</p>
+<p>CRAN release on 14.10.2025</p>
 <div class="section level4">
 <h4 id="description-file-1-0-2">DESCRIPTION file<a class="anchor" aria-label="anchor" href="#description-file-1-0-2"></a></h4>
 <ul><li>Fixed brackets in DESCRIPTION so that auto linking works.</li>

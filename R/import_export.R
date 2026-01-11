@@ -16,6 +16,15 @@
 #' @param decimal Only used in CSV-export. Defines the single character decimal character.
 #' @param var_names TRUE by default. Whether to export variable names or not.
 #'
+#' @details
+#' [import_data()] and [export_data()] are based on the 'SAS' procedures Proc Import and Proc Export,
+#' which provide a very straight forward syntax. While 'SAS' can import many different formats with
+#' these procedures, these 'R' versions concentrate on importing CSV and XLSX files.
+#'
+#' The main goal here is to just provide as few as possible parameters to tackle most of the imports
+#' and exports. These error handling also tries to let an import and export happen, even though
+#' a parameter wasn't provided in the correct way.
+#'
 #' @return
 #' Returns a data frame.
 #'
@@ -71,7 +80,7 @@ import_data <- function(infile,
     }
 
     # Abort on invalid path
-    if (!dir.exists(dirname(infile))|| dirname(infile) == "."){
+    if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
         message(" X ERROR: Path does not exist: ", infile, "\n",
                 "          Import will be aborted.")
 
@@ -246,6 +255,9 @@ import_data <- function(infile,
 #' my_data |> export_data(export_csv)
 #' my_data |> export_data(export_xlsx)
 #'
+#' # Manual cleanup for example
+#' unlink(c(export_csv, export_xlsx))
+#'
 #' @rdname import_export
 #'
 #' @export
@@ -272,7 +284,7 @@ export_data <- function(data_frame,
     }
 
     # Abort on invalid path
-    if (!dir.exists(dirname(outfile))|| dirname(outfile) == "."){
+    if (!dir.exists(dirname(outfile)) || dirname(outfile) == "."){
         message(" X ERROR: Path does not exist: ", outfile, "\n",
                 "          Export will be aborted.")
 

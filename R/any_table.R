@@ -294,7 +294,7 @@ any_table <- function(data_frame,
                       box            = "",
                       workbook       = NULL,
                       style          = .qol_options[["excel_style"]],
-                      output         = "excel",
+                      output         = .qol_options[["output"]],
                       na.rm          = .qol_options[["na.rm"]],
                       print          = .qol_options[["print"]],
                       monitor        = .qol_options[["monitor"]]){
@@ -465,6 +465,11 @@ any_table <- function(data_frame,
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Silent conversion of global options, which are invalid for any_table
+    if (!tolower(output) %in% c("console", "text")){
+        output <- "excel"
+    }
+
     # Check for invalid output option
     if (!tolower(output) %in% c("excel", "excel_nostyle")){
         message(" ! WARNING: <Output> format '", output, "' not available. Using 'excel' instead.")
@@ -474,6 +479,10 @@ any_table <- function(data_frame,
     else{
         output <- tolower(output)
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Order
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Correct nesting option if not set right
     if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved")){
@@ -953,7 +962,7 @@ any_table <- function(data_frame,
             # aren't present in the data frame. This leads to the data frame having no
             # observations at this point, which leads to an error down below. If this
             # happens, abort.
-            if (nrow(combi_df) == 0){
+            if (collapse::fnrow(combi_df) == 0){
                 message(" X ERROR: The variable combination of '", subset_type, "' is not part of the provided data frame.\n",
                         "          Tabulation will be aborted.")
                 return(invisible(NULL))
@@ -984,7 +993,7 @@ any_table <- function(data_frame,
             # as names. The needed format is "value_stat_expression". In the mentioned
             # case this format is pre computed.
             if (length(values) == 1 && length(statistics) == 1){
-                value_stat <- names(combi_df[ncol(combi_df)])
+                value_stat <- names(combi_df[collapse::fncol(combi_df)])
 
                 combi_df[[col_combi_vars[1]]] <-
                     paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
@@ -992,8 +1001,8 @@ any_table <- function(data_frame,
             # Fallback check if the user happens to input only wrong statistics but one.
             # In this case statistics is longer than 1 even though only one statistic was
             # computed. This leads to the condition above being omitted.
-            else if (ncol(combi_df) - length(c(id_vars, col_combi_vars, "TYPE")) == 1){
-                value_stat <- names(combi_df[ncol(combi_df)])
+            else if (collapse::fncol(combi_df) - length(c(id_vars, col_combi_vars, "TYPE")) == 1){
+                value_stat <- names(combi_df[collapse::fncol(combi_df)])
 
                 combi_df[[col_combi_vars[1]]] <-
                     paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
@@ -1071,14 +1080,9 @@ any_table <- function(data_frame,
             }
             # Following iterations
             else{
-                combi_df <- suppressMessages(combi_df |>
-                    dropp(new_row_names, "row.label", "BY", "by_vars"))
-
-                # Add row header variable
-                new_row_names <- c("row.label", new_row_names)
-
                 # Check for duplicate variable names. If any duplicate is found abort.
-                duplicates <- intersect(names(combined_col_df), names(combi_df))
+                duplicates <- intersect(names(combined_col_df),
+                                        setdiff(names(combi_df), c(new_row_names, "row.label", "BY", "by_vars")))
 
                 if (length(duplicates) > 0){
                     message(" X ERROR: Duplicate <columns> names found: ", paste(duplicates, collapse = ", "), ".\n",
@@ -1087,7 +1091,16 @@ any_table <- function(data_frame,
                 }
 
                 # cbind current data frame to the iterations before
-                combined_col_df <- cbind(combined_col_df, combi_df)
+                #combined_col_df <- cbind(combined_col_df, combi_df)
+                combined_col_df <- collapse::join(combined_col_df, combi_df,
+                                                  on       = new_row_names,
+                                                  how      = "left",
+                                                  verbose  = FALSE)
+
+                # Remove variables which define the row labels so that they don't appear
+                # when combining the column header below.
+                combi_df <- suppressMessages(combi_df |>
+                    dropp(new_row_names, "row.label", "BY", "by_vars"))
             }
 
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1107,11 +1120,11 @@ any_table <- function(data_frame,
 
                 # If the header has fewer rows than the maximum header rows, fill up the header
                 # with additional empty rows.
-                header_diff <- max_plus - nrow(col_header_df)
+                header_diff <- max_plus - collapse::fnrow(col_header_df)
                 if (header_diff > 0){
                     col_header_df <- rbind(col_header_df,
                                            stats::setNames(data.table::as.data.table(
-                                               matrix("", header_diff, ncol(col_header_df))),
+                                               matrix("", header_diff, collapse::fncol(col_header_df))),
                                                names(col_header_df)))
                 }
 
@@ -1138,7 +1151,7 @@ any_table <- function(data_frame,
 
         # Get table dimensions for later use during formatting.
         name <- paste0("header_end_", paste(row_combi_vars, collapse = "%%%"))
-        last_number_of_rows           <- (nrow(combined_col_df) / by_division) + last_number_of_rows
+        last_number_of_rows           <- (collapse::fnrow(combined_col_df) / by_division) + last_number_of_rows
         row_header_dimensions[[name]] <- last_number_of_rows
 
         name <- paste0("header_size_", paste(row_combi_vars, collapse = "%%%"))
@@ -1152,7 +1165,7 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Put all computed data frames below each other to form a final result data frame
-    any_tab <- data.table::rbindlist(part_combi_list,   fill = TRUE)
+    any_tab <- data.table::rbindlist(part_combi_list, fill = TRUE, use.names = TRUE)
 
     # Reorder variables according to statistics
     if (tolower(order_by) == "stats" || tolower(order_by) == "values_stats"){
@@ -1377,16 +1390,16 @@ format_any_excel <- function(wb,
     # Remove empty statistics rows, but keep multi_header with statistics because the information
     # is needed below for applying the correct number formats.
     column_header <- multi_header |> set_statistic_labels(stat_labels)
-    column_header <- column_header[rowSums(column_header == "") != ncol(column_header), , drop = FALSE]
+    column_header <- column_header[rowSums(column_header == "") != collapse::fncol(column_header), , drop = FALSE]
 
-    stats_row <- multi_header[nrow(multi_header), , drop = FALSE]
+    stats_row <- multi_header[collapse::fnrow(multi_header), , drop = FALSE]
 
     # Get table ranges
     any_ranges <- get_any_tab_ranges(any_tab, column_header, stats_row,
                                      titles, footnotes, style)
 
     # Add empty columns to the header for the top left box at the beginning
-    blank_columns <- matrix("", nrow = nrow(column_header), ncol = any_ranges[["cat_col.width"]])
+    blank_columns <- matrix("", nrow = collapse::fnrow(column_header), ncol = any_ranges[["cat_col.width"]])
     column_header <- cbind(blank_columns, column_header)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1496,6 +1509,19 @@ format_any_excel <- function(wb,
             col_index <- col_index + 1
         }
 
+        # Draw inner table cells as heat map with conditional formatting
+        if (style[["as_heatmap"]]){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
+            #-----------------------------------------------------------------#
+
+            wb$add_conditional_formatting(dims  = any_ranges[["table_range"]],
+                                          style = c(style[["heatmap_low_color"]],
+                                                    style[["heatmap_middle_color"]],
+                                                    style[["heatmap_high_color"]]),
+                                          type  = "colorScale")
+        }
+
         # Freeze headers. If both options are true they have to be set together, otherwise one
         # option would overwrite the other.
         if (style[["freeze_col_header"]] && style[["freeze_row_header"]]){
@@ -1515,8 +1541,8 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
-                                              ncol(any_tab),
-                                              nrow(any_tab) + nrow(multi_header),
+                                              collapse::fncol(any_tab),
+                                              collapse::fnrow(any_tab) + collapse::fnrow(multi_header),
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
@@ -1564,7 +1590,7 @@ set_statistic_labels <- function(column_header, stat_labels){
         }
 
         # Replace stat texts with provided labels
-        column_header[nrow(column_header), ] <- gsub(name, label, column_header[nrow(column_header), ])
+        column_header[collapse::fnrow(column_header), ] <- gsub(name, label, column_header[collapse::fnrow(column_header), ])
     }
 
     column_header
@@ -1683,7 +1709,7 @@ build_multi_header <- function(var_names,
     }
 
     # Drop completely empty rows
-    if (nrow(header_matrix) > 1){
+    if (collapse::fnrow(header_matrix) > 1){
         header_matrix <- data.table::as.data.table(
             header_matrix[rowSums(header_matrix != "" & header_matrix != " ") > 0,
                           colSums(header_matrix != "" & header_matrix != " ") > 0, drop = FALSE])
@@ -1718,12 +1744,12 @@ merge_headers <- function(value_header, variable_header){
     row_list <- list()
 
     # Loop over the value header rows to inject the variable headers into them
-    for (i in seq_len(nrow(value_header))){
+    for (i in seq_len(collapse::fnrow(value_header))){
         # Take a row from the value header
         row_list[[length(row_list) + 1]] <- value_header[i, , drop = FALSE]
 
         # If there are still rows in the variable header check whether to inject them
-        if (i <= nrow(variable_header)){
+        if (i <= collapse::fnrow(variable_header)){
             variable_row <- variable_header[i, , drop = FALSE]
 
             # Only inject variable row, if the row isn't completely empty
@@ -1734,7 +1760,7 @@ merge_headers <- function(value_header, variable_header){
     }
 
     # Output as data table
-    data.table::rbindlist(row_list, use.names=FALSE)
+    data.table::rbindlist(row_list, use.names = FALSE)
 }
 
 ###############################################################################
@@ -2055,11 +2081,16 @@ combine_into_workbook <- function(...,
         #---------------------------------------------------------------------#
 
         if (is.null(file)){
-            wb$open()
+            if (interactive()){
+                wb$open()
+            }
         }
-        else if (!dir.exists(dirname(file))){
+        else if (!dir.exists(dirname(file)) || dirname(file) == "."){
             message(" ! WARNING: Directory '", dirname(file), "' does not exist. File won't be saved.")
-            wb$open()
+
+            if (interactive()){
+                wb$open()
+            }
         }
         else{
             wb$save(file = file, overwrite = TRUE)

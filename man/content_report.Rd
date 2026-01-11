@@ -7,7 +7,7 @@
 content_report(data_frame, output = "console", monitor = FALSE)
 }
 \arguments{
-\item{data_frame}{The data frame to get the cointent information from.}
+\item{data_frame}{The data frame to get the content information from.}
 
 \item{output}{The following output formats are available: console (default) or text.}
 
@@ -23,6 +23,17 @@ Prints a summary of a data frames contents, including details such as variable n
 types, unique values, missings and min/max values. It also tells you the number of
 observations and variables present in the data frame, memory usage and the number
 of duplicate observations.
+}
+\details{
+\code{\link[=content_report]{content_report()}} is based on the 'SAS' procedure Proc Contents, which provides
+a summary of global information one one hand like number of observations and variables among
+many others and on the other hand shows per variable information like type and length.
+
+'R' doesn't store the same information in a data frame like 'SAS', but there are many
+useful information to get a quick overview of a data frame. With this function you don't
+need to look at each variable individually. You can simply run it over a data frame and
+get values for: number of unique values, missing values (absolute and relative), min and
+max value as well as the top value.
 }
 \examples{
 # Example data frame
