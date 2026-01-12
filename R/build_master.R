@@ -6,6 +6,7 @@
 #'
 #' @param dir The folder structure which contains the scripts to build upon.
 #' @param master_name The file name which should be written.
+#' @param author Authors name to be put in the header.
 #' @param with_structure Whether the folder structure as tree should be written
 #' to the master script.
 #' @param with_run_all Whether a section, which let's the user run all scripts,
@@ -58,6 +59,7 @@
 #' @export
 build_master <- function(dir,
                          master_name     = "Master",
+                         author          = "",
                          with_structure  = TRUE,
                          with_run_all    = TRUE,
                          with_run_folder = TRUE){
@@ -70,34 +72,49 @@ build_master <- function(dir,
         return(invisible(NULL))
     }
 
+    path <- ifelse(grepl("/$", dir), dir, paste0(dir, "/"))
+
     # Get folders in provided directory
     folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
 
     # Get all .R scripts inside the folders
     scripts <- lapply(folders, function(folder){
-        files <- list.files(folder, pattern = "\\.R$", full.names = TRUE)
-
-        if (length(files) == 0){
-            return(invisible(NULL))
-        }
-        else{
-            files
-        }
+        libname(folder, get_files = TRUE)
     })
     names(scripts) <- folders
     scripts        <- Filter(Negate(is.null), scripts)
-
-    all_scripts <- unlist(scripts)
 
     # Setup header
     lines <- c(
         "################################################################################",
         paste0("# ", master_name),
         "#",
-        "# Author: ",
+        paste0("# Author: ", author),
         "#",
         paste0("# Date: ", format(Sys.Date(), "%d.%m.%Y")),
         "################################################################################",
+        "")
+
+    # Get the function call itself with all parameters and convert to character
+    # so that it can be inserted in the file as rebuilt option.
+    call_expr <- match.call()
+    call_text <- paste(deparse(call_expr, width.cutoff = 500), collapse = "\n")
+
+    # Rebuilt master section
+    lines <- c(lines,
+        "################################################################################",
+        "# Rebuilt Master",
+        "################################################################################",
+        "",
+        "```{r rebuilt_master, echo = TRUE}",
+        paste0('master_file <- "', path, master_name, '.Rmd"'),
+        "",
+        "if (file.exists(master_file)){",
+        "    file.remove(master_file)",
+        "}",
+        "",
+        call_text,
+        "```",
         "")
 
     # Generate tree view folder structure
@@ -112,18 +129,19 @@ build_master <- function(dir,
         message(" > Write all scripts execution")
 
         run_all_folders <- c(
+            "",
             "################################################################################",
             "# Run All Scripts in All Folders",
             "################################################################################",
-            "",
             "```{r run_all_scripts, echo = TRUE}",
-            paste0('all_scripts <- c("', paste(all_scripts, collapse = '",\n                 "'), '")'),
+            paste0('scripts <- c(', paste(paste0('libname("', names(scripts), '", get_files = TRUE)'), collapse = ',\n             '), ')'),
             "",
-            "for (file in all_scripts){",
+            "for (file in scripts){",
             "    source(file, local = FALSE)",
             "}",
-            "```",
-            "")
+            "",
+            "rm(scripts)",
+            "```")
 
         lines <- c(lines, run_all_folders)
     }
@@ -139,18 +157,18 @@ build_master <- function(dir,
         if (with_run_folder){
             message("   + folder: ", folder)
 
-            lines <- c(lines, c("#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-                                paste0("# Run All Scripts in Folder: ", basename(folder)),
-                                "#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-                                ""),
-                              paste0("```{r ", folder_name, ", echo = TRUE}\n"),
-                              c(paste0('all_scripts <- c("', paste(all_scripts_in_folder, collapse = '",\n                 "'), '")'),
+            lines <- c(lines, c("\n#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+                                paste0("#     Run All Scripts in Folder: ", basename(folder)),
+                                "#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"),
+                              paste0("```{r ", folder_name, ", echo = TRUE}"),
+                              paste0('      scripts <- libname("', folder, '", get_files = TRUE)'),
                                 "",
-                                "for (file in all_scripts){",
-                                "    source(file, local = FALSE)",
-                                "}",
-                                "```",
-                                "\n"))
+                                "      for (file in scripts){",
+                                "          source(file, local = FALSE)",
+                                "      }",
+                               "",
+                               "      rm(scripts)",
+                                "```")
         }
 
         # Add each script as its own chunk
@@ -162,20 +180,17 @@ build_master <- function(dir,
             file_name <- gsub("[^a-zA-Z0-9_]", "_", paste0("run_", basename(file)))
 
             lines <- c(lines, c("#-------------------------------------------------------------------------------#",
-                                paste0("# Run Script: ", basename(file)),
+                                paste0("#         Run Script: ", basename(file)),
                                 "#-------------------------------------------------------------------------------#"),
                               paste0("```{r ", file_name, ", echo = TRUE}"),
-                              paste0('source("', file, '", local = FALSE)'),
-                              "```",
-                              "\n")
+                              paste0('          source("', file, '", local = FALSE)'),
+                              "```")
         }
     }
 
     message(" > Putting together master file")
 
     # Write master file
-    path <- ifelse(grepl("/$", dir), dir, paste0(dir, "/"))
-
     writeLines(lines, con = paste0(path, master_name, ".Rmd"))
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
@@ -200,21 +215,40 @@ print_folder_structure <- function(file_list) {
     # Extract root folder
     root <- paste0(dirname(names(file_list)[1]), "/")
 
-    # Loop trough all list entries to build folder tree
+    # Root is always on top
     output <- c("################################################################################",
                 "# Folder structure",
                 "################################################################################",
                 "",
-                root)
+                "# Root",
+                "```{r open_root, echo = TRUE}",
+                paste0('utils::browseURL("', root, '")'),
+                "```")
 
-    for (folder in names(file_list)) {
-        subfolder <- basename(folder)
-        files     <- basename(file_list[[folder]])
+    # Loop trough all list entries to build folder tree
+    for (folder in names(file_list)){
+        # Get folder and corresponding files first
+        folder_path <- normalizePath(folder, winslash = "/")
+        subfolder   <- basename(folder)
+        files       <- file_list[[folder]]
 
-        # Write folder structure into character vector
+        # Open folder section
         output <- c(output,
-                    paste0("  ", subfolder, "/"),
-                    paste0("    |_ ", files))
+                    paste0("##......", subfolder),
+                    paste0('```{r open_', subfolder, ', echo = TRUE}'),
+                    paste0('        utils::browseURL("', folder_path, '")'),
+                    "```")
+
+        # Open files block
+        for (file in files){
+            file_path <- normalizePath(file, winslash = "/")
+
+            output <- c(output,
+                        paste0("###.............", basename(file)),
+                        paste0('```{r open_', basename(file), ', echo = TRUE}'),
+                        paste0('                file.edit("', file_path,'")'),
+                        "```")
+        }
     }
 
     output

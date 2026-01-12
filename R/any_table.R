@@ -466,7 +466,7 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Silent conversion of global options, which are invalid for any_table
-    if (!tolower(output) %in% c("console", "text")){
+    if (tolower(output) %in% c("console", "text")){
         output <- "excel"
     }
 
@@ -489,24 +489,6 @@ any_table <- function(data_frame,
         message(" ! WARNING: <Order by> option '", order_by, "' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'\n",
                 "            and 'interleaved' are available. <Order by> will be set to 'stats'.")
         order_by <- "stats"
-    }
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Percentages
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Remove missing variables from pct_group
-    if ("pct_group" %in% tolower(statistics)){
-        invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
-
-        if (length(invalid_pct) > 0){
-            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
-                    "            of the <rows> and <columns> variables. The variable will be omitted.")
-
-            pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
-        }
-
-        rm(invalid_pct)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -538,7 +520,7 @@ any_table <- function(data_frame,
 
         # Set up options to make sure nothing errors below. Statistics is set to "mean"
         # because then summarise_plus takes a route where factor variables are kept in order.
-        # With "sum" the order would messed up.
+        # With "sum" the order would be messed up.
         statistics <- "mean"
         pct_group  <- ""
         pct_value  <- ""
@@ -571,6 +553,32 @@ any_table <- function(data_frame,
             }
         }
         rm(list_of_statistics, invalid_stats)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Percentages
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Remove missing variables from pct_group
+    if ("pct_group" %in% tolower(statistics)){
+        invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
+
+        if (length(invalid_pct) > 0){
+            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
+                    "            of the <rows> and <columns> variables. The variable will be omitted.")
+
+            pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
+        }
+
+        rm(invalid_pct)
+    }
+
+    # If pct_value is selected, make sure sum is also part of statistics
+    flag_remove_sum <- FALSE
+
+    if ("pct_value" %in% tolower(statistics) && length(statistics) == 1){
+        statistics      <- c(statistics, "sum")
+        flag_remove_sum <- TRUE
     }
 
     ###########################################################################
@@ -797,8 +805,7 @@ any_table <- function(data_frame,
             }
             # Without sum percentages can't be computed
             else{
-                message(" ! WARNING: <pct_value> can only be computed in combination with <statistic>\n",
-                        "            'sum'. Percentages for '", name, "' could not be evaluated.")
+                flag_remove_sum <- FALSE
 
                 # Additional warnings for missing variables
                 if (!eval_vars[1] %in% names(data_frame)){
@@ -810,7 +817,11 @@ any_table <- function(data_frame,
             }
         }
 
-        rm(eval_vars, i, value)
+        if (flag_remove_sum){
+            any_tab <- any_tab |> dropp(":_sum")
+        }
+
+        rm(eval_vars, i, value, flag_remove_sum)
     }
 
     rm(data_frame)

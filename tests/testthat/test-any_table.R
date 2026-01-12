@@ -7,7 +7,8 @@
 
 set_style_options(as_heatmap = TRUE)
 
-dummy_df <- suppressMessages(dummy_data(1000))
+dummy_df  <- suppressMessages(dummy_data(1000))
+dummy_big <- suppressMessages(dummy_data(10000))
 
 dummy_df[["binary"]] <- replicate(nrow(dummy_df), {
     paste0(sample(0:1, 2, replace = TRUE), collapse = "")
@@ -29,7 +30,7 @@ sum_df2  <- suppressMessages(dummy_df |>
 
 
 test_that("Simplest form of any_table", {
-    result_list <- suppressMessages(dummy_df |>
+    result_list <- suppressMessages(dummy_big |>
           any_table(rows    = "age",
                     columns = "sex",
                     values  = weight,
@@ -326,7 +327,7 @@ test_that("any_table with applied interval multilabels", {
 })
 
 
-test_that("any_table able to apply format on numeric values stored as character", {
+test_that("any_table able to apply format on numeric values stored as character (short route)", {
     binary. <- discrete_format(
         "binary1" = c("00", "01"),
         "binary2" = c("10", "11"))
@@ -342,12 +343,41 @@ test_that("any_table able to apply format on numeric values stored as character"
 })
 
 
-test_that("any_table converts numeric values stored as character to numeric, if no format is applied", {
+test_that("any_table converts numeric values stored as character to numeric, if no format is applied (short route)", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows    = "binary",
                       columns = "sex",
                       values  = weight,
                       print   = FALSE))
+
+    expect_equal(result_list[[1]][["var1"]], c("0", "1", "10", "11"))
+})
+
+
+test_that("any_table able to apply format on numeric values stored as character (long route)", {
+    binary. <- discrete_format(
+        "binary1" = c("00", "01"),
+        "binary2" = c("10", "11"))
+
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows       = "binary",
+                      columns    = "sex",
+                      statistics = "mean",
+                      values     = weight,
+                      formats    = list(binary = binary.),
+                      print      = FALSE))
+
+    expect_equal(result_list[[1]][["var1"]], c("binary1", "binary2"))
+})
+
+
+test_that("any_table converts numeric values stored as character to numeric, if no format is applied (long route)", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows       = "binary",
+                      columns    = "sex",
+                      statistics = "mean",
+                      values     = weight,
+                      print      = FALSE))
 
     expect_equal(result_list[[1]][["var1"]], c("0", "1", "10", "11"))
 })
@@ -398,8 +428,8 @@ test_that("any_table warning with wrong output format", {
                        any_table(rows    = "age",
                                  columns = "sex",
                                  values  = weight,
-                                 output  = "Text",
-                                 print   = FALSE), " ! WARNING: <Output> format 'Text' not available.")
+                                 output  = "Test",
+                                 print   = FALSE), " ! WARNING: <Output> format 'Test' not available.")
 })
 
 
@@ -410,17 +440,6 @@ test_that("any_table warning with wrong output format", {
                                  values   = weight,
                                  order_by = "test",
                                  print    = FALSE), " ! WARNING: <Order by> option 'test' doesn't exist")
-})
-
-
-test_that("any_table pct_value won't work without sum", {
-    expect_message(result_list <- dummy_df |>
-                       any_table(rows       = "age",
-                                 columns    = "sex",
-                                 values     = weight,
-                                 statistics = c("pct_value", "freq"),
-                                 pct_value  = list(rate = "Test1 / Test2"),
-                                 print      = FALSE), " ! WARNING: <pct_value> can only be computed in combination with <statistic>")
 })
 
 
@@ -570,14 +589,17 @@ test_that("any_table aborts with row/column variable part of values", {
 })
 
 
-test_that("any_table aborts with only invalid pct_value statistic", {
+test_that("any_table outputs sum values with only invalid pct_value statistic and throws a warning", {
     expect_message(result_list <- dummy_df |>
            any_table(rows       = "age",
                      columns    = "sex",
                      values     = weight,
                      statistics = c("pct_value"),
                      pct_value  = list(rate = "Test1 / Test2"),
-                     print      = FALSE), " X ERROR: <pct_value> can only be computed in combination with <statistic>")
+                     print      = FALSE), " ! WARNING: Variable 'Test1' not found in the data frame.")
+
+    expect_equal(names(result_list[[1]]), c("row.label", "var1", "weight_sum_1",
+                                            "weight_sum_2", "weight_sum_NA"))
 })
 
 

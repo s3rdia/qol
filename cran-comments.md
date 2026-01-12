@@ -43,6 +43,8 @@ New functionality
 * excel_output_style(): New parameters as_heatmap, heatmap_low_color, heatmap_middle_color and heatmap_high_color. These can also be set as global options. If as_heatmap is TRUE the tables from any_table(), frequencies(), crosstabs() and export_with_style() receive a conditional formatting.
 * crosstabs(): Now has a new parameter show_total to control output of row and column totals.
 * keep()/dropp(): The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains".
+* any_table(): Is now able to generate 'pct_value' statistic without outputting additional 'sum' values.
+* build_master(): Now generates a code block which can rebuilt the master file. Additionally the folder structure is now generated in code blocks which can open the folders and files. Overall gave the master file a bit more visual structure.
 
 Removed
 * split_by_var() and split_by_condition(): See comment under 'New functions'.

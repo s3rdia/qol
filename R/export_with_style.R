@@ -81,7 +81,7 @@ export_with_style <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Silent conversion of global options, which are invalid for any_table
-    if (!tolower(output) %in% c("console", "text")){
+    if (tolower(output) %in% c("console", "text")){
         output <- "excel"
     }
 
