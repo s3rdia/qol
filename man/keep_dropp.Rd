@@ -50,5 +50,15 @@ new_dt7 <- my_data |> dropp(var_names)
 new_dt8 <- my_data |> keep(year, state:income)
 new_dt9 <- my_data |> dropp(year, state:income)
 
+# You can also use the colon as a placeholder for any text
+start1 <- my_data |> keep("s:") # Variable names start with "s"
+start2 <- my_data |> dropp("s:")
+
+end1 <- my_data |> keep(":id") # Variable names end with "id"
+end2 <- my_data |> dropp(":id")
+
+contain1 <- my_data |> keep(":on:") # Variable names which contain "on"
+contain2 <- my_data |> dropp(":on:")
+
 }
 \keyword{internal}

@@ -54,6 +54,33 @@ test_that("Keep range of variables", {
 })
 
 
+test_that("Keep variables starting with letter", {
+    keep_df <- test_df |> keep("s:")
+
+    expect_equal(ncol(keep_df), 2)
+
+    expect_true(all(c("state", "sex") %in% names(keep_df)))
+})
+
+
+test_that("Keep variables ending with letter", {
+    keep_df <- test_df |> keep(":id")
+
+    expect_equal(ncol(keep_df), 2)
+
+    expect_true(all(c("household_id", "person_id") %in% names(keep_df)))
+})
+
+
+test_that("Keep variables containing letter", {
+    keep_df <- test_df |> keep(":on:")
+
+    expect_equal(ncol(keep_df), 3)
+
+    expect_true(all(c("person_id", "first_person", "education") %in% names(keep_df)))
+})
+
+
 test_that("Variables to keep contain a variable name that isn't part of the data frame", {
     expect_message(keep_df1 <- test_df |> keep(year, age, sex, cats, dogs), " ! WARNING: The provided variable to keep")
     keep_df2 <- test_df |> keep(year, age, sex)
@@ -129,6 +156,27 @@ test_that("Drop range of variables", {
     expect_equal(ncol(drop_df), ncol(test_df) - 3)
 
     expect_true(!all(c("state", "sex", "age") %in% names(drop_df)))
+})
+
+
+test_that("Drop variables starting with letter", {
+    drop_df <- test_df |> dropp("s:")
+
+    expect_true(!all(c("state", "sex") %in% names(drop_df)))
+})
+
+
+test_that("Drop variables ending with letter", {
+    drop_df <- test_df |> dropp(":id")
+
+    expect_true(!all(c("household_id", "person_id") %in% names(drop_df)))
+})
+
+
+test_that("Drop variables containing letter", {
+    drop_df <- test_df |> dropp(":on:")
+
+    expect_true(!all(c("person_id", "first_person", "education") %in% names(drop_df)))
 })
 
 

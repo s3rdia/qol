@@ -43,6 +43,7 @@
 * `retain_value()`: Reworked iternally, can now also handle character variables. (10.01.2026)
 * `excel_output_style()`: New parameters `as_heatmap`, `heatmap_low_color`, `heatmap_middle_color` and `heatmap_high_color`. These can also be set as global options. If `as_heatmap` is TRUE the tables from `any_table()`, `frequencies()`, `crosstabs()` and `export_with_style()` receive a conditional formatting. (11.01.2026)
 * `crosstabs()`: Now has a new parameter `show_total` to control output of row and column totals. (11.01.2026)
+* `keep()`/`dropp()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (12.01.2026)
 
 ### Removed
 

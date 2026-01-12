@@ -31,6 +31,16 @@
 #' new_dt8 <- my_data |> keep(year, state:income)
 #' new_dt9 <- my_data |> dropp(year, state:income)
 #'
+#' # You can also use the colon as a placeholder for any text
+#' start1 <- my_data |> keep("s:") # Variable names start with "s"
+#' start2 <- my_data |> dropp("s:")
+#'
+#' end1 <- my_data |> keep(":id") # Variable names end with "id"
+#' end2 <- my_data |> dropp(":id")
+#'
+#' contain1 <- my_data |> keep(":on:") # Variable names which contain "on"
+#' contain2 <- my_data |> dropp(":on:")
+#'
 #' @rdname keep_dropp
 #'
 #' @keywords internal
@@ -53,20 +63,9 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     }
 
     original_order <- names(data_frame)
-    variables      <- character(0)
 
-    # Check if there are any "from":"to" selections and unwrap them
-    for (variable in variables_temp){
-        if (grepl(":", variable, fixed = TRUE)){
-            parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
-
-            variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
-        }
-        # If element is just a single variable, add it to the new variable vector
-        else{
-            variables <- c(variables, variable)
-        }
-    }
+    # Check if there are any colons in the selection and deparse variables accordingly
+    variables <- data_frame |> deparse_colon(variables_temp)
 
     # Check if all variables are part of the data frame
     provided_vars <- variables
@@ -116,20 +115,8 @@ dropp <- function(data_frame, ...){
         return(data_frame)
     }
 
-    variables <- character(0)
-
-    # Check if there are any "from":"to" selections and unwrap them
-    for (variable in variables_temp){
-        if (grepl(":", variable, fixed = TRUE)){
-            parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
-
-            variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
-        }
-        # If element is just a single variable, add it to the new variable vector
-        else{
-            variables <- c(variables, variable)
-        }
-    }
+    # Check if there are any colons in the selection and deparse variables accordingly
+    variables <- data_frame |> deparse_colon(variables_temp)
 
     # Check if all variables are part of the data frame
     provided_vars <- variables
@@ -154,4 +141,84 @@ dropp <- function(data_frame, ...){
     collapse::fselect(data_frame, variables) <- NULL
 
     data_frame
+}
+
+#' Helper For Selecting Variable Ranges
+#'
+#' @description
+#' When using a colon in certain places, variable ranges should be selected, depending
+#' on where the colon is placed.
+#'
+#' @param data_frame The data frame which contains the variable names to be selected.
+#' @param variable_vector A vector containing the variable names to be checked.
+#'
+#' @return
+#' A deparsed vector of variable names.
+#'
+#' @noRd
+deparse_colon <- function(data_frame, variable_vector){
+    variables <- character(0)
+
+    # Loop through variable vector to decide whether it is a single variable or
+    # a variable range with colon should be selected.
+    for (variable in variable_vector){
+        only_colons <- gsub(":", "", variable)
+
+        # If it's just colons with no text, skip "variable" and put out a warning
+        if (nchar(only_colons) == 0) {
+            message(" ! WARNING: A selection only contained colons. Selection will be ignored.")
+            next
+        }
+
+        # Count the colons, there may not be more than two, otherwise the function
+        # should skip the variable.
+        colon_count <- nchar(gsub("[^:]", "", variable))
+
+        # In case of a single variable just add it to the vector
+        if (colon_count == 0){
+            variables <- c(variables, variable)
+        }
+        # In case of a variable range
+        else if (colon_count == 1){
+            # When at the end ("text:"), select all variables which start with the characters
+            # coming before the colon. ":" acts as a placeholder for those who come after.
+            if (endsWith(variable, ":")){
+                search_term <- substring(variable, 1, nchar(variable) - 1)
+                matches     <- names(data_frame)[startsWith(names(data_frame), search_term)]
+
+                variables   <- c(variables, matches)
+            }
+            # When at the start (":text"), select all variables which end with the characters
+            # following the colon. ":" acts as a placeholder for everything that comes before
+            else if (startsWith(variable, ":")){
+                search_term <- substring(variable, 2)
+                matches     <- names(data_frame)[endsWith(names(data_frame), search_term)]
+
+                variables   <- c(variables, matches)
+            }
+            # If colon is in the middle ("var1:var10"), select a range of varaibles between
+            # these two.
+            else{
+                parts     <- strsplit(variable, ":", fixed = TRUE)[[1]]
+
+                variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+            }
+        }
+        # In case there are two colons, one at the start and one at the end (":text:"),
+        # look for the text inbetween inside the variable names.
+        else if (colon_count == 2 && startsWith(variable, ":") && endsWith(variable, ":")){
+            search_term <- gsub(":", "", variable)
+            matches     <- names(data_frame)[grepl(search_term, names(data_frame), fixed = TRUE)]
+
+            variables   <- c(variables, matches)
+
+        }
+        # If there are more than two colons skip variable
+        else{
+            message(" ! WARNING: Selection '", variable, "' contains more than two colons which is\n",
+                    "            not allowed. Selection will be ignored.")
+        }
+    }
+
+    variables
 }
