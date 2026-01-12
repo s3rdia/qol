@@ -81,6 +81,8 @@
 <code><a href="../reference/style_options.html">set_variable_labels()</a></code>, <code><a href="../reference/style_options.html">get_variable_labels()</a></code>, <code>set_statistic_labels()</code>, <code>get_statistic_labels()</code>, <code><a href="../reference/qol_options.html">set_print()</a></code>, <code><a href="../reference/qol_options.html">get_print()</a></code>, <code><a href="../reference/qol_options.html">set_monitor()</a></code>, <code><a href="../reference/qol_options.html">get_monitor()</a></code>, <code><a href="../reference/qol_options.html">set_na.rm()</a></code>, <code><a href="../reference/qol_options.html">get_na.rm()</a></code>: Additional global setters and getters. (07.01.2026)</li>
 <li>
 <code><a href="../reference/qol_options.html">set_output()</a></code>, <code><a href="../reference/qol_options.html">get_output()</a></code>: Additional global setters and getters. (11.01.2026)</li>
+<li>
+<code><a href="../reference/qol_options.html">set_titles()</a></code>, <code><a href="../reference/qol_options.html">get_titles()</a></code>, <code><a href="../reference/qol_options.html">set_footnotes()</a></code>, <code><a href="../reference/qol_options.html">get_footnotes()</a></code>: Additional global setters and getters. (11.01.2026)</li>
 </ul></li>
 <li>
 <code><a href="../reference/content_report.html">content_report()</a></code>: Collects and prints global and per variable information about the provided data frame. (08.01.2026)</li>
@@ -118,6 +120,12 @@
 <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: New parameters <code>as_heatmap</code>, <code>heatmap_low_color</code>, <code>heatmap_middle_color</code> and <code>heatmap_high_color</code>. These can also be set as global options. If <code>as_heatmap</code> is TRUE the tables from <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code> and <code><a href="../reference/export_with_style.html">export_with_style()</a></code> receive a conditional formatting. (11.01.2026)</li>
 <li>
 <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: Now has a new parameter <code>show_total</code> to control output of row and column totals. (11.01.2026)</li>
+<li>
+<code><a href="../reference/keep_dropp.html">keep()</a></code>/<code><a href="../reference/keep_dropp.html">dropp()</a></code>: The “:” can now be used as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (12.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Is now able to generate ‘pct_value’ statistic without outputting additional ‘sum’ values. (12.01.2026)</li>
+<li>
+<code><a href="../reference/build_master.html">build_master()</a></code>: Now generates a code block which can rebuilt the master file. Additionally the folder structure is now generated in code blocks which can open the folders and files. Overall gave the master file a bit more visual structure. (12.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>

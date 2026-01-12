@@ -21,8 +21,7 @@ New functions
 	* get_style_options(): Print the currently set global options.
 	* reset_style_options(): Set global style options to default values of excel_output_style() and number_format_style().
 	* close_file(): A simple, more readable wrapper for setting file parameter to NULL.
-	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(): Additional global setters and getters.
-	* set_output(), get_output(): Additional global setters and getters.
+	* set_variable_labels(), get_variable_labels(), set_statistic_labels(), get_statistic_labels(), set_print(), get_print(), set_monitor(), get_monitor(), set_na.rm(), get_na.rm(), set_output(), get_output(), set_titles(), get_titles(), set_footnotes(), get_footnotes(): Additional global setters and getters.
 * content_report(): Collects and prints global and per variable information about the provided data frame.
 * import_data(), export_data(): Lightweight import and export for csv and xlsx files.
 * first_row_as_names(): Sets the values of the first data frame row as variable names and deletes first row.

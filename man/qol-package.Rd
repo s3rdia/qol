@@ -75,7 +75,8 @@ Error handling: \code{\link[=resolve_intersection]{resolve_intersection()}}, \co
 
 Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=reset_style_options]{reset_style_options()}}, \code{\link[=get_style_options]{get_style_options()}}, \code{\link[=close_file]{close_file()}},
 \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=get_variable_labels]{get_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}, \code{\link[=get_stat_labels]{get_stat_labels()}},
-\code{\link[=set_print]{set_print()}}, \code{\link[=get_print]{get_print()}}, \code{\link[=set_monitor]{set_monitor()}}, \code{\link[=get_monitor]{get_monitor()}}, \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=get_na.rm]{get_na.rm()}}
+\code{\link[=set_print]{set_print()}}, \code{\link[=get_print]{get_print()}}, \code{\link[=set_monitor]{set_monitor()}}, \code{\link[=get_monitor]{get_monitor()}}, \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=get_na.rm]{get_na.rm()}},
+\code{\link[=set_output]{set_output()}}, \code{\link[=get_output]{get_output()}}, \code{\link[=set_titles]{set_titles()}}, \code{\link[=get_titles]{get_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=get_footnotes]{get_footnotes()}}
 
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}
 }

@@ -287,8 +287,8 @@ any_table <- function(data_frame,
                       by             = c(),
                       weight         = NULL,
                       order_by       = "stats",
-                      titles         = c(),
-                      footnotes      = c(),
+                      titles         = .qol_options[["titles"]],
+                      footnotes      = .qol_options[["footnotes"]],
                       var_labels     = .qol_options[["var_labels"]],
                       stat_labels    = .qol_options[["stat_labels"]],
                       box            = "",
@@ -1101,10 +1101,9 @@ any_table <- function(data_frame,
                     return(invisible(NULL))
                 }
 
-                # cbind current data frame to the iterations before
-                #combined_col_df <- cbind(combined_col_df, combi_df)
+                # Join current data frame to the iterations before
                 combined_col_df <- collapse::join(combined_col_df, combi_df,
-                                                  on       = new_row_names,
+                                                  on       = id_vars,
                                                   how      = "left",
                                                   verbose  = FALSE)
 

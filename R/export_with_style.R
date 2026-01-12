@@ -62,8 +62,8 @@
 #'
 #' @export
 export_with_style <- function(data_frame,
-                              titles     = c(),
-                              footnotes  = c(),
+                              titles     = .qol_options[["titles"]],
+                              footnotes  = .qol_options[["footnotes"]],
                               var_labels = .qol_options[["var_labels"]],
                               workbook   = NULL,
                               style      = .qol_options[["excel_style"]],

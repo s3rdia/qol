@@ -129,6 +129,12 @@ reference:
   - get_monitor
   - set_na.rm
   - get_na.rm
+  - set_output
+  - get_output
+  - set_titles
+  - get_titles
+  - set_footnotes
+  - get_footnotes
 - title: Other
   contents:
   - build_master

@@ -7,6 +7,7 @@
 build_master(
   dir,
   master_name = "Master",
+  author = "",
   with_structure = TRUE,
   with_run_all = TRUE,
   with_run_folder = TRUE
@@ -16,6 +17,8 @@ build_master(
 \item{dir}{The folder structure which contains the scripts to build upon.}
 
 \item{master_name}{The file name which should be written.}
+
+\item{author}{Authors name to be put in the header.}
 
 \item{with_structure}{Whether the folder structure as tree should be written
 to the master script.}

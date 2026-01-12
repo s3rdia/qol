@@ -4,6 +4,9 @@ default_stat_labels   <- get_stat_labels()
 default_print         <- get_print()
 default_monitor       <- get_monitor()
 default_na            <- get_na.rm()
+default_output        <- get_output()
+default_titles        <- get_titles()
+default_footnotes     <- get_footnotes()
 
 
 test_that("Get global style options", {
@@ -97,7 +100,7 @@ test_that("Set global print option", {
 
     new_options <- get_print()
 
-    expect_true(default_print == !new_options)
+    expect_equal(new_options, FALSE)
 })
 
 
@@ -106,7 +109,7 @@ test_that("Set global monitor option", {
 
     new_options <- get_monitor()
 
-    expect_true(default_monitor == !new_options)
+    expect_equal(new_options, TRUE)
 })
 
 
@@ -115,20 +118,53 @@ test_that("Set global na.rm option", {
 
     new_options <- get_na.rm()
 
-    expect_true(default_na == !new_options)
+    expect_equal(new_options, TRUE)
+})
+
+
+test_that("Set global output option", {
+    set_output("excel")
+
+    new_options <- get_output()
+
+    expect_equal(new_options, "excel")
+})
+
+
+test_that("Set global titles", {
+    set_titles("Title1", "Title2")
+
+    new_options <- get_titles()
+
+    expect_equal(new_options, c("Title1", "Title2"))
+})
+
+
+test_that("Set global footnotes", {
+    set_titles("Footnote1", "Footnote2")
+
+    new_options <- get_titles()
+
+    expect_equal(new_options, c("Footnote1", "Footnote2"))
 })
 
 
 test_that("Reset global options", {
     reset_qol_options()
 
-    new_print   <- get_print()
-    new_monitor <- get_monitor()
-    new_na      <- get_na.rm()
+    new_print     <- get_print()
+    new_monitor   <- get_monitor()
+    new_na        <- get_na.rm()
+    new_output    <- get_output()
+    new_titles    <- get_titles()
+    new_footnotes <- get_footnotes()
 
-    expect_true(new_print   == new_print)
-    expect_true(new_monitor == new_monitor)
-    expect_true(default_na  == new_na)
+    expect_true(default_print     == new_print)
+    expect_true(default_monitor   == new_monitor)
+    expect_true(default_na        == new_na)
+    expect_true(default_output    == new_output)
+    expect_equal(new_titles, NULL)
+    expect_equal(new_footnotes, NULL)
 })
 
 ###############################################################################
@@ -173,7 +209,10 @@ test_that("Abort setting global style options on empty list", {
 
 
 test_that("Abort setting global options on empty list", {
-    expect_message(set_print(1),   " X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.")
-    expect_message(set_monitor(1), " X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
-    expect_message(set_na.rm(1),   " X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_print(1),     " X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_monitor(1),   " X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_na.rm(1),     " X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
+    expect_message(set_output(1),    " X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
+    expect_message(set_titles(1),    " X ERROR: Titles must be provided as character. Global titles remain unchanged.")
+    expect_message(set_footnotes(1), " X ERROR: Footnotes must be provided as character. Global footnotes remain unchanged.")
 })

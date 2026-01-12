@@ -23,6 +23,7 @@
 	* `close_file()`: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)
 	* `set_variable_labels()`, `get_variable_labels()`, `set_statistic_labels()`, `get_statistic_labels()`, `set_print()`, `get_print()`, `set_monitor()`, `get_monitor()`, `set_na.rm()`, `get_na.rm()`: Additional global setters and getters. (07.01.2026)
 	* `set_output()`, `get_output()`: Additional global setters and getters. (11.01.2026)
+	* `set_titles()`, `get_titles()`, `set_footnotes()`, `get_footnotes()`: Additional global setters and getters. (11.01.2026)
 * `content_report()`: Collects and prints global and per variable information about the provided data frame. (08.01.2026)
 * `import_data()`, `export_data()`: Lightweight import and export for csv and xlsx files. (10.01.2026)
 * `first_row_as_names()`: Sets the values of the first data frame row as variable names and deletes first row. (10.01.2026)

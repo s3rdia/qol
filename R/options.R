@@ -325,7 +325,7 @@ get_stat_labels <- function(){
 #' @param ... Put in TRUE or FALSE to activate or deactivate the option.
 #'
 #' @return
-#' [set_print()]: Change global print option.
+#' [set_print()]: Changed global print option.
 #'
 #' @examples
 #' set_print(FALSE)
@@ -386,7 +386,7 @@ get_print <- function(){
 #' able to show how they work internally.
 #'
 #' @return
-#' [set_monitor()]: Change global monitor option.
+#' [set_monitor()]: Changed global monitor option.
 #'
 #' @examples
 #' set_monitor(TRUE)
@@ -447,7 +447,7 @@ get_monitor <- function(){
 #' NA values.
 #'
 #' @return
-#' [set_na.rm()]: Change global na.rm option.
+#' [set_na.rm()]: Changed global na.rm option.
 #'
 #' @examples
 #' set_na.rm(TRUE)
@@ -508,7 +508,7 @@ get_na.rm <- function(){
 #' results to "console", "text", "excel" or "excel_nostyle".
 #'
 #' @return
-#' [set_output()]: Change global output option.
+#' [set_output()]: Changed global output option.
 #'
 #' @examples
 #' set_output("excel")
@@ -566,6 +566,140 @@ get_output <- function(){
 }
 
 
+#' Set Global Titles
+#'
+#' @description
+#' [set_titles()]: Set the titles globally for each function that can print titles
+#' above the output table.
+#'
+#' @return
+#' [set_titles()]: Changed global titles.
+#'
+#' @examples
+#' set_titles("This is title number 1 link: https://cran.r-project.org/",
+#'            "This is title number 2",
+#'            "This is title number 3")
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_titles <- function(...){
+    # Translate ... into a list if possible
+    titles_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        "ERROR"
+    })
+
+    if (is.null(titles_option)){
+        .qol_options[["titles"]] <- c()
+        return(invisible(.qol_options[["titles"]]))
+    }
+
+    if (length(titles_option) == 1 && titles_option == "ERROR"){
+        message(" X ERROR: Unknown object found. Global titles remain unchanged.")
+        return(invisible(.qol_options[["titles"]]))
+    }
+
+    if (!is.character(titles_option)){
+        message(" X ERROR: Titles must be provided as character. Global titles remain unchanged.")
+        return(invisible(.qol_options[["titles"]]))
+    }
+
+    .qol_options[["titles"]] <- titles_option
+
+    invisible(.qol_options[["titles"]])
+}
+
+
+#' Get Global Titles
+#'
+#' @description
+#' [get_titles()]: Get the globally stored titles.
+#'
+#' @return
+#' [get_titles()]: Current titles as character.
+#'
+#' @examples
+#' get_titles()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_titles <- function(){
+    .qol_options[["titles"]]
+}
+
+
+#' Set Global Footnotes
+#'
+#' @description
+#' [set_footnotes()]: Set the footnotes globally for each function that can print footnotes
+#' above the output table.
+#'
+#' @return
+#' [set_footnotes()]: Changed global footnotes.
+#'
+#' @examples
+#' set_footnotes("This is title number 1 link: https://cran.r-project.org/",
+#'            "This is title number 2",
+#'            "This is title number 3")
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_footnotes <- function(...){
+    # Translate ... into a list if possible
+    footnotes_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        "ERROR"
+    })
+
+    if (is.null(footnotes_option)){
+        .qol_options[["footnotes"]] <- c()
+        return(invisible(.qol_options[["footnotes"]]))
+    }
+
+    if (length(footnotes_option) == 1 && footnotes_option == "ERROR"){
+        message(" X ERROR: Unknown object found. Global footnotes remain unchanged.")
+        return(invisible(.qol_options[["footnotes"]]))
+    }
+
+    if (!is.character(footnotes_option)){
+        message(" X ERROR: Footnotes must be provided as character. Global footnotes remain unchanged.")
+        return(invisible(.qol_options[["footnotes"]]))
+    }
+
+    .qol_options[["footnotes"]] <- footnotes_option
+
+    invisible(.qol_options[["footnotes"]])
+}
+
+
+#' Get Global Footnotes
+#'
+#' @description
+#' [get_footnotes()]: Get the globally stored footnotes.
+#'
+#' @return
+#' [get_footnotes()]: Current footnotes as character.
+#'
+#' @examples
+#' get_footnotes()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_footnotes <- function(){
+    .qol_options[["footnotes"]]
+}
+
+
 #' Reset Global Options
 #'
 #' @description
@@ -581,10 +715,12 @@ get_output <- function(){
 #'
 #' @export
 reset_qol_options <- function(){
-    .qol_options[["print"]]   <- TRUE
-    .qol_options[["monitor"]] <- FALSE
-    .qol_options[["na.rm"]]   <- FALSE
-    .qol_options[["output"]]  <- "console"
+    .qol_options[["print"]]     <- TRUE
+    .qol_options[["monitor"]]   <- FALSE
+    .qol_options[["na.rm"]]     <- FALSE
+    .qol_options[["output"]]    <- "console"
+    .qol_options[["titles"]]    <- c()
+    .qol_options[["footnotes"]] <- c()
 
     invisible(.qol_options)
 }

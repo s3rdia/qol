@@ -10,6 +10,10 @@
 \alias{get_na.rm}
 \alias{set_output}
 \alias{get_output}
+\alias{set_titles}
+\alias{get_titles}
+\alias{set_footnotes}
+\alias{get_footnotes}
 \title{Set Global Print Option}
 \usage{
 set_print(...)
@@ -27,26 +31,42 @@ get_na.rm()
 set_output(...)
 
 get_output()
+
+set_titles(...)
+
+get_titles()
+
+set_footnotes(...)
+
+get_footnotes()
 }
 \arguments{
 \item{...}{Put in TRUE or FALSE to activate or deactivate the option.}
 }
 \value{
-\code{\link[=set_print]{set_print()}}: Change global print option.
+\code{\link[=set_print]{set_print()}}: Changed global print option.
 
 \code{\link[=get_print]{get_print()}}: TRUE or FALSE.
 
-\code{\link[=set_monitor]{set_monitor()}}: Change global monitor option.
+\code{\link[=set_monitor]{set_monitor()}}: Changed global monitor option.
 
 \code{\link[=get_monitor]{get_monitor()}}: TRUE or FALSE.
 
-\code{\link[=set_na.rm]{set_na.rm()}}: Change global na.rm option.
+\code{\link[=set_na.rm]{set_na.rm()}}: Changed global na.rm option.
 
 \code{\link[=get_na.rm]{get_na.rm()}}: TRUE or FALSE.
 
-\code{\link[=set_output]{set_output()}}: Change global output option.
+\code{\link[=set_output]{set_output()}}: Changed global output option.
 
 \code{\link[=get_output]{get_output()}}: Current output option as character.
+
+\code{\link[=set_titles]{set_titles()}}: Changed global titles.
+
+\code{\link[=get_titles]{get_titles()}}: Current titles as character.
+
+\code{\link[=set_footnotes]{set_footnotes()}}: Changed global footnotes.
+
+\code{\link[=get_footnotes]{get_footnotes()}}: Current footnotes as character.
 }
 \description{
 \code{\link[=set_print]{set_print()}}: Set the print option globally for the tabulation and export to
@@ -68,6 +88,16 @@ NA values.
 results to "console", "text", "excel" or "excel_nostyle".
 
 \code{\link[=get_output]{get_output()}}: Get the globally stored output option.
+
+\code{\link[=set_titles]{set_titles()}}: Set the titles globally for each function that can print titles
+above the output table.
+
+\code{\link[=get_titles]{get_titles()}}: Get the globally stored titles.
+
+\code{\link[=set_footnotes]{set_footnotes()}}: Set the footnotes globally for each function that can print footnotes
+above the output table.
+
+\code{\link[=get_footnotes]{get_footnotes()}}: Get the globally stored footnotes.
 }
 \examples{
 set_print(FALSE)
@@ -88,5 +118,17 @@ get_na.rm()
 set_output("excel")
 
 get_output()
+
+set_titles("This is title number 1 link: https://cran.r-project.org/",
+           "This is title number 2",
+           "This is title number 3")
+
+get_titles()
+
+set_footnotes("This is title number 1 link: https://cran.r-project.org/",
+           "This is title number 2",
+           "This is title number 3")
+
+get_footnotes()
 
 }

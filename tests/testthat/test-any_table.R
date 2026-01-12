@@ -231,7 +231,20 @@ test_that("any_table with multiple by variables", {
 })
 
 
-test_that("any_table with by variables", {
+test_that("any_table with by variables and multiple row and column variables", {
+    result_list <- dummy_df |>
+           any_table(rows    = c("first_person", "state", "first_person + state"),
+                     columns = c("sex", "education", "sex + education"),
+                     values  = weight,
+                     by      = year,
+                     print   = FALSE,
+                     na.rm   = TRUE)
+
+    expect_true("BY" %in% names(result_list[["table"]]))
+})
+
+
+test_that("any_table with by variables aborts if by is also part of rows or columns", {
     expect_message(result_list <- dummy_df |>
             any_table(rows    = "age",
                       columns = "sex",

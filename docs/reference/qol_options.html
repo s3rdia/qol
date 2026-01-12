@@ -10,7 +10,13 @@ NA values.
 get_na.rm(): Get the globally stored na.rm option.
 set_output(): Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".
-get_output(): Get the globally stored output option.'><meta property="og:description" content='set_print(): Set the print option globally for the tabulation and export to
+get_output(): Get the globally stored output option.
+set_titles(): Set the titles globally for each function that can print titles
+above the output table.
+get_titles(): Get the globally stored titles.
+set_footnotes(): Set the footnotes globally for each function that can print footnotes
+above the output table.
+get_footnotes(): Get the globally stored footnotes.'><meta property="og:description" content='set_print(): Set the print option globally for the tabulation and export to
 Excel functions.
 get_print(): Get the globally stored print option.
 set_monitor(): Set the monitor option globally for the heavier functions which are
@@ -21,7 +27,13 @@ NA values.
 get_na.rm(): Get the globally stored na.rm option.
 set_output(): Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".
-get_output(): Get the globally stored output option.'><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
+get_output(): Get the globally stored output option.
+set_titles(): Set the titles globally for each function that can print titles
+above the output table.
+get_titles(): Get the globally stored titles.
+set_footnotes(): Set the footnotes globally for each function that can print footnotes
+above the output table.
+get_footnotes(): Get the globally stored footnotes.'><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -72,6 +84,12 @@ NA values.</p>
 <p><code>set_output()</code>: Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".</p>
 <p><code>get_output()</code>: Get the globally stored output option.</p>
+<p><code>set_titles()</code>: Set the titles globally for each function that can print titles
+above the output table.</p>
+<p><code>get_titles()</code>: Get the globally stored titles.</p>
+<p><code>set_footnotes()</code>: Set the footnotes globally for each function that can print footnotes
+above the output table.</p>
+<p><code>get_footnotes()</code>: Get the globally stored footnotes.</p>
     </div>
 
     <div class="section level2">
@@ -90,7 +108,15 @@ results to "console", "text", "excel" or "excel_nostyle".</p>
 <span></span>
 <span><span class="fu">set_output</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_output</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_output</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_titles</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_titles</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_footnotes</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_footnotes</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,14 +129,18 @@ results to "console", "text", "excel" or "excel_nostyle".</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>set_print()</code>: Change global print option.</p>
+    <p><code>set_print()</code>: Changed global print option.</p>
 <p><code>get_print()</code>: TRUE or FALSE.</p>
-<p><code>set_monitor()</code>: Change global monitor option.</p>
+<p><code>set_monitor()</code>: Changed global monitor option.</p>
 <p><code>get_monitor()</code>: TRUE or FALSE.</p>
-<p><code>set_na.rm()</code>: Change global na.rm option.</p>
+<p><code>set_na.rm()</code>: Changed global na.rm option.</p>
 <p><code>get_na.rm()</code>: TRUE or FALSE.</p>
-<p><code>set_output()</code>: Change global output option.</p>
+<p><code>set_output()</code>: Changed global output option.</p>
 <p><code>get_output()</code>: Current output option as character.</p>
+<p><code>set_titles()</code>: Changed global titles.</p>
+<p><code>get_titles()</code>: Current titles as character.</p>
+<p><code>set_footnotes()</code>: Changed global footnotes.</p>
+<p><code>get_footnotes()</code>: Current footnotes as character.</p>
     </div>
 
     <div class="section level2">
@@ -133,6 +163,18 @@ results to "console", "text", "excel" or "excel_nostyle".</p>
 <span><span class="fu">set_output</span><span class="op">(</span><span class="st">"excel"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_output</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_titles</span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 2"</span>,</span>
+<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_titles</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_footnotes</span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 2"</span>,</span>
+<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_footnotes</span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
