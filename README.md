@@ -153,16 +153,17 @@ education. <- discrete_format(
     "high education"   = "high")
     
 # Define style
-my_style <- excel_output_style(column_widths = c(2, 15, 15, 15, 9))
+set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
-titles <- c("This is title number 1 link: https://cran.r-project.org/",
-            "This is title number 2",
-            "This is title number 3")
-footnotes <- c("This is footnote number 1",
-               "This is footnote number 2",
-               "This is footnote number 3 link: https://cran.r-project.org/")
+set_titles("This is title number 1 link: https://cran.r-project.org/",
+           "This is title number 2",
+           "This is title number 3")
+
+set_footnotes("This is footnote number 1",
+              "This is footnote number 2",
+              "This is footnote number 3 link: https://cran.r-project.org/")
 
 # Output complex tables with different percentages
 my_data |> any_table(rows       = c("sex + age", "sex", "age"),
@@ -172,10 +173,10 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      pct_group  = c("sex", "age"),
                      formats    = list(sex = sex., age = age.,
                                        education = education.),
-                     titles     = titles,
-                     footnotes  = footnotes,
-                     style      = my_style,
                      na.rm      = TRUE)
+
+reset_style_options()
+reset_qol_options()
 ```
 
 <img src='man/figures/tabulation.png' alt="Example output table"/>

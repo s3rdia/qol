@@ -160,12 +160,13 @@ tables, you can also just output the tables in ASCII style format.</p>
 <span></span>
 <span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text.</span></span>
-<span><span class="va">titles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
-<span>            <span class="st">"This is title number 2"</span>,</span>
-<span>            <span class="st">"This is title number 3"</span><span class="op">)</span></span>
-<span><span class="va">footnotes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
-<span>               <span class="st">"This is footnote number 2"</span>,</span>
-<span>               <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 2"</span>,</span>
+<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
+<span>              <span class="st">"This is footnote number 2"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output frequencies tables</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span><span class="op">)</span></span>
@@ -177,16 +178,14 @@ tables, you can also just output the tables in ASCII style format.</p>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"education"</span><span class="op">)</span>,</span>
 <span>                       weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Applying formats and titles</span></span>
+<span><span class="co"># Applying</span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Total"</span>  <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
 <span>    <span class="st">"Male"</span>   <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>,</span>
-<span>                       formats   <span class="op">=</span> <span class="op">(</span><span class="va">sex</span> <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span>,</span>
-<span>                       titles    <span class="op">=</span> <span class="va">titles</span>,</span>
-<span>                       footnotes <span class="op">=</span> <span class="va">footnotes</span><span class="op">)</span></span>
+<span>                       formats   <span class="op">=</span> <span class="op">(</span><span class="va">sex</span> <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Split frequencies by expressions of another variable</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, by <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
@@ -200,11 +199,32 @@ tables, you can also just output the tables in ASCII style format.</p>
 <span><span class="co"># Output to Excel</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># With individual styling</span></span>
+<span><span class="co"># Individual styling can also be passed directly</span></span>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0077B6"</span>,</span>
 <span>                               font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span>, style <span class="op">=</span> <span class="va">my_style</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To save a table as xlsx file you have to set the path and filename in the</span></span>
+<span><span class="co"># style element</span></span>
+<span><span class="co"># Example files paths</span></span>
+<span><span class="va">table_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>save_path  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
+<span>                  file       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
+<span>                  sheet_name <span class="op">=</span> <span class="st">"MyTable"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">frequencies</span><span class="op">(</span><span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manual cleanup for example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Global options are permanently active until the current R session is closed.</span></span>
+<span><span class="co"># There are also functions to reset the values manually.</span></span>
+<span><span class="fu"><a href="style_options.html">reset_style_options</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">reset_qol_options</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">close_file</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

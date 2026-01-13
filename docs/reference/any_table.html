@@ -287,16 +287,17 @@ a designed workbook.</p>
 <span>    <span class="st">"East"</span>                          <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define style</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>column_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>column_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text.</span></span>
-<span><span class="va">titles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
-<span>            <span class="st">"This is title number 2"</span>,</span>
-<span>            <span class="st">"This is title number 3"</span><span class="op">)</span></span>
-<span><span class="va">footnotes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
-<span>               <span class="st">"This is footnote number 2"</span>,</span>
-<span>               <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 2"</span>,</span>
+<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
+<span>              <span class="st">"This is footnote number 2"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output complex tables with different percentages</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex + age"</span>, <span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span>
@@ -306,7 +307,6 @@ a designed workbook.</p>
 <span>                     pct_group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"education"</span>, <span class="st">"year"</span><span class="op">)</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>,</span>
 <span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># If you want to get a clearer vision of what the result table looks like, in terms</span></span>
@@ -321,7 +321,6 @@ a designed workbook.</p>
 <span>                     pct_group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"education"</span>, <span class="st">"year"</span><span class="op">)</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>,</span>
 <span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Percentages based on value variables instead of categories</span></span>
@@ -332,11 +331,11 @@ a designed workbook.</p>
 <span>                     pct_value  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="st">"probability / person"</span><span class="op">)</span>,</span>
 <span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Customize the visual appearance by adding titles, footnotes and variable</span></span>
-<span><span class="co"># and statistic labels.</span></span>
+<span><span class="co"># Customize the visual appearance by adding variable and statistic labels. Both</span></span>
+<span><span class="co"># can also be set as a global option, if labels should be reused over multiple</span></span>
+<span><span class="co"># tables.</span></span>
 <span><span class="co"># Note: You don't have to describe every element. Sometimes a table can be more</span></span>
 <span><span class="co"># readable with less text. To completely remove a variable label just put in an</span></span>
 <span><span class="co"># empty text "" as label.</span></span>
@@ -346,17 +345,14 @@ a designed workbook.</p>
 <span>                     statistics  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"pct_group"</span><span class="op">)</span>,</span>
 <span>                     order_by    <span class="op">=</span> <span class="st">"interleaved"</span>,</span>
 <span>                     formats     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
-<span>                     titles      <span class="op">=</span> <span class="va">titles</span>,</span>
-<span>                     footnotes   <span class="op">=</span> <span class="va">footnotes</span>,</span>
 <span>                     var_labels  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="st">"Age categories"</span>,</span>
-<span>                                       sex <span class="op">=</span> <span class="st">""</span>, weight <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
+<span>                                        sex <span class="op">=</span> <span class="st">""</span>, weight <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
 <span>                     stat_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="st">"%"</span><span class="op">)</span>,</span>
-<span>                     style       <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm       <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># With individual styling</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0077B6"</span>,</span>
-<span>                                            font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
+<span><span class="co"># Individual styling can also be passed directly</span></span>
+<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0077B6"</span>,</span>
+<span>                               font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age + year"</span><span class="op">)</span>,</span>
 <span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
@@ -377,7 +373,6 @@ a designed workbook.</p>
 <span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span><span class="op">)</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     print      <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
@@ -389,7 +384,6 @@ a designed workbook.</p>
 <span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_group"</span><span class="op">)</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output multiple complex tables by expressions of another variable.</span></span>
@@ -406,10 +400,31 @@ a designed workbook.</p>
 <span>                     pct_group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span><span class="op">)</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>, state <span class="op">=</span> <span class="va">state.</span>,</span>
 <span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                     titles     <span class="op">=</span> <span class="va">titles</span>,</span>
-<span>                     footnotes  <span class="op">=</span> <span class="va">footnotes</span>,</span>
-<span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To save a table as xlsx file you have to set the path and filename in the</span></span>
+<span><span class="co"># style element</span></span>
+<span><span class="co"># Example files paths</span></span>
+<span><span class="va">table_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>save_path  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
+<span>                  file       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
+<span>                  sheet_name <span class="op">=</span> <span class="st">"MyTable"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manual cleanup for example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Global options are permanently active until the current R session is closed.</span></span>
+<span><span class="co"># There are also functions to reset the values manually.</span></span>
+<span><span class="fu"><a href="style_options.html">reset_style_options</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">reset_qol_options</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">close_file</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

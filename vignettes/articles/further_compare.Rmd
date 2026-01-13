@@ -113,13 +113,19 @@ Data Work.MyData_If;
            which are true on the following condition. */
         If Age > 65;
 
+        /* Or you could just do this, which means: only
+           keep observations, where weight is not missing. */
+        If Weight;
+
 Run;
 ```
 
 The new `if.()` makes this possible, too:
 
 ```{R, eval = FALSE}
-MyData_If <- MyData |> if.(Age > 65)
+MyData_If <- MyData |>
+    if.(Age > 65) |>
+    if.(weight)
 ```
 
 Simple, readable and multi-functional.
@@ -298,7 +304,7 @@ MyData_List <- MyData |> split_by(Sex == 1 & Age <  18,
 
 # Keep/Drop
 
-This is probably the least special one, but 'Keep' and 'Drop' share the same writing style and don't require a minus sign (in case of 'Drop'):
+In SAS 'Keep' and 'Drop' share the same writing style and don't require a minus sign (in case of 'Drop'). There are also some additions which can make keeping or dropping ranges of variables easier:
 
 ```{sas, eval = FALSE}
 Data Work.MyData_KeepDrop;
@@ -306,6 +312,14 @@ Data Work.MyData_KeepDrop;
 
         Keep a b c d;
         Drop a b c d;
+
+        /* When you have to keep or drop many variables you can also define a range */
+        Keep start_var -- end_var; /* Keep every variable between the two given ones (including them) */
+        Drop start_var -- end_var; /* Drop every variable between the two given ones (including them) */
+
+        /* You can also keep or drop variables based on what characters they start with */
+        Keep var:; /* Keep every variable starting with "var" */
+        Drop var:; /* Drop every variable starting with "var" */
 
 Run;
 ```
@@ -315,6 +329,21 @@ The qol `keep()` and `dropp()` (drop was already taken, so the additional p is i
 ```{R, eval = FALSE}
 MyData_KeepDrop <- MyData |> keep(a, b, c, d)
 MyData_KeepDrop <- MyData |> dropp(a, b, c, d)
+
+# Ranges can be used like this
+MyData_KeepDrop <- MyData |> keep(start_var:end_var)
+MyData_KeepDrop <- MyData |> dropp(start_var:end_var)
+
+# The R version not only provides the option to select variables "starting with"
+# certain characters but also "ending with" and "containing". The colon ":" acts
+# as a placeholder.
+MyData_KeepDrop <- MyData |> keep("var:")  # Start with
+MyData_KeepDrop <- MyData |> keep(":var")  # End with
+MyData_KeepDrop <- MyData |> keep(":var:") # Contains
+
+MyData_KeepDrop <- MyData |> dropp("var:")  # Start with
+MyData_KeepDrop <- MyData |> dropp(":var")  # End with
+MyData_KeepDrop <- MyData |> dropp(":var:") # Contains
 ```
 
 # More On Tabulation
@@ -440,3 +469,95 @@ MyData <- wb_to_df(file  = "C:/MyFile.xlsx",
 ```
 
 These are just very basic examples. For further details you can look up the functions in the [reference](https://s3rdia.github.io/qol/reference/index.html).
+
+# Import CSV And XLSX Files
+
+With SAS you can import many different file formats with a straight forward syntax:
+
+```{sas, eval = FALSE}
+/* For CVS */
+Proc Import
+
+    Datafile = "C:\MyFile.csv"
+    Out      = Work.MyData
+    DBMS     = csv;
+
+Run;
+
+/* For XLSX */
+Proc Import
+
+    Datafile = "C:\MyFile.xlsx"
+    Out      = Work.MyData
+    DBMS     = xlsx;
+
+Run;
+```
+
+The R versions concentrate on importing CSV and XLSX files:
+
+```{R, eval = FALSE}
+csv_file  <- import_data("C:\MyFile.csv")
+xlsx_file <- import_data("C:\MyFile.xlsx")
+```
+
+Note: There is also an export function which can export CSV and XLSX files without any style:
+
+# Information About Datasets
+
+To get a quick overview of a dataset, SAS provides an easy way to get a short report. This report contains global information like, number of variables and observations but also information per variable like the type and length:
+
+```{sas, eval = FALSE}
+/* For CVS */
+Proc Contents Data = Work.MyData;
+Run;
+```
+
+A data frame in R doesn't store the same information like a SAS dataset but one can get quiet a few information out of it like this:
+
+```{R, eval = FALSE}
+MyData |> content_report()
+```
+
+# Transposing
+
+The SAS transpose procedure is very basic, but it knows in which direction the user wants to transpose by just providing certain parameters:
+
+```{sas, eval = FALSE}
+/* Long to wide */
+Proc Transpose Data = Work.Long
+                Out = Work.Wide;
+
+    By Age;
+
+    Var Income;
+
+    ID Sex;
+
+Run;
+
+/* Wide to long */
+Proc Transpose Data = Work.Wide
+                Out = Work.Long (Rename = (_NAME_ = Sex));
+
+    By Age;
+
+    Var Male Female;
+
+Run;
+```
+
+The R version in this package actually can do way more than just a simple transposition. Here is just a basic example, for what it can do additionally, have a look at the reference on [transpose_plus](https://s3rdia.github.io/qol/reference/transpose_plus.html):
+
+```{R, eval = FALSE}
+# Wide to long
+wide <- long |>
+    transpose_plus(preserve = age,
+                   pivot    = "sex",
+                   values   = income)
+
+# Long to wide
+long <- wide |>
+    transpose_plus(preserve = age,
+                   pivot    = list(sex = c("Male", "Female")))
+```

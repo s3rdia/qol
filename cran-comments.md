@@ -87,6 +87,7 @@ Additionally
 * retain_value(), retain_sum(): value parameter is now called values.
 * mark_cases(), retain_value(), retain_sum(): Adjusted unit tests to something that actually makes sense.
 * In general: Added some unit tests on file saving and retreiving.
+* any_table(), frequencies(), crosstabs(), export_with_style(): Updated examples to show how a file is saved via the style element.
 
 ## R CMD check results
 

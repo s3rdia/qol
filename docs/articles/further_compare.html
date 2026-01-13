@@ -165,10 +165,16 @@ only the condition without any ‘Then’ is provided like this:</p>
            which are true on the following condition. */
         If Age &gt; 65;
 
+        /* Or you could just do this, which means: only
+           keep observations, where weight is not missing. */
+        If Weight;
+
 Run;</code></pre>
 <p>The new <code><a href="../reference/if_else.html">if.()</a></code> makes this possible, too:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">MyData_If</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">MyData_If</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">weight</span><span class="op">)</span></span></code></pre></div>
 <p>Simple, readable and multi-functional.</p>
 </div>
 <div class="section level2">
@@ -338,14 +344,22 @@ frames into a list of multiple new ones:</p>
 <div class="section level2">
 <h2 id="keepdrop">Keep/Drop<a class="anchor" aria-label="anchor" href="#keepdrop"></a>
 </h2>
-<p>This is probably the least special one, but ‘Keep’ and ‘Drop’ share
-the same writing style and don’t require a minus sign (in case of
-‘Drop’):</p>
+<p>In SAS ‘Keep’ and ‘Drop’ share the same writing style and don’t
+require a minus sign (in case of ‘Drop’). There are also some additions
+which can make keeping or dropping ranges of variables easier:</p>
 <pre class="sas"><code>Data Work.MyData_KeepDrop;
     Set Work.MyData;
 
         Keep a b c d;
         Drop a b c d;
+
+        /* When you have to keep or drop many variables you can also define a range */
+        Keep start_var -- end_var; /* Keep every variable between the two given ones (including them) */
+        Drop start_var -- end_var; /* Drop every variable between the two given ones (including them) */
+
+        /* You can also keep or drop variables based on what characters they start with */
+        Keep var:; /* Keep every variable starting with "var" */
+        Drop var:; /* Drop every variable starting with "var" */
 
 Run;</code></pre>
 <p>The qol <code><a href="../reference/keep_dropp.html">keep()</a></code> and <code><a href="../reference/keep_dropp.html">dropp()</a></code> (drop was
@@ -353,7 +367,22 @@ already taken, so the additional p is intentional ;-) ), are written
 alike:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, <span class="va">d</span><span class="op">)</span></span>
-<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, <span class="va">d</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, <span class="va">d</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Ranges can be used like this</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="va">start_var</span><span class="op">:</span><span class="va">end_var</span><span class="op">)</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="va">start_var</span><span class="op">:</span><span class="va">end_var</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The R version not only provides the option to select variables "starting with"</span></span>
+<span><span class="co"># certain characters but also "ending with" and "containing". The colon ":" acts</span></span>
+<span><span class="co"># as a placeholder.</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="st">"var:"</span><span class="op">)</span>  <span class="co"># Start with</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="st">":var"</span><span class="op">)</span>  <span class="co"># End with</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">keep</a></span><span class="op">(</span><span class="st">":var:"</span><span class="op">)</span> <span class="co"># Contains</span></span>
+<span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="st">"var:"</span><span class="op">)</span>  <span class="co"># Start with</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="st">":var"</span><span class="op">)</span>  <span class="co"># End with</span></span>
+<span><span class="va">MyData_KeepDrop</span> <span class="op">&lt;-</span> <span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/keep_dropp.html">dropp</a></span><span class="op">(</span><span class="st">":var:"</span><span class="op">)</span> <span class="co"># Contains</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="more-on-tabulation">More On Tabulation<a class="anchor" aria-label="anchor" href="#more-on-tabulation"></a>
@@ -466,6 +495,91 @@ package:</p>
 <span>                   named_region <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span></code></pre></div>
 <p>These are just very basic examples. For further details you can look
 up the functions in the <a href="https://s3rdia.github.io/qol/reference/index.html">reference</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="import-csv-and-xlsx-files">Import CSV And XLSX Files<a class="anchor" aria-label="anchor" href="#import-csv-and-xlsx-files"></a>
+</h2>
+<p>With SAS you can import many different file formats with a straight
+forward syntax:</p>
+<pre class="sas"><code>/* For CVS */
+Proc Import
+
+    Datafile = "C:\MyFile.csv"
+    Out      = Work.MyData
+    DBMS     = csv;
+
+Run;
+
+/* For XLSX */
+Proc Import
+
+    Datafile = "C:\MyFile.xlsx"
+    Out      = Work.MyData
+    DBMS     = xlsx;
+
+Run;</code></pre>
+<p>The R versions concentrate on importing CSV and XLSX files:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>csv_file  <span class="ot">&lt;-</span> <span class="fu">import_data</span>(<span class="st">"C:\MyFile.csv"</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>xlsx_file <span class="ot">&lt;-</span> <span class="fu">import_data</span>(<span class="st">"C:\MyFile.xlsx"</span>)</span></code></pre></div>
+<p>Note: There is also an export function which can export CSV and XLSX
+files without any style:</p>
+</div>
+<div class="section level2">
+<h2 id="information-about-datasets">Information About Datasets<a class="anchor" aria-label="anchor" href="#information-about-datasets"></a>
+</h2>
+<p>To get a quick overview of a dataset, SAS provides an easy way to get
+a short report. This report contains global information like, number of
+variables and observations but also information per variable like the
+type and length:</p>
+<pre class="sas"><code>/* For CVS */
+Proc Contents Data = Work.MyData;
+Run;</code></pre>
+<p>A data frame in R doesn’t store the same information like a SAS
+dataset but one can get quiet a few information out of it like this:</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">MyData</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/content_report.html">content_report</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="transposing">Transposing<a class="anchor" aria-label="anchor" href="#transposing"></a>
+</h2>
+<p>The SAS transpose procedure is very basic, but it knows in which
+direction the user wants to transpose by just providing certain
+parameters:</p>
+<pre class="sas"><code>/* Long to wide */
+Proc Transpose Data = Work.Long
+                Out = Work.Wide;
+
+    By Age;
+
+    Var Income;
+
+    ID Sex;
+
+Run;
+
+/* Wide to long */
+Proc Transpose Data = Work.Wide
+                Out = Work.Long (Rename = (_NAME_ = Sex));
+
+    By Age;
+
+    Var Male Female;
+
+Run;</code></pre>
+<p>The R version in this package actually can do way more than just a
+simple transposition. Here is just a basic example, for what it can do
+additionally, have a look at the reference on <a href="https://s3rdia.github.io/qol/reference/transpose_plus.html">transpose_plus</a>:</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Wide to long</span></span>
+<span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="va">long</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="va">age</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                   values   <span class="op">=</span> <span class="va">income</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Long to wide</span></span>
+<span><span class="va">long</span> <span class="op">&lt;-</span> <span class="va">wide</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="va">age</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

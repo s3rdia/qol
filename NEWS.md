@@ -98,6 +98,11 @@
 * `retain_value()`, `retain_sum()`: `value` parameter is now called `values`. (10.01.2026)
 * `mark_cases()`, `retain_value()`, `retain_sum()`: Adjusted unit tests to something that actually makes sense. (10.01.2026)
 * In general: Added some unit tests on file saving and retrieving. (10.01.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Updated examples to show how a file is saved via the style element. (13.01.2026)
+
+### GitHub related
+
+* Updated article on further comparison with SAS on import csv and xlsx and `content_report()` as well as the new `if.()` selection with only providing a variable name. Also added `transpose_plus()` example and selecting ranges with `keep()`/`dropp()`. (12.01.2026)
 
 
 # qol 1.1.1

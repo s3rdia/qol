@@ -91,12 +91,13 @@ my_data <- dummy_data(1000)
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
-titles <- c("This is title number 1 link: https://cran.r-project.org/",
-            "This is title number 2",
-            "This is title number 3")
-footnotes <- c("This is footnote number 1",
-               "This is footnote number 2",
-               "This is footnote number 3 link: https://cran.r-project.org/")
+set_titles("This is title number 1 link: https://cran.r-project.org/",
+           "This is title number 2",
+           "This is title number 3")
+
+set_footnotes("This is footnote number 1",
+              "This is footnote number 2",
+              "This is footnote number 3 link: https://cran.r-project.org/")
 
 # Output cross tables
 my_data |> crosstabs(age, sex)
@@ -108,7 +109,7 @@ my_data |> crosstabs("age", "sex")
 my_data |> crosstabs("age", "sex",
                      weight = "weight")
 
-# Applying formats and titles
+# Applying formats
 age. <- discrete_format(
     "Total"          = 0:100,
     "under 18"       = 0:17,
@@ -123,9 +124,7 @@ sex. <- discrete_format(
     "Female" = 2)
 
 my_data |> crosstabs(age, sex,
-                     formats   = list(age = age., sex = sex.),
-                     titles    = titles,
-                     footnotes = footnotes)
+                     formats   = list(age = age., sex = sex.))
 
 # Split cross table by expressions of another variable
 my_data |> crosstabs(age, sex, by = education)
@@ -144,11 +143,32 @@ my_data |> crosstabs(age, sex, output = "text")
 # Output to Excel
 my_data |> crosstabs(age, sex, output = "excel")
 
-# With individual styling
+# Individual styling can also be passed directly
 my_style <- excel_output_style(header_back_color = "0077B6",
                                font              = "Times New Roman")
 
 my_data |> crosstabs(age, sex, output = "excel", style = my_style)
+
+# To save a table as xlsx file you have to set the path and filename in the
+# style element
+# Example files paths
+table_file <- tempfile(fileext = ".xlsx")
+
+# Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").
+set_style_options(save_path  = dirname(table_file),
+                  file       = basename(table_file),
+                  sheet_name = "MyTable")
+
+my_data |> crosstabs(age, sex, output = "excel")
+
+# Manual cleanup for example
+unlink(table_file)
+
+# Global options are permanently active until the current R session is closed.
+# There are also functions to reset the values manually.
+reset_style_options()
+reset_qol_options()
+close_file()
 
 }
 \seealso{
