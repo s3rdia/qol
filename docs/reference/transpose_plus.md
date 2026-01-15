@@ -1,0 +1,177 @@
+# Fast And Powerful Yet Simple To Use Transpose
+
+`transpose_plus()` is able to reshape a data frame from long to wide and
+from wide to long. In the long to wide transposition variables can be
+nested or placed side by side. With the wide to long transposition it is
+also possible to transpose multiple variables at once.
+
+Additionally `transpose_plus()` is able to weight results before
+transposing them from long to wide.
+
+The function also makes use of formats, which means you don't need to
+create variables storing the new variable names before transposition.
+You can just use formats to name the new variables and with multilabels
+you can even generate new variable expressions at the same time.
+
+## Usage
+
+``` r
+transpose_plus(
+  data_frame,
+  preserve = NULL,
+  pivot,
+  values = NULL,
+  formats = c(),
+  weight = NULL,
+  na.rm = .qol_options[["na.rm"]],
+  monitor = .qol_options[["monitor"]]
+)
+```
+
+## Arguments
+
+- data_frame:
+
+  A data frame to transpose
+
+- preserve:
+
+  Variables to keep and preserve in their current form.
+
+- pivot:
+
+  A vector that provides the expressions of single variables or od
+  variable combinations that should be transposed. To nest variables use
+  the form: "var1 + var2 + var3 + ...".
+
+- values:
+
+  A vector containing all value variables that should be transposed.
+
+- formats:
+
+  A list in which is specified which formats should be applied to which
+  variables.
+
+- weight:
+
+  Put in a weight variable to compute weighted results.
+
+- na.rm:
+
+  FALSE by default. If TRUE removes all NA values from the preserve and
+  pivot variables.
+
+- monitor:
+
+  FALSE by default. If TRUE, outputs two charts to visualize the
+  functions time consumption.
+
+## Value
+
+Returns a transposed data table.
+
+## Details
+
+`transpose_plus()` is just very loosely based on the 'SAS' procedure
+Proc Transpose, and the possibilities of a Data-Step transposition using
+loops.
+
+The transposition methods 'SAS' has to offer are actually fairly weak.
+Which is weird because all tools are there to have another powerful
+function. So `transpose_plus()` tries to create the function 'SAS'
+should have.
+
+The function is able to interpret which transposition direction the user
+wants by just looking at what the user provided with the function
+parameters. For a long to wide transposition it is natural to just
+provide variables to transpose. While it is also just natural to provide
+new variable names when transposing from wide to long. That alone
+reduces the number of parameters the user has to enter to perform a
+simple transposition.
+
+The real magic happens when formats come into play. With their help you
+can not only name new variables or their expressions, but you can also
+generate completely new expressions with no effort, just with the help
+of multilabels.
+
+## See also
+
+Creating formats:
+[`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md)
+and
+[`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md).
+
+Functions that also make use of formats:
+[`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+[`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+[`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md).
+
+## Examples
+
+``` r
+# Example formats
+age. <- discrete_format(
+    "Total"          = 0:100,
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:100)
+
+sex. <- discrete_format(
+    "Total"  = 1:2,
+    "Male"   = 1,
+    "Female" = 2)
+
+sex2. <- discrete_format(
+    "Total"  = c("Male", "Female"),
+    "Male"   = "Male",
+    "Female" = "Female")
+
+income. <- interval_format(
+    "Total"              = 0:99999,
+    "below 500"          = 0:499,
+    "500 to under 1000"  = 500:999,
+    "1000 to under 2000" = 1000:1999,
+    "2000 and more"      = 2000:99999)
+
+# Example data frame
+my_data <- dummy_data(1000)
+
+# Transpose from long to wide and use a multilabel to generate additional categories
+long_to_wide <- my_data |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = c("sex", "education"),
+                   values   = income,
+                   formats  = list(sex = sex., age = age.),
+                   weight   = weight,
+                   na.rm    = TRUE)
+
+# Transpose back from wide to long
+wide_to_long <- long_to_wide |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = list(sex       = c("Total", "Male", "Female"),
+                                   education = c("low", "middle", "high")))
+
+# Nesting variables in long to wide transposition
+nested <- my_data |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = "sex + education",
+                   values   = income,
+                   formats  = list(sex = sex., age = age.),
+                   weight   = weight,
+                   na.rm    = TRUE)
+
+# Or both, nested and un-nested, at the same time
+both <- my_data |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = c("sex + education", "sex", "education"),
+                   values   = income,
+                   formats  = list(sex = sex., age = age.),
+                   weight   = weight,
+                   na.rm    = TRUE)
+```

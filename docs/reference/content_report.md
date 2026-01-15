@@ -1,0 +1,55 @@
+# Get Detailed Summary About A Data Frame
+
+Prints a summary of a data frames contents, including details such as
+variable names, types, unique values, missings and min/max values. It
+also tells you the number of observations and variables present in the
+data frame, memory usage and the number of duplicate observations.
+
+## Usage
+
+``` r
+content_report(data_frame, output = "console", monitor = FALSE)
+```
+
+## Arguments
+
+- data_frame:
+
+  The data frame to get the content information from.
+
+- output:
+
+  The following output formats are available: console (default) or text.
+
+- monitor:
+
+  FALSE by default. If TRUE, outputs two charts to visualize the
+  functions time consumption.
+
+## Value
+
+Returns a list containing the global information as well as a data table
+containing the per variable information.
+
+## Details
+
+`content_report()` is based on the 'SAS' procedure Proc Contents, which
+provides a summary of global information one one hand like number of
+observations and variables among many others and on the other hand shows
+per variable information like type and length.
+
+'R' doesn't store the same information in a data frame like 'SAS', but
+there are many useful information to get a quick overview of a data
+frame. With this function you don't need to look at each variable
+individually. You can simply run it over a data frame and get values
+for: number of unique values, missing values (absolute and relative),
+min and max value as well as the top value.
+
+## Examples
+
+``` r
+# Example data frame
+my_data <- dummy_data(100)
+
+content_report(my_data)
+```

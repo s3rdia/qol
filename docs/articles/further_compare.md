@@ -1,0 +1,637 @@
+# A Further Comparison Of qol And SAS
+
+## Checking File Paths
+
+In SAS you have to assign Libraries to have access to a file path. When
+assigning a Library SAS directly checks, if the given path is valid.
+Additionally you can view all the SAS data files in the user interface,
+which are available in a Library:
+
+``` sas
+Libname MyData "C\:My_Path\";
+```
+
+qol also implements a
+[`libname()`](https://s3rdia.github.io/qol/reference/libname.md)
+function, which basically does a little check on the given path and
+informs you with the result:
+
+``` r
+# Check if path exists
+my_path <- libname("C/:My_Path/")
+
+# Retrieve a named character vector of full file paths
+my_path <- libname("C/:My_Path/", get_files = TRUE)
+```
+
+## Stacking datasets
+
+Stacking up datasets can be as easy and readable as this in SAS:
+
+``` sas
+Data Work.NewDataSet;
+    Set Work.MyData1
+        Work.MyData2
+        Work.MyData3;
+Run;
+```
+
+qol does it just as readable:
+
+``` r
+NewDataSet <- set(MyData1,
+                  MyData2,
+                  MyData3)
+```
+
+## More Than Just ‘if’
+
+SAS makes use of if-statements like most other languages do. The most
+common use case should be to generate a new variable or to be more
+specific: to assign a value to a variable conditionally. Inside a
+Data-Step you can write single if-statements or connect multiple to a
+whole block. You can also make use of ‘else if’, which is only executed,
+if no other if-condition from before was true. And there is ‘else’ which
+is executed, if no other condition in a block became true.
+
+Here is a simple if-block in a SAS Data-Step, which is used to generate
+groups of ages:
+
+``` sas
+Data Work.MyData_AgeGr;
+    Set Work.MyData;
+
+             If       Age < 18 Then AgeGr = 1;
+        Else If 18 <= Age < 25 Then AgeGr = 2;
+        Else If 25 <= Age < 55 Then AgeGr = 3;
+        Else If 55 <= Age < 65 Then AgeGr = 4;
+        Else                        AgeGr = 5;
+
+Run;
+```
+
+The equivalent in R looks like this:
+
+``` r
+MyData_AgeGr <- MyData |> 
+         if.(Age < 18,             AgeGr = 1) |>
+    else_if.(Age >= 18 & Age < 25, AgeGr = 2) |>
+    else_if.(Age >= 25 & Age < 55, AgeGr = 3) |>
+    else_if.(Age >= 55 & Age < 65, AgeGr = 4) |>
+    else.   (                      AgeGr = 5)
+```
+
+In SAS you can do more than just conditionally assigning a value to a
+variable with an if-statement. If you use the condition with ‘Then Do’,
+you can generate multiple variables like this:
+
+``` sas
+Data Work.MyData_Do;
+    Set Work.MyData;
+
+        If a < 100 Then Do;
+
+            b = 1;
+            c = "Hello";
+            d = 42;
+
+        End;
+
+Run;
+```
+
+With the qol-Package you can write:
+
+``` r
+MyData_Do <- MyData |> 
+         if.(a < 100, b = 1,
+                      c = "Hello",
+                      d = 42)
+```
+
+In both programs you can also connect further ‘else if’ and
+‘else’-statements. And there is yet another function ‘if’ can do in SAS:
+you can use it to filter observations. This function takes action, if
+only the condition without any ‘Then’ is provided like this:
+
+``` sas
+Data Work.MyData_If;
+    Set Work.MyData;
+
+        /* Which means: only keep the observations,
+           which are true on the following condition. */
+        If Age > 65;
+
+        /* Or you could just do this, which means: only
+           keep observations, where weight is not missing. */
+        If Weight;
+
+Run;
+```
+
+The new [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md)
+makes this possible, too:
+
+``` r
+MyData_If <- MyData |>
+    if.(Age > 65) |>
+    if.(weight)
+```
+
+Simple, readable and multi-functional.
+
+## Recoding With Formats
+
+Normally, if you want to recode a variable into new categories, you
+would probably do it with if-statements as seen above. With SAS formats
+you can achieve the same, just simpler and more readable:
+
+``` sas
+Proc Format Library = Work;
+
+    Value AgeGroup
+        00 - 17 = 'under 18'
+        18 - 24 = '18 to under 25'
+        25 - 54 = '25 to under 55'
+        55 - 64 = '55 to under 65'
+        65 - 99 = '65 and older';
+
+Run;
+
+Data Work.MyData_Recode;
+    Set Work.MyData;
+
+        AgeGr = Put(Age, AgeGroup.);
+
+Run;
+```
+
+Now you can do the same in R with
+[`recode()`](https://s3rdia.github.io/qol/reference/recode.md) just as
+easy:
+
+``` r
+AgeGroup. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:99)
+
+MyData_Recode <- MyData |> recode("AgeGr", Age = "AgeGroup.")
+```
+
+## The World Of Retain
+
+On a very basic level ‘Retain’ can do two things, depending on the
+position in the SAS code: It can either sort variables column wise or it
+can - since it works row wise - remember a value from one row to the
+next. The newly implemented functions concentrate on the second part.
+Remembering a value from a previous observation offers multiple use
+cases. E.g. always adding +1 to the previous case creates a running
+number or adding different values can create a cumulative sum:
+
+``` sas
+Data Work.MyData_Retain;
+    Set Work.MyData;
+
+        Retain RunningNr 0 CumulativeIncome 0;
+
+        RunningNr = RunningNr + 1;
+        CumulativeIncome = CumulativeIncome + Income;
+
+Run;
+```
+
+qol doesn’t mimic the behavior of ‘Retain’, but rather the result:
+
+``` r
+MyData_Retain <- MyData |>
+    running_number() |> 
+    retain_sum(var_name = "CumulativeIncome", value = income)
+```
+
+In it’s simplest form it can remember a value from the first observation
+and transfer it to all other observations:
+
+``` sas
+Data Work.MyData_Value;
+    Set Work.MyData;
+
+        Retain MyValue 0;
+
+        If _n_ = 1 Then MyValue = Income;
+
+Run;
+```
+
+qol does it like this:
+
+``` r
+MyData_Running <- MyData |> retain_value(var_name = "MyValue", value = income)
+```
+
+Not directly ‘Retain’ related, but also useful: If an observation knows
+the value of the previous one, it can check whether it is of the same
+value or another, e.g. to mark first or last cases within a group.
+
+``` sas
+Data Work.MyData_FirstLast;
+    Set Work.MyData;
+
+        By AgeGr;
+    
+            If First.AgeGr Then FirstCase = 1;
+            If Last.AgeGr  Then LastCase  = 1;
+
+Run;
+```
+
+qol creates this effect like this:
+
+``` r
+MyData_FirstLast <- MyData |>
+    mark_case(var_name = "FirstCase", by = AgeGr) |> 
+    mark_case(var_name = "LastCase",  by = AgeGr, first = FALSE)
+```
+
+All of these functions work on the whole data frame as well as on
+groups, e.g. to transfer a value from the first person in a household to
+all other persons of the same household.
+
+## Join Them All
+
+In a SAS Data-Step you can join multiple datasets together in a single
+operation using ‘Merge’ with a very basic syntax. Provide the dataset
+names, the variables, on which they should be joined and after a full
+join is complete, the user can decide which parts of the joins should
+remain in the final dataset:
+
+``` sas
+Data Work.MyData_Merged;
+    Merge Work.MyData_A (in = a)
+          Work.MyData_B (in = b)
+          Work.MyData_C;
+
+        By a b c d e;
+          
+          /* Here are examples of how the different joins can be selected,
+             making use of the above assigned in-variables. */
+          If a;             /* left join */
+          If b;             /* right join */
+          If a And b;       /* inner join */
+          If Not (a And b); /* outer join */
+          If a and Not b;   /* left inner join */
+          If Not a And b;   /* right inner join */
+                            /* full join happens if no selection is specified */
+
+Run;
+```
+
+The R equivalent
+[`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md)
+tries to keep the simplicity, while giving the user the power, to do
+more joins at the same time. Additionally to what Merge can do, this
+function also makes use of the Proc SQL possibility to join datasets on
+different variable names:
+
+``` r
+MyData_Merged <- multi_join(data_frames = list(MyData_A, MyData_B, MyData_C),
+                            on  = c("a", "b", "c", "d", "e")
+                            how = "left")
+
+# Instead of "left" you can assign any of the above join methods.
+# To join on differently named variables, you can write the function like this:
+
+MyData_Merged <- multi_join(list(MyData_A, MyData_B, MyData_C),
+                            on = list(MyData_A = c("a", "b"),
+                                      MyData_B = c("var1", "var2"),
+                                      MyData_C = c("key1", "key2")))
+```
+
+## Splitting Datasets
+
+SAS is capable of splitting up a dataset into multiple new ones. With
+the ‘Output’ function one can - among other things - explicitly tell SAS
+which observation to output into which dataset. Instead of subsetting
+the same dataset multiple times manually, you can subset it multiple
+times at once:
+
+``` sas
+Data Work.MyData_Male
+     Work.MyData_Female;
+    Set Work.MyData;
+
+             If Sex = 1 Then Output Work.MyData_Male;
+        Else If Sex = 2 Then Output Work.MyData_Female;
+
+Run;
+```
+
+qol offers the function
+[`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md) which
+split up data frames into a list of multiple new ones:
+
+``` r
+# Using just the expressions of a single variable
+MyData_List <- MyData |> split_by(Sex)
+
+# Or using conditions
+MyData_List <- MyData |> split_by(Sex == 1 & Age <  18,
+                                  Sex == 2 & Age >= 18)
+```
+
+## Keep/Drop
+
+In SAS ‘Keep’ and ‘Drop’ share the same writing style and don’t require
+a minus sign (in case of ‘Drop’). There are also some additions which
+can make keeping or dropping ranges of variables easier:
+
+``` sas
+Data Work.MyData_KeepDrop;
+    Set Work.MyData;
+
+        Keep a b c d;
+        Drop a b c d;
+
+        /* When you have to keep or drop many variables you can also define a range */
+        Keep start_var -- end_var; /* Keep every variable between the two given ones (including them) */
+        Drop start_var -- end_var; /* Drop every variable between the two given ones (including them) */
+
+        /* You can also keep or drop variables based on what characters they start with */
+        Keep var:; /* Keep every variable starting with "var" */
+        Drop var:; /* Drop every variable starting with "var" */
+
+Run;
+```
+
+The qol [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md)
+and [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md)
+(drop was already taken, so the additional p is intentional ;-) ), are
+written alike:
+
+``` r
+MyData_KeepDrop <- MyData |> keep(a, b, c, d)
+MyData_KeepDrop <- MyData |> dropp(a, b, c, d)
+
+# Ranges can be used like this
+MyData_KeepDrop <- MyData |> keep(start_var:end_var)
+MyData_KeepDrop <- MyData |> dropp(start_var:end_var)
+
+# The R version not only provides the option to select variables "starting with"
+# certain characters but also "ending with" and "containing". The colon ":" acts
+# as a placeholder.
+MyData_KeepDrop <- MyData |> keep("var:")  # Start with
+MyData_KeepDrop <- MyData |> keep(":var")  # End with
+MyData_KeepDrop <- MyData |> keep(":var:") # Contains
+
+MyData_KeepDrop <- MyData |> dropp("var:")  # Start with
+MyData_KeepDrop <- MyData |> dropp(":var")  # End with
+MyData_KeepDrop <- MyData |> dropp(":var:") # Contains
+```
+
+## More On Tabulation
+
+Sometimes you probably don’t want to create a big, fully styled table
+and just need a small and basic one for a quick overview. The SAS
+procedure Proc Freq offers tools to produce simple frequencies of single
+variables. The code is as straight forward as this:
+
+``` sas
+Proc Freq Data = Work.MyData;
+
+    Table Age;
+
+Run;
+```
+
+The function
+[`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md)
+does the same like this:
+
+``` r
+# You can just output a quick ASCII style table in the console
+MyData |> frequencies(Age)
+
+# Or a fully styled Excel table like this
+MyData |> frequencies(Age, output = "excel")
+```
+
+Proc Freq is also capable of producing cross tables. Just an asterisk
+between two variables is neccessary:
+
+``` sas
+Proc Freq Data = Work.MyData;
+
+    Table Age * Sex;
+
+Run;
+```
+
+To reproduce this, the function
+[`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md)
+comes into play:
+
+``` r
+# Again in ASCII style
+MyData |> crosstabs(Age, Sex)
+
+# Or in the fully styled Excel version
+MyData |> crosstabs(Age, Sex, output = "excel")
+
+# By the way: if you want to produce multiple structurally identical tables
+# by the expressions of another variable, you can do so like this:
+MyData |> frequencies(Age, by = Education)
+MyData |> crosstabs(Age, Sex, by = Education)
+```
+
+There are several options to customize the output tables. You can for
+example add titles and footnotes or put some labels on the variable
+expressions:
+
+``` sas
+Proc Format Library = Work;
+
+    Value AgeGroup
+        00 - 17 = 'under 18'
+        18 - 24 = '18 to under 25'
+        25 - 54 = '25 to under 55'
+        55 - 64 = '55 to under 65'
+        65 - 99 = '65 and older';
+
+Run;
+
+Title1    "This is a title";
+Footnote1 "This is a footnote";
+        
+Proc Freq Data = Work.MyData;
+
+    Table Age;
+        
+    Format Age AgeGroup.;
+
+Run;
+```
+
+And in R you do it like this:
+
+``` r
+AgeGroup. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:99)
+
+MyData |> frequencies(Age,
+                      formats   = list(Age = AgeGroup.),
+                      titles    = "This is a title",
+                      footnotes = "This is a footnote")
+```
+
+## Export Data Frames With Style
+
+There are occasions when you don’t want to tabulate your data, but just
+print out the data frame you put together. There are multiple ways to do
+this, Proc Export is probably the most straight forward one:
+
+``` sas
+Proc Export Data = Work.MyData;
+
+    Outfile = "C:\MyFile.xlsx";
+    DBMS = xlsx;
+
+Run;
+```
+
+This in itself is no revolution, many R packages already can do this.
+But to combine the simplicity of this export with the simplicity of the
+already established styling options from the tabulation functions,
+offers new options:
+
+``` r
+MyData |> export_with_style(titles    = "This is a title",
+                            footnotes = "This is a footnote",
+                            style     = excel_output_style(header_back_color = "0000FF",
+                                                           header_font_color = "FF0000",
+                                                           font              = "Times New Roman",
+                                                           title_font_size   = 20))
+```
+
+By the way: All tabulation functions and the above export function from
+the qol package generate the named regions ‘table’ and ‘data’ in the
+Excel output, which can easily be read back in with the help of the
+[openxlsx2](https://github.com/JanMarvin/openxlsx2) package:
+
+``` r
+MyData <- wb_to_df(file  = "C:/MyFile.xlsx",
+                   sheet = 1,
+                   named_region = "data")
+```
+
+These are just very basic examples. For further details you can look up
+the functions in the
+[reference](https://s3rdia.github.io/qol/reference/index.html).
+
+## Import CSV And XLSX Files
+
+With SAS you can import many different file formats with a straight
+forward syntax:
+
+``` sas
+/* For CVS */
+Proc Import
+
+    Datafile = "C:\MyFile.csv"
+    Out      = Work.MyData
+    DBMS     = csv;
+
+Run;
+
+/* For XLSX */
+Proc Import
+
+    Datafile = "C:\MyFile.xlsx"
+    Out      = Work.MyData
+    DBMS     = xlsx;
+
+Run;
+```
+
+The R versions concentrate on importing CSV and XLSX files:
+
+``` r
+csv_file  <- import_data("C:\MyFile.csv")
+xlsx_file <- import_data("C:\MyFile.xlsx")
+```
+
+Note: There is also an export function which can export CSV and XLSX
+files without any style:
+
+## Information About Datasets
+
+To get a quick overview of a dataset, SAS provides an easy way to get a
+short report. This report contains global information like, number of
+variables and observations but also information per variable like the
+type and length:
+
+``` sas
+/* For CVS */
+Proc Contents Data = Work.MyData;
+Run;
+```
+
+A data frame in R doesn’t store the same information like a SAS dataset
+but one can get quiet a few information out of it like this:
+
+``` r
+MyData |> content_report()
+```
+
+## Transposing
+
+The SAS transpose procedure is very basic, but it knows in which
+direction the user wants to transpose by just providing certain
+parameters:
+
+``` sas
+/* Long to wide */
+Proc Transpose Data = Work.Long
+                Out = Work.Wide;
+
+    By Age;
+
+    Var Income;
+
+    ID Sex;
+
+Run;
+
+/* Wide to long */
+Proc Transpose Data = Work.Wide
+                Out = Work.Long (Rename = (_NAME_ = Sex));
+
+    By Age;
+
+    Var Male Female;
+
+Run;
+```
+
+The R version in this package actually can do way more than just a
+simple transposition. Here is just a basic example, for what it can do
+additionally, have a look at the reference on
+[transpose_plus](https://s3rdia.github.io/qol/reference/transpose_plus.html):
+
+``` r
+# Wide to long
+wide <- long |>
+    transpose_plus(preserve = age,
+                   pivot    = "sex",
+                   values   = income)
+
+# Long to wide
+long <- wide |>
+    transpose_plus(preserve = age,
+                   pivot    = list(sex = c("Male", "Female")))
+```

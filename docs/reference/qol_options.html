@@ -8,6 +8,9 @@ get_monitor(): Get the globally stored monitor option.
 set_na.rm(): Set the na.rm option globally for each function which can remove
 NA values.
 get_na.rm(): Get the globally stored na.rm option.
+set_print_miss(): Set the print_miss option globally for each function which can display
+missing categories.
+get_print_miss(): Get the globally stored print_miss option.
 set_output(): Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".
 get_output(): Get the globally stored output option.
@@ -25,6 +28,9 @@ get_monitor(): Get the globally stored monitor option.
 set_na.rm(): Set the na.rm option globally for each function which can remove
 NA values.
 get_na.rm(): Get the globally stored na.rm option.
+set_print_miss(): Set the print_miss option globally for each function which can display
+missing categories.
+get_print_miss(): Get the globally stored print_miss option.
 set_output(): Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".
 get_output(): Get the globally stored output option.
@@ -41,7 +47,7 @@ get_footnotes(): Get the globally stored footnotes.'><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,9 @@ able to show how they work internally.</p>
 <p><code>set_na.rm()</code>: Set the na.rm option globally for each function which can remove
 NA values.</p>
 <p><code>get_na.rm()</code>: Get the globally stored na.rm option.</p>
+<p><code>set_print_miss()</code>: Set the print_miss option globally for each function which can display
+missing categories.</p>
+<p><code>get_print_miss()</code>: Get the globally stored print_miss option.</p>
 <p><code>set_output()</code>: Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".</p>
 <p><code>get_output()</code>: Get the globally stored output option.</p>
@@ -105,6 +114,10 @@ above the output table.</p>
 <span><span class="fu">set_na.rm</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_na.rm</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_print_miss</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_print_miss</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_output</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -135,6 +148,8 @@ above the output table.</p>
 <p><code>get_monitor()</code>: TRUE or FALSE.</p>
 <p><code>set_na.rm()</code>: Changed global na.rm option.</p>
 <p><code>get_na.rm()</code>: TRUE or FALSE.</p>
+<p><code>set_print_miss()</code>: Changed global print_miss option.</p>
+<p><code>get_print_miss()</code>: TRUE or FALSE.</p>
 <p><code>set_output()</code>: Changed global output option.</p>
 <p><code>get_output()</code>: Current output option as character.</p>
 <p><code>set_titles()</code>: Changed global titles.</p>
@@ -159,6 +174,11 @@ above the output table.</p>
 <span><span class="fu">set_na.rm</span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_na.rm</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_print_miss</span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">set_print_miss</span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_print_miss</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_output</span><span class="op">(</span><span class="st">"excel"</span><span class="op">)</span></span>
 <span></span>
@@ -186,7 +206,7 @@ above the output table.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

@@ -1,0 +1,70 @@
+# Keep and Drop Variables Inside a Data Frame
+
+`keep()` enables you to put in a vector of variable names which then are
+kept inside the given data frame. All other variables are dropped.
+
+`dropp()` enables you to put in a vector of variable names which then
+are dropped from the given data frame. All other variables are kept.
+
+## Usage
+
+``` r
+keep(data_frame, ..., order_vars = FALSE)
+
+dropp(data_frame, ...)
+```
+
+## Arguments
+
+- data_frame:
+
+  A data frame which should be reduced to (keep) or by (drop) the
+  specified variables.
+
+- ...:
+
+  The variable names to keep/drop.
+
+- order_vars:
+
+  keep: At the end variables are ordered as specified in the command.
+
+## Value
+
+Returns a reduced data table.
+
+## Examples
+
+``` r
+# Example data frame
+my_data <- dummy_data(1000)
+
+# Call function
+new_dt1 <- my_data |> keep(year, age, sex)
+new_dt2 <- my_data |> keep(weight, income, education, sex, order_vars = TRUE)
+new_dt3 <- my_data |> dropp(year, age, sex)
+
+# Also works with characters
+new_dt4 <- my_data |> keep("year", "age", "sex")
+new_dt5 <- my_data |> dropp("year", "age", "sex")
+
+# Or variable names stored as a character vector
+var_names <- c("age", "sex", "income", "weight")
+
+new_dt6 <- my_data |> keep(var_names)
+new_dt7 <- my_data |> dropp(var_names)
+
+# You can also keep or drop a range of variables
+new_dt8 <- my_data |> keep(year, state:income)
+new_dt9 <- my_data |> dropp(year, state:income)
+
+# You can also use the colon as a placeholder for any text
+start1 <- my_data |> keep("s:") # Variable names start with "s"
+start2 <- my_data |> dropp("s:")
+
+end1 <- my_data |> keep(":id") # Variable names end with "id"
+end2 <- my_data |> dropp(":id")
+
+contain1 <- my_data |> keep(":on:") # Variable names which contain "on"
+contain2 <- my_data |> dropp(":on:")
+```

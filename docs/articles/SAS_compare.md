@@ -1,0 +1,335 @@
+# How Does qol Compare to SAS?
+
+SAS is a flagship when it comes to creating massive descriptive tables
+with little effort, because it offers the right tools. This package
+tries to adapt some of these to also make them available in R.
+
+## The Concept of Formats
+
+Formats are like molds or stencils to put the data through. In SAS
+formats are defined with the procedure Proc Formats, which is adapted
+with
+[`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md)
+and
+[`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md).
+Here you can define, which values should be transferred into which
+result categories. This is completely detached from the data your
+working with.
+
+The great thing about this is, that one can not only label and recode
+values, but one can also define so called multilabels. Meaning, one
+original value can be transferred into multiple result categories.
+
+A cell in a data frame can only hold one distinct value, which is
+normally a good thing. But let’s say you want to convert single ages
+into age categories. The age “3” for example could go into the category
+“under 6”, but also in “under 12”, “under 18” and “total”. Normally you
+would compute additional variables, which hold the different
+categorizations, or you could also double up the observations for each
+category. Both ways would just bloat up the data frame and cost
+additional memory, particularly if you work with big data sets.
+
+With these format containers, you just keep a small reference of
+original values and result categories. Formats and data find their way
+together only just before computing the results, meaning the original
+data frame can be passed into a function capable of handling formats,
+without any data transformation beforehand. You just tell the function
+which format should be applied to which variable. That’s it. The
+function handles the rest and outputs all the desired categories.
+
+This method is very memory efficient, readable and user friendly for
+creating larger and more complex outputs at the same time.
+
+Let’s look at how formats are created in SAS:
+
+``` sas
+Proc Format;
+
+    Value Sex (Multilabel Notsorted)
+        1,2 = 'Total'
+          1 = 'Male'
+          2 = 'Female';
+          
+    Value Age (Multilabel Notsorted)
+        00 - 99 = 'Total'
+        00 - 02 = 'under 3'
+        00 - 05 = 'under 6'
+        00 - 11 = 'under 12'
+        00 - 17 = 'under 18'
+        18 - 24 = '18 to under 25'
+        25 - 54 = '25 to under 55'
+        55 - 64 = '55 to under 65'
+        65 - 99 = '65 and older'
+        80 - 99 = '80 and older';
+
+Run;
+```
+
+The equivalent in R now looks like this:
+
+``` r
+sex. <- discrete_format(
+    "Total"  = 1:2,
+    "Male"   = 1,
+    "Female" = 2)
+    
+age. <- discrete_format(
+    "Total"          = 0:99,
+    "under 3"        = 0:2,
+    "under 6"        = 0:5,
+    "under 12"       = 0:11,
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:99,
+    "80 and older"   = 80:99)
+```
+
+The main difference is that input and output values are swapped, but
+that aside it looks very similar. I would recommend to let format names
+end with a dot to make them stand out. The dot at the end is the SAS way
+of assigning a format to a variable.
+
+## A More Powerful Summarise
+
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
+is based on the SAS procedure Proc Summary, which provides efficient and
+readable ways to perform complex aggregations.
+
+Normally you would compute new categorical variables beforehand -
+probably even in different forms, if you wanted to have different
+categorizations - and bloat up the data set. After all this recoding
+footwork you could finally use multiple summaries to compute all the
+stats you need to then put them back together. With this function this
+is no more necessary.
+
+In
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
+you put in the original data frame and let the recoding happen via
+format containers. This is very efficient, since new variables and
+categories are only created just before the summarise happens.
+
+Additionally you can specify whether you only want to produce the all
+nested version of all group variables or whether you want to produce
+every possible combination in one go. All with a single option.
+
+First of all let’s look at it from the SAS side:
+
+``` sas
+Proc Summary Data = Work.My_Data;
+
+    Class Year;
+    Class Sex Age /Order = Data Mlf Preloadfmt Missing;
+
+    Var Weight;
+
+    Format Sex Sex. Age Age.;
+
+    Output Out  = Work.My_Data_Agg
+           Sum  =
+           Mean =;
+
+Run;
+```
+
+The equivalent in R would be this:
+
+``` r
+my_data_agg <- my_data |>
+    summarise_plus(class      = c(year, sex, age),
+                   values     = weight,
+                   statistics = c("sum", "mean", "freq"),
+                   formats    = list(sex = sex.,
+                                     age = age.),
+                   nesting    = "all",
+                   na.rm      = TRUE)
+```
+
+Again I tried to keep it as close as possible to the original. What both
+functions do, is to generate every possible combination of the class
+variables. Meaning:
+
+- total
+- year
+- sex
+- age
+- year + sex
+- year + age
+- sex + age
+- year + sex + age
+
+In addition, because we are using formats, the function not only
+generates the results for the original (labeled) values, but also for
+the additional categories specified in the multilabels above. To make it
+simple: You put in the variable sex with the values of 1 and 2 from the
+original data and get the results for “Male”, “Female” and “Total”
+(meaning 1 + 2). With this approach you can keep the original data as
+original as possible and only generate the desired variables and values
+during summarisation. And if you only would like the combination of
+year + sex + age, as you would get from any other summarisation
+function, you can just change nesting to “deepest”. In SAS you would
+just add NWay to the end of the first line.
+
+## A More Powerful Tabulation
+
+[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md) is
+based on the SAS procedure Proc Tabulate, which provides efficient and
+readable ways to perform complex tabulations.
+
+With this function you can combine any number of variables in any
+possible way, all at once. Sounds crazy? Is crazy! You just define which
+variables or variable combinations should end up in the table rows and
+columns with a simple syntax. Listing variables in a vector like
+c(“var1”, “var2”, “var3”,…) means to put variables below (in case of the
+row variables) or besides (in case of the column variables) each other.
+Nesting variables is as easy as putting a plus sign between them,
+e.g. c(“var1 + var2”, “var2” + “var3” + “var4”, etc.). And of course you
+can combine both versions.
+
+The real highlight is, that this function not only creates all the
+desired variable combinations and exports them to an Excel file, it
+prints a fully custom styled table to a workbook. Setting up a custom,
+reusable style is as easy as setting up options like: provide a color
+for the table header, set the font size for the row header, should
+borders be drawn for the table cells yes/no, and so on. Merging doubled
+header texts, happens automatically.
+
+With this function you basically can fully concentrate on designing a
+table, instead of thinking hard about how to calculate where to put a
+border or to even manually prepare a designed workbook.
+
+Again, the SAS way first:
+
+``` sas
+Proc Tabulate Data = Work.Armut;
+
+    Class Year;
+    Class Sex Age /Order = Data Mlf Preloadfmt;
+
+    Var Weight;
+
+    Table /* Rows */
+          Sex = ''
+          Sex = '' * Alter = '',
+
+          /* Columns */
+          Year = 'Percentage based on sex' * Weight = '' * PctSum<sex> = '%'
+          Year = 'Population (weighted)'   * Weight = '' * Sum = '1000'
+          Year = 'Unweighted'              * Weight = '' * N = 'Count'
+          /Box = 'Variable';
+
+    Format Sex Sex. Age Age.;
+
+Run;
+```
+
+The equivalent in R would be this:
+
+``` r
+my_data |> any_table(rows       = c("sex", "sex + age"),
+                     columns    = "year",
+                     values     = weight,
+                     statistics = c("pct_group", "sum", "freq"),
+                     pct_group  = "sex",
+                     formats    = list(sex = sex.,
+                                       age = age.),
+                     na.rm      = TRUE)
+```
+
+In this function the way of writing things goes a bit apart, but the
+core mechanics, to achieve the same result, stay the same. This is just
+a simple example, but you can nest any number of variables, anywhere in
+the table. With the help of formats you can generate any number of
+additional categories without touching the original data. And it doesn’t
+get more complex than what you see above. Don’t believe me?
+
+What should we do, if we wanted to produce the same table multiple
+times, but every time filtered by an expression of another variable? I
+need to write some fancy loops, right? … right? Give me a second:
+
+``` r
+# Let's try it with the single states of Germany, Germany as a whole
+# and eastern and western states.
+state. <- discrete_format(
+    "Germany"                       = 1:16,
+    "Schleswig-Holstein"            = 1,
+    "Hamburg"                       = 2,
+    "Lower Saxony"                  = 3,
+    "Bremen"                        = 4,
+    "North Rhine-Westphalia"        = 5,
+    "Hesse"                         = 6,
+    "Rhineland-Palatinate"          = 7,
+    "Baden-Württemberg"             = 8,
+    "Bavaria"                       = 9,
+    "Saarland"                      = 10,
+    "West"                          = 1:10,
+    "Berlin"                        = 11,
+    "Brandenburg"                   = 12,
+    "Mecklenburg-Western Pomerania" = 13,
+    "Saxony"                        = 14,
+    "Saxony-Anhalt"                 = 15,
+    "Thuringia"                     = 16,
+    "East"                          = 11:16)
+
+# Now produce the same table as above for every expression of the format above.
+# See the difference? There is nothing more to it.
+my_data |> any_table(rows       = c("sex", "sex + age"),
+                     columns    = "year",
+                     by         = state,
+                     values     = weight,
+                     statistics = c("pct_group", "sum", "freq"),
+                     pct_group  = "sex",
+                     formats    = list(sex   = sex.,
+                                       age   = age.,
+                                       state = state.),
+                     na.rm      = TRUE)
+```
+
+With the above code you get an Excel workbook with 19 worksheets
+containing the same table for the different states. By the way: SAS can
+do the same just as easy.
+
+## Do It With Style
+
+This all may be nice and good, but what if you don’t like the style the
+programmer gave the tables? What if you need a different style? Change
+everything by hand afterwards? Not at all, you can just create your own
+style as simple as this:
+
+``` r
+# Want a blue header color? Sure.
+my_style <- excel_output_style(header_back_color = "0000FF")
+
+# But with red font color? No problem.
+my_style <- my_style |> modify_output_style(header_font_color = "FF0000")
+
+# Another font and individual column width? Why not.
+my_style <- my_style |> modify_output_style(font         = "Times New Roman",
+                                            column_width = c(20, 12, 15, 9))
+
+# Change the font size for the titles and remove borders around the row header? Absolutely.
+my_style <- my_style |> modify_output_style(title_font_size = 20,
+                                            cat_col_borders = FALSE)
+                                            
+# Now let's integrate this new style
+my_data |> any_table(rows       = c("sex", "sex + age"),
+                     columns    = "year",
+                     by         = state,
+                     values     = weight,
+                     statistics = c("pct_group", "sum", "freq"),
+                     pct_group  = "sex",
+                     formats    = list(sex   = sex.,
+                                       age   = age.,
+                                       state = state.),
+                     style      = my_style,
+                     na.rm      = TRUE)
+                     
+# Done.
+```
+
+As I said: It doesn’t get more complex. You can add many more things to
+your tables just as easy. No complex programming needed, just a little
+bit of imagination. For more examples see the reference.
+
+And now go and create some good looking tables!

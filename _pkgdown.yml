@@ -14,6 +14,7 @@ reference:
   contents:
   - discrete_format
   - interval_format
+  - expand_formats
 - title: Summarisation and Tabulation
   contents:
   - summarise_plus
@@ -129,6 +130,8 @@ reference:
   - get_monitor
   - set_na.rm
   - get_na.rm
+  - set_print_miss
+  - get_print_miss
   - set_output
   - get_output
   - set_titles

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,25 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120">qol 1.2.0<a class="anchor" aria-label="anchor" href="#qol-120"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.1" id="qol-121---development">qol 1.2.1 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-121---development"></a></h2>
+<div class="section level4">
+<h4 id="new-functions-1-2-1">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/expand_formats.html">expand_formats()</a></code>: Generates a data frame which contains all nested combinations of the provided format labels. (15.01.2026)</li>
+<li>Global style options:
+<ul><li>
+<code><a href="../reference/qol_options.html">set_print_miss()</a></code>, <code><a href="../reference/qol_options.html">get_print_miss()</a></code>: Additional global setters and getters. (15.01.2026)</li>
+</ul></li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-functionality-1-2-1">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The new parameter <code>print_miss</code> outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120">qol 1.2.0<a class="anchor" aria-label="anchor" href="#qol-120"></a></h2><p class="text-muted">CRAN release: 2026-01-13</p>
+<p>CRAN release on 13.01.2026</p>
 <div class="section level4">
 <h4 id="new-functions-1-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-0"></a></h4>
 <ul><li>
@@ -49,7 +67,7 @@
 <li>
 <code><a href="../reference/sort_plus.html">sort_plus()</a></code>: Sort data frame observations with some additions. (27.12.2025)</li>
 <li>
-<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> didn’t have any benefit, <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Since <code>split_by_var()</code> didn’t have any benefit, <code>split_by_var()</code> and <code>split_by_condition()</code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 <li>
 <code><a href="../reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
 <li>Error handling functions:
@@ -130,9 +148,9 @@
 <div class="section level4">
 <h4 id="removed-1-2-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-2-0"></a></h4>
 <ul><li>
-<code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_var()</a></code> and <code><a href="https://rdrr.io/pkg/qol/man/split_by.html" class="external-link">split_by_condition()</a></code>: See comment under ‘New functions’. (30.12.2025)</li>
+<code>split_by_var()</code> and <code>split_by_condition()</code>: See comment under ‘New functions’. (30.12.2025)</li>
 <li>
-<code><a href="https://rdrr.io/pkg/qol/man/convert_numeric.html" class="external-link">is_numeric()</a></code>: There was simply no benefit. (02.01.2026)</li>
+<code>is_numeric()</code>: There was simply no benefit. (02.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-0"></a></h4>
@@ -160,11 +178,11 @@
 <div class="section level4">
 <h4 id="optimization-1-2-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-0"></a></h4>
 <ul><li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses faster <code><a href="https://rdrr.io/pkg/collapse/man/efficient-programming.html" class="external-link">collapse::na_omit</a></code> for NA removal. (27.12.2025)</li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses faster <code><a href="https://fastverse.org/collapse/reference/efficient-programming.html" class="external-link">collapse::na_omit</a></code> for NA removal. (27.12.2025)</li>
 <li>
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Optimized and now just takes half the time to generate data. (27.12.2025)</li>
 <li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Swapped in more <code>collapse</code> functions. Turned off sorting of <code><a href="https://rdrr.io/pkg/collapse/man/GRP.html" class="external-link">collapse::GRP</a></code> when using the shortcut route. (28.12.2025)</li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Swapped in more <code>collapse</code> functions. Turned off sorting of <code><a href="https://fastverse.org/collapse/reference/GRP.html" class="external-link">collapse::GRP</a></code> when using the shortcut route. (28.12.2025)</li>
 <li>
 <code>apply_formats()</code>: NA value subsetting is now only done once and not twice with interval formats. <code><a href="https://rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">data.table::setkey</a></code> is now only called on the format data frame. (28.12.2025)</li>
 <li>
@@ -207,6 +225,10 @@
 <li>In general: Added some unit tests on file saving and retrieving. (10.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Updated examples to show how a file is saved via the style element. (13.01.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="github-related-1-2-0">GitHub related<a class="anchor" aria-label="anchor" href="#github-related-1-2-0"></a></h4>
+<ul><li>Updated article on further comparison with SAS on import csv and xlsx and <code><a href="../reference/content_report.html">content_report()</a></code> as well as the new <code><a href="../reference/if_else.html">if.()</a></code> selection with only providing a variable name. Also added <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code> example and selecting ranges with <code><a href="../reference/keep_dropp.html">keep()</a></code>/<code><a href="../reference/keep_dropp.html">dropp()</a></code>. (12.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -361,7 +383,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

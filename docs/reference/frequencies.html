@@ -13,7 +13,7 @@ and unweighted frequencies per expression."><meta property="og:image" content="h
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@ and unweighted frequencies per expression.</p>
 <span>  style <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"excel_style"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  output <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"output"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"na.rm"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  print_miss <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"print_miss"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  print <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"print"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  monitor <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"monitor"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -112,6 +113,12 @@ excel and excel_nostyle.</p></dd>
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>FALSE by default. If TRUE removes all NA values from the variables.</p></dd>
+
+
+<dt id="arg-print-miss">print_miss<a class="anchor" aria-label="anchor" href="#arg-print-miss"></a></dt>
+<dd><p>FALSE by default. If TRUE outputs all possible categories of the
+grouping variables based on the provided formats, even if there are no observations
+for a combination.</p></dd>
 
 
 <dt id="arg-print">print<a class="anchor" aria-label="anchor" href="#arg-print"></a></dt>
@@ -236,7 +243,7 @@ tables, you can also just output the tables in ASCII style format.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
