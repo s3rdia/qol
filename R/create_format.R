@@ -270,3 +270,114 @@ is_list_of_dfs <- function(formats_list){
     })
 
 }
+
+
+#' Expand A List Of Formats To Generate All Possible Combinations
+#'
+#' @description
+#' Generates a data frame which contains all nested combinations of the provided
+#' format labels.
+#'
+#' @param ... A list containing format data frames.
+#' @param names Custom variable names for the newly generated data frame.
+#'
+#' @return
+#' Returns a data frames with all format label combinations.
+#'
+#' @examples
+#' # Example formats
+#' sex. <- discrete_format(
+#'     "Total"  = 1:2,
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
+#' # Expand formats
+#' expand_df <- expand_formats(sex., age.,
+#'                             names = c("sex", "age"))
+#'
+#' @export
+expand_formats <- function(..., names = NULL){
+    # Measure the time
+    start_time <- Sys.time()
+
+    # Translate ... into a list if possible
+    format_list <- tryCatch({
+        # Force evaluation to see if it exists
+        formats      <- list(...)
+        format_names <- names(formats)
+
+        # If ... is passed as a list instead of single format data frames, it has
+        # to be unwrapped first. Otherwise there would be a list inside a list.
+        if (length(formats) == 1 && is.list(formats[[1]])){
+            if (is.null(format_names) || identical(format_names, "")){
+                formats <- formats[[1]]
+            }
+
+            # If there is only one format data frame provided there is nothing to expand,
+            # so the function just returns the unique values of the label column.
+            if (data.table::is.data.table(formats)){
+                return(formats |>
+                           keep("label") |>
+                           collapse::funique())
+            }
+        }
+
+        formats
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(format_list)){
+        message(" X ERROR: Formats must be provided as data frames or as a list of data frames.\n",
+                "          Format expansion will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Create a list of format data frames which only contain the "label" column
+    format_list <- lapply(format_list, function(format){
+            if ("label" %in% names(format)){
+                format[["label"]]
+            }
+            else{
+                NULL
+            }
+        })
+
+    # Abort if there is a missing "label" column in one of the data frames. Normally I could drop this
+    # and go on, but if used in other functions this could lead to follow up errors. So abort to be safe.
+    if (length(format_list[sapply(format_list, is.null)]) > 0){
+        message(" X ERROR: A data frame is missing the 'label' column. This function is especially for expanding formats created\n",
+                "          with 'discrete_format' and 'interval_format'. If you want to include another non format data frame, you have\n",
+                "          to name the desired expansion column 'label'. Format expansion will be aborted.")
+
+        return(invisible(NULL))
+    }
+
+    # Generate the cartesian product of all given labels to get all possible
+    # combinations of categories.
+    expand_df <- do.call(data.table::CJ, c(format_list,
+                                           list(unique = TRUE, sorted = FALSE)))
+
+    # Name the columns after the given names
+    if (!is.null(names)){
+        names(expand_df) <- names
+    }
+
+    # Convert to factor so that they are sorted in format order
+    var_names <- names(expand_df)
+    expand_df <- expand_df |> convert_factor(var_names)
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("- - - 'expand_formats' execution time: ", end_time, " seconds")
+
+    expand_df
+}

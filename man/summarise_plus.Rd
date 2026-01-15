@@ -15,6 +15,7 @@ summarise_plus(
   nesting = "deepest",
   merge_back = FALSE,
   na.rm = .qol_options[["na.rm"]],
+  print_miss = .qol_options[["print_miss"]],
   monitor = .qol_options[["monitor"]],
   notes = TRUE
 )
@@ -65,6 +66,10 @@ only outputs the ungrouped summary of all class variables in one data table.}
 data frame if TRUE. Only works if nested = "deepest and no formats are defined.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the class variables.}
+
+\item{print_miss}{FALSE by default. If TRUE outputs all possible categories of the
+grouping variables based on the provided formats, even if there are no observations
+for a combination.}
 
 \item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
 functions time consumption.}

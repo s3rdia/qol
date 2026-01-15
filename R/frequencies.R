@@ -18,6 +18,9 @@
 #' @param output The following output formats are available: console (default), text,
 #' excel and excel_nostyle.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
+#' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
+#' grouping variables based on the provided formats, even if there are no observations
+#' for a combination.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output data frame.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
@@ -130,16 +133,17 @@
 #' @export
 frequencies <- function(data_frame,
                         variables,
-                        formats   = c(),
-                        by        = c(),
-                        weight    = NULL,
-                        titles    = .qol_options[["titles"]],
-                        footnotes = .qol_options[["footnotes"]],
-                        style     = .qol_options[["excel_style"]],
-                        output    = .qol_options[["output"]],
-                        na.rm     = .qol_options[["na.rm"]],
-                        print     = .qol_options[["print"]],
-                        monitor   = .qol_options[["monitor"]]){
+                        formats    = c(),
+                        by         = c(),
+                        weight     = NULL,
+                        titles     = .qol_options[["titles"]],
+                        footnotes  = .qol_options[["footnotes"]],
+                        style      = .qol_options[["excel_style"]],
+                        output     = .qol_options[["output"]],
+                        na.rm      = .qol_options[["na.rm"]],
+                        print_miss = .qol_options[["print_miss"]],
+                        print      = .qol_options[["print"]],
+                        monitor    = .qol_options[["monitor"]]){
 
     # Measure the time
     start_time <- Sys.time()
@@ -315,7 +319,8 @@ frequencies <- function(data_frame,
                             weight     = weight_var,
                             nesting    = "single",
                             notes      = FALSE,
-                            na.rm      = na.rm))
+                            na.rm      = na.rm,
+                            print_miss = print_miss))
     }
     # In case by variables are specified
     else{
@@ -332,7 +337,8 @@ frequencies <- function(data_frame,
                             nesting    = "all",
                             types      = combinations,
                             notes      = FALSE,
-                            na.rm      = na.rm)) |>
+                            na.rm      = na.rm,
+                            print_miss = print_miss)) |>
              fuse_variables("fused_vars", variables) |>
              fuse_variables("by_vars", by)
 

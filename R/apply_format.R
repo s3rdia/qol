@@ -13,7 +13,7 @@
 #' Returns a data table to which a format data frame was joined.
 #'
 #' @noRd
-apply_format <- function(data_frame, formats, group_vars = NULL){
+apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TRUE){
     if (length(formats) == 0){
         # When no format is applied numeric variables should be sorted in numerical order.
         # Otherwise they will be sorted as usual in format order.
@@ -141,12 +141,12 @@ apply_format <- function(data_frame, formats, group_vars = NULL){
             temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
 
             # Extract the number of labels from format
-            label_levels <- format_df[-1] |>
+            all_levels <- format_df[-1] |>
                 unlist(use.names = FALSE) |>
                 collapse::funique() |>
                 collapse::na_omit()
 
-            all_levels <- union(label_levels, temp_data[[current_var]])
+            #all_levels <- union(label_levels, temp_data[[current_var]])
         }
 
         # Make sure that the labels will appear in order of the format when

@@ -30,4 +30,5 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["print"]]       <- TRUE
 .qol_options[["monitor"]]     <- FALSE
 .qol_options[["na.rm"]]       <- FALSE
+.qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"

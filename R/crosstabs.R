@@ -24,6 +24,9 @@
 #' @param output The following output formats are available: console (default), text,
 #' excel and excel_nostyle.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
+#' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
+#' grouping variables based on the provided formats, even if there are no observations
+#' for a combination.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output data frame.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
@@ -160,6 +163,7 @@ crosstabs <- function(data_frame,
                       style      = .qol_options[["excel_style"]],
                       output     = .qol_options[["output"]],
                       na.rm      = .qol_options[["na.rm"]],
+                      print_miss = .qol_options[["print_miss"]],
                       print      = .qol_options[["print"]],
                       monitor    = .qol_options[["monitor"]]){
 
@@ -314,7 +318,8 @@ crosstabs <- function(data_frame,
                             weight     = weight_var,
                             nesting    = "deepest",
                             notes      = FALSE,
-                            na.rm      = na.rm)) |>
+                            na.rm      = na.rm,
+                            print_miss = print_miss)) |>
             drop_type_vars() |>
             collapse::frename(var_pct_group = var_pct_row)
 
@@ -353,7 +358,8 @@ crosstabs <- function(data_frame,
                            nesting    = "all",
                            types      = combinations,
                            notes      = FALSE,
-                           na.rm      = na.rm)) |>
+                           na.rm      = na.rm,
+                           print_miss = print_miss)) |>
             collapse::frename(var_pct_group = var_pct_row) |>
             fuse_variables("by_vars", by)
 

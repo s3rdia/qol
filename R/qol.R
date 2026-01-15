@@ -25,7 +25,7 @@
 #' 4.1.0 or higher
 #'
 #' @section Functions:
-#' Creating formats: [discrete_format()], [interval_format()]
+#' Creating formats: [discrete_format()], [interval_format()], [expand_formats()]
 #'
 #' Summarisation and tabulation: [summarise_plus()], [frequencies()], [crosstabs()], [any_table()], [export_with_style()], [combine_into_workbook()]
 #'
@@ -68,7 +68,8 @@
 #' Global options: [set_style_options()], [reset_style_options()], [get_style_options()], [close_file()],
 #' [set_variable_labels()], [get_variable_labels()], [set_stat_labels()], [get_stat_labels()],
 #' [set_print()], [get_print()], [set_monitor()], [get_monitor()], [set_na.rm()], [get_na.rm()],
-#' [set_output()], [get_output()], [set_titles()], [get_titles()], [set_footnotes()], [get_footnotes()]
+#' [set_output()], [get_output()], [set_titles()], [get_titles()], [set_footnotes()], [get_footnotes()],
+#' [set_print_miss()], [get_print_miss()]
 #'
 #' Other: [build_master()], [build_rstheme()]
 #'

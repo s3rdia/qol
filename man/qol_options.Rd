@@ -8,6 +8,8 @@
 \alias{get_monitor}
 \alias{set_na.rm}
 \alias{get_na.rm}
+\alias{set_print_miss}
+\alias{get_print_miss}
 \alias{set_output}
 \alias{get_output}
 \alias{set_titles}
@@ -27,6 +29,10 @@ get_monitor()
 set_na.rm(...)
 
 get_na.rm()
+
+set_print_miss(...)
+
+get_print_miss()
 
 set_output(...)
 
@@ -56,6 +62,10 @@ get_footnotes()
 
 \code{\link[=get_na.rm]{get_na.rm()}}: TRUE or FALSE.
 
+\code{\link[=set_print_miss]{set_print_miss()}}: Changed global print_miss option.
+
+\code{\link[=get_print_miss]{get_print_miss()}}: TRUE or FALSE.
+
 \code{\link[=set_output]{set_output()}}: Changed global output option.
 
 \code{\link[=get_output]{get_output()}}: Current output option as character.
@@ -83,6 +93,11 @@ able to show how they work internally.
 NA values.
 
 \code{\link[=get_na.rm]{get_na.rm()}}: Get the globally stored na.rm option.
+
+\code{\link[=set_print_miss]{set_print_miss()}}: Set the print_miss option globally for each function which can display
+missing categories.
+
+\code{\link[=get_print_miss]{get_print_miss()}}: Get the globally stored print_miss option.
 
 \code{\link[=set_output]{set_output()}}: Set the output option globally for each function that can output
 results to "console", "text", "excel" or "excel_nostyle".
@@ -114,6 +129,11 @@ set_na.rm(TRUE)
 set_na.rm(FALSE)
 
 get_na.rm()
+
+set_print_miss(TRUE)
+set_print_miss(FALSE)
+
+get_print_miss()
 
 set_output("excel")
 

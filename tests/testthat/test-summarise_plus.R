@@ -408,7 +408,7 @@ test_that("Simplest form without specifying statistics leads to sum and freq out
         summarise_plus(class  = year,
                        values = income))
 
-    expect_equal(ncol(result_df), 6)
+    expect_equal(collapse::fncol(result_df), 6)
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df)))
 })
 
@@ -423,8 +423,8 @@ test_that("Weighted vs. unweighted output", {
                        values = income,
                        weight = weight))
 
-    expect_equal(ncol(result_df1), 6)
-    expect_equal(ncol(result_df2), 6)
+    expect_equal(collapse::fncol(result_df1), 6)
+    expect_equal(collapse::fncol(result_df2), 6)
 
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)))
     expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)))
@@ -447,7 +447,7 @@ test_that("Specifying many statistics doesn't break function", {
 
     # 2 class vars + 17 statistics for both variables + sum_wgt
     variable_count <- 2 + (2 * 17) + 1 + 3
-    expect_equal(ncol(result_df), variable_count)
+    expect_equal(collapse::fncol(result_df), variable_count)
 })
 
 
@@ -475,7 +475,7 @@ test_that("None existent statistics will be omitted", {
                        statistics = c("sum", "test"),
                        weight     = weight)
 
-    expect_equal(ncol(result_df), 6)
+    expect_equal(collapse::fncol(result_df), 6)
 })
 
 
@@ -487,8 +487,8 @@ test_that("Merging variables back to original data frame creates new column", {
                        weight     = weight,
                        merge_back = TRUE)
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
-    expect_equal(nrow(result_df), nrow(dummy_df))
+    expect_equal(collapse::fncol(result_df), collapse::fncol(dummy_df) + 1)
+    expect_equal(collapse::fnrow(result_df), collapse::fnrow(dummy_df))
 })
 
 
@@ -500,7 +500,7 @@ test_that("Don't nest class variables but compute them separately and fuse varia
                        weight     = weight,
                        nesting    = "single")
 
-    expect_equal(ncol(result_df), 5)
+    expect_equal(collapse::fncol(result_df), 5)
 
     expect_true(all(c("TYPE", "TYPE_NR", "DEPTH") %in% names(result_df)))
 
@@ -517,7 +517,7 @@ test_that("Drop auto generated variables after summarise", {
                        nesting    = "single") |>
         drop_type_vars()
 
-    expect_equal(ncol(result_df), 2)
+    expect_equal(collapse::fncol(result_df), 2)
 
     expect_true(!all(c("TYPE", "TYPE_NR", "DEPTH") %in% names(result_df)))
 })
@@ -531,7 +531,7 @@ test_that("Generate all possible combinations of class variables", {
                        weight     = weight,
                        nesting    = "all")
 
-    expect_equal(ncol(result_df), 11)
+    expect_equal(collapse::fncol(result_df), 11)
 
     expect_true(all(c("TYPE", "TYPE_NR", "DEPTH") %in% names(result_df)))
 
@@ -568,8 +568,8 @@ test_that("Summarise possible with empty class vector", {
                        values = income,
                        statistics = "sum")
 
-    expect_equal(ncol(result_df), 4)
-    expect_equal(nrow(result_df), 1)
+    expect_equal(collapse::fncol(result_df), 4)
+    expect_equal(collapse::fnrow(result_df), 1)
 })
 
 
@@ -578,8 +578,8 @@ test_that("Summarise possible with no class variables provided", {
         summarise_plus(values = income,
                        statistics = "sum")
 
-    expect_equal(ncol(result_df), 4)
-    expect_equal(nrow(result_df), 1)
+    expect_equal(collapse::fncol(result_df), 4)
+    expect_equal(collapse::fnrow(result_df), 1)
 })
 
 ###############################################################################
@@ -718,6 +718,52 @@ test_that("Apply interval multilabel", {
                       "2000 and more") %in% format_df[["income"]]))
 })
 
+test_that("Output missing categories in summarise_plus with deepest nesting", {
+    sex. <- suppressMessages(discrete_format(
+        "Male"   = 1,
+        "Female" = 2))
+    age. <- suppressMessages(discrete_format(
+        "under 18"       = 0:17,
+        "18 to under 25" = 18:24,
+        "25 to under 55" = 25:54,
+        "55 to under 65" = 55:64,
+        "65 and older"   = 65:100))
+
+    format_df <- dummy_df |>
+        if.(sex == 1 & (age < 25 | age >= 55)) |>
+        summarise_plus(class   = c(year, sex, age),
+                       values  = weight,
+                       formats = list(sex = sex., age = age.),
+                       print_miss = TRUE)
+
+    expect_true("Female" %in% format_df[["sex"]])
+    expect_true("25 to under 55" %in% format_df[["age"]])
+})
+
+
+test_that("Output missing categories in summarise_plus with all combnations", {
+    sex. <- suppressMessages(discrete_format(
+        "Male"   = 1,
+        "Female" = 2))
+    age. <- suppressMessages(discrete_format(
+        "under 18"       = 0:17,
+        "18 to under 25" = 18:24,
+        "25 to under 55" = 25:54,
+        "55 to under 65" = 55:64,
+        "65 and older"   = 65:100))
+
+    format_df <- dummy_df |>
+        if.(sex == 1 & (age < 25 | age >= 55)) |>
+        summarise_plus(class   = c(year, sex, age),
+                       values  = weight,
+                       formats = list(sex = sex., age = age.),
+                       nesting = "all",
+                       print_miss = TRUE)
+
+    expect_true("Female" %in% format_df[["sex"]])
+    expect_true("25 to under 55" %in% format_df[["age"]])
+})
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -764,7 +810,7 @@ test_that("Percentiles won't be calculated if value variable has NA values", {
                               statistics = c("p1", "p99"),
                               weight     = weight), " ! WARNING: To calculate percentiles there may be no NAs in the value variables")
 
-    expect_equal(ncol(result_df), 5)
+    expect_equal(collapse::fncol(result_df), 5)
 })
 
 
@@ -775,7 +821,7 @@ test_that("Percentiles above 100 not allowed", {
                               statistics = c("p101"),
                               weight     = weight), " ! WARNING: Percentiles are only possible from p0 to p100")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -786,7 +832,7 @@ test_that("None existent class variables will be omitted", {
                               statistics = "sum",
                               weight     = weight), "This variable will be omitted during computation")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -797,7 +843,7 @@ test_that("None existent analysis variable will be omitted", {
                               statistics = "sum",
                               weight     = weight), "This variable will be omitted during computation")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -808,7 +854,7 @@ test_that("Double class variables will be omitted", {
                               statistics = "sum",
                               weight     = weight), " ! WARNING: Some <class> variables are provided more than once")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -819,7 +865,7 @@ test_that("Double analysis variables will be omitted", {
                               statistics = "sum",
                               weight     = weight), " ! WARNING: Some <values> variables are provided more than once")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -830,7 +876,7 @@ test_that("Analysis variable will be omitted if also passed as class variable", 
                               statistics = "sum",
                               weight     = weight), "This variable will be omitted as <values> variable during computation")
 
-    expect_equal(ncol(result_df), 7)
+    expect_equal(collapse::fncol(result_df), 7)
 })
 
 
@@ -843,8 +889,8 @@ test_that("Merging variables back works if wrong nesting option ist provided", {
                               nesting    = "all",
                               merge_back = TRUE), " ! WARNING: Merging variables back only works with nesting = 'deepest'")
 
-    expect_equal(ncol(result_df), ncol(dummy_df) + 1)
-    expect_equal(nrow(result_df), nrow(dummy_df))
+    expect_equal(collapse::fncol(result_df), collapse::fncol(dummy_df) + 1)
+    expect_equal(collapse::fnrow(result_df), collapse::fnrow(dummy_df))
 })
 
 
@@ -860,7 +906,7 @@ test_that("Invalid statistic will be omitted", {
                               values     = income,
                               statistics = c("test", "sum")), " ! WARNING: <Statistic> 'test' is invalid and will be omitted.")
 
-    expect_equal(ncol(result_df), 5)
+    expect_equal(collapse::fncol(result_df), 5)
 })
 
 
@@ -870,7 +916,7 @@ test_that("'Invalid statistic will be omitted 'sum' will be chosen as statistic 
                               values     = income,
                               statistics = "test"), " ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 
-    expect_equal(ncol(result_df), 5)
+    expect_equal(collapse::fncol(result_df), 5)
 })
 
 ###############################################################################

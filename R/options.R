@@ -501,6 +501,67 @@ get_na.rm <- function(){
 }
 
 
+#' Set Global Print Missing Categories Option
+#'
+#' @description
+#' [set_print_miss()]: Set the print_miss option globally for each function which can display
+#' missing categories.
+#'
+#' @return
+#' [set_print_miss()]: Changed global print_miss option.
+#'
+#' @examples
+#' set_print_miss(TRUE)
+#' set_print_miss(FALSE)
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_print_miss <- function(...){
+    # Translate ... into a list if possible
+    print_miss_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(print_miss_option)){
+        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        return(invisible(.qol_options[["print_miss"]]))
+    }
+
+    if (!is.logical(print_miss_option)){
+        message(" X ERROR: Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.")
+        return(invisible(.qol_options[["print_miss"]]))
+    }
+
+    .qol_options[["print_miss"]] <- print_miss_option
+
+    invisible(.qol_options[["print_miss"]])
+}
+
+
+#' Get Global Print Missing Categories Option
+#'
+#' @description
+#' [get_print_miss()]: Get the globally stored print_miss option.
+#'
+#' @return
+#' [get_print_miss()]: TRUE or FALSE.
+#'
+#' @examples
+#' get_print_miss()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_print_miss <- function(){
+    .qol_options[["print_miss"]]
+}
+
+
 #' Set Global Output Option
 #'
 #' @description
@@ -715,12 +776,13 @@ get_footnotes <- function(){
 #'
 #' @export
 reset_qol_options <- function(){
-    .qol_options[["print"]]     <- TRUE
-    .qol_options[["monitor"]]   <- FALSE
-    .qol_options[["na.rm"]]     <- FALSE
-    .qol_options[["output"]]    <- "console"
-    .qol_options[["titles"]]    <- c()
-    .qol_options[["footnotes"]] <- c()
+    .qol_options[["print"]]      <- TRUE
+    .qol_options[["monitor"]]    <- FALSE
+    .qol_options[["na.rm"]]      <- FALSE
+    .qol_options[["print_miss"]] <- FALSE
+    .qol_options[["output"]]     <- "console"
+    .qol_options[["titles"]]     <- c()
+    .qol_options[["footnotes"]]  <- c()
 
     invisible(.qol_options)
 }

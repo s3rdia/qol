@@ -25,6 +25,7 @@ any_table(
   style = .qol_options[["excel_style"]],
   output = .qol_options[["output"]],
   na.rm = .qol_options[["na.rm"]],
+  print_miss = .qol_options[["print_miss"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]
 )
@@ -104,6 +105,10 @@ Styles can be created with \code{\link[=excel_output_style]{excel_output_style()
 \item{output}{The following output formats are available: excel and excel_nostyle.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the variables.}
+
+\item{print_miss}{FALSE by default. If TRUE outputs all possible categories of the
+grouping variables based on the provided formats, even if there are no observations
+for a combination.}
 
 \item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 if one only wants to catch the output data frame and workbook with meta information.}
