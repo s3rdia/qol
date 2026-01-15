@@ -130,5 +130,10 @@ my_data <- my_data |> retain_variables(age:income, order_last = TRUE)
 # Retain columns inside data frame and add new variables with all NA values
 my_data <- my_data |> retain_variables(age, sex, income, status1:status5)
 
+# You can also use the colon as a placeholder for any text
+start1   <- my_data |> retain_variables("s:")   # Variable names start with "s"
+end1     <- my_data |> retain_variables(":id")  # Variable names end with "id"
+contain1 <- my_data |> retain_variables(":on:") # Variable names which contain "on"
+
 }
 \keyword{internal}

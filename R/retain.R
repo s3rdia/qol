@@ -44,6 +44,9 @@ NULL
 #' a by variable results in the row number. With by variable computes the running
 #' number within each group of expressions.
 #'
+#' @return
+#' [running_number()]: Returns the data frame with a new variable containing a running number.
+#'
 #' @examples
 #' # Example data frame
 #' my_data <- dummy_data(1000)
@@ -54,9 +57,6 @@ NULL
 #'
 #' # Running number per variable expression
 #' my_data <- my_data |> running_number(by = year)
-#'
-#' @return
-#' [running_number()]: Returns the data frame with a new variable containing a running number.
 #'
 #' @rdname retain
 #'
@@ -114,14 +114,14 @@ running_number <- function(data_frame,
 #' @param first [mark_case()]: If TRUE marks the first case within a group, otherwise
 #' the last case.
 #'
+#' @return
+#' [mark_case()]: Returns the data frame with a new variable marking first or last cases.
+#'
 #' @examples
 #' # Mark first and last cases
 #' my_data <- my_data |>
 #'     mark_case(by = household_id) |>
 #'     mark_case(var_name = "last", by = household_id, first = FALSE)
-#'
-#' @return
-#' [mark_case()]: Returns the data frame with a new variable marking first or last cases.
 #'
 #' @rdname retain
 #'
@@ -200,15 +200,15 @@ mark_case <- function(data_frame,
 #' [retain_value()] retains the first value for all cases of the same group and saves
 #' it into a new variable.
 #'
+#' @return
+#' [retain_value()]: Return the data frame with a new variable containing a retained value.
+#'
 #' @examples
 #' # Retain first value inside a group
 #' my_data <- my_data |>
 #'     retain_value(var_name = c("household_weight", "household_icome"),
 #'                  value    = c(weight, income),
 #'                  by       = c(state, household_id))
-#'
-#' @return
-#' [retain_value()]: Return the data frame with a new variable containing a retained value.
 #'
 #' @rdname retain
 #'
@@ -286,15 +286,15 @@ retain_value <- function(data_frame,
 #' [retain_sum()] retains the summarised values for all cases of the same group and saves
 #' it into a new variable.
 #'
+#' @return
+#' [retain_sum()]: Return the data frame with a new variable containing a retained sum.
+#'
 #' @examples
 #' # Retain sum inside a group
 #' my_data <- my_data |>
 #'     retain_sum(var_name = c("weight_hh_sum", "icome_hh_sum"),
 #'                values    = c(weight, income),
 #'                by       = c(state, household_id))
-#'
-#' @return
-#' [retain_sum()]: Return the data frame with a new variable containing a retained sum.
 #'
 #' @rdname retain
 #'
@@ -382,6 +382,9 @@ retain_sum <- function(data_frame,
 #' @param retain_variables [retain_variables()]: FALSE by default. If TRUE puts the
 #' variables at the end of the data frame instead of the beginning.
 #'
+#' @return
+#' [retain_sum()]: Return the data frame with a new variable containing a retained sum.
+#'
 #' @examples
 #' # Retain columns inside data frame, which orders them to the front
 #' my_data <- my_data |> retain_variables(age, sex, income)
@@ -393,9 +396,10 @@ retain_sum <- function(data_frame,
 #' # Retain columns inside data frame and add new variables with all NA values
 #' my_data <- my_data |> retain_variables(age, sex, income, status1:status5)
 #'
-#' @return
-#' [retain_sum()]: Return the data frame with a new variable containing a retained sum.
-#'
+#' # You can also use the colon as a placeholder for any text
+#' start1   <- my_data |> retain_variables("s:")   # Variable names start with "s"
+#' end1     <- my_data |> retain_variables(":id")  # Variable names end with "id"
+#' contain1 <- my_data |> retain_variables(":on:") # Variable names which contain "on"
 #'
 #' @rdname retain
 #'
@@ -418,7 +422,7 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
         return(invisible(data_frame))
     }
 
-    # Check if there are any "from":"to" selections and unwrap them
+    # Check if there are any colons in the selection and deparse variables accordingly
     var_names <- names(data_frame)
     variables <- character(0)
 
@@ -426,13 +430,21 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
         if (grepl(":", variable, fixed = TRUE)){
             parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
 
-            # If both variables are not part of the data frame, add the variables as new ones
-            if (!any(c(parts[1], parts[2]) %in% var_names)){
-                data_frame <- data_frame |> add_variable_range(variable)
+            # If there is only one part the selection is "text:" and if the first element
+            # is empty the selection was either ":text" or ":text:". In these cases a selection
+            # of variables inside the data frame happens.
+            if (length(parts) == 1 || parts[[1]] == ""){
+                variables <- c(variables, data_frame |> deparse_colon(variable))
             }
-
+            # If both variables are not part of the data frame, add the variables as new ones
+            else if (!any(c(parts[1], parts[2]) %in% var_names)){
+                data_frame <- data_frame |> add_variable_range(variable)
+                variables  <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+            }
             # Add variables in range to retain vector
-            variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+            else{
+                variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
+            }
         }
         # If element is just a single variable
         else{
@@ -453,7 +465,12 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
         }
     }
 
-    # Rename all variables in one g
+    # Only keep unique values. It can happen that a colon selection at the end of the
+    # provided variable list catches variables another time which already have been
+    # added to the variable vector.
+    variables <- variables |> collapse::funique()
+
+    # Reorder variables
     if (!order_last){
         ordered_df <- data.table::copy(data_frame) |>
             data.table::setcolorder(variables,

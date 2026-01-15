@@ -165,11 +165,48 @@ test_that("Add new NA column range with retain", {
 })
 
 
-test_that("Add new NA column range with wrong pattern returns original data frame", {
-    expect_message(retain_df <- (dummy_df |>
-          retain_variables(status1:age3)), "X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.")
+test_that("Retain variables starting with letter", {
+    retain_df1 <- suppressMessages(dummy_df |>
+          retain_variables("s:"))
 
-    expect_equal(dummy_df, retain_df)
+    retain_df2 <- suppressMessages(dummy_df |>
+          retain_variables("s:", order_last = TRUE))
+
+    expect_equal(names(retain_df1)[1:2], c("state", "sex"))
+    expect_equal(utils::tail(names(retain_df2), 2), c("state", "sex"))
+})
+
+
+test_that("Retain variables ending with letter", {
+    retain_df1 <- suppressMessages(dummy_df |>
+          retain_variables(":id"))
+
+    retain_df2 <- suppressMessages(dummy_df |>
+          retain_variables(":id", order_last = TRUE))
+
+    expect_equal(names(retain_df1)[1:2], c("household_id", "person_id"))
+    expect_equal(utils::tail(names(retain_df2), 2), c("household_id", "person_id"))
+})
+
+
+test_that("Retain variables containing letter", {
+    retain_df1 <- suppressMessages(dummy_df |>
+          retain_variables(":on:"))
+
+    retain_df2 <- suppressMessages(dummy_df |>
+          retain_variables(":on:", order_last = TRUE))
+
+    expect_equal(names(retain_df1)[1:3], c("person_id", "first_person", "education"))
+    expect_equal(utils::tail(names(retain_df2), 3), c("person_id", "first_person", "education"))
+})
+
+
+test_that("Retain variables with all actions together doesn't break", {
+    retain_df <- suppressMessages(dummy_df |>
+          retain_variables(state:age, "s:", ":id", ":on:", status1:status3, income))
+
+    expect_equal(names(retain_df), c("state", "sex", "age", "household_id", "person_id", "first_person", "education",
+                                     "status1", "status2", "status3", "income", "year", "probability", "weight"))
 })
 
 ###############################################################################
@@ -206,4 +243,12 @@ test_that("Retain sum without providing sum_of", {
     expect_message(retain_df <- dummy_df |>
                        retain_sum(),
                    " X ERROR: Must provide a <values> to retain. Retain will be aborted.")
+})
+
+
+test_that("Add new NA column range with wrong pattern returns original data frame", {
+    expect_message(retain_df <- (dummy_df |>
+                                     retain_variables(status1:age3)), "X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.")
+
+    expect_equal(dummy_df, retain_df)
 })

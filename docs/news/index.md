@@ -21,6 +21,9 @@
   The new parameter `print_miss` outputs all possible categories of the
   grouping variables based on the provided formats, even if there are no
   observations for a combination. (15.01.2026)
+- [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md):
+  The “:” can now be used as a placeholder for “starts with” (“text:”),
+  “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)
 
 ## qol 1.2.0
 
