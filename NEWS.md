@@ -11,6 +11,11 @@
 * `summarise_plus()`, `any_table()`, `frequencies()`, `crosstabs()`: The new parameter `print_miss` outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)
 * `retain_variables()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (15.01.2026)
 
+### Optimization
+
+* `summarise_plus()`: When only statistics based on sums are selected, the function already pre summarises the data frame, to apply the formats on a much smaller data frame. When using nesting = "all"/"single" the data frame is now pre summarised a second time before applying formats, this time only using the grouping variables of the combination beeing processed. This drastically cuts down memory allocation - especially for larger data frames - and speeds up every iteration significantly. In addition to this function `any_table()` benefits greatly from this optimization. (16.01.2026)
+
+
 # qol 1.2.0
 
 CRAN release on 13.01.2026

@@ -750,7 +750,11 @@ summarise_plus <- function(data_frame,
                     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                     if (flag_shortcut){
-                        group_df <- data_frame |> apply_format(formats, combination)
+                        # Final summarise with formatted data frame
+                        group_df <- data_frame |>
+                            collapse::fgroup_by(combination) |>
+                            collapse::fsummarise(across(values, collapse::fsum)) |>
+                            apply_format(formats, combination)
 
                         # Final summarise with formatted data frame
                         group_df <- group_df |>
@@ -765,8 +769,9 @@ summarise_plus <- function(data_frame,
                     }
                     else{
                         # Apply formats first
-                        group_df <- data_frame |> collapse::fselect(combination, values, weight_var)
-                        group_df <- group_df |> apply_format(formats, combination)
+                        group_df <- data_frame |>
+                            collapse::fselect(combination, values, weight_var) |>
+                            apply_format(formats, combination)
 
                         monitor_df <- monitor_df |> monitor_end()
 

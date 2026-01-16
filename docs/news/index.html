@@ -54,6 +54,11 @@
 <li>
 <code><a href="../reference/retain.html">retain_variables()</a></code>: The “:” can now be used as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)</li>
 </ul></div>
+<div class="section level4">
+<h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When only statistics based on sums are selected, the function already pre summarises the data frame, to apply the formats on a much smaller data frame. When using nesting = “all”/“single” the data frame is now pre summarised a second time before applying formats, this time only using the grouping variables of the combination beeing processed. This drastically cuts down memory allocation - especially for larger data frames - and speeds up every iteration significantly. In addition to this function <code><a href="../reference/any_table.html">any_table()</a></code> benefits greatly from this optimization. (16.01.2026)</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="qol-120">qol 1.2.0<a class="anchor" aria-label="anchor" href="#qol-120"></a></h2><p class="text-muted">CRAN release: 2026-01-13</p>

@@ -25,6 +25,20 @@
   The “:” can now be used as a placeholder for “starts with” (“text:”),
   “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)
 
+#### Optimization
+
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When only statistics based on sums are selected, the function already
+  pre summarises the data frame, to apply the formats on a much smaller
+  data frame. When using nesting = “all”/“single” the data frame is now
+  pre summarised a second time before applying formats, this time only
+  using the grouping variables of the combination beeing processed. This
+  drastically cuts down memory allocation - especially for larger data
+  frames - and speeds up every iteration significantly. In addition to
+  this function
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+  benefits greatly from this optimization. (16.01.2026)
+
 ## qol 1.2.0
 
 CRAN release: 2026-01-13

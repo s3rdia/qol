@@ -145,8 +145,6 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                 unlist(use.names = FALSE) |>
                 collapse::funique() |>
                 collapse::na_omit()
-
-            #all_levels <- union(label_levels, temp_data[[current_var]])
         }
 
         # Make sure that the labels will appear in order of the format when
