@@ -783,7 +783,7 @@ any_table <- function(data_frame,
             merge_vars <- variables
 
             if (length(by) > 0){
-                group_tab <- group_tab |> fuse_variables("by_vars", by)
+                group_tab  <- group_tab |> fuse_variables("by_vars", by)
                 merge_vars <- c("by_vars", variables)
             }
 

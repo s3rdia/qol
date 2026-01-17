@@ -53,7 +53,10 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The new parameter <code>print_miss</code> outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_variables()</a></code>: The “:” can now be used as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)</li>
-<li>
+</ul></div>
+<div class="section level4">
+<h4 id="changed-functionality-1-2-1">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-1"></a></h4>
+<ul><li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new <code>means</code> parameter. (17.01.2026)</li>
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: When using multiple by variables with excel <code>output</code>, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)</li>
@@ -73,6 +76,10 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When only statistics based on sums are selected, the function already pre summarises the data frame, to apply the formats on a much smaller data frame. When using nesting = “all”/“single” the data frame is now pre summarised a second time before applying formats, this time only using the grouping variables of the combination beeing processed. This drastically cuts down memory allocation - especially for larger data frames - and speeds up every iteration significantly. In addition to this function <code><a href="../reference/any_table.html">any_table()</a></code> benefits greatly from this optimization. (16.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: When using by variables in excel <code>output</code>, the new <code>print_miss</code> option enables a shortcut in formatting the sheets after the first one. Since the option guarantees that all follow up sheets are printed with the exact same table width and height, because all categories are printed, only the first sheet must be formatted. All other sheets can clone the entire style from the first sheet. (17.01.2026)</li>
+<li>
+<code><a href="../reference/replace_except.html">replace_except()</a></code>: Got rid of the nested for loop. This saves time in <code><a href="../reference/any_table.html">any_table()</a></code> on larger data frames. (17.01.2026)</li>
+<li>
+<code>reorder_combination()</code>: Reordering is now only done on unique vector values instead of a whole larger vector. This saves time in <code><a href="../reference/any_table.html">any_table()</a></code> on larger data frames. (17.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-error-checks-1-2-1">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-1"></a></h4>
@@ -393,6 +400,7 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.1" id="qol-101">qol 1.0.1<a class="anchor" aria-label="anchor" href="#qol-101"></a></h2><p class="text-muted">CRAN release: 2025-10-10</p>
+<p>CRAN release on 10.10.2025</p>
 <ul><li>Added references to specific SAS functions in the description field of the Description file where they are mentioned.</li>
 <li>Removed specific seed in R/dummy_data.R</li>
 <li>Fixed a bug in dummy_data where it could happen that not enough observations where generated.</li>

@@ -210,23 +210,25 @@ replace_except <- function(vector,
                            pattern,
                            replacement,
                            exceptions = NULL){
-    # Replace the pattern in the exceptions with a pseudo symbol
-    except_replace <- gsub(pattern, "&%!", exceptions)
+    # If there are no exceptions just do a normal replace
+    if (is.null(exceptions) || length(exceptions) == 0){
+        return(gsub(pattern, replacement, vector))
+    }
+
+    # Replace pattern first in exceptions globally
+    placeholder      <- "&%!"
+    except_protected <- gsub(pattern, placeholder, exceptions, fixed = TRUE)
 
     # Protect exceptions in original vector
-    for (element in seq_along(vector)){
-        for (exception in seq_along(exceptions)){
-            vector[[element]] <- gsub(exceptions[[exception]],
-                                      except_replace[[exception]],
-                                      vector[[element]])
-        }
+    for (i in seq_along(exceptions)){
+        vector <- gsub(exceptions[i], except_protected[i], vector, fixed = TRUE)
     }
 
     # Replace pattern safely
     vector <- gsub(pattern, replacement, vector)
 
     # Reestablish protected pattern
-    gsub("&%!", pattern, vector)
+    gsub(placeholder, pattern, vector, fixed = TRUE)
 }
 
 

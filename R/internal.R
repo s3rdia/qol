@@ -16,11 +16,23 @@
 #'
 #' @noRd
 reorder_combination <- function(combination){
-    combination <- gsub(" ", "", combination)
+    # Remove spaces if there are any
+    combination <- gsub(" ", "", combination, fixed = TRUE)
 
-    sapply(strsplit(combination, "\\+"), function(variables){
-        paste(sort(variables), collapse = "+")
-    })
+    # Extract unique combinations so that only a short vector has to be reordered
+    unique_combi  <- collapse::funique(combination)
+    unique_vector <- strsplit(unique_combi, "+", fixed = TRUE)
+
+    # Reorder variables of combinations alphabetically and combine them again into single combinations
+    map <- stats::setNames(vapply(unique_vector,
+                function(variable){
+                    paste(sort(variable), collapse = "+")
+                }, character(1)),
+            unique_combi)
+
+    # For each element of combination, retrieve value of map whose name equals that element.
+    # Basically replacing the unordered with ordered combinations in one go.
+    unname(map[combination])
 }
 
 

@@ -24,6 +24,9 @@
 - [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md):
   The “:” can now be used as a placeholder for “starts with” (“text:”),
   “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)
+
+#### Changed functionality
+
 - [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
   Until now the function always printed a means and a frequencies table
   as default. Now it only prints a frequencies table as default to get
@@ -68,6 +71,14 @@
   exact same table width and height, because all categories are printed,
   only the first sheet must be formatted. All other sheets can clone the
   entire style from the first sheet. (17.01.2026)
+- [`replace_except()`](https://s3rdia.github.io/qol/reference/replace_except.md):
+  Got rid of the nested for loop. This saves time in
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+  on larger data frames. (17.01.2026)
+- `reorder_combination()`: Reordering is now only done on unique vector
+  values instead of a whole larger vector. This saves time in
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+  on larger data frames. (17.01.2026)
 
 #### New Error Checks
 
@@ -590,6 +601,8 @@ CRAN release on 14.10.2025
 ## qol 1.0.1
 
 CRAN release: 2025-10-10
+
+CRAN release on 10.10.2025
 
 - Added references to specific SAS functions in the description field of
   the Description file where they are mentioned.

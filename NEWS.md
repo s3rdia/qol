@@ -10,6 +10,9 @@
 
 * `summarise_plus()`, `any_table()`, `frequencies()`, `crosstabs()`: The new parameter `print_miss` outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)
 * `retain_variables()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (15.01.2026)
+
+### Changed functionality
+
 * `frequencies()`: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new `means` parameter. (17.01.2026)
 * `frequencies()`: When using multiple by variables with excel `output`, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)
 
@@ -23,6 +26,8 @@
 
 * `summarise_plus()`: When only statistics based on sums are selected, the function already pre summarises the data frame, to apply the formats on a much smaller data frame. When using nesting = "all"/"single" the data frame is now pre summarised a second time before applying formats, this time only using the grouping variables of the combination beeing processed. This drastically cuts down memory allocation - especially for larger data frames - and speeds up every iteration significantly. In addition to this function `any_table()` benefits greatly from this optimization. (16.01.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`: When using by variables in excel `output`, the new `print_miss` option enables a shortcut in formatting the sheets after the first one. Since the option guarantees that all follow up sheets are printed with the exact same table width and height, because all categories are printed, only the first sheet must be formatted. All other sheets can clone the entire style from the first sheet. (17.01.2026)
+* `replace_except()`: Got rid of the nested for loop. This saves time in `any_table()` on larger data frames. (17.01.2026)
+* `reorder_combination()`: Reordering is now only done on unique vector values instead of a whole larger vector. This saves time in `any_table()` on larger data frames. (17.01.2026)
 
 ### New Error Checks
 
@@ -249,7 +254,9 @@ CRAN release on 14.10.2025
 * Corrected a typo in a warning message in `any_table()` concerning variable order.
 
 
-# qol 1.0.1 
+# qol 1.0.1
+
+CRAN release on 10.10.2025
 
 * Added references to specific SAS functions in the description field of the Description file where they are mentioned.
 * Removed specific seed in R/dummy_data.R
