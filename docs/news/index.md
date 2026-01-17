@@ -24,6 +24,27 @@
 - [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md):
   The “:” can now be used as a placeholder for “starts with” (“text:”),
   “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  Until now the function always printed a means and a frequencies table
+  as default. Now it only prints a frequencies table as default to get
+  the main results as fast as possible on screen. The means table can be
+  activated again with the new `means` parameter. (17.01.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  When using multiple by variables with excel `output`, worksheets are
+  now ordered in provided variable order instead of alternating.
+  (17.01.2026)
+
+#### Fixed
+
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  Mean tables are now printed when by variables are provided.
+  (17.01.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  No empty “total” table is printed when by variables are provided.
+  (17.01.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  “total” row is not printed anymore, when variables use multilabels and
+  are computed with a by group. (17.01.2026)
 
 #### Optimization
 
@@ -38,6 +59,22 @@
   this function
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
   benefits greatly from this optimization. (16.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  When using by variables in excel `output`, the new `print_miss` option
+  enables a shortcut in formatting the sheets after the first one. Since
+  the option guarantees that all follow up sheets are printed with the
+  exact same table width and height, because all categories are printed,
+  only the first sheet must be formatted. All other sheets can clone the
+  entire style from the first sheet. (17.01.2026)
+
+#### New Error Checks
+
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Added an error check in case a provided object is no
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+  result list. (17.01.2026)
 
 ## qol 1.2.0
 

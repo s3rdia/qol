@@ -10,6 +10,7 @@ frequencies(
   formats = c(),
   by = c(),
   weight = NULL,
+  means = FALSE,
   titles = .qol_options[["titles"]],
   footnotes = .qol_options[["footnotes"]],
   style = .qol_options[["excel_style"]],
@@ -30,6 +31,9 @@ frequencies(
 \item{by}{Compute tables stratified by the expressions of the provided variables.}
 
 \item{weight}{Put in a weight variable to compute weighted results.}
+
+\item{means}{FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
+min, max, total freq and missing values.}
 
 \item{titles}{Specify one or more table titles.}
 

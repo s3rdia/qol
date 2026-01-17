@@ -526,6 +526,34 @@ test_that("Save any_table as Excel file", {
     expect_true(file.exists(temp_file))
 })
 
+
+test_that("Combine tables into a single workbook", {
+    my_style <- excel_output_style(sheet_name = "tab1")
+
+    tab1 <- suppressMessages(dummy_df |>
+         any_table(rows    = "age",
+                   columns = "sex",
+                   values  = weight,
+                   print   = FALSE))
+
+    my_style <- my_style |> modify_output_style(sheet_name = "tab2")
+
+    tab2 <- suppressMessages(dummy_df |>
+         any_table(rows    = "age",
+                   columns = "sex",
+                   values  = weight,
+                   by      = education,
+                   print   = FALSE))
+
+    temp_file <- tempfile(fileext = ".xlsx")
+    on.exit(unlink(temp_file), add = TRUE)
+
+    result <- combine_into_workbook(tab1, tab2, file = temp_file)
+
+    expect_type(result, "environment")
+    expect_true(file.exists(temp_file))
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -634,31 +662,17 @@ test_that("any_table aborts with missing variable combination in pre summarised 
 })
 
 
-test_that("Combine tables into a single workbook", {
-    my_style <- excel_output_style(sheet_name = "tab1")
-
-    tab1 <- suppressMessages(dummy_df |>
-                 any_table(rows    = "age",
-                           columns = "sex",
-                           values  = weight,
-                           print   = FALSE))
-
-    my_style <- my_style |> modify_output_style(sheet_name = "tab2")
-
-    tab2 <- suppressMessages(dummy_df |>
-                 any_table(rows    = "age",
-                           columns = "sex",
-                           values  = weight,
-                           by      = education,
-                           print   = FALSE))
-
+test_that("Combine tables into a single workbook aborts, if any not any_table object was found", {
     temp_file <- tempfile(fileext = ".xlsx")
     on.exit(unlink(temp_file), add = TRUE)
 
-    result <- combine_into_workbook(tab1, tab2, file = temp_file)
+    expect_message(result <- combine_into_workbook(1, file = temp_file),
+                   "X ERROR: Unknown object found. Provide <any_table> results.")
 
-    expect_type(result, "environment")
-    expect_true(file.exists(temp_file))
+    expect_message(result <- combine_into_workbook(list(1), file = temp_file),
+                   "X ERROR: Unknown object found. Provide <any_table> results.")
+
+    expect_true(!file.exists(temp_file))
 })
 
 set_style_options(as_heatmap = FALSE)

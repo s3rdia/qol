@@ -564,7 +564,7 @@ summarise_plus <- function(data_frame,
         }
         # If formats are applied and all format categories schould be output
         else if (print_miss && !is.null(formats)){
-            result_df <- result_df |> print_miss(formats, group_vars)
+            result_df <- result_df |> print_missing(formats, group_vars)
         }
 
         #---------------------------------------------------------------------#
@@ -905,7 +905,7 @@ summarise_plus <- function(data_frame,
 
                     # If formats are applied and all format categories schould be output
                     if (print_miss && !is.null(formats)){
-                        group_df <- group_df |> print_miss(formats, combination)
+                        group_df <- group_df |> print_missing(formats, combination)
                     }
 
                     # Add data frame to list to add them together at the end
@@ -1284,9 +1284,9 @@ reorder_summarised_columns <- function(data_frame, requested_stats){
 #' Returns a data frame with added missing categories.
 #'
 #' @noRd
-print_miss <- function(data_frame,
-                       formats,
-                       group_vars){
+print_missing <- function(data_frame,
+                          formats,
+                          group_vars){
     format_list <- formats
 
     # First check if given variables to format are part of the data frame. This only
@@ -1355,6 +1355,7 @@ print_miss <- function(data_frame,
         collapse::join(format_df, data_frame,
                        on       = group_vars,
                        how      = "left",
+                       multiple = TRUE,
                        verbose  = FALSE) |>
             dropp(".pseudo_join"))
 

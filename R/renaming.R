@@ -140,7 +140,7 @@ add_extension <- function(data_frame,
         return(data_frame)
     }
 
-    if (from > ncol(data_frame)){
+    if (from > collapse::fncol(data_frame)){
         message(" X ERROR: From is greater than number of columns in data frame. Adding extensions will be aborted.")
         return(data_frame)
     }
@@ -266,8 +266,8 @@ rename_multi <- function(data_frame, ...){
     })
 
     if (is.null(rename_list)){
-        message('X ERROR: Unknown object found. Provide variables in quotation marks, like: "old_var" = "new_var".\n",
-                "         Renaming will be aborted.')
+        message('X ERROR: Unknown object found. Provide variables in quotation marks, like: "old_var" = "new_var".\n',
+                "         Renaming will be aborted.")
         return(data_frame)
     }
 

@@ -35,11 +35,21 @@ test_that("Simplest form of frequencies", {
     expect_type(result_list, "list")
     expect_equal(length(result_list), 2)
 
-    expect_true(all(c("variable", "mean", "sd", "min", "max", "freq", "miss")
-                    %in% names(result_list[["mean"]])))
+    expect_true(is.null(result_list[["mean"]]))
     expect_true(all(c("fused_vars", "TYPE", "TYPE_NR", "DEPTH",
                       "var_sum", "var_pct_group", "var_freq")
                     %in% names(result_list[["freq"]])))
+})
+
+
+test_that("Simplest form of frequencies with means", {
+    result_list <- suppressMessages(dummy_df |>
+            frequencies(variables = sex,
+                        means     = TRUE,
+                        print     = FALSE))
+
+    expect_true(all(c("variable", "mean", "sd", "min", "max", "freq", "miss")
+                    %in% names(result_list[["mean"]])))
 })
 
 
@@ -58,9 +68,20 @@ test_that("frequencies with titles and footnotes", {
 test_that("frequencies with multiple variables", {
     result_list <- suppressMessages(dummy_df |>
             frequencies(variables = c(sex, age),
+                        means     = TRUE,
                         print     = FALSE))
 
-    expect_equal(nrow(result_list[["mean"]]), 2)
+    expect_true(all(c("sex", "age") %in% result_list[["freq"]][["TYPE"]]))
+})
+
+
+test_that("frequencies with multiple variables and means", {
+    result_list <- suppressMessages(dummy_df |>
+            frequencies(variables = c(sex, age),
+                        means     = TRUE,
+                        print     = FALSE))
+
+    expect_equal(collapse::fnrow(result_list[["mean"]]), 2)
     expect_true(all(c("sex", "age") %in% result_list[["mean"]][["variable"]]))
 })
 
@@ -68,9 +89,10 @@ test_that("frequencies with multiple variables", {
 test_that("Character variables won't be evaluated in mean tab", {
     result_list <- suppressMessages(dummy_df |>
             frequencies(variables = c(sex, education),
+                        means     = TRUE,
                         print     = FALSE))
 
-    expect_equal(nrow(result_list[["mean"]]), 1)
+    expect_equal(collapse::fnrow(result_list[["mean"]]), 1)
     expect_true(!"education" %in% result_list[["mean"]][["variable"]])
 })
 
@@ -89,6 +111,7 @@ test_that("frequencies with multiple by variables", {
     result_list <- suppressMessages(dummy_df |>
             frequencies(variables = c(age, education),
                         by        = c(sex, year),
+                        means     = TRUE,
                         print     = FALSE))
 
     expect_true(all(c("sex", "year") %in% result_list[["freq"]][["BY"]]))
@@ -100,6 +123,16 @@ test_that("frequencies where by is also part of freq variables is aborted", {
         frequencies(variables = c(age, sex),
                     by        = c(sex, year),
                     print     = FALSE), " ! WARNING: The provided <by> variable '")
+})
+
+
+test_that("frequencies throws a NOTE, if print_miss and means option are both TRUE", {
+    expect_message(result_list <- dummy_df |>
+            frequencies(variables  = age,
+                        by         = sex,
+                        print_miss = TRUE,
+                        means      = TRUE,
+                        print      = FALSE), " ~ NOTE: Wenn <print_miss> is TRUE, there will be no mean tables. <Means> is set to FALSE.")
 })
 
 
@@ -131,9 +164,10 @@ test_that("frequencies with NAs removed", {
 test_that("frequencies with character variable omits mean table", {
     result_list <- suppressMessages(dummy_df |>
             frequencies(variables = education,
+                        means     = TRUE,
                         print     = FALSE))
 
-    expect_equal(nrow(result_list[[1]]), 0)
+    expect_true(is.null(collapse::fnrow(result_list[["means"]])))
 })
 
 
@@ -257,8 +291,21 @@ test_that("frequencies with excel output and by variables", {
     result_list <- suppressMessages(dummy_df |>
         frequencies(variables = age,
                     by        = sex,
+                    means     = TRUE,
                     output    = "excel",
                     print     = FALSE))
+
+    expect_true(all(c("by_vars", "BY") %in% names(result_list[["freq"]])))
+})
+
+
+test_that("frequencies with excel output and by variables and print_miss", {
+    result_list <- suppressMessages(dummy_df |>
+                                        frequencies(variables  = age,
+                                                    by         = sex,
+                                                    print_miss = TRUE,
+                                                    output     = "excel",
+                                                    print      = FALSE))
 
     expect_true(all(c("by_vars", "BY") %in% names(result_list[["freq"]])))
 })

@@ -53,11 +53,31 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The new parameter <code>print_miss</code> outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_variables()</a></code>: The “:” can now be used as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new <code>means</code> parameter. (17.01.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: When using multiple by variables with excel <code>output</code>, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="fixed-1-2-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: Mean tables are now printed when by variables are provided. (17.01.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: No empty “total” table is printed when by variables are provided. (17.01.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: “total” row is not printed anymore, when variables use multilabels and are computed with a by group. (17.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>
 <ul><li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When only statistics based on sums are selected, the function already pre summarises the data frame, to apply the formats on a much smaller data frame. When using nesting = “all”/“single” the data frame is now pre summarised a second time before applying formats, this time only using the grouping variables of the combination beeing processed. This drastically cuts down memory allocation - especially for larger data frames - and speeds up every iteration significantly. In addition to this function <code><a href="../reference/any_table.html">any_table()</a></code> benefits greatly from this optimization. (16.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: When using by variables in excel <code>output</code>, the new <code>print_miss</code> option enables a shortcut in formatting the sheets after the first one. Since the option guarantees that all follow up sheets are printed with the exact same table width and height, because all categories are printed, only the first sheet must be formatted. All other sheets can clone the entire style from the first sheet. (17.01.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-error-checks-1-2-1">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Added an error check in case a provided object is no <code><a href="../reference/any_table.html">any_table()</a></code> result list. (17.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

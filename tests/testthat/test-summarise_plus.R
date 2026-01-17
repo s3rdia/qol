@@ -764,6 +764,23 @@ test_that("Output missing categories in summarise_plus with all combnations", {
     expect_true("25 to under 55" %in% format_df[["age"]])
 })
 
+
+test_that("Use the 'other' format keyword with summarise_plus", {
+    age. <- suppressMessages(discrete_format(
+        "under 18"     = 0:17,
+        "18 and older" = "other"))
+
+    format_df <- dummy_df |>
+        summarise_plus(class   = age,
+                       values  = weight,
+                       formats = list(age = age.))
+
+    unique_values <- as.character(format_df[["age"]] |> collapse::funique())
+
+    expect_equal(unique_values,
+                 c("under 18", "18 and older", NA))
+})
+
 ###############################################################################
 # Warning checks
 ###############################################################################

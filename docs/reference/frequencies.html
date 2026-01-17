@@ -58,6 +58,7 @@ and unweighted frequencies per expression.</p>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  means <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  titles <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"titles"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  footnotes <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"footnotes"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  style <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"excel_style"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -91,6 +92,11 @@ and unweighted frequencies per expression.</p>
 
 <dt id="arg-weight">weight<a class="anchor" aria-label="anchor" href="#arg-weight"></a></dt>
 <dd><p>Put in a weight variable to compute weighted results.</p></dd>
+
+
+<dt id="arg-means">means<a class="anchor" aria-label="anchor" href="#arg-means"></a></dt>
+<dd><p>FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
+min, max, total freq and missing values.</p></dd>
 
 
 <dt id="arg-titles">titles<a class="anchor" aria-label="anchor" href="#arg-titles"></a></dt>

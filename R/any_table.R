@@ -1257,7 +1257,7 @@ any_table <- function(data_frame,
     meta <- mget(c("rows", "columns", "statistics",
                    "by", "titles", "footnotes", "var_labels", "stat_labels",
                    "box", "any_header", "row_header_dimensions",
-                   "style", "na.rm"))
+                   "style", "na.rm", "print_miss"))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
@@ -1296,7 +1296,7 @@ any_table <- function(data_frame,
         wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
                                        by, titles, footnotes, var_labels, stat_labels,
                                        box, any_header,
-                                       style, output, na.rm, monitor_df)
+                                       style, output, na.rm, print_miss, monitor_df)
 
         wb         <- wb_list[[1]]
         monitor_df <- wb_list[[2]]
@@ -1820,6 +1820,9 @@ merge_headers <- function(value_header, variable_header){
 #' @param output Determines whether to style the output or to just quickly paste
 #' the data.
 #' @param na.rm If TRUE removes all NA values from the tabulation.
+#' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
+#' grouping variables based on the provided formats, even if there are no observations
+#' for a combination.
 #' @param monitor_df Data frame which stores the monitoring values.
 #'
 #' @return
@@ -1842,6 +1845,7 @@ format_any_by_excel <- function(wb,
                                 style,
                                 output,
                                 na.rm,
+                                print_miss,
                                 monitor_df){
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1909,24 +1913,56 @@ format_any_by_excel <- function(wb,
                 titles_temp <- by_info
             }
 
-            # Generate frequency tables as normal but base is filtered data frame
-            wb_list <- format_any_excel(wb,
-                                        any_temp,
-                                        rows,
-                                        columns,
-                                        statistics,
-                                        value,
-                                        titles_temp,
-                                        footnotes,
-                                        var_labels,
-                                        stat_labels,
-                                        box,
-                                        any_header,
-                                        style,
-                                        output,
-                                        by_info,
-                                        index,
-                                        NULL)
+            # The print_miss option enables a shortcut in formatting the sheets after
+            # the first one. Since it guarantees that all follow up sheets are printed
+            # with the exact same table width and height, because all categories are
+            # printed, only the first sheet must be formatted. All other sheets can
+            # clone the entire style from the first sheet.
+            if (index == 1 || !print_miss){
+                # Generate tables as normal but base is filtered data frame
+                wb_list <- format_any_excel(wb,
+                                            any_temp,
+                                            rows,
+                                            columns,
+                                            statistics,
+                                            value,
+                                            titles_temp,
+                                            footnotes,
+                                            var_labels,
+                                            stat_labels,
+                                            box,
+                                            any_header,
+                                            style,
+                                            output,
+                                            by_info,
+                                            index,
+                                            NULL)
+
+            }
+            # Clone style for follow up iterations
+            else{
+                # Generate tables with no style but base is filtered data frame
+                wb_list <- format_any_excel(wb,
+                                            any_temp,
+                                            rows,
+                                            columns,
+                                            statistics,
+                                            value,
+                                            titles_temp,
+                                            footnotes,
+                                            var_labels,
+                                            stat_labels,
+                                            box,
+                                            any_header,
+                                            style,
+                                            "excel_nostyle",
+                                            by_info,
+                                            index,
+                                            NULL)
+
+                # Clone entire style from first sheet
+                wb_list[[1]]$clone_sheet_style(from = 1, to = index)
+            }
 
             index <- index + 1
 
@@ -2061,7 +2097,29 @@ combine_into_workbook <- function(...,
     # Measure the time
     start_time <- Sys.time()
 
-    tables    <- list(...)
+    # Translate ... into a list if possible
+    tables <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(tables)){
+        message("X ERROR: Unknown object found. Provide <any_table> results.\n",
+                "         Combining tables to workbook will be aborted.")
+        return(invisible(NULL))
+    }
+
+    for (table in tables){
+        if (!is.list(table) || !all(c("table", "workbook", "meta") %in% names(table))){
+            message("X ERROR: Unknown object found. Provide <any_table> results.\n",
+                    "         Combining tables to workbook will be aborted.")
+            return(invisible(NULL))
+        }
+    }
+
     tab_names <- as.character(substitute(list(...)))[-1]
     wb        <- openxlsx2::wb_workbook()
 
@@ -2097,7 +2155,7 @@ combine_into_workbook <- function(...,
                                     meta[["statistics"]], meta[["by"]], meta[["titles"]],
                                     meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
                                     meta[["box"]], meta[["any_header"]],
-                                    meta[["style"]], output, meta[["na.rm"]], monitor_df))
+                                    meta[["style"]], output, meta[["na.rm"]], meta[["print_miss"]], monitor_df))
 
             wb <- wb_list[[1]]
         }
