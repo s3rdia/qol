@@ -1293,10 +1293,18 @@ any_table <- function(data_frame,
     }
     # In case there are  by variables are provided
     else{
-        wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
-                                       by, titles, footnotes, var_labels, stat_labels,
-                                       box, any_header,
-                                       style, output, na.rm, print_miss, monitor_df)
+        if (!style[["by_as_subheaders"]]){
+            wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
+                                           by, titles, footnotes, var_labels, stat_labels,
+                                           box, any_header,
+                                           style, output, na.rm, print_miss, monitor_df)
+        }
+        else{
+            wb_list <- format_by_single_table(workbook, any_tab, rows, columns, statistics,
+                                              by, titles, footnotes, var_labels, stat_labels,
+                                              box, any_header,
+                                              style, output, na.rm, print_miss, monitor_df)
+        }
 
         wb         <- wb_list[[1]]
         monitor_df <- wb_list[[2]]
@@ -1524,6 +1532,25 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
         wb <- wb |> handle_cell_styles(any_ranges, style)
 
+        # Format subheaders, if present
+        if (style[["by_as_subheaders"]]){
+            # Get subheader ranges and the ones of the empty column header
+            subheader_range     <- any_ranges[["subheader_range"]]
+            pre_subheader_range <- any_ranges[["pre_subheader_range"]]
+
+            # Merge subheaders and apply style
+            for (sub_range in seq_along(subheader_range)){
+                wb$add_data(x          = style[["subheaders"]][[sub_range]],
+                            start_col  = any_ranges[["header.column"]] + any_ranges[["cat_col.width"]],
+                            start_row  = any_ranges[["table.row"]] + (style[["subheader_rows"]][[sub_range]] - 1),
+                            col_names  = FALSE,
+                            na.strings = style[["na_symbol"]])
+
+                wb$merge_cells(dims = pre_subheader_range[[sub_range]])
+                wb$merge_cells(dims = subheader_range[[sub_range]])
+            }
+        }
+
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
         #---------------------------------------------------------------------#
@@ -1728,7 +1755,7 @@ build_multi_header <- function(var_names,
     })
 
     # Revert back underscores
-    header_matrix   <- gsub("!!!", "_", header_matrix)
+    header_matrix <- gsub("!!!", "_", header_matrix)
 
     # Replace variable texts with custom labels
     header_matrix <- header_matrix |>
@@ -1794,14 +1821,15 @@ merge_headers <- function(value_header, variable_header){
     data.table::rbindlist(row_list, use.names = FALSE)
 }
 
+
 ###############################################################################
 # Format grouped by tables for excel output
 ###############################################################################
 #' Format Any Table Output with by Variables (Excel Based)
 #'
 #' @description
-#' Format any table with the provided row and column variables. Statistics
-#' can be anything available.
+#' Format any table with the provided row and column variables. Data frame is split
+#' by by-variables, each table gets printed on a different sheet.
 #'
 #' @param wb An already created workbook to add more sheets to.
 #' @param any_tab The data frame which contains the information for this cross
@@ -1976,6 +2004,146 @@ format_any_by_excel <- function(wb,
 
     # Return workbook
     list(wb, monitor_df)
+}
+
+
+###############################################################################
+# Format grouped by tables for excel output in one table
+###############################################################################
+#' Format Any Table Output with by Variables On One Sheet (Excel Based)
+#'
+#' @description
+#' Format any table with the provided row and column variables. Data frame is printed
+#' as one on one sheet. By-variables are used as subheaders.
+#'
+#' @param wb An already created workbook to add more sheets to.
+#' @param any_tab The data frame which contains the information for this cross
+#' table.
+#' @param rows The variable that appears in the table rows.
+#' @param columns The variable that appears in the table columns.
+#' @param statistics The user requested statistics.
+#' @param by Separate the cross table output by the expressions of the provided variables.
+#' @param titles Character vector of titles to display above the table.
+#' @param footnotes Character vector of footnotes to display under the table.
+#' @param var_labels List which contains column variable names and their respective labels.
+#' @param stat_labels List which contains statistic names and their respective labels.
+#' @param box The text that should appear in the upper left box of the table.
+#' @param any_header The column header carrying the variable names.
+#' @param style A list containing the styling elements.
+#' @param output Determines whether to style the output or to just quickly paste
+#' the data.
+#' @param na.rm If TRUE removes all NA values from the tabulation.
+#' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
+#' grouping variables based on the provided formats, even if there are no observations
+#' for a combination.
+#' @param monitor_df Data frame which stores the monitoring values.
+#'
+#' @return
+#' Returns a list containing a formatted Excel workbook as well as the monitoring
+#' data frame.
+#'
+#' @noRd
+format_by_single_table <- function(wb,
+                                   any_tab,
+                                   rows,
+                                   columns,
+                                   statistics,
+                                   by,
+                                   titles,
+                                   footnotes,
+                                   var_labels,
+                                   stat_labels,
+                                   box,
+                                   any_header,
+                                   style,
+                                   output,
+                                   na.rm,
+                                   print_miss,
+                                   monitor_df){
+    #---------------------------------------------------------------------#
+    monitor_df <- monitor_df |> monitor_start("Insert subheaders", "Format by")
+    #---------------------------------------------------------------------#
+
+    # Store the variable names for later
+    var_names <- names(any_tab)
+
+    # Get the unique by variable expressions as subheaders
+    subheaders <- any_tab|>
+        collapse::fselect("by_vars")|>
+        collapse::funique("by_vars")
+
+    style[["subheaders"]] <- subheaders[[1]]
+
+    # Get number of row header variables by determining the number of character columns
+    variable_types        <- vapply(any_tab, is.character, logical(1))
+    number_of_row_headers <- which(!variable_types)[1] - 1
+    number_of_values      <- collapse::fncol(any_tab) - number_of_row_headers
+
+    # Split up data frame on by variable expressions
+    grouping   <- collapse::GRP(any_tab, "by_vars", sort = FALSE)
+    split_list <- any_tab |> collapse::gsplit(g = grouping, use.g.names = TRUE)
+
+    # Insert by variable expressions as subheadings
+    for (i in seq_along(split_list)){
+        # Get subheader name and bind together as data frame row
+        subheading <- split_list[[i]][1, "by_vars"]
+
+        # Generate empty subheader line in separate parts to ensure that the value
+        # columns will be set as numeric.
+        sub_part1 <- as.list(rep(" ", number_of_row_headers))
+        sub_part2 <- as.list(rep(NA_real_, number_of_values))
+
+        # Combine both parts into data frame
+        subheading_df <- data.table::as.data.table(c(sub_part1, sub_part2))
+
+        # Put subheader above the initial data frame
+        split_list[[i]] <- data.table::rbindlist(list(subheading_df, split_list[[i]]), use.names = FALSE)
+
+        # Insert a helper column which indicates where in the data frame the headline sits.
+        # This is later used to identify the subheader rows in the full data frame
+        split_list[[i]][[".subheader"]]  <- 0
+        split_list[[i]][1, ".subheader"] <- 1
+    }
+
+    # Bind full data frame back together
+    any_tab <- data.table::rbindlist(split_list, use.names = FALSE)
+
+    names(any_tab) <- c(var_names, ".subheader")
+    any_tab <- any_tab |> collapse::fselect(-BY, -by_vars)
+
+    # Set row numbers of subheaders in the helper column
+    any_tab[[".subheader"]][any_tab[[".subheader"]] == 1] <- which(any_tab[[".subheader"]] == 1)
+
+    subheader_rows <- any_tab |>
+        collapse::fselect(".subheader") |>
+        collapse::funique(".subheader") |>
+        collapse::fsubset(.subheader != 0)
+
+    style[["subheader_rows"]] <- subheader_rows[[1]]
+
+    # Generate tables as normal but base is filtered data frame
+    any_tab <- any_tab |> dropp(".subheader")
+
+    monitor_df <- monitor_df |> monitor_end()
+
+    wb_list <- format_any_excel(wb,
+                                any_tab,
+                                rows,
+                                columns,
+                                statistics,
+                                NULL,
+                                titles,
+                                footnotes,
+                                var_labels,
+                                stat_labels,
+                                box,
+                                any_header,
+                                style,
+                                output,
+                                monitor_df = monitor_df)
+
+    # Return workbook
+    list(wb_list[[1]], wb_list[[2]])
 }
 
 

@@ -244,6 +244,20 @@ test_that("any_table with by variables and multiple row and column variables", {
 })
 
 
+test_that("any_table with by variables as subheaders", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows    = "age",
+                      columns = "sex",
+                      values  = weight,
+                      by      = education,
+                      style   = excel_output_style(by_as_subheaders = TRUE),
+                      print   = FALSE))
+
+    expect_true("BY" %in% names(result_list[[1]]))
+    expect_equal(length(unique(result_list[[1]][["BY"]])), 1)
+})
+
+
 test_that("any_table with by variables aborts if by is also part of rows or columns", {
     expect_message(result_list <- dummy_df |>
             any_table(rows    = "age",

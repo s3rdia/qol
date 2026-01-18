@@ -61,24 +61,24 @@ set_style_options <- function(...){
                            "median_excel", "mode_excel", "min_excel", "max_excel", "sd_excel", "variance_excel",
                            "first_excel", "last_excel", "p_excel", "missing_excel")
 
-    logicals <- c("freeze_col_header", "freeze_row_header", "filters", "grid_lines", "header_font_bold",
+    logicals <- c("freeze_col_header", "freeze_row_header", "filters", "grid_lines", "by_as_subheaders", "header_font_bold",
                   "header_borders", "cat_col_font_bold", "cat_col_borders", "table_font_bold", "table_borders",
                   "box_font_bold", "box_borders", "title_font_bold", "footnote_font_bold", "as_heatmap")
 
-    numerics <- c("start_row", "start_column", "header_font_size", "header_indent",
+    numerics <- c("start_row", "start_column", "header_font_size", "header_indent", "subheader_font_size", "subheader_indent",
                   "cat_col_font_size", "cat_col_indent", "table_font_size", "table_indent",
                   "box_font_size", "box_indent", "title_font_size", "footnote_font_size",
-                  "title_heights", "header_heights", "table_heights", "footnote_heights",
+                  "title_heights", "header_heights", "subheader_heights", "table_heights", "footnote_heights",
                   "column_widths", "row_heights")
 
-    characters  <- c("sheet_name", "font", "header_alignment", "header_wrap", "cat_col_alignment",
-                     "cat_col_wrap", "table_alignment", "box_alignment", "box_wrap", "title_alignment",
+    characters  <- c("sheet_name", "font", "header_alignment", "header_wrap", "subheader_alignment", "subheader_wrap",
+                     "cat_col_alignment", "cat_col_wrap", "table_alignment", "box_alignment", "box_wrap", "title_alignment",
                      "footnote_alignment", "na_symbol", "save_path", "file")
 
-    colors <- c("header_back_color", "header_font_color", "header_border_color", "cat_col_back_color", "cat_col_font_color",
-                "cat_col_border_color", "table_back_color", "table_font_color", "table_border_color",
-                "box_back_color", "box_font_color", "box_border_color", "title_font_color", "footnote_font_color",
-                "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color")
+    colors <- c("header_back_color", "header_font_color", "header_border_color", "subheader_back_color", "subheader_font_color",
+                "subheader_border_color", "cat_col_back_color", "cat_col_font_color", "cat_col_border_color", "table_back_color",
+                "table_font_color", "table_border_color", "box_back_color", "box_font_color", "box_border_color", "title_font_color",
+                "footnote_font_color", "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color")
 
     # Loop through passed arguments and check if they are of valid type
     for (style_option in names(style_list)){

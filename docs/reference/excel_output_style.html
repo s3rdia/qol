@@ -55,6 +55,7 @@ by <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="cro
 <span>  row_heights <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  title_heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  header_heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subheader_heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  table_heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footnote_heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  start_row <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -63,6 +64,7 @@ by <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="cro
 <span>  freeze_row_header <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  filters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid_lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  by_as_subheaders <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  header_back_color <span class="op">=</span> <span class="st">"FFFFFF"</span>,</span>
 <span>  header_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
 <span>  header_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -72,6 +74,15 @@ by <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="cro
 <span>  header_indent <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  header_borders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  header_border_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  subheader_back_color <span class="op">=</span> <span class="st">"FFFFFF"</span>,</span>
+<span>  subheader_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  subheader_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  subheader_font_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  subheader_alignment <span class="op">=</span> <span class="st">"center"</span>,</span>
+<span>  subheader_wrap <span class="op">=</span> <span class="st">"1"</span>,</span>
+<span>  subheader_indent <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  subheader_borders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  subheader_border_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
 <span>  cat_col_back_color <span class="op">=</span> <span class="st">"FFFFFF"</span>,</span>
 <span>  cat_col_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
 <span>  cat_col_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -158,6 +169,10 @@ end of the table.</p></dd>
 <dd><p>Set individual row heights for the table header only.</p></dd>
 
 
+<dt id="arg-subheader-heights">subheader_heights<a class="anchor" aria-label="anchor" href="#arg-subheader-heights"></a></dt>
+<dd><p>Set individual row heights for the table subheader only.</p></dd>
+
+
 <dt id="arg-table-heights">table_heights<a class="anchor" aria-label="anchor" href="#arg-table-heights"></a></dt>
 <dd><p>Set individual row heights for the table body only.</p></dd>
 
@@ -190,6 +205,11 @@ while scrolling sideways in the document.</p></dd>
 
 <dt id="arg-grid-lines">grid_lines<a class="anchor" aria-label="anchor" href="#arg-grid-lines"></a></dt>
 <dd><p>Whether to show grid lines or not.</p></dd>
+
+
+<dt id="arg-by-as-subheaders">by_as_subheaders<a class="anchor" aria-label="anchor" href="#arg-by-as-subheaders"></a></dt>
+<dd><p>Whether to format by variables as subheaders in one table instead
+of single tables on multiple sheets.</p></dd>
 
 
 <dt id="arg-header-back-color">header_back_color<a class="anchor" aria-label="anchor" href="#arg-header-back-color"></a></dt>
@@ -226,6 +246,42 @@ while scrolling sideways in the document.</p></dd>
 
 <dt id="arg-header-border-color">header_border_color<a class="anchor" aria-label="anchor" href="#arg-header-border-color"></a></dt>
 <dd><p>Borders colors of the table header cells.</p></dd>
+
+
+<dt id="arg-subheader-back-color">subheader_back_color<a class="anchor" aria-label="anchor" href="#arg-subheader-back-color"></a></dt>
+<dd><p>Background cell color of the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-font-color">subheader_font_color<a class="anchor" aria-label="anchor" href="#arg-subheader-font-color"></a></dt>
+<dd><p>Font color of the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-font-size">subheader_font_size<a class="anchor" aria-label="anchor" href="#arg-subheader-font-size"></a></dt>
+<dd><p>Font size of the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-font-bold">subheader_font_bold<a class="anchor" aria-label="anchor" href="#arg-subheader-font-bold"></a></dt>
+<dd><p>Whether to print the table subheader in bold letters.</p></dd>
+
+
+<dt id="arg-subheader-alignment">subheader_alignment<a class="anchor" aria-label="anchor" href="#arg-subheader-alignment"></a></dt>
+<dd><p>Set the text alignment of the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-wrap">subheader_wrap<a class="anchor" aria-label="anchor" href="#arg-subheader-wrap"></a></dt>
+<dd><p>Whether to wrap the texts in the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-indent">subheader_indent<a class="anchor" aria-label="anchor" href="#arg-subheader-indent"></a></dt>
+<dd><p>Indentation level of the table subheader.</p></dd>
+
+
+<dt id="arg-subheader-borders">subheader_borders<a class="anchor" aria-label="anchor" href="#arg-subheader-borders"></a></dt>
+<dd><p>Whether to draw borders around the table subheader cells.</p></dd>
+
+
+<dt id="arg-subheader-border-color">subheader_border_color<a class="anchor" aria-label="anchor" href="#arg-subheader-border-color"></a></dt>
+<dd><p>Borders colors of the table subheader cells.</p></dd>
 
 
 <dt id="arg-cat-col-back-color">cat_col_back_color<a class="anchor" aria-label="anchor" href="#arg-cat-col-back-color"></a></dt>

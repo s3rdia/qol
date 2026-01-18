@@ -13,6 +13,7 @@ excel_output_style(
   row_heights = "auto",
   title_heights = NULL,
   header_heights = NULL,
+  subheader_heights = NULL,
   table_heights = NULL,
   footnote_heights = NULL,
   start_row = 2,
@@ -21,6 +22,7 @@ excel_output_style(
   freeze_row_header = FALSE,
   filters = TRUE,
   grid_lines = TRUE,
+  by_as_subheaders = FALSE,
   header_back_color = "FFFFFF",
   header_font_color = "000000",
   header_font_size = 10,
@@ -30,6 +32,15 @@ excel_output_style(
   header_indent = 0,
   header_borders = TRUE,
   header_border_color = "000000",
+  subheader_back_color = "FFFFFF",
+  subheader_font_color = "000000",
+  subheader_font_size = 10,
+  subheader_font_bold = TRUE,
+  subheader_alignment = "center",
+  subheader_wrap = "1",
+  subheader_indent = 0,
+  subheader_borders = TRUE,
+  subheader_border_color = "000000",
   cat_col_back_color = "FFFFFF",
   cat_col_font_color = "000000",
   cat_col_font_size = 10,
@@ -96,6 +107,8 @@ end of the table.}
 
 \item{header_heights}{Set individual row heights for the table header only.}
 
+\item{subheader_heights}{Set individual row heights for the table subheader only.}
+
 \item{table_heights}{Set individual row heights for the table body only.}
 
 \item{footnote_heights}{Set individual row heights for the footnotes only.}
@@ -114,6 +127,9 @@ while scrolling sideways in the document.}
 
 \item{grid_lines}{Whether to show grid lines or not.}
 
+\item{by_as_subheaders}{Whether to format by variables as subheaders in one table instead
+of single tables on multiple sheets.}
+
 \item{header_back_color}{Background cell color of the table header.}
 
 \item{header_font_color}{Font color of the table header.}
@@ -131,6 +147,24 @@ while scrolling sideways in the document.}
 \item{header_borders}{Whether to draw borders around the table header cells.}
 
 \item{header_border_color}{Borders colors of the table header cells.}
+
+\item{subheader_back_color}{Background cell color of the table subheader.}
+
+\item{subheader_font_color}{Font color of the table subheader.}
+
+\item{subheader_font_size}{Font size of the table subheader.}
+
+\item{subheader_font_bold}{Whether to print the table subheader in bold letters.}
+
+\item{subheader_alignment}{Set the text alignment of the table subheader.}
+
+\item{subheader_wrap}{Whether to wrap the texts in the table subheader.}
+
+\item{subheader_indent}{Indentation level of the table subheader.}
+
+\item{subheader_borders}{Whether to draw borders around the table subheader cells.}
+
+\item{subheader_border_color}{Borders colors of the table subheader cells.}
 
 \item{cat_col_back_color}{Background cell color of the category columns inside the table.}
 

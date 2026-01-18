@@ -53,6 +53,10 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The new parameter <code>print_miss</code> outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_variables()</a></code>: The “:” can now be used as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)</li>
+<li>
+<code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: New <code>subheader</code> parameters which come into play when setting the <code>by_as_subheaders</code> to TRUE when using <code><a href="../reference/any_table.html">any_table()</a></code>. The parameters can also be set as global option. (18.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When using by variables with the new styling option <code>by_as_subheaders</code> the tables aren’t split among multiple sheets, instead the by variable expressions are used as subheaders in one big table. (18.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-1">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-1"></a></h4>
@@ -60,6 +64,8 @@
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new <code>means</code> parameter. (17.01.2026)</li>
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: When using multiple by variables with excel <code>output</code>, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)</li>
+<li>
+<code>mark_cases()</code>: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-1"></a></h4>
@@ -69,6 +75,7 @@
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: No empty “total” table is printed when by variables are provided. (17.01.2026)</li>
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: “total” row is not printed anymore, when variables use multilabels and are computed with a by group. (17.01.2026)</li>
+<li>Unit test: Fixed global footnote option unit test. <code><a href="../reference/qol_options.html">set_titles()</a></code> was called instead of <code><a href="../reference/qol_options.html">set_footnotes()</a></code>. (18.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>

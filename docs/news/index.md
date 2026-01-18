@@ -24,6 +24,15 @@
 - [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md):
   The “:” can now be used as a placeholder for “starts with” (“text:”),
   “ends with” (“:text”) and “contains” (“:text:”). (15.01.2026)
+- [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  New `subheader` parameters which come into play when setting the
+  `by_as_subheaders` to TRUE when using
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md).
+  The parameters can also be set as global option. (18.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When using by variables with the new styling option `by_as_subheaders`
+  the tables aren’t split among multiple sheets, instead the by variable
+  expressions are used as subheaders in one big table. (18.01.2026)
 
 #### Changed functionality
 
@@ -36,6 +45,8 @@
   When using multiple by variables with excel `output`, worksheets are
   now ordered in provided variable order instead of alternating.
   (17.01.2026)
+- `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE.
+  (18.01.2026)
 
 #### Fixed
 
@@ -48,6 +59,11 @@
 - [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
   “total” row is not printed anymore, when variables use multilabels and
   are computed with a by group. (17.01.2026)
+- Unit test: Fixed global footnote option unit test.
+  [`set_titles()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+  was called instead of
+  [`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md).
+  (18.01.2026)
 
 #### Optimization
 

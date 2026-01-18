@@ -147,7 +147,7 @@ mark_case <- function(data_frame,
     # most likely the group in which the first and last cases should be marked.
     if (length(by) > 1){
         message(" ~ NOTE: Cases are marked in current data frame order. Only last variable\n",
-                "         '", by, "' inside provided by vector will be used.")
+                "         '", by[length(by)], "' inside provided <by> vector will be used.")
 
         by <- by[length(by)]
     }
@@ -188,6 +188,9 @@ mark_case <- function(data_frame,
             data_frame[collapse::fnrow(data_frame), var_name] <- TRUE
         }
     }
+
+    # Output as 1/0 instead of TRUE/FALSE
+    data_frame[[var_name]] <- as.integer(data_frame[[var_name]])
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'mark_cases' execution time: ", end_time, " seconds\n")

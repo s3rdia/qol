@@ -149,6 +149,28 @@ get_any_table_ranges <- function(table,
                                       to_row      = footnote.row  + (footnote.length - 1),
                                       to_column   = header.column)
 
+    # Get subheader ranges, if present
+    if ("subheaders" %in% names(style)){
+        subheader_range     <- list()
+        pre_subheader_range <- list()
+        subheader_rows      <- style[["subheader_rows"]][style[["subheader_rows"]] != 0]
+
+        # Loop through all subheader rows and extract excel ranges
+        for(row in seq_along(subheader_rows)){
+            current_row <- subheader_rows[[row]]
+
+            subheader_range[[row]] <- get_excel_range(from_row    = table.row + (current_row - 1),
+                                                      from_column = header.column + cat_col.width,
+                                                      to_row      = table.row + (current_row - 1),
+                                                      to_column   = header.column + (cat_col.width - 1) + header.width)
+
+            pre_subheader_range[[row]] <- get_excel_range(from_row    = table.row + (current_row - 1),
+                                                          from_column = header.column,
+                                                          to_row      = table.row + (current_row - 1),
+                                                          to_column   = header.column + (cat_col.width - 1))
+        }
+    }
+
     # Output ranges for further use
     all    <- as.list(environment())
     ranges <- names(formals(sys.function()))
@@ -382,6 +404,7 @@ handle_row_header_merge <- function(wb, row_header, ranges){
 
     wb
 }
+
 
 ###############################################################################
 # Get ranges for export with style
@@ -825,7 +848,7 @@ handle_cell_styles <- function(wb,
                                ranges,
                                style = excel_output_style()){
     # Apply individual styles for each table part
-    for (type in c("header", "box", "cat_col", "table")){
+    for (type in c("header", "box", "cat_col", "table", "subheader")){
 
         apply_font <- NULL
         font_id    <- NULL
@@ -848,17 +871,36 @@ handle_cell_styles <- function(wb,
             fill_id    <- wb$styles_mgr$get_fill_id(paste0(type, "_fill"))
         }
 
-        wb$add_cell_style(dims         = ranges[[paste0(type, "_range")]],
-                          horizontal   = style[[paste0(type, "_alignment")]],
-                          vertical     = "center",
-                          wrap_text    = style[[paste0(type, "_wrap")]],
-                          indent       = style[[paste0(type, "_indent")]],
-                          apply_font   = apply_font,
-                          font_id      = font_id,
-                          apply_border = apply_border,
-                          border_id    = border_id,
-                          apply_fill   = apply_fill,
-                          fill_id      = fill_id)
+        # Subheader ranges are stored inside a list which has to be looped over
+        if (type == "subheader"){
+            for (sub_range in seq_along(ranges[["subheader_range"]])){
+                wb$add_cell_style(dims         = ranges[["subheader_range"]][[sub_range]],
+                                  horizontal   = style[[paste0(type, "_alignment")]],
+                                  vertical     = "center",
+                                  wrap_text    = style[[paste0(type, "_wrap")]],
+                                  indent       = style[[paste0(type, "_indent")]],
+                                  apply_font   = apply_font,
+                                  font_id      = font_id,
+                                  apply_border = apply_border,
+                                  border_id    = border_id,
+                                  apply_fill   = apply_fill,
+                                  fill_id      = fill_id)
+            }
+        }
+        # All other ranges are stored as single entries
+        else{
+            wb$add_cell_style(dims         = ranges[[paste0(type, "_range")]],
+                              horizontal   = style[[paste0(type, "_alignment")]],
+                              vertical     = "center",
+                              wrap_text    = style[[paste0(type, "_wrap")]],
+                              indent       = style[[paste0(type, "_indent")]],
+                              apply_font   = apply_font,
+                              font_id      = font_id,
+                              apply_border = apply_border,
+                              border_id    = border_id,
+                              apply_fill   = apply_fill,
+                              fill_id      = fill_id)
+        }
     }
 
     wb
@@ -880,7 +922,7 @@ handle_cell_styles <- function(wb,
 #' @noRd
 handle_fill_styles <- function(wb, style = excel_output_style()){
     # Add individual fill styles for each table part
-    for (type in c("header", "box", "cat_col", "table")){
+    for (type in c("header", "subheader", "box", "cat_col", "table")){
         # With color fill
         if (style[[paste0(type, "_back_color")]] != ""){
             wb$styles_mgr$add(
@@ -919,7 +961,7 @@ handle_font_styles <- function(wb, style = excel_output_style()){
     wb$set_base_font(font_name = style[["font"]])
 
     # Add individual font styles for each table part
-    for (type in c("title", "footnote", "header", "box", "cat_col", "table")){
+    for (type in c("title", "footnote", "header", "subheader", "box", "cat_col", "table")){
         wb$styles_mgr$add(
             openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]],
                                    color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]]),
@@ -964,6 +1006,15 @@ handle_border_styles <- function(wb, style = excel_output_style()){
                       top_color    = openxlsx2::wb_color(hex = style[["header_border_color"]]),
                       left_color   = openxlsx2::wb_color(hex = style[["header_border_color"]])),
             "header_borders")
+    }
+    if (style[["subheader_borders"]]){
+        wb$styles_mgr$add(
+            openxlsx2::create_border(
+                bottom = "thin",
+                top    = "thin",
+                bottom_color = openxlsx2::wb_color(hex = style[["subheader_border_color"]]),
+                top_color    = openxlsx2::wb_color(hex = style[["subheader_border_color"]])),
+            "subheader_borders")
     }
     if (style[["box_borders"]]){
         wb$styles_mgr$add(
@@ -1315,6 +1366,7 @@ fill_or_trim <- function(format_vector,
 #' end of the table.
 #' @param title_heights Set individual row heights for the titles only.
 #' @param header_heights Set individual row heights for the table header only.
+#' @param subheader_heights Set individual row heights for the table subheader only.
 #' @param table_heights Set individual row heights for the table body only.
 #' @param footnote_heights Set individual row heights for the footnotes only.
 #' @param start_row The row in which the table starts.
@@ -1325,6 +1377,8 @@ fill_or_trim <- function(format_vector,
 #' while scrolling sideways in the document.
 #' @param filters Whether to set filters in the column header, when exporting a data frame.
 #' @param grid_lines Whether to show grid lines or not.
+#' @param by_as_subheaders Whether to format by variables as subheaders in one table instead
+#' of single tables on multiple sheets.
 #' @param header_back_color Background cell color of the table header.
 #' @param header_font_color Font color of the table header.
 #' @param header_font_size Font size of the table header.
@@ -1334,6 +1388,15 @@ fill_or_trim <- function(format_vector,
 #' @param header_indent Indentation level of the table header.
 #' @param header_borders Whether to draw borders around the table header cells.
 #' @param header_border_color Borders colors of the table header cells.
+#' @param subheader_back_color Background cell color of the table subheader.
+#' @param subheader_font_color Font color of the table subheader.
+#' @param subheader_font_size Font size of the table subheader.
+#' @param subheader_font_bold Whether to print the table subheader in bold letters.
+#' @param subheader_alignment Set the text alignment of the table subheader.
+#' @param subheader_wrap Whether to wrap the texts in the table subheader.
+#' @param subheader_indent Indentation level of the table subheader.
+#' @param subheader_borders Whether to draw borders around the table subheader cells.
+#' @param subheader_border_color Borders colors of the table subheader cells.
 #' @param cat_col_back_color Background cell color of the category columns inside the table.
 #' @param cat_col_font_color Font color of the category columns inside the table.
 #' @param cat_col_font_size Font size of the category columns inside the table.
@@ -1412,71 +1475,82 @@ fill_or_trim <- function(format_vector,
 #' excel_style <- excel_output_style(table_back_color = "")
 #'
 #' @export
-excel_output_style <- function(save_path			= NULL,
-							   file                 = NULL,
-                               sheet_name           = "Table",
-                               font                 = "Arial",
-                               column_widths        = "auto",
-                               row_heights          = "auto",
-                               title_heights        = NULL,
-                               header_heights       = NULL,
-                               table_heights        = NULL,
-                               footnote_heights     = NULL,
-                               start_row            = 2,
-                               start_column         = 2,
-                               freeze_col_header    = FALSE,
-                               freeze_row_header    = FALSE,
-                               filters              = TRUE,
-                               grid_lines           = TRUE,
-                               header_back_color    = "FFFFFF",
-                               header_font_color    = "000000",
-                               header_font_size     = 10,
-                               header_font_bold     = TRUE,
-                               header_alignment     = "center",
-                               header_wrap          = "1",
-                               header_indent        = 0,
-                               header_borders       = TRUE,
-                               header_border_color  = "000000",
-                               cat_col_back_color   = "FFFFFF",
-                               cat_col_font_color   = "000000",
-                               cat_col_font_size    = 10,
-                               cat_col_font_bold    = FALSE,
-                               cat_col_alignment    = "left",
-                               cat_col_wrap         = "1",
-                               cat_col_indent       = 1,
-                               cat_col_borders      = TRUE,
-                               cat_col_border_color = "000000",
-                               table_back_color     = "FFFFFF",
-                               table_font_color     = "000000",
-                               table_font_size      = 10,
-                               table_font_bold      = FALSE,
-                               table_alignment      = "right",
-                               table_indent         = 1,
-                               table_borders        = FALSE,
-                               table_border_color   = "000000",
-							   as_heatmap           = FALSE,
-							   heatmap_low_color    = "F8696B",
-							   heatmap_middle_color = "FFFFFF",
-							   heatmap_high_color   = "63BE7B",
-                               box_back_color       = "FFFFFF",
-                               box_font_color       = "000000",
-                               box_font_size        = 10,
-                               box_font_bold        = TRUE,
-                               box_alignment        = "center",
-                               box_wrap             = "1",
-                               box_indent           = 0,
-                               box_borders          = TRUE,
-                               box_border_color     = "000000",
-                               number_formats       = number_format_style(),
-                               title_font_color     = "000000",
-                               title_font_size      = 10,
-                               title_font_bold      = TRUE,
-                               title_alignment      = "left",
-                               footnote_font_color  = "000000",
-                               footnote_font_size   = 8,
-                               footnote_font_bold   = FALSE,
-                               footnote_alignment   = "left",
-                               na_symbol            = "."){
+excel_output_style <- function(save_path              = NULL,
+                               file                   = NULL,
+                               sheet_name             = "Table",
+                               font                   = "Arial",
+                               column_widths          = "auto",
+                               row_heights            = "auto",
+                               title_heights          = NULL,
+                               header_heights         = NULL,
+                               subheader_heights      = NULL,
+                               table_heights          = NULL,
+                               footnote_heights       = NULL,
+                               start_row              = 2,
+                               start_column           = 2,
+                               freeze_col_header      = FALSE,
+                               freeze_row_header      = FALSE,
+                               filters                = TRUE,
+                               grid_lines             = TRUE,
+                               by_as_subheaders       = FALSE,
+                               header_back_color      = "FFFFFF",
+                               header_font_color      = "000000",
+                               header_font_size       = 10,
+                               header_font_bold       = TRUE,
+                               header_alignment       = "center",
+                               header_wrap            = "1",
+                               header_indent          = 0,
+                               header_borders         = TRUE,
+                               header_border_color    = "000000",
+                               subheader_back_color   = "FFFFFF",
+                               subheader_font_color   = "000000",
+                               subheader_font_size    = 10,
+                               subheader_font_bold    = TRUE,
+                               subheader_alignment    = "center",
+                               subheader_wrap         = "1",
+                               subheader_indent       = 0,
+                               subheader_borders      = TRUE,
+                               subheader_border_color = "000000",
+                               cat_col_back_color     = "FFFFFF",
+                               cat_col_font_color     = "000000",
+                               cat_col_font_size      = 10,
+                               cat_col_font_bold      = FALSE,
+                               cat_col_alignment      = "left",
+                               cat_col_wrap           = "1",
+                               cat_col_indent         = 1,
+                               cat_col_borders        = TRUE,
+                               cat_col_border_color   = "000000",
+                               table_back_color       = "FFFFFF",
+                               table_font_color       = "000000",
+                               table_font_size        = 10,
+                               table_font_bold       = FALSE,
+                               table_alignment        = "right",
+                               table_indent           = 1,
+                               table_borders          = FALSE,
+                               table_border_color     = "000000",
+                               as_heatmap             = FALSE,
+                               heatmap_low_color      = "F8696B",
+                               heatmap_middle_color   = "FFFFFF",
+                               heatmap_high_color     = "63BE7B",
+                               box_back_color         = "FFFFFF",
+                               box_font_color         = "000000",
+                               box_font_size          = 10,
+                               box_font_bold          = TRUE,
+                               box_alignment          = "center",
+                               box_wrap               = "1",
+                               box_indent             = 0,
+                               box_borders            = TRUE,
+                               box_border_color       = "000000",
+                               number_formats         = number_format_style(),
+                               title_font_color       = "000000",
+                               title_font_size        = 10,
+                               title_font_bold        = TRUE,
+                               title_alignment        = "left",
+                               footnote_font_color    = "000000",
+                               footnote_font_size     = 8,
+                               footnote_font_bold     = FALSE,
+                               footnote_alignment     = "left",
+                               na_symbol              = "."){
 
     as.list(environment())
 }

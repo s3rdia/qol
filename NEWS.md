@@ -10,17 +10,21 @@
 
 * `summarise_plus()`, `any_table()`, `frequencies()`, `crosstabs()`: The new parameter `print_miss` outputs all possible categories of the grouping variables based on the provided formats, even if there are no observations for a combination. (15.01.2026)
 * `retain_variables()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (15.01.2026)
+* `excel_output_style()`: New `subheader` parameters which come into play when setting the `by_as_subheaders` to TRUE when using `any_table()`. The parameters can also be set as global option. (18.01.2026)
+* `any_table()`: When using by variables with the new styling option `by_as_subheaders` the tables aren't split among multiple sheets, instead the by variable expressions are used as subheaders in one big table. (18.01.2026)
 
 ### Changed functionality
 
 * `frequencies()`: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new `means` parameter. (17.01.2026)
 * `frequencies()`: When using multiple by variables with excel `output`, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)
+* `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
 
 ### Fixed
 
 * `frequencies()`: Mean tables are now printed when by variables are provided. (17.01.2026)
 * `frequencies()`: No empty "total" table is printed when by variables are provided. (17.01.2026)
 * `frequencies()`: "total" row is not printed anymore, when variables use multilabels and are computed with a by group. (17.01.2026)
+* Unit test: Fixed global footnote option unit test. `set_titles()` was called instead of `set_footnotes()`. (18.01.2026)
 
 ### Optimization
 

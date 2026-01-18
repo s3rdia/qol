@@ -8,6 +8,7 @@
 [![SAS](https://img.shields.io/badge/SAS-R-orange.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
+[![r-universe](https://s3rdia.r-universe.dev/badges/qol)](https://s3rdia.r-universe.dev/qol)
 [![DEVELOPMENT
 Version](https://img.shields.io/badge/GitHub-1.2.1-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
@@ -33,6 +34,9 @@ install.packages("qol")
 
 # Development version
 devtools::install_github("s3rdia/qol")
+
+install.packages('qol', repos = c('https://s3rdia.r-universe.dev', 'https://cloud.r-project.org'))
+
 pak::pak("s3rdia/qol")
 ```
 

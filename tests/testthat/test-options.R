@@ -151,9 +151,9 @@ test_that("Set global titles", {
 
 
 test_that("Set global footnotes", {
-    set_titles("Footnote1", "Footnote2")
+    set_footnotes("Footnote1", "Footnote2")
 
-    new_options <- get_titles()
+    new_options <- get_footnotes()
 
     expect_equal(new_options, c("Footnote1", "Footnote2"))
 })

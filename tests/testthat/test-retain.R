@@ -32,8 +32,8 @@ test_that("Mark first and last cases without by", {
         mark_case() |>
         mark_case(var_name = "last", first = FALSE))
 
-    expect_equal(mark_df[["first"]], c(TRUE, FALSE, FALSE, FALSE, FALSE))
-    expect_equal(mark_df[["last"]],  c(FALSE, FALSE, FALSE, FALSE, TRUE))
+    expect_equal(mark_df[["first"]], c(1, 0, 0, 0, 0))
+    expect_equal(mark_df[["last"]],  c(0, 0, 0, 0, 1))
 })
 
 
@@ -42,8 +42,8 @@ test_that("Mark first and last cases with by", {
        mark_case(by = var_by) |>
        mark_case(var_name = "last", by = var_by, first = FALSE))
 
-    expect_equal(mark_df[["first"]], c(TRUE, FALSE, TRUE, TRUE, FALSE))
-    expect_equal(mark_df[["last"]],  c(FALSE, TRUE, TRUE, FALSE, TRUE))
+    expect_equal(mark_df[["first"]], c(1, 0, 1, 1, 0))
+    expect_equal(mark_df[["last"]],  c(0, 1, 1, 0, 1))
 })
 
 
@@ -248,7 +248,7 @@ test_that("Retain sum without providing sum_of", {
 
 test_that("Add new NA column range with wrong pattern returns original data frame", {
     expect_message(retain_df <- (dummy_df |>
-                                     retain_variables(status1:age3)), "X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.")
+         retain_variables(status1:age3)), "X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.")
 
     expect_equal(dummy_df, retain_df)
 })
