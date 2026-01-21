@@ -8,13 +8,8 @@
 #' there is a function for each different use case.
 #'
 #' @param data_frame The data frame in which to compute retained variables.
-#' @param var_name The name of the newly created variable.
-#'
-#' [retain_sum]: One or multiple variables of which the sum should be retained.
 #' @param by By group in which to compute the retained variable.
-#' @param values [retain_value]: One or multiple variables of which a value should be retained.
-#'
-#' [retain_sum]: One or multiple variables of which their sum should be retained.
+#' @param values One or multiple variables of which a value should be retained.
 #'
 #' @details
 #' The functions listed here are based on the 'SAS' function retain. On a very basic level retain
@@ -45,25 +40,23 @@ NULL
 #' number within each group of expressions.
 #'
 #' @return
-#' [running_number()]: Returns the data frame with a new variable containing a running number.
+#' [running_number()]: Returns a vector containing a running number.
 #'
 #' @examples
 #' # Example data frame
 #' my_data <- dummy_data(1000)
 #'
 #' # Get row numbers
-#' my_data <- my_data |> running_number()
-#' my_data <- my_data |> running_number("row_number")
+#' my_data[["run_nr"]] <- my_data |> running_number()
 #'
 #' # Running number per variable expression
-#' my_data <- my_data |> running_number(by = year)
+#' my_data[["run_nr_by"]] <- my_data |> running_number(by = year)
 #'
 #' @rdname retain
 #'
 #' @export
 running_number <- function(data_frame,
-                           var_name = "run_nr",
-                           by       = NULL){
+                           by = NULL){
     # Measure the time
     start_time <- Sys.time()
 
@@ -92,19 +85,19 @@ running_number <- function(data_frame,
 
     # In case of a by variable
     if (length(by) == 1){
-        data_frame[[var_name]] <- stats::ave(seq_len(collapse::fnrow(data_frame)),
-                                             data.table::rleid(data_frame[[by]]),
-                                             FUN = seq_along)
+        variable <- stats::ave(seq_len(collapse::fnrow(data_frame)),
+                                       data.table::rleid(data_frame[[by]]),
+                                       FUN = seq_along)
     }
     # In case of no by variable
     else{
-        data_frame[[var_name]] <- seq_len(collapse::fnrow(data_frame))
+        variable <- seq_len(collapse::fnrow(data_frame))
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'running_number' execution time: ", end_time, " seconds\n")
 
-    data_frame
+    variable
 }
 
 
@@ -115,19 +108,18 @@ running_number <- function(data_frame,
 #' the last case.
 #'
 #' @return
-#' [mark_case()]: Returns the data frame with a new variable marking first or last cases.
+#' [mark_case()]: Returns a vector containing a the marking for first or last cases.
 #'
 #' @examples
 #' # Mark first and last cases
-#' my_data <- my_data |>
-#'     mark_case(by = household_id) |>
-#'     mark_case(var_name = "last", by = household_id, first = FALSE)
+#' my_data[["first"]] <- my_data |> mark_case(by = household_id)
+#' my_data[["last"]]  <- my_data |> mark_case(by    = household_id,
+#'                                            first = FALSE)
 #'
 #' @rdname retain
 #'
 #' @export
 mark_case <- function(data_frame,
-                      var_name = "first",
                       by       = NULL,
                       first    = TRUE){
     # Measure the time
@@ -152,9 +144,6 @@ mark_case <- function(data_frame,
         by <- by[length(by)]
     }
 
-    # Convert to character vectors
-    var_name <- get_origin_as_char(var_name, substitute(var_name))
-
     ###########################################################################
     # Retain
     ###########################################################################
@@ -167,35 +156,36 @@ mark_case <- function(data_frame,
         # Mark first cases by placing the missing TRUE value at the front, meaning: Shift down the whole
         # vector by one.
         if (first){
-            data_frame[[var_name]] <- c(TRUE, data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)])
+            variable <- c(TRUE, data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)])
         }
         # Mark last cases by placing the missing TRUE value at the back, meaning: Shift up the whole
         # vector by one.
         else{
-            data_frame[[var_name]] <- c(data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)], TRUE)
+            variable <- c(data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)], TRUE)
         }
     }
-    # In case no by variable is specified, mark first/last of whole data frame
+    # In case no by variable is specified, mark first/last case of whole data frame
     else{
-        # Mark first case
+        number_of_obersvations <- collapse::fnrow(data_frame)
+
+        # Create vector of all FALSE values with the length of the provided data frame
+        variable <- logical(number_of_obersvations)
+
         if (first){
-            data_frame[[var_name]]  <- FALSE
-            data_frame[1, var_name] <- TRUE
+            variable[1] <- TRUE
         }
-        # Mark last cases
         else{
-            data_frame[[var_name]] <- FALSE
-            data_frame[collapse::fnrow(data_frame), var_name] <- TRUE
+            variable[number_of_obersvations] <- TRUE
         }
     }
 
     # Output as 1/0 instead of TRUE/FALSE
-    data_frame[[var_name]] <- as.integer(data_frame[[var_name]])
+    variable <- as.integer(variable)
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'mark_cases' execution time: ", end_time, " seconds\n")
 
-    data_frame
+    variable
 }
 
 
@@ -204,22 +194,23 @@ mark_case <- function(data_frame,
 #' it into a new variable.
 #'
 #' @return
-#' [retain_value()]: Return the data frame with a new variable containing a retained value.
+#' [retain_value()]: Returns a vector containing a retained value.
 #'
 #' @examples
-#' # Retain first value inside a group
-#' my_data <- my_data |>
-#'     retain_value(var_name = c("household_weight", "household_icome"),
-#'                  value    = c(weight, income),
-#'                  by       = c(state, household_id))
+#' # Retain first value without grouping
+#' my_data[["first_weight"]] <- my_data |> retain_value(value = weight)
+#'
+#' # Retain first value inside a group for multiple variables
+#' my_data[, c("household_weight", "household_icome")] <- my_data |>
+#'     retain_value(values = c(weight, income),
+#'                  by     = c(state, household_id))
 #'
 #' @rdname retain
 #'
 #' @export
 retain_value <- function(data_frame,
                          values,
-                         var_name = "retain_value",
-                         by       = NULL){
+                         by = NULL){
     # Measure the time
     start_time <- Sys.time()
 
@@ -253,9 +244,6 @@ retain_value <- function(data_frame,
         }
     }
 
-    # Convert to character vectors
-    var_name <- get_origin_as_char(var_name, substitute(var_name))
-
     ###########################################################################
     # Retain
     ###########################################################################
@@ -263,25 +251,17 @@ retain_value <- function(data_frame,
     group <- collapse::GRP(data_frame, by)
 
     # If there are as much new variable names provided, as there are values given, then rename them
-    if (length(values) == length(var_name)){
-        # In case original variable should be overwritten
-        if (identical(values, var_name)){
-            data_frame[values] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
-        }
-        # Otherwise add new variable
-        else{
-            data_frame[var_name] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
-        }
-    }
-    # On unequal names give the variable name an extension
-    else{
-        data_frame[paste0(values, "_first")] <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
-    }
+    data_frame <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'retain_value' execution time: ", end_time, " seconds\n")
 
-    suppressMessages(data_frame |> dropp(".pseudo_by"))
+    if (length(values) == 1){
+        data_frame[[1]]
+    }
+    else{
+        as.list(data_frame)
+    }
 }
 
 
@@ -290,21 +270,22 @@ retain_value <- function(data_frame,
 #' it into a new variable.
 #'
 #' @return
-#' [retain_sum()]: Return the data frame with a new variable containing a retained sum.
+#' [retain_sum()]: Returns a vector containing a retained sum.
 #'
 #' @examples
-#' # Retain sum inside a group
-#' my_data <- my_data |>
-#'     retain_sum(var_name = c("weight_hh_sum", "icome_hh_sum"),
-#'                values    = c(weight, income),
-#'                by       = c(state, household_id))
+#' # Retain sum without grouping
+#' my_data[["total_sum"]] <- my_data |> retain_sum(values = weight)
+#'
+#' # Retain sum inside a group for multiple variables
+#' my_data[, c("weight_sum", "income_sum")] <- my_data |>
+#'     retain_sum(values = c(weight, income),
+#'                  by   = c(state, household_id))
 #'
 #' @rdname retain
 #'
 #' @export
 retain_sum <- function(data_frame,
                        values,
-                       var_name = "retain_sum",
                        by       = NULL){
     # Measure the time
     start_time <- Sys.time()
@@ -345,9 +326,6 @@ retain_sum <- function(data_frame,
         return(invisible(data_frame))
     }
 
-    # Convert to character vectors
-    var_name <- get_origin_as_char(var_name, substitute(var_name))
-
     ###########################################################################
     # Retain
     ###########################################################################
@@ -358,18 +336,17 @@ retain_sum <- function(data_frame,
                           values     = values,
                           statistics = "sum",
                           nesting    = "deepest",
-                          merge_back = TRUE) |>
-           dropp(".pseudo_by"))
-
-    # If there are as much new variable names provided, as there are values given, then rename them
-    if (length(values) == length(var_name)){
-        data_frame <- data_frame |> collapse::frename(stats::setNames(var_name, paste0(values, "_sum")))
-    }
+                          merge_back = TRUE))
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'retain_sum' execution time: ", end_time, " seconds\n")
 
-    data_frame
+    if (length(values) == 1){
+        data_frame[[collapse::fncol(data_frame)]]
+    }
+    else{
+        as.list(data_frame[-(1:(collapse::fncol(data_frame) - length(values)))])
+    }
 }
 
 

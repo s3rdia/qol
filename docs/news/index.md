@@ -47,8 +47,8 @@
   When using multiple by variables with excel `output`, worksheets are
   now ordered in provided variable order instead of alternating.
   (17.01.2026)
-- `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE.
-  (18.01.2026)
+- [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md): Now
+  outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
 - [`recode()`](https://s3rdia.github.io/qol/reference/recode.md):
   Removed `new_var` parameter. Recode now doesn’t return the whole data
   frame anymore, but only the recoded variable as a vector. So instead
@@ -56,6 +56,16 @@
   the syntax is now more natural like this
   `my_data[["age_group"]] <- my_data |> recode(age = age.)`.
   (21.01.2026)
+- [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md),
+  [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
+  [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
+  Removed `new_var` parameter. Functions now don’t return the whole data
+  frame anymore, but only the retained variable as a vector or list of
+  vectors. So instead of writing
+  e.g. `my_data <- my_data |> running_number("running")`, the syntax is
+  now more natural like this
+  `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
 
 #### Fixed
 
@@ -394,7 +404,7 @@ CRAN release on 13.01.2026
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
   `value` parameter is now called `values`. (10.01.2026)
-- `mark_cases()`,
+- [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
   Adjusted unit tests to something that actually makes sense.

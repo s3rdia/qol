@@ -63,6 +63,21 @@ test_that("Pad single variable with individual length", {
     expect_equal(concat_vec, c("____1", "___10", "__100"))
 })
 
+
+test_that("Pad single variable on the right side", {
+    concat_vec <- test_df |> concat(var1, padding_char = "0", padding_right = TRUE)
+
+    expect_equal(concat_vec, c("100", "100", "100"))
+})
+
+
+test_that("Concatenating multiple variables with automatic padding on the right side", {
+    concat_vec <- test_df |> concat(var1, var2, var3,
+                                    padding_char = "0", padding_right = TRUE)
+
+    expect_equal(concat_vec, c("1001abc", "1000ab0", "1003a00"))
+})
+
 ###############################################################################
 # Warning checks
 ###############################################################################

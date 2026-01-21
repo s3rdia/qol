@@ -82,13 +82,13 @@ all NA values at the desired position.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">running_number</span><span class="op">(</span><span class="va">data_frame</span>, var_name <span class="op">=</span> <span class="st">"run_nr"</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">running_number</span><span class="op">(</span><span class="va">data_frame</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">mark_case</span><span class="op">(</span><span class="va">data_frame</span>, var_name <span class="op">=</span> <span class="st">"first"</span>, by <span class="op">=</span> <span class="cn">NULL</span>, first <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">mark_case</span><span class="op">(</span><span class="va">data_frame</span>, by <span class="op">=</span> <span class="cn">NULL</span>, first <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">retain_value</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">values</span>, var_name <span class="op">=</span> <span class="st">"retain_value"</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">retain_value</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">values</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">retain_sum</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">values</span>, var_name <span class="op">=</span> <span class="st">"retain_sum"</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">retain_sum</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">values</span>, by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">retain_variables</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span>, order_last <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -101,11 +101,6 @@ all NA values at the desired position.</p>
 <dd><p>The data frame in which to compute retained variables.</p></dd>
 
 
-<dt id="arg-var-name">var_name<a class="anchor" aria-label="anchor" href="#arg-var-name"></a></dt>
-<dd><p>The name of the newly created variable.</p>
-<p>retain_sum: One or multiple variables of which the sum should be retained.</p></dd>
-
-
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
 <dd><p>By group in which to compute the retained variable.</p></dd>
 
@@ -116,8 +111,7 @@ the last case.</p></dd>
 
 
 <dt id="arg-values">values<a class="anchor" aria-label="anchor" href="#arg-values"></a></dt>
-<dd><p>retain_value: One or multiple variables of which a value should be retained.</p>
-<p>retain_sum: One or multiple variables of which their sum should be retained.</p></dd>
+<dd><p>One or multiple variables of which a value should be retained.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -134,10 +128,10 @@ variables at the end of the data frame instead of the beginning.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>running_number()</code>: Returns the data frame with a new variable containing a running number.</p>
-<p><code>mark_case()</code>: Returns the data frame with a new variable marking first or last cases.</p>
-<p><code>retain_value()</code>: Return the data frame with a new variable containing a retained value.</p>
-<p><code>retain_sum()</code>: Return the data frame with a new variable containing a retained sum.</p>
+    <p><code>running_number()</code>: Returns a vector containing a running number.</p>
+<p><code>mark_case()</code>: Returns a vector containing a the marking for first or last cases.</p>
+<p><code>retain_value()</code>: Returns a vector containing a retained value.</p>
+<p><code>retain_sum()</code>: Returns a vector containing a retained sum.</p>
 <p><code>retain_sum()</code>: Return the data frame with a new variable containing a retained sum.</p>
     </div>
     <div class="section level2">
@@ -162,28 +156,31 @@ a value from the first person in a household to all other persons of the same ho
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get row numbers</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">running_number</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">running_number</span><span class="op">(</span><span class="st">"row_number"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"run_nr"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">running_number</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Running number per variable expression</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">running_number</span><span class="op">(</span>by <span class="op">=</span> <span class="va">year</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"run_nr_by"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">running_number</span><span class="op">(</span>by <span class="op">=</span> <span class="va">year</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Mark first and last cases</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">mark_case</span><span class="op">(</span>by <span class="op">=</span> <span class="va">household_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">mark_case</span><span class="op">(</span>var_name <span class="op">=</span> <span class="st">"last"</span>, by <span class="op">=</span> <span class="va">household_id</span>, first <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"first"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">mark_case</span><span class="op">(</span>by <span class="op">=</span> <span class="va">household_id</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"last"</span><span class="op">]</span><span class="op">]</span>  <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">mark_case</span><span class="op">(</span>by    <span class="op">=</span> <span class="va">household_id</span>,</span>
+<span>                                           first <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Retain first value inside a group</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">retain_value</span><span class="op">(</span>var_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"household_weight"</span>, <span class="st">"household_icome"</span><span class="op">)</span>,</span>
-<span>                 value    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">weight</span>, <span class="va">income</span><span class="op">)</span>,</span>
-<span>                 by       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">household_id</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Retain first value without grouping</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"first_weight"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_value</span><span class="op">(</span>value <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Retain sum inside a group</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">retain_sum</span><span class="op">(</span>var_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weight_hh_sum"</span>, <span class="st">"icome_hh_sum"</span><span class="op">)</span>,</span>
-<span>               values    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">weight</span>, <span class="va">income</span><span class="op">)</span>,</span>
-<span>               by       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">household_id</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Retain first value inside a group for multiple variables</span></span>
+<span><span class="va">my_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"household_weight"</span>, <span class="st">"household_icome"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">retain_value</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">weight</span>, <span class="va">income</span><span class="op">)</span>,</span>
+<span>                 by     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">household_id</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retain sum without grouping</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"total_sum"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_sum</span><span class="op">(</span>values <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retain sum inside a group for multiple variables</span></span>
+<span><span class="va">my_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weight_sum"</span>, <span class="st">"income_sum"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">retain_sum</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">weight</span>, <span class="va">income</span><span class="op">)</span>,</span>
+<span>                 by   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">household_id</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Retain columns inside data frame, which orders them to the front</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">retain_variables</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, <span class="va">income</span><span class="op">)</span></span>

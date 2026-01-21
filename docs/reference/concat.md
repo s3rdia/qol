@@ -9,7 +9,13 @@ The function can also be used to give a single variable a padding.
 ## Usage
 
 ``` r
-concat(data_frame, ..., padding_char = NULL, padding_length = NULL)
+concat(
+  data_frame,
+  ...,
+  padding_char = NULL,
+  padding_length = NULL,
+  padding_right = FALSE
+)
 ```
 
 ## Arguments
@@ -30,6 +36,11 @@ concat(data_frame, ..., padding_char = NULL, padding_length = NULL)
 
   A numeric vector containing the individual padding length per
   variable.
+
+- padding_right:
+
+  FALSE by default. If TRUE insert padding characters on the right side
+  instead of the left side.
 
 ## Value
 

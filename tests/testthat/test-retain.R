@@ -14,114 +14,96 @@ dummy_df <- dummy_data(10)
 
 
 test_that("Generate running number without by", {
-    run_df <- suppressMessages(test_df |> running_number())
+    test_df[["run_nr"]] <- suppressMessages(test_df |> running_number())
 
-    expect_equal(run_df[["run_nr"]], c(1, 2, 3, 4, 5))
+    expect_equal(test_df[["run_nr"]], c(1, 2, 3, 4, 5))
 })
 
 
 test_that("Generate running number with by", {
-    run_df <- suppressMessages(test_df |> running_number(by = var_by))
+    test_df[["run_nr"]] <- suppressMessages(test_df |> running_number(by = var_by))
 
-    expect_equal(run_df[["run_nr"]], c(1, 2, 1, 1, 2))
+    expect_equal(test_df[["run_nr"]], c(1, 2, 1, 1, 2))
 })
 
 
 test_that("Mark first and last cases without by", {
-    mark_df <- suppressMessages(test_df |>
-        mark_case() |>
-        mark_case(var_name = "last", first = FALSE))
+    test_df[["first"]] <- suppressMessages(test_df |> mark_case())
+    test_df[["last"]]  <- suppressMessages(test_df |> mark_case(first = FALSE))
 
-    expect_equal(mark_df[["first"]], c(1, 0, 0, 0, 0))
-    expect_equal(mark_df[["last"]],  c(0, 0, 0, 0, 1))
+    expect_equal(test_df[["first"]], c(1, 0, 0, 0, 0))
+    expect_equal(test_df[["last"]],  c(0, 0, 0, 0, 1))
 })
 
 
 test_that("Mark first and last cases with by", {
-    mark_df <- suppressMessages(test_df |>
-       mark_case(by = var_by) |>
-       mark_case(var_name = "last", by = var_by, first = FALSE))
+    test_df[["first"]] <- suppressMessages(test_df |> mark_case(by = var_by))
+    test_df[["last"]]  <- suppressMessages(test_df |> mark_case(by = var_by, first = FALSE))
 
-    expect_equal(mark_df[["first"]], c(1, 0, 1, 1, 0))
-    expect_equal(mark_df[["last"]],  c(0, 1, 1, 0, 1))
+    expect_equal(test_df[["first"]], c(1, 0, 1, 1, 0))
+    expect_equal(test_df[["last"]],  c(0, 1, 1, 0, 1))
 })
 
 
 test_that("Retain value without by", {
-    retain_df <- suppressMessages(test_df |>
-        retain_value(value = var_num))
+    test_df[["retain_value"]] <- suppressMessages(test_df |>
+        retain_value(values = var_num))
 
-    expect_equal(retain_df[["retain_value"]], c(1, 1, 1, 1, 1))
+    expect_equal(test_df[["retain_value"]], c(1, 1, 1, 1, 1))
 })
 
 
 test_that("Retain value with by", {
-    retain_df <- suppressMessages(test_df |>
-          retain_value(value = var_num, by = var_by))
+    test_df[["retain_value"]] <- suppressMessages(test_df |>
+          retain_value(values = var_num, by = var_by))
 
-    expect_equal(retain_df[["retain_value"]], c(1, 1, NA, 2, 2))
-})
-
-
-test_that("Retain value and overwrite existing variable", {
-    retain_df <- suppressMessages(test_df |>
-          retain_value(value    = var_num,
-                       var_name = var_num))
-
-    expect_equal(names(test_df), names(retain_df))
-})
-
-
-test_that("Retain character value and overwrite existing variable", {
-    retain_df <- suppressMessages(test_df |>
-          retain_value(value    = var_char,
-                       var_name = var_char))
-
-    expect_equal(names(test_df), names(retain_df))
+    expect_equal(test_df[["retain_value"]], c(1, 1, NA, 2, 2))
 })
 
 
 test_that("Retain character value", {
-    retain_df <- suppressMessages(test_df |>
-          retain_value(value = var_char))
+    test_df[["retain_value"]] <- suppressMessages(test_df |>
+          retain_value(values = var_char))
 
-    expect_equal(retain_df[["retain_value"]], c("a", "a", "a", "a", "a"))
+    expect_equal(test_df[["retain_value"]], c("a", "a", "a", "a", "a"))
 })
 
 
 test_that("Retain multiple values", {
-    retain_df <- suppressMessages(test_df |>
-          retain_value(value = c(var_num, var_char),
+    test_df[, c("var_num_first", "var_char_first")] <-
+        suppressMessages(test_df |>
+          retain_value(values = c(var_num, var_char),
                        by    = c(var_sum, var_by)))
 
-    expect_equal(retain_df[["var_num_first"]],  c(1, 1, NA, 2, 2))
-    expect_equal(retain_df[["var_char_first"]], c("a", "a", NA, "b", "b"))
+    expect_equal(test_df[["var_num_first"]],  c(1, 1, NA, 2, 2))
+    expect_equal(test_df[["var_char_first"]], c("a", "a", NA, "b", "b"))
 })
 
 
 test_that("Retain sum without by", {
-    retain_df <- suppressMessages(test_df |>
-          retain_sum(value = var_sum))
+    test_df[["retain_sum"]] <- suppressMessages(test_df |>
+          retain_sum(values = var_sum))
 
-    expect_equal(retain_df[["retain_sum"]], c(5, 5, 5, 5, 5))
+    expect_equal(test_df[["retain_sum"]], c(5, 5, 5, 5, 5))
 })
 
 
 test_that("Retain sum with by", {
-    retain_df <- suppressMessages(test_df |>
-          retain_sum(value = var_sum, by = var_by))
+    test_df[["retain_sum"]] <- suppressMessages(test_df |>
+          retain_sum(values = var_sum, by = var_by))
 
-    expect_equal(retain_df[["retain_sum"]], c(2, 2, 1, 2, 2))
+    expect_equal(test_df[["retain_sum"]], c(2, 2, 1, 2, 2))
 })
 
 
 test_that("Retain multiple sums", {
-    retain_df <- suppressMessages(test_df |>
-          retain_sum(value = c(var_num, var_num2),
-                      by   = c(var_sum, var_by)))
+    test_df[, c("var_num_sum", "var_num2_sum")] <-
+        suppressMessages(test_df |>
+          retain_sum(values = c(var_num, var_num2),
+                      by    = c(var_sum, var_by)))
 
-    expect_equal(retain_df[["var_num_sum"]],  c(1, 1, NA, 2, 2))
-    expect_equal(retain_df[["var_num2_sum"]], c(3, 3, 3, 9, 9))
+    expect_equal(test_df[["var_num_sum"]],  c(1, 1, NA, 2, 2))
+    expect_equal(test_df[["var_num2_sum"]], c(3, 3, 3, 9, 9))
 })
 
 
@@ -214,18 +196,21 @@ test_that("Retain variables with all actions together doesn't break", {
 ###############################################################################
 
 test_that("Generate running number with multiple by variables", {
-    expect_message(run_df <- dummy_df |> running_number(by = c(year, sex)),
+    expect_message(dummy_df[["run_nr"]] <- dummy_df |> running_number(by = c(year, sex)),
                    " ~ NOTE: Running number is generated in current data frame order.")
 })
 
 
 test_that("Mark first and last cases with multiple by variables", {
-    expect_message(mark_df <- dummy_df |>
-                       mark_case(by = c(sex, household_id)) |>
-                       mark_case(var_name = "last", by = c(sex, household_id), first = FALSE),
+    expect_message(dummy_df[["first"]] <- dummy_df |>
+                       mark_case(by = c(sex, household_id)),
                    " ~ NOTE: Cases are marked in current data frame order.")
 
-    expect_true(all(c("first", "last") %in% names(mark_df)))
+    expect_message(dummy_df[["last"]] <- dummy_df |>
+                       mark_case(by = c(sex, household_id), first = FALSE),
+                   " ~ NOTE: Cases are marked in current data frame order.")
+
+    expect_true(all(c("first", "last") %in% names(dummy_df)))
 })
 
 ###############################################################################
@@ -233,14 +218,14 @@ test_that("Mark first and last cases with multiple by variables", {
 ###############################################################################
 
 test_that("Retain value without providing a value", {
-    expect_message(retain_df <- dummy_df |>
+    expect_message(dummy_df[["retain_value"]] <- dummy_df |>
                        retain_value(),
                    " X ERROR: Must provide <values> to retain. Retain will be aborted.")
 })
 
 
 test_that("Retain sum without providing sum_of", {
-    expect_message(retain_df <- dummy_df |>
+    expect_message(dummy_df[["retain_sum"]] <- dummy_df |>
                        retain_sum(),
                    " X ERROR: Must provide a <values> to retain. Retain will be aborted.")
 })

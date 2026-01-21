@@ -17,8 +17,9 @@
 
 * `frequencies()`: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new `means` parameter. (17.01.2026)
 * `frequencies()`: When using multiple by variables with excel `output`, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)
-* `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
+* `mark_case()`: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
 * `recode()`: Removed `new_var` parameter. Recode now doesn't return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing `my_data <- my_data |> recode("age_group", age = age.)`, the syntax is now more natural like this `my_data[["age_group"]] <- my_data |> recode(age = age.)`. (21.01.2026)
+* `running_number()`, `mark_case()`, `retain_value()`, `retain_sum()`: Removed `new_var` parameter. Functions now don't return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. `my_data <- my_data |> running_number("running")`, the syntax is now more natural like this `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
 
 ### Fixed
 
@@ -139,7 +140,7 @@ CRAN release on 13.01.2026
 * `discrete_format()` and `interval_format()`: Labels will now be converted to numeric if they are all numeric. (02.01.2026)
 * In general: Added more messages to display what functions do. (03.01.2026)
 * `retain_value()`, `retain_sum()`: `value` parameter is now called `values`. (10.01.2026)
-* `mark_cases()`, `retain_value()`, `retain_sum()`: Adjusted unit tests to something that actually makes sense. (10.01.2026)
+* `mark_case()`, `retain_value()`, `retain_sum()`: Adjusted unit tests to something that actually makes sense. (10.01.2026)
 * In general: Added some unit tests on file saving and retrieving. (10.01.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Updated examples to show how a file is saved via the style element. (13.01.2026)
 

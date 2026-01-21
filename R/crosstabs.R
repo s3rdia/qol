@@ -330,7 +330,7 @@ crosstabs <- function(data_frame,
         # running numbers instead of the values or labels.
         run_nr_df        <- data.table::data.table(column_names)
         names(run_nr_df) <- columns
-        run_nr_df        <- run_nr_df |> running_number()
+        run_nr_df[["run_nr"]] <- run_nr_df |> running_number()
 
         cross_tab <- cross_tab |>
             collapse::join(run_nr_df,
@@ -372,7 +372,7 @@ crosstabs <- function(data_frame,
         # running numbers instead of the values or labels.
         run_nr_df        <- data.table::data.table(column_names)
         names(run_nr_df) <- columns
-        run_nr_df        <- run_nr_df |> running_number()
+        run_nr_df[["run_nr"]] <- run_nr_df |> running_number()
 
         cross_tab <- cross_tab |>
             collapse::join(run_nr_df,

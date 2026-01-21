@@ -52,7 +52,13 @@ chosen freely.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">concat</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span>, padding_char <span class="op">=</span> <span class="cn">NULL</span>, padding_length <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">concat</span><span class="op">(</span></span>
+<span>  <span class="va">data_frame</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  padding_char <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  padding_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  padding_right <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -73,6 +79,11 @@ chosen freely.</p>
 
 <dt id="arg-padding-length">padding_length<a class="anchor" aria-label="anchor" href="#arg-padding-length"></a></dt>
 <dd><p>A numeric vector containing the individual padding length per variable.</p></dd>
+
+
+<dt id="arg-padding-right">padding_right<a class="anchor" aria-label="anchor" href="#arg-padding-right"></a></dt>
+<dd><p>FALSE by default. If TRUE insert padding characters on the right side
+instead of the left side.</p></dd>
 
 </dl></div>
     <div class="section level2">

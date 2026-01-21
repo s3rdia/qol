@@ -9,31 +9,25 @@
 \alias{retain_variables}
 \title{Different Facets of Retain}
 \usage{
-running_number(data_frame, var_name = "run_nr", by = NULL)
+running_number(data_frame, by = NULL)
 
-mark_case(data_frame, var_name = "first", by = NULL, first = TRUE)
+mark_case(data_frame, by = NULL, first = TRUE)
 
-retain_value(data_frame, values, var_name = "retain_value", by = NULL)
+retain_value(data_frame, values, by = NULL)
 
-retain_sum(data_frame, values, var_name = "retain_sum", by = NULL)
+retain_sum(data_frame, values, by = NULL)
 
 retain_variables(data_frame, ..., order_last = FALSE)
 }
 \arguments{
 \item{data_frame}{The data frame in which to compute retained variables.}
 
-\item{var_name}{The name of the newly created variable.
-
-\link{retain_sum}: One or multiple variables of which the sum should be retained.}
-
 \item{by}{By group in which to compute the retained variable.}
 
 \item{first}{\code{\link[=mark_case]{mark_case()}}: If TRUE marks the first case within a group, otherwise
 the last case.}
 
-\item{values}{\link{retain_value}: One or multiple variables of which a value should be retained.
-
-\link{retain_sum}: One or multiple variables of which their sum should be retained.}
+\item{values}{One or multiple variables of which a value should be retained.}
 
 \item{...}{\code{\link[=retain_variables]{retain_variables()}}: Put in single variable names or variable ranges
 (var_name1:var_name10) which should be ordered to the front or back of the data frame.
@@ -44,13 +38,13 @@ to the data frame.}
 variables at the end of the data frame instead of the beginning.}
 }
 \value{
-\code{\link[=running_number]{running_number()}}: Returns the data frame with a new variable containing a running number.
+\code{\link[=running_number]{running_number()}}: Returns a vector containing a running number.
 
-\code{\link[=mark_case]{mark_case()}}: Returns the data frame with a new variable marking first or last cases.
+\code{\link[=mark_case]{mark_case()}}: Returns a vector containing a the marking for first or last cases.
 
-\code{\link[=retain_value]{retain_value()}}: Return the data frame with a new variable containing a retained value.
+\code{\link[=retain_value]{retain_value()}}: Returns a vector containing a retained value.
 
-\code{\link[=retain_sum]{retain_sum()}}: Return the data frame with a new variable containing a retained sum.
+\code{\link[=retain_sum]{retain_sum()}}: Returns a vector containing a retained sum.
 
 \code{\link[=retain_sum]{retain_sum()}}: Return the data frame with a new variable containing a retained sum.
 }
@@ -97,28 +91,31 @@ a value from the first person in a household to all other persons of the same ho
 my_data <- dummy_data(1000)
 
 # Get row numbers
-my_data <- my_data |> running_number()
-my_data <- my_data |> running_number("row_number")
+my_data[["run_nr"]] <- my_data |> running_number()
 
 # Running number per variable expression
-my_data <- my_data |> running_number(by = year)
+my_data[["run_nr_by"]] <- my_data |> running_number(by = year)
 
 # Mark first and last cases
-my_data <- my_data |>
-    mark_case(by = household_id) |>
-    mark_case(var_name = "last", by = household_id, first = FALSE)
+my_data[["first"]] <- my_data |> mark_case(by = household_id)
+my_data[["last"]]  <- my_data |> mark_case(by    = household_id,
+                                           first = FALSE)
 
-# Retain first value inside a group
-my_data <- my_data |>
-    retain_value(var_name = c("household_weight", "household_icome"),
-                 value    = c(weight, income),
-                 by       = c(state, household_id))
+# Retain first value without grouping
+my_data[["first_weight"]] <- my_data |> retain_value(value = weight)
 
-# Retain sum inside a group
-my_data <- my_data |>
-    retain_sum(var_name = c("weight_hh_sum", "icome_hh_sum"),
-               values    = c(weight, income),
-               by       = c(state, household_id))
+# Retain first value inside a group for multiple variables
+my_data[, c("household_weight", "household_icome")] <- my_data |>
+    retain_value(values = c(weight, income),
+                 by     = c(state, household_id))
+
+# Retain sum without grouping
+my_data[["total_sum"]] <- my_data |> retain_sum(values = weight)
+
+# Retain sum inside a group for multiple variables
+my_data[, c("weight_sum", "income_sum")] <- my_data |>
+    retain_sum(values = c(weight, income),
+                 by   = c(state, household_id))
 
 # Retain columns inside data frame, which orders them to the front
 my_data <- my_data |> retain_variables(age, sex, income)

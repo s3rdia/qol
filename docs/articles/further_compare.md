@@ -178,7 +178,7 @@ AgeGroup. <- discrete_format(
     "55 to under 65" = 55:64,
     "65 and older"   = 65:99)
 
-MyData_Recode <- MyData |> recode("AgeGr", Age = "AgeGroup.")
+MyData[["AgeGr"]] <- MyData |> recode(Age = "AgeGroup.")
 ```
 
 ## The World Of Retain
@@ -197,7 +197,7 @@ Data Work.MyData_Retain;
 
         Retain RunningNr 0 CumulativeIncome 0;
 
-        RunningNr = RunningNr + 1;
+        RunningNr        = RunningNr + 1;
         CumulativeIncome = CumulativeIncome + Income;
 
 Run;
@@ -206,9 +206,8 @@ Run;
 qol doesn’t mimic the behavior of ‘Retain’, but rather the result:
 
 ``` r
-MyData_Retain <- MyData |>
-    running_number() |> 
-    retain_sum(var_name = "CumulativeIncome", value = income)
+MyData[["run_nr"]]           <- MyData |> running_number() |> 
+MyData[["CumulativeIncome"]] <- MyData |> retain_sum(values = income)
 ```
 
 In it’s simplest form it can remember a value from the first observation
@@ -228,7 +227,7 @@ Run;
 qol does it like this:
 
 ``` r
-MyData_Running <- MyData |> retain_value(var_name = "MyValue", value = income)
+MyData[["MyValue"]] <- MyData |> retain_value(values = income)
 ```
 
 Not directly ‘Retain’ related, but also useful: If an observation knows
@@ -250,9 +249,8 @@ Run;
 qol creates this effect like this:
 
 ``` r
-MyData_FirstLast <- MyData |>
-    mark_case(var_name = "FirstCase", by = AgeGr) |> 
-    mark_case(var_name = "LastCase",  by = AgeGr, first = FALSE)
+MyData[["FirstCase"]] <- MyData |> mark_case(by = AgeGr)
+MyData[["LastCase"]]  <- MyData |> mark_case(by = AgeGr, first = FALSE)
 ```
 
 All of these functions work on the whole data frame as well as on

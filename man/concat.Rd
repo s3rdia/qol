@@ -4,7 +4,13 @@
 \alias{concat}
 \title{Concatenate Multiple Variables With Padding}
 \usage{
-concat(data_frame, ..., padding_char = NULL, padding_length = NULL)
+concat(
+  data_frame,
+  ...,
+  padding_char = NULL,
+  padding_length = NULL,
+  padding_right = FALSE
+)
 }
 \arguments{
 \item{data_frame}{A data frame which contains the the variables to concatenate.}
@@ -14,6 +20,9 @@ concat(data_frame, ..., padding_char = NULL, padding_length = NULL)
 \item{padding_char}{A single character which will be used to fill up the empty places.}
 
 \item{padding_length}{A numeric vector containing the individual padding length per variable.}
+
+\item{padding_right}{FALSE by default. If TRUE insert padding characters on the right side
+instead of the left side.}
 }
 \value{
 Returns a character vector.

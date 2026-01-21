@@ -11,6 +11,8 @@
 #' @param ... The names of the variables to concatenate.
 #' @param padding_char A single character which will be used to fill up the empty places.
 #' @param padding_length A numeric vector containing the individual padding length per variable.
+#' @param padding_right FALSE by default. If TRUE insert padding characters on the right side
+#' instead of the left side.
 #'
 #' @return
 #' Returns a character vector.
@@ -43,7 +45,8 @@
 concat <- function(data_frame,
                    ...,
                    padding_char   = NULL,
-                   padding_length = NULL){
+                   padding_length = NULL,
+                   padding_right  = FALSE){
     variables <- dots_to_char(...)
 
     # If no padding is defined just concatenate provided variables as they are
@@ -114,7 +117,12 @@ concat <- function(data_frame,
             pad_per_observation <- pmax(padding_length - collapse::vlengths(variable), 0)
 
             # Concatenate padding and variable values
-            paste0(strrep(padding_char, pad_per_observation), variable)
+            if (!padding_right){
+                paste0(strrep(padding_char, pad_per_observation), variable)
+            }
+            else{
+                paste0(variable, strrep(padding_char, pad_per_observation))
+            }
         },
         data_frame[variables],
         padding_length
