@@ -7,10 +7,12 @@
 - [`expand_formats()`](https://s3rdia.github.io/qol/reference/expand_formats.md):
   Generates a data frame which contains all nested combinations of the
   provided format labels. (15.01.2026)
-- Global style options:
-  - [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
-    [`get_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md):
-    Additional global setters and getters. (15.01.2026)
+- [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+  [`get_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md):
+  Additional global setters and getters. (15.01.2026)
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md):
+  Concatenate multiple variables inside a data frame into a new variable
+  with automatic or individual padding. (21.01.2026)
 
 #### New functionality
 
@@ -47,6 +49,13 @@
   (17.01.2026)
 - `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE.
   (18.01.2026)
+- [`recode()`](https://s3rdia.github.io/qol/reference/recode.md):
+  Removed `new_var` parameter. Recode now doesn’t return the whole data
+  frame anymore, but only the recoded variable as a vector. So instead
+  of writing `my_data <- my_data |> recode("age_group", age = age.)`,
+  the syntax is now more natural like this
+  `my_data[["age_group"]] <- my_data |> recode(age = age.)`.
+  (21.01.2026)
 
 #### Fixed
 

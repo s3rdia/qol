@@ -5,14 +5,12 @@
 \alias{recode_multi}
 \title{Recode New Variables With Formats}
 \usage{
-recode(data_frame, new_var, ...)
+recode(data_frame, ...)
 
 recode_multi(data_frame, ...)
 }
 \arguments{
 \item{data_frame}{A data frame which contains the the original variables to recode.}
-
-\item{new_var}{The name of the newly created and recoded variable.}
 
 \item{...}{\code{\link[=recode]{recode()}} Pass in the original variable name that should be recoded
 along with the corresponding format container in the form: variable = format.
@@ -24,7 +22,9 @@ afterwards perform operations with other packages, you can make use of this
 principle with this function.}
 }
 \value{
-Returns a data frame with the newly recoded variable.
+\code{\link[=recode]{recode()}}: Returns a vector with recoded values.
+
+\code{\link[=recode_multi]{recode_multi()}}: Returns a data frame with the newly recoded variable.
 }
 \description{
 Instead of writing multiple if-clauses to recode values into a new variable,
@@ -52,10 +52,10 @@ age. <- discrete_format(
 my_data <- dummy_data(1000)
 
 # Call function
-my_data <- my_data |> recode("age_group1", age = age.)
+my_data[["age_group1"]] <- my_data |> recode(age = age.)
 
 # Formats can also be passed as characters
-my_data <- my_data |> recode("age_group2", age = "age.")
+my_data[["age_group2"]] <- my_data |> recode(age = "age.")
 
 # Multilabel recode
 sex. <- discrete_format(
@@ -70,6 +70,10 @@ income. <- interval_format(
     "1000 to under 2000" = 1000:1999,
     "2000 and more"      = 2000:99999)
 
+# recode_multi() can not only apply multiple recodings, but it can also
+# apply multilabels.
+# NOTE: Recoding will always be in place. When applying multilabels the
+#       result data frame will have more observations than before.
 multi_data <- my_data |> recode_multi(sex = sex., income = income.)
 
 }
@@ -77,5 +81,5 @@ multi_data <- my_data |> recode_multi(sex = sex., income = income.)
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
 
 Functions that also make use of formats: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},
-\code{\link[=any_table]{any_table()}}.
+\code{\link[=any_table]{any_table()}}, \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}
 }

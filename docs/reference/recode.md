@@ -6,7 +6,7 @@ variable, you can use formats to recode a variable into a new one.
 ## Usage
 
 ``` r
-recode(data_frame, new_var, ...)
+recode(data_frame, ...)
 
 recode_multi(data_frame, ...)
 ```
@@ -16,10 +16,6 @@ recode_multi(data_frame, ...)
 - data_frame:
 
   A data frame which contains the the original variables to recode.
-
-- new_var:
-
-  The name of the newly created and recoded variable.
 
 - ...:
 
@@ -35,7 +31,9 @@ recode_multi(data_frame, ...)
 
 ## Value
 
-Returns a data frame with the newly recoded variable.
+`recode()`: Returns a vector with recoded values.
+
+`recode_multi()`: Returns a data frame with the newly recoded variable.
 
 ## Details
 
@@ -58,7 +56,10 @@ and
 Functions that also make use of formats:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
-[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md).
+[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md),
+[`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md)
 
 ## Examples
 
@@ -75,10 +76,10 @@ age. <- discrete_format(
 my_data <- dummy_data(1000)
 
 # Call function
-my_data <- my_data |> recode("age_group1", age = age.)
+my_data[["age_group1"]] <- my_data |> recode(age = age.)
 
 # Formats can also be passed as characters
-my_data <- my_data |> recode("age_group2", age = "age.")
+my_data[["age_group2"]] <- my_data |> recode(age = "age.")
 
 # Multilabel recode
 sex. <- discrete_format(
@@ -93,5 +94,9 @@ income. <- interval_format(
     "1000 to under 2000" = 1000:1999,
     "2000 and more"      = 2000:99999)
 
+# recode_multi() can not only apply multiple recodings, but it can also
+# apply multilabels.
+# NOTE: Recoding will always be in place. When applying multilabels the
+#       result data frame will have more observations than before.
 multi_data <- my_data |> recode_multi(sex = sex., income = income.)
 ```

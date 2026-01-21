@@ -156,7 +156,8 @@ sort_plus <- function(data_frame,
     if (!is.null(formats)){
         message("\n > Preparing formats")
 
-        extended_by <- c()
+        extended_by    <- c()
+        extended_index <- 0
 
         for (variable in names(formats)){
             if (is_multilabel(formats, variable)){
@@ -181,16 +182,11 @@ sort_plus <- function(data_frame,
             # would take it as "variable" instead of e.g. "age". Therefore a named list
             # with all the needed elements has to be constructed beforehand.
             new_column    <- paste0(".sort_", variable)
-            argument_list <- list(data_frame, new_column)
+            argument_list <- list(data_frame)
             argument_list[[variable]] <- formats[[variable]]
 
-            # To prevent errors when running examples
-            if (length(argument_list) < 3){
-                next
-            }
-
             # Now use do.call to run e.g.: recode(data_frame, ".sort_age", age = formats[["age"]])
-            data_frame <- suppressMessages(do.call(recode, argument_list))
+            data_frame[new_column] <- suppressMessages(do.call(recode, argument_list))
 
             # Format new sorting variable as factor to sort in provided format order
             # Extract the number of labels from variable
@@ -205,10 +201,17 @@ sort_plus <- function(data_frame,
                 levels  = label_levels,
                 ordered = TRUE)
 
-            extended_by <- c(extended_by, new_column)
+            extended_by    <- c(extended_by, new_column)
+            extended_index <- extended_index + 1
         }
 
+        # Add extended variables before original by variables to sort them first
         by <- c(extended_by, by)
+
+        # Take order from original by variables and pass them to the extended variables as well
+        if (extended_index > 0){
+            order <- c(order[1:extended_index], order)
+        }
     }
 
     if (!is.null(preserve)){

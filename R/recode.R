@@ -7,7 +7,6 @@
 #' you can use formats to recode a variable into a new one.
 #'
 #' @param data_frame A data frame which contains the the original variables to recode.
-#' @param new_var The name of the newly created and recoded variable.
 #' @param ... [recode()] Pass in the original variable name that should be recoded
 #' along with the corresponding format container in the form: variable = format.
 #'
@@ -27,13 +26,13 @@
 #' if_else statements.
 #'
 #' @return
-#' Returns a data frame with the newly recoded variable.
+#' [recode()]: Returns a vector with recoded values.
 #'
 #' @seealso
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that also make use of formats: [frequencies()], [crosstabs()],
-#' [any_table()].
+#' [any_table()], [summarise_plus()], [transpose_plus()], [sort_plus()]
 #'
 #' @examples
 #' # Example formats
@@ -48,10 +47,10 @@
 #' my_data <- dummy_data(1000)
 #'
 #' # Call function
-#' my_data <- my_data |> recode("age_group1", age = age.)
+#' my_data[["age_group1"]] <- my_data |> recode(age = age.)
 #'
 #' # Formats can also be passed as characters
-#' my_data <- my_data |> recode("age_group2", age = "age.")
+#' my_data[["age_group2"]] <- my_data |> recode(age = "age.")
 #'
 #' # Multilabel recode
 #' sex. <- discrete_format(
@@ -66,13 +65,16 @@
 #'     "1000 to under 2000" = 1000:1999,
 #'     "2000 and more"      = 2000:99999)
 #'
+#' # recode_multi() can not only apply multiple recodings, but it can also
+#' # apply multilabels.
+#' # NOTE: Recoding will always be in place. When applying multilabels the
+#' #       result data frame will have more observations than before.
 #' multi_data <- my_data |> recode_multi(sex = sex., income = income.)
 #'
 #' @rdname recode
 #'
 #' @export
 recode <- function(data_frame,
-                   new_var,
                    ...){
     # Measure the time
     start_time <- Sys.time()
@@ -81,16 +83,19 @@ recode <- function(data_frame,
     # Early evaluations
     ###########################################################################
 
-    # Convert to character
-    new_var <- gsub("\"", "", deparse(substitute(new_var)))
-
-    if (new_var %in% names(data_frame)){
-        message(" X ERROR: Variable '", new_var, "' already exists. Recoding aborted, variable won't be overwritten.")
-        return(data_frame)
-    }
-
     # Translate ... into separately controllable arguments
-    formats <- list(...)
+    formats <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e) {
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(formats)){
+        message('X ERROR: Unknown object found. Recode will be aborted.')
+        return(invisible(NULL))
+    }
 
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){
@@ -107,12 +112,12 @@ recode <- function(data_frame,
 
     if (!current_var %in% names(data_frame)){
         message(" X ERROR: Variable '", current_var, "' not found in the input data frame. No format will be applied.")
-        return(data_frame)
+        return(invisible(NULL))
     }
 
     if (!data.table::is.data.table(format_df)){
         message(" X ERROR: The format for '", current_var, "' must be a data table. No format will be applied.")
-        return(data_frame)
+        return(invisible(NULL))
     }
 
     if (names(format_df)[1] == "value" && collapse::any_duplicated(format_df[["value"]])){
@@ -131,6 +136,9 @@ recode <- function(data_frame,
     # Recode
     ###########################################################################
 
+    # Only keep the variable to be recoded
+    data_frame <- data_frame |> keep(current_var)
+
     # Look up variable names in format data frame to check whether it is an
     # interval or discrete format
     interval_variables <- c("from", "to")
@@ -143,8 +151,9 @@ recode <- function(data_frame,
     if (identical(interval_variables, actual_variables)){
         # Remove NA values
         if (any(is.na(data_frame[[current_var]]))){
-            message(" ! WARNING: Variable '", current_var, "' has NA values. Interval merge only works without NA values.\n",
-                    "            NA values will be removed.")
+            message(" X ERROR: Variable '", current_var, "' has NA values. Interval merge only works without NA values.\n",
+                    "          NA values have to be removed before calling recode. Recode will be aborted.")
+            return(invisible(NULL))
         }
 
         data_frame <- data_frame |>
@@ -163,20 +172,13 @@ recode <- function(data_frame,
         temp_dt   <- data.table::as.data.table(data_frame)
         format_dt <- data.table::copy(format_df)
 
-        data.table::setkey(temp_dt, qol_from, qol_to)
         data.table::setkey(format_dt, from, to)
 
         # Merge data frame with format by range
         data_frame <- data.table::foverlaps(temp_dt, format_dt,
                                             by.x = c("qol_from", "qol_to"),
                                             by.y = c("from", "to")) |>
-            collapse::frename(stats::setNames("label", new_var)) |>
-            data.table::setorder(qol_ID) |>
-            unique(by = "qol_ID") |>
-            dropp("qol_ID", "qol_from", "qol_to", "from", "to")
-
-        data_frame <- data_frame |>
-            data.table::setcolorder(new_var, after = ncol(data_frame))
+                                  keep("label")
 
         if (collapse::fnrow(data_frame) > original_rows){
             message(" ! WARNING: The format for '", current_var, "' is a multilabel. For interval formats this leads to\n",
@@ -199,16 +201,19 @@ recode <- function(data_frame,
                            on = current_var,
                            how = "left",
                            verbose = FALSE) |>
-            collapse::frename(stats::setNames("label", new_var))
+            keep("label")
     }
 
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("- - - 'recode' execution time: ", end_time, " seconds")
 
-    data_frame
+    as.vector(data_frame)[[1]]
 }
 
 
+#' @return
+#' [recode_multi()]: Returns a data frame with the newly recoded variable.
+#'
 #' @rdname recode
 #'
 #' @export

@@ -68,7 +68,7 @@ reference:
   - add_extension
   - remove_stat_extension
   - rename_multi
-  - first_row_as_names 
+  - first_row_as_names
 - title: Retaining
   contents:
   - running_number
@@ -76,6 +76,9 @@ reference:
   - retain_value
   - retain_sum
   - retain_variables
+- title: Character Manipulation
+  contents:
+  - concat
 - title: Generate Dummy Data
   contents:
   - dummy_data

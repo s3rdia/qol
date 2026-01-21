@@ -3,8 +3,8 @@
 ### New functions
 
 * `expand_formats()`: Generates a data frame which contains all nested combinations of the provided format labels. (15.01.2026)
-* Global style options:
-	* `set_print_miss()`, `get_print_miss()`: Additional global setters and getters. (15.01.2026)
+* `set_print_miss()`, `get_print_miss()`: Additional global setters and getters. (15.01.2026)
+* `concat()`: Concatenate multiple variables inside a data frame into a new variable with automatic or individual padding. (21.01.2026)
 
 ### New functionality
 
@@ -18,6 +18,7 @@
 * `frequencies()`: Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new `means` parameter. (17.01.2026)
 * `frequencies()`: When using multiple by variables with excel `output`, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)
 * `mark_cases()`: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
+* `recode()`: Removed `new_var` parameter. Recode now doesn't return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing `my_data <- my_data |> recode("age_group", age = age.)`, the syntax is now more natural like this `my_data[["age_group"]] <- my_data |> recode(age = age.)`. (21.01.2026)
 
 ### Fixed
 

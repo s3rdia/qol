@@ -4,8 +4,8 @@ Last CRAN release was on 13.01.2026.
 New functions
 
 * expand_formats(): Generates a data frame which contains all nested combinations of the provided format labels.
-* Global style options:
-	* set_print_miss(), get_print_miss(): Additional global setters and getters.
+* set_print_miss(), get_print_miss(): Additional global setters and getters.
+* concat(): Concatenate multiple variables inside a data frame into a new variable with automatic or individual padding.
 
 New functionality
 
@@ -19,6 +19,7 @@ Changed functionality
 * frequencies(): Until now the function always printed a means and a frequencies table as default. Now it only prints a frequencies table as default to get the main results as fast as possible on screen. The means table can be activated again with the new means parameter.
 * frequencies(): When using multiple by variables with excel output, worksheets are now ordered in provided variable order instead of alternating.
 * mark_cases(): Now outputs a variable with 1/0 instead of TRUE/FALSE.
+* recode(): Removed new_var parameter. Recode now doesn't return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing my_data <- my_data |> recode("age_group", age = age.), the syntax is now more natural like this my_data[["age_group"]] <- my_data |> recode(age = age.).
 
 Fixed
 

@@ -46,7 +46,7 @@ you can use formats to recode a variable into a new one.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recode</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">new_var</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recode</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">recode_multi</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -57,10 +57,6 @@ you can use formats to recode a variable into a new one.</p>
 
 <dl><dt id="arg-data-frame">data_frame<a class="anchor" aria-label="anchor" href="#arg-data-frame"></a></dt>
 <dd><p>A data frame which contains the the original variables to recode.</p></dd>
-
-
-<dt id="arg-new-var">new_var<a class="anchor" aria-label="anchor" href="#arg-new-var"></a></dt>
-<dd><p>The name of the newly created and recoded variable.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -75,7 +71,8 @@ principle with this function.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Returns a data frame with the newly recoded variable.</p>
+    <p><code>recode()</code>: Returns a vector with recoded values.</p>
+<p><code>recode_multi()</code>: Returns a data frame with the newly recoded variable.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -90,7 +87,7 @@ if_else statements.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Creating formats: <code><a href="formats.html">discrete_format()</a></code> and <code><a href="formats.html">interval_format()</a></code>.</p>
 <p>Functions that also make use of formats: <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="crosstabs.html">crosstabs()</a></code>,
-<code><a href="any_table.html">any_table()</a></code>.</p></div>
+<code><a href="any_table.html">any_table()</a></code>, <code><a href="summarise_plus.html">summarise_plus()</a></code>, <code><a href="transpose_plus.html">transpose_plus()</a></code>, <code><a href="sort_plus.html">sort_plus()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -107,10 +104,10 @@ if_else statements.</p>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Call function</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span><span class="st">"age_group1"</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group1"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Formats can also be passed as characters</span></span>
-<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span><span class="st">"age_group2"</span>, age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group2"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span>age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Multilabel recode</span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
@@ -125,6 +122,10 @@ if_else statements.</p>
 <span>    <span class="st">"1000 to under 2000"</span> <span class="op">=</span> <span class="fl">1000</span><span class="op">:</span><span class="fl">1999</span>,</span>
 <span>    <span class="st">"2000 and more"</span>      <span class="op">=</span> <span class="fl">2000</span><span class="op">:</span><span class="fl">99999</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># recode_multi() can not only apply multiple recodings, but it can also</span></span>
+<span><span class="co"># apply multilabels.</span></span>
+<span><span class="co"># NOTE: Recoding will always be in place. When applying multilabels the</span></span>
+<span><span class="co">#       result data frame will have more observations than before.</span></span>
 <span><span class="va">multi_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode_multi</span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, income <span class="op">=</span> <span class="va">income.</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>

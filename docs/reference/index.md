@@ -115,6 +115,11 @@
   [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md)
   : Different Facets of Retain
 
+## Character Manipulation
+
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md) :
+  Concatenate Multiple Variables With Padding
+
 ## Generate Dummy Data
 
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md)
