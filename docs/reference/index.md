@@ -119,6 +119,8 @@
 
 - [`concat()`](https://s3rdia.github.io/qol/reference/concat.md) :
   Concatenate Multiple Variables With Padding
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md)
+  : Retrieve A Substring From A Character
 
 ## Generate Dummy Data
 

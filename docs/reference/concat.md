@@ -48,7 +48,8 @@ Returns a character vector.
 
 ## See also
 
-Other character manipulating functions: Coming soon...
+Other character manipulating functions:
+[`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md)
 
 ## Examples
 

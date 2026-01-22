@@ -18,7 +18,7 @@
 #' Returns a character vector.
 #'
 #' @seealso
-#' Other character manipulating functions: Coming soon...
+#' Other character manipulating functions: [sub_string()]
 #'
 #' @examples
 #' # Example data frame
@@ -130,4 +130,137 @@ concat <- function(data_frame,
 
     # Concatenate all padded variables together to one single variable
     do.call(paste0, padded_variables)
+}
+
+
+#' Retrieve A Substring From A Character
+#'
+#' @description
+#' [sub_string()] can extract parts of a character from the left side, right side
+#' or from the middle. It is also able to start or end at specific letter sequences
+#' instead of positions.
+#'
+#' @param data_frame A data frame which contains the the variables to concatenate.
+#' @param variable A character variable to extract parts from.
+#' @param from The names of the variables to concatenate.
+#' @param to A single character which will be used to fill up the empty places.
+#' @param case_sensitive TRUE by default. When a character expression is passed as
+#' from or to it makes a difference whether a letter is written in upper or lower case.
+#' Pass FALSE to handle upper and lower case equaly.
+#'
+#' @return
+#' Returns parts of a character vector.
+#'
+#' @seealso
+#' Other character manipulating functions: [concat()]
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
+#' # Extract text from the left
+#' my_data[["left"]] <- my_data |> sub_string(education, to = 2)
+#'
+#' # Extract text from the right
+#' my_data[["right"]] <- my_data |> sub_string(education, from = 2)
+#'
+#' # Extract text from the middle
+#' my_data[["middle"]] <- my_data |> sub_string(education, from = 2, to = 3)
+#'
+#' # Find text and extract from the left
+#' my_data[["left2"]] <- my_data |> sub_string(education, to = "l")
+#'
+#' # Find text and extract from the right
+#' my_data[["right2"]] <- my_data |> sub_string(education, from = "l")
+#'
+#' # Find text and extract from the middle
+#' my_data[["middle2"]] <- my_data |> sub_string(education, from = "i", to = "l")
+#'
+#' @export
+sub_string <- function(data_frame,
+                       variable,
+                       from  = NULL,
+                       to    = NULL,
+                       case_sensitive = TRUE){
+    variable <- get_origin_as_char(variable, substitute(variable))
+
+    # Adjust variable
+    if (length(variable) > 1){
+        message(" ! WARNING: <Variable> may only be of length one. The first Element will be used.")
+
+        variable <- variable[[1]]
+    }
+
+    # Make sure that the variable provided is part of the data frame
+    variable <- data_frame |> part_of_df(variable, check_only = TRUE)
+
+    if (is.list(variable)){
+        message(" X ERROR: The provided <variable> '", variable[[1]], "' is not part of\n",
+                "          the data frame. Substring will be aborted.")
+        return(invisible(NULL))
+    }
+
+    if (!is.character(data_frame[[variable]])){
+        message(" X ERROR: <Variable> type must be character. Substring will be aborted.")
+        return(invisible(NULL))
+    }
+
+    if (is.null(from) && is.null(to)){
+        message(" X ERROR: Neither <from> nor <to> is provided. Substring will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Adjust from and length
+    if (length(to) > 1){
+        message(" ! WARNING: <To> may only be of length one. The first Element will be used.")
+
+        to <- to[[1]]
+    }
+
+    if (length(from) > 1){
+        message(" ! WARNING: <From> may only be of length one. The first Element will be used.")
+
+        from <- from[[1]]
+    }
+
+    variable_vector <- data_frame[[variable]]
+
+    # If to is a character, extract the text up until the first match of to
+    if (is.character(to)){
+        # If no match is found, to is adjusted to retrieve the whole text
+        if (case_sensitive){
+            to <- regexpr(to, variable_vector)
+        }
+        else{
+            to <- regexpr(tolower(to), tolower(variable_vector))
+        }
+        to <- data.table::fifelse(to == -1, 9999, to)
+    }
+
+    # If from is a character, extract the text up until the first match of from
+    if (is.character(from)){
+        # If no match is found, from is adjusted to retrieve the whole text
+        if (case_sensitive){
+            from <- regexpr(from, variable_vector)
+        }
+        else{
+            from <- regexpr(tolower(from), tolower(variable_vector))
+        }
+        from <- data.table::fifelse(from == -1, 1, from)
+    }
+
+    # In case no from position is given, substring starts at position 1 up to to-position
+    if (is.null(from)){
+        sub_variable <- substring(variable_vector, 1, to)
+    }
+    # In case no to position is given, substring starts at from and goes to the end
+    else if (is.null(to)){
+        sub_variable <- substring(variable_vector, from, nchar(variable_vector))
+    }
+    # In case both positions are given, extract text in between these two points
+    else{
+        sub_variable <- substring(variable_vector, from, to)
+    }
+
+    sub_variable
 }

@@ -79,6 +79,7 @@ reference:
 - title: Character Manipulation
   contents:
   - concat
+  - sub_string
 - title: Generate Dummy Data
   contents:
   - dummy_data

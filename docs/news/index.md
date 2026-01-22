@@ -13,6 +13,9 @@
 - [`concat()`](https://s3rdia.github.io/qol/reference/concat.md):
   Concatenate multiple variables inside a data frame into a new variable
   with automatic or individual padding. (21.01.2026)
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
+  Can extract text from left, right or middle and is able to look up
+  characters as start or end position. (22.01.2026)
 
 #### New functionality
 
@@ -60,9 +63,9 @@
   [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
-  Removed `new_var` parameter. Functions now don’t return the whole data
-  frame anymore, but only the retained variable as a vector or list of
-  vectors. So instead of writing
+  Removed `var_name` parameter. Functions now don’t return the whole
+  data frame anymore, but only the retained variable as a vector or list
+  of vectors. So instead of writing
   e.g. `my_data <- my_data |> running_number("running")`, the syntax is
   now more natural like this
   `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)

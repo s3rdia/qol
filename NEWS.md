@@ -5,6 +5,7 @@
 * `expand_formats()`: Generates a data frame which contains all nested combinations of the provided format labels. (15.01.2026)
 * `set_print_miss()`, `get_print_miss()`: Additional global setters and getters. (15.01.2026)
 * `concat()`: Concatenate multiple variables inside a data frame into a new variable with automatic or individual padding. (21.01.2026)
+* `sub_string()`: Can extract text from left, right or middle and is able to look up characters as start or end position. (22.01.2026)
 
 ### New functionality
 
@@ -19,7 +20,7 @@
 * `frequencies()`: When using multiple by variables with excel `output`, worksheets are now ordered in provided variable order instead of alternating. (17.01.2026)
 * `mark_case()`: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
 * `recode()`: Removed `new_var` parameter. Recode now doesn't return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing `my_data <- my_data |> recode("age_group", age = age.)`, the syntax is now more natural like this `my_data[["age_group"]] <- my_data |> recode(age = age.)`. (21.01.2026)
-* `running_number()`, `mark_case()`, `retain_value()`, `retain_sum()`: Removed `new_var` parameter. Functions now don't return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. `my_data <- my_data |> running_number("running")`, the syntax is now more natural like this `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
+* `running_number()`, `mark_case()`, `retain_value()`, `retain_sum()`: Removed `var_name` parameter. Functions now don't return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. `my_data <- my_data |> running_number("running")`, the syntax is now more natural like this `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
 
 ### Fixed
 
