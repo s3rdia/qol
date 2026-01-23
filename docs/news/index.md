@@ -69,6 +69,13 @@
   e.g. `my_data <- my_data |> running_number("running")`, the syntax is
   now more natural like this
   `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When using pre summarised data, the error handling is now less
+  restrict. Instead of aborting if the TYPE variable is missing, it is
+  now auto generated. Additionally if statistic extensions are missing
+  to the value variable names, the function now doesn’t abort, instead
+  extensions are now added according to the provided statistics and a
+  warning is thrown. (23.01.2026)
 
 #### Fixed
 
@@ -86,6 +93,12 @@
   was called instead of
   [`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md).
   (18.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When variable names started with the same base name and variable
+  labels should be assigned, it could happen that the label of the
+  shortest variable was applied to all variables. Now variable labels
+  are always assigned from longest to shortest variable name to prevent
+  this. (23.01.2026)
 
 #### Optimization
 

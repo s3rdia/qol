@@ -568,6 +568,30 @@ test_that("Combine tables into a single workbook", {
     expect_true(file.exists(temp_file))
 })
 
+
+test_that("any_table throws a warning with missing statistic extension in pre summarised data", {
+    expect_message(result_list <- sum_df |>
+           any_table(rows       = "year",
+                     columns    = "sex",
+                     values     = DEPTH,
+                     print      = FALSE), " ! WARNING: All <values> variables need to have the <statistic> extension in their variable name.")
+
+    expect_type(result_list, "list")
+    expect_equal(length(result_list), 3)
+})
+
+
+test_that("any_table auto generates missing TYPE variable in pre summarised data", {
+    result_list <- sum_df |>
+           any_table(rows       = "year",
+                     columns    = "sex",
+                     values     = weight_sum,
+                     print      = FALSE)
+
+    expect_type(result_list, "list")
+    expect_equal(length(result_list), 3)
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -655,15 +679,6 @@ test_that("any_table outputs sum values with only invalid pct_value statistic an
 
     expect_equal(names(result_list[[1]]), c("row.label", "var1", "weight_sum_1",
                                             "weight_sum_2", "weight_sum_NA"))
-})
-
-
-test_that("any_table aborts with missing statistic extension in pre summarised data", {
-    expect_message(result_list <- sum_df |>
-           any_table(rows       = "year",
-                     columns    = "sex",
-                     values     = TYPE_NR,
-                     print      = FALSE), " X ERROR: All <values> variables need to have the <statistic> extensions in their variable names")
 })
 
 

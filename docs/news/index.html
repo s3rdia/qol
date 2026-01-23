@@ -72,6 +72,8 @@
 <code><a href="../reference/recode.html">recode()</a></code>: Removed <code>new_var</code> parameter. Recode now doesn’t return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing <code>my_data &lt;- my_data |&gt; recode("age_group", age = age.)</code>, the syntax is now more natural like this <code>my_data[["age_group"]] &lt;- my_data |&gt; recode(age = age.)</code>. (21.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">running_number()</a></code>, <code><a href="../reference/retain.html">mark_case()</a></code>, <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: Removed <code>var_name</code> parameter. Functions now don’t return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. <code>my_data &lt;- my_data |&gt; running_number("running")</code>, the syntax is now more natural like this <code>my_data[["running"]] &lt;- my_data |&gt; running_number()</code>. (22.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When using pre summarised data, the error handling is now less restrict. Instead of aborting if the TYPE variable is missing, it is now auto generated. Additionally if statistic extensions are missing to the value variable names, the function now doesn’t abort, instead extensions are now added according to the provided statistics and a warning is thrown. (23.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-1"></a></h4>
@@ -82,6 +84,8 @@
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>: “total” row is not printed anymore, when variables use multilabels and are computed with a by group. (17.01.2026)</li>
 <li>Unit test: Fixed global footnote option unit test. <code><a href="../reference/qol_options.html">set_titles()</a></code> was called instead of <code><a href="../reference/qol_options.html">set_footnotes()</a></code>. (18.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When variable names started with the same base name and variable labels should be assigned, it could happen that the label of the shortest variable was applied to all variables. Now variable labels are always assigned from longest to shortest variable name to prevent this. (23.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>
