@@ -10,6 +10,10 @@ test_df <- data.frame(
 
 dummy_df <- suppressMessages(dummy_data(1000))
 
+dummy_df[["binary"]] <- replicate(nrow(dummy_df), {
+    paste0(sample(0:1, 2, replace = TRUE), collapse = "")
+})
+
 ###############################################################################
 # Do statistics produce correct output (unweighted)
 ###############################################################################
@@ -779,6 +783,44 @@ test_that("Use the 'other' format keyword with summarise_plus", {
 
     expect_equal(unique_values,
                  c("under 18", "18 and older", NA))
+})
+
+
+test_that("summarise_plus doesn't convert numeric values stored as character (short route)", {
+    result_df <- suppressMessages(dummy_df |>
+            summarise_plus(class  = binary,
+                           values = weight))
+
+    expect_equal(result_df[["binary"]], c("00", "01", "10", "11"))
+})
+
+
+test_that("summarise_plus doesn't convert numeric values stored as character (long route)", {
+    result_df <- suppressMessages(dummy_df |>
+          summarise_plus(class  = binary,
+                         values = weight,
+                         statistics = "mean"))
+
+    expect_equal(result_df[["binary"]], c("00", "01", "10", "11"))
+})
+
+
+test_that("summarise_plus converts numeric values back to numeric (short route)", {
+    result_df <- suppressMessages(dummy_df |>
+          summarise_plus(class  = age,
+                         values = weight))
+
+    expect_equal(result_df[1:5, "age"], c(0, 1, 2, 3, 4))
+})
+
+
+test_that("summarise_plus converts numeric values back to numeric (long route)", {
+    result_df <- suppressMessages(dummy_df |>
+          summarise_plus(class  = age,
+                         values = weight,
+                         statistics = "mean"))
+
+    expect_equal(result_df[1:5, "age"], c(0, 1, 2, 3, 4))
 })
 
 ###############################################################################

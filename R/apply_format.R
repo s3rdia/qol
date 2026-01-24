@@ -15,12 +15,7 @@
 #' @noRd
 apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TRUE){
     if (length(formats) == 0){
-        # When no format is applied numeric variables should be sorted in numerical order.
-        # Otherwise they will be sorted as usual in format order.
-        # Additionally it should be possible to apply a format on a numerical variable stored
-        # as character. Meaning it is possible to e.g. join format expression "0001" on variable
-        # expression "0001". Variable expression "0001" won't be converted to 1 before join happens.
-        return(data_frame |> convert_numeric(group_vars))
+        return(data_frame)
     }
 
     arguments     <- formats

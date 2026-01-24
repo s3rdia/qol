@@ -370,14 +370,14 @@ test_that("any_table able to apply format on numeric values stored as character 
 })
 
 
-test_that("any_table converts numeric values stored as character to numeric, if no format is applied (short route)", {
+test_that("any_table doesn't convert numeric values stored as character (short route)", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows    = "binary",
                       columns = "sex",
                       values  = weight,
                       print   = FALSE))
 
-    expect_equal(result_list[[1]][["var1"]], c("0", "1", "10", "11"))
+    expect_equal(result_list[[1]][["var1"]], c("00", "01", "10", "11"))
 })
 
 
@@ -398,7 +398,7 @@ test_that("any_table able to apply format on numeric values stored as character 
 })
 
 
-test_that("any_table converts numeric values stored as character to numeric, if no format is applied (long route)", {
+test_that("any_table doesn't convert numeric values stored as character (long route)", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows       = "binary",
                       columns    = "sex",
@@ -406,7 +406,7 @@ test_that("any_table converts numeric values stored as character to numeric, if 
                       values     = weight,
                       print      = FALSE))
 
-    expect_equal(result_list[[1]][["var1"]], c("0", "1", "10", "11"))
+    expect_equal(result_list[[1]][["var1"]], c("00", "01", "10", "11"))
 })
 
 

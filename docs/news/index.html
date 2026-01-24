@@ -74,6 +74,8 @@
 <code><a href="../reference/retain.html">running_number()</a></code>, <code><a href="../reference/retain.html">mark_case()</a></code>, <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: Removed <code>var_name</code> parameter. Functions now don’t return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. <code>my_data &lt;- my_data |&gt; running_number("running")</code>, the syntax is now more natural like this <code>my_data[["running"]] &lt;- my_data |&gt; running_number()</code>. (22.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When using pre summarised data, the error handling is now less restrict. Instead of aborting if the TYPE variable is missing, it is now auto generated. Additionally if statistic extensions are missing to the value variable names, the function now doesn’t abort, instead extensions are now added according to the provided statistics and a warning is thrown. (23.01.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Numeric values stored as characters are now returned as character, while originally numeric variables stay numeric. (24.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-1"></a></h4>

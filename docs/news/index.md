@@ -76,6 +76,9 @@
   to the value variable names, the function now doesn’t abort, instead
   extensions are now added according to the provided statistics and a
   warning is thrown. (23.01.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Numeric values stored as characters are now returned as character,
+  while originally numeric variables stay numeric. (24.01.2026)
 
 #### Fixed
 

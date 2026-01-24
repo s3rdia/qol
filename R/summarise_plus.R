@@ -1063,6 +1063,9 @@ matrix_summarise <- function(data_frame,
     monitor_df <- monitor_df |> monitor_start("Matrix conversion", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
     #-------------------------------------------------------------------------#
 
+    # Store original types of grouping variables to later reapply them.
+    original_types <- lapply(data_frame[group_vars], class)
+
     # Temporarily rename "." in factor variable levels, if there are any. This is
     # necessary because later the matrix row names need to be split by ".". If there
     # are any additional dots in the level names, this leads to errors.
@@ -1193,6 +1196,25 @@ matrix_summarise <- function(data_frame,
         # Case where there are no grouping variables
         result_df <- cbind(sum_wgt, sum_result,
               do.call(cbind, result_list))
+    }
+
+    # Restore original variable types of numeric variables
+    for (variable in names(original_types)){
+        var_type <- original_types[[variable]]
+
+        if (length(var_type) > 1){
+            next
+        }
+
+        if (var_type == "integer"){
+            result_df[[variable]] <- as.integer(result_df[[variable]])
+        }
+        else if (var_type == "double"){
+            result_df[[variable]] <- as.double(result_df[[variable]])
+        }
+        else if (var_type == "numeric"){
+            result_df[[variable]] <- as.numeric(result_df[[variable]])
+        }
     }
 
     monitor_df <- monitor_df |> monitor_end()
