@@ -31,6 +31,8 @@
 * Unit test: Fixed global footnote option unit test. `set_titles()` was called instead of `set_footnotes()`. (18.01.2026)
 * `any_table()`: When variable names started with the same base name and variable labels should be assigned, it could happen that the label of the shortest variable was applied to all variables. Now variable labels are always assigned from longest to shortest variable name to prevent this. (23.01.2026)
 * `any_table()`: If a variable name was part of another variable label, it could happen that the already set label was altered with the label of the variable appearing in the label. This can't happen anymore. (24.01.2026)
+* `summarise_plus()`: When a factor variable is used as class variable and a factor level has a "." in it, it is now output as provided instead of the "." being converted to "!!!". (24.01.2026)
+* `summarise_plus()`: When a character variable is used as class variable and there is a "." in an expression, the function doesn't error anymore. (24.01.2026)
 
 ### Optimization
 

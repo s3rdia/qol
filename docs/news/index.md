@@ -103,6 +103,13 @@
   If a variable name was part of another variable label, it could happen
   that the already set label was altered with the label of the variable
   appearing in the label. This can’t happen anymore. (24.01.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When a factor variable is used as class variable and a factor level
+  has a “.” in it, it is now output as provided instead of the “.” being
+  converted to “!!!”. (24.01.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When a character variable is used as class variable and there is a “.”
+  in an expression, the function doesn’t error anymore. (24.01.2026)
 
 #### Optimization
 

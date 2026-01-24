@@ -1070,6 +1070,9 @@ matrix_summarise <- function(data_frame,
         if (is.factor(data_frame[[column]])){
             levels(data_frame[[column]]) <- gsub("\\.", "!!!", levels(data_frame[[column]]))
         }
+        else if(is.character(data_frame[[column]])){
+            data_frame[[column]] <- gsub("\\.", "!!!", data_frame[[column]])
+        }
     }
 
     # Convert the value columns of the data frame into a matrix
@@ -1148,7 +1151,7 @@ matrix_summarise <- function(data_frame,
     # Restore temporarily renamed dots
     for (column in names(restored_group)){
         if (is.character(restored_group[[column]])){
-            restored_group[[column]] <- gsub("\\.", "!!!", restored_group[[column]])
+            restored_group[[column]] <- gsub("!!!", ".", restored_group[[column]])
         }
     }
 
