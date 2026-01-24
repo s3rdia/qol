@@ -86,6 +86,8 @@
 <li>Unit test: Fixed global footnote option unit test. <code><a href="../reference/qol_options.html">set_titles()</a></code> was called instead of <code><a href="../reference/qol_options.html">set_footnotes()</a></code>. (18.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When variable names started with the same base name and variable labels should be assigned, it could happen that the label of the shortest variable was applied to all variables. Now variable labels are always assigned from longest to shortest variable name to prevent this. (23.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: If a variable name was part of another variable label, it could happen that the already set label was altered with the label of the variable appearing in the label. This can’t happen anymore. (24.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>
@@ -102,6 +104,11 @@
 <h4 id="new-error-checks-1-2-1">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-1"></a></h4>
 <ul><li>
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Added an error check in case a provided object is no <code><a href="../reference/any_table.html">any_table()</a></code> result list. (17.01.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-2-1">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-1"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Removed c() in examples where not necessary. (24.01.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

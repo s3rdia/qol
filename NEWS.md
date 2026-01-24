@@ -30,6 +30,7 @@
 * `frequencies()`: "total" row is not printed anymore, when variables use multilabels and are computed with a by group. (17.01.2026)
 * Unit test: Fixed global footnote option unit test. `set_titles()` was called instead of `set_footnotes()`. (18.01.2026)
 * `any_table()`: When variable names started with the same base name and variable labels should be assigned, it could happen that the label of the shortest variable was applied to all variables. Now variable labels are always assigned from longest to shortest variable name to prevent this. (23.01.2026)
+* `any_table()`: If a variable name was part of another variable label, it could happen that the already set label was altered with the label of the variable appearing in the label. This can't happen anymore. (24.01.2026)
 
 ### Optimization
 
@@ -41,6 +42,10 @@
 ### New Error Checks
 
 * `combine_into_workbook()`: Added an error check in case a provided object is no `any_table()` result list. (17.01.2026)
+
+### Additionally
+
+* `any_table()`: Removed c() in examples where not necessary. (24.01.2026)
 
 
 # qol 1.2.0

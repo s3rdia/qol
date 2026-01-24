@@ -31,6 +31,7 @@ Fixed
 * frequencies(): "total" row is not printed anymore, when variables use multilabels and are computed with a by group.
 * Unit test: Fixed global footnote option unit test. set_titles() was called instead of set_footnotes().
 * any_table(): When variable names started with the same base name and variable labels should be assigned, it could happen that the label of the shortest variable was applied to all variables. Now variable labels are always assigned from longest to shortest variable name to prevent this.
+* any_table(): If a variable name was part of another variable label, it could happen that the already set label was altered with the label of the variable appearing in the label. This can't happen anymore.
 
 Optimization
 
@@ -41,7 +42,11 @@ Optimization
 
 New Error Checks
 
-* combine_into_workbook(): Added an error check in case a provided object is no any_table() result list. (17.01.2026)
+* combine_into_workbook(): Added an error check in case a provided object is no any_table() result list.
+
+Additionally
+
+* any_table(): Removed c() in examples where not necessary.
 
 ## R CMD check results
 

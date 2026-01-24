@@ -192,7 +192,7 @@
 #'
 #' # Percentages based on value variables instead of categories
 #' my_data |> any_table(rows       = c("age + year"),
-#'                      columns    = c("sex"),
+#'                      columns    = "sex",
 #'                      values     = c(probability, person),
 #'                      statistics = c("pct_value", "sum", "freq"),
 #'                      pct_value  = list(rate = "probability / person"),
@@ -207,7 +207,7 @@
 #' # readable with less text. To completely remove a variable label just put in an
 #' # empty text "" as label.
 #' my_data |> any_table(rows        = c("age + year"),
-#'                      columns     = c("sex"),
+#'                      columns     = "sex",
 #'                      values      = weight,
 #'                      statistics  = c("sum", "pct_group"),
 #'                      order_by    = "interleaved",
@@ -222,7 +222,7 @@
 #'                                font              = "Times New Roman")
 #'
 #' my_data |> any_table(rows       = c("age + year"),
-#'                      columns    = c("sex"),
+#'                      columns    = "sex",
 #'                      values     = c(probability, person),
 #'                      statistics = c("pct_value", "sum", "freq"),
 #'                      pct_value  = list(rate = "probability / person"),
@@ -235,10 +235,10 @@
 #' my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
 #'
 #' result_list <- my_data |>
-#'            any_table(rows       = c("age"),
-#'                      columns    = c("sex"),
+#'            any_table(rows       = "age",
+#'                      columns    = "sex",
 #'                      values     = weight,
-#'                      statistics = c("sum"),
+#'                      statistics = "sum",
 #'                      formats    = list(sex = sex., age = age.),
 #'                      na.rm      = TRUE,
 #'                      print      = FALSE)
@@ -246,10 +246,10 @@
 #' my_style <- my_style |> modify_output_style(sheet_name = "edu_year")
 #'
 #' my_data |> any_table(workbook   = result_list[["workbook"]],
-#'                      rows       = c("education"),
-#'                      columns    = c("year"),
+#'                      rows       = "education",
+#'                      columns    = "year",
 #'                      values     = weight,
-#'                      statistics = c("pct_group"),
+#'                      statistics = "pct_group",
 #'                      formats    = list(education = education.),
 #'                      na.rm      = TRUE)
 #'
@@ -260,11 +260,11 @@
 #' my_style <- my_style |> modify_output_style(sheet_name = "by")
 #'
 #' my_data |> any_table(rows       = c("sex", "age"),
-#'                      columns    = c("education + year"),
+#'                      columns    = "education + year",
 #'                      values     = weight,
 #'                      by         = state,
 #'                      statistics = c("sum", "pct_group"),
-#'                      pct_group  = c("education"),
+#'                      pct_group  = "education",
 #'                      formats    = list(sex = sex., age = age., state = state.,
 #'                                        education = education.),
 #'                      na.rm      = TRUE)
@@ -1712,7 +1712,7 @@ set_col_variable_labels <- function(column_header, var_labels){
         }
 
         # Replace variable texts with provided labels
-        column_header[,] <- gsub(name, label, as.matrix(column_header))
+        column_header[,] <- gsub(paste0("^", name, "$"), label, as.matrix(column_header))
     }
 
     # If header only consists of one row it gets converted to a vector when using gsub above.

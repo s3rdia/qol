@@ -99,6 +99,10 @@
   shortest variable was applied to all variables. Now variable labels
   are always assigned from longest to shortest variable name to prevent
   this. (23.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If a variable name was part of another variable label, it could happen
+  that the already set label was altered with the label of the variable
+  appearing in the label. This can’t happen anymore. (24.01.2026)
 
 #### Optimization
 
@@ -137,6 +141,11 @@
   Added an error check in case a provided object is no
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
   result list. (17.01.2026)
+
+#### Additionally
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Removed c() in examples where not necessary. (24.01.2026)
 
 ## qol 1.2.0
 

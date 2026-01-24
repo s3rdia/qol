@@ -7,7 +7,7 @@
 
 set_style_options(as_heatmap = TRUE)
 
-dummy_df  <- suppressMessages(dummy_data(1000))
+dummy_df  <- suppressMessages(dummy_data(2000))
 dummy_big <- suppressMessages(dummy_data(10000))
 
 dummy_df[["binary"]] <- replicate(nrow(dummy_df), {

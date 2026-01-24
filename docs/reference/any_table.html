@@ -332,7 +332,7 @@ a designed workbook.</p>
 <span></span>
 <span><span class="co"># Percentages based on value variables instead of categories</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age + year"</span><span class="op">)</span>,</span>
-<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">probability</span>, <span class="va">person</span><span class="op">)</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_value"</span>, <span class="st">"sum"</span>, <span class="st">"freq"</span><span class="op">)</span>,</span>
 <span>                     pct_value  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="st">"probability / person"</span><span class="op">)</span>,</span>
@@ -347,7 +347,7 @@ a designed workbook.</p>
 <span><span class="co"># readable with less text. To completely remove a variable label just put in an</span></span>
 <span><span class="co"># empty text "" as label.</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age + year"</span><span class="op">)</span>,</span>
-<span>                     columns     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span>                     columns     <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                     values      <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     statistics  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"pct_group"</span><span class="op">)</span>,</span>
 <span>                     order_by    <span class="op">=</span> <span class="st">"interleaved"</span>,</span>
@@ -362,7 +362,7 @@ a designed workbook.</p>
 <span>                               font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age + year"</span><span class="op">)</span>,</span>
-<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">probability</span>, <span class="va">person</span><span class="op">)</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_value"</span>, <span class="st">"sum"</span>, <span class="st">"freq"</span><span class="op">)</span>,</span>
 <span>                     pct_value  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="st">"probability / person"</span><span class="op">)</span>,</span>
@@ -375,10 +375,10 @@ a designed workbook.</p>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result_list</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
-<span>           <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span><span class="op">)</span>,</span>
-<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span>           <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="st">"age"</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>                     statistics <span class="op">=</span> <span class="st">"sum"</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     print      <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -386,10 +386,10 @@ a designed workbook.</p>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>workbook   <span class="op">=</span> <span class="va">result_list</span><span class="op">[[</span><span class="st">"workbook"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>                     rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span><span class="op">)</span>,</span>
-<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span>,</span>
+<span>                     rows       <span class="op">=</span> <span class="st">"education"</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"year"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_group"</span><span class="op">)</span>,</span>
+<span>                     statistics <span class="op">=</span> <span class="st">"pct_group"</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -400,11 +400,11 @@ a designed workbook.</p>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"by"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span>
-<span>                     columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education + year"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"education + year"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     by         <span class="op">=</span> <span class="va">state</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"pct_group"</span><span class="op">)</span>,</span>
-<span>                     pct_group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span><span class="op">)</span>,</span>
+<span>                     pct_group  <span class="op">=</span> <span class="st">"education"</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>, state <span class="op">=</span> <span class="va">state.</span>,</span>
 <span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
