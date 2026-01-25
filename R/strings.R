@@ -18,7 +18,7 @@
 #' Returns a character vector.
 #'
 #' @seealso
-#' Other character manipulating functions: [sub_string()]
+#' Other character manipulating functions: [sub_string()], [remove_blanks()]
 #'
 #' @examples
 #' # Example data frame
@@ -140,7 +140,7 @@ concat <- function(data_frame,
 #' or from the middle. It is also able to start or end at specific letter sequences
 #' instead of positions.
 #'
-#' @param data_frame A data frame which contains the the variables to concatenate.
+#' @param data_frame A data frame which contains the variables to concatenate.
 #' @param variable A character variable to extract parts from.
 #' @param from The names of the variables to concatenate.
 #' @param to A single character which will be used to fill up the empty places.
@@ -152,7 +152,7 @@ concat <- function(data_frame,
 #' Returns parts of a character vector.
 #'
 #' @seealso
-#' Other character manipulating functions: [concat()]
+#' Other character manipulating functions: [concat()], [remove_blanks()]
 #'
 #' @examples
 #' # Example data frame
@@ -183,6 +183,14 @@ sub_string <- function(data_frame,
                        to    = NULL,
                        case_sensitive = TRUE){
     variable <- get_origin_as_char(variable, substitute(variable))
+
+    # If no value variables are provided abort
+    if (length(variable) <= 1){
+        if (length(variable) == 0 || variable == ""){
+            message(" X ERROR: No <variables> provided. Blank removal will be aborted.")
+            return(invisible(NULL))
+        }
+    }
 
     # Adjust variable
     if (length(variable) > 1){
@@ -263,4 +271,98 @@ sub_string <- function(data_frame,
     }
 
     sub_variable
+}
+
+
+#' Remove Blanks
+#'
+#' @description
+#' Removes leading and trailing blanks or both. Can also remove all blanks from a
+#' character or normalize multiple blanks to single ones.
+#'
+#' @param data_frame A data frame which contains the character variables from which blanks
+#' should be removed.
+#' @param variable Variable name of the one from which to remove blanks.
+#' @param which "all" by default. Can be "leading", "trailing", "trim", "normalize" or "all".
+#' Determines which blanks should be removed
+#'
+#' @return
+#' Returns a character vector with removed blanks.
+#'
+#' @seealso
+#' Other character manipulating functions: [concat()], [sub_string()]
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#' my_data[["blanks"]] <- " This  is  a  test "
+#'
+#' # Remove blanks
+#' my_data[["leading"]]   <- my_data |> remove_blanks(blanks, which = "leading")
+#' my_data[["trailing"]]  <- my_data |> remove_blanks(blanks, which = "trailing")
+#' my_data[["trim"]]      <- my_data |> remove_blanks(blanks, which = "trim")
+#' my_data[["all"]]       <- my_data |> remove_blanks(blanks, which = "all")
+#' my_data[["normalize"]] <- my_data |> remove_blanks(blanks, which = "normalize")
+#'
+#' @export
+remove_blanks <- function(data_frame,
+                          variable,
+                          which = "all"){
+
+    # Convert to character vectors
+    variable <- get_origin_as_char(variable, substitute(variable))
+
+    # If no value variable are provided abort
+    if (length(variable) <= 1){
+        if (length(variable) == 0 || variable == ""){
+            message(" X ERROR: No <variable> provided. Blank removal will be aborted.")
+            return(invisible(NULL))
+        }
+    }
+
+    # Adjust variable
+    if (length(variable) > 1){
+        message(" ! WARNING: <Variable> may only be of length one. The first Element will be used.")
+
+        variable <- variable[[1]]
+    }
+
+    # Make sure that the provided variable is part of the data frame.
+    variable <- data_frame |> part_of_df(variable)
+
+    if (length(variable) == 0){
+        message(" X ERROR: No valid <variable> provided. Blank removal will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Abort if non-character variable are selected
+    variable_vector <- unlist(data_frame[variable])
+
+    if (!is.character(variable_vector[[1]])){
+        message(" X ERROR: Blank removal only works with a character <variable>. Blank removal will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Check if which is a valid option
+    which <- tolower(which)
+
+    if (!which %in% c("trim", "leading", "trailing", "all", "normalize")){
+        message(" ! WARNING: Invalid option for <which> provided. Allowed are 'trim', 'leading', 'trailing', 'all' and\n",
+                "            'normalize'. 'all' will be used.")
+
+        which <- "all"
+    }
+
+    # Remove blanks according to selected option
+    variable_vector <- switch(which,
+                              trim      = trimws(variable_vector, which = "both"),
+                              leading   = trimws(variable_vector, which = "left"),
+                              trailing  = trimws(variable_vector, which = "right"),
+                              all       = gsub(" +", "", variable_vector),
+                              normalize = {
+                                  variable_vector <- trimws(variable_vector)
+                                  gsub(" +", " ", variable_vector)
+                              })
+
+    variable_vector
 }

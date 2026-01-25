@@ -14,7 +14,7 @@ sub_string(data_frame, variable, from = NULL, to = NULL, case_sensitive = TRUE)
 
 - data_frame:
 
-  A data frame which contains the the variables to concatenate.
+  A data frame which contains the variables to concatenate.
 
 - variable:
 
@@ -41,7 +41,8 @@ Returns parts of a character vector.
 ## See also
 
 Other character manipulating functions:
-[`concat()`](https://s3rdia.github.io/qol/reference/concat.md)
+[`concat()`](https://s3rdia.github.io/qol/reference/concat.md),
+[`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md)
 
 ## Examples
 

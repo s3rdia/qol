@@ -6,6 +6,7 @@
 * `set_print_miss()`, `get_print_miss()`: Additional global setters and getters. (15.01.2026)
 * `concat()`: Concatenate multiple variables inside a data frame into a new variable with automatic or individual padding. (21.01.2026)
 * `sub_string()`: Can extract text from left, right or middle and is able to look up characters as start or end position. (22.01.2026)
+* `remove_blanks()`: Removes blanks in the expressions of a character variable. (24.01.2026)
 
 ### New functionality
 

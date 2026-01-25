@@ -50,6 +50,8 @@
 #'
 #' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_sum()], [retain_variables()]
 #'
+#' Character Manipulation: [concat()], [sub_string()], [remove_blanks()]
+#'
 #' Generate dummy data: [dummy_data()]
 #'
 #' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()]

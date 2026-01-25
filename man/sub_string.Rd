@@ -7,7 +7,7 @@
 sub_string(data_frame, variable, from = NULL, to = NULL, case_sensitive = TRUE)
 }
 \arguments{
-\item{data_frame}{A data frame which contains the the variables to concatenate.}
+\item{data_frame}{A data frame which contains the variables to concatenate.}
 
 \item{variable}{A character variable to extract parts from.}
 
@@ -51,5 +51,5 @@ my_data[["middle2"]] <- my_data |> sub_string(education, from = "i", to = "l")
 
 }
 \seealso{
-Other character manipulating functions: \code{\link[=concat]{concat()}}
+Other character manipulating functions: \code{\link[=concat]{concat()}}, \code{\link[=remove_blanks]{remove_blanks()}}
 }

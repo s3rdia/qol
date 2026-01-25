@@ -16,6 +16,9 @@
 - [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
   Can extract text from left, right or middle and is able to look up
   characters as start or end position. (22.01.2026)
+- [`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md):
+  Removes blanks in the expressions of a character variable.
+  (24.01.2026)
 
 #### New functionality
 

@@ -514,6 +514,8 @@ can be found on GitHub.
   Concatenate Multiple Variables With Padding
 - [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md)
   : Retrieve A Substring From A Character
+- [`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md)
+  : Remove Blanks
 
 ## Generate Dummy Data
 

@@ -57,5 +57,5 @@ my_data[["state"]] <- my_data |> concat(state, padding_char = "0")
 
 }
 \seealso{
-Other character manipulating functions: \code{\link[=sub_string]{sub_string()}}
+Other character manipulating functions: \code{\link[=sub_string]{sub_string()}}, \code{\link[=remove_blanks]{remove_blanks()}}
 }

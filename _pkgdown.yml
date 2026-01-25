@@ -80,6 +80,7 @@ reference:
   contents:
   - concat
   - sub_string
+  - remove_blanks
 - title: Generate Dummy Data
   contents:
   - dummy_data

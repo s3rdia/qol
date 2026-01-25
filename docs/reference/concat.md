@@ -49,7 +49,8 @@ Returns a character vector.
 ## See also
 
 Other character manipulating functions:
-[`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md)
+[`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md),
+[`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md)
 
 ## Examples
 

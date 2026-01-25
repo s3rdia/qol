@@ -58,6 +58,8 @@ Renaming: \code{\link[=rename_pattern]{rename_pattern()}}, \code{\link[=add_exte
 
 Retaining: \code{\link[=running_number]{running_number()}}, \code{\link[=mark_case]{mark_case()}}, \code{\link[=retain_value]{retain_value()}}, \code{\link[=retain_sum]{retain_sum()}}, \code{\link[=retain_variables]{retain_variables()}}
 
+Character Manipulation: \code{\link[=concat]{concat()}}, \code{\link[=sub_string]{sub_string()}}, \code{\link[=remove_blanks]{remove_blanks()}}
+
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
 Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}

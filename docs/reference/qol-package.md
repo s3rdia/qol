@@ -89,6 +89,11 @@ Retaining:
 [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md),
 [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md)
 
+Character Manipulation:
+[`concat()`](https://s3rdia.github.io/qol/reference/concat.md),
+[`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md),
+[`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md)
+
 Generate dummy data:
 [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md)
 
