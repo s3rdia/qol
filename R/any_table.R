@@ -348,6 +348,9 @@ any_table <- function(data_frame,
     # Row variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Enable the use of macro variables
+    rows <- apply_macro(rows)
+
     # Get row variables from provided combinations
     row_vars <- unlist_variables(rows)
 
@@ -374,6 +377,9 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Column variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Enable the use of macro variables
+    columns <- apply_macro(columns)
 
     # Get row variables from provided combinations
     col_vars <- unlist_variables(columns)
@@ -621,6 +627,15 @@ any_table <- function(data_frame,
         statistics      <- c(statistics, "sum")
         flag_remove_sum <- TRUE
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Resolve macros
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    titles      <- apply_macro(titles)
+    footnotes   <- apply_macro(footnotes)
+    var_labels  <- apply_macro(var_labels)
+    stat_labels <- apply_macro(stat_labels)
 
     ###########################################################################
     # Any tabulation starts

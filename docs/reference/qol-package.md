@@ -104,6 +104,9 @@ Conversion:
 [`convert_numeric()`](https://s3rdia.github.io/qol/reference/convert_variables.md),
 [`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md)
 
+Macros: [`macro()`](https://s3rdia.github.io/qol/reference/macro.md),
+[`apply_macro()`](https://s3rdia.github.io/qol/reference/macro.md)
+
 Loading:
 [`libname()`](https://s3rdia.github.io/qol/reference/libname.md),
 [`set()`](https://s3rdia.github.io/qol/reference/set.md)

@@ -139,6 +139,12 @@
   [`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md)
   : Convert Variables
 
+## Macro Variables
+
+- [`macro()`](https://s3rdia.github.io/qol/reference/macro.md)
+  [`apply_macro()`](https://s3rdia.github.io/qol/reference/macro.md) :
+  Resolve Macro Variables In A Text
+
 ## Loading
 
 - [`libname()`](https://s3rdia.github.io/qol/reference/libname.md) :

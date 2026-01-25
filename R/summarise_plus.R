@@ -322,6 +322,9 @@ summarise_plus <- function(data_frame,
     # Types
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Enable the use of macro variables
+    types <- apply_macro(types)
+
     # Get row variables from provided combinations
     type_vars <- unlist_variables(types)
 

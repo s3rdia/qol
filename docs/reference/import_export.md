@@ -1,13 +1,13 @@
 # High Level Import From And Export To CSV And XLSX
 
 `import_data()`: A wrapper for
-[`data.table::fread()`](https://rdatatable.gitlab.io/data.table/reference/fread.html)
+[`data.table::fread()`](https://rdrr.io/pkg/data.table/man/fread.html)
 and
 [`openxlsx2::wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html),
 providing basic import functionality with minimal code.
 
 `export_data()`: A wrapper for
-[`data.table::fwrite()`](https://rdatatable.gitlab.io/data.table/reference/fwrite.html)
+[`data.table::fwrite()`](https://rdrr.io/pkg/data.table/man/fwrite.html)
 and
 [`openxlsx2::wb_save()`](https://janmarvin.github.io/openxlsx2/reference/wb_save.html),
 providing basic export functionality with minimal code.

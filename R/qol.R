@@ -56,6 +56,8 @@
 #'
 #' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()]
 #'
+#' Macros: [macro()], [apply_macro()]
+#'
 #' Loading: [libname()], [set()]
 #'
 #' Reporting: [content_report()]

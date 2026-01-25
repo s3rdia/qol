@@ -91,6 +91,10 @@ reference:
   - get_origin_as_char
   - convert_numeric
   - convert_factor
+- title: Macro Variables
+  contents:
+  - macro
+  - apply_macro
 - title: Loading
   contents:
   - libname

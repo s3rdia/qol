@@ -64,6 +64,8 @@ Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
 Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
 
+Macros: \code{\link[=macro]{macro()}}, \code{\link[=apply_macro]{apply_macro()}}
+
 Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}
 
 Reporting: \code{\link[=content_report]{content_report()}}

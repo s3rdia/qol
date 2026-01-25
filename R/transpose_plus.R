@@ -215,6 +215,9 @@ transpose_plus <- function(data_frame,
     # Pivot variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Enable the use of macro variables
+    pivot <- apply_macro(pivot)
+
     # Get pivot variables from provided combinations
     if (long_to_wide){
         pivot_vars <- unlist_variables(pivot)
@@ -251,7 +254,7 @@ transpose_plus <- function(data_frame,
                 "          the <preserve> variables, which is not allowed. Transposition will be aborted.")
         return(invisible(NULL))
     }
-
+    print(4)
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Value variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

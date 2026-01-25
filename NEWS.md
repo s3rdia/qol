@@ -7,6 +7,7 @@
 * `concat()`: Concatenate multiple variables inside a data frame into a new variable with automatic or individual padding. (21.01.2026)
 * `sub_string()`: Can extract text from left, right or middle and is able to look up characters as start or end position. (22.01.2026)
 * `remove_blanks()`: Removes blanks in the expressions of a character variable. (24.01.2026)
+* `macro()`, `apply_macro()`: Resolve objects starting with "&" within a text. Functions which can print titles, footnotes, variable or statistic labels make use of these functions, so that e.g. a title can be passed as "The current year is &year" and will be resolved to "The current year is 2026". (24.01.2026)
 
 ### New functionality
 

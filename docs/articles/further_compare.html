@@ -578,6 +578,22 @@ additionally, have a look at the reference on <a href="https://s3rdia.github.io/
 <span>    <span class="fu"><a href="../reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="va">age</span>,</span>
 <span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level2">
+<h2 id="macro-variables">Macro Variables<a class="anchor" aria-label="anchor" href="#macro-variables"></a>
+</h2>
+<p>Macro variables in ‘SAS’ can be set up with %Let and can act as
+global accessible variables. Among other use cases macro variables can
+be resolved within texts, which can come in handy in e.g. titles and
+footnotes:</p>
+<pre class="sas"><code>%Let year = 2026;
+
+Title1 "The current year is &amp;year";</code></pre>
+<p>The R version looks basically the same:</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fl">2026</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"The current year is &amp;year"</span><span class="op">)</span></span></code></pre></div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

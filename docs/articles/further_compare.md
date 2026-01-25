@@ -633,3 +633,24 @@ long <- wide |>
     transpose_plus(preserve = age,
                    pivot    = list(sex = c("Male", "Female")))
 ```
+
+## Macro Variables
+
+Macro variables in ‘SAS’ can be set up with %Let and can act as global
+accessible variables. Among other use cases macro variables can be
+resolved within texts, which can come in handy in e.g. titles and
+footnotes:
+
+``` sas
+%Let year = 2026;
+
+Title1 "The current year is &year";
+```
+
+The R version looks basically the same:
+
+``` r
+year <- 2026
+
+set_titles("The current year is &year")
+```

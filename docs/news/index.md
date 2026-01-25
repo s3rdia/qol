@@ -19,6 +19,13 @@
 - [`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md):
   Removes blanks in the expressions of a character variable.
   (24.01.2026)
+- [`macro()`](https://s3rdia.github.io/qol/reference/macro.md),
+  [`apply_macro()`](https://s3rdia.github.io/qol/reference/macro.md):
+  Resolve objects starting with “&” within a text. Functions which can
+  print titles, footnotes, variable or statistic labels make use of
+  these functions, so that e.g. a title can be passed as “The current
+  year is &year” and will be resolved to “The current year is 2026”.
+  (24.01.2026)
 
 #### New functionality
 
@@ -376,7 +383,7 @@ CRAN release on 13.01.2026
   when using the shortcut route. (28.12.2025)
 - `apply_formats()`: NA value subsetting is now only done once and not
   twice with interval formats.
-  [`data.table::setkey`](https://rdatatable.gitlab.io/data.table/reference/setkey.html)
+  [`data.table::setkey`](https://rdrr.io/pkg/data.table/man/setkey.html)
   is now only called on the format data frame. (28.12.2025)
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   When na.rm option is TRUE and only statistics based on sums are
