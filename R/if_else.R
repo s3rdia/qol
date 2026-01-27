@@ -91,6 +91,9 @@ if. <- function(data_frame, condition, ...) {
         }
     }
     else{
+        # Remember rows to tell the user how many rows have been removed
+        rows_before <- data_frame |> collapse::fnrow()
+
         # Evaluate normal condition
         if (is.logical(condition)){
             data_frame <- data_frame |> collapse::fsubset(condition)
@@ -118,6 +121,17 @@ if. <- function(data_frame, condition, ...) {
                 data_frame <- data_frame |> collapse::fsubset(!is.na(condition))
             }
         }
+
+        # Output info message
+        rows_after <- data_frame |> collapse::fnrow()
+
+        message("\n- - - 'if.' removed ",
+                format(rows_before - rows_after,
+                       format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+                " observations. Data frame now has ",
+                format(rows_after,
+                       format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+                " observations.")
     }
 
     data_frame
@@ -252,4 +266,45 @@ generate_new_var <- function(data_frame, condition, variable, value){
     }
 
     data_frame
+}
+
+
+
+#' Filter Data Frame With Direct View
+#'
+#' @description
+#' Filter observations and variables and directly view the result on screen.
+#'
+#' @param data_frame A data frame on which to apply filters.
+#' @param condition The condition on which to filter observations.
+#' @param keep The Variables to keep in the result data frame.
+#'
+#' @return Returns a filtered data frame.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(1000)
+#'
+#' # G         et a quick filtered view
+#' my_data |> where.(sex == 1 & age < 25,
+#'                   c(sex, age, household_id, education))
+#'
+#' @export
+where. <- function(data_frame, condition = NULL, keep = NULL){
+    condition <- eval(substitute(condition), envir = data_frame, enclos = parent.frame())
+    keep      <- get_origin_as_char(keep, substitute(keep))
+
+    if (!is.null(condition)){
+        data_frame <- data_frame |> if.(condition)
+    }
+
+    if (!is.null(keep)){
+        data_frame <- data_frame |> keep(keep, order_vars = TRUE)
+    }
+
+    if (interactive()){
+        data_frame |> utils::View()
+    }
+
+    invisible(data_frame)
 }

@@ -26,6 +26,9 @@
   these functions, so that e.g. a title can be passed as “The current
   year is &year” and will be resolved to “The current year is 2026”.
   (24.01.2026)
+- [`where.()`](https://s3rdia.github.io/qol/reference/where..md): A
+  quick way to filter a data frame and get a direct view of the result.
+  (27.01.2026)
 
 #### New functionality
 
@@ -166,6 +169,9 @@
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Removed c() in examples where not necessary. (24.01.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
+  outputs a message on how many observations have been removed and how
+  many are left. (27.01.2026)
 
 ## qol 1.2.0
 

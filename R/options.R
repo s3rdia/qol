@@ -192,6 +192,8 @@ close_file <- function(){
 #' [set_variable_labels()]: Can set variable labels globally so that they don't
 #' have to be provided in every output function separately.
 #'
+#' @param ... [set_variable_labels()]: Put in the variable names and their respective labels.
+#'
 #' @return
 #' [set_variable_labels()]: List of variable labels.
 #'
@@ -259,6 +261,8 @@ get_variable_labels <- function(){
 #' [set_stat_labels()]: Can set statistic labels globally so that they don't
 #' have to be provided in every output function separately.
 #'
+#' @param ... [set_stat_labels()]: Put in the statistics and their respective labels.
+#'
 #' @return
 #' [set_stat_labels()]: List of statistic labels.
 #'
@@ -322,7 +326,7 @@ get_stat_labels <- function(){
 #' [set_print()]: Set the print option globally for the tabulation and export to
 #' Excel functions.
 #'
-#' @param ... Put in TRUE or FALSE to activate or deactivate the option.
+#' @param ... [set_print()]: Put in TRUE or FALSE to activate or deactivate the option.
 #'
 #' @return
 #' [set_print()]: Changed global print option.
@@ -385,6 +389,8 @@ get_print <- function(){
 #' [set_monitor()]: Set the monitor option globally for the heavier functions which are
 #' able to show how they work internally.
 #'
+#' @param ... [set_monitor()]: Put in TRUE or FALSE to activate or deactivate the option.
+#'
 #' @return
 #' [set_monitor()]: Changed global monitor option.
 #'
@@ -445,6 +451,8 @@ get_monitor <- function(){
 #' @description
 #' [set_na.rm()]: Set the na.rm option globally for each function which can remove
 #' NA values.
+#'
+#' @param ... [set_na.rm()]: Put in TRUE or FALSE to activate or deactivate the option.
 #'
 #' @return
 #' [set_na.rm()]: Changed global na.rm option.
@@ -507,6 +515,8 @@ get_na.rm <- function(){
 #' [set_print_miss()]: Set the print_miss option globally for each function which can display
 #' missing categories.
 #'
+#' @param ... [set_print_miss()]: Put in TRUE or FALSE to activate or deactivate the option.
+#'
 #' @return
 #' [set_print_miss()]: Changed global print_miss option.
 #'
@@ -567,6 +577,8 @@ get_print_miss <- function(){
 #' @description
 #' [set_output()]: Set the output option globally for each function that can output
 #' results to "console", "text", "excel" or "excel_nostyle".
+#'
+#' @param ... [set_print_miss()]: Input option to set global output style.
 #'
 #' @return
 #' [set_output()]: Changed global output option.
@@ -632,6 +644,8 @@ get_output <- function(){
 #' @description
 #' [set_titles()]: Set the titles globally for each function that can print titles
 #' above the output table.
+#'
+#' @param ... [set_titles()]: Put in the titles that should appear above tables.
 #'
 #' @return
 #' [set_titles()]: Changed global titles.
@@ -699,6 +713,8 @@ get_titles <- function(){
 #' @description
 #' [set_footnotes()]: Set the footnotes globally for each function that can print footnotes
 #' above the output table.
+#'
+#' @param ... [set_footnotes()]: Put in the footnotes that should appear below tables.
 #'
 #' @return
 #' [set_footnotes()]: Changed global footnotes.

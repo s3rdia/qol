@@ -42,7 +42,7 @@
 #'
 #' Sorting: [sort_plus()]
 #'
-#' If-statement: [if.()], [else_if.()], [else.()]
+#' If-statement: [if.()], [else_if.()], [else.()], [where.()]
 #'
 #' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()]
 #'

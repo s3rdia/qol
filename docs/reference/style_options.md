@@ -57,11 +57,8 @@ reset_qol_options()
 
 - ...:
 
-  Put in any styling option from
-  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md)
-  or
-  [`number_format_style()`](https://s3rdia.github.io/qol/reference/number_format_style.md)
-  with the new value.
+  `set_stat_labels()`: Put in the statistics and their respective
+  labels.
 
 ## Value
 

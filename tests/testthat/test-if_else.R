@@ -138,3 +138,15 @@ test_that("Abort subset with if., if multiple variables are provided", {
 
     expect_equal(test_df, dummy_df)
 })
+
+###############################################################################
+# Where.
+###############################################################################
+
+test_that("Filter data frame with where.", {
+    test_df <- dummy_df |> where.(sex == 1, c("sex", "age"))
+
+
+    expect_equal(names(test_df), c("sex", "age"))
+    expect_true(!any(c(2, NA) %in% test_df[["sex"]]))
+})

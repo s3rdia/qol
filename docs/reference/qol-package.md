@@ -68,7 +68,8 @@ Sorting:
 If-statement:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-[`else.()`](https://s3rdia.github.io/qol/reference/if_else.md)
+[`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+[`where.()`](https://s3rdia.github.io/qol/reference/where..md)
 
 Monitoring:
 [`monitor_start()`](https://s3rdia.github.io/qol/reference/monitor.md),

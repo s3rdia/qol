@@ -47,7 +47,7 @@ set_footnotes(...)
 get_footnotes()
 }
 \arguments{
-\item{...}{Put in TRUE or FALSE to activate or deactivate the option.}
+\item{...}{\code{\link[=set_footnotes]{set_footnotes()}}: Put in the footnotes that should appear below tables.}
 }
 \value{
 \code{\link[=set_print]{set_print()}}: Changed global print option.

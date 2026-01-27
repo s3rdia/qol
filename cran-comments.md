@@ -9,6 +9,7 @@ New functions
 * sub_string(): Can extract text from left, right or middle and is able to look up characters as start or end position.
 * remove_blanks(): Removes blanks in the expressions of a character variable.
 * macro(), apply_macro(): Resolve objects starting with "&" within a text. Functions which can print titles, footnotes, variable or statistic labels make use of these functions, so that e.g. a title can be passed as "The current year is &year" and will be resolved to "The current year is 2026".
+* where.(): A quick way to filter a data frame and get a direct view of the result.
 
 New functionality
 
@@ -52,6 +53,7 @@ New Error Checks
 Additionally
 
 * any_table(): Removed c() in examples where not necessary.
+* if.(): Now outputs a message on how many observations have been removed and how many are left. 
 
 ## R CMD check results
 

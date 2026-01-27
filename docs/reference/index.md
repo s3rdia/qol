@@ -84,6 +84,8 @@
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md)
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md) : If -
   Else if - Else Statements
+- [`where.()`](https://s3rdia.github.io/qol/reference/where..md) :
+  Filter Data Frame With Direct View
 
 ## Monitoring
 

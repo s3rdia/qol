@@ -71,7 +71,8 @@ get_footnotes()
 
 - ...:
 
-  Put in TRUE or FALSE to activate or deactivate the option.
+  `set_footnotes()`: Put in the footnotes that should appear below
+  tables.
 
 ## Value
 
