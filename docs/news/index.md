@@ -29,6 +29,9 @@
 - [`where.()`](https://s3rdia.github.io/qol/reference/where..md): A
   quick way to filter a data frame and get a direct view of the result.
   (27.01.2026)
+- [`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md):
+  Provides more flexible ways to remove objects from memory.
+  (28.01.2026)
 
 #### New functionality
 
@@ -126,6 +129,13 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   When a character variable is used as class variable and there is a “.”
   in an expression, the function doesn’t error anymore. (24.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When removing the value variable label with “” from the column header,
+  so that the header line is removed, the alternation of the header
+  lines won’t mess up anymore. (28.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The function ran into an error when statistic labels where set in the
+  variable labels parameter. This is no more possible. (28.01.2026)
 
 #### Optimization
 

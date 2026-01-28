@@ -227,3 +227,5 @@
   : Build a Master Script From Folder
 - [`build_rstheme()`](https://s3rdia.github.io/qol/reference/build_rstheme.md)
   : Build a Theme From Scratch
+- [`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md)
+  : Remove Objects From Memory By Name And Type

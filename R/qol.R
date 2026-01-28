@@ -75,7 +75,7 @@
 #' [set_output()], [get_output()], [set_titles()], [get_titles()], [set_footnotes()], [get_footnotes()],
 #' [set_print_miss()], [get_print_miss()]
 #'
-#' Other: [build_master()], [build_rstheme()]
+#' Other: [build_master()], [build_rstheme()], [free_memory()]
 #'
 #' @section Snippets:
 #' \preformatted{

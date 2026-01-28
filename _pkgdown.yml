@@ -152,3 +152,4 @@ reference:
   contents:
   - build_master
   - build_rstheme
+  - free_memory

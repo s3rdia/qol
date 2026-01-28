@@ -54,6 +54,8 @@
 <code><a href="../reference/macro.html">macro()</a></code>, <code><a href="../reference/macro.html">apply_macro()</a></code>: Resolve objects starting with “&amp;” within a text. Functions which can print titles, footnotes, variable or statistic labels make use of these functions, so that e.g. a title can be passed as “The current year is &amp;year” and will be resolved to “The current year is 2026”. (24.01.2026)</li>
 <li>
 <code><a href="../reference/where..html">where.()</a></code>: A quick way to filter a data frame and get a direct view of the result. (27.01.2026)</li>
+<li>
+<code><a href="../reference/free_memory.html">free_memory()</a></code>: Provides more flexible ways to remove objects from memory. (28.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-1">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-1"></a></h4>
@@ -100,6 +102,10 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When a factor variable is used as class variable and a factor level has a “.” in it, it is now output as provided instead of the “.” being converted to “!!!”. (24.01.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When a character variable is used as class variable and there is a “.” in an expression, the function doesn’t error anymore. (24.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When removing the value variable label with “” from the column header, so that the header line is removed, the alternation of the header lines won’t mess up anymore. (28.01.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The function ran into an error when statistic labels where set in the variable labels parameter. This is no more possible. (28.01.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-1">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-1"></a></h4>

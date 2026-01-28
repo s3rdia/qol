@@ -27,7 +27,8 @@ dropp(data_frame, ...)
 
 - order_vars:
 
-  keep: At the end variables are ordered as specified in the command.
+  `keep()`: At the end variables are ordered as specified in the
+  command.
 
 ## Value
 

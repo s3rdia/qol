@@ -15,7 +15,7 @@ dropp(data_frame, ...)
 
 \item{...}{The variable names to keep/drop.}
 
-\item{order_vars}{keep: At the end variables are ordered as specified in the command.}
+\item{order_vars}{\code{\link[=keep]{keep()}}: At the end variables are ordered as specified in the command.}
 }
 \value{
 Returns a reduced data table.

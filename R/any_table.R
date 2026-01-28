@@ -1760,6 +1760,15 @@ build_multi_header <- function(var_names,
                                any_header,
                                var_labels,
                                style){
+    # Make sure no statistic is part of the variable labels
+    extensions <- c("sum", "pctgroup", "pcttotal", "pctvalue", "pct", "freqg0",
+                    "freq", "mean", "median", "mode", "min", "max", "first",
+                    "last", "sumwgt", "p[0-9]+$", "sd", "variance", "missing")
+
+    labels_to_drop <- grepl(paste(extensions, collapse = "|"), names(var_labels))
+
+    var_labels <- var_labels[!labels_to_drop]
+
     # Replace variable texts with custom labels
     any_header      <- any_header |> set_col_variable_labels(var_labels)
     col_var_headers <- data.table::as.data.table(any_header, stringsAsFactors = FALSE)
@@ -1801,8 +1810,7 @@ build_multi_header <- function(var_names,
     header_matrix <- gsub("!!!", "_", header_matrix)
 
     # Replace variable texts with custom labels
-    header_matrix <- header_matrix |>
-        set_col_variable_labels(var_labels)
+    header_matrix <- header_matrix |> set_col_variable_labels(var_labels)
 
     # Make sure header_matrix is treated as a matrix, even though there can be only one row
     if (is.null(dim(header_matrix))) {
@@ -1812,8 +1820,7 @@ build_multi_header <- function(var_names,
     # Drop completely empty rows
     if (collapse::fnrow(header_matrix) > 1){
         header_matrix <- data.table::as.data.table(
-            header_matrix[rowSums(header_matrix != "" & header_matrix != " ") > 0,
-                          colSums(header_matrix != "" & header_matrix != " ") > 0, drop = FALSE])
+            header_matrix[, colSums(header_matrix != "" & header_matrix != " ") > 0, drop = FALSE])
     }
     else{
         header_matrix <- data.table::as.data.table(
@@ -1854,7 +1861,7 @@ merge_headers <- function(value_header, variable_header){
             variable_row <- variable_header[i, , drop = FALSE]
 
             # Only inject variable row, if the row isn't completely empty
-            if (!all(variable_row == "")) {
+            if (!all(variable_row == "")){
                 row_list[[length(row_list) + 1]] <- variable_row
             }
         }

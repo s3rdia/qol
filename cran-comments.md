@@ -10,6 +10,7 @@ New functions
 * remove_blanks(): Removes blanks in the expressions of a character variable.
 * macro(), apply_macro(): Resolve objects starting with "&" within a text. Functions which can print titles, footnotes, variable or statistic labels make use of these functions, so that e.g. a title can be passed as "The current year is &year" and will be resolved to "The current year is 2026".
 * where.(): A quick way to filter a data frame and get a direct view of the result.
+* free_memory(): Provides more flexible ways to remove objects from memory.
 
 New functionality
 
@@ -38,6 +39,8 @@ Fixed
 * any_table(): If a variable name was part of another variable label, it could happen that the already set label was altered with the label of the variable appearing in the label. This can't happen anymore.
 * summarise_plus(): When a factor variable is used as class variable and a factor level has a "." in it, it is now output as provided instead of the "." being converted to "!!!".
 * summarise_plus(): When a character variable is used as class variable and there is a "." in an expression, the function doesn't error anymore.
+* any_table(): When removing the value variable label with "" from the column header, so that the header line is removed, the alternation of the header lines won't mess up anymore.
+* any_table(): The function ran into an error when statistic labels where set in the variable labels parameter. This is no more possible.
 
 Optimization
 

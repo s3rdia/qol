@@ -83,7 +83,7 @@ Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\li
 \code{\link[=set_output]{set_output()}}, \code{\link[=get_output]{get_output()}}, \code{\link[=set_titles]{set_titles()}}, \code{\link[=get_titles]{get_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=get_footnotes]{get_footnotes()}},
 \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=get_print_miss]{get_print_miss()}}
 
-Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}
+Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=free_memory]{free_memory()}}
 }
 
 \section{Snippets}{

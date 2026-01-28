@@ -157,7 +157,8 @@ Global options:
 
 Other:
 [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md),
-[`build_rstheme()`](https://s3rdia.github.io/qol/reference/build_rstheme.md)
+[`build_rstheme()`](https://s3rdia.github.io/qol/reference/build_rstheme.md),
+[`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md)
 
 ## Snippets
 

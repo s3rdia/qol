@@ -4,7 +4,7 @@
 #'
 #' @param data_frame A data frame which should be reduced to (keep) or by (drop) the specified variables.
 #' @param ... The variable names to keep/drop.
-#' @param order_vars keep: At the end variables are ordered as specified in the command.
+#' @param order_vars [keep()]: At the end variables are ordered as specified in the command.
 #'
 #' @return Returns a reduced data table.
 #'
