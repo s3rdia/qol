@@ -141,3 +141,27 @@ test_that("Abort format expansion, if a data frame has no label column", {
                                                names = c("sex", "income")),
                    " X ERROR: A data frame is missing the 'label' column. This function is especially for expanding formats created")
 })
+
+
+test_that("Create single discrete label aborts, if elements not provided in the correct way", {
+    expect_message(discrete_format(test == 1),
+                   " X ERROR: Formats must be provided in the form.")
+})
+
+
+test_that("Create single discrete label aborts, if list element is missing a name", {
+    expect_message(discrete_format(1),
+                   " X ERROR: Formats must be provided in the form.")
+})
+
+
+test_that("Create single interval label aborts, if elements not provided in the correct way", {
+    expect_message(interval_format(test == 1),
+                   " X ERROR: Formats must be provided in the form.")
+})
+
+
+test_that("Create single interval label aborts, if list element is missing a name", {
+    expect_message(discrete_format(1),
+                   " X ERROR: Formats must be provided in the form.")
+})

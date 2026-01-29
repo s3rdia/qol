@@ -93,6 +93,10 @@ build_master <- function(dir,
         "#",
         paste0("# Date: ", format(Sys.Date(), "%d.%m.%Y")),
         "################################################################################",
+        "",
+        "```{r load_package, echo = TRUE}",
+        "library(qol)",
+        "```",
         "")
 
     # Get the function call itself with all parameters and convert to character

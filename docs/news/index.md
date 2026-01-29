@@ -136,6 +136,11 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   The function ran into an error when statistic labels where set in the
   variable labels parameter. This is no more possible. (28.01.2026)
+- [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
+  Added [`library(qol)`](https://github.com/s3rdia/qol) to the top of
+  the file. Loading the package is neccessary so that the
+  [`libname()`](https://s3rdia.github.io/qol/reference/libname.md)
+  functions are able to run. (29.01.2026)
 
 #### Optimization
 
@@ -174,6 +179,10 @@
   Added an error check in case a provided object is no
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
   result list. (17.01.2026)
+- [`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md),
+  [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  Added an error check in case something other than list elements are
+  provided. (29.01.2026)
 
 #### Additionally
 

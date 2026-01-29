@@ -130,7 +130,29 @@ discrete_format <- function(...){
     start_time <- Sys.time()
 
     # Translate ... into separately controllable arguments
-    list_of_groupings <- list(...)
+    list_of_groupings <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(list_of_groupings)){
+        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
+                "          Creating format will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Check if any element has a missing name. If that is the case the list wasn't provided
+    # in the correct way.
+    labels <- names(list_of_groupings)
+
+    if (is.null(labels) || any(is.na(labels) | labels == "")){
+        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
+                "          Creating format will be aborted.")
+        return(invisible(NULL))
+    }
 
     unwrap_grouping <- function(single_label){
         data.table::data.table(value = list_of_groupings[[single_label]],
@@ -169,8 +191,29 @@ interval_format <- function(...){
     start_time <- Sys.time()
 
     # Translate ... into separately controllable arguments
-    ranges <- list(...)
+    ranges <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(ranges)){
+        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
+                "          Creating format will be aborted.")
+        return(invisible(NULL))
+    }
+
+    # Check if any element has a missing name. If that is the case the list wasn't provided
+    # in the correct way.
     labels <- names(ranges)
+
+    if (is.null(labels) || any(is.na(labels) | labels == "")){
+        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
+                "          Creating format will be aborted.")
+        return(invisible(NULL))
+    }
 
     # Get from - to value as vectors
     from <- sapply(ranges, function(x) min(x, na.rm = TRUE))

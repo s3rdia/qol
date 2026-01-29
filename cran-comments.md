@@ -41,6 +41,7 @@ Fixed
 * summarise_plus(): When a character variable is used as class variable and there is a "." in an expression, the function doesn't error anymore.
 * any_table(): When removing the value variable label with "" from the column header, so that the header line is removed, the alternation of the header lines won't mess up anymore.
 * any_table(): The function ran into an error when statistic labels where set in the variable labels parameter. This is no more possible.
+* build_master(): Added library(qol) to the top of the file. Loading the package is neccessary so that the libname() functions are able to run.
 
 Optimization
 
@@ -52,6 +53,7 @@ Optimization
 New Error Checks
 
 * combine_into_workbook(): Added an error check in case a provided object is no any_table() result list.
+* discrete_format(), interval_format(): Added an error check in case something other than list elements are provided.
 
 Additionally
 
