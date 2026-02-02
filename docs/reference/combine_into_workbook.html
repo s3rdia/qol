@@ -113,22 +113,24 @@ if one only wants to catch the combined workbook.</p></dd>
 <span>    <span class="st">"high education"</span>   <span class="op">=</span> <span class="st">"high"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define style</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>column_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>column_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text.</span></span>
-<span><span class="va">titles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
-<span>            <span class="st">"This is title number 2"</span>,</span>
-<span>            <span class="st">"This is title number 3"</span><span class="op">)</span></span>
-<span><span class="va">footnotes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
-<span>               <span class="st">"This is footnote number 2"</span>,</span>
-<span>               <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 2"</span>,</span>
+<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
+<span>              <span class="st">"This is footnote number 2"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Catch the output and additionally use the options:</span></span>
 <span><span class="co"># pint = FALSE and output = "excel_nostyle".</span></span>
 <span><span class="co"># This skips the styling and output part, so that the function runs faster.</span></span>
 <span><span class="co"># The styling is done later on.</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"big table"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_output</a></span><span class="op">(</span><span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"big table"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tab1</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex + age"</span>, <span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span>
 <span>                             columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"education + year"</span><span class="op">)</span>,</span>
@@ -137,40 +139,35 @@ if one only wants to catch the combined workbook.</p></dd>
 <span>                             pct_group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"education"</span>, <span class="st">"year"</span><span class="op">)</span>,</span>
 <span>                             formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>,</span>
 <span>                                               education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                             style      <span class="op">=</span> <span class="va">my_style</span>,</span>
-<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                             print      <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                             output     <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"age_sex"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tab2</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span><span class="op">)</span>,</span>
-<span>                             columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span><span class="op">)</span>,</span>
+<span><span class="va">tab2</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="st">"age"</span>,</span>
+<span>                             columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                             values     <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                             statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>                             statistics <span class="op">=</span> <span class="st">"sum"</span>,</span>
 <span>                             formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
-<span>                             style      <span class="op">=</span> <span class="va">my_style</span>,</span>
-<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                             print      <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                             output     <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="modify_output_style.html">modify_output_style</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"edu_year"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tab3</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span><span class="op">)</span>,</span>
-<span>                             columns    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span>,</span>
+<span><span class="va">tab3</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="any_table.html">any_table</a></span><span class="op">(</span>rows       <span class="op">=</span> <span class="st">"education"</span>,</span>
+<span>                             columns    <span class="op">=</span> <span class="st">"year"</span>,</span>
 <span>                             values     <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                             statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pct_group"</span><span class="op">)</span>,</span>
+<span>                             statistics <span class="op">=</span> <span class="st">"pct_group"</span>,</span>
 <span>                             formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
-<span>                             style      <span class="op">=</span> <span class="va">my_style</span>,</span>
-<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                             print      <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                             output     <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span>                             na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Every of the above tabs is a list, which contains the data table, an unstyled</span></span>
 <span><span class="co"># workbook and the meta information needed for the individual styling. These</span></span>
 <span><span class="co"># tabs can be input into the following function, which reads the meta information,</span></span>
 <span><span class="co"># styles each table individually and combines them as separate sheets into a single workbook.</span></span>
 <span><span class="fu">combine_into_workbook</span><span class="op">(</span><span class="va">tab1</span>, <span class="va">tab2</span>, <span class="va">tab3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Reset the global options afterwards</span></span>
+<span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_output</a></span><span class="op">(</span><span class="st">"excel"</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

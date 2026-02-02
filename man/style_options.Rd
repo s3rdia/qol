@@ -103,7 +103,7 @@ reset_qol_options()
 
 }
 \seealso{
-Functions that use global styling optionss: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
+Functions that use global styling options: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
 \code{\link[=crosstabs]{crosstabs()}}.
 
 Functions that also use global variable labels: \code{\link[=export_with_style]{export_with_style()}}.

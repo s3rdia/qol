@@ -39,6 +39,21 @@ Additionally certain object types can be removed.
 ## Examples
 
 ``` r
-# Example data frame
-my_data <- dummy_data(1000)
+# Example data frames
+my_data1 <- dummy_data(10)
+my_data2 <- dummy_data(10)
+data     <- dummy_data(10)
+file     <- dummy_data(10)
+
+# Free memory by name
+free_memory("my_:")
+free_memory(c("data", "file"))
+
+# Free by type
+my_data1 <- dummy_data(10)
+my_data2 <- dummy_data(10)
+data     <- dummy_data(10)
+file     <- dummy_data(10)
+
+free_memory(type = "data.frame")
 ```

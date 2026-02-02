@@ -17,7 +17,7 @@
 #' [set_style_options()]: Returns modified global styling options.
 #'
 #' @seealso
-#' Functions that use global styling optionss: [any_table()], [frequencies()],
+#' Functions that use global styling options: [any_table()], [frequencies()],
 #' [crosstabs()].
 #'
 #' Functions that also use global variable labels: [export_with_style()].

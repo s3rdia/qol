@@ -82,7 +82,7 @@ reset_qol_options()
 
 ## See also
 
-Functions that use global styling optionss:
+Functions that use global styling options:
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md).

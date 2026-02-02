@@ -58,22 +58,24 @@ education. <- discrete_format(
     "high education"   = "high")
 
 # Define style
-my_style <- excel_output_style(column_widths = c(2, 15, 15, 15, 9))
+set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
-titles <- c("This is title number 1 link: https://cran.r-project.org/",
-            "This is title number 2",
-            "This is title number 3")
-footnotes <- c("This is footnote number 1",
-               "This is footnote number 2",
-               "This is footnote number 3 link: https://cran.r-project.org/")
+set_titles("This is title number 1 link: https://cran.r-project.org/",
+           "This is title number 2",
+           "This is title number 3")
+set_footnotes("This is footnote number 1",
+              "This is footnote number 2",
+              "This is footnote number 3 link: https://cran.r-project.org/")
 
 # Catch the output and additionally use the options:
 # pint = FALSE and output = "excel_nostyle".
 # This skips the styling and output part, so that the function runs faster.
 # The styling is done later on.
-my_style <- my_style |> modify_output_style(sheet_name = "big table")
+set_print(FALSE)
+set_output("excel_nostyle")
+set_style_options(sheet_name = "big table")
 
 tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                              columns    = c("year", "education + year"),
@@ -82,39 +84,34 @@ tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                              pct_group  = c("sex", "age", "education", "year"),
                              formats    = list(sex = sex., age = age.,
                                                education = education.),
-                             style      = my_style,
-                             na.rm      = TRUE,
-                             print      = FALSE,
-                             output     = "excel_nostyle")
+                             na.rm      = TRUE)
 
-my_style <- my_style |> modify_output_style(sheet_name = "age_sex")
+set_style_options(sheet_name = "age_sex")
 
-tab2 <- my_data |> any_table(rows       = c("age"),
-                             columns    = c("sex"),
+tab2 <- my_data |> any_table(rows       = "age",
+                             columns    = "sex",
                              values     = weight,
-                             statistics = c("sum"),
+                             statistics = "sum",
                              formats    = list(sex = sex., age = age.),
-                             style      = my_style,
-                             na.rm      = TRUE,
-                             print      = FALSE,
-                             output     = "excel_nostyle")
+                             na.rm      = TRUE)
 
-my_style <- my_style |> modify_output_style(sheet_name = "edu_year")
+set_style_options(sheet_name = "edu_year")
 
-tab3 <- my_data |> any_table(rows       = c("education"),
-                             columns    = c("year"),
+tab3 <- my_data |> any_table(rows       = "education",
+                             columns    = "year",
                              values     = weight,
-                             statistics = c("pct_group"),
+                             statistics = "pct_group",
                              formats    = list(education = education.),
-                             style      = my_style,
-                             na.rm      = TRUE,
-                             print      = FALSE,
-                             output     = "excel_nostyle")
+                             na.rm      = TRUE)
 
 # Every of the above tabs is a list, which contains the data table, an unstyled
 # workbook and the meta information needed for the individual styling. These
 # tabs can be input into the following function, which reads the meta information,
 # styles each table individually and combines them as separate sheets into a single workbook.
 combine_into_workbook(tab1, tab2, tab3)
+
+# Reset the global options afterwards
+set_print(TRUE)
+set_output("excel")
 
 }
