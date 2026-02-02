@@ -54,7 +54,7 @@ of variables can be nested and crossed. The output is an individually styled
 <span>  <span class="va">rows</span>,</span>
 <span>  columns <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  <span class="va">values</span>,</span>
-<span>  statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>  statistics <span class="op">=</span> <span class="st">"sum"</span>,</span>
 <span>  pct_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pct_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -392,6 +392,10 @@ a designed workbook.</p>
 <span>                     statistics <span class="op">=</span> <span class="st">"pct_group"</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The result list from above also carries the transformed data frame if</span></span>
+<span><span class="co"># needed for further usage</span></span>
+<span><span class="va">any_table_df</span> <span class="op">&lt;-</span> <span class="va">result_list</span><span class="op">[[</span><span class="st">"table"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Output multiple complex tables by expressions of another variable.</span></span>
 <span><span class="co"># If you specify the sheet name as "by" in the output style, the sheet</span></span>

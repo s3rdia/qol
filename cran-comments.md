@@ -28,6 +28,7 @@ Changed functionality
 * running_number(), mark_case(), retain_value(), retain_sum(): Removed var_name parameter. Functions now don't return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. my_data <- my_data |> running_number("running"), the syntax is now more natural like this my_data[["running"]] <- my_data |> running_number().
 * any_table(): When using pre summarised data, the error handling is now less restrict. Instead of aborting if the TYPE variable is missing, it is now auto generated. Additionally if statistic extensions are missing to the value variable names, the function now doesn't abort, instead extensions are now added according to the provided statistics and a warning is thrown.
 * summarise_plus(): Numeric values stored as characters are now returned as character, while originally numeric variables stay numeric.
+* any_table(): Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
 
 Fixed
 
@@ -58,7 +59,8 @@ New Error Checks
 Additionally
 
 * any_table(): Removed c() in examples where not necessary.
-* if.(): Now outputs a message on how many observations have been removed and how many are left. 
+* if.(): Now outputs a message on how many observations have been removed and how many are left.
+* any_table(), combine_into_worbook(): Adjusted examples.
 
 ## R CMD check results
 

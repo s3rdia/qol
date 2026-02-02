@@ -95,6 +95,9 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Numeric values stored as characters are now returned as character,
   while originally numeric variables stay numeric. (24.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Instead of aborting when no values are passed, the function now
+  generates a variable to output unweighted results. (02.02.2026)
 
 #### Fixed
 
@@ -191,6 +194,8 @@
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
   outputs a message on how many observations have been removed and how
   many are left. (27.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  `combine_into_worbook()`: Adjusted examples. (02.02.2026)
 
 ## qol 1.2.0
 

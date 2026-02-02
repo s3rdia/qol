@@ -253,6 +253,10 @@
 #'                      formats    = list(education = education.),
 #'                      na.rm      = TRUE)
 #'
+#' # The result list from above also carries the transformed data frame if
+#' # needed for further usage
+#' any_table_df <- result_list[["table"]]
+#'
 #' # Output multiple complex tables by expressions of another variable.
 #' # If you specify the sheet name as "by" in the output style, the sheet
 #' # names are named by the variable expressions of the by-variable. Otherwise
@@ -298,7 +302,7 @@ any_table <- function(data_frame,
                       rows,
                       columns        = "",
                       values,
-                      statistics     = c("sum"),
+                      statistics     = "sum",
                       pct_group      = c(),
                       pct_value      = list(),
                       formats        = list(),
@@ -459,11 +463,13 @@ any_table <- function(data_frame,
     # Convert to character vectors
     values <- get_origin_as_char(values, substitute(values))
 
-    # If no value variables are provided abort
+    # If no value variables are provided generate a temporary variable which
+    # outputs unweighted results.
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            message(" X ERROR: No <values> provided. Tabulation will be aborted.")
-            return(invisible(NULL))
+            values     <- ".temp_values"
+            var_labels <- c(var_labels, .temp_values = "")
+            data_frame[[values]] <- 1
         }
     }
 

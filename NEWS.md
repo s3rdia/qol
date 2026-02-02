@@ -27,6 +27,7 @@
 * `running_number()`, `mark_case()`, `retain_value()`, `retain_sum()`: Removed `var_name` parameter. Functions now don't return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. `my_data <- my_data |> running_number("running")`, the syntax is now more natural like this `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
 * `any_table()`: When using pre summarised data, the error handling is now less restrict. Instead of aborting if the TYPE variable is missing, it is now auto generated. Additionally if statistic extensions are missing to the value variable names, the function now doesn't abort, instead extensions are now added according to the provided statistics and a warning is thrown. (23.01.2026)
 * `summarise_plus()`: Numeric values stored as characters are now returned as character, while originally numeric variables stay numeric. (24.01.2026)
+* `any_table()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (02.02.2026)
 
 ### Fixed
 
@@ -58,6 +59,7 @@
 
 * `any_table()`: Removed c() in examples where not necessary. (24.01.2026)
 * `if.()`: Now outputs a message on how many observations have been removed and how many are left. (27.01.2026)
+* `any_table()`, `combine_into_worbook()`: Adjusted examples. (02.02.2026)
 
 
 # qol 1.2.0

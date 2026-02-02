@@ -9,7 +9,7 @@ crosstabs(
   rows,
   columns,
   show_total = TRUE,
-  statistics = c("sum"),
+  statistics = "sum",
   formats = c(),
   by = c(),
   weight = NULL,

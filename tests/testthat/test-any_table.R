@@ -592,6 +592,17 @@ test_that("any_table auto generates missing TYPE variable in pre summarised data
     expect_equal(length(result_list), 3)
 })
 
+
+test_that("any_table outputs unweighted results without values variable", {
+    result_list <- dummy_df |>
+        any_table(rows    = "age",
+                  columns = "sex",
+                  print   = FALSE)
+
+    expect_type(result_list, "list")
+    expect_equal(length(result_list), 3)
+})
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -647,15 +658,6 @@ test_that("any_table aborts with invalid by variable", {
                      by      = "test",
                      values  = weight,
                      print   = FALSE), " ! WARNING: The provided <by> variable 'test' is not part of")
-})
-
-
-test_that("any_table aborts with invalid values", {
-    expect_message(result_list <- dummy_df |>
-           any_table(rows    = "age",
-                     columns = "sex",
-                     values  = "",
-                     print   = FALSE), " X ERROR: No <values> provided.")
 })
 
 

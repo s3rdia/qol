@@ -13,7 +13,7 @@ any_table(
   rows,
   columns = "",
   values,
-  statistics = c("sum"),
+  statistics = "sum",
   pct_group = c(),
   pct_value = list(),
   formats = list(),
@@ -405,6 +405,10 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      statistics = "pct_group",
                      formats    = list(education = education.),
                      na.rm      = TRUE)
+
+# The result list from above also carries the transformed data frame if
+# needed for further usage
+any_table_df <- result_list[["table"]]
 
 # Output multiple complex tables by expressions of another variable.
 # If you specify the sheet name as "by" in the output style, the sheet
