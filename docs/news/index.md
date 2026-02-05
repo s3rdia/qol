@@ -144,6 +144,10 @@
   the file. Loading the package is neccessary so that the
   [`libname()`](https://s3rdia.github.io/qol/reference/libname.md)
   functions are able to run. (29.01.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Percentages could have the wrong number of decimal places, if the
+  group percentage variable name ended in a specific way and a number.
+  (05.02.2026)
 
 #### Optimization
 

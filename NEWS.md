@@ -42,6 +42,7 @@
 * `any_table()`: When removing the value variable label with "" from the column header, so that the header line is removed, the alternation of the header lines won't mess up anymore. (28.01.2026)
 * `any_table()`: The function ran into an error when statistic labels where set in the variable labels parameter. This is no more possible. (28.01.2026)
 * `build_master()`: Added `library(qol)` to the top of the file. Loading the package is neccessary so that the `libname()` functions are able to run. (29.01.2026)
+* `any_table()`: Percentages could have the wrong number of decimal places, if the group percentage variable name ended in a specific way and a number. (05.02.2026)
 
 ### Optimization
 

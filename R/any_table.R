@@ -909,11 +909,7 @@ any_table <- function(data_frame,
     }
 
     # Round values according to number formats
-    for (var_name in names(any_tab)){
-        if (!var_name %in% value_vars){
-            next
-        }
-
+    for (var_name in value_vars){
         # Get stat from variable name
         stat <- strsplit(var_name, split = "_")[[1]]
         stat <- stat[length(stat)]
@@ -932,7 +928,7 @@ any_table <- function(data_frame,
             any_tab[[var_name]] <- round(any_tab[[var_name]],
                                          style[["number_formats"]][["sum_decimals"]])
         }
-        else if(grepl("^[0-9]$", substr(stat, 2, 2))){
+        else if(length(stat) <= 3 && substr(stat, 1, 1) == "p" && grepl("^[0-9]$", substr(stat, 2, 2))){
             any_tab[[var_name]] <- round(any_tab[[var_name]],
                                          style[["number_formats"]][["p_decimals"]])
         }
