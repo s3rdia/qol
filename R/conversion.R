@@ -158,7 +158,7 @@ get_origin_as_char <- function(original, substituted){
         else{
             args_to_char(substituted)
         }
-    }, error = function(e) {
+    }, error = function(e){
         # If evaluation failed (object not found), convert the symbol name
         args_to_char(substituted)
     })
@@ -168,14 +168,19 @@ get_origin_as_char <- function(original, substituted){
 #' Get The Original Symbol From Parent Environments
 #'
 #' @description
-#' When nesting functions and trying to catch symbols, it often happens that 'R'
-#' looses contact to the original symbol. This function looks up the parent environments
-#' until it finds the original symbol and returns it.
+#' When nesting functions and trying to catch symbols, it
+#' often happens that 'R' looses contact to the original symbol. This function looks
+#' up the parent environments until it finds the original symbol and returns its
+#' contents as character.
+#'
+#' In case the originally passed argument is an unresolvable symbol (e.g. a variable
+#' name), this function returns original argument passed down as characxter instead of
+#' the contents.
 #'
 #' @param symbol The symbol to look up in the parent environments.
 #'
 #' @return
-#' The original symbol.
+#' The original symbols contents or name as character.
 #'
 #' @noRd
 get_origin_symbol <- function(symbol){
@@ -186,7 +191,18 @@ get_origin_symbol <- function(symbol){
         env <- sys.frame(i)
 
         # If the symbol is found in the current parent environment return it
-        value <- get0(substitute(symbol), envir = env, inherits = FALSE)
+        value <- tryCatch({
+            # Force evaluation to see if it exists
+            get0(substitute(symbol), envir = env, inherits = FALSE)
+        }, error = function(e){
+            # Nested substitute:
+            # 1. Inner: substitute(substitute(sym, env), list(sym = symbol))
+            #    This builds the expression "substitute(var_name, env)"
+            # 2. Outer: eval(...)
+            #    This gets the expression in the correct context
+            as.character(eval(substitute(
+                substitute(sym, env), list(sym = as.name(symbol)))))
+        })
 
         if (!is.null(value) && is.character(value)){
             return(value)

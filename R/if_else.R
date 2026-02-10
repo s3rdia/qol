@@ -63,30 +63,36 @@ NULL
 #' @rdname if_else
 #'
 #' @export
-if. <- function(data_frame, condition, ...) {
+if. <- function(data_frame, condition, ...){
     condition   <- eval(substitute(condition), envir = data_frame, enclos = parent.frame())
     assignments <- as.list(substitute(list(...)))[-1]
 
     if (length(assignments) > 0){
         # Go trough each assignment and calculate the values individually
         for (variable in names(assignments)){
+            # This step is important to make this function work in a nested situation.
+            # Normally variable would be the name of what was last passed as a parameter.
+            # If "if.()" is used nested inside a function this can basically be any placeholder.
+            # So here we go up the ladder to get the original name of the variable.
+            original_var <- get_origin_symbol(variable)
+
             # Evaluate complete assignment first without condition
             value <- eval(assignments[[variable]], envir = data_frame, enclos = parent.frame())
 
             # If there already is a variable with the given name pick the existing value as fallback
-            if (variable %in% names(data_frame)){
+            if (original_var %in% names(data_frame)){
                 # Check if existing variable type is of same type as assigned value.
                 # Put out a warning on type mismatch.
-                if (check_types(data_frame, variable, value)){
-                    data_frame[[variable]] <- as.character(data_frame[[variable]])
+                if (check_types(data_frame, original_var, value)){
+                    data_frame[[original_var]] <- as.character(data_frame[[original_var]])
                     value <- as.character(value)
                 }
 
-                data_frame <- generate_new_var(data_frame, condition, variable, value)
+                data_frame <- generate_new_var(data_frame, condition, original_var, value)
             }
             # If there is not an existing variable pass NA as fallback
             else{
-                data_frame <- generate_new_var(data_frame, condition, variable, value)
+                data_frame <- generate_new_var(data_frame, condition, original_var, value)
             }
         }
     }
@@ -151,8 +157,14 @@ else_if. <- function(data_frame, condition, ...){
 
     # Go trough each assignment and calculate the values individually
     for (variable in names(assignments)){
+        # This step is important to make this function work in a nested situation.
+        # Normally variable would be the name of what was last passed as a parameter.
+        # If "if.()" is used nested inside a function this can basically be any placeholder.
+        # So here we go up the ladder to get the original name of the variable.
+        original_var <- get_origin_symbol(variable)
+
         # Variable has to exist in data frame
-        if (!variable %in% names(data_frame)){
+        if (!original_var %in% names(data_frame)){
             next
         }
 
@@ -161,12 +173,12 @@ else_if. <- function(data_frame, condition, ...){
 
         # Check if existing variable type is of same type as assigned value.
         # Put out a warning on type mismatch.
-        if (check_types(data_frame, variable, value)){
-            data_frame[[variable]] <- as.character(data_frame[[variable]])
+        if (check_types(data_frame, original_var, value)){
+            data_frame[[original_var]] <- as.character(data_frame[[original_var]])
             value <- as.character(value)
         }
 
-        data_frame <- generate_new_var(data_frame, is.na(data_frame[[variable]]) & condition, variable, value)
+        data_frame <- generate_new_var(data_frame, is.na(data_frame[[original_var]]) & condition, original_var, value)
     }
 
     data_frame
@@ -185,8 +197,14 @@ else. <- function(data_frame, ...){
 
     # Go trough each assignment and calculate the values individually
     for (variable in names(assignments)){
+        # This step is important to make this function work in a nested situation.
+        # Normally variable would be the name of what was last passed as a parameter.
+        # If "if.()" is used nested inside a function this can basically be any placeholder.
+        # So here we go up the ladder to get the original name of the variable.
+        original_var <- get_origin_symbol(variable)
+
         # Variable has to exist in data frame
-        if (!variable %in% names(data_frame)){
+        if (!original_var %in% names(data_frame)){
             next
         }
 
@@ -195,12 +213,12 @@ else. <- function(data_frame, ...){
 
         # Check if existing variable type is of same type as assigned value.
         # Put out a warning on type mismatch.
-        if (check_types(data_frame, variable, value)){
-            data_frame[[variable]] <- as.character(data_frame[[variable]])
+        if (check_types(data_frame, original_var, value)){
+            data_frame[[original_var]] <- as.character(data_frame[[original_var]])
             value <- as.character(value)
         }
 
-        data_frame <- generate_new_var(data_frame, is.na(data_frame[[variable]]), variable, value)
+        data_frame <- generate_new_var(data_frame, is.na(data_frame[[original_var]]), original_var, value)
     }
 
     data_frame

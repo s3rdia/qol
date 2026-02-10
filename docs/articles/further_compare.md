@@ -527,10 +527,6 @@ MyData <- wb_to_df(file  = "C:/MyFile.xlsx",
                    named_region = "data")
 ```
 
-These are just very basic examples. For further details you can look up
-the functions in the
-[reference](https://s3rdia.github.io/qol/reference/index.html).
-
 ## Import CSV And XLSX Files
 
 With SAS you can import many different file formats with a straight
@@ -654,3 +650,7 @@ year <- 2026
 
 set_titles("The current year is &year")
 ```
+
+These are just very basic examples. For further details you can look up
+the functions in the
+[reference](https://s3rdia.github.io/qol/reference/index.html).

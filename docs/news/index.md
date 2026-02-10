@@ -200,6 +200,12 @@
   many are left. (27.01.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
   `combine_into_worbook()`: Adjusted examples. (02.02.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): If
+  used inside a function, these functions should now be able to catch
+  the original variable name passed into the parent function.
+  (10.02.2026)
 
 ## qol 1.2.0
 

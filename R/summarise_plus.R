@@ -973,19 +973,19 @@ summarise_plus <- function(data_frame,
 ###############################################################################
 # List of all possible actions
 ###############################################################################
-static_statistics <- list(sum = collapse::fsum,
-                          freq = function(x, w, g) collapse::fnobs(x, g = g),
-                          freq_g0 = function(x, w, g) freq_g0_qol(x, group = g),
-                          mean = collapse::fmean,
-                          median = collapse::fmedian,
-                          mode = collapse::fmode,
-                          min = function(x, w, g) collapse::fmin(x, g = g),
-                          max = function(x, w, g) collapse::fmax(x, g = g),
-                          sd = collapse::fsd,
+static_statistics <- list(sum      = collapse::fsum,
+                          freq     = function(x, w, g) collapse::fnobs(x, g = g),
+                          freq_g0  = function(x, w, g) freq_g0_qol(x, group = g),
+                          mean     = collapse::fmean,
+                          median   = collapse::fmedian,
+                          mode     = collapse::fmode,
+                          min      = function(x, w, g) collapse::fmin(x, g = g),
+                          max      = function(x, w, g) collapse::fmax(x, g = g),
+                          sd       = collapse::fsd,
                           variance = collapse::fvar,
-                          first = function(x, w, g) collapse::ffirst(x, g = g),
-                          last = function(x, w, g) collapse::flast(x, g = g),
-                          missing = function(x, w, g) collapse::fsum(is.na(x), g = g))
+                          first    = function(x, w, g) collapse::ffirst(x, g = g),
+                          last     = function(x, w, g) collapse::flast(x, g = g),
+                          missing  = function(x, w, g) collapse::fsum(is.na(x), g = g))
 
 
 #' Compute Percentile Functions

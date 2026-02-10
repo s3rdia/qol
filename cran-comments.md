@@ -62,6 +62,7 @@ Additionally
 * any_table(): Removed c() in examples where not necessary.
 * if.(): Now outputs a message on how many observations have been removed and how many are left.
 * any_table(), combine_into_worbook(): Adjusted examples.
+* if.(), else_if.(), else.(): If used inside a function, these functions should now be able to catch the original variable name passed into the parent function.
 
 ## R CMD check results
 
