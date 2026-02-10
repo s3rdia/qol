@@ -3,7 +3,9 @@
 \name{import_export}
 \alias{import_export}
 \alias{import_data}
+\alias{import_multi}
 \alias{export_data}
+\alias{export_multi}
 \title{High Level Import From And Export To CSV And XLSX}
 \usage{
 import_data(
@@ -15,10 +17,28 @@ import_data(
   var_names = TRUE
 )
 
+import_multi(
+  file_list,
+  sheet = "all",
+  region = NULL,
+  separator = "auto",
+  decimal = "auto",
+  var_names = TRUE
+)
+
 export_data(
   data_frame,
   outfile,
   separator = ";",
+  decimal = ",",
+  var_names = TRUE
+)
+
+export_multi(
+  file_list,
+  out_path,
+  into_sheets = TRUE,
+  separator = NULL,
   decimal = ",",
   var_names = TRUE
 )
@@ -37,19 +57,36 @@ or the name of a named region.}
 
 \item{var_names}{TRUE by default. Whether to export variable names or not.}
 
+\item{file_list}{\code{\link[=import_multi]{import_multi()}}: A character vector containing full file paths.
+
+\code{\link[=export_multi]{export_multi()}}: A list of data frames.}
+
 \item{data_frame}{A data frame to export.}
 
 \item{outfile}{Full file path with extension. Allowed extensions are ".csv" and ".xlsx".}
+
+\item{out_path}{The file path where to save the exported files.}
+
+\item{into_sheets}{TRUE by default. Whether to export all data frames into multiple
+sheets of a single xlsx file or into separate xlsx files.}
 }
 \value{
 Returns a data frame.
+
+Multi functions: Returns a list of data frames.
 }
 \description{
 \code{\link[=import_data]{import_data()}}: A wrapper for \code{\link[data.table:fread]{data.table::fread()}} and \code{\link[openxlsx2:wb_to_df]{openxlsx2::wb_to_df()}},
 providing basic import functionality with minimal code.
 
+\code{\link[=import_multi]{import_multi()}}: Runs multiple imports on all provided files. Is able to import
+all sheets from xlsx files.
+
 \code{\link[=export_data]{export_data()}}: A wrapper for \code{\link[data.table:fwrite]{data.table::fwrite()}} and \code{\link[openxlsx2:wb_save]{openxlsx2::wb_save()}},
 providing basic export functionality with minimal code.
+
+\code{\link[=export_multi]{export_multi()}}: Runs multiple exports on a list of data frames. Is able to export
+to a single xlsx file with multiple sheets.
 }
 \details{
 \code{\link[=import_data]{import_data()}} and \code{\link[=export_data]{export_data()}} are based on the 'SAS' procedures Proc Import and Proc Export,
@@ -76,6 +113,9 @@ name_import  <- import_data(xlsx_file, region = "test_region")
 # Import from another sheet
 sheet_import <- import_data(xlsx_file, sheet = "Sheet 2")
 
+# Import multiple files at once
+all_files <- import_multi(c(csv_file, xlsx_file))
+
 # Example data frame
 my_data <- dummy_data(100)
 
@@ -87,8 +127,29 @@ export_xlsx <- tempfile(fileext = ".xlsx")
 my_data |> export_data(export_csv)
 my_data |> export_data(export_xlsx)
 
+# Example data frame list
+my_list <- list(first  = dummy_data(10),
+                second = dummy_data(10))
+
+# Export multiple data frames into one xlsx file
+# with multiple sheets
+export_multi(my_list, tempdir())
+
+# Export multiple data frames into multiple xlsx files
+export_multi(my_list, tempdir(), into_sheets = FALSE)
+
+# Export multiple data frames into multiple csv files
+export_multi(my_list, tempdir(), separator = ";")
+
 # Manual cleanup for example
-unlink(c(export_csv, export_xlsx))
+file1 <- file.path(tempdir(), "my_list.xlsx")
+file2 <- file.path(tempdir(), "first.xlsx")
+file3 <- file.path(tempdir(), "second.xlsx")
+file4 <- file.path(tempdir(), "first.csv")
+file5 <- file.path(tempdir(), "second.csv")
+
+unlink(c(export_csv, export_xlsx,
+         file1, file2, file3, file4, file5))
 
 }
 \seealso{

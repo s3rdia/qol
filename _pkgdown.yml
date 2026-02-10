@@ -32,7 +32,9 @@ reference:
 - title: Import And Export CSV and XLSX
   contents:
   - import_data
+  - import_multi
   - export_data
+  - export_multi
 - title: Recoding
   contents:
   - recode

@@ -10,6 +10,8 @@
 * `macro()`, `apply_macro()`: Resolve objects starting with "&" within a text. Functions which can print titles, footnotes, variable or statistic labels make use of these functions, so that e.g. a title can be passed as "The current year is &year" and will be resolved to "The current year is 2026". (24.01.2026)
 * `where.()`: A quick way to filter a data frame and get a direct view of the result. (27.01.2026)
 * `free_memory()`: Provides more flexible ways to remove objects from memory. (28.01.2026)
+* `import_multi()`: Import multiple csv or xlsx files. The function is also capable of importing all sheets from multiple xlsx file. (10.02.2026)
+* `export_multi()`: Export multiple csv or xlsx files based on a list of data frames. The function is also capable of exporting all data frames to multiple sheets in one xlsx file. (10.02.2026)
 
 ### New functionality
 

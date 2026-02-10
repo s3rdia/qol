@@ -32,6 +32,13 @@
 - [`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md):
   Provides more flexible ways to remove objects from memory.
   (28.01.2026)
+- [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Import multiple csv or xlsx files. The function is also capable of
+  importing all sheets from multiple xlsx file. (10.02.2026)
+- [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Export multiple csv or xlsx files based on a list of data frames. The
+  function is also capable of exporting all data frames to multiple
+  sheets in one xlsx file. (10.02.2026)
 
 #### New functionality
 

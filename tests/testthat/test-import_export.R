@@ -1,6 +1,6 @@
 test_that("Example files load", {
-    csv_file  <- system.file("extdata", "qol_example_data.csv",  package = "qol")
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    csv_file  <- system.file("extdata", "qol_example_data_csv.csv",  package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     expect_true(file.exists(csv_file))
     expect_true(file.exists(xlsx_file))
@@ -11,6 +11,8 @@ test_that("Example files load", {
 ###############################################################################
 
 export_df <- dummy_data(10)
+export_list <- list(first  = dummy_data(10),
+                    second = dummy_data(10))
 
 
 test_that("CSV export works correctly", {
@@ -122,13 +124,47 @@ test_that("Warning in export if separator and decimal are equal", {
     expect_true(file.exists(temp_file))
 })
 
+
+test_that("Multi CSV export works correctly", {
+    file1 <- file.path(tempdir(), "first.csv")
+    file2 <- file.path(tempdir(), "second.csv")
+    on.exit(unlink(c(file1, file2)), add = TRUE)
+
+    export_multi(export_list, tempdir(), separator = ";")
+
+    expect_true(file.exists(file1))
+    expect_true(file.exists(file2))
+})
+
+
+test_that("Multi XLSX export works correctly", {
+    file1 <- file.path(tempdir(), "first.xlsx")
+    file2 <- file.path(tempdir(), "second.xlsx")
+    on.exit(unlink(c(file1, file2)), add = TRUE)
+
+    export_multi(export_list, tempdir(), into_sheets = FALSE)
+
+    expect_true(file.exists(file1))
+    expect_true(file.exists(file2))
+})
+
+
+test_that("Multi sheet export into one XLSX file works correctly", {
+    file <- file.path(tempdir(), "export_list.xlsx")
+    on.exit(unlink(file), add = TRUE)
+
+    export_multi(export_list, tempdir())
+
+    expect_true(file.exists(file))
+})
+
 ###############################################################################
 # Import
 ###############################################################################
 
 
 test_that("CSV import works correctly", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     infile <- import_data(csv_file)
 
@@ -138,7 +174,7 @@ test_that("CSV import works correctly", {
 
 
 test_that("CSV import without first row as column names", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     infile <- import_data(csv_file, var_names = FALSE)
 
@@ -147,7 +183,7 @@ test_that("CSV import without first row as column names", {
 
 
 test_that("XLSX import works correctly", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     infile <- import_data(xlsx_file)
 
@@ -157,7 +193,7 @@ test_that("XLSX import works correctly", {
 
 
 test_that("XLSX import with specific region", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     infile <- import_data(xlsx_file, sheet = 2, region = "A1:C11")
 
@@ -167,7 +203,7 @@ test_that("XLSX import with specific region", {
 
 
 test_that("XLSX import with named region", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     infile <- import_data(xlsx_file, region = "test_region")
 
@@ -177,7 +213,7 @@ test_that("XLSX import with named region", {
 
 
 test_that("XLSX import without first row as column names", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     infile <- import_data(xlsx_file, var_names = FALSE)
 
@@ -198,7 +234,7 @@ test_that("Abort import with non existing path", {
 
 
 test_that("Abort import on missing file extension", {
-    csv_file <- sub(".csv", "", system.file("extdata", "qol_example_data.csv", package = "qol"))
+    csv_file <- gsub(".csv", "", system.file("extdata", "qol_example_data_csv.csv", package = "qol"))
 
     expect_message(infile <- import_data(csv_file),
                    " X ERROR: No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.")
@@ -206,7 +242,7 @@ test_that("Abort import on missing file extension", {
 
 
 test_that("Abort import on invalid file extension", {
-    csv_file <- sub(".csv", ".test", system.file("extdata", "qol_example_data.csv", package = "qol"))
+    csv_file <- gsub(".csv", ".test", system.file("extdata", "qol_example_data_csv.csv", package = "qol"))
 
     expect_message(infile <- import_data(csv_file),
                    " X ERROR: Only 'csv' or 'xlsx' are allowed as file extensions in the <infile>.")
@@ -214,7 +250,7 @@ test_that("Abort import on invalid file extension", {
 
 
 test_that("Warning in import if separator is not provided as character", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     expect_message(infile <- import_data(csv_file, separator = 1),
                    " ! WARNING: <Separator> must be provided as character. Automatic detection will be used.")
@@ -225,7 +261,7 @@ test_that("Warning in import if separator is not provided as character", {
 
 
 test_that("Warning in import if separator is longer than one character", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     expect_message(infile <- import_data(csv_file, separator = ";;"),
                    " ! WARNING: <Separator> may only be one character. Automatic detection will be used.")
@@ -236,7 +272,7 @@ test_that("Warning in import if separator is longer than one character", {
 
 
 test_that("Warning in import if decimal is not provided as character", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     expect_message(infile <- import_data(csv_file, decimal = 1),
                    " ! WARNING: <Decimal> must be provided as character. Automatic detection will be used.")
@@ -247,7 +283,7 @@ test_that("Warning in import if decimal is not provided as character", {
 
 
 test_that("Warning in import if decimal is longer than one character", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     expect_message(infile <- import_data(csv_file, decimal = ",,"),
                    " ! WARNING: <Decimal> may only be one character. Automatic detection will be used.")
@@ -258,7 +294,7 @@ test_that("Warning in import if decimal is longer than one character", {
 
 
 test_that("Warning in import if separator and decimal are equal", {
-    csv_file <- system.file("extdata", "qol_example_data.csv", package = "qol")
+    csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     expect_message(infile <- import_data(csv_file, separator = ";", decimal = ";"),
                    " ! WARNING: <Decimal> may not be the same character as the <separator>. Automatic detection will be used.")
@@ -269,7 +305,7 @@ test_that("Warning in import if separator and decimal are equal", {
 
 
 test_that("Warning in import if region is not provided as character", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     expect_message(infile <- import_data(xlsx_file, region = 1),
                              " ! WARNING: Region must be provided as character. Allowed are specific ranges like 'A1:BY27' or")
@@ -280,7 +316,7 @@ test_that("Warning in import if region is not provided as character", {
 
 
 test_that("Warning in import if region is a vector", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     expect_message(infile <- import_data(xlsx_file, region = c("A", "B")),
                              " ! WARNING: Only one character element allowed for region. The whole file will be read.")
@@ -291,11 +327,33 @@ test_that("Warning in import if region is a vector", {
 
 
 test_that("Warning in import if region not found", {
-    xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     expect_message(infile <- import_data(xlsx_file, region = "Test"),
                              " ! WARNING: Region 'Test' doesn't exist in sheet")
 
     expect_equal(nrow(infile), 100)
     expect_equal(ncol(infile), 11)
+})
+
+
+test_that("Multi file import works correctly (single sheet)", {
+    csv_file  <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
+    files <- c(csv_file, xlsx_file)
+
+    infile <- import_multi(files, 1)
+
+    expect_type(infile, "list")
+    expect_equal(length(infile), 2)
+})
+
+
+test_that("Multi file import works correctly (all sheets)", {
+    xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
+
+    infile <- import_multi(xlsx_file)
+
+    expect_type(infile, "list")
+    expect_equal(length(infile), 2)
 })

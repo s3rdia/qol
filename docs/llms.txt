@@ -439,7 +439,9 @@ can be found on GitHub.
 ## Import And Export CSV and XLSX
 
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md)
+  [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md)
   [`export_data()`](https://s3rdia.github.io/qol/reference/import_export.md)
+  [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md)
   : High Level Import From And Export To CSV And XLSX
 
 ## Recoding

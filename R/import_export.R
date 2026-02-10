@@ -232,10 +232,95 @@ import_data <- function(infile,
         }
     }
 
+    # Convert xlsx files to data.table
+    if (!data.table::is.data.table(data_frame)){
+        data_frame <- data.table::as.data.table(data_frame)
+    }
+
     end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
     message("\n- - - 'import_data' execution time: ", end_time, " seconds\n")
 
     invisible(data_frame)
+}
+
+
+#' @description
+#' [import_multi()]: Runs multiple imports on all provided files. Is able to import
+#' all sheets from xlsx files.
+#'
+#' @param file_list [import_multi()]: A character vector containing full file paths.
+#'
+#' [export_multi()]: A list of data frames.
+#'
+#' @return
+#' Multi functions: Returns a list of data frames.
+#'
+#' @examples
+#' # Import multiple files at once
+#' all_files <- import_multi(c(csv_file, xlsx_file))
+#'
+#' @rdname import_export
+#'
+#' @export
+import_multi <- function(file_list,
+                         sheet     = "all",
+                         region    = NULL,
+                         separator = "auto",
+                         decimal   = "auto",
+                         var_names = TRUE){
+    start_time <- Sys.time()
+
+    # Loop through all files and import them one after another
+    result_list <- list()
+
+    for (i in seq_along(file_list)){
+        infile <- file_list[[i]]
+
+        filename  <- tools::file_path_sans_ext(basename(infile))
+        extension <- tolower(tools::file_ext(infile))
+
+        # For CSV files just do a simple import
+        if (extension == "csv"){
+            result_list[[filename]] <- suppressMessages(
+                import_data(infile    = infile,
+                            separator = separator,
+                            decimal   = decimal,
+                            var_names = var_names))
+        }
+        # For XLSX files there are two possible path to go
+        else if (extension == "xlsx"){
+            # If all sheets should be imported from a single file
+            if (sheet == "all"){
+                # Load file as a workbook first to be able to extract the sheet names
+                wb <- openxlsx2::wb_load(infile)
+                sheet_names <- openxlsx2::wb_get_sheet_names(wb)
+
+                # Import all sheets one after another by name
+                for (sheet_name in sheet_names){
+                    result_list[[paste0(filename, "_", sheet_name)]] <-
+                        suppressMessages(
+                            import_data(infile    = infile,
+                                        sheet     = sheet_name,
+                                        region    = region,
+                                        var_names = var_names))
+                }
+            }
+            # If only a single sheet from each file should be imported, just do a
+            # simple import
+            else{
+                result_list[[filename]] <- suppressMessages(
+                    import_data(infile    = infile,
+                                sheet     = sheet,
+                                region    = region,
+                                var_names = var_names))
+            }
+        }
+    }
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("\n- - - 'import_multi' execution time: ", end_time, " seconds\n")
+
+    invisible(result_list)
 }
 
 
@@ -254,9 +339,6 @@ import_data <- function(infile,
 #' # Export: Provide full file path
 #' my_data |> export_data(export_csv)
 #' my_data |> export_data(export_xlsx)
-#'
-#' # Manual cleanup for example
-#' unlink(c(export_csv, export_xlsx))
 #'
 #' @rdname import_export
 #'
@@ -382,4 +464,104 @@ export_data <- function(data_frame,
     message("\n- - - 'export_data' execution time: ", end_time, " seconds\n")
 
     invisible(data_frame)
+}
+
+
+#' @description
+#' [export_multi()]: Runs multiple exports on a list of data frames. Is able to export
+#' to a single xlsx file with multiple sheets.
+#'
+#' @param out_path The file path where to save the exported files.
+#' @param into_sheets TRUE by default. Whether to export all data frames into multiple
+#' sheets of a single xlsx file or into separate xlsx files.
+#'
+#' @examples
+#' # Example data frame list
+#' my_list <- list(first  = dummy_data(10),
+#'                 second = dummy_data(10))
+#'
+#' # Export multiple data frames into one xlsx file
+#' # with multiple sheets
+#' export_multi(my_list, tempdir())
+#'
+#' # Export multiple data frames into multiple xlsx files
+#' export_multi(my_list, tempdir(), into_sheets = FALSE)
+#'
+#' # Export multiple data frames into multiple csv files
+#' export_multi(my_list, tempdir(), separator = ";")
+#'
+#' # Manual cleanup for example
+#' file1 <- file.path(tempdir(), "my_list.xlsx")
+#' file2 <- file.path(tempdir(), "first.xlsx")
+#' file3 <- file.path(tempdir(), "second.xlsx")
+#' file4 <- file.path(tempdir(), "first.csv")
+#' file5 <- file.path(tempdir(), "second.csv")
+#'
+#' unlink(c(export_csv, export_xlsx,
+#'          file1, file2, file3, file4, file5))
+#'
+#' @rdname import_export
+#'
+#' @export
+export_multi <- function(file_list,
+                         out_path,
+                         into_sheets = TRUE,
+                         separator   = NULL,
+                         decimal     = ",",
+                         var_names   = TRUE){
+    start_time <- Sys.time()
+
+    if (into_sheets && is.null(separator)){
+        wb <- openxlsx2::wb_workbook()
+    }
+
+    # Loop through all files and export them one after another
+    for (i in seq_along(file_list)){
+        data_frame <- file_list[[i]]
+        filename   <- names(file_list)[[i]]
+
+        # For CSV files just do a simple export
+        if (!is.null(separator)){
+            suppressMessages(export_data(data_frame,
+                                         outfile   = paste0(out_path, "/", filename, ".csv"),
+                                         separator = separator,
+                                         decimal   = decimal,
+                                         var_names = var_names))
+        }
+        # For XLSX files there are two possible path to go
+        else{
+            # If all data frames should be exported into the same file with multiple sheets
+            if (into_sheets){
+                # Fill all sheets one after another with data
+                wb$add_worksheet(filename)
+                wb$add_data(x          = data_frame,
+                            col_names  = var_names,
+                            na.strings = "")
+
+                # Add named region so there is no need to specify the exact region when importing back
+                wb$add_named_region(dims = openxlsx2::wb_dims(rows = seq.int(1, collapse::fnrow(data_frame) + var_names),
+                                                              cols = seq.int(1, collapse::fncol(data_frame))),
+                                    name = "data", local_sheet = TRUE)
+            }
+            # If only a single sheet from each file should be imported, just do a
+            # simple import
+            else{
+                suppressMessages(export_data(data_frame,
+                                             outfile   = paste0(out_path, "/", filename, ".xlsx"),
+                                             separator = separator,
+                                             decimal   = decimal,
+                                             var_names = var_names))
+            }
+        }
+    }
+
+    if (into_sheets && is.null(separator)){
+        filename <- get_origin_as_char(file_list, substitute(file_list))
+        wb$save(file = paste0(out_path, "/", filename, ".xlsx"), overwrite = TRUE)
+    }
+
+    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
+    message("\n- - - 'export_multi' execution time: ", end_time, " seconds\n")
+
+    invisible(file_list)
 }
