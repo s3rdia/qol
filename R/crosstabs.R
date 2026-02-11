@@ -279,6 +279,13 @@ crosstabs <- function(data_frame,
         output <- tolower(output)
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+    statistics <- tolower(statistics)
+
     # Get the intersection of the requested statistics to make sure
     # only valid actions are passed down
     statistics <- statistics[collapse::funique(statistics) %in%

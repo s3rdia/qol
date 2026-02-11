@@ -1,4 +1,4 @@
-# qol 1.2.1 - DEVELOPMENT
+# qol 1.2.1
 
 ### New functions
 
@@ -12,6 +12,8 @@
 * `free_memory()`: Provides more flexible ways to remove objects from memory. (28.01.2026)
 * `import_multi()`: Import multiple csv or xlsx files. The function is also capable of importing all sheets from multiple xlsx file. (10.02.2026)
 * `export_multi()`: Export multiple csv or xlsx files based on a list of data frames. The function is also capable of exporting all data frames to multiple sheets in one xlsx file. (10.02.2026)
+* `get_duplicate_var_names()`: Checks for duplicate variable names in a data frame, e.g. AGE, age and Age. (11.02.2026)
+* `get_duplicate_var_count()`: Counts the number of duplicated variables in a data frame. If a variable appears three times, e.g. AGE, age and Age, the variable count will be one. (11.02.2026)
 
 ### New functionality
 
@@ -19,6 +21,8 @@
 * `retain_variables()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (15.01.2026)
 * `excel_output_style()`: New `subheader` parameters which come into play when setting the `by_as_subheaders` to TRUE when using `any_table()`. The parameters can also be set as global option. (18.01.2026)
 * `any_table()`: When using by variables with the new styling option `by_as_subheaders` the tables aren't split among multiple sheets, instead the by variable expressions are used as subheaders in one big table. (18.01.2026)
+* `summarise_plus`, `any_table()`, `crosstabs()`: `statistics` parameter can now be passed without quotation marks. (11.02.2026)
+* `any_table()`: `pct_group` parameter can now be passed without quotation marks. (11.02.2026)
 
 ### Changed functionality
 
@@ -64,6 +68,7 @@
 * `if.()`: Now outputs a message on how many observations have been removed and how many are left. (27.01.2026)
 * `any_table()`, `combine_into_worbook()`: Adjusted examples. (02.02.2026)
 * `if.()`, `else_if.()`, `else.()`: If used inside a function, these functions should now be able to catch the original variable name passed into the parent function. (10.02.2026)
+* `content_report`: Added duplicate variable count to global information. (11.02.2026)
 
 
 # qol 1.2.0

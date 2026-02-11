@@ -4,6 +4,10 @@
 ###############################################################################
 
 dummy_df <- suppressMessages(dummy_data(100))
+dup_df <- data.frame(age = 1, AGE = 2, Age = 3,
+                     sex = 1, SeX = 2,
+                     Height_male = 1, Height_female = 1,
+                     weight = 2)
 
 
 test_that("Add new NA column range with helper function", {
@@ -18,6 +22,17 @@ test_that("Get length of integer variable", {
     expect_equal(get_integer_length(1L), 1)
     expect_equal(get_integer_length(10L), 2)
     expect_equal(get_integer_length(100L), 3)
+})
+
+
+test_that("Get duplicate variable names", {
+    expect_equal(get_duplicate_var_names(dup_df),
+                 c("age", "AGE", "Age", "sex", "SeX"))
+})
+
+
+test_that("Get duplicate variable count", {
+    expect_equal(get_duplicate_var_count(dup_df), 2)
 })
 
 ###############################################################################

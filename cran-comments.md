@@ -12,7 +12,9 @@ New functions
 * where.(): A quick way to filter a data frame and get a direct view of the result.
 * free_memory(): Provides more flexible ways to remove objects from memory.
 * import_multi(): Import multiple csv or xlsx files. The function is also capable of importing all sheets from multiple xlsx file.
-* export_multi(): Export multiple csv or xlsx files based on a list of data frames. The function is also capable of exporting all data frames to multiple sheets in one xlsx file. 
+* export_multi(): Export multiple csv or xlsx files based on a list of data frames. The function is also capable of exporting all data frames to multiple sheets in one xlsx file.
+* get_duplicate_var_names(): Checks for duplicate variable names in a data frame, e.g. AGE, age and Age.
+* get_duplicate_var_count(): Counts the number of duplicated variables in a data frame. If a variable appears three times, e.g. AGE, age and Age, the variable count will be one.
 
 New functionality
 
@@ -20,6 +22,8 @@ New functionality
 * retain_variables(): The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:").
 * excel_output_style(): New subheader parameters which come into play when setting the by_as_subheaders to TRUE when using any_table(). The parameters can also be set as global option.
 * any_table(): When using by variables with the new styling option by_as_subheaders the tables aren't split among multiple sheets, instead the by variable expressions are used as subheaders in one big table.
+* summarise_plus, any_table(), crosstabs(): statistics parameter can now be passed without quotation marks.
+* any_table(): pct_group parameter can now be passed without quotation marks.
 
 Changed functionality
 
@@ -65,6 +69,7 @@ Additionally
 * if.(): Now outputs a message on how many observations have been removed and how many are left.
 * any_table(), combine_into_worbook(): Adjusted examples.
 * if.(), else_if.(), else.(): If used inside a function, these functions should now be able to catch the original variable name passed into the parent function.
+* content_report: Added duplicate variable count to global information.
 
 ## R CMD check results
 

@@ -246,11 +246,13 @@ summarise_plus <- function(data_frame,
     # Statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+    statistics <- tolower(statistics)
+
     list_of_statistics <- get_complete_statistics_list(statistics)
 
     # Get the intersection of the requested statistics to make sure
     # only valid actions are passed down
-    statistics     <- tolower(statistics)
     requested      <- collapse::funique(unlist(list(statistics)))
     valid_stats    <- requested[requested %in% names(list_of_statistics)]
     selected_stats <- list_of_statistics[valid_stats]
@@ -1002,9 +1004,9 @@ static_statistics <- list(sum      = collapse::fsum,
 get_complete_statistics_list <- function(statistics){
     all_stats <- static_statistics
 
-    for (stat_name in statistics) {
+    for (stat_name in statistics){
         # Match pattern p<number>
-        if (grepl("^p\\d+$", stat_name)) {
+        if (grepl("^p\\d+$", stat_name)){
             prob <- as.numeric(sub("^p", "", stat_name)) / 100
 
             if (prob > 1){
@@ -1013,7 +1015,7 @@ get_complete_statistics_list <- function(statistics){
             }
 
             # Define the function
-            all_stats[[stat_name]] <- (function(prob) {
+            all_stats[[stat_name]] <- (function(prob){
                 force(prob)
                 function(x, w = NULL, g = NULL) {
                     percentiles_qol(x, w, g, probs = prob)

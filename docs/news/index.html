@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.1" id="qol-121---development">qol 1.2.1 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-121---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.1" id="qol-121">qol 1.2.1<a class="anchor" aria-label="anchor" href="#qol-121"></a></h2>
 <div class="section level4">
 <h4 id="new-functions-1-2-1">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-1"></a></h4>
 <ul><li>
@@ -60,6 +60,10 @@
 <code><a href="../reference/import_export.html">import_multi()</a></code>: Import multiple csv or xlsx files. The function is also capable of importing all sheets from multiple xlsx file. (10.02.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">export_multi()</a></code>: Export multiple csv or xlsx files based on a list of data frames. The function is also capable of exporting all data frames to multiple sheets in one xlsx file. (10.02.2026)</li>
+<li>
+<code><a href="../reference/duplicates.html">get_duplicate_var_names()</a></code>: Checks for duplicate variable names in a data frame, e.g. AGE, age and Age. (11.02.2026)</li>
+<li>
+<code><a href="../reference/duplicates.html">get_duplicate_var_count()</a></code>: Counts the number of duplicated variables in a data frame. If a variable appears three times, e.g. AGE, age and Age, the variable count will be one. (11.02.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-1">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-1"></a></h4>
@@ -71,6 +75,10 @@
 <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: New <code>subheader</code> parameters which come into play when setting the <code>by_as_subheaders</code> to TRUE when using <code><a href="../reference/any_table.html">any_table()</a></code>. The parameters can also be set as global option. (18.01.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When using by variables with the new styling option <code>by_as_subheaders</code> the tables aren’t split among multiple sheets, instead the by variable expressions are used as subheaders in one big table. (18.01.2026)</li>
+<li>
+<code>summarise_plus</code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: <code>statistics</code> parameter can now be passed without quotation marks. (11.02.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: <code>pct_group</code> parameter can now be passed without quotation marks. (11.02.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-1">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-1"></a></h4>
@@ -145,6 +153,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code>combine_into_worbook()</code>: Adjusted examples. (02.02.2026)</li>
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: If used inside a function, these functions should now be able to catch the original variable name passed into the parent function. (10.02.2026)</li>
+<li>
+<code>content_report</code>: Added duplicate variable count to global information. (11.02.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

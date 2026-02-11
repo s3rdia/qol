@@ -179,6 +179,9 @@
   : Add Empty Variables In A Given Range
 - [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.md)
   : Get Integer Length
+- [`get_duplicate_var_names()`](https://s3rdia.github.io/qol/reference/duplicates.md)
+  [`get_duplicate_var_count()`](https://s3rdia.github.io/qol/reference/duplicates.md)
+  : Check For Duplicate Variable Names
 
 ## Split Data Frame
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.2.1 - DEVELOPMENT
+## qol 1.2.1
 
 #### New functions
 
@@ -39,6 +39,13 @@
   Export multiple csv or xlsx files based on a list of data frames. The
   function is also capable of exporting all data frames to multiple
   sheets in one xlsx file. (10.02.2026)
+- [`get_duplicate_var_names()`](https://s3rdia.github.io/qol/reference/duplicates.md):
+  Checks for duplicate variable names in a data frame, e.g. AGE, age and
+  Age. (11.02.2026)
+- [`get_duplicate_var_count()`](https://s3rdia.github.io/qol/reference/duplicates.md):
+  Counts the number of duplicated variables in a data frame. If a
+  variable appears three times, e.g. AGE, age and Age, the variable
+  count will be one. (11.02.2026)
 
 #### New functionality
 
@@ -61,6 +68,14 @@
   When using by variables with the new styling option `by_as_subheaders`
   the tables aren’t split among multiple sheets, instead the by variable
   expressions are used as subheaders in one big table. (18.01.2026)
+- `summarise_plus`,
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  `statistics` parameter can now be passed without quotation marks.
+  (11.02.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `pct_group` parameter can now be passed without quotation marks.
+  (11.02.2026)
 
 #### Changed functionality
 
@@ -213,6 +228,8 @@
   used inside a function, these functions should now be able to catch
   the original variable name passed into the parent function.
   (10.02.2026)
+- `content_report`: Added duplicate variable count to global
+  information. (11.02.2026)
 
 ## qol 1.2.0
 

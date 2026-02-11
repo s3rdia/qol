@@ -116,6 +116,8 @@ reference:
   - replace_except
   - add_variable_range
   - get_integer_length
+  - get_duplicate_var_names
+  - get_duplicate_var_count
 - title: Split Data Frame
   contents:
   - split_by

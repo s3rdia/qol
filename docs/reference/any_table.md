@@ -393,6 +393,7 @@ result_list <- my_data |>
                      values     = weight,
                      statistics = "sum",
                      formats    = list(sex = sex., age = age.),
+                     style      = my_style,
                      na.rm      = TRUE,
                      print      = FALSE)
 
@@ -404,6 +405,7 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      values     = weight,
                      statistics = "pct_group",
                      formats    = list(education = education.),
+                     style      = my_style,
                      na.rm      = TRUE)
 
 # The result list from above also carries the transformed data frame if

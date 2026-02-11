@@ -262,3 +262,60 @@ get_integer_length <- function(variable){
 
     nchar(abs(variable))
 }
+
+
+#' Check For Duplicate Variable Names
+#'
+#' @name duplicates
+#'
+#' @description
+#' Checks for duplicate variable names in a data frame, e.g. AGE, age and Age.
+#'
+#' @param data_frame The data frame which variable names to check for duplicates.
+#'
+#' @return
+#' [get_duplicate_var_names()]: Returns a vector of duplicate variable names.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- data.frame(age    = 1,
+#'                       AGE    = 2,
+#'                       Age    = 3,
+#'                       sex    = 1)
+#'
+#' dup_var_names <- my_data |> get_duplicate_var_names()
+#'
+#' @rdname duplicates
+#'
+#' @export
+get_duplicate_var_names <- function(data_frame){
+    var_names <- names(data_frame)
+
+    duplicate_names <- duplicated(tolower(var_names)) |
+        duplicated(tolower(var_names), fromLast = TRUE)
+
+    var_names[duplicate_names]
+}
+
+
+#' @description
+#' Counts the number of duplicated variables in a data frame. If a variable
+#' appears three times, e.g. AGE, age and Age, the variable count will be one.
+#'
+#' @return
+#' [get_duplicate_var_count()]: Returns the count of duplicated variables as a
+#' numeric value.
+#'
+#' @examples
+#' dup_var_count <- my_data |> get_duplicate_var_count()
+#'
+#' @rdname duplicates
+#'
+#' @export
+get_duplicate_var_count <- function(data_frame){
+    duplicate_names <- data_frame |> get_duplicate_var_names()
+
+    unique_names <- collapse::funique(tolower(duplicate_names))
+
+    length(unique_names)
+}

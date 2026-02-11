@@ -240,6 +240,7 @@
 #'                      values     = weight,
 #'                      statistics = "sum",
 #'                      formats    = list(sex = sex., age = age.),
+#'                      style      = my_style,
 #'                      na.rm      = TRUE,
 #'                      print      = FALSE)
 #'
@@ -251,6 +252,7 @@
 #'                      values     = weight,
 #'                      statistics = "pct_group",
 #'                      formats    = list(education = education.),
+#'                      style      = my_style,
 #'                      na.rm      = TRUE)
 #'
 #' # The result list from above also carries the transformed data frame if
@@ -523,6 +525,13 @@ any_table <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+    statistics <- tolower(statistics)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Pre summarised data
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -611,6 +620,8 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Percentages
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
 
     # Remove missing variables from pct_group
     if ("pct_group" %in% tolower(statistics)){
