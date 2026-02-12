@@ -1266,20 +1266,9 @@ any_table <- function(data_frame,
     ordered_cols <- grep("^var[0-9]+$", names(any_tab), value = TRUE)
     any_tab <- any_tab |> data.table::setcolorder(c("row.label", ordered_cols), before = 1)
 
-    # If all row labels are empty, delete the row header column
-    if (all(any_tab[["row.label"]] == " ")){
-        any_tab <- any_tab |> dropp("row.label")
-    }
-    # If only some labels are empty the row label column is printed. Problem: the cell
-    # merging omits empty cells. Therefor convert empty cells into cells with a space
-    # to merge the empty parts correctly.
-    else{
-        any_tab["row.label" == ""] <- " "
-    }
-
     # Get number of row header variables by getting the maximum number of + signs in the
     # row variables.
-    max_plus <- max(sapply(gregexpr("\\+", rows), function(var_to_test) {
+    max_plus <- max(sapply(gregexpr("\\+", rows), function(var_to_test){
         if (var_to_test[1] == -1){
             1
         }
@@ -1295,6 +1284,17 @@ any_table <- function(data_frame,
     # Mark empty row header cells
     row_var_cols <- 1:length_row_header
     any_tab[, row_var_cols][is.na(any_tab[, row_var_cols])] <- ""
+
+    # If all row labels are empty, delete the row header column
+    if (all(any_tab[["row.label"]] == " ")){
+        any_tab <- any_tab |> dropp("row.label")
+    }
+    # If only some labels are empty the row label column is printed. Problem: the cell
+    # merging omits empty cells. Therefor convert empty cells into cells with a space
+    # to merge the empty parts correctly.
+    else{
+        any_tab["row.label" == ""] <- " "
+    }
 
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,
@@ -1657,6 +1657,7 @@ format_any_excel <- function(wb,
 
         wb$add_ignore_error(dims = any_ranges[["header_range"]],  number_stored_as_text = TRUE)
         wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+        wb$add_ignore_error(dims = any_ranges[["table_range"]],   number_stored_as_text = TRUE)
 
         wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
         wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)

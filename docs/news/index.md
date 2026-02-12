@@ -1,5 +1,19 @@
 # Changelog
 
+## qol 1.2.2 - DEVELOPMENT
+
+#### Fixed
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When there was an NA value in the first table column while the row
+  label column was deleted, the NA symbol wasn’t set. This is fixed now.
+  (12.02.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If the custom NA symbol is set to a number, Excels number stored as
+  text error is now ignored. (12.02.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Took out a debug print I forgot in the function. (12.02.2026)
+
 ## qol 1.2.1
 
 #### New functions

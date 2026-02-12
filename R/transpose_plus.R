@@ -254,7 +254,7 @@ transpose_plus <- function(data_frame,
                 "          the <preserve> variables, which is not allowed. Transposition will be aborted.")
         return(invisible(NULL))
     }
-    print(4)
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Value variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
