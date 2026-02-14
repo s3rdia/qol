@@ -7,6 +7,10 @@ Last CRAN release was on 11.02.2026.
 * `any_table()`: If the custom NA symbol is set to a number, Excels number stored as text error is now ignored.
 * `transpose_plus()`: Took out a debug print I forgot in the function.
 
+### Additionally
+
+* `frequencies()`: Fixed two of the examples where `list` was missing in formats parameter. (14.02.2026)
+
 
 ## R CMD check results
 

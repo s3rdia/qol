@@ -14,6 +14,12 @@
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Took out a debug print I forgot in the function. (12.02.2026)
 
+#### Additionally
+
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  Fixed two of the examples where `list` was missing in formats
+  parameter. (14.02.2026)
+
 ## qol 1.2.1
 
 #### New functions

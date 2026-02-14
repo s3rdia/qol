@@ -90,14 +90,13 @@
 #'     "Male"   = 1,
 #'     "Female" = 2)
 #'
-#' my_data |> frequencies(sex,
-#'                        formats   = (sex = sex.))
+#' my_data |> frequencies(sex, formats = list(sex = sex.))
 #'
 #' # Split frequencies by expressions of another variable
 #' my_data |> frequencies(sex, by = education)
 #'
 #' # Get a list with two data tables for further usage
-#' result_list <- my_data |> frequencies(sex, formats = (sex = sex.))
+#' result_list <- my_data |> frequencies(sex, formats = list(sex = sex.))
 #'
 #' # Output in text file
 #' my_data |> frequencies(sex, output = "text")
