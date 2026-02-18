@@ -172,10 +172,7 @@ compute_group_percentages <- function(original_df,
         super_df <- result_list[[1]]
         rm(result_list)
 
-        # Convert numeric variables back which have become characters during summarisation
-        # and apply formats
         super_df <- super_df |>
-            convert_numeric(super_group) |>
             apply_format(formats, super_group) |>
             collapse::fselect(-sum_wgt)
 
@@ -189,8 +186,7 @@ compute_group_percentages <- function(original_df,
         # Summarise first
         super_df <- original_df |>
             collapse::fgroup_by(super_group) |>
-            collapse::fsummarise(across(values, collapse::fsum)) |>
-            convert_numeric(super_group)
+            collapse::fsummarise(across(values, collapse::fsum))
 
         super_df <- super_df |>
             apply_format(formats, super_group)

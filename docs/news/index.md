@@ -13,6 +13,9 @@
   text error is now ignored. (12.02.2026)
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Took out a debug print I forgot in the function. (12.02.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Fixed formats not matching data when computing percentages, if numeric
+  values are stored as character. (18.02.2026)
 
 #### Additionally
 
@@ -21,6 +24,8 @@
   parameter. (14.02.2026)
 
 ## qol 1.2.1
+
+CRAN release: 2026-02-11
 
 #### New functions
 
@@ -88,7 +93,7 @@
   When using by variables with the new styling option `by_as_subheaders`
   the tables aren’t split among multiple sheets, instead the by variable
   expressions are used as subheaders in one big table. (18.01.2026)
-- `summarise_plus`,
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
   [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
   `statistics` parameter can now be passed without quotation marks.

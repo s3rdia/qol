@@ -5,6 +5,7 @@
 * `any_table()`: When there was an NA value in the first table column while the row label column was deleted, the NA symbol wasn't set. This is fixed now. (12.02.2026)
 * `any_table()`: If the custom NA symbol is set to a number, Excels number stored as text error is now ignored. (12.02.2026)
 * `transpose_plus()`: Took out a debug print I forgot in the function. (12.02.2026)
+* `summarise_plus()`: Fixed formats not matching data when computing percentages, if numeric values are stored as character. (18.02.2026)
 
 ### Additionally
 
@@ -33,7 +34,7 @@
 * `retain_variables()`: The ":" can now be used as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (15.01.2026)
 * `excel_output_style()`: New `subheader` parameters which come into play when setting the `by_as_subheaders` to TRUE when using `any_table()`. The parameters can also be set as global option. (18.01.2026)
 * `any_table()`: When using by variables with the new styling option `by_as_subheaders` the tables aren't split among multiple sheets, instead the by variable expressions are used as subheaders in one big table. (18.01.2026)
-* `summarise_plus`, `any_table()`, `crosstabs()`: `statistics` parameter can now be passed without quotation marks. (11.02.2026)
+* `summarise_plus()`, `any_table()`, `crosstabs()`: `statistics` parameter can now be passed without quotation marks. (11.02.2026)
 * `any_table()`: `pct_group` parameter can now be passed without quotation marks. (11.02.2026)
 
 ### Changed functionality
