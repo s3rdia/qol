@@ -182,6 +182,8 @@
 - [`get_duplicate_var_names()`](https://s3rdia.github.io/qol/reference/duplicates.md)
   [`get_duplicate_var_count()`](https://s3rdia.github.io/qol/reference/duplicates.md)
   : Check For Duplicate Variable Names
+- [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md)
+  : Round Values With Half Rounded Up
 
 ## Split Data Frame
 

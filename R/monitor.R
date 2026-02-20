@@ -184,7 +184,7 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
     }
 
     # Calculate total time consumption
-    total_time <- round(collapse::fsum(monitor_df[["delta"]]), 3)
+    total_time <- round_values(collapse::fsum(monitor_df[["delta"]]), 3)
 
     # Setup plot dimensions
     graphics::par(las      = 2,             # Vertical labels

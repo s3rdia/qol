@@ -98,7 +98,7 @@ content_report <- function(data_frame,
     message("   + Number of missing values")
 
     variable_report[["na_count"]] <- sapply(data_frame, function(variable) collapse::fsum(is.na(variable)))
-    variable_report[["na_pct"]]   <- sapply(data_frame, function(variable) round(collapse::fsum(is.na(variable))/length(variable) * 100, 1))
+    variable_report[["na_pct"]]   <- sapply(data_frame, function(variable) round_values(collapse::fsum(is.na(variable))/length(variable) * 100, 1))
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Longest value", "Per variable information")
@@ -207,7 +207,7 @@ get_max_length <- function(variable){
     # saved as doubles.
     if (is.double(variable)){
         # Get unique values to avoid redundant formatting
-        unique_values <- round(variable, 5) |>
+        unique_values <- round_values(variable, 5) |>
             collapse::funique(sort = FALSE) |>
             collapse::na_omit()
 
@@ -281,7 +281,7 @@ format_value <- function(variable, type_func, type){
     value <- type_func(variable, na.rm = TRUE)
 
     if (is.numeric(value)){
-        return(as.character(round(value, 5)))
+        return(as.character(round_values(value, 5)))
     }
 
     as.character(value)
@@ -307,7 +307,7 @@ get_top_value <- function(variable) {
     # Round doubles, otherwise for doubles with decimals places this would result
     # in 0.0 % afterwards and would take forever
     if (is.double(variable)){
-        variable <- round(variable, 3)
+        variable <- round_values(variable, 3)
     }
 
     # Calculate frequencies
@@ -325,7 +325,7 @@ get_top_value <- function(variable) {
     # Evaluate top value percentage
     top_value <- names(counts)[which.max(counts)]
     top_freq  <- collapse::fmax(counts)
-    pct       <- round((top_freq / length(variable)) * 100, 1)
+    pct       <- round_values((top_freq / length(variable)) * 100, 1)
 
     # Format percentage so that it can be displayed in a column with even width
     # despite uneven values.

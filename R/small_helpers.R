@@ -319,3 +319,46 @@ get_duplicate_var_count <- function(data_frame){
 
     length(unique_names)
 }
+
+
+#' Round Values With Half Rounded Up
+#'
+#' @description
+#' This function rounds values according to DIN 1333 (round half up).
+#'
+#' @param values Numeric values to round.
+#' @param digits The number of decimal places the values should be rounded to.
+#'
+#' @return
+#' Returns rounded values
+#'
+#' @examples
+#' round_numbers1 <- round_values(c(-0.5, -0.4, 0.1, 0.49, 0.5, 1.5, 2.5, 3.2))
+#' round_numbers2 <- round_values(c(-0.5, -0.49, 0.17, 0.499, 0.51, 1.549, 2.51, 3.25),
+#'                                digits = 1)
+#'
+#' @export
+round_values <- function(values, digits = 0){
+    if (!is.numeric(values)){
+        message(" X ERROR: Only numeric values allowed.")
+        return(invisible(values))
+    }
+
+    # Get positive and negative signs
+    number_signs <- sign(values)
+
+    # Multiply absolute values by number of desired digits to have the desired numbers
+    # before the decimal places.
+    temp_values <- abs(values) * (10 ^ digits)
+
+    # And a half and the tiniest bit
+    temp_values <- temp_values + 0.5 + sqrt(.Machine[["double.eps"]])
+
+    # Remove all decimal places and convert back to the original form with the desired
+    # number of decimal places.
+    temp_values <- trunc(temp_values)
+    temp_values <- temp_values / (10 ^ digits)
+
+    # Bring back the original signs
+    temp_values * number_signs
+}

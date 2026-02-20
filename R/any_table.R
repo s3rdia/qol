@@ -928,24 +928,24 @@ any_table <- function(data_frame,
         # Round values to the decimals places specified in the style
         if (tolower(stat) %in% c("sum", "freq", "freq", "mean", "median", "mode",
                                  "min", "max")){
-            any_tab[[var_name]] <- round(any_tab[[var_name]],
-                                         style[["number_formats"]][[paste0(stat, "_decimals")]])
+            any_tab[[var_name]] <- round_values(any_tab[[var_name]],
+                                          style[["number_formats"]][[paste0(stat, "_decimals")]])
         }
         else if(stat == "g0"){
-            any_tab[[var_name]] <- round(any_tab[[var_name]],
-                                         style[["number_formats"]][["freq_decimals"]])
+            any_tab[[var_name]] <- round_values(any_tab[[var_name]],
+                                          style[["number_formats"]][["freq_decimals"]])
         }
         else if(stat == "wgt"){
-            any_tab[[var_name]] <- round(any_tab[[var_name]],
-                                         style[["number_formats"]][["sum_decimals"]])
+            any_tab[[var_name]] <- round_values(any_tab[[var_name]],
+                                          style[["number_formats"]][["sum_decimals"]])
         }
         else if(length(stat) <= 3 && substr(stat, 1, 1) == "p" && grepl("^[0-9]$", substr(stat, 2, 2))){
-            any_tab[[var_name]] <- round(any_tab[[var_name]],
-                                         style[["number_formats"]][["p_decimals"]])
+            any_tab[[var_name]] <- round_values(any_tab[[var_name]],
+                                          style[["number_formats"]][["p_decimals"]])
         }
         else{
-            any_tab[[var_name]] <- round(any_tab[[var_name]],
-                                         style[["number_formats"]][["pct_decimals"]])
+            any_tab[[var_name]] <- round_values(any_tab[[var_name]],
+                                          style[["number_formats"]][["pct_decimals"]])
         }
     }
 
@@ -1413,8 +1413,7 @@ any_table <- function(data_frame,
 #' can be anything available.
 #'
 #' @param wb An already created workbook to add more sheets to.
-#' @param any_tab The data frame which contains the information for this cross
-#' table.
+#' @param any_tab The data frame which contains the information for this table.
 #' @param rows The variable that appears in the table rows.
 #' @param columns The variable that appears in the table columns.
 #' @param statistics The user requested statistics.
@@ -1896,8 +1895,7 @@ merge_headers <- function(value_header, variable_header){
 #' by by-variables, each table gets printed on a different sheet.
 #'
 #' @param wb An already created workbook to add more sheets to.
-#' @param any_tab The data frame which contains the information for this cross
-#' table.
+#' @param any_tab The data frame which contains the information for this table.
 #' @param rows The variable that appears in the table rows.
 #' @param columns The variable that appears in the table columns.
 #' @param statistics The user requested statistics.

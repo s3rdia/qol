@@ -35,6 +35,13 @@ test_that("Get duplicate variable count", {
     expect_equal(get_duplicate_var_count(dup_df), 2)
 })
 
+
+test_that("Round values half up", {
+    values_to_round <- c(-2.5, -2.4, -0.5, -0.4, 0.4, 0.5, 2.4, 2.5)
+	
+    expect_equal(round_values(values_to_round), c(-3, -2, -1, 0, 0, 1, 2, 3))
+})
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -68,4 +75,9 @@ test_that("Adding NA variables aborts, if variables are already part of data fra
 
 test_that("Abort length of integer if character variable provided", {
     expect_message(get_integer_length("Test"), " X ERROR: Only numeric values allowed.")
+})
+
+
+test_that("Abort round values if values are not numeric", {
+    expect_message(round_values("Test"), " X ERROR: Only numeric values allowed.")
 })

@@ -2,6 +2,19 @@
 
 ## qol 1.2.2 - DEVELOPMENT
 
+#### New functions
+
+- `round.()`: Rounds values according to the round half up rule.
+  (20.02.2026)
+
+#### Changed functionality
+
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md):
+  Now uses round half up rule for rounding values. (20.02.2026)
+
 #### Fixed
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):

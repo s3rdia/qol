@@ -13,6 +13,8 @@ Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-p
 Version](https://img.shields.io/badge/GitHub-1.2.2-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
+[![r-universe
+checks](https://s3rdia.r-universe.dev/badges/:registry)](https://s3rdia.r-universe.dev/qol)
 <!-- badges: end -->
 
 Bringing Powerful ‘SAS’ Inspired Concepts for more Efficient Bigger

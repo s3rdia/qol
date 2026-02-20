@@ -1,5 +1,13 @@
 # qol 1.2.2 - DEVELOPMENT
 
+### New functions
+
+* `round.()`: Rounds values according to the round half up rule. (20.02.2026)
+
+### Changed functionality
+
+* `frequencies()`, `crosstabs()`, `any_table()`, `content_report()`: Now uses round half up rule for rounding values. (20.02.2026)
+
 ### Fixed
 
 * `any_table()`: When there was an NA value in the first table column while the row label column was deleted, the NA symbol wasn't set. This is fixed now. (12.02.2026)

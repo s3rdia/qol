@@ -118,6 +118,7 @@ reference:
   - get_integer_length
   - get_duplicate_var_names
   - get_duplicate_var_count
+  - round_values
 - title: Split Data Frame
   contents:
   - split_by
