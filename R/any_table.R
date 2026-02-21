@@ -35,6 +35,8 @@
 #' @param pct_group If pct_group is specified in the statistics, this option is used to
 #' determine which variable of the row and column variables should add up to 100 %.
 #' Multiple variables can be specified in a vector to generate multiple group percentages.
+#' You can also use the keywords "row_pct" or "col_pct" to calculate total percentages for
+#' rows and columns regardless of the respective other dimension.
 #' @param pct_value If pct_value is specified in the statistics, you can pass a list here
 #' which contains the information for a new variable name and between which of the value
 #' variables percentages should be computed.
@@ -171,7 +173,7 @@
 #'                      columns    = c("year", "education + year"),
 #'                      values     = weight,
 #'                      statistics = c("sum", "pct_group"),
-#'                      pct_group  = c("sex", "age", "education", "year"),
+#'                      pct_group  = c("sex", "age", "row_pct", "col_pct"),
 #'                      formats    = list(sex = sex., age = age.,
 #'                                        education = education.),
 #'                      na.rm      = TRUE)
@@ -621,17 +623,44 @@ any_table <- function(data_frame,
     # Percentages
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    row_pct <- FALSE
+    col_pct <- FALSE
+
     pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
 
     # Remove missing variables from pct_group
     if ("pct_group" %in% tolower(statistics)){
+        # Keep groups for later sorting in case row or column percents where chosen
+        order_pct <- sub("_pct", "", pct_group)
+
         invalid_pct <- pct_group[!pct_group %in% c(row_vars, col_vars)]
 
+        # Check whether keywords for row or column percents where passed
+        if (any(c("row_pct", "col_pct") %in% invalid_pct)){
+            if ("row_pct" %in% invalid_pct){
+                row_pct <- TRUE
+            }
+            if ("col_pct" %in% invalid_pct){
+                col_pct <- TRUE
+            }
+        }
+
         if (length(invalid_pct) > 0){
-            message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
-                    "            of the <rows> and <columns> variables. The variable will be omitted.")
+            if (row_pct || col_pct){
+                invalid_pct <- invalid_pct[!invalid_pct %in% c("row_pct", "col_pct")]
+            }
+
+            if (length(invalid_pct) > 0){
+                message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
+                        "            of the <rows> and <columns> variables. The variable will be omitted.")
+
+            }
 
             pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
+
+            if (length(pct_group) == 0){
+                statistics <- statistics[!statistics %in% "pct_group"]
+            }
         }
 
         rm(invalid_pct)
@@ -640,9 +669,11 @@ any_table <- function(data_frame,
     # If pct_value is selected, make sure sum is also part of statistics
     flag_remove_sum <- FALSE
 
-    if ("pct_value" %in% tolower(statistics) && length(statistics) == 1){
-        statistics      <- c(statistics, "sum")
-        flag_remove_sum <- TRUE
+    if (!"sum" %in% statistics){
+        if ("pct_value" %in% tolower(statistics) || row_pct || col_pct){
+            statistics      <- c(statistics, "sum")
+            flag_remove_sum <- TRUE
+        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -780,6 +811,184 @@ any_table <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle row percentages
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # In case keyword row_pct was entered as group percentage, compute percentages
+    # based on the row totals.
+    if (row_pct){
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Row percentages", "Summary")
+        #---------------------------------------------------------------------#
+
+        current_values <- paste0(values, "_sum")
+
+        # To make the column variable independent row percentages work, the data frame
+        # has to be summarised as before, but the column variables don't receive their
+        # formats. This is to prevent multilabels from doubling up the sums.
+        # This summarise is important because it makes sure, that the row variables have
+        # the same NA values as the main any_tab.
+        row_formats <- formats[names(formats) %in% c(by, row_vars)]
+
+        group_df <- suppressMessages(data_frame |>
+              summarise_plus(class      = group_vars,
+                             values     = values,
+                             statistics = "sum",
+                             formats    = row_formats,
+                             weight     = weight_var,
+                             nesting    = "all",
+                             types      = combinations,
+                             notes      = FALSE,
+                             na.rm      = na.rm,
+                             print_miss = print_miss)) |>
+            rename_pattern("_sum", "")
+
+
+        # The TYPE is put into the grouping, otherwise the row variable expressions
+        # would double up.
+        row_group <- c(row_vars, "TYPE")
+
+        # Clean up by variables
+        if (length(by) > 0){
+            group_df <- group_df |> fuse_variables("by_vars", by)
+
+            group_df[["TYPE"]] <- sub("^[^+]*\\+\\s*", "", group_df[["TYPE"]])
+
+            row_group <- c("by_vars", row_vars, "TYPE")
+        }
+
+        # Generate a pseudo weight for a simple summarise
+        group_df[[".weight"]] <- 1
+
+        result_list <- group_df |>
+            matrix_summarise(values,
+                             row_group,
+                             group_df[[".weight"]],
+                             "sum",
+                             get_complete_statistics_list("sum"),
+                             monitor_df,
+                             FALSE)
+
+        group_df <- result_list[[1]] |>
+            rename_pattern("_sum", "_row_sum") |>
+            dropp("sum_wgt")
+
+        # Join total sums to the main data frame
+        any_tab <- any_tab |>
+            collapse::join(group_df,
+                           on      = row_group,
+                           how     = "left",
+                           verbose = FALSE,
+                           overid  = 2)
+
+        # Calculate row percentages per value variable
+        total_sums <- paste0(values, "_row_sum")
+
+        for (i in seq_along(values)){
+            new_variable <- paste0(values[i], "_pct_group_row")
+
+            any_tab[[new_variable]] <-
+                data.table::fifelse(any_tab[[total_sums[i]]] > 0,
+                                    any_tab[[current_values[i]]] * 100 / any_tab[[total_sums[i]]],
+                                    NA)
+        }
+
+        # Drop total sums
+        any_tab <- any_tab |> dropp(":_row_sum")
+
+        rm(row_group, result_list, group_df, current_values, total_sums, new_variable)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle column percentages
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # In case keyword col_pct was entered as group percentage, compute percentages
+    # based on the row totals.
+    if (col_pct){
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Row percentages", "Summary")
+        #---------------------------------------------------------------------#
+
+        current_values <- paste0(values, "_sum")
+
+        # To make the row variable independent column percentages work, the data frame
+        # has to be summarised as before, but the row variables don't receive their
+        # formats. This is to prevent multilabels from doubling up the sums.
+        # This summarise is important because it makes sure, that the row variables have
+        # the same NA values as the main any_tab.
+        col_formats <- formats[names(formats) %in% c(by, col_vars)]
+
+        group_df <- suppressMessages(data_frame |>
+             summarise_plus(class      = group_vars,
+                            values     = values,
+                            statistics = "sum",
+                            formats    = col_formats,
+                            weight     = weight_var,
+                            nesting    = "all",
+                            types      = combinations,
+                            notes      = FALSE,
+                            na.rm      = na.rm,
+                            print_miss = print_miss)) |>
+            rename_pattern("_sum", "")
+
+
+        # The TYPE is put into the grouping, otherwise the row variable expressions
+        # would double up.
+        col_group <- c(col_vars, "TYPE")
+
+        # Clean up by variables
+        if (length(by) > 0){
+            group_df <- group_df |> fuse_variables("by_vars", by)
+
+            group_df[["TYPE"]] <- sub("^[^+]*\\+\\s*", "", group_df[["TYPE"]])
+
+            col_group <- c("by_vars", col_vars, "TYPE")
+        }
+
+        # Generate a pseudo weight for a simple summarise
+        group_df[[".weight"]] <- 1
+
+        result_list <- group_df |>
+            matrix_summarise(values,
+                             col_group,
+                             group_df[[".weight"]],
+                             "sum",
+                             get_complete_statistics_list("sum"),
+                             monitor_df,
+                             FALSE)
+
+        group_df <- result_list[[1]] |>
+            rename_pattern("_sum", "_col_sum") |>
+            dropp("sum_wgt")
+
+        # Join total sums to the main data frame
+        any_tab <- any_tab |>
+            collapse::join(group_df,
+                           on      = col_group,
+                           how     = "left",
+                           verbose = FALSE,
+                           overid  = 2)
+
+        # Calculate row percentages per value variable
+        total_sums <- paste0(values, "_col_sum")
+
+        for (i in seq_along(values)){
+            new_variable <- paste0(values[i], "_pct_group_col")
+
+            any_tab[[new_variable]] <-
+                data.table::fifelse(any_tab[[total_sums[i]]] > 0,
+                                    any_tab[[current_values[i]]] * 100 / any_tab[[total_sums[i]]],
+                                    NA)
+        }
+
+        # Drop total sums
+        any_tab <- any_tab |> dropp(":_col_sum")
+
+        rm(col_group, result_list, group_df, current_values, total_sums, new_variable)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Handle group percentages
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -892,21 +1101,26 @@ any_table <- function(data_frame,
             }
         }
 
-        if (flag_remove_sum){
-            any_tab <- any_tab |> dropp(":_sum")
-        }
-
-        rm(eval_vars, i, value, flag_remove_sum)
+        rm(eval_vars, i, value)
     }
 
     rm(data_frame)
+
+    # If no sums were selected in the statistics, drop them again now
+    if (flag_remove_sum){
+        any_tab <- any_tab |> dropp(":_sum")
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Round values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Reorder variables according to statistics. This is necessary because pct_value
-    # can only be computed after summarise_plus and therefor isn't ordered.
+    # Reorder variables according to statistics. This is necessary because some
+    # percentages can only be computed after summarise_plus and therefor aren't ordered.
+    if ("pct_group" %in% statistics){
+        any_tab <- any_tab |> setcolorder_by_pattern(order_pct)
+    }
+
     any_tab <- any_tab |> setcolorder_by_pattern(statistics)
 
     # Get value variable names
@@ -1299,8 +1513,10 @@ any_table <- function(data_frame,
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,
        combinations, current_combi, index, last_number_of_rows, name, new_row_names,
-       row_combi, row_combi_vars, sorted_combi, subset_type, group_vars,
-       length_row_header, col_header_df, header_diff, row_header_var_count, var_vector)
+       row_combi, row_combi_vars, sorted_combi, subset_type, group_vars, flag_remove_sum,
+       length_row_header, col_header_df, header_diff, row_header_var_count, var_vector,
+       var_name, var_index, value_sort, stat, row_pct, col_pct, pre_summed, ordered_cols,
+       max_plus, id_vars, by_division)
 
     # Grab all information, which is necessary to format the workbook. This list will be
     # returned at the end and can be grabbed by the workbook combine function.

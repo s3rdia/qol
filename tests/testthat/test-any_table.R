@@ -138,6 +138,21 @@ test_that("any_table with different percentages", {
 })
 
 
+test_that("any_table with keywords for row and column percentages", {
+    result_list <- suppressMessages(dummy_df |>
+            any_table(rows       = "age",
+                      columns    = "sex",
+                      values     = c(probability, weight),
+                      statistics = c("pct_group"),
+                      pct_group  = c("row_pct", "col_pct"),
+                      print      = FALSE))
+
+    expect_true(all(c("weight_pct_group_row_1", "probability_pct_group_row_2",
+                      "weight_pct_group_col_1", "probability_pct_group_col_2")
+                    %in% names(result_list[["table"]])))
+})
+
+
 test_that("any_table with a lot of statistics doesn't break", {
     result_list <- suppressMessages(dummy_df |>
             any_table(rows       = "age",

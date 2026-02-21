@@ -4,8 +4,15 @@
 
 #### New functions
 
-- `round.()`: Rounds values according to the round half up rule.
-  (20.02.2026)
+- [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
+  Rounds values according to the round half up rule. (20.02.2026)
+
+#### New functionality
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With
+  this the function can calculate total percentages for rows and columns
+  regardless of the respective other dimension. (21.02.2026)
 
 #### Changed functionality
 

@@ -67,7 +67,9 @@ should appear in the table rows. To nest variables use the form:
 
 \item{pct_group}{If pct_group is specified in the statistics, this option is used to
 determine which variable of the row and column variables should add up to 100 \%.
-Multiple variables can be specified in a vector to generate multiple group percentages.}
+Multiple variables can be specified in a vector to generate multiple group percentages.
+You can also use the keywords "row_pct" or "col_pct" to calculate total percentages for
+rows and columns regardless of the respective other dimension.}
 
 \item{pct_value}{If pct_value is specified in the statistics, you can pass a list here
 which contains the information for a new variable name and between which of the value
@@ -211,7 +213,7 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      columns    = c("year", "education + year"),
                      values     = weight,
                      statistics = c("sum", "pct_group"),
-                     pct_group  = c("sex", "age", "education", "year"),
+                     pct_group  = c("sex", "age", "row_pct", "col_pct"),
                      formats    = list(sex = sex., age = age.,
                                        education = education.),
                      na.rm      = TRUE)

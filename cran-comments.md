@@ -3,7 +3,11 @@ Last CRAN release was on 11.02.2026.
 
 ### New functions
 
-* `round.()`: Rounds values according to the round half up rule. (20.02.2026)
+* `round_values()`: Rounds values according to the round half up rule. (20.02.2026)
+
+### New functionality
+
+* `any_table()`: Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension. (21.02.2026)
 
 ### Changed functionality
 

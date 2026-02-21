@@ -106,7 +106,9 @@ any_table(
   If pct_group is specified in the statistics, this option is used to
   determine which variable of the row and column variables should add up
   to 100 %. Multiple variables can be specified in a vector to generate
-  multiple group percentages.
+  multiple group percentages. You can also use the keywords "row_pct" or
+  "col_pct" to calculate total percentages for rows and columns
+  regardless of the respective other dimension.
 
 - pct_value:
 
@@ -324,7 +326,7 @@ my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                      columns    = c("year", "education + year"),
                      values     = weight,
                      statistics = c("sum", "pct_group"),
-                     pct_group  = c("sex", "age", "education", "year"),
+                     pct_group  = c("sex", "age", "row_pct", "col_pct"),
                      formats    = list(sex = sex., age = age.,
                                        education = education.),
                      na.rm      = TRUE)
