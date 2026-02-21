@@ -1,4 +1,29 @@
+# qol 1.4.0 - DEVELOPMENT
+
+### New functions
+
+* `design_graphic()`: High level graphics function with many parameters. The focus is around concentrating on designing a graphic rather than engineering. Tedious operations are taken care of by the function. It is also modular and can take in custom diagram functions. (21.02.2026)
+* Graphic options: `graphic_visuals()`, `modify_graphic_visuals()`, `graphic_axes()`, `modify_graphic_axes()`, `graphic_dimensions()`, `modify_graphic_dimensions()`, `graphic_output()`, `modify_graphic_output()`. (21.02.2026)
+* Global graphic options: `graphic_visuals()`, `set_color_theme()`, `get_theme_colors()`, `reset_color_themes()`. (21.02.2026)
+* Main diagrams: `vbars()`. (21.02.2026)
+* View colors and themes: `display_colors()`, `display_themes()`. (21.02.2026)
+* Mid level functions:
+	* Textboxes: `add_textbox()`, `add_title()`, `add_footnote()`, `add_graphic_origin()`, `wrap_single_text()`, `wrap_text_vector()`, `register_windows_font()`. (21.02.2026)
+	* Viewport: `setup_main_canvas()`, `setup_nested_viewport()`, `setup_diagram_viewport()`, `setup_nested_diagram_viewport()`, `back_to_the_root()`, `is_viewport_pushed()`. (21.02.2026)
+	* Dimensions: `get_available_width()`, `get_available_height()`. (21.02.2026)
+	* Diagram: `get_diagram_dimensions()`, `vbar_grob()`. (21.02.2026)
+	* Axes: `get_value_axes_width()`, `get_variable_axes_dimension()`, `get_group_tick_positions_x()`, `get_y_axes_values()`, `setup_y_axes()`, `setup_x_axes()`, `setup_xy_axes()`. (21.02.2026)
+	* Labels: `direct_vertical_labels()`. (21.02.2026)
+	* Output: `output_graphic()`. (21.02.2026)
+	* Other: `format_values()`. (21.02.2026)
+
+### Additionally
+
+* Added `design_graphic()` example to the README. (21.02.2026)
+
 # qol 1.3.2
+
+CRAN release on 16.06.2026
 
 ### New functions
 
@@ -80,26 +105,6 @@ CRAN release on 16.05.2026
 * `set_up_custom_message()`: The way custom messages are set up has slightly changed and will break existing code. Custom message types are now stored globally and are called within quotation marks like all the other built-in message types. See updated README for the new handling. (25.04.2026)
 * `interval_format()`: The function had a flaw in that it always included the lower and upper bound values. The "workaround" in the examples to pass bounds like e.g. 0:499, 500:999, would miss values between 499 and 500 or 999 and 1000. The function now got two new parameters `inlcude_lower` (TRUE) and `include_upper` (FALSE), which by default read as "from ... to under ...". Which means bounds can be passed like 0:500, 500:1000 without overlapping. (07.05.2026)
 * `recode.()`: Interval formats can now be applied even though a variable has NA values. NA values are taken care of automatically instead of the function aborting with an error. Additionally multilabels are reduced so that no additional observations are created. (08.05.2026)
-
-### Fixed
-
-* `combine_into_workbook()`: Titles and footnotes are now styled again. (18.04.2026)
-* `compute.()`: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)
-* `print_step()`: Waiting character "?" is now drawn as intended in non-utf8 mode. (25.04.2026)
-* `compute.()`, `if.()`, `else_if.()`, `else.()`: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)
-* `compute.()`: Doesn't crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)
-* `dummy_data()`: Variable `income_class` was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)
-* `any_table()`: If the `block` keyword was used in `var_labels` parameter and all `block` keywords weren't written in lower case, the column header generation crashed. This is fixed now. (04.05.2026)
-* `interval_format()`: Now preserves single values. (08.05.2026)
-* `dummy_data()`: `person_id` is now adjusted after taking sample to have continuous numbers. (08.05.2026)
-
-### Additionally
-
-* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes. (20.04.2026)
-* `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing. (23.04.2026)
-* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: If only the `save_path` or the `file name` is specified in the global options or the style parameter there will now be a note stating that something is missing. (13.05.2026)
-* `if.()`, `else_if.()`: `&&` and `||` will now be converted into `&` and `|`. Additionally a warning is displayed. (15.05.2026)
-* Set the used threads from data.table to 2 for the `summarise_plus()` examples, because the CRAN server throws a NOTE for the r-devel-linux-x86_64-debian-gcc: "Examples with CPU time > 2.5 times elapsed time". (16.05.2026)
 
 # qol 1.3.0
 
@@ -203,6 +208,7 @@ CRAN release on 18.04.2026
 * `any_table()`: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)
 * `compute.()`: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)
 
+
 # qol 1.2.2
 
 CRAN release on 10.03.2026
@@ -251,6 +257,7 @@ CRAN release on 10.03.2026
 ### Additionally
 
 * `frequencies()`: Fixed two of the examples where `list` was missing in formats parameter. (14.02.2026)
+
 
 # qol 1.2.1
 
