@@ -1,4 +1,28 @@
-# qol 1.3.1 - DEVELOPMENT
+# qol 1.4.0 - DEVELOPMENT
+
+### New functions
+
+* `design_graphic()`: High level graphics function with many parameters. The focus is around concentrating on designing a graphic rather than engineering. Tedious operations are taken care of by the function. It is also modular and can take in custom diagram functions. (21.02.2026)
+* Graphic options: `graphic_visuals()`, `modify_graphic_visuals()`, `graphic_axes()`, `modify_graphic_axes()`, `graphic_dimensions()`, `modify_graphic_dimensions()`, `graphic_output()`, `modify_graphic_output()`. (21.02.2026)
+* Global graphic options: `graphic_visuals()`, `set_color_theme()`, `get_theme_colors()`, `reset_color_themes()`. (21.02.2026)
+* Main diagrams: `vbars()`. (21.02.2026)
+* View colors and themes: `display_colors()`, `display_themes()`. (21.02.2026)
+* Mid level functions:
+	* Textboxes: `add_textbox()`, `add_title()`, `add_footnote()`, `add_graphic_origin()`, `wrap_single_text()`, `wrap_text_vector()`, `register_windows_font()`. (21.02.2026)
+	* Viewport: `setup_main_canvas()`, `setup_nested_viewport()`, `setup_diagram_viewport()`, `setup_nested_diagram_viewport()`, `back_to_the_root()`, `is_viewport_pushed()`. (21.02.2026)
+	* Dimensions: `get_available_width()`, `get_available_height()`. (21.02.2026)
+	* Diagram: `get_diagram_dimensions()`, `vbar_grob()`. (21.02.2026)
+	* Axes: `get_value_axes_width()`, `get_variable_axes_dimension()`, `get_group_tick_positions_x()`, `get_y_axes_values()`, `setup_y_axes()`, `setup_x_axes()`, `setup_xy_axes()`. (21.02.2026)
+	* Labels: `direct_vertical_labels()`. (21.02.2026)
+	* Output: `output_graphic()`. (21.02.2026)
+	* Other: `format_values()`. (21.02.2026)
+
+### Additionally
+
+* Added `design_graphic()` example to the README. (21.02.2026)
+
+
+# qol 1.3.1
 
 ### Fixed
 
@@ -8,7 +32,10 @@
 
 * Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes (20.04.2026)
 
+
 # qol 1.3.0
+
+CRAN release on 18.04.2026
 
 ### New functions
 
@@ -108,7 +135,10 @@
 * `any_table()`: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)
 * `compute()`: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)
 
+
 # qol 1.2.2
+
+CRAN release on 10.03.2026
 
 ### New functions
 
@@ -155,7 +185,10 @@
 
 * `frequencies()`: Fixed two of the examples where `list` was missing in formats parameter. (14.02.2026)
 
+
 # qol 1.2.1
+
+CRAN release on 11.02.2026
 
 ### New functions
 

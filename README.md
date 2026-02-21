@@ -10,7 +10,7 @@
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
 [![r-universe](https://s3rdia.r-universe.dev/badges/qol)](https://s3rdia.r-universe.dev/qol)
 [![DEVELOPMENT
-Version](https://img.shields.io/badge/GitHub-1.3.1-blue.svg)](https://github.com/s3rdia/qol)
+Version](https://img.shields.io/badge/GitHub-1.4.0-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
 [![Ask
@@ -293,7 +293,26 @@ my_fst_where <- load_file(path  = tempdir(),
                           where = age > 65)
 ```
 
-## One function to join them all
+## Design Graphics
+
+Design graphics in a way, where the computer does the tedious and you
+the fun work. Make graphics look beautiful without complex programming.
+The main graphics function is modular, meaning with the help of the many
+mid level functions you can integrate your own custom graphic and make
+use of the many parameters.
+
+``` r
+qol_graphic <- my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = vbars,
+                    formats        = list(sex = sex., age = age.),
+                    titles         = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less  code.",
+                    footnotes      = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code.")
+```
+
+## One Function to Join Them All
 
 Join two or more data frames together in one operation with multiple
 different join methods and join on differently named variables.
