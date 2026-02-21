@@ -10,7 +10,7 @@
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
 [![r-universe](https://s3rdia.r-universe.dev/badges/qol)](https://s3rdia.r-universe.dev/qol)
 [![DEVELOPMENT
-Version](https://img.shields.io/badge/GitHub-1.2.2-blue.svg)](https://github.com/s3rdia/qol)
+Version](https://img.shields.io/badge/GitHub-1.3.0-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
 [![r-universe
@@ -264,6 +264,25 @@ tab4     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 # into a single workbook.
 combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8,
                       file = "C:/My_folder/My_workbook.xlsx")
+```
+
+## Design Graphics
+
+Design graphics in a way, where the computer does the tedious and you
+the fun work. Make graphics look beautiful without complex programming.
+The main graphics function is modular, meaning with the help of the many
+mid level functions you can integrate your own custom graphic and make
+use of the many parameters.
+
+``` r
+qol_graphic <- my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = vbars,
+                    formats        = list(sex = sex., age = age.),
+                    titles         = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less  code.",
+                    footnotes      = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code.")
 ```
 
 ## One Function to Join Them All

@@ -32,3 +32,11 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["na.rm"]]       <- FALSE
 .qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"
+
+# Graphics globals
+.qol_options[["graphic_themes"]]         <- basic_color_themes()
+.qol_options[["graphic_visuals"]]        <- graphic_visuals()
+.qol_options[["graphic_axes"]]           <- graphic_axes()
+.qol_options[["graphic_dimensions"]]     <- graphic_dimensions()
+.qol_options[["graphic_number_formats"]] <- number_format_style()
+.qol_options[["graphic_output"]]         <- graphic_output()
