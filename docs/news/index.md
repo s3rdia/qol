@@ -36,6 +36,11 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Fixed formats not matching data when computing percentages, if numeric
   values are stored as character. (18.02.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): When
+  passing a vector to a new variable, the functions don’t error any more
+  if there are NA values. (22.02.2026)
 
 #### Additionally
 

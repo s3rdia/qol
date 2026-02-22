@@ -17,6 +17,17 @@ test_that("if. can convert values conditionally", {
 })
 
 
+test_that("if. can handle vectors", {
+    test_df <- dummy_df |>
+             if.(age < 18,             income_new = income) |>
+        else_if.(age >= 18 & age < 65, income_new = income) |>
+        else.   (                      income_new = income)
+
+    expect_true("income_new" %in% names(test_df))
+    expect_equal(test_df[["income_new"]], test_df[["income"]])
+})
+
+
 test_that("else_if. doesn't work without if.", {
     test_df <- dummy_df |>
         else_if.(age >= 18 & age < 65, age_group = "18 to under 65") |>

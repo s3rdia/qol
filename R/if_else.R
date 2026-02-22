@@ -280,7 +280,8 @@ generate_new_var <- function(data_frame, condition, variable, value){
     }
     # In case of a vector, set the same condition to the vector as to the data frame
     else{
-        data_frame[[variable]][condition] <- value[condition]
+        data_frame[condition & !is.na(condition), variable] <-
+            value[condition & !is.na(condition)]
     }
 
     data_frame

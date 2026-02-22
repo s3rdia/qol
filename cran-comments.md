@@ -19,6 +19,7 @@ Last CRAN release was on 11.02.2026.
 * `any_table()`: If the custom NA symbol is set to a number, Excels number stored as text error is now ignored.
 * `transpose_plus()`: Took out a debug print I forgot in the function.
 * `summarise_plus()`: Fixed formats not matching data when computing percentages, if numeric values are stored as character.
+* `if.()`, `else_if.()`, `else.()`: When passing a vector to a new variable, the functions don't error any more if there are NA values.
 
 ### Additionally
 
