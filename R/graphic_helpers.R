@@ -480,7 +480,7 @@ setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["gr
 #' @export
 setup_nested_viewport <- function(x_pos   = 0,
                                   y_pos   = 0,
-                                  y_scale = 1,
+                                  y_scale = c(0, 1),
                                   width   = .qol_options[["graphic_dimensions"]][["graphic_width"]],
                                   height  = .qol_options[["graphic_dimensions"]][["graphic_height"]],
                                   background_color = .qol_options[["graphic_visuals"]][["diagram_background_color"]],
@@ -491,7 +491,7 @@ setup_nested_viewport <- function(x_pos   = 0,
                          y      = grid::unit(y_pos, "native"),
                          width  = grid::unit(width, "native"),
                          height = grid::unit(height, "native"),
-                         yscale = c(0, y_scale),
+                         yscale = y_scale,
                          just   = c("left", "top"),
                          gp     = grid::gpar(lineheight = 1.2),
                          name   = name)
@@ -539,7 +539,7 @@ setup_diagram_viewport <- function(arguments){
     # in this area.
     setup_nested_viewport(x_pos   = arguments[["dimensions"]][["margins"]],
                           y_pos   = y_pos,
-                          y_scale = 1,
+                          y_scale = c(0, 1),
                           width   = arguments[["dimensions"]][["graphic_width"]]
                                  - (arguments[["dimensions"]][["margins"]] * 2),
                           height  = height,
@@ -578,7 +578,7 @@ setup_nested_diagram_viewport <- function(arguments){
     segment_info[["inner_viewport"]] <-
         setup_nested_viewport(x_pos   = segment_info[["primary_y_axes_width"]],
                               y_pos   = grid::unit(1, "native"),
-                              y_scale = collapse::fmax(segment_info[["primary_y_values"]]),
+                              y_scale = c(segment_info[["primary_y_min"]], segment_info[["primary_y_max"]]),
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
                                       - segment_info[["primary_y_axes_width"]],
                               height           = 1 - segment_info[["group_label_height"]],
@@ -771,6 +771,14 @@ get_diagram_dimensions <- function(graphic_tab,
     primary_y_tick_pos   <- c(0:(length(primary_y_values) - 1)) * primary_y_tick_width
     #secondary_y_tick_pos <- c(1:length(secondary_y_values)) * secondary_y_tick_width
 
+    # Get extreme axes values and distance
+    primary_y_max <- collapse::fmax(primary_y_values)
+    primary_y_min <- collapse::fmin(primary_y_values)
+    primary_y_distance <- abs(primary_y_max - primary_y_min)
+    #secondary_y_max <- collapse::fmax(secondary_y_values)
+    #secondary_y_min <- collapse::fmin(secondary_y_values)
+    #secondary_y_distance <- abs(secondary_y_max - secondary_y_min)
+
     # Determine the 0 position of the y axes. Normally at the bottom or where ever
     # 0 is.
     zero_pos <- 0
@@ -781,13 +789,35 @@ get_diagram_dimensions <- function(graphic_tab,
     # If 0 value isn't displayed on the y axes and all values are negative,
     # draw the x axes at the top
     else if (collapse::fmin(primary_y_values) < 0){
-        zero_pos    <- 1
+        zero_pos <- 1
+    }
+
+    # Calculate the actual drawing heights of the segments, which is needed in case
+    # of the bottom line of the viewport not being the zero line of the axes. Or if
+    # the zero line starts at a higher value than zero.
+    if (primary_y_min <= 0){
+        if (primary_y_max < 0){
+            actual_drawing_height <- graphic_tab[[values]] - primary_y_max
+        }
+        else{
+            actual_drawing_height <- graphic_tab[[values]]
+        }
+    }
+    else{
+        actual_drawing_height <- graphic_tab[[values]] - primary_y_min
     }
 
     # Get width of the highest value for the axes to measure the actual space the
     # whole axes needs in the diagram.
-    primary_y_axes_width <- graphic_tab |>
-        get_value_axes_width(collapse::fmax(primary_y_values), axes, dimensions, visuals)
+    if (abs(primary_y_max) > abs(primary_y_min)){
+        primary_y_axes_width <- graphic_tab |>
+            get_value_axes_width(primary_y_max, axes, dimensions, visuals)
+    }
+    # In case of negative value having more digits
+    else{
+        primary_y_axes_width <- graphic_tab |>
+            get_value_axes_width(primary_y_min, axes, dimensions, visuals)
+    }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
     # Calculate the positions of the group labels
@@ -829,7 +859,11 @@ get_diagram_dimensions <- function(graphic_tab,
          primary_y_values       = primary_y_values,
          primary_y_tick_width   = primary_y_tick_width,
          primary_y_tick_pos     = primary_y_tick_pos,
+         primary_y_max          = primary_y_max,
+         primary_y_min          = primary_y_min,
+         primary_y_distance     = primary_y_distance,
          zero_pos               = zero_pos,
+         actual_drawing_height  = actual_drawing_height,
          primary_y_axes_width   = primary_y_axes_width,
          group_label_pos        = group_label_pos,
          wrapped_group_labels   = wrapped_group_labels,
@@ -858,12 +892,12 @@ vbar_grob <- function(segment_info,
                       arguments,
                       theme){
     grid::rectGrob(x      = grid::unit(segment_info[["segment_pos"]], "native"),
-                   y      = grid::unit(segment_info[["zero_pos"]], "native"),
+                   y      = segment_info[["zero_pos"]],
                    width  = grid::unit(segment_info[["segment_width"]], "native"),
-                   height = grid::unit(arguments[["graphic_tab"]][[arguments[["values"]]]], "native"),
+                   height = grid::unit(segment_info[["actual_drawing_height"]], "native"),
                    just   = c("left", "bottom"),
                    gp     = grid::gpar(fill = theme[segment_info[["segment_ids"]] + 1],
-                                       col  = "white"))
+                                       col  = arguments[["visuals"]][["segment_border_color"]]))
 }
 
 ###############################################################################
@@ -1026,7 +1060,7 @@ get_y_axes_values <- function(values,
 
     # Replace auto generated value by statically set global values
     if (global_max != "auto"){
-        min_value <- global_max
+        max_value <- global_max
     }
     # Get values from the actual data frame and add ten percent to the value, so
     # that the highest value doesn't go up to the end of the axes. Leave a little
@@ -1082,7 +1116,7 @@ setup_y_axes <- function(tick_positions,
                                 y0 = grid::unit(tick_positions, "npc"),
                                 y1 = grid::unit(tick_positions, "npc"))
 
-    # Format values according to optins
+    # Format values according to options
     axes <- arguments[["axes"]]
 
     formatted_tick_values <- format_values(tick_values,
@@ -1132,13 +1166,13 @@ setup_x_axes <- function(tick_positions,
                          labels,
                          zero_pos,
                          arguments){
-    tick_length <- 0.1
+    tick_length <- 0.02
 
     # Ticks point up if the x axes is drawn at the top.
     # TODO: IN THIS CASE THE VIEWPORT SHOULD BE SET UP DIFFERENTLY BEFOREHAND.
     #       LABELS SHOULD BE DRAWN AT THE TOP.
     if (zero_pos == 1){
-        tick_length <- -0.1
+        tick_length <- -0.02
     }
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
@@ -1149,7 +1183,7 @@ setup_x_axes <- function(tick_positions,
     ticks <- grid::segmentsGrob(x0 = grid::unit(tick_positions, "native"),
                                 x1 = grid::unit(tick_positions, "native"),
                                 y0 = zero_pos,
-                                y1 = grid::unit(zero_pos, "native") - grid::unit(tick_length, "cm"))
+                                y1 = zero_pos - tick_length)
 
     # Insert the group labels for the variable axes
     group_labels <- grid::textGrob(label = labels,
@@ -1241,13 +1275,27 @@ direct_vertical_labels <- function(segment_info,
     segment_centers_x <- (segment_info[["segment_pos"]][label_group_selection]
                        + (segment_info[["segment_width"]] * 0.5))
 
-    # Get starting y, which is the height of the segments, and the ending y which
-    # is a fixed height from the segments. The maximum height is right below the
-    # highest axes value.
-    max_value       <- collapse::fmax(segment_info[["primary_y_values"]])
+    # Set a factor for the drawing direction. Normally everything is drawn up, but
+    # if there are negative values and the zero axes line is far up, the drawing
+    # direction will be turned around. Therefor a reverse factor is needed.
+    drawing_direction <- 1
+    alignment         <- "bottom"
+
+    if (segment_info[["zero_pos"]] > 0.75){
+        drawing_direction <- -1
+        alignment         <- "top"
+    }
+
+    # Get starting y, which is the height of the segments measured from the y axes
+    # zero position, and the ending y which is a fixed height from the segments.
+    # The maximum height is right below the highest axes value.
+    max_value   <- segment_info[["primary_y_distance"]]
+    line_length <- grid::convertUnit(grid::unit(arguments[["dimensions"]][["segment_line_length"]], "cm"),
+                                     "native", valueOnly = TRUE) * max_value
 
     segment_start_y <- arguments[["graphic_tab"]][[arguments[["values"]]]][label_group_selection]
-    segment_end_y   <- collapse::fmin(c(collapse::fmax(segment_start_y) + (0.5 * max_value),
+    segment_start_y <- data.table::fifelse(segment_start_y * drawing_direction < 0, 0, segment_start_y)
+    segment_end_y   <- collapse::fmin(c(collapse::fmax(abs(segment_start_y) + line_length) * drawing_direction,
                                         max_value * 0.95))
 
     # TODO: VARIABLE HEIGHT + DRAWING IN STEPS
@@ -1255,7 +1303,7 @@ direct_vertical_labels <- function(segment_info,
 
     # Generate a static offset for the lines so that they are a bit apart from the
     # segments and labels.
-    offset_y <- grid::convertUnit(grid::unit(0.2 * max_value, "cm"), "native", valueOnly = TRUE)
+    offset_y <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * max_value * drawing_direction
 
     # Put together the vector containing start and end points for the lines.
     # In addition double up the x segment centers to match the length of the y vector.
@@ -1272,16 +1320,17 @@ direct_vertical_labels <- function(segment_info,
     lines <- grid::polylineGrob(x  = grid::unit(center_vector, "npc"),
                                 y  = grid::unit(line_vector, "native"),
                                 id = line_ids,
-                                gp = grid::gpar(col = "black", lty = "solid"))
+                                gp = grid::gpar(col = arguments[["visuals"]][["segment_line_color"]],
+                                                lty = arguments[["visuals"]][["segment_line_type"]]))
 
     # Generate the labels on top of the lines
     segment_labels <- grid::textGrob(label = segment_info[["wrapped_segment_labels"]],
                                      x     = grid::unit(segment_centers_x, "npc"),
                                      y     = grid::unit(segment_end_y, "native"),
-                                     just  = c("center", "bottom"),
+                                     just  = c("center", alignment),
                                      gp    = grid::gpar(fontfamily = arguments[["visuals"]][["font"]],
-                                                        fontsize   = arguments[["dimensions"]][["axes_font_size"]],
-                                                        fontface   = arguments[["visuals"]][["axes_font_face"]],
+                                                        fontsize   = arguments[["dimensions"]][["label_font_size"]],
+                                                        fontface   = arguments[["visuals"]][["label_font_face"]],
                                                         lineheight = 1.1))
 
     # Return whole label object
