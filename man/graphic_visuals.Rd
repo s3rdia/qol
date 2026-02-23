@@ -30,7 +30,6 @@ graphic_visuals(
   other_alignment = "left",
   color_theme = "ocean",
   reverse_colors = FALSE,
-  segment_border_color = NULL,
   primary_axes_color = "#2B2B2B",
   secondary_axes_color = "#2B2B2B",
   variable_axes_color = "#2B2B2B",
@@ -38,6 +37,7 @@ graphic_visuals(
   diagram_background_color = "#FFFFFF",
   graphic_border_color = "#000000",
   diagram_border_color = "#FFFFFF",
+  segment_border_color = "#000000",
   line_markers = TRUE,
   line_markers_change = TRUE,
   guiding_lines = FALSE,
@@ -45,6 +45,8 @@ graphic_visuals(
   guiding_line_color = "#2B2B2B",
   separation_line_type = "dashed",
   separation_line_color = "#2B2B2B",
+  segment_line_type = "solid",
+  segment_line_color = "#000000",
   remove_small_values = TRUE,
   bar_values_inside = TRUE,
   label_type = "lines",
@@ -108,8 +110,6 @@ graphic_visuals(
 
 \item{reverse_colors}{FALSE by default. If TRUE reverses the color order.}
 
-\item{segment_border_color}{The border color of each segment.}
-
 \item{primary_axes_color}{The color of the primary axes.}
 
 \item{secondary_axes_color}{The color of the secondary axes.}
@@ -123,6 +123,8 @@ graphic_visuals(
 \item{graphic_border_color}{The border color of the entire graphic.}
 
 \item{diagram_border_color}{The border color of the diagram area.}
+
+\item{segment_border_color}{The border color of each segment.}
 
 \item{line_markers}{TRUE by default. Draws markers in line charts. If FALSE,
 doesn't draw markers in line charts.}
