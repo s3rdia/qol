@@ -21,7 +21,7 @@ setup_main_canvas(
 setup_nested_viewport(
   x_pos = 0,
   y_pos = 0,
-  y_scale = 1,
+  y_scale = c(0, 1),
   width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
   height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
   background_color = .qol_options[["graphic_visuals"]][["diagram_background_color"]],

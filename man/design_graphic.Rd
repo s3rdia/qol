@@ -20,6 +20,7 @@ design_graphic(
   stat_labels = .qol_options[["stat_labels"]],
   diagram = vbars,
   colors = "ocean",
+  color_usage = .qol_options[["graphic_color_usage"]],
   visuals = .qol_options[["graphic_visuals"]],
   axes = .qol_options[["graphic_axes"]],
   dimensions = .qol_options[["graphic_dimensions"]],
@@ -91,6 +92,9 @@ which statistic instead of the statistic name.}
 \item{colors}{The color theme to use. Can either be the name of a built-in or
 custom theme or a vector of hex codes. Existing color themes can be viewed with
 \code{\link[=display_themes]{display_themes()}}.}
+
+\item{color_usage}{A list of numerical vectors that specify which specific colors
+from the color scheme are used for which number of segments.}
 
 \item{visuals}{Visual parameters set with \code{\link[=graphic_visuals]{graphic_visuals()}}.}
 

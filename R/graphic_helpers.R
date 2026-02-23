@@ -891,13 +891,34 @@ get_diagram_dimensions <- function(graphic_tab,
 vbar_grob <- function(segment_info,
                       arguments,
                       theme){
+    border_color <- arguments[["visuals"]][["segment_border_color"]]
+    shrink_width <- grid::unit(0, "pt")
+
+    # Check whether the provided border color is a single hex code. If it is not
+    # and is a theme name instead, then get the theme colors to make it visually
+    # as if there where no borders. This way the borders are colored like the inner
+    # space.
+    if (!grepl("^#([A-Fa-f0-9]{6})$", border_color)){
+        border_color <- get_theme_colors(border_color)
+
+        # Get color usage to determine which colors to pick for the specific number
+        # of segments
+        border_color <- border_color[arguments[["color_usage"]][[segment_info[["number_of_segments"]]]]]
+
+        # If borders are colored, it becomes obvious that the segments actually overlap
+        # by one pixel. To conceal this the segment width will be reduced by a bit.
+        shrink_width <- grid::unit(0.5, "pt")
+    }
+
+    # NOTE: For the width a tiny bit is subtracted because the bars would otherwise
+    #       overlap by one pixel.
     grid::rectGrob(x      = grid::unit(segment_info[["segment_pos"]], "native"),
                    y      = segment_info[["zero_pos"]],
-                   width  = grid::unit(segment_info[["segment_width"]], "native"),
+                   width  = grid::unit(segment_info[["segment_width"]], "native") - shrink_width,
                    height = grid::unit(segment_info[["actual_drawing_height"]], "native"),
                    just   = c("left", "bottom"),
-                   gp     = grid::gpar(fill = theme[segment_info[["segment_ids"]] + 1],
-                                       col  = arguments[["visuals"]][["segment_border_color"]]))
+                   gp     = grid::gpar(fill = theme[arguments[["color_usage"]][[segment_info[["number_of_segments"]]]]],
+                                       col  = border_color))
 }
 
 ###############################################################################
