@@ -74,6 +74,33 @@ basic_color_themes <- function(){
 }
 
 
+# These are the two main sequences in which colors are used. The first one is just
+# sequential from 1 to 10, the second one skips colors to use the whole color range
+# as much as possible and to put colors with more contrasts together (if the colors
+# themselves are ordered sequentially).
+sequential_usage <- list(c(1),
+                         c(1, 2),
+                         c(1, 2, 3),
+                         c(1, 2, 3, 4),
+                         c(1, 2, 3, 4, 5),
+                         c(1, 2, 3, 4, 5, 6),
+                         c(1, 2, 3, 4, 5, 6, 7),
+                         c(1, 2, 3, 4, 5, 6, 7, 8),
+                         c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                         c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+contrast_usage <- list(c(1),
+                       c(1, 3),
+                       c(1, 3, 5),
+                       c(1, 3, 5, 7),
+                       c(1, 3, 5, 7, 9),
+                       c(1, 2, 3, 5, 7, 9),
+                       c(1, 2, 3, 4, 5, 7, 9),
+                       c(1, 2, 3, 4, 5, 6, 7, 9),
+                       c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                       c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+
 #' Managing Global Color Themes
 #'
 #' @name graphic_themes

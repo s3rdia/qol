@@ -53,6 +53,8 @@
 #' @param colors The color theme to use. Can either be the name of a built-in or
 #' custom theme or a vector of hex codes. Existing color themes can be viewed with
 #' [display_themes()].
+#' @param color_usage A list of numerical vectors that specify which specific colors
+#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -160,6 +162,7 @@ design_graphic <- function(data_frame,
                            stat_labels    = .qol_options[["stat_labels"]],
                            diagram        = vbars,
                            colors         = "ocean",
+                           color_usage    = .qol_options[["graphic_color_usage"]],
                            visuals        = .qol_options[["graphic_visuals"]],
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
@@ -671,7 +674,7 @@ design_graphic <- function(data_frame,
     if (length(by) == 0){
         graphic_list <- generate_graphic(graphic_tab, axes_vars, segment_vars, statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
-                                         diagram, colors, visuals, axes, dimensions,
+                                         diagram, colors, color_usage, visuals, axes, dimensions,
                                          add_texts, output, monitor_df = monitor_df)
 
         plot_element <- graphic_list[[1]]
@@ -681,7 +684,7 @@ design_graphic <- function(data_frame,
     else{
         graphic_list <- generate_graphic_by(graphic_tab, axes_vars, segment_vars, statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
-                                            diagram, colors, visuals, axes, dimensions,
+                                            diagram, colors, color_usage, visuals, axes, dimensions,
                                             add_texts, output, na.rm, print_miss, monitor_df)
 
         plot_element <- graphic_list[[1]]
@@ -725,6 +728,8 @@ design_graphic <- function(data_frame,
 #' @param colors The color theme to use. Can either be the name of a built-in or
 #' custom theme or a vector of hex codes. Existing color themes can be viewed with
 #' [display_themes()].
+#' @param color_usage A list of numerical vectors that specify which specific colors
+#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -752,6 +757,7 @@ generate_graphic <- function(graphic_tab,
                              stat_labels,
                              diagram,
                              colors,
+                             color_usage,
                              visuals,
                              axes,
                              dimensions,
@@ -795,6 +801,7 @@ generate_graphic <- function(graphic_tab,
                          var_labels,
                          stat_labels,
                          c(colors),
+                         color_usage,
                          structure,
                          visuals,
                          axes,
@@ -861,6 +868,8 @@ generate_graphic <- function(graphic_tab,
 #' @param colors The color theme to use. Can either be the name of a built-in or
 #' custom theme or a vector of hex codes. Existing color themes can be viewed with
 #' [display_themes()].
+#' @param color_usage A list of numerical vectors that specify which specific colors
+#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -888,6 +897,7 @@ generate_graphic_by <- function(graphic_tab,
                                 stat_labels,
                                 diagram,
                                 colors,
+                                color_usage,
                                 visuals,
                                 axes,
                                 dimensions,
