@@ -49,6 +49,7 @@ graphic_visuals(
   segment_line_color = "#000000",
   remove_small_values = TRUE,
   bar_values_inside = TRUE,
+  rotate_values = FALSE,
   label_type = "lines",
   label_group = 3,
   line_offset = 0,
@@ -146,11 +147,19 @@ categories. Can be "dashed", "dotted" or "solid".}
 \item{separation_line_color}{The color of the separation lines drawn between top group
 categories.}
 
+\item{segment_line_type}{Sets the type of leading lines from segments to labels. Can be
+"dashed", "dotted" or "solid".}
+
+\item{segment_line_color}{Sets the color of the leading lines from segments to labels.}
+
 \item{remove_small_values}{TRUE by default. Doesn't display values if the corresponding
 segment is to small and value would go out of bounds. If FALSE, always displays values.}
 
 \item{bar_values_inside}{TRUE by default. In grouped bar charts the segment values
-will be drawn inside the bars. If FALSE, values vill be drawn above/beside the bars.}
+will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.}
+
+\item{rotate_values}{FALSE by default. If TRUE rotates values inside the segments by
+90 degrees.}
 
 \item{label_type}{Can be "lines", which connects labels and segments with leading lines,
 or "legend", which allows to position a legend separately.}

@@ -14,12 +14,12 @@ graphic_axes(
   primary_axes_prefix = "",
   primary_axes_suffix = "",
   primary_axes_scale = 1,
-  primary_variable_decimals = 0,
-  primary_variable_big_mark = ".",
-  primary_variable_decimal_mark = ",",
-  primary_variable_prefix = "",
-  primary_variable_suffix = "",
-  primary_variable_scale = 1,
+  primary_values_decimals = 1,
+  primary_values_big_mark = ".",
+  primary_values_decimal_mark = ",",
+  primary_values_prefix = "",
+  primary_values_suffix = "",
+  primary_values_scale = 1,
   secondary_axes_max = "auto",
   secondary_axes_min = "auto",
   secondary_axes_steps = 5,
@@ -29,12 +29,12 @@ graphic_axes(
   secondary_axes_prefix = "",
   secondary_axes_suffix = "",
   secondary_axes_scale = 1,
-  secondary_variable_decimals = 0,
-  secondary_variable_big_mark = ".",
-  secondary_variable_decimal_mark = ",",
-  secondary_variable_prefix = "",
-  secondary_variable_suffix = "",
-  secondary_variables_scale = 1,
+  secondary_values_decimals = 0,
+  secondary_values_big_mark = ".",
+  secondary_values_decimal_mark = ",",
+  secondary_values_prefix = "",
+  secondary_values_suffix = "",
+  secondary_values_scale = 1,
   variable_axes_interval = 1
 )
 }
@@ -61,19 +61,19 @@ the primary axes.}
 
 \item{primary_axes_scale}{Multiplier for the values on the primary axes.}
 
-\item{primary_variable_decimals}{Number of decimal points the values plotted on the primary axes have.}
+\item{primary_values_decimals}{Number of decimal points the values plotted on the primary axes have.}
 
-\item{primary_variable_big_mark}{Character used as the thousand separator for the values plotted
+\item{primary_values_big_mark}{Character used as the thousand separator for the values plotted
 on the primary axes have.}
 
-\item{primary_variable_decimal_mark}{Character used as the decimal separator for the values plotted
+\item{primary_values_decimal_mark}{Character used as the decimal separator for the values plotted
 on the primary axes have.}
 
-\item{primary_variable_prefix}{What to put in front of the values plotted on the primary axes have.}
+\item{primary_values_prefix}{What to put in front of the values plotted on the primary axes have.}
 
-\item{primary_variable_suffix}{What to put after the values plotted on the primary axes have.}
+\item{primary_values_suffix}{What to put after the values plotted on the primary axes have.}
 
-\item{primary_variable_scale}{Multiplier for the values plotted on the primary axes have.}
+\item{primary_values_scale}{Multiplier for the values plotted on the primary axes have.}
 
 \item{secondary_axes_max}{Maximum value for the secondary axes. If "auto", the maximum
 value is determined by the maximum value present in the graphic.}
@@ -97,19 +97,19 @@ the secondary axes.}
 
 \item{secondary_axes_scale}{Multiplier for values on the secondary axes.}
 
-\item{secondary_variable_decimals}{Number of decimal points the values plotted on the secondary axes have.}
+\item{secondary_values_decimals}{Number of decimal points the values plotted on the secondary axes have.}
 
-\item{secondary_variable_big_mark}{Character used as the thousand separator for the values plotted
+\item{secondary_values_big_mark}{Character used as the thousand separator for the values plotted
 on the secondary axes.}
 
-\item{secondary_variable_decimal_mark}{Character used as the decimal separator for the values plotted
+\item{secondary_values_decimal_mark}{Character used as the decimal separator for the values plotted
 on the secondary axes.}
 
-\item{secondary_variable_prefix}{What to put in front of the values plotted on the secondary axes.}
+\item{secondary_values_prefix}{What to put in front of the values plotted on the secondary axes.}
 
-\item{secondary_variable_suffix}{What to put after the values plotted on the secondary axes.}
+\item{secondary_values_suffix}{What to put after the values plotted on the secondary axes.}
 
-\item{secondary_variables_scale}{Multiplier for the values plotted on the secondary axes.}
+\item{secondary_values_scale}{Multiplier for the values plotted on the secondary axes.}
 
 \item{variable_axes_interval}{The number of steps in which to display labels on the variable axes.}
 }
