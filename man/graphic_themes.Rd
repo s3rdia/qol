@@ -2,48 +2,72 @@
 % Please edit documentation in R/graphic_colors.R
 \name{graphic_themes}
 \alias{graphic_themes}
-\alias{set_color_theme}
+\alias{add_color_theme}
 \alias{get_theme_colors}
+\alias{get_theme_base_colors}
+\alias{get_theme_font_colors}
 \alias{reset_color_themes}
 \alias{display_colors}
 \alias{display_themes}
 \title{Managing Global Color Themes}
 \usage{
-set_color_theme(color_list)
+add_color_theme(
+  theme_name,
+  base_colors,
+  font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000",
+    "#000000", "#000000", "#000000", "#000000")
+)
 
 get_theme_colors(theme_name)
 
+get_theme_base_colors(theme_name)
+
+get_theme_font_colors(theme_name)
+
 reset_color_themes(clear_themes = FALSE)
 
-display_colors(theme)
+display_colors(theme_name)
 
 display_themes()
 }
 \arguments{
-\item{color_list}{A named list of hex color vectors.}
+\item{theme_name}{The name of a globally stored theme.}
 
-\item{theme_name}{The theme name to look up.}
+\item{base_colors}{The base colors for the segments.}
+
+\item{font_colors}{The individual font colors used on the corresponding base color.}
 
 \item{clear_themes}{FALSE by default. If TRUE clears the global theme list.}
-
-\item{theme}{A vector containing hex color codes.}
 }
 \value{
-\code{\link[=set_color_theme]{set_color_theme()}}: Returns modified global colors list.
+\code{\link[=add_color_theme]{add_color_theme()}}: Returns modified global theme list.
 
-\code{\link[=get_theme_colors]{get_theme_colors()}}: A vector of hex color codes.
+\code{\link[=get_theme_colors]{get_theme_colors()}}: A list with two vectors of hex color codes.
+
+\code{\link[=get_theme_base_colors]{get_theme_base_colors()}}: A vector of hex color codes.
+
+\code{\link[=get_theme_font_colors]{get_theme_font_colors()}}: A vector of hex color codes.
 
 \code{\link[=reset_color_themes]{reset_color_themes()}}: Default global color list or empty list.
 
-\code{\link[=display_colors]{display_colors()}}: Returns the input vector.
+\code{\link[=display_colors]{display_colors()}}: Returns a list of base and font colors.
 
 \code{\link[=display_themes]{display_themes()}}: A list containing all globally stored themes with their color
 codew vectors.
 }
 \description{
-\code{\link[=set_color_theme]{set_color_theme()}}: Adds a named list containing vectors of hex color codes to the global color theme list.
+\code{\link[=add_color_theme]{add_color_theme()}}: Adds a new color theme containing base and font colors to the
+global theme list.
 
-\code{\link[=get_theme_colors]{get_theme_colors()}}: Retrieve a vector of hex colors from the globally set up themes.
+\code{\link[=get_theme_colors]{get_theme_colors()}}: Retrieve a list with two vectors of hex colors from the
+globally set up themes containing the base colors for the segments and the
+corresponding font colors.
+
+\code{\link[=get_theme_base_colors]{get_theme_base_colors()}}: Retrieve a vector of hex colors from the globally set up themes
+containing the base colors for the segments.
+
+\code{\link[=get_theme_font_colors]{get_theme_font_colors()}}: Retrieve a vector of hex colors from the globally set up themes
+containing the individual font colors corresponding to the base segment colors.
 
 \code{\link[=reset_color_themes]{reset_color_themes()}}: Resets the global color themes back to default.
 
@@ -53,16 +77,18 @@ codew vectors.
 global environment.
 }
 \examples{
-# Setting and getting color themes
-set_color_theme(list(tropic = c(
-                          "#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
-                          "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
-
-                      rosewood = c(
-                          "#3A1E28", "#542334", "#6F2D40", "#8C4256", "#AA6A78",
-                          "#C28E9B", "#D7B1BB", "#E7D0D6", "#F3E7EB", "#FAF3F5")))
+# Adding and getting color themes
+add_color_theme(theme_name  = "tropic",
+                base_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
+                                "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
+                font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+                                "#000000", "#000000", "#000000", "#000000", "#000000"))
 
 get_theme_colors("ocean")
+
+get_theme_base_colors("ocean")
+
+get_theme_font_colors("ocean")
 
 # Clear all globally stored themes in case only self created themes should be stored
 reset_color_themes(clear_themes = TRUE)
@@ -71,7 +97,7 @@ reset_color_themes(clear_themes = TRUE)
 reset_color_themes()
 
 # Displaying colors and themes
-display_colors(get_theme_colors("ocean"))
+display_colors("ocean")
 
 display_themes()
 
@@ -79,7 +105,8 @@ display_themes()
 \seealso{
 Graphic functions: \code{\link[=design_graphic]{design_graphic()}}
 
-Global graphic options: \code{\link[=set_color_theme]{set_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}}, \code{\link[=reset_color_themes]{reset_color_themes()}}
+Global graphic options: \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_colors]{get_theme_font_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}
 
 View colors and themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}
 }

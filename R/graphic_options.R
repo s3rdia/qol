@@ -53,10 +53,15 @@
 #' categories. Can be "dashed", "dotted" or "solid".
 #' @param separation_line_color The color of the separation lines drawn between top group
 #' categories.
+#' @param segment_line_type Sets the type of leading lines from segments to labels. Can be
+#' "dashed", "dotted" or "solid".
+#' @param segment_line_color Sets the color of the leading lines from segments to labels.
 #' @param remove_small_values TRUE by default. Doesn't display values if the corresponding
 #' segment is to small and value would go out of bounds. If FALSE, always displays values.
 #' @param bar_values_inside TRUE by default. In grouped bar charts the segment values
-#' will be drawn inside the bars. If FALSE, values vill be drawn above/beside the bars.
+#' will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.
+#' @param rotate_values FALSE by default. If TRUE rotates values inside the segments by
+#' 90 degrees.
 #' @param label_type Can be "lines", which connects labels and segments with leading lines,
 #' or "legend", which allows to position a legend separately.
 #' @param label_group If label_Type is "lines", then this parameter determines above which
@@ -139,6 +144,7 @@ graphic_visuals <- function(font                      = "Arial",
                             segment_line_color        = "#000000",
                             remove_small_values       = TRUE,
                             bar_values_inside         = TRUE,
+                            rotate_values             = FALSE,
                             label_type                = "lines",
                             label_group               = 3,
                             line_offset               = 0,
@@ -223,14 +229,14 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' @param primary_axes_prefix What to put in front of the value on the primary axes.
 #' @param primary_axes_suffix What to put after the value on the primary axes.
 #' @param primary_axes_scale Multiplier for the values on the primary axes.
-#' @param primary_variable_decimals Number of decimal points the values plotted on the primary axes have.
-#' @param primary_variable_big_mark Character used as the thousand separator for the values plotted
+#' @param primary_values_decimals Number of decimal points the values plotted on the primary axes have.
+#' @param primary_values_big_mark Character used as the thousand separator for the values plotted
 #' on the primary axes have.
-#' @param primary_variable_decimal_mark Character used as the decimal separator for the values plotted
+#' @param primary_values_decimal_mark Character used as the decimal separator for the values plotted
 #' on the primary axes have.
-#' @param primary_variable_prefix What to put in front of the values plotted on the primary axes have.
-#' @param primary_variable_suffix What to put after the values plotted on the primary axes have.
-#' @param primary_variable_scale Multiplier for the values plotted on the primary axes have.
+#' @param primary_values_prefix What to put in front of the values plotted on the primary axes have.
+#' @param primary_values_suffix What to put after the values plotted on the primary axes have.
+#' @param primary_values_scale Multiplier for the values plotted on the primary axes have.
 #' @param secondary_axes_max Maximum value for the secondary axes. If "auto", the maximum
 #' value is determined by the maximum value present in the graphic.
 #' @param secondary_axes_min Minimum value for the secondary axes. If "auto", the minimum
@@ -244,14 +250,14 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' @param secondary_axes_prefix What to put in front of the value on the secondary axes.
 #' @param secondary_axes_suffix What to put after the value on the secondary axes.
 #' @param secondary_axes_scale Multiplier for values on the secondary axes.
-#' @param secondary_variable_decimals Number of decimal points the values plotted on the secondary axes have.
-#' @param secondary_variable_big_mark Character used as the thousand separator for the values plotted
+#' @param secondary_values_decimals Number of decimal points the values plotted on the secondary axes have.
+#' @param secondary_values_big_mark Character used as the thousand separator for the values plotted
 #' on the secondary axes.
-#' @param secondary_variable_decimal_mark Character used as the decimal separator for the values plotted
+#' @param secondary_values_decimal_mark Character used as the decimal separator for the values plotted
 #' on the secondary axes.
-#' @param secondary_variable_prefix What to put in front of the values plotted on the secondary axes.
-#' @param secondary_variable_suffix What to put after the values plotted on the secondary axes.
-#' @param secondary_variables_scale Multiplier for the values plotted on the secondary axes.
+#' @param secondary_values_prefix What to put in front of the values plotted on the secondary axes.
+#' @param secondary_values_suffix What to put after the values plotted on the secondary axes.
+#' @param secondary_values_scale Multiplier for the values plotted on the secondary axes.
 #' @param variable_axes_interval The number of steps in which to display labels on the variable axes.
 #'
 #' @return
@@ -282,12 +288,12 @@ graphic_axes <- function(primary_axes_max                = "auto",
                          primary_axes_prefix             = "",
                          primary_axes_suffix             = "",
                          primary_axes_scale              = 1,
-                         primary_variable_decimals       = 0,
-                         primary_variable_big_mark       = ".",
-                         primary_variable_decimal_mark   = ",",
-                         primary_variable_prefix         = "",
-                         primary_variable_suffix         = "",
-                         primary_variable_scale          = 1,
+                         primary_values_decimals         = 1,
+                         primary_values_big_mark         = ".",
+                         primary_values_decimal_mark     = ",",
+                         primary_values_prefix           = "",
+                         primary_values_suffix           = "",
+                         primary_values_scale            = 1,
                          secondary_axes_max              = "auto",
                          secondary_axes_min              = "auto",
                          secondary_axes_steps            = 5,
@@ -297,12 +303,12 @@ graphic_axes <- function(primary_axes_max                = "auto",
                          secondary_axes_prefix           = "",
                          secondary_axes_suffix           = "",
                          secondary_axes_scale            = 1,
-                         secondary_variable_decimals     = 0,
-                         secondary_variable_big_mark     = ".",
-                         secondary_variable_decimal_mark = ",",
-                         secondary_variable_prefix       = "",
-                         secondary_variable_suffix       = "",
-                         secondary_variables_scale       = 1,
+                         secondary_values_decimals       = 0,
+                         secondary_values_big_mark       = ".",
+                         secondary_values_decimal_mark   = ",",
+                         secondary_values_prefix         = "",
+                         secondary_values_suffix         = "",
+                         secondary_values_scale          = 1,
                          variable_axes_interval          = 1){
     as.list(environment())
 }

@@ -49,7 +49,7 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst())
 
 # Graphics globals
-.qol_options[["graphic_themes"]]         <- basic_color_themes()
+.qol_options[["graphic_themes"]]         <- create_global_themes()
 .qol_options[["graphic_color_usage"]]    <- contrast_usage
 .qol_options[["graphic_visuals"]]        <- graphic_visuals()
 .qol_options[["graphic_axes"]]           <- graphic_axes()
