@@ -33,5 +33,5 @@ format_values(
 Returns a formatted value as character.
 }
 \description{
-Format values to output numbers in a certain way.
+\code{\link[=format_values]{format_values()}}: Format values to output numbers in a certain way.
 }

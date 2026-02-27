@@ -10,7 +10,7 @@
 #' Returns a named list.
 #'
 #' @noRd
-basic_color_themes <- function(){
+base_color_themes <- function(){
     greys <- c("#2B2B2B", "#5A5A5A", "#9A9A9A", "#DADADA")
 
     list(ocean = c(
@@ -74,6 +74,113 @@ basic_color_themes <- function(){
 }
 
 
+#' Set Up Basic Font Colors Themes
+#'
+#' @description
+#' Set up fitting font colors for base theme colors in global options.
+#'
+#' @return
+#' Returns a named list.
+#'
+#' @noRd
+font_color_themes <- function(){
+    greys <- c("#FFFFFF", "#FFFFFF", "#000000", "#000000")
+
+    list(ocean = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        sunset = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        ember = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        forest = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        lagoon = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        dusk = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        clay = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        olive_gold = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        steel = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
+
+        graphite = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
+            "#FFFFFF", "#000000", "#000000", "#000000", "#000000"),
+
+        aurora = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        forest_sun = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        clay_mint = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        violet_gold = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        night_lime = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        plum_citrus = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+            "#000000", "#000000", "#000000", "#000000", "#000000"),
+
+        violet_fire = c(
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
+            "#000000", "#000000", "#000000", "#000000", "#000000"))
+}
+
+
+#' Create The Default Global Theme List
+#'
+#' @description
+#' Creates the default global list of themes consisting of the base and corresponding
+#' font colors.
+#'
+#' @return
+#' Returns a named list.
+#'
+#' @noRd
+create_global_themes <- function(){
+    global_list <- list()
+    base_colors <- base_color_themes()
+    font_colors <- font_color_themes()
+
+    # Loop through provided colors and check if they are valid
+    for (i in seq_along(base_colors)){
+        name <- names(base_colors)[i]
+        base <- base_colors[[i]]
+        font <- font_colors[[i]]
+
+        # Build theme list
+        theme <- stats::setNames(list(list(base = base,
+                                           font = font)),
+                          name)
+
+        # Add to global list
+        global_list <- c(global_list, theme)
+    }
+
+    global_list
+}
+
+
 # These are the two main sequences in which colors are used. The first one is just
 # sequential from 1 to 10, the second one skips colors to use the whole color range
 # as much as possible and to put colors with more contrasts together (if the colors
@@ -106,67 +213,87 @@ contrast_usage <- list(c(1),
 #' @name graphic_themes
 #'
 #' @description
-#' [set_color_theme()]: Adds a named list containing vectors of hex color codes to the global color theme list.
+#' [add_color_theme()]: Adds a new color theme containing base and font colors to the
+#' global theme list.
 #'
-#' @param color_list A named list of hex color vectors.
+#' @param theme_name The name of the theme.
+#' @param base_colors The base colors for the segments.
+#' @param font_colors The individual font colors used on the corresponding base color.
 #'
 #' @return
-#' [set_color_theme()]: Returns modified global colors list.
+#' [add_color_theme()]: Returns modified global theme list.
 #'
 #' @seealso
 #' Graphic functions: [design_graphic()]
 #'
-#' Global graphic options: [set_color_theme()], [get_theme_colors()], [reset_color_themes()]
+#' Global graphic options: [add_color_theme()], [get_theme_base_colors()], [get_theme_font_colors()],
+#' [reset_color_themes()]
 #'
 #' View colors and themes: [display_colors()], [display_themes()]
 #'
 #' @examples
-#' # Setting and getting color themes
-#' set_color_theme(list(tropic = c(
-#'                           "#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
-#'                           "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
-#'
-#'                       rosewood = c(
-#'                           "#3A1E28", "#542334", "#6F2D40", "#8C4256", "#AA6A78",
-#'                           "#C28E9B", "#D7B1BB", "#E7D0D6", "#F3E7EB", "#FAF3F5")))
+#' # Adding and getting color themes
+#' add_color_theme(theme_name  = "tropic",
+#'                 base_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
+#'                                 "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
+#'                 font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+#'                                 "#000000", "#000000", "#000000", "#000000", "#000000"))
 #'
 #' @rdname graphic_themes
 #'
 #' @export
-set_color_theme <- function(color_list){
-    if (length(color_list) == 0){
-        message(" X ERROR: Empty list found. Color theme won't be added.")
+add_color_theme <- function(theme_name,
+                            base_colors,
+                            font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+                                            "#000000", "#000000", "#000000", "#000000", "#000000")){
+    theme_name <- get_origin_as_char(theme_name, substitute(theme_name))
+
+    if (length(base_colors) == 0){
+        message(" X ERROR: No base colors provided. Color theme won't be added.")
         return(invisible(.qol_options[["graphic_themes"]]))
     }
 
-    if (!(!is.null(names(color_list)) && all(nzchar(names(color_list))))){
-        message(" X ERROR: Colors must be provided as a named list. Color theme won't be added.")
+    if (length(font_colors) == 0){
+        message(" X ERROR: No font colors provided. Color theme won't be added.")
         return(invisible(.qol_options[["graphic_themes"]]))
     }
 
-    # Loop through provided colors and check if they are valid
-    for (theme in color_list){
-        for (single_color in theme){
-            if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
-                message(" X ERROR: '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
-                return(invisible(.qol_options[["graphic_themes"]]))
-            }
+    # Loop through provided base colors and check if they are valid
+    for (single_color in base_colors){
+        if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
+            message(" X ERROR: Base color '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
+            return(invisible(.qol_options[["graphic_themes"]]))
         }
     }
 
-    # Update the internal state
-    .qol_options[["graphic_themes"]] <- utils::modifyList(.qol_options[["graphic_themes"]], color_list)
+    # Loop through provided font colors and check if they are valid
+    for (single_color in font_colors){
+        if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
+            message(" X ERROR: Font color '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
+            return(invisible(.qol_options[["graphic_themes"]]))
+        }
+    }
+
+    # Build theme list
+    theme <- stats::setNames(list(list(base = base_colors,
+                                       font = font_colors)),
+                             theme_name)
+
+    # Update the internal global theme list
+    .qol_options[["graphic_themes"]] <- utils::modifyList(.qol_options[["graphic_themes"]], theme)
     invisible(.qol_options[["graphic_themes"]])
 }
 
 
 #' @description
-#' [get_theme_colors()]: Retrieve a vector of hex colors from the globally set up themes.
+#' [get_theme_colors()]: Retrieve a list with two vectors of hex colors from the
+#' globally set up themes containing the base colors for the segments and the
+#' corresponding font colors.
 #'
 #' @param theme_name The theme name to look up.
 #'
 #' @return
-#' [get_theme_colors()]: A vector of hex color codes.
+#' [get_theme_colors()]: A list with two vectors of hex color codes.
 #'
 #' @examples
 #' get_theme_colors("ocean")
@@ -187,6 +314,68 @@ get_theme_colors <- function(theme_name){
     }
 
     invisible(.qol_options[["graphic_themes"]][[theme_name]])
+}
+
+
+#' @description
+#' [get_theme_base_colors()]: Retrieve a vector of hex colors from the globally set up themes
+#' containing the base colors for the segments.
+#'
+#' @param theme_name The theme name to look up.
+#'
+#' @return
+#' [get_theme_base_colors()]: A vector of hex color codes.
+#'
+#' @examples
+#' get_theme_base_colors("ocean")
+#'
+#' @rdname graphic_themes
+#'
+#' @export
+get_theme_base_colors <- function(theme_name){
+    if (length(theme_name) > 1){
+        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+
+        theme_name <- theme_name[[1]]
+    }
+
+    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
+        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        return(invisible(.qol_options[["graphic_themes"]][[1]][["base"]]))
+    }
+
+    invisible(.qol_options[["graphic_themes"]][[theme_name]][["base"]])
+}
+
+
+#' @description
+#' [get_theme_font_colors()]: Retrieve a vector of hex colors from the globally set up themes
+#' containing the individual font colors corresponding to the base segment colors.
+#'
+#' @param theme_name The theme name to look up.
+#'
+#' @return
+#' [get_theme_font_colors()]: A vector of hex color codes.
+#'
+#' @examples
+#' get_theme_font_colors("ocean")
+#'
+#' @rdname graphic_themes
+#'
+#' @export
+get_theme_font_colors <- function(theme_name){
+    if (length(theme_name) > 1){
+        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+
+        theme_name <- theme_name[[1]][["font"]]
+    }
+
+    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
+        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        return(invisible(.qol_options[["graphic_themes"]][[1]][["font"]]))
+    }
+
+    invisible(.qol_options[["graphic_themes"]][[theme_name]][["font"]])
 }
 
 
@@ -213,7 +402,7 @@ reset_color_themes <- function(clear_themes = FALSE){
         .qol_options[["graphic_themes"]] <- list()
     }
     else{
-        .qol_options[["graphic_themes"]] <- basic_color_themes()
+        .qol_options[["graphic_themes"]] <- create_global_themes()
     }
 
     invisible(.qol_options[["graphic_themes"]])
@@ -223,32 +412,27 @@ reset_color_themes <- function(clear_themes = FALSE){
 #' @description
 #' [display_colors()]: Displays all colors of a theme with the corresponding hex codes.
 #'
-#' @param theme A vector containing hex color codes.
+#' @param theme_name The name of a globally stored theme.
 #'
 #' @return
-#' [display_colors()]: Returns the input vector.
+#' [display_colors()]: Returns a list of base and font colors.
 #'
 #' @examples
 #' # Displaying colors and themes
-#' display_colors(get_theme_colors("ocean"))
+#' display_colors("ocean")
 #'
 #' @rdname graphic_themes
 #'
 #' @export
-display_colors <- function(theme){
-    if (!is.character(theme)){
+display_colors <- function(theme_name){
+    if (length(theme_name) > 1 || !is.character(theme_name)){
         message(" X ERROR: Only a single theme can be displayed. Use 'display_themes()' to display all\n",
                 "          currently stored themes with their respective colors.")
         return(invisible(NULL))
     }
 
-    # Loop through provided colors and check if they are valid
-    for (single_color in theme){
-        if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
-            message(" X ERROR: '", single_color, "' must be a 6 character <hex code>. Color theme can't be displayed.")
-            return(invisible(NULL))
-        }
-    }
+    base_colors <- get_theme_base_colors(theme_name)
+    font_colors <- get_theme_font_colors(theme_name)
 
     # Set up a new graphic
     grid::grid.newpage()
@@ -258,7 +442,7 @@ display_colors <- function(theme){
     # divided by the total number of colors. This basically gives the positions of the
     # right edges of the rectangles. Since the draw function draws rectangles from the
     # center, the positions have to be reduced by a half, to get the center positions.
-    number_of_colors <- length(theme)
+    number_of_colors <- length(base_colors)
     rect_centers     <- (seq_len(number_of_colors) - 0.5) / number_of_colors
 
     # Draw rectangles side by side
@@ -266,15 +450,17 @@ display_colors <- function(theme){
                     y      = 0.5,
                     width  = 1 / number_of_colors,
                     height = 0.6,
-                    gp     = grid::gpar(fill = theme, col = NA))
+                    gp     = grid::gpar(fill = base_colors, col = NA))
 
     # Draw hex codes in rectangles
-    grid::grid.text(theme,
+    grid::grid.text(base_colors,
                     x   = rect_centers,
                     y   = 0.5,
-                    rot = 90)
+                    rot = 90,
+                    gp  = grid::gpar(col = font_colors))
 
-    invisible(theme)
+    invisible(list(base = base_colors,
+                   font = font_colors))
 }
 
 
@@ -326,20 +512,29 @@ display_themes <- function(){
 
     # Draw the individual color ramps one after another and evenly spread the colors based
     # on the individual number of colors in a theme.
-    for (i in seq_len(number_of_themes)) {
-        theme_colors     <- global_themes[[i]]
-        number_of_colors <- length(theme_colors)
+    for (i in seq_len(number_of_themes)){
+        base_colors      <- global_themes[[i]][["base"]]
+        font_colors      <- global_themes[[i]][["font"]]
+        number_of_colors <- length(base_colors)
         rect_centers     <- (seq_len(number_of_colors) - 0.5) / number_of_colors
 
+        # Draw rectangles with base colors
         grid::grid.rect(x = rect_centers,
                         width  = 1 / number_of_colors,
                         height = 0.8,
-                        gp     = grid::gpar(fill = theme_colors, col = NA),
+                        gp     = grid::gpar(fill = base_colors, col = NA),
                         vp     = grid::viewport(layout.pos.row = i, layout.pos.col = 2))
+
+        # Draw numbers in rectangles
+        grid::grid.text(1:number_of_colors,
+                        x   = rect_centers,
+                        y   = 0.5,
+                        gp  = grid::gpar(col = font_colors),
+                        vp  = grid::viewport(layout.pos.row = i, layout.pos.col = 2))
     }
 
     # Remove viewport from the stack
     grid::popViewport()
 
-    global_themes
+    invisible(global_themes)
 }
