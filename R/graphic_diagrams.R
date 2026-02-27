@@ -26,21 +26,21 @@ vbars <- function(...){
     }
 
     # Get the colors to be used
-    theme <- get_theme_colors(arguments[["colors"]])
+    theme <- get_theme_colors(arguments[["color_theme"]])
 
     # Set up the whole diagram as well as the inner diagram viewport. Additionally
     # retrieve the calculated measurements.
-    segment_info <- setup_nested_diagram_viewport(arguments)
+    diagram_info <- setup_nested_diagram_viewport(arguments)
 
     # Generate segments
-    segments <- vbar_grob(segment_info, arguments, theme)
+    segments <- vbar_grob(diagram_info, arguments, theme)
 
     # Generate axes
-    axes <- setup_xy_axes(segment_info, arguments)
+    axes <- setup_xy_axes(diagram_info, arguments)
 
-    segment_labels <- direct_vertical_labels(segment_info, arguments)
+    segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
     list(graphic = grid::gTree(children = grid::gList(segments, axes, segment_labels)),
-         meta    = segment_info)
+         meta    = diagram_info)
 }

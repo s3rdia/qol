@@ -19,7 +19,7 @@ design_graphic(
   var_labels = .qol_options[["var_labels"]],
   stat_labels = .qol_options[["stat_labels"]],
   diagram = vbars,
-  colors = "ocean",
+  color_theme = "ocean",
   color_usage = .qol_options[["graphic_color_usage"]],
   visuals = .qol_options[["graphic_visuals"]],
   axes = .qol_options[["graphic_axes"]],
@@ -89,7 +89,7 @@ which statistic instead of the statistic name.}
 
 \item{diagram}{Function that provides the generation of the main diagram area.}
 
-\item{colors}{The color theme to use. Can either be the name of a built-in or
+\item{color_theme}{The color theme to use. Can either be the name of a built-in or
 custom theme or a vector of hex codes. Existing color themes can be viewed with
 \code{\link[=display_themes]{display_themes()}}.}
 
@@ -180,8 +180,8 @@ Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[
 \code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
 \code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}
 
-Global graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=set_color_theme]{set_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
-\code{\link[=reset_color_themes]{reset_color_themes()}}
+Global graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_colors]{get_theme_font_colors()}}, \code{\link[=reset_color_themes]{reset_color_themes()}}
 
 Main diagrams: \code{\link[=vbars]{vbars()}}
 

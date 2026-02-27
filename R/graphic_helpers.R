@@ -564,7 +564,7 @@ setup_nested_diagram_viewport <- function(arguments){
     outer_viewport <- setup_diagram_viewport(arguments)
 
     # Measure segment, group and axes dimensions
-    segment_info <- arguments[["graphic_tab"]] |>
+    diagram_info <- arguments[["graphic_tab"]] |>
         get_diagram_dimensions(arguments[["axes_vars"]],
                                arguments[["segment_vars"]],
                                arguments[["values"]],
@@ -572,20 +572,20 @@ setup_nested_diagram_viewport <- function(arguments){
                                arguments[["dimensions"]],
                                arguments[["visuals"]])
 
-    segment_info[["outer_viewport"]] <- outer_viewport
+    diagram_info[["outer_viewport"]] <- outer_viewport
 
     # Setup the main inner diagram viewport
-    segment_info[["inner_viewport"]] <-
-        setup_nested_viewport(x_pos   = segment_info[["primary_y_axes_width"]],
+    diagram_info[["inner_viewport"]] <-
+        setup_nested_viewport(x_pos   = diagram_info[["primary_y_axes_width"]],
                               y_pos   = grid::unit(1, "native"),
-                              y_scale = c(segment_info[["primary_y_min"]], segment_info[["primary_y_max"]]),
+                              y_scale = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
-                                      - segment_info[["primary_y_axes_width"]],
-                              height           = 1 - segment_info[["group_label_height"]],
+                                      - diagram_info[["primary_y_axes_width"]],
+                              height           = 1 - diagram_info[["group_label_height"]],
                               background_color = arguments[["visuals"]][["diagram_background_color"]],
                               name             = "main_diagram")
 
-    invisible(segment_info)
+    invisible(diagram_info)
 }
 
 
@@ -736,6 +736,7 @@ get_diagram_dimensions <- function(graphic_tab,
                                    axes       = .qol_options[["graphic_axes"]],
                                    dimensions = .qol_options[["graphic_dimensions"]],
                                    visuals    = .qol_options[["graphic_visuals"]]){
+    values <- graphic_tab[[values]]
     # TODO: WHAT IF MULTIPLE VARIABLES ARE PASSED OR "age + sex" COMBINATIONS?
 
     # Get the unique values of the axes and segment variables to determine their
@@ -763,7 +764,7 @@ get_diagram_dimensions <- function(graphic_tab,
 
     # Get the values and tick positions for the y axes, which is basically an even
     # distribution.
-    primary_y_values   <- get_y_axes_values(graphic_tab[[values]], axes)
+    primary_y_values   <- get_y_axes_values(values, axes)
     #secondary_y_values <- get_y_axes_values(values, axes, "secondary")
 
     primary_y_tick_width <- 1 / (length(primary_y_values) - 1)
@@ -797,14 +798,14 @@ get_diagram_dimensions <- function(graphic_tab,
     # the zero line starts at a higher value than zero.
     if (primary_y_min <= 0){
         if (primary_y_max < 0){
-            actual_drawing_height <- graphic_tab[[values]] - primary_y_max
+            actual_drawing_height <- values - primary_y_max
         }
         else{
-            actual_drawing_height <- graphic_tab[[values]]
+            actual_drawing_height <- values
         }
     }
     else{
-        actual_drawing_height <- graphic_tab[[values]] - primary_y_min
+        actual_drawing_height <- values - primary_y_min
     }
 
     # Get width of the highest value for the axes to measure the actual space the
@@ -819,6 +820,20 @@ get_diagram_dimensions <- function(graphic_tab,
             get_value_axes_width(primary_y_min, axes, dimensions, visuals)
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
+
+    # Setup adjustment for vbar values, depending on whether the values are positive
+    # or negative and whether they are rotated by 90 degrees or not.
+    if (!visuals[["rotate_values"]]){
+        values_inner_vjust <- data.table::fifelse(values >= 0, 1.7, -0.7)
+        values_outer_vjust <- data.table::fifelse(values >= 0, -0.7, 1.7)
+    }
+    else{
+        values_inner_vjust <- data.table::fifelse(values >= 0, 1.2, -0.2)
+        values_outer_vjust <- data.table::fifelse(values >= 0, -0.2, 1.2)
+    }
+
+    # Get center vbar position
+    values_x_pos <- segment_pos + (segment_width * 0.5)
 
     # Calculate the positions of the group labels
     group_label_pos <- (collapse::funique(group_ids) * group_width) + (group_width * 0.5)
@@ -845,7 +860,8 @@ get_diagram_dimensions <- function(graphic_tab,
                                                dimensions[["axes_font_size"]],
                                                visuals[["axes_font_face"]])
     # Return information as list
-    list(unique_groups          = unique_groups,
+    list(values                 = values,
+         unique_groups          = unique_groups,
          number_of_groups       = number_of_groups,
          unique_segments        = unique_segments,
          number_of_segments     = number_of_segments,
@@ -865,6 +881,9 @@ get_diagram_dimensions <- function(graphic_tab,
          zero_pos               = zero_pos,
          actual_drawing_height  = actual_drawing_height,
          primary_y_axes_width   = primary_y_axes_width,
+         values_inner_vjust     = values_inner_vjust,
+         values_outer_vjust     = values_outer_vjust,
+         values_x_pos           = values_x_pos,
          group_label_pos        = group_label_pos,
          wrapped_group_labels   = wrapped_group_labels,
          group_label_height     = group_label_height,
@@ -876,7 +895,7 @@ get_diagram_dimensions <- function(graphic_tab,
 #' @description
 #' [vbar_grob()]: Set up the main segments for vertical bars.
 #'
-#' @param segment_info The list of measurements generated by
+#' @param diagram_info The list of measurements generated by
 #' [setup_nested_diagram_viewport()].
 #' @param arguments Argument list passed passed on by [design_graphic()].
 #' @param theme Color theme used for the segments.
@@ -888,10 +907,12 @@ get_diagram_dimensions <- function(graphic_tab,
 #'
 #' @export
 #'
-vbar_grob <- function(segment_info,
+vbar_grob <- function(diagram_info,
                       arguments,
                       theme){
-    border_color <- arguments[["visuals"]][["segment_border_color"]]
+    visuals <- arguments[["visuals"]]
+
+    border_color <- visuals[["segment_border_color"]]
     shrink_width <- grid::unit(0, "pt")
 
     # Check whether the provided border color is a single hex code. If it is not
@@ -899,11 +920,12 @@ vbar_grob <- function(segment_info,
     # as if there where no borders. This way the borders are colored like the inner
     # space.
     if (!grepl("^#([A-Fa-f0-9]{6})$", border_color)){
-        border_color <- get_theme_colors(border_color)
+        border_color <- get_theme_base_colors(border_color)
 
         # Get color usage to determine which colors to pick for the specific number
         # of segments
-        border_color <- border_color[arguments[["color_usage"]][[segment_info[["number_of_segments"]]]]]
+        border_color <- border_color[arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
+        # TODO: PREVENT ERROR IF MORE NUMBER_OF_SEGMENTS THAN ENTRIES IN COLOR_USAGE
 
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
@@ -912,13 +934,64 @@ vbar_grob <- function(segment_info,
 
     # NOTE: For the width a tiny bit is subtracted because the bars would otherwise
     #       overlap by one pixel.
-    grid::rectGrob(x      = grid::unit(segment_info[["segment_pos"]], "native"),
-                   y      = segment_info[["zero_pos"]],
-                   width  = grid::unit(segment_info[["segment_width"]], "native") - shrink_width,
-                   height = grid::unit(segment_info[["actual_drawing_height"]], "native"),
-                   just   = c("left", "bottom"),
-                   gp     = grid::gpar(fill = theme[arguments[["color_usage"]][[segment_info[["number_of_segments"]]]]],
-                                       col  = border_color))
+    rects <- grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]], "native"),
+                            y      = diagram_info[["zero_pos"]],
+                            width  = grid::unit(diagram_info[["segment_width"]], "native") - shrink_width,
+                            height = grid::unit(diagram_info[["actual_drawing_height"]], "native"),
+                            just   = c("left", "bottom"),
+                            gp     = grid::gpar(fill = theme[["base"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
+                                               col  = border_color))
+
+    # Get adjustment according to specified position and rotation
+    if (visuals[["bar_values_inside"]]){
+        # With no rotation set adjustments like normal
+        if (!visuals[["rotate_values"]]){
+            vjust  <- diagram_info[["values_inner_vjust"]]
+            hjust  <- 0.5
+            rotate <- 0
+        }
+        # With rotation swap h and v just
+        else{
+            hjust  <- diagram_info[["values_inner_vjust"]]
+            vjust  <- 0.5
+            rotate <- 90
+        }
+    }
+    else{
+        # With no rotation set adjustments like normal
+        if (!visuals[["rotate_values"]]){
+            vjust  <- diagram_info[["values_outer_vjust"]]
+            hjust  <- 0.5
+            rotate <- 0
+        }
+        # With rotation swap h and v just
+        else{
+            hjust  <- diagram_info[["values_outer_vjust"]]
+            vjust  <- 0.5
+            rotate <- 90
+        }
+    }
+
+    # Format values and draw them on the segments
+    formatted_values <- format_diagram_values(diagram_info, arguments)
+
+    # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
+    # TODO: WHICH COLOR SHOULD BE CHOOSEN THEN? ADD INSIDE/OUTSIDE FONT COLOR TO THEME?
+
+    texts <- grid::textGrob(formatted_values,
+                            x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
+                            y      = grid::unit(diagram_info[["values"]], "native"),
+                            vjust  = vjust,
+                            hjust  = hjust,
+                            rot    = rotate,
+                            gp     = grid::gpar(col        = theme[["font"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
+                                                fontfamily = visuals[["value_font"]],
+                                                fontsize   = arguments[["dimensions"]][["value_font_size"]],
+                                                fontface   = visuals[["value_font_face"]],
+                                                lineheight = 1.1))
+
+    # Return final segments
+    grid::gList(rects,texts)
 }
 
 ###############################################################################
@@ -1225,22 +1298,22 @@ setup_x_axes <- function(tick_positions,
 #' [setup_xy_axes()]: Uses the currently active viewport to set up both the x and
 #' y axes.
 #'
-#' @param segment_info The list of measurements generated by
+#' @param diagram_info The list of measurements generated by
 #' [setup_nested_diagram_viewport()].
 #'
 #' @rdname axes
 #'
 #' @export
-setup_xy_axes <- function(segment_info,
+setup_xy_axes <- function(diagram_info,
                           arguments){
-    axes_x <- setup_x_axes(segment_info[["group_ticks_pos_x"]],
-                           segment_info[["group_label_pos"]],
-                           segment_info[["wrapped_group_labels"]],
-                           segment_info[["zero_pos"]],
+    axes_x <- setup_x_axes(diagram_info[["group_ticks_pos_x"]],
+                           diagram_info[["group_label_pos"]],
+                           diagram_info[["wrapped_group_labels"]],
+                           diagram_info[["zero_pos"]],
                            arguments)
 
-    axes_y_primary <- setup_y_axes(segment_info[["primary_y_tick_pos"]],
-                                   segment_info[["primary_y_values"]],
+    axes_y_primary <- setup_y_axes(diagram_info[["primary_y_tick_pos"]],
+                                   diagram_info[["primary_y_values"]],
                                    arguments)
 
     grid::gTree(children = grid::gList(axes_x, axes_y_primary))
@@ -1258,7 +1331,7 @@ setup_xy_axes <- function(segment_info,
 #' [direct_vertical_labels()]: Set up segment labels which are connected directly
 #' to the segments by a line.
 #'
-#' @param segment_info The list of measurements generated by
+#' @param diagram_info The list of measurements generated by
 #' [setup_nested_diagram_viewport()].
 #' @param arguments Argument list passed passed on by [design_graphic()].
 #'
@@ -1268,7 +1341,7 @@ setup_xy_axes <- function(segment_info,
 #' @rdname segment_labels
 #'
 #' @export
-direct_vertical_labels <- function(segment_info,
+direct_vertical_labels <- function(diagram_info,
                                    arguments){
     if (arguments[["visuals"]][["label_type"]] != "lines"){
         return(grid::nullGrob())
@@ -1277,7 +1350,7 @@ direct_vertical_labels <- function(segment_info,
     # Look up which group of segments gets the labels. If desired group is out of
     # bounds, set the group to one of the extreme points.
     label_group  <- arguments[["visuals"]][["label_group"]]
-    group_ids_up <- segment_info[["group_ids"]] + 1
+    group_ids_up <- diagram_info[["group_ids"]] + 1
 
     if (label_group < 1){
         label_group <- 1
@@ -1293,8 +1366,8 @@ direct_vertical_labels <- function(segment_info,
     label_group_selection <- data.table::fifelse(group_ids_up == label_group, TRUE, FALSE)
 
     # Get the middle points of the vertical bars
-    segment_centers_x <- (segment_info[["segment_pos"]][label_group_selection]
-                       + (segment_info[["segment_width"]] * 0.5))
+    segment_centers_x <- (diagram_info[["segment_pos"]][label_group_selection]
+                       + (diagram_info[["segment_width"]] * 0.5))
 
     # Set a factor for the drawing direction. Normally everything is drawn up, but
     # if there are negative values and the zero axes line is far up, the drawing
@@ -1302,7 +1375,7 @@ direct_vertical_labels <- function(segment_info,
     drawing_direction <- 1
     alignment         <- "bottom"
 
-    if (segment_info[["zero_pos"]] > 0.75){
+    if (diagram_info[["zero_pos"]] > 0.75){
         drawing_direction <- -1
         alignment         <- "top"
     }
@@ -1310,7 +1383,7 @@ direct_vertical_labels <- function(segment_info,
     # Get starting y, which is the height of the segments measured from the y axes
     # zero position, and the ending y which is a fixed height from the segments.
     # The maximum height is right below the highest axes value.
-    max_value   <- segment_info[["primary_y_distance"]]
+    max_value   <- diagram_info[["primary_y_distance"]]
     line_length <- grid::convertUnit(grid::unit(arguments[["dimensions"]][["segment_line_length"]], "cm"),
                                      "native", valueOnly = TRUE) * max_value
 
@@ -1320,7 +1393,8 @@ direct_vertical_labels <- function(segment_info,
                                         max_value * 0.95))
 
     # TODO: VARIABLE HEIGHT + DRAWING IN STEPS
-    # TODO: SEPARATE LABELS
+    # TODO: SEPARATE LABELS TO PREVENT OVERLAP
+    # TODO: IF ZERO POS IS NOT 0 THEN LABELS CAN BE DRAWN TO HIGH
 
     # Generate a static offset for the lines so that they are a bit apart from the
     # segments and labels.
@@ -1345,7 +1419,7 @@ direct_vertical_labels <- function(segment_info,
                                                 lty = arguments[["visuals"]][["segment_line_type"]]))
 
     # Generate the labels on top of the lines
-    segment_labels <- grid::textGrob(label = segment_info[["wrapped_segment_labels"]],
+    segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
                                      x     = grid::unit(segment_centers_x, "npc"),
                                      y     = grid::unit(segment_end_y, "native"),
                                      just  = c("center", alignment),
@@ -1426,20 +1500,26 @@ output_graphic <- function(graphic_object,
 expected_parameters <- c("graphic_tab",
                          "axes_vars",
                          "segment_vars",
+                         "values",
                          "statistics",
                          "var_labels",
                          "stat_labels",
-                         "colors",
-                         "structure",
+                         "color_theme",
+                         "color_usage",
                          "visuals",
                          "axes",
-                         "dimensions")
+                         "dimensions",
+                         "title_height",
+                         "footnote_height",
+                         "origin_height")
 
 
 #' Format Values
 #'
+#' @name format_values
+#'
 #' @description
-#' Format values to output numbers in a certain way.
+#' [format_values()]: Format values to output numbers in a certain way.
 #'
 #' @param values Single value or vector of values.
 #' @param decimals Number of decimals to be displayed.
@@ -1451,6 +1531,8 @@ expected_parameters <- c("graphic_tab",
 #'
 #' @return
 #' Returns a formatted value as character.
+#'
+#' @rdname format_values
 #'
 #' @export
 format_values <- function(values,
@@ -1467,4 +1549,34 @@ format_values <- function(values,
                    big.mark     = big_mark,
                    decimal.mark = decimal_mark),
            suffix)
+}
+
+
+#' Format Values
+#'
+#' @description
+#' [format_diagram_values()]: A wrapper to make the code for formatting segment
+#' values shorter.
+#'
+#' @param diagram_info The list of measurements generated by
+#' [setup_nested_diagram_viewport()].
+#' @param arguments Argument list passed passed on by [design_graphic()].
+#' @param which Primary or secondary axes.
+#'
+#' @return
+#' Returns a formatted value as character.
+#'
+#' @export
+format_diagram_values <- function(diagram_info,
+                                  arguments,
+                                  which = "primary"){
+    axes <- arguments[["axes"]]
+
+    format_values(values       = diagram_info[["values"]],
+                  decimals     = axes[[paste0(which, "_values_decimals")]],
+                  big_mark     = axes[[paste0(which, "_values_big_mark")]],
+                  decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
+                  prefix       = axes[[paste0(which, "_values_prefix")]],
+                  suffix       = axes[[paste0(which, "_values_suffix")]],
+                  scale        = axes[[paste0(which, "_values_scale")]])
 }
