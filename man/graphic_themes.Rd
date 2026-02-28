@@ -5,7 +5,8 @@
 \alias{add_color_theme}
 \alias{get_theme_colors}
 \alias{get_theme_base_colors}
-\alias{get_theme_font_colors}
+\alias{get_theme_font_inside_colors}
+\alias{get_theme_font_outside_colors}
 \alias{reset_color_themes}
 \alias{display_colors}
 \alias{display_themes}
@@ -14,15 +15,19 @@
 add_color_theme(
   theme_name,
   base_colors,
-  font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000",
-    "#000000", "#000000", "#000000", "#000000")
+  font_inside_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+    "#000000", "#000000", "#000000", "#000000", "#000000"),
+  font_outside_colors = c("#000000", "#000000", "#000000", "#000000", "#000000",
+    "#000000", "#000000", "#000000", "#000000", "#000000")
 )
 
 get_theme_colors(theme_name)
 
 get_theme_base_colors(theme_name)
 
-get_theme_font_colors(theme_name)
+get_theme_font_inside_colors(theme_name)
+
+get_theme_font_outside_colors(theme_name)
 
 reset_color_themes(clear_themes = FALSE)
 
@@ -35,7 +40,11 @@ display_themes()
 
 \item{base_colors}{The base colors for the segments.}
 
-\item{font_colors}{The individual font colors used on the corresponding base color.}
+\item{font_inside_colors}{The individual font colors used when drawing values inside segments
+on the corresponding base color.}
+
+\item{font_outside_colors}{The individual font colors used when drawing values outsidr segments
+on the corresponding base color.}
 
 \item{clear_themes}{FALSE by default. If TRUE clears the global theme list.}
 }
@@ -46,7 +55,9 @@ display_themes()
 
 \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}: A vector of hex color codes.
 
-\code{\link[=get_theme_font_colors]{get_theme_font_colors()}}: A vector of hex color codes.
+\code{\link[=get_theme_font_inside_colors]{get_theme_font_inside_colors()}}: A vector of hex color codes.
+
+\code{\link[=get_theme_font_outside_colors]{get_theme_font_outside_colors()}}: A vector of hex color codes.
 
 \code{\link[=reset_color_themes]{reset_color_themes()}}: Default global color list or empty list.
 
@@ -66,8 +77,13 @@ corresponding font colors.
 \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}: Retrieve a vector of hex colors from the globally set up themes
 containing the base colors for the segments.
 
-\code{\link[=get_theme_font_colors]{get_theme_font_colors()}}: Retrieve a vector of hex colors from the globally set up themes
-containing the individual font colors corresponding to the base segment colors.
+\code{\link[=get_theme_font_inside_colors]{get_theme_font_inside_colors()}}: Retrieve a vector of hex colors from the globally
+set up themes containing the individual font colors, which are used when values are
+drawn inside segments, corresponding to the base segment colors.
+
+\code{\link[=get_theme_font_outside_colors]{get_theme_font_outside_colors()}}: Retrieve a vector of hex colors from the globally
+set up themes containing the individual font colors, which are used when values are
+drawn outside segments, corresponding to the base segment colors.
 
 \code{\link[=reset_color_themes]{reset_color_themes()}}: Resets the global color themes back to default.
 
@@ -81,14 +97,18 @@ global environment.
 add_color_theme(theme_name  = "tropic",
                 base_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
                                 "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
-                font_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-                                "#000000", "#000000", "#000000", "#000000", "#000000"))
+                font_inside_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
+                                        "#000000", "#000000", "#000000", "#000000", "#000000"),
+                font_outside_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
+                                        "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"))
 
 get_theme_colors("ocean")
 
 get_theme_base_colors("ocean")
 
-get_theme_font_colors("ocean")
+get_theme_font_inside_colors("ocean")
+
+get_theme_font_outside_colors("ocean")
 
 # Clear all globally stored themes in case only self created themes should be stored
 reset_color_themes(clear_themes = TRUE)
@@ -105,8 +125,8 @@ display_themes()
 \seealso{
 Graphic functions: \code{\link[=design_graphic]{design_graphic()}}
 
-Global graphic options: \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_colors]{get_theme_font_colors()}},
-\code{\link[=reset_color_themes]{reset_color_themes()}}
+Global graphic options: \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_inside_colors]{get_theme_font_inside_colors()}},
+\code{\link[=get_theme_font_outside_colors]{get_theme_font_outside_colors()}}, \code{\link[=reset_color_themes]{reset_color_themes()}}
 
 View colors and themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}
 }
