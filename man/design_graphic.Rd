@@ -173,7 +173,6 @@ qol_graphic <- my_data |>
                                       produce bigger and more complex outputs in
                                       less time with less code.")
 
-
 }
 \seealso{
 Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
@@ -181,7 +180,8 @@ Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[
 \code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}
 
 Global graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
-\code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_colors]{get_theme_font_colors()}}, \code{\link[=reset_color_themes]{reset_color_themes()}}
+\code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_inside_colors]{get_theme_font_inside_colors()}}, \code{\link[=get_theme_font_outside_colors]{get_theme_font_outside_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}
 
 Main diagrams: \code{\link[=vbars]{vbars()}}
 
