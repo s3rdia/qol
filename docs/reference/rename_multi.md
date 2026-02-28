@@ -30,6 +30,11 @@ Returns a data_frame with renamed variables.
 my_data <- dummy_data(10)
 
 # Rename multiple variables at once
+new_names_df <- my_data |> rename_multi(sex   = var1,
+                                        age   = var2,
+                                        state = var3)
+
+# Also works with variable names in quotation marks
 new_names_df <- my_data |> rename_multi("sex"   = "var1",
                                         "age"   = "var2",
                                         "state" = "var3")

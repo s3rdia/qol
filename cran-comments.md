@@ -8,6 +8,7 @@ Last CRAN release was on 11.02.2026.
 ### New functionality
 
 * `any_table()`: Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension. (21.02.2026)
+* `rename_multi()`: Variable names can now be passed without quotation marks. (28.02.2026)
 
 ### Changed functionality
 

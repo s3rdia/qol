@@ -249,6 +249,11 @@ replace_except <- function(vector,
 #' my_data <- dummy_data(10)
 #'
 #' # Rename multiple variables at once
+#' new_names_df <- my_data |> rename_multi(sex   = var1,
+#'                                         age   = var2,
+#'                                         state = var3)
+#'
+#' # Also works with variable names in quotation marks
 #' new_names_df <- my_data |> rename_multi("sex"   = "var1",
 #'                                         "age"   = "var2",
 #'                                         "state" = "var3")
@@ -267,15 +272,23 @@ rename_multi <- function(data_frame, ...){
         NULL
     })
 
+    # If capturing the ellipses failed, the variable names are probably passed
+    # without quotation marks. If this is the case, capture them on another way.
     if (is.null(rename_list)){
-        message('X ERROR: Unknown object found. Provide variables in quotation marks, like: "old_var" = "new_var".\n',
-                "         Renaming will be aborted.")
-        return(data_frame)
+        rename_list <- substitute(list(...))[-1]
     }
 
     # Get old and new names in separate vectors to rename them in one go
     old_names <- names(rename_list)
-    new_names <- unlist(rename_list, use.names = FALSE)
+
+    # Depending on how the variable names were passed, thene wvariable names have
+    # to be captured on a different way.
+    if (is.list(rename_list)){
+        new_names <- unlist(rename_list, use.names = FALSE)
+    }
+    else{
+        new_names <- vapply(rename_list, deparse, character(1))
+    }
 
     # Make sure that the variables provided are part of the data frame.
     old_names <- data_frame |> part_of_df(old_names, check_only = TRUE)

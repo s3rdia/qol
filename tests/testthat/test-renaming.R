@@ -28,6 +28,14 @@ test_that("Renaming multiple variables", {
 })
 
 
+test_that("Renaming multiple variables without quotation marks", {
+    new_names_df <- dummy_df |> rename_multi(sex = var1, age = var2)
+
+    expect_true(all(c("var1", "var2") %in% names(new_names_df)))
+    expect_true(!all(c("sex", "age") %in% names(new_names_df)))
+})
+
+
 test_that("Renaming based on first row in data frame", {
     test_df <- data.frame(
                   var1 = c("id", 1, 2, 3),
@@ -45,12 +53,6 @@ test_that("Renaming based on first row in data frame", {
 ###############################################################################
 # Abort checks
 ###############################################################################
-
-test_that("Renaming aborts if symbol cannot be evaluated", {
-    expect_message(new_names_df <- dummy_df |> rename_multi(sex = var1),
-                   'X ERROR: Unknown object found. Provide variables in quotation marks, like: "old_var" = "new_var".')
-})
-
 
 test_that("Renaming aborts if old variable name not found in data frame", {
     expect_message(new_names_df <- dummy_df |> rename_multi("var1" = "var2"),

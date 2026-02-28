@@ -13,6 +13,8 @@
   Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With
   this the function can calculate total percentages for rows and columns
   regardless of the respective other dimension. (21.02.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Variable names can now be passed without quotation marks. (28.02.2026)
 
 #### Changed functionality
 

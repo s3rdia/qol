@@ -72,6 +72,11 @@ names in one go.</p>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Rename multiple variables at once</span></span>
+<span><span class="va">new_names_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">rename_multi</span><span class="op">(</span>sex   <span class="op">=</span> <span class="va">var1</span>,</span>
+<span>                                        age   <span class="op">=</span> <span class="va">var2</span>,</span>
+<span>                                        state <span class="op">=</span> <span class="va">var3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Also works with variable names in quotation marks</span></span>
 <span><span class="va">new_names_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">rename_multi</span><span class="op">(</span><span class="st">"sex"</span>   <span class="op">=</span> <span class="st">"var1"</span>,</span>
 <span>                                        <span class="st">"age"</span>   <span class="op">=</span> <span class="st">"var2"</span>,</span>
 <span>                                        <span class="st">"state"</span> <span class="op">=</span> <span class="st">"var3"</span><span class="op">)</span></span>
