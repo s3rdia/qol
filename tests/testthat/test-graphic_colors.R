@@ -38,7 +38,7 @@ test_that("Get theme colors", {
 test_that("Display theme colors", {
     theme <- display_colors("ocean")
 
-    expect_true(all(c("base", "font") %in% names(theme)))
+    expect_true(all(c("base", "font_inside", "font_outside") %in% names(theme)))
 })
 
 ###############################################################################
