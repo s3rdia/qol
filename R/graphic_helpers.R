@@ -944,6 +944,8 @@ vbar_grob <- function(diagram_info,
 
     # Get adjustment according to specified position and rotation
     if (visuals[["bar_values_inside"]]){
+        font_color <- "font_inside"
+
         # With no rotation set adjustments like normal
         if (!visuals[["rotate_values"]]){
             vjust  <- diagram_info[["values_inner_vjust"]]
@@ -958,6 +960,8 @@ vbar_grob <- function(diagram_info,
         }
     }
     else{
+        font_color <- "font_outside"
+
         # With no rotation set adjustments like normal
         if (!visuals[["rotate_values"]]){
             vjust  <- diagram_info[["values_outer_vjust"]]
@@ -976,7 +980,7 @@ vbar_grob <- function(diagram_info,
     formatted_values <- format_diagram_values(diagram_info, arguments)
 
     # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
-    # TODO: WHICH COLOR SHOULD BE CHOOSEN THEN? ADD INSIDE/OUTSIDE FONT COLOR TO THEME?
+    # TODO: MOVE SEGMENT LINES UP BY VALUE HEIGHT
 
     texts <- grid::textGrob(formatted_values,
                             x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
@@ -984,7 +988,7 @@ vbar_grob <- function(diagram_info,
                             vjust  = vjust,
                             hjust  = hjust,
                             rot    = rotate,
-                            gp     = grid::gpar(col        = theme[["font"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
+                            gp     = grid::gpar(col        = theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
                                                 fontfamily = visuals[["value_font"]],
                                                 fontsize   = arguments[["dimensions"]][["value_font_size"]],
                                                 fontface   = visuals[["value_font_face"]],

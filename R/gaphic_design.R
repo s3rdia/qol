@@ -83,7 +83,8 @@
 #' [graphic_output()], [modify_graphic_output()]
 #'
 #' Global graphic options: [graphic_visuals()], [add_color_theme()], [get_theme_colors()],
-#' [get_theme_base_colors()], [get_theme_font_colors()], [reset_color_themes()]
+#' [get_theme_base_colors()], [get_theme_font_inside_colors()], [get_theme_font_outside_colors()],
+#' [reset_color_themes()]
 #'
 #' Main diagrams: [vbars()]
 #'
@@ -144,7 +145,6 @@
 #'                                       from 'SAS' to 'R' to make life easier and
 #'                                       produce bigger and more complex outputs in
 #'                                       less time with less code.")
-#'
 #'
 #' @export
 design_graphic <- function(data_frame,
