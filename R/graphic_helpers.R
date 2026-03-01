@@ -942,60 +942,64 @@ vbar_grob <- function(diagram_info,
                             gp     = grid::gpar(fill = theme[["base"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
                                                col  = border_color))
 
-    # Get adjustment according to specified position and rotation
-    if (visuals[["bar_values_inside"]]){
-        font_color <- "font_inside"
+    if (visuals[["display_values"]]){
+        # Get adjustment according to specified position and rotation
+        if (visuals[["bar_values_inside"]]){
+            font_color <- "font_inside"
 
-        # With no rotation set adjustments like normal
-        if (!visuals[["rotate_values"]]){
-            vjust  <- diagram_info[["values_inner_vjust"]]
-            hjust  <- 0.5
-            rotate <- 0
+            # With no rotation set adjustments like normal
+            if (!visuals[["rotate_values"]]){
+                vjust  <- diagram_info[["values_inner_vjust"]]
+                hjust  <- 0.5
+                rotate <- 0
+            }
+            # With rotation swap h and v just
+            else{
+                hjust  <- diagram_info[["values_inner_vjust"]]
+                vjust  <- 0.5
+                rotate <- 90
+            }
         }
-        # With rotation swap h and v just
         else{
-            hjust  <- diagram_info[["values_inner_vjust"]]
-            vjust  <- 0.5
-            rotate <- 90
+            font_color <- "font_outside"
+
+            # With no rotation set adjustments like normal
+            if (!visuals[["rotate_values"]]){
+                vjust  <- diagram_info[["values_outer_vjust"]]
+                hjust  <- 0.5
+                rotate <- 0
+            }
+            # With rotation swap h and v just
+            else{
+                hjust  <- diagram_info[["values_outer_vjust"]]
+                vjust  <- 0.5
+                rotate <- 90
+            }
         }
+
+        # Format values and draw them on the segments
+        formatted_values <- format_diagram_values(diagram_info, arguments)
+
+        # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
+
+        texts <- grid::textGrob(formatted_values,
+                                x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
+                                y      = grid::unit(diagram_info[["values"]], "native"),
+                                vjust  = vjust,
+                                hjust  = hjust,
+                                rot    = rotate,
+                                gp     = grid::gpar(col        = theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
+                                                    fontfamily = visuals[["value_font"]],
+                                                    fontsize   = arguments[["dimensions"]][["value_font_size"]],
+                                                    fontface   = visuals[["value_font_face"]],
+                                                    lineheight = 1.1))
     }
     else{
-        font_color <- "font_outside"
-
-        # With no rotation set adjustments like normal
-        if (!visuals[["rotate_values"]]){
-            vjust  <- diagram_info[["values_outer_vjust"]]
-            hjust  <- 0.5
-            rotate <- 0
-        }
-        # With rotation swap h and v just
-        else{
-            hjust  <- diagram_info[["values_outer_vjust"]]
-            vjust  <- 0.5
-            rotate <- 90
-        }
+        texts <- grid::nullGrob()
     }
 
-    # Format values and draw them on the segments
-    formatted_values <- format_diagram_values(diagram_info, arguments)
-
-    # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
-    # TODO: MOVE SEGMENT LINES UP BY VALUE HEIGHT
-
-    texts <- grid::textGrob(formatted_values,
-                            x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
-                            y      = grid::unit(diagram_info[["values"]], "native"),
-                            vjust  = vjust,
-                            hjust  = hjust,
-                            rot    = rotate,
-                            gp     = grid::gpar(col        = theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
-                                                fontfamily = visuals[["value_font"]],
-                                                fontsize   = arguments[["dimensions"]][["value_font_size"]],
-                                                fontface   = visuals[["value_font_face"]],
-                                                lineheight = 1.1))
-
     # Return final segments
-    grid::gList(rects,texts)
+    grid::gList(rects, texts)
 }
 
 ###############################################################################
@@ -1043,7 +1047,7 @@ get_value_axes_width <- function(graphic_tab,
 
     tick_width <- grid::convertWidth(grid::unit(0.5, "lines"), "native", valueOnly = TRUE)
 
-    # Create test graphical object to measure the actual width taken
+    # Create test graphical object to measure the actual width
     temp_grob <- grid::textGrob(axes_max,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
@@ -1068,7 +1072,7 @@ get_value_axes_width <- function(graphic_tab,
 get_variable_axes_dimension <- function(wrapped_text,
                                         dimensions,
                                         visuals){
-    # Create test graphical object to measure the actual width taken
+    # Create test graphical object to measure the actual height
     temp_grob <- grid::textGrob(wrapped_text,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
@@ -1079,6 +1083,36 @@ get_variable_axes_dimension <- function(wrapped_text,
     # too small.
     height_cm <- (grid::convertHeight(grid::stringHeight(temp_grob[["label"]]), "cm", valueOnly = TRUE)
                   / dimensions[["graphic_height"]])
+
+    collapse::fmax(height_cm) + 0.02
+}
+
+
+#' @description
+#' [get_values_dimension()]: Get the height of the variable axes.
+#'
+#' @param diagram_info The list of measurements generated by
+#' [setup_nested_diagram_viewport()].
+#'
+#' @return
+#' [get_values_dimension()]: Returns a numeric height.
+#'
+#' @rdname axes
+#'
+#' @export
+get_values_dimension <- function(diagram_info,
+                                 dimensions,
+                                 visuals){
+    # Create test graphical object to measure the actual height
+    temp_grob <- grid::textGrob(diagram_info[["values"]],
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[["value_font_size"]],
+                                                fontface   = visuals[["value_font_face"]],
+                                                lineheight = 1.2))
+
+    # Measure height by manual calculation because the grobHeight comes out way
+    # too small.
+    height_cm <- grid::convertHeight(grid::stringHeight(temp_grob[["label"]]), "native", valueOnly = TRUE)
 
     collapse::fmax(height_cm) + 0.02
 }
@@ -1347,16 +1381,22 @@ setup_xy_axes <- function(diagram_info,
 #' @export
 direct_vertical_labels <- function(diagram_info,
                                    arguments){
-    if (arguments[["visuals"]][["label_type"]] != "lines"){
+    visuals <- arguments[["visuals"]]
+
+    if (visuals[["label_type"]] != "lines"){
         return(grid::nullGrob())
     }
 
     # Look up which group of segments gets the labels. If desired group is out of
     # bounds, set the group to one of the extreme points.
-    label_group  <- arguments[["visuals"]][["label_group"]]
+    label_group  <- visuals[["label_group"]]
     group_ids_up <- diagram_info[["group_ids"]] + 1
 
-    if (label_group < 1){
+    if (label_group == "auto"){
+        # Get middle group
+        label_group <- ceiling(collapse::fmax(group_ids_up) / 2)
+    }
+    else if (label_group < 1){
         label_group <- 1
     }
     else if (label_group > collapse::fmax(group_ids_up)){
@@ -1385,16 +1425,13 @@ direct_vertical_labels <- function(diagram_info,
     }
 
     # Get starting y, which is the height of the segments measured from the y axes
-    # zero position, and the ending y which is a fixed height from the segments.
-    # The maximum height is right below the highest axes value.
+    # zero position.
     max_value   <- diagram_info[["primary_y_distance"]]
     line_length <- grid::convertUnit(grid::unit(arguments[["dimensions"]][["segment_line_length"]], "cm"),
-                                     "native", valueOnly = TRUE) * max_value
+                                     "native", valueOnly = TRUE) * max_value * 2
 
     segment_start_y <- arguments[["graphic_tab"]][[arguments[["values"]]]][label_group_selection]
     segment_start_y <- data.table::fifelse(segment_start_y * drawing_direction < 0, 0, segment_start_y)
-    segment_end_y   <- collapse::fmin(c(collapse::fmax(abs(segment_start_y) + line_length) * drawing_direction,
-                                        max_value * 0.95))
 
     # TODO: VARIABLE HEIGHT + DRAWING IN STEPS
     # TODO: SEPARATE LABELS TO PREVENT OVERLAP
@@ -1402,12 +1439,24 @@ direct_vertical_labels <- function(diagram_info,
 
     # Generate a static offset for the lines so that they are a bit apart from the
     # segments and labels.
-    offset_y <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * max_value * drawing_direction
+    offset_y     <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * max_value * drawing_direction
+    offset_value <- 0
+
+    if (visuals[["display_values"]] && !visuals[["bar_values_inside"]]){
+        offset_value <- get_values_dimension(diagram_info,
+                                             arguments[["dimensions"]],
+                                             visuals)
+    }
+
+    # Get the ending y, which is a fixed height from the segments. The maximum height
+    # is right below the highest axes value.
+    segment_end_y <- collapse::fmin(c(collapse::fmax(abs(segment_start_y) + line_length) * drawing_direction,
+                                    max_value * 0.95))
 
     # Put together the vector containing start and end points for the lines.
     # In addition double up the x segment centers to match the length of the y vector.
-    line_vector <- as.vector(rbind(segment_start_y + offset_y,
-                                   segment_end_y   - offset_y))
+    line_vector <- as.vector(rbind(segment_start_y + offset_y + offset_value,
+                                   segment_end_y))
     center_vector <- rep(segment_centers_x, each = 2)
 
     # To be able to draw each line as a separate line, the points inside the line_vector
@@ -1419,17 +1468,17 @@ direct_vertical_labels <- function(diagram_info,
     lines <- grid::polylineGrob(x  = grid::unit(center_vector, "npc"),
                                 y  = grid::unit(line_vector, "native"),
                                 id = line_ids,
-                                gp = grid::gpar(col = arguments[["visuals"]][["segment_line_color"]],
-                                                lty = arguments[["visuals"]][["segment_line_type"]]))
+                                gp = grid::gpar(col = visuals[["segment_line_color"]],
+                                                lty = visuals[["segment_line_type"]]))
 
     # Generate the labels on top of the lines
     segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
                                      x     = grid::unit(segment_centers_x, "npc"),
-                                     y     = grid::unit(segment_end_y, "native"),
+                                     y     = grid::unit(segment_end_y + offset_y, "native"),
                                      just  = c("center", alignment),
-                                     gp    = grid::gpar(fontfamily = arguments[["visuals"]][["font"]],
+                                     gp    = grid::gpar(fontfamily = visuals[["font"]],
                                                         fontsize   = arguments[["dimensions"]][["label_font_size"]],
-                                                        fontface   = arguments[["visuals"]][["label_font_face"]],
+                                                        fontface   = visuals[["label_font_face"]],
                                                         lineheight = 1.1))
 
     # Return whole label object
@@ -1582,5 +1631,5 @@ format_diagram_values <- function(diagram_info,
                   decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
                   prefix       = axes[[paste0(which, "_values_prefix")]],
                   suffix       = axes[[paste0(which, "_values_suffix")]],
-                  scale        = axes[[paste0(which, "_values_scale")]])
+                  scale        = axes[[paste0(which, "_axes_scale")]])
 }
