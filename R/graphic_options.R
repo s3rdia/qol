@@ -58,6 +58,8 @@
 #' @param segment_line_color Sets the color of the leading lines from segments to labels.
 #' @param remove_small_values TRUE by default. Doesn't display values if the corresponding
 #' segment is to small and value would go out of bounds. If FALSE, always displays values.
+#' @param display_values TRUE by default. Displays the values with the segments. If FALSE,
+#' removes all values and just draws the segments.
 #' @param bar_values_inside TRUE by default. In grouped bar charts the segment values
 #' will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.
 #' @param rotate_values FALSE by default. If TRUE rotates values inside the segments by
@@ -143,10 +145,11 @@ graphic_visuals <- function(font                      = "Arial",
                             segment_line_type         = "solid",
                             segment_line_color        = "#000000",
                             remove_small_values       = TRUE,
+                            display_values            = TRUE,
                             bar_values_inside         = TRUE,
                             rotate_values             = FALSE,
                             label_type                = "lines",
-                            label_group               = 3,
+                            label_group               = "auto",
                             line_offset               = 0,
                             legend_x_pos              = 11,
                             legend_y_pos              = 5,
@@ -236,7 +239,6 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' on the primary axes have.
 #' @param primary_values_prefix What to put in front of the values plotted on the primary axes have.
 #' @param primary_values_suffix What to put after the values plotted on the primary axes have.
-#' @param primary_values_scale Multiplier for the values plotted on the primary axes have.
 #' @param secondary_axes_max Maximum value for the secondary axes. If "auto", the maximum
 #' value is determined by the maximum value present in the graphic.
 #' @param secondary_axes_min Minimum value for the secondary axes. If "auto", the minimum
@@ -257,7 +259,6 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' on the secondary axes.
 #' @param secondary_values_prefix What to put in front of the values plotted on the secondary axes.
 #' @param secondary_values_suffix What to put after the values plotted on the secondary axes.
-#' @param secondary_values_scale Multiplier for the values plotted on the secondary axes.
 #' @param variable_axes_interval The number of steps in which to display labels on the variable axes.
 #'
 #' @return
@@ -293,7 +294,6 @@ graphic_axes <- function(primary_axes_max                = "auto",
                          primary_values_decimal_mark     = ",",
                          primary_values_prefix           = "",
                          primary_values_suffix           = "",
-                         primary_values_scale            = 1,
                          secondary_axes_max              = "auto",
                          secondary_axes_min              = "auto",
                          secondary_axes_steps            = 5,
@@ -308,7 +308,6 @@ graphic_axes <- function(primary_axes_max                = "auto",
                          secondary_values_decimal_mark   = ",",
                          secondary_values_prefix         = "",
                          secondary_values_suffix         = "",
-                         secondary_values_scale          = 1,
                          variable_axes_interval          = 1){
     as.list(environment())
 }
@@ -425,7 +424,7 @@ graphic_dimensions <- function(graphic_width          = 16,
                                other_font_size        = 9,
                                space_between_bars_pct = 50,
                                line_thickness         = 0,
-                               segment_line_length    = 3,
+                               segment_line_length    = 2,
                                textbox_width          = 2){
     if (is.numeric(diagram_width) && diagram_width > graphic_width){
         message(" ! WANRING: Diagram width can't be greater than the whole graphic width.\n",

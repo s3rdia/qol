@@ -19,7 +19,6 @@ graphic_axes(
   primary_values_decimal_mark = ",",
   primary_values_prefix = "",
   primary_values_suffix = "",
-  primary_values_scale = 1,
   secondary_axes_max = "auto",
   secondary_axes_min = "auto",
   secondary_axes_steps = 5,
@@ -34,7 +33,6 @@ graphic_axes(
   secondary_values_decimal_mark = ",",
   secondary_values_prefix = "",
   secondary_values_suffix = "",
-  secondary_values_scale = 1,
   variable_axes_interval = 1
 )
 }
@@ -73,8 +71,6 @@ on the primary axes have.}
 
 \item{primary_values_suffix}{What to put after the values plotted on the primary axes have.}
 
-\item{primary_values_scale}{Multiplier for the values plotted on the primary axes have.}
-
 \item{secondary_axes_max}{Maximum value for the secondary axes. If "auto", the maximum
 value is determined by the maximum value present in the graphic.}
 
@@ -108,8 +104,6 @@ on the secondary axes.}
 \item{secondary_values_prefix}{What to put in front of the values plotted on the secondary axes.}
 
 \item{secondary_values_suffix}{What to put after the values plotted on the secondary axes.}
-
-\item{secondary_values_scale}{Multiplier for the values plotted on the secondary axes.}
 
 \item{variable_axes_interval}{The number of steps in which to display labels on the variable axes.}
 }

@@ -97,7 +97,8 @@
 #' [setup_nested_diagram_viewport()], [back_to_the_root()], [is_viewport_pushed()]
 #' - Dimensions: [get_available_width()], [get_available_height()]
 #' - Diagram: [get_diagram_dimensions()], [vbar_grob()]
-#' - Axes: [get_value_axes_width()], [get_variable_axes_dimension()], [get_group_tick_positions_x()],
+#' - Axes: [get_value_axes_width()], [get_variable_axes_dimension()], [get_values_dimension()],
+#' [get_group_tick_positions_x()],
 #' [get_y_axes_values()], [setup_y_axes()], [setup_x_axes()], [setup_xy_axes()]
 #' - Labels: [direct_vertical_labels()]
 #' - Output: [output_graphic()]
