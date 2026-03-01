@@ -20,7 +20,7 @@ graphic_dimensions(
   other_font_size = 9,
   space_between_bars_pct = 50,
   line_thickness = 0,
-  segment_line_length = 3,
+  segment_line_length = 2,
   textbox_width = 2
 )
 }
