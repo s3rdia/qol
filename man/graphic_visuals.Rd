@@ -51,7 +51,7 @@ graphic_visuals(
   bar_values_inside = TRUE,
   rotate_values = FALSE,
   label_type = "lines",
-  label_group = 3,
+  label_group = "auto",
   line_offset = 0,
   legend_x_pos = 11,
   legend_y_pos = 5,

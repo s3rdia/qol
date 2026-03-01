@@ -195,7 +195,8 @@ Mid level functions:
 \code{\link[=setup_nested_diagram_viewport]{setup_nested_diagram_viewport()}}, \code{\link[=back_to_the_root]{back_to_the_root()}}, \code{\link[=is_viewport_pushed]{is_viewport_pushed()}}
 \item Dimensions: \code{\link[=get_available_width]{get_available_width()}}, \code{\link[=get_available_height]{get_available_height()}}
 \item Diagram: \code{\link[=get_diagram_dimensions]{get_diagram_dimensions()}}, \code{\link[=vbar_grob]{vbar_grob()}}
-\item Axes: \code{\link[=get_value_axes_width]{get_value_axes_width()}}, \code{\link[=get_variable_axes_dimension]{get_variable_axes_dimension()}}, \code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}},
+\item Axes: \code{\link[=get_value_axes_width]{get_value_axes_width()}}, \code{\link[=get_variable_axes_dimension]{get_variable_axes_dimension()}}, \code{\link[=get_values_dimension]{get_values_dimension()}},
+\code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}},
 \code{\link[=get_y_axes_values]{get_y_axes_values()}}, \code{\link[=setup_y_axes]{setup_y_axes()}}, \code{\link[=setup_x_axes]{setup_x_axes()}}, \code{\link[=setup_xy_axes]{setup_xy_axes()}}
 \item Labels: \code{\link[=direct_vertical_labels]{direct_vertical_labels()}}
 \item Output: \code{\link[=output_graphic]{output_graphic()}}
