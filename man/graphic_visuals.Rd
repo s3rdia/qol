@@ -48,6 +48,7 @@ graphic_visuals(
   segment_line_type = "solid",
   segment_line_color = "#000000",
   remove_small_values = TRUE,
+  display_values = TRUE,
   bar_values_inside = TRUE,
   rotate_values = FALSE,
   label_type = "lines",
@@ -154,6 +155,9 @@ categories.}
 
 \item{remove_small_values}{TRUE by default. Doesn't display values if the corresponding
 segment is to small and value would go out of bounds. If FALSE, always displays values.}
+
+\item{display_values}{TRUE by default. Displays the values with the segments. If FALSE,
+removes all values and just draws the segments.}
 
 \item{bar_values_inside}{TRUE by default. In grouped bar charts the segment values
 will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.}
