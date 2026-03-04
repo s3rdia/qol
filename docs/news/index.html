@@ -49,6 +49,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Added <code>row_pct</code> and <code>col_pct</code> keywords to <code>pct_group</code> parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension. (21.02.2026)</li>
 <li>
 <code><a href="../reference/rename_multi.html">rename_multi()</a></code>: Variable names can now be passed without quotation marks. (28.02.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Percentages based on single formatted variable expressions can now be computed with the <code>pct_value</code> parameter. (05.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-2">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-2"></a></h4>
@@ -67,6 +69,11 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Fixed formats not matching data when computing percentages, if numeric values are stored as character. (18.02.2026)</li>
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: When passing a vector to a new variable, the functions don’t error any more if there are NA values. (22.02.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-error-checks-1-2-2">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-2"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case all caLculations are done and no value variable was computed. (05.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-2-2">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-2"></a></h4>

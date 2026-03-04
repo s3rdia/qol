@@ -15,6 +15,9 @@
   regardless of the respective other dimension. (21.02.2026)
 - [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
   Variable names can now be passed without quotation marks. (28.02.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Percentages based on single formatted variable expressions can now be
+  computed with the `pct_value` parameter. (05.03.2026)
 
 #### Changed functionality
 
@@ -43,6 +46,12 @@
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): When
   passing a vector to a new variable, the functions don’t error any more
   if there are NA values. (22.02.2026)
+
+#### New Error Checks
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Added an error check in case all caLculations are done and no value
+  variable was computed. (05.03.2026)
 
 #### Additionally
 

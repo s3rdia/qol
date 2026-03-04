@@ -8,6 +8,7 @@
 
 * `any_table()`: Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension. (21.02.2026)
 * `rename_multi()`: Variable names can now be passed without quotation marks. (28.02.2026)
+* `any_table()`: Percentages based on single formatted variable expressions can now be computed with the `pct_value` parameter. (05.03.2026)
 
 ### Changed functionality
 
@@ -20,6 +21,10 @@
 * `transpose_plus()`: Took out a debug print I forgot in the function. (12.02.2026)
 * `summarise_plus()`: Fixed formats not matching data when computing percentages, if numeric values are stored as character. (18.02.2026)
 * `if.()`, `else_if.()`, `else.()`: When passing a vector to a new variable, the functions don't error any more if there are NA values. (22.02.2026)
+
+### New Error Checks
+
+* `any_table()`: Added an error check in case all caLculations are done and no value variable was computed. (05.03.2026)
 
 ### Additionally
 

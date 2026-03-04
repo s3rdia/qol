@@ -50,7 +50,7 @@ should appear in the table rows. To nest variables use the form:
 \item "freq"      -> Unweighted frequency
 \item "freq_g0"   -> Unweighted frequency of all values greater than zero
 \item "pct_group" -> Weighted and unweighted percentages within the respective group
-\item "pct_value" -> Weighted and unweighted percentages between value variables
+\item "pct_value" -> Weighted and unweighted percentages between value variables or of a variable expression
 \item "pct_total" -> Weighted and unweighted percentages compared to the grand total
 \item "mean"      -> Weighted and unweighted mean
 \item "median"    -> Weighted and unweighted median
@@ -238,6 +238,16 @@ my_data |> any_table(rows       = c("age + year"),
                      values     = c(probability, person),
                      statistics = c("pct_value", "sum", "freq"),
                      pct_value  = list(rate = "probability / person"),
+                     weight     = weight,
+                     formats    = list(sex = sex., age = age.),
+                     na.rm      = TRUE)
+
+# Percentages based on a formatted variable expression
+my_data |> any_table(rows       = c("age + year"),
+                     columns    = "sex",
+                     values     = c(probability, person),
+                     statistics = "pct_value",
+                     pct_value  = list(sex = "Total", age = "Total"),
                      weight     = weight,
                      formats    = list(sex = sex., age = age.),
                      na.rm      = TRUE)

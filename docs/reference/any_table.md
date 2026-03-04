@@ -73,7 +73,7 @@ any_table(
     respective group
 
   - "pct_value" -\> Weighted and unweighted percentages between value
-    variables
+    variables or of a variable expression
 
   - "pct_total" -\> Weighted and unweighted percentages compared to the
     grand total
@@ -351,6 +351,16 @@ my_data |> any_table(rows       = c("age + year"),
                      values     = c(probability, person),
                      statistics = c("pct_value", "sum", "freq"),
                      pct_value  = list(rate = "probability / person"),
+                     weight     = weight,
+                     formats    = list(sex = sex., age = age.),
+                     na.rm      = TRUE)
+
+# Percentages based on a formatted variable expression
+my_data |> any_table(rows       = c("age + year"),
+                     columns    = "sex",
+                     values     = c(probability, person),
+                     statistics = "pct_value",
+                     pct_value  = list(sex = "Total", age = "Total"),
                      weight     = weight,
                      formats    = list(sex = sex., age = age.),
                      na.rm      = TRUE)

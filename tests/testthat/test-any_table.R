@@ -130,11 +130,12 @@ test_that("any_table with different percentages", {
                     values     = c(probability, weight),
                     statistics = c("sum", "pct_group", "pct_total", "pct_value"),
                     pct_group  = c("age", "sex"),
-                    pct_value  = list(rate = "probability / weight"),
+                    pct_value  = list(rate = "probability / weight",
+                                      sex  = 1),
                     print      = FALSE))
 
     expect_true(all(c("weight_pct_group_age_1", "weight_pct_total_1",
-                      "rate_pct_value_1") %in% names(result_list[["table"]])))
+                      "rate_pct_value_1", "sex_pct_value_1") %in% names(result_list[["table"]])))
 })
 
 
@@ -701,10 +702,10 @@ test_that("any_table outputs sum values with only invalid pct_value statistic an
 
 test_that("any_table aborts with missing variable combination in pre summarised data", {
     expect_message(result_list <- sum_df2 |>
-           any_table(rows       = c("year", "age"),
-                     columns    = "sex",
-                     values     = weight_sum,
-                     print      = FALSE), " X ERROR: The variable combination of '")
+           any_table(rows    = c("year", "age"),
+                     columns = "sex",
+                     values  = weight_sum,
+                     print   = FALSE), " X ERROR: The variable combination of '")
 })
 
 
@@ -720,5 +721,22 @@ test_that("Combine tables into a single workbook aborts, if any not any_table ob
 
     expect_true(!file.exists(temp_file))
 })
+
+
+test_that("any_table aborts with no valid values after calculating the results", {
+    errors <- testthat::capture_messages(result_list <- dummy_df |>
+           any_table(rows       = "year",
+                     columns    = "sex",
+                     values     = weight,
+                     statistics = "pct_value",
+                     pct_value  = list(sex = "test",
+                                       age = "test"),
+                     print      = FALSE))
+
+    expect_true(any(grepl(" ! WARNING: Variable 'age' not found in the data frame.", errors)))
+    expect_true(any(grepl(" ! WARNING: Subsetting variable 'sex' by 'test' results in an empty data frame.", errors)))
+    expect_true(any(grepl(" X ERROR: After calculating the results, there are no valid values.", errors)))
+})
+
 
 set_style_options(as_heatmap = FALSE)
