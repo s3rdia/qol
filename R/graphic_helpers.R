@@ -516,32 +516,59 @@ setup_nested_viewport <- function(x_pos   = 0,
 #'
 #' @export
 setup_diagram_viewport <- function(arguments){
-    # Calculate new diagram viewport y starting position
-    # HACK: Using one additional margin here because somehow the height measuring
-    #       of multiline text doesn't output the correct values.
-    valid_heights <- sum(arguments[["title_height"]] > 0)
-    y_pos         <- (arguments[["dimensions"]][["graphic_height"]]
-                   - (arguments[["title_height"]]
-                   + (arguments[["dimensions"]][["margins"]] * (2 + valid_heights))))
+    diagram_start  <- arguments[["dimensions"]][["diagram_start"]]
+    diagram_height <- arguments[["dimensions"]][["diagram_height"]]
+    diagram_width  <- arguments[["dimensions"]][["diagram_width"]]
 
-    # Calculate new diagram viewport height
-    valid_heights <- sum(arguments[["title_height"]]    > 0,
-                         arguments[["footnote_height"]] > 0)
+    # Measure diagram start automatically and set it right under the title or
+    # take the manually set start.
+    if (diagram_start == "auto"){
+        # Calculate new diagram viewport y starting position
+        # HACK: Using one additional margin here because somehow the height measuring
+        #       of multiline text doesn't output the correct values.
+        valid_heights <- sum(arguments[["title_height"]] > 0)
+        y_pos         <- (arguments[["dimensions"]][["graphic_height"]]
+                       - (arguments[["title_height"]]
+                       + (arguments[["dimensions"]][["margins"]] * (2 + valid_heights))))
+    }
+    else{
+        y_pos <- arguments[["dimensions"]][["graphic_height"]] - diagram_start
+    }
 
-    # HACK: Using two additional margins here because somehow the height measuring
-    #       of multiline text doesn't output the correct values.
-    height <- (arguments[["dimensions"]][["graphic_height"]]
-             - arguments[["title_height"]]
-             - arguments[["footnote_height"]]
-             - (arguments[["dimensions"]][["margins"]] * (4 + valid_heights)))
+    # Measure diagram height automatically and set it to span between title and
+    # footnotes or take the manually set height.
+    if (diagram_height == "auto"){
+        # Calculate new diagram viewport height
+        valid_heights <- sum(arguments[["title_height"]]    > 0,
+                             arguments[["footnote_height"]] > 0)
+
+        # HACK: Using two additional margins here because somehow the height measuring
+        #       of multiline text doesn't output the correct values.
+        height <- (arguments[["dimensions"]][["graphic_height"]]
+                 - arguments[["title_height"]]
+                 - arguments[["footnote_height"]]
+                 - (arguments[["dimensions"]][["margins"]] * (4 + valid_heights)))
+    }
+    else{
+        height <- diagram_height
+    }
+
+    # Measure diagram width automatically and set it to span from side to side or
+    # take the manually set height.
+    if (diagram_width == "auto"){
+        width <- (arguments[["dimensions"]][["graphic_width"]]
+               - (arguments[["dimensions"]][["margins"]] * 2))
+    }
+    else{
+        width <- diagram_width
+    }
 
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
     setup_nested_viewport(x_pos   = arguments[["dimensions"]][["margins"]],
                           y_pos   = y_pos,
                           y_scale = c(0, 1),
-                          width   = arguments[["dimensions"]][["graphic_width"]]
-                                 - (arguments[["dimensions"]][["margins"]] * 2),
+                          width   = width,
                           height  = height,
                           background_color = arguments[["visuals"]][["diagram_background_color"]],
                           border_color     = arguments[["visuals"]][["diagram_border_color"]],
