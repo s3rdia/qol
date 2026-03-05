@@ -128,7 +128,7 @@ test_that("any_table with different percentages", {
           any_table(rows       = "age",
                     columns    = "sex",
                     values     = c(probability, weight),
-                    statistics = c("sum", "pct_group", "pct_total", "pct_value"),
+                    statistics = c("sum", "pct_total"),
                     pct_group  = c("age", "sex"),
                     pct_value  = list(rate = "probability / weight",
                                       sex  = 1),

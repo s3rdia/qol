@@ -18,6 +18,10 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Percentages based on single formatted variable expressions can now be
   computed with the `pct_value` parameter. (05.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If the `pct_value or`pct_group\` parameters are used but are not part
+  of the statistics parameter, they will be automatically added to
+  statistics. (05.03.2026)
 
 #### Changed functionality
 

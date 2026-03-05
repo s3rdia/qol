@@ -636,7 +636,21 @@ any_table <- function(data_frame,
     row_pct <- FALSE
     col_pct <- FALSE
 
+    # If pct_group parameter is passed but is not selected as statistic, add it
+    if (length(pct_value) > 0 && !"pct_value" %in% tolower(statistics)){
+        if (!(length(pct_value) == 1 && pct_value == "")){
+            statistics <- c(statistics, "pct_value")
+        }
+    }
+
     pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
+
+    # If pct_group parameter is passed but is not selected as statistic, add it
+    if (length(pct_group) > 0 && !"pct_group" %in% tolower(statistics)){
+        if (!(length(pct_group) == 1 && pct_group == "")){
+            statistics <- c(statistics, "pct_group")
+        }
+    }
 
     # Remove missing variables from pct_group
     if ("pct_group" %in% tolower(statistics)){

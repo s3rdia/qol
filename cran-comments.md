@@ -10,6 +10,7 @@ Last CRAN release was on 11.02.2026.
 * `any_table()`: Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension.
 * `rename_multi()`: Variable names can now be passed without quotation marks.
 * `any_table()`: Percentages based on single formatted variable expressions can now be computed with the `pct_value` parameter.
+* `any_table()`: If the `pct_value or `pct_group` parameters are used but are not part of the statistics parameter, they will be automatically added to statistics.
 
 ### Changed functionality
 
