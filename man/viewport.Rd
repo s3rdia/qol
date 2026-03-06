@@ -24,8 +24,6 @@ setup_nested_viewport(
   y_scale = c(0, 1),
   width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
   height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-  background_color = .qol_options[["graphic_visuals"]][["diagram_background_color"]],
-  border_color = .qol_options[["graphic_visuals"]][["diagram_border_color"]],
   name = "nested_viewport"
 )
 
