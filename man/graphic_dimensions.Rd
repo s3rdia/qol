@@ -18,9 +18,10 @@ graphic_dimensions(
   label_font_size = 9,
   origin_font_size = 8,
   other_font_size = 9,
-  space_between_bars_pct = 50,
-  line_thickness = 0,
+  space_between_bars_pct = 0,
+  line_thickness = 1,
   segment_line_length = 2,
+  segment_line_offset = 0,
   textbox_width = 2
 )
 }
@@ -56,6 +57,12 @@ graphic_dimensions(
 \item{line_thickness}{The thickness of lines in points.}
 
 \item{segment_line_length}{The length of the lines leading from segments to labels in cm.}
+
+\item{segment_line_offset}{Offset in the height of the leading lines in cm. If 0, all leading lines
+will end at the same height, meaning the labels will be drawn at the same height. If
+an offset is set, all lines after the first one will be shorter by this amount * number
+of the line. Enables the labels to be drawn in steps, if e.g. the labels have a long
+text which would overlap, if they where on the same height.}
 
 \item{textbox_width}{Determines the width of any freely placed textbox.}
 }

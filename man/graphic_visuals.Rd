@@ -11,7 +11,6 @@ graphic_visuals(
   primary_axes_font_color = "#000000",
   secondary_axes_font_color = "#000000",
   variable_axes_font_color = "#000000",
-  value_font_color = "#000000",
   label_font_color = "#000000",
   origin_font_color = "#2B2B2B",
   other_font_color = "#000000",
@@ -28,7 +27,6 @@ graphic_visuals(
   footnote_alignment = "left",
   hbar_alignment = "right",
   other_alignment = "left",
-  color_theme = "ocean",
   reverse_colors = FALSE,
   primary_axes_color = "#2B2B2B",
   secondary_axes_color = "#2B2B2B",
@@ -42,7 +40,7 @@ graphic_visuals(
   line_markers_change = TRUE,
   guiding_lines = FALSE,
   guiding_line_type = "dotted",
-  guiding_line_color = "#2B2B2B",
+  guiding_line_color = "#9A9A9A",
   separation_line_type = "dashed",
   separation_line_color = "#2B2B2B",
   segment_line_type = "solid",
@@ -53,7 +51,6 @@ graphic_visuals(
   rotate_values = FALSE,
   label_type = "lines",
   label_group = "auto",
-  line_offset = 0,
   legend_x_pos = 11,
   legend_y_pos = 5,
   legend_columns = 1,
@@ -73,8 +70,6 @@ graphic_visuals(
 \item{secondary_axes_font_color}{Font color of the secondary axes.}
 
 \item{variable_axes_font_color}{Font color of the variable axes.}
-
-\item{value_font_color}{Font color of the values.}
 
 \item{label_font_color}{Font color of the segment labels.}
 
@@ -107,8 +102,6 @@ graphic_visuals(
 \item{hbar_alignment}{The alignment of the axes group labels in horizontal bars.}
 
 \item{other_alignment}{Alignment of other elements, like freely positionable textboxes.}
-
-\item{color_theme}{The color theme used for the segments.}
 
 \item{reverse_colors}{FALSE by default. If TRUE reverses the color order.}
 
@@ -170,12 +163,6 @@ or "legend", which allows to position a legend separately.}
 
 \item{label_group}{If label_Type is "lines", then this parameter determines above which
 group of segments the labels will be drawn.}
-
-\item{line_offset}{Offset in the height of the leading lines in cm. If 0, all leading lines
-will end at the same height, meaning the labels will be drawn at the same height. If
-an offset is set, all lines after the first one will be shorter by this amount * number
-of the line. Enables the labels to be drawn in steps, if e.g. the labels have a long
-text which would overlap, if they where on the same height.}
 
 \item{legend_x_pos}{Horizontal position of the legend.}
 

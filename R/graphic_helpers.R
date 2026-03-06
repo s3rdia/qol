@@ -483,8 +483,6 @@ setup_nested_viewport <- function(x_pos   = 0,
                                   y_scale = c(0, 1),
                                   width   = .qol_options[["graphic_dimensions"]][["graphic_width"]],
                                   height  = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-                                  background_color = .qol_options[["graphic_visuals"]][["diagram_background_color"]],
-                                  border_color     = .qol_options[["graphic_visuals"]][["diagram_border_color"]],
                                   name = "nested_viewport"){
     # Set up a new nested viewport.
     vp <- grid::viewport(x      = grid::unit(x_pos, "native"),
@@ -497,10 +495,6 @@ setup_nested_viewport <- function(x_pos   = 0,
                          name   = name)
 
     grid::pushViewport(vp)
-
-    # Draw the graphics background
-    grid::grid.rect(gp = grid::gpar(fill = background_color,
-                                    col  = border_color))
 
     invisible(vp)
 }
@@ -570,8 +564,6 @@ setup_diagram_viewport <- function(arguments){
                           y_scale = c(0, 1),
                           width   = width,
                           height  = height,
-                          background_color = arguments[["visuals"]][["diagram_background_color"]],
-                          border_color     = arguments[["visuals"]][["diagram_border_color"]],
                           name = "diagram_area")
 }
 
@@ -609,8 +601,11 @@ setup_nested_diagram_viewport <- function(arguments){
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
                                       - diagram_info[["primary_y_axes_width"]],
                               height           = 1 - diagram_info[["group_label_height"]],
-                              background_color = arguments[["visuals"]][["diagram_background_color"]],
                               name             = "main_diagram")
+
+    # Draw the graphics background
+    grid::grid.rect(gp = grid::gpar(fill = arguments[["visuals"]][["diagram_background_color"]],
+                                    col  = arguments[["visuals"]][["diagram_border_color"]]))
 
     invisible(diagram_info)
 }
@@ -940,7 +935,7 @@ vbar_grob <- function(diagram_info,
     visuals <- arguments[["visuals"]]
 
     border_color <- visuals[["segment_border_color"]]
-    shrink_width <- grid::unit(0, "pt")
+    shrink_width <- grid::unit(arguments[["dimensions"]][["space_between_bars_pct"]], "pt")
 
     # Check whether the provided border color is a single hex code. If it is not
     # and is a theme name instead, then get the theme colors to make it visually
@@ -956,18 +951,29 @@ vbar_grob <- function(diagram_info,
 
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
-        shrink_width <- grid::unit(0.5, "pt")
+        if (arguments[["dimensions"]][["space_between_bars_pct"]] == 0){
+            shrink_width <- grid::unit(0.5, "pt")
+        }
+    }
+
+    # Get the colors from the theme which should be used. Reverse them if option
+    # is set accordingly.
+    colors_to_use <- theme[["base"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
+
+    if (visuals[["reverse_colors"]]){
+        colors_to_use <- rev(colors_to_use)
+        border_color  <- rev(border_color)
     }
 
     # NOTE: For the width a tiny bit is subtracted because the bars would otherwise
-    #       overlap by one pixel.
-    rects <- grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]], "native"),
+    #       overlap by one pixel, in case colored outlines are used.
+    rects <- grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]], "native") + (shrink_width / 2),
                             y      = diagram_info[["zero_pos"]],
                             width  = grid::unit(diagram_info[["segment_width"]], "native") - shrink_width,
                             height = grid::unit(diagram_info[["actual_drawing_height"]], "native"),
                             just   = c("left", "bottom"),
-                            gp     = grid::gpar(fill = theme[["base"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
-                                               col  = border_color))
+                            gp     = grid::gpar(fill = colors_to_use,
+                                                col  = border_color))
 
     if (visuals[["display_values"]]){
         # Get adjustment according to specified position and rotation
@@ -1026,13 +1032,21 @@ vbar_grob <- function(diagram_info,
 
         # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
 
+        # Get the colors from the theme which should be used. Reverse them if option
+        # is set accordingly.
+        colors_to_use <- theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
+
+        if (visuals[["reverse_colors"]]){
+            colors_to_use <- rev(colors_to_use)
+        }
+
         texts <- grid::textGrob(formatted_values,
                                 x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
                                 y      = grid::unit(value_y_pos, "native"),
                                 vjust  = vjust,
                                 hjust  = hjust,
                                 rot    = rotate,
-                                gp     = grid::gpar(col        = theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]],
+                                gp     = grid::gpar(col        = colors_to_use,
                                                     fontfamily = visuals[["value_font"]],
                                                     fontsize   = arguments[["dimensions"]][["value_font_size"]],
                                                     fontface   = visuals[["value_font_face"]],
@@ -1323,7 +1337,8 @@ setup_y_axes <- function(tick_positions,
     # Vertical axes line over the whole viewport
     zero_pos <- sum(secondary)
 
-    line <- grid::linesGrob(x = c(zero_pos, zero_pos), y = c(0, 1))
+    line <- grid::linesGrob(x = c(zero_pos, zero_pos), y = c(0, 1),
+                            gp = grid::gpar(col = arguments[["visuals"]][[paste0(which, "_axes_color")]]))
 
     # Setup the ticks left/right
     tick_length <- 0.1 + (-0.2 * zero_pos)
@@ -1331,7 +1346,18 @@ setup_y_axes <- function(tick_positions,
     ticks <- grid::segmentsGrob(x0 = zero_pos,
                                 x1 = grid::unit(zero_pos, "native") - grid::unit(tick_length, "cm"),
                                 y0 = grid::unit(tick_positions, "npc"),
-                                y1 = grid::unit(tick_positions, "npc"))
+                                y1 = grid::unit(tick_positions, "npc"),
+                                gp = grid::gpar(col = arguments[["visuals"]][[paste0(which, "_axes_color")]]))
+
+    # Draw guiding lines
+    if (arguments[["visuals"]][["guiding_lines"]]){
+        ticks <- grid::segmentsGrob(x0 = 0,
+                                    x1 = 1,
+                                    y0 = grid::unit(tick_positions, "npc"),
+                                    y1 = grid::unit(tick_positions, "npc"),
+                                    gp = grid::gpar(col = arguments[["visuals"]][["guiding_line_color"]],
+                                                    lty = arguments[["visuals"]][["guiding_line_type"]]))
+    }
 
     # Format values according to options
     axes <- arguments[["axes"]]
@@ -1356,7 +1382,8 @@ setup_y_axes <- function(tick_positions,
                                   x     = label_offset,
                                   y     = value_positions,
                                   just  = c("right", "center"),
-                                  gp    = grid::gpar(fontfamily = arguments[["visuals"]][["font"]],
+                                  gp    = grid::gpar(col        = arguments[["visuals"]][[paste0(which, "_axes_font_color")]],
+                                                     fontfamily = arguments[["visuals"]][["font"]],
                                                      fontsize   = arguments[["dimensions"]][["axes_font_size"]],
                                                      fontface   = arguments[["visuals"]][["axes_font_face"]]))
 
@@ -1394,20 +1421,23 @@ setup_x_axes <- function(tick_positions,
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
     # position of the primary y axes if it is there.
-    line <- grid::linesGrob(x = c(0, 1), y = c(zero_pos, zero_pos))
+    line <- grid::linesGrob(x = c(0, 1), y = c(zero_pos, zero_pos),
+                            gp = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
 
     # Setup the ticks pointing down
     ticks <- grid::segmentsGrob(x0 = grid::unit(tick_positions, "native"),
                                 x1 = grid::unit(tick_positions, "native"),
                                 y0 = zero_pos,
-                                y1 = zero_pos - tick_length)
+                                y1 = zero_pos - tick_length,
+                                gp = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
 
     # Insert the group labels for the variable axes
     group_labels <- grid::textGrob(label = labels,
                                    x     = label_positions,
                                    y     = -0.02,
                                    just  = c("center", "top"),
-                                   gp    = grid::gpar(fontfamily = arguments[["visuals"]][["font"]],
+                                   gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
+                                                      fontfamily = arguments[["visuals"]][["font"]],
                                                       fontsize   = arguments[["dimensions"]][["axes_font_size"]],
                                                       fontface   = arguments[["visuals"]][["axes_font_face"]],
                                                       lineheight = 1.1))
@@ -1466,7 +1496,8 @@ setup_xy_axes <- function(diagram_info,
 #' @export
 direct_vertical_labels <- function(diagram_info,
                                    arguments){
-    visuals <- arguments[["visuals"]]
+    visuals    <- arguments[["visuals"]]
+    dimensions <- arguments[["dimensions"]]
 
     if (visuals[["label_type"]] != "lines"){
         return(grid::nullGrob())
@@ -1501,18 +1532,18 @@ direct_vertical_labels <- function(diagram_info,
     # Set a factor for the drawing direction. Normally everything is drawn up, but
     # if there are negative values and the zero axes line is far up, the drawing
     # direction will be turned around. Therefor a reverse factor is needed.
-    drawing_direction <- 1
-    alignment         <- "bottom"
+    drawing_direction  <- 1
+    vertical_alignment <- "bottom"
 
     if (diagram_info[["zero_pos"]] > 0.75){
-        drawing_direction <- -1
-        alignment         <- "top"
+        drawing_direction  <- -1
+        vertical_alignment <- "top"
     }
 
     # Get starting y, which is the height of the segments measured from the y axes
     # zero position.
     distance    <- diagram_info[["primary_y_distance"]]
-    line_length <- grid::convertUnit(grid::unit(arguments[["dimensions"]][["segment_line_length"]], "cm"),
+    line_length <- grid::convertUnit(grid::unit(dimensions[["segment_line_length"]], "cm"),
                                      "native", valueOnly = TRUE) * distance * 2
 
     segment_start_y <- arguments[["graphic_tab"]][[arguments[["values"]]]][label_group_selection]
@@ -1529,12 +1560,12 @@ direct_vertical_labels <- function(diagram_info,
     if (visuals[["display_values"]] && !visuals[["bar_values_inside"]]){
         if (!visuals[["rotate_values"]]){
             offset_value <- get_values_height(diagram_info,
-                                              arguments[["dimensions"]],
+                                              dimensions,
                                               visuals)
         }
         else{
             offset_value <- get_values_width(diagram_info,
-                                             arguments[["dimensions"]],
+                                             dimensions,
                                              visuals,
                                              arguments) * 2
             offset_value <- offset_value[group_ids_up == label_group]
@@ -1556,10 +1587,15 @@ direct_vertical_labels <- function(diagram_info,
     # Apply offsets to segment start
     segment_start_y <- segment_start_y + offset_y + offset_value
 
+
     # Get the ending y, which is a fixed height from the segments. The maximum height
     # is right below the highest axes value.
     segment_end_y <- collapse::fmin(c(collapse::fmax(abs(segment_start_y) + line_length),
                                       abs(max_value) * 0.95)) * drawing_direction
+
+    # Draw lines in stairs
+    line_stairs   <- seq(0, by = dimensions[["segment_line_offset"]], length.out = length(segment_start_y))
+    segment_end_y <- rep(segment_end_y, length(segment_start_y)) - line_stairs
 
     # Put together the vector containing start and end points for the lines.
     # In addition double up the x segment centers to match the length of the y vector.
@@ -1571,20 +1607,35 @@ direct_vertical_labels <- function(diagram_info,
     # as two points of the same line by the grob function.
     line_ids <- rep(seq_along(segment_centers_x), each = 2)
 
+    # Set the horizontal label alignment according to whether the segment lines are
+    # drawn on equal heights or in stairs.
+    horizontal_alignment <- "center"
+
+    if (dimensions[["segment_line_offset"]] > 0){
+        horizontal_alignment <- "left"
+        segment_centers_x    <- segment_centers_x * 0.95
+    }
+    else if (dimensions[["segment_line_offset"]] < 0){
+        horizontal_alignment <- "right"
+        segment_centers_x    <- segment_centers_x * 1.05
+    }
+
     # Generate the lines
     lines <- grid::polylineGrob(x  = grid::unit(center_vector, "npc"),
                                 y  = grid::unit(line_vector, "native"),
                                 id = line_ids,
                                 gp = grid::gpar(col = visuals[["segment_line_color"]],
-                                                lty = visuals[["segment_line_type"]]))
+                                                lty = visuals[["segment_line_type"]],
+                                                lwd = dimensions[["line_thickness"]]))
 
     # Generate the labels on top of the lines
     segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
                                      x     = grid::unit(segment_centers_x, "npc"),
                                      y     = grid::unit(segment_end_y + offset_y, "native"),
-                                     just  = c("center", alignment),
-                                     gp    = grid::gpar(fontfamily = visuals[["font"]],
-                                                        fontsize   = arguments[["dimensions"]][["label_font_size"]],
+                                     just  = c(horizontal_alignment, vertical_alignment),
+                                     gp    = grid::gpar(col        = visuals[["label_font_color"]],
+                                                        fontfamily = visuals[["font"]],
+                                                        fontsize   = dimensions[["label_font_size"]],
                                                         fontface   = visuals[["label_font_face"]],
                                                         lineheight = 1.1))
 
