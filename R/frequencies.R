@@ -502,6 +502,7 @@ format_number <- function(number,
                           width,
                           stat,
                           decimals = 1){
+    number <- unlist(number)
 
     # Format numbers to make them more readable
     if (stat %in% c("freq", "miss", "var_freq", "var_cum_freq")){

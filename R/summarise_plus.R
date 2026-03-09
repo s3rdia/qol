@@ -1074,7 +1074,7 @@ matrix_summarise <- function(data_frame,
     # Temporarily rename "." in factor variable levels, if there are any. This is
     # necessary because later the matrix row names need to be split by ".". If there
     # are any additional dots in the level names, this leads to errors.
-    for (column in names(data_frame[, group_vars])){
+    for (column in group_vars){
         if (is.factor(data_frame[[column]])){
             levels(data_frame[[column]]) <- gsub("\\.", "!!!", levels(data_frame[[column]]))
         }

@@ -340,8 +340,19 @@ get_duplicate_var_count <- function(data_frame){
 #' @export
 round_values <- function(values, digits = 0){
     if (!is.numeric(values)){
-        message(" X ERROR: Only numeric values allowed.")
-        return(invisible(values))
+        # Translate ... into a list if possible
+        values <- tryCatch({
+            # Force evaluation to see if it exists
+            unlist(values)
+        }, error = function(e) {
+            # Evaluation failed
+            NULL
+        })
+
+        if (!is.numeric(values)){
+            message(" X ERROR: Only numeric values allowed.")
+            return(invisible(values))
+        }
     }
 
     # Get positive and negative signs

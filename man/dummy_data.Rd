@@ -4,10 +4,16 @@
 \alias{dummy_data}
 \title{Dummy Data}
 \usage{
-dummy_data(no_obs, monitor = .qol_options[["monitor"]])
+dummy_data(
+  no_obs = 25000,
+  insert_na = TRUE,
+  monitor = .qol_options[["monitor"]]
+)
 }
 \arguments{
 \item{no_obs}{Number of observations.}
+
+\item{insert_na}{TRUE by default. Inserts random NA values into variables.}
 
 \item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
 }

@@ -7,7 +7,11 @@ generated with the desired number of observations.
 ## Usage
 
 ``` r
-dummy_data(no_obs, monitor = .qol_options[["monitor"]])
+dummy_data(
+  no_obs = 25000,
+  insert_na = TRUE,
+  monitor = .qol_options[["monitor"]]
+)
 ```
 
 ## Arguments
@@ -15,6 +19,10 @@ dummy_data(no_obs, monitor = .qol_options[["monitor"]])
 - no_obs:
 
   Number of observations.
+
+- insert_na:
+
+  TRUE by default. Inserts random NA values into variables.
 
 - monitor:
 

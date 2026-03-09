@@ -125,9 +125,9 @@ test_that("Retain columns in a data frame and order them to the end", {
 
 test_that("Retain column ranges in a data frame", {
     retain_df <- suppressMessages(dummy_df |>
-          retain_variables(state:age))
+          retain_variables(age:education))
 
-    expect_equal(names(retain_df)[1:3], c("state", "sex", "age"))
+    expect_equal(names(retain_df)[1:3], c("age", "sex", "education"))
 })
 
 
@@ -178,17 +178,18 @@ test_that("Retain variables containing letter", {
     retain_df2 <- suppressMessages(dummy_df |>
           retain_variables(":on:", order_last = TRUE))
 
-    expect_equal(names(retain_df1)[1:3], c("person_id", "first_person", "education"))
-    expect_equal(utils::tail(names(retain_df2), 3), c("person_id", "first_person", "education"))
+    expect_equal(names(retain_df1)[1:3], c("person_id", "number_of_persons", "first_person"))
+    expect_equal(utils::tail(names(retain_df2), 3), c("number_of_persons", "first_person", "education"))
 })
 
 
 test_that("Retain variables with all actions together doesn't break", {
     retain_df <- suppressMessages(dummy_df |>
-          retain_variables(state:age, "s:", ":id", ":on:", status1:status3, income))
+          retain_variables(age:education, "s:", ":id", ":on:", status1:status3, income))
 
-    expect_equal(names(retain_df), c("state", "sex", "age", "household_id", "person_id", "first_person", "education",
-                                     "status1", "status2", "status3", "income", "year", "probability", "weight"))
+    expect_equal(names(retain_df)[1:12], c("age", "sex", "education", "state", "household_id", "person_id",
+                                           "number_of_persons", "first_person", "status1", "status2", "status3",
+                                           "income"))
 })
 
 ###############################################################################

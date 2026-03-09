@@ -22,6 +22,20 @@
   If the `pct_value or`pct_group\` parameters are used but are not part
   of the statistics parameter, they will be automatically added to
   statistics. (05.03.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Reworked the dummy data generation in mutliple ways:
+  - Added new variables: NUTS2, NUTS3, number_of_persons, body_height,
+    body_weight, income_class, expenses, balance. (09.03.2026)
+  - Now generates up to five years. (09.03.2026)
+  - Variables are now sorted by year, state, household_id, person_id.
+    (09.03.2026)
+  - household_id is now numbered individually within each state.
+    (09.03.2026)
+  - Weights now adapt to the number of observations so that weighted
+    results stay roughly the same. (09.03.2026)
+  - Brought variety in most of the variables so that different
+    distributions aren’t evenly spread anymore. (09.03.2026)
+  - Adding NA values is now optional. (09.03.2026)
 
 #### Changed functionality
 
@@ -50,6 +64,19 @@
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): When
   passing a vector to a new variable, the functions don’t error any more
   if there are NA values. (22.02.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Fixed “.” in a variable expression is now preserved as intended.
+  (09.03.2026)
+
+#### Optimization
+
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Got rid of the loop for generating multiple years at random. Now the
+  dummy data is based on a smaller set of observations, which allows
+  faster variable generation. Years are only added as cartesian product
+  at the end and values altered per year. This allowed the rework
+  mentioned above: More variables and more variety in the same amount of
+  time as before. (09.03.2026)
 
 #### New Error Checks
 

@@ -7,9 +7,9 @@ dummy_df <- suppressMessages(dummy_data(10))
 
 
 test_that("Add extensions to limited variables", {
-    new_names_df <- dummy_df |> add_extension(5, c("sum", "pct"))
+    new_names_df <- dummy_df |> add_extension(9, c("sum", "pct"))
 
-    expect_true(all(c("state_sum", "sex_pct") %in% names(new_names_df)))
+    expect_true(all(c("age_sum", "sex_pct") %in% names(new_names_df)))
 })
 
 
