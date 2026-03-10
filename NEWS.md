@@ -1,4 +1,4 @@
-# qol 1.2.2 - DEVELOPMENT
+# qol 1.2.2
 
 ### New functions
 
@@ -9,7 +9,7 @@
 * `any_table()`: Added `row_pct` and `col_pct` keywords to `pct_group` parameter. With this the function can calculate total percentages for rows and columns regardless of the respective other dimension. (21.02.2026)
 * `rename_multi()`: Variable names can now be passed without quotation marks. (28.02.2026)
 * `any_table()`: Percentages based on single formatted variable expressions can now be computed with the `pct_value` parameter. (05.03.2026)
-* `any_table()`: If the `pct_value or `pct_group` parameters are used but are not part of the statistics parameter, they will be automatically added to statistics. (05.03.2026)
+* `any_table()`: If the `pct_value` or `pct_group` parameters are used but are not part of the statistics parameter, they will be automatically added to statistics. (05.03.2026)
 * `dummy_data()`: Reworked the dummy data generation in mutliple ways:
 	* Added new variables: NUTS2, NUTS3, number_of_persons, body_height, body_weight, income_class, expenses, balance. (09.03.2026)
 	* Now generates up to five years. (09.03.2026)
@@ -31,6 +31,7 @@
 * `summarise_plus()`: Fixed formats not matching data when computing percentages, if numeric values are stored as character. (18.02.2026)
 * `if.()`, `else_if.()`, `else.()`: When passing a vector to a new variable, the functions don't error any more if there are NA values. (22.02.2026)
 * `summarise_plus()`: Fixed "." in a variable expression is now preserved as intended. (09.03.2026)
+* `frequencies()`: When by variables were used the first by expression was omitted. This is fixed now. (09.03.2026)
 
 ### Optimization
 
@@ -38,7 +39,7 @@
 
 ### New Error Checks
 
-* `any_table()`: Added an error check in case all caLculations are done and no value variable was computed. (05.03.2026)
+* `any_table()`: Added an error check in case all calculations are done and no value variable was computed. (05.03.2026)
 
 ### Additionally
 

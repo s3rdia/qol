@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.2" id="qol-122---development">qol 1.2.2 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-122---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.2" id="qol-122">qol 1.2.2<a class="anchor" aria-label="anchor" href="#qol-122"></a></h2>
 <div class="section level4">
 <h4 id="new-functions-1-2-2">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-2"></a></h4>
 <ul><li>
@@ -52,7 +52,7 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Percentages based on single formatted variable expressions can now be computed with the <code>pct_value</code> parameter. (05.03.2026)</li>
 <li>
-<code><a href="../reference/any_table.html">any_table()</a></code>: If the <code>pct_value or</code>pct_group` parameters are used but are not part of the statistics parameter, they will be automatically added to statistics. (05.03.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: If the <code>pct_value</code> or <code>pct_group</code> parameters are used but are not part of the statistics parameter, they will be automatically added to statistics. (05.03.2026)</li>
 <li>
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Reworked the dummy data generation in mutliple ways:
 <ul><li>Added new variables: NUTS2, NUTS3, number_of_persons, body_height, body_weight, income_class, expenses, balance. (09.03.2026)</li>
@@ -83,6 +83,8 @@
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: When passing a vector to a new variable, the functions don’t error any more if there are NA values. (22.02.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Fixed “.” in a variable expression is now preserved as intended. (09.03.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>: When by variables were used the first by expression was omitted. This is fixed now. (09.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-2">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-2"></a></h4>
@@ -92,7 +94,7 @@
 <div class="section level4">
 <h4 id="new-error-checks-1-2-2">New Error Checks<a class="anchor" aria-label="anchor" href="#new-error-checks-1-2-2"></a></h4>
 <ul><li>
-<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case all caLculations are done and no value variable was computed. (05.03.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Added an error check in case all calculations are done and no value variable was computed. (05.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-2-2">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-2"></a></h4>

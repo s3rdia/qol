@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.2.2 - DEVELOPMENT
+## qol 1.2.2
 
 #### New functions
 
@@ -19,7 +19,7 @@
   Percentages based on single formatted variable expressions can now be
   computed with the `pct_value` parameter. (05.03.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
-  If the `pct_value or`pct_group\` parameters are used but are not part
+  If the `pct_value` or `pct_group` parameters are used but are not part
   of the statistics parameter, they will be automatically added to
   statistics. (05.03.2026)
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
@@ -67,6 +67,9 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Fixed “.” in a variable expression is now preserved as intended.
   (09.03.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  When by variables were used the first by expression was omitted. This
+  is fixed now. (09.03.2026)
 
 #### Optimization
 
@@ -81,7 +84,7 @@
 #### New Error Checks
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
-  Added an error check in case all caLculations are done and no value
+  Added an error check in case all calculations are done and no value
   variable was computed. (05.03.2026)
 
 #### Additionally

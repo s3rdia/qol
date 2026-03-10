@@ -1352,7 +1352,7 @@ format_by_text <- function(mean_tab,
 
         # Extract unique values
         if (anyNA(freq_by[["by_vars"]])){
-            values <- c(collapse::funique(collapse::na_omit(freq_by[["by_vars"]]))[-1], NA)
+            values <- c(collapse::funique(collapse::na_omit(freq_by[["by_vars"]])), NA)
         }
         else{
             values <- collapse::funique(freq_by[["by_vars"]])
@@ -1509,7 +1509,7 @@ format_by_excel <- function(mean_tab,
 
         # Extract unique values
         if (anyNA(freq_by[["by_vars"]])){
-            values <- c(collapse::funique(collapse::na_omit(freq_by[["by_vars"]]))[-1], NA)
+            values <- c(collapse::funique(collapse::na_omit(freq_by[["by_vars"]])), NA)
         }
         else{
             values <- collapse::funique(freq_by[["by_vars"]])
