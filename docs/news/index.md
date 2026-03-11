@@ -24,6 +24,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Columns are now sorted correctly, if only row or column percentages
   are computed. (11.03.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Now cuts down observations by random sample instead of just the head,
+  so that the cut expressions aren’t lost completely. (11.03.2026)
 
 #### Additionally
 

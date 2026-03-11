@@ -8,6 +8,7 @@
 * `any_table()`: Excel number stored as text error is now ignored in general even if no styling is used. This was especially noticeable when generating tables with by variables and the `print_miss` option. (11.03.2026)
 * `any_table()`: Even if no styling is used the tables now all receive the named regions. (11.03.2026)
 * `any_table()`: Columns are now sorted correctly, if only row or column percentages are computed. (11.03.2026)
+* `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely. (11.03.2026)
 
 ### Additionally
 
