@@ -134,6 +134,7 @@ test_that("any_table with different percentages", {
                     pct_group  = c("age", "sex"),
                     pct_value  = list(rate = "probability / weight",
                                       sex  = 1),
+                    output  = "excel_nostyle",
                     print      = FALSE))
 
     expect_true(all(c("weight_pct_group_age_1", "weight_pct_total_1",
@@ -164,6 +165,7 @@ test_that("any_table with a lot of statistics doesn't break", {
                       statistics = c("freq", "freq_g0", "mean", "median", "mode", "min", "max",
                                      "first", "last", "sum_wgt", "p1", "p99", "sd", "variance",
                                      "missing"),
+                      output     = "excel_nostyle",
                       print      = FALSE))
 
     expect_type(result_list, "list")
@@ -192,7 +194,6 @@ test_that("any_table with values order", {
     year_current <- as.integer(format(Sys.Date(), "%Y"))
 
     result_list <- suppressMessages(dummy_df |>
-            collapse::fsubset(year < year_current) |>
             any_table(rows       = "age",
                       columns    = c("sex", "year"),
                       values     = c(weight, income),
@@ -205,9 +206,11 @@ test_that("any_table with values order", {
                  c("row.label", "var1", "weight_sum_1", "weight_sum_2", "weight_sum_NA",
                    paste0("weight_sum_", year_current - 4), paste0("weight_sum_", year_current - 3),
                    paste0("weight_sum_", year_current - 2), paste0("weight_sum_", year_current - 1),
+                   paste0("weight_sum_", year_current),
                    "income_sum_1", "income_sum_2", "income_sum_NA", paste0("income_sum_", year_current - 4),
                    paste0("income_sum_", year_current - 3), paste0("income_sum_", year_current - 2),
-                   paste0("income_sum_", year_current - 1)))
+                   paste0("income_sum_", year_current - 1),
+                   paste0("income_sum_", year_current)))
 })
 
 
@@ -215,7 +218,6 @@ test_that("any_table with columns order", {
     year_current <- as.integer(format(Sys.Date(), "%Y"))
 
     result_list <- suppressMessages(dummy_df |>
-            collapse::fsubset(year < year_current) |>
             any_table(rows       = "age",
                       columns    = c("sex", "year"),
                       values     = c(weight, income),
@@ -229,9 +231,9 @@ test_that("any_table with columns order", {
                    "income_sum_1", "income_sum_2", "income_sum_NA",
                    paste0("weight_sum_", year_current - 4), paste0("weight_sum_", year_current - 3),
                    paste0("weight_sum_", year_current - 2), paste0("weight_sum_", year_current - 1),
-                   paste0("income_sum_", year_current - 4),
+                   paste0("weight_sum_", year_current),paste0("income_sum_", year_current - 4),
                    paste0("income_sum_", year_current - 3), paste0("income_sum_", year_current - 2),
-                   paste0("income_sum_", year_current - 1)))
+                   paste0("income_sum_", year_current - 1), paste0("income_sum_", year_current)))
 })
 
 

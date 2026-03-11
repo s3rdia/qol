@@ -1,6 +1,39 @@
 # Changelog
 
+## qol 1.2.3 - DEVELOPMENT
+
+#### Fixed
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Some examples had a too long running time. Additionally shortened the
+  running time of unit tests by ignoring styling options in the larger
+  tables. (11.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Fixed percentages based on single formatted variable expressions
+  couldn’t be computed with by variables. (11.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The column header wasn’t put together correctly, if only multiple
+  group percentages were computed. (11.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Excel number stored as text error is now ignored in general even if no
+  styling is used. This was especially noticeable when generating tables
+  with by variables and the `print_miss` option. (11.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Even if no styling is used the tables now all receive the named
+  regions. (11.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Columns are now sorted correctly, if only row or column percentages
+  are computed. (11.03.2026)
+
+#### Additionally
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `statistics` parameter is now NULL by default to enable group
+  percentages to be computed on their own without sums. (11.03.2026)
+
 ## qol 1.2.2
+
+CRAN release: 2026-03-10
 
 #### New functions
 

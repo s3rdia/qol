@@ -172,8 +172,7 @@
 #' my_data |> any_table(rows       = c("sex + age", "sex", "age"),
 #'                      columns    = c("year", "education + year"),
 #'                      values     = weight,
-#'                      statistics = c("sum", "pct_group"),
-#'                      pct_group  = c("sex", "age", "row_pct", "col_pct"),
+#'                      pct_group  = c("row_pct", "col_pct"),
 #'                      formats    = list(sex = sex., age = age.,
 #'                                        education = education.),
 #'                      na.rm      = TRUE)
@@ -186,8 +185,7 @@
 #'                                  "sex",
 #'                                  "age"),
 #'                      values     = weight,
-#'                      statistics = c("sum", "pct_group"),
-#'                      pct_group  = c("sex", "age", "education", "year"),
+#'                      pct_group  = c("sex", "age"),
 #'                      formats    = list(sex = sex., age = age.,
 #'                                        education = education.),
 #'                      na.rm      = TRUE)
@@ -206,7 +204,6 @@
 #' my_data |> any_table(rows       = c("age + year"),
 #'                      columns    = "sex",
 #'                      values     = c(probability, person),
-#'                      statistics = "pct_value",
 #'                      pct_value  = list(sex = "Total", age = "Total"),
 #'                      weight     = weight,
 #'                      formats    = list(sex = sex., age = age.),
@@ -278,7 +275,7 @@
 #' my_style <- my_style |> modify_output_style(sheet_name = "by")
 #'
 #' my_data |> any_table(rows       = c("sex", "age"),
-#'                      columns    = "education + year",
+#'                      columns    = "education",
 #'                      values     = weight,
 #'                      by         = state,
 #'                      statistics = c("sum", "pct_group"),
@@ -316,7 +313,7 @@ any_table <- function(data_frame,
                       rows,
                       columns        = "",
                       values,
-                      statistics     = "sum",
+                      statistics     = NULL,
                       pct_group      = c(),
                       pct_value      = list(),
                       formats        = list(),
@@ -552,6 +549,11 @@ any_table <- function(data_frame,
     # In case of using a pre summarised data frame, underscores are only allowed, if they carry
     # the statistics extension afterwards.
     if (pre_summed){
+        # This basically serves as the default parameter
+        if (length(statistics) == 0){
+            statistics <- "sum"
+        }
+
         # Only keep provided variables, otherwise it can happen later on that e.g. too many
         # variables are pivoted
         data_frame <- data_frame |> keep(by, variables, values, ".temp_weight")
@@ -608,6 +610,22 @@ any_table <- function(data_frame,
     # Statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
+
+    # If pct_group parameter is passed but is not selected as statistic, add it
+    if (length(pct_group) > 0 && !"pct_group" %in% tolower(statistics)){
+        if (!(length(pct_group) == 1 && pct_group == "")){
+            statistics <- c(statistics, "pct_group")
+        }
+    }
+
+    # If pct_group parameter is passed but is not selected as statistic, add it
+    if (length(pct_value) > 0 && !"pct_value" %in% tolower(statistics)){
+        if (!(length(pct_value) == 1 && pct_value == "")){
+            statistics <- c(statistics, "pct_value")
+        }
+    }
+
     if (!pre_summed){
         list_of_statistics <- get_complete_statistics_list(statistics)
 
@@ -626,6 +644,12 @@ any_table <- function(data_frame,
                 statistics <- "sum"
             }
         }
+
+        # This basically serves as the default parameter
+        if (length(statistics) == 0){
+            statistics <- "sum"
+        }
+
         rm(list_of_statistics, invalid_stats)
     }
 
@@ -635,22 +659,7 @@ any_table <- function(data_frame,
 
     row_pct <- FALSE
     col_pct <- FALSE
-
-    # If pct_group parameter is passed but is not selected as statistic, add it
-    if (length(pct_value) > 0 && !"pct_value" %in% tolower(statistics)){
-        if (!(length(pct_value) == 1 && pct_value == "")){
-            statistics <- c(statistics, "pct_value")
-        }
-    }
-
-    pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
-
-    # If pct_group parameter is passed but is not selected as statistic, add it
-    if (length(pct_group) > 0 && !"pct_group" %in% tolower(statistics)){
-        if (!(length(pct_group) == 1 && pct_group == "")){
-            statistics <- c(statistics, "pct_group")
-        }
-    }
+    reenter_pct_group <- FALSE
 
     # Remove missing variables from pct_group
     if ("pct_group" %in% tolower(statistics)){
@@ -672,6 +681,7 @@ any_table <- function(data_frame,
         if (length(invalid_pct) > 0){
             if (row_pct || col_pct){
                 invalid_pct <- invalid_pct[!invalid_pct %in% c("row_pct", "col_pct")]
+                reenter_pct_group <- TRUE
             }
 
             if (length(invalid_pct) > 0){
@@ -682,8 +692,11 @@ any_table <- function(data_frame,
 
             pct_group <- pct_group[pct_group %in% c(row_vars, col_vars)]
 
+            # Save original statistics so that later on the order can be restored if
+            # only row or column percentages were used.
             if (length(pct_group) == 0){
-                statistics <- statistics[!statistics %in% "pct_group"]
+                statistics_orig <- statistics
+                statistics      <- statistics[!statistics %in% "pct_group"]
             }
         }
 
@@ -1012,6 +1025,10 @@ any_table <- function(data_frame,
         rm(col_group, result_list, group_df, current_values, total_sums, new_variable)
     }
 
+    if (reenter_pct_group && !"pct_group" %in% statistics){
+        statistics <- statistics_orig
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Handle group percentages
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1131,7 +1148,12 @@ any_table <- function(data_frame,
 
                 # Get the super group values by subsetting the data frame by the given
                 # variable value.
-                super_group <- group_vars[!group_vars %in% name]
+                if (length(by) == 0){
+                    super_group <- group_vars[!group_vars %in% name]
+                }
+                else{
+                    super_group <- c("by_vars", group_vars[!group_vars %in% c(name, by)])
+                }
 
                 super_tab <- any_tab |>
                     collapse::fsubset(any_tab[[name]] == value) |>
@@ -1362,19 +1384,31 @@ any_table <- function(data_frame,
             # as names. The needed format is "value_stat_expression". In the mentioned
             # case this format is pre computed.
             if (length(values) == 1 && length(statistics) == 1){
-                value_stat <- names(combi_df[collapse::fncol(combi_df)])
+                # If only group percentages are selected, but for multiple variables, then
+                # the resulting variables are more than the given values, which isn't detected
+                # with the condition above. This case has to be captured here, because it would
+                # lead to wrong variable names and therefor a wrong header.
+                if ((is.null(pct_group) || length(pct_group) <= 1) && !row_pct && !col_pct){
+                    value_stat <- names(combi_df[collapse::fncol(combi_df)])
 
-                combi_df[[col_combi_vars[1]]] <-
-                    paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
+                    combi_df[[col_combi_vars[1]]] <-
+                        paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
+                }
             }
             # Fallback check if the user happens to input only wrong statistics but one.
             # In this case statistics is longer than 1 even though only one statistic was
             # computed. This leads to the condition above being omitted.
             else if (collapse::fncol(combi_df) - length(c(id_vars, col_combi_vars, "TYPE")) == 1){
-                value_stat <- names(combi_df[collapse::fncol(combi_df)])
+                # If only group percentages are selected, but for multiple variables, then
+                # the resulting variables are more than the given values, which isn't detected
+                # with the condition above. This case has to be captured here, because it would
+                # lead to wrong variable names and therefor a wrong header.
+                if ((is.null(pct_group) || length(pct_group) <= 1) && !row_pct && !col_pct){
+                    value_stat <- names(combi_df[collapse::fncol(combi_df)])
 
-                combi_df[[col_combi_vars[1]]] <-
-                    paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
+                    combi_df[[col_combi_vars[1]]] <-
+                        paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
+                }
             }
 
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1942,14 +1976,14 @@ format_any_excel <- function(wb,
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
-
-        wb$add_ignore_error(dims = any_ranges[["header_range"]],  number_stored_as_text = TRUE)
-        wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
-        wb$add_ignore_error(dims = any_ranges[["table_range"]],   number_stored_as_text = TRUE)
-
-        wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
-        wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
     }
+
+    wb$add_ignore_error(dims = any_ranges[["header_range"]],  number_stored_as_text = TRUE)
+    wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+    wb$add_ignore_error(dims = any_ranges[["table_range"]],   number_stored_as_text = TRUE)
+
+    wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
 
     monitor_df <- monitor_df |> monitor_end()
 

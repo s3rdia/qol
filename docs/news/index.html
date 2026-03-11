@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,30 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.2" id="qol-122">qol 1.2.2<a class="anchor" aria-label="anchor" href="#qol-122"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.3" id="qol-123---development">qol 1.2.3 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-123---development"></a></h2>
+<div class="section level4">
+<h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables. (11.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Fixed percentages based on single formatted variable expressions couldn’t be computed with by variables. (11.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The column header wasn’t put together correctly, if only multiple group percentages were computed. (11.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Excel number stored as text error is now ignored in general even if no styling is used. This was especially noticeable when generating tables with by variables and the <code>print_miss</code> option. (11.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Even if no styling is used the tables now all receive the named regions. (11.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Columns are now sorted correctly, if only row or column percentages are computed. (11.03.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-2-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-3"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: <code>statistics</code> parameter is now NULL by default to enable group percentages to be computed on their own without sums. (11.03.2026)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.2" id="qol-122">qol 1.2.2<a class="anchor" aria-label="anchor" href="#qol-122"></a></h2><p class="text-muted">CRAN release: 2026-03-10</p>
 <div class="section level4">
 <h4 id="new-functions-1-2-2">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-2"></a></h4>
 <ul><li>

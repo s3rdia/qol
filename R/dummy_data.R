@@ -363,7 +363,9 @@ dummy_data <- function(no_obs    = 25000,
     #-------------------------------------------------------------------------#
     message(" > Finish")
 
-    dummy_temp <- utils::head(dummy_temp, orig_obs) |>
+    random_sample <- sort(sample.int(collapse::fnrow(dummy_temp), orig_obs))
+
+    dummy_temp <- dummy_temp[random_sample, ] |>
         keep("year", "state", "NUTS2", "NUTS3", "household_id", "person_id",
              "number_of_persons", "first_person", "age",
              "sex", "education", "body_height", "body_weight",
