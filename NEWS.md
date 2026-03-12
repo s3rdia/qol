@@ -1,5 +1,9 @@
 # qol 1.2.3 - DEVELOPMENT
 
+### New functions
+
+* `row_calculation()`: Perform row wise calculations on numeric variables. (12.03.2026)
+
 ### Fixed
 
 * `any_table()`: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables. (11.03.2026)
@@ -9,6 +13,7 @@
 * `any_table()`: Even if no styling is used the tables now all receive the named regions. (11.03.2026)
 * `any_table()`: Columns are now sorted correctly, if only row or column percentages are computed. (11.03.2026)
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely. (11.03.2026)
+* `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed. (12.03.2026)
 
 ### Additionally
 

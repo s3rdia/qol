@@ -160,8 +160,6 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp[["expenses"]] <- data.table::fifelse(dummy_temp[["sex"]] == 1,                             dummy_temp[["expenses"]] * 0.8,  dummy_temp[["expenses"]])
     dummy_temp[["expenses"]] <- data.table::fifelse(dummy_temp[["state"]] >= 11,                          dummy_temp[["expenses"]] * 0.7,  dummy_temp[["expenses"]])
 
-    dummy_temp[["balance"]] <- dummy_temp[["income"]] + dummy_temp[["expenses"]]
-
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate income classes")
     #-------------------------------------------------------------------------#
@@ -327,7 +325,7 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp <- dummy_temp |> collapse::fmutate(age      = age      + age_factor,
                                                   income   = income   * income_factor,
                                                   expenses = expenses * expenses_factor,
-                                                  balance  = income - expenses)
+                                                  balance  = income + expenses)
 
     # Up the body height for people under 18
     dummy_temp[["body_height"]] <- as.integer(data.table::fifelse(

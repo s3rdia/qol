@@ -2,6 +2,11 @@
 
 ## qol 1.2.3 - DEVELOPMENT
 
+#### New functions
+
+- [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md):
+  Perform row wise calculations on numeric variables. (12.03.2026)
+
 #### Fixed
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
@@ -27,6 +32,9 @@
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Now cuts down observations by random sample instead of just the head,
   so that the cut expressions aren’t lost completely. (11.03.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  `balance` variable wasn’t calculated correctly, which is now fixed.
+  (12.03.2026)
 
 #### Additionally
 

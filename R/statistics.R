@@ -1,3 +1,80 @@
+################################################################################
+# Export functions
+################################################################################
+#' Perform Row Wise Calculations
+#'
+#' @description
+#' Perform row wise calculations on numeric variables.
+#'
+#' @param data_frame A data frame in which are the values to be calculated.
+#' @param statistics Available functions: "sum", "freq", "mean", "median", "mode",
+#' "min", "max".
+#' @param ... Variable names of the value variables.
+#'
+#' @return
+#' Returns a numeric vector.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- data.frame(var1 = 1:5,
+#'                       var2 = c(6, 7, 8, NA, 10),
+#'                       var3 = 11:15)
+#'
+#' # Calculate new variables
+#' my_data[["sum"]]  <- my_data |> row_calculation("sum",  var1, var2, var3)
+#' my_data[["mean"]] <- my_data |> row_calculation("mean", var1:var3)
+#' @export
+row_calculation <- function(data_frame,
+                            statistics,
+                            ...){
+    # Just keep the selected variables and transpose the entire matrix. Since
+    # the rows then become the columns, it is possible to just use column wise
+    # operations on the matrix.
+    var_matrix <- data_frame |>
+        keep(...) |>
+        t()
+
+    if (!is.numeric(var_matrix)){
+        message(" X ERROR: Only numeric values allowed. Calculation will be aborted.")
+
+        return(invisible(NA))
+    }
+
+    # Check if provided statistics is valid
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+
+    if (length(statistics) > 1){
+        message(" ! WARNING: Only one <statistics> allowed at a time. The first element will be used.")
+
+        statistics <- statistics[1]
+    }
+
+    if (!tolower(statistics) %in% c("sum", "mean", "median", "min", "max", "mode", "freq")){
+        message(" ! WARNING: <Statistic> '", tolower(statistics), "' is invalid. 'sum' will be used.")
+
+        statistics <- "sum"
+    }
+
+    # Get the desired operation
+    stat_function <- switch(statistics,
+                            sum    = collapse::fsum,
+                            mean   = collapse::fmean,
+                            median = collapse::fmedian,
+                            min    = collapse::fmin,
+                            max    = collapse::fmax,
+                            mode   = collapse::fmode,
+                            freq   = collapse::fnobs,
+                            NULL)
+
+    # Compute row result and return as vector
+    stat_function(var_matrix)
+}
+
+
+################################################################################
+# Internal functions used in summarise_plus
+################################################################################
+
 #' Sum of Weights
 #'
 #' @description

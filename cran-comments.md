@@ -1,6 +1,10 @@
 # Resubmission qol 1.2.3
 Last CRAN release was on 11.03.2026.
 
+### New functions
+
+* `row_calculation()`: Perform row wise calculations on numeric variables.
+
 ### Fixed
 
 * `any_table()`: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables.
@@ -10,6 +14,7 @@ Last CRAN release was on 11.03.2026.
 * `any_table()`: Even if no styling is used the tables now all receive the named regions.
 * `any_table()`: Columns are now sorted correctly, if only row or column percentages are computed.
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely.
+* `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed.
 
 ### Additionally
 

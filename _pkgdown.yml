@@ -105,6 +105,9 @@ reference:
 - title: Reporting
   contents:
   - content_report
+- title: Calculation
+  contents:
+  - row_calculation
 - title: Small Helpers
   contents:
   - inverse

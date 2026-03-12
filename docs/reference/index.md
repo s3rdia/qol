@@ -161,6 +161,11 @@
 - [`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md)
   : Get Detailed Summary About A Data Frame
 
+## Calculation
+
+- [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md)
+  : Perform Row Wise Calculations
+
 ## Small Helpers
 
 - [`inverse()`](https://s3rdia.github.io/qol/reference/inverse.md) : Get
