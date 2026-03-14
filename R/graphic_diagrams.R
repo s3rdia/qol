@@ -32,15 +32,16 @@ vbars <- function(...){
     # retrieve the calculated measurements.
     diagram_info <- setup_nested_diagram_viewport(arguments)
 
+    # Generate axes
+    axes <- setup_xy_axes(diagram_info, arguments)
+
     # Generate segments
     segments <- vbar_grob(diagram_info, arguments, theme)
 
-    # Generate axes
-    axes <- setup_xy_axes(diagram_info, arguments)
 
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
-    list(graphic = grid::gTree(children = grid::gList(axes, segments, segment_labels)),
+    list(graphic = grid::gTree(children = grid::gList(segments, axes, segment_labels)),
          meta    = diagram_info)
 }
