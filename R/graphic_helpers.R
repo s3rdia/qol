@@ -1004,9 +1004,12 @@ vbar_grob <- function(diagram_info,
             }
             # With rotation swap h and v just
             else{
-                hjust  <- diagram_info[["values_outer_vjust"]]
-                vjust  <- 0.5
-                rotate <- 90
+                # Rotated values move further away from the segments with equal adjustment.
+                # This is roughly corrected here.
+                hcorrect <- max(1, nchar(as.character(diagram_info[["values"]])) / 5)
+                hjust    <- diagram_info[["values_outer_vjust"]] / hcorrect
+                vjust    <- 0.4
+                rotate   <- 90
             }
         }
 
@@ -1018,6 +1021,11 @@ vbar_grob <- function(diagram_info,
         value_y_pos <- diagram_info[["values"]]
 
         formatted_values[value_y_pos == 0] <- sub("-", "", formatted_values[value_y_pos == 0])
+
+        # Add offset to y axes for values equal to 0 if they are rotated
+        if (visuals[["rotate_values"]]){
+            value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(0.2, "cm"), "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
+        }
 
         # If all values are negative and the y axes is at the top of the diagram,
         # 0 values should be drawn below the y axes.
@@ -1047,7 +1055,7 @@ vbar_grob <- function(diagram_info,
                                 hjust  = hjust,
                                 rot    = rotate,
                                 gp     = grid::gpar(col        = colors_to_use,
-                                                    fontfamily = visuals[["value_font"]],
+                                                    fontfamily = visuals[["font"]],
                                                     fontsize   = arguments[["dimensions"]][["value_font_size"]],
                                                     fontface   = visuals[["value_font_face"]],
                                                     lineheight = 1.1))
@@ -1153,7 +1161,7 @@ get_variable_axes_height <- function(wrapped_text,
 #' [setup_nested_diagram_viewport()].
 #'
 #' @return
-#' [get_values_width()]: Returns a numeric height.
+#' [get_values_width()]: Returns a numeric width
 #'
 #' @rdname axes
 #'
@@ -1174,7 +1182,7 @@ get_values_width <- function(diagram_info,
 
     # Measure individual widths
     widths <- grid::convertWidth(grid::stringWidth(formatted_values),
-                                 "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
+                                 "native", valueOnly = TRUE)
 
     # Release viewport
     grid::popViewport()
@@ -1214,6 +1222,28 @@ get_values_height <- function(diagram_info,
 
     # Height seems to be measured too small. Adding a bit on top seems to help.
     collapse::fmax(height) * 1.5
+}
+
+
+#' @description
+#' [swap_xy_scaling()]: Width and height are measured according to the individual scaling
+#' for each dimension. This function converts the measured to the respective other dimension.
+#'
+#' @param measuring The values received from [get_values_width()] or [get_values_height()].
+#' @param from Input measuring: Can be "width" or "height".
+#' @param to Output measuring: Can be "width" or "height".
+#'
+#' @return
+#' [swap_xy_scaling()]: Returns a vector of width or heights.
+#'
+#' @rdname axes
+#'
+#' @export
+swap_xy_scaling <- function(measuring,
+                            dimensions,
+                            from = "width",
+                            to   = "height"){
+    measuring * dimensions[[paste0("graphic_", from)]] / dimensions[[paste0("graphic_", to)]]
 }
 
 
@@ -1286,7 +1316,7 @@ get_y_axes_values <- function(values,
     # room to breathe.
     else{
         min_value <- collapse::fmin(c(0, values))
-        min_value <- min_value + (min_value / 10)
+        min_value <- min_value * 1.3
     }
 
     # Replace auto generated value by statically set global values
@@ -1298,7 +1328,7 @@ get_y_axes_values <- function(values,
     # room to breathe.
     else{
         max_value <- collapse::fmax(c(0, values))
-        max_value <- max_value + (max_value / 10)
+        max_value <- max_value * 1.3
     }
 
     # Return equally spaced round values in given range
@@ -1546,10 +1576,9 @@ direct_vertical_labels <- function(diagram_info,
     line_length <- grid::convertUnit(grid::unit(dimensions[["segment_line_length"]], "cm"),
                                      "native", valueOnly = TRUE) * distance * 2
 
-    segment_start_y <- arguments[["graphic_tab"]][[arguments[["values"]]]][label_group_selection]
-    segment_start_y <- data.table::fifelse(segment_start_y * drawing_direction < 0, 0, segment_start_y)
+    values_in_group <- diagram_info[["values"]][label_group_selection]
+    segment_start_y <- data.table::fifelse(values_in_group * drawing_direction < 0, 0, values_in_group)
 
-    # TODO: VARIABLE HEIGHT + DRAWING IN STEPS
     # TODO: SEPARATE LABELS TO PREVENT OVERLAP
 
     # Generate a static offset for the lines so that they are a bit apart from the
@@ -1567,14 +1596,23 @@ direct_vertical_labels <- function(diagram_info,
             offset_value <- get_values_width(diagram_info,
                                              dimensions,
                                              visuals,
-                                             arguments) * 2
-            offset_value <- offset_value[group_ids_up == label_group]
+                                             arguments)
+
+            # Rotated value lines move further away from the segments with equal adjustment.
+            # This is roughly corrected here. Additionally the width measuring needs to be
+            # swapped to the height dimension.
+            hcorrect     <- 1 - (nchar(as.character(diagram_info[["values"]])) / 100)
+            offset_value <- swap_xy_scaling(offset_value, dimensions) * hcorrect
+
+            # Select label group and scale offset to y axes distance
+            offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
+
+            # Add additional offset for the space between segment and value
+            offset_value <- offset_value + (0.2 * offset_value)
         }
     }
 
     # In case segment lines start at the y axes, the value offset has to be reset
-    values_in_group <- diagram_info[["values"]][label_group_selection]
-
     if (drawing_direction > 0){
         offset_value <- data.table::fifelse(values_in_group < 0, 0, offset_value)
         max_value    <- diagram_info[["primary_y_max"]]
@@ -1586,7 +1624,6 @@ direct_vertical_labels <- function(diagram_info,
 
     # Apply offsets to segment start
     segment_start_y <- segment_start_y + offset_y + offset_value
-
 
     # Get the ending y, which is a fixed height from the segments. The maximum height
     # is right below the highest axes value.

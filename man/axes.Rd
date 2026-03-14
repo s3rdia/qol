@@ -6,6 +6,7 @@
 \alias{get_variable_axes_height}
 \alias{get_values_width}
 \alias{get_values_height}
+\alias{swap_xy_scaling}
 \alias{get_group_tick_positions_x}
 \alias{get_y_axes_values}
 \alias{setup_y_axes}
@@ -27,6 +28,8 @@ get_variable_axes_height(wrapped_text, dimensions, visuals)
 get_values_width(diagram_info, dimensions, visuals, arguments)
 
 get_values_height(diagram_info, dimensions, visuals)
+
+swap_xy_scaling(measuring, dimensions, from = "width", to = "height")
 
 get_group_tick_positions_x(
   number_of_groups,
@@ -63,6 +66,12 @@ setup_xy_axes(diagram_info, arguments)
 
 \item{arguments}{Argument list passed passed on by \code{\link[=design_graphic]{design_graphic()}}.}
 
+\item{measuring}{The values received from \code{\link[=get_values_width]{get_values_width()}} or \code{\link[=get_values_height]{get_values_height()}}.}
+
+\item{from}{Input measuring: Can be "width" or "height".}
+
+\item{to}{Output measuring: Can be "width" or "height".}
+
 \item{number_of_groups}{The number of groups.}
 
 \item{number_of_segments}{The number of segments per group.}
@@ -91,9 +100,11 @@ otherwise the secondary axes on the right side.}
 
 \code{\link[=get_variable_axes_height]{get_variable_axes_height()}}: Returns a numeric height.
 
-\code{\link[=get_values_width]{get_values_width()}}: Returns a numeric height.
+\code{\link[=get_values_width]{get_values_width()}}: Returns a numeric width
 
 \code{\link[=get_values_height]{get_values_height()}}: Returns a numeric height.
+
+\code{\link[=swap_xy_scaling]{swap_xy_scaling()}}: Returns a vector of width or heights.
 
 \code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}}: Returns a vector of numeric tick positions.
 
@@ -112,6 +123,9 @@ the width is measured.
 \code{\link[=get_values_width]{get_values_width()}}: Get the width of the segment values.
 
 \code{\link[=get_values_height]{get_values_height()}}: Get the height of the segment values.
+
+\code{\link[=swap_xy_scaling]{swap_xy_scaling()}}: Width and height are measured according to the individual scaling
+for each dimension. This function converts the measured to the respective other dimension.
 
 \code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}}: Calculates the x axes tick positions. In this
 calculation ticks are meant to enclose the group labels. Meaning ticks are drawn
