@@ -761,6 +761,10 @@ get_diagram_dimensions <- function(graphic_tab,
     values <- graphic_tab[[values]]
     # TODO: WHAT IF MULTIPLE VARIABLES ARE PASSED OR "age + sex" COMBINATIONS?
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Basic horizontal positioning for vbars
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Get the unique values of the axes and segment variables to determine their
     # actual numbers. This is needed to measure the space each group and each
     # segment takes.
@@ -783,6 +787,10 @@ get_diagram_dimensions <- function(graphic_tab,
     group_ids   <- floor(running_nr / number_of_segments)
     segment_ids <- running_nr %% number_of_segments
     segment_pos <- margin + (group_ids * group_width) + (segment_ids * segment_width)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # y axes calculations
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get the values and tick positions for the y axes, which is basically an even
     # distribution.
@@ -843,6 +851,10 @@ get_diagram_dimensions <- function(graphic_tab,
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Calculations concerning the segment value positioning
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Setup adjustment for vbar values, depending on whether the values are positive
     # or negative and whether they are rotated by 90 degrees or not.
     if (!visuals[["rotate_values"]]){
@@ -856,6 +868,32 @@ get_diagram_dimensions <- function(graphic_tab,
 
     # Get center vbar position
     values_x_pos <- segment_pos + (segment_width * 0.5)
+
+    # Check whether values fit in vbar segments. If values don't fit, mark the exact
+    # positions so that later functions can decide what to do with these values.
+    values_fit_vertical <- TRUE
+
+    if (visuals[["bar_values_inside"]]){
+        if (!visuals[["rotate_values"]]){
+            # Determine whether a value should be drawn inside or outside the segment
+            values_fit_vertical <- (get_values_height(list(values            = values,
+                                                          primary_y_distance = primary_y_distance),
+                                                     dimensions, visuals) * 1.3 < values)
+        }
+        else{
+            # Determine whether a value should be drawn inside or outside the segment
+            values_width <- get_values_width(list(values = values),
+                                             dimensions,
+                                             visuals,
+                                             list(axes = axes)) * primary_y_distance
+
+            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * 1.3 < values
+        }
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Label positioning
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Calculate the positions of the group labels
     group_label_pos <- (collapse::funique(group_ids) * group_width) + (group_width * 0.5)
@@ -881,6 +919,11 @@ get_diagram_dimensions <- function(graphic_tab,
                                                visuals[["font"]],
                                                dimensions[["axes_font_size"]],
                                                visuals[["axes_font_face"]])
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Return information
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Return information as list
     list(values                 = values,
          unique_groups          = unique_groups,
@@ -906,6 +949,7 @@ get_diagram_dimensions <- function(graphic_tab,
          values_inner_vjust     = values_inner_vjust,
          values_outer_vjust     = values_outer_vjust,
          values_x_pos           = values_x_pos,
+         values_fit_vertical    = values_fit_vertical,
          group_label_pos        = group_label_pos,
          wrapped_group_labels   = wrapped_group_labels,
          group_label_height     = group_label_height,
@@ -932,10 +976,18 @@ get_diagram_dimensions <- function(graphic_tab,
 vbar_grob <- function(diagram_info,
                       arguments,
                       theme){
-    visuals <- arguments[["visuals"]]
+    visuals     <- arguments[["visuals"]]
+    dimensions  <- arguments[["dimensions"]]
+    value_y_pos <- diagram_info[["values"]]
 
     border_color <- visuals[["segment_border_color"]]
-    shrink_width <- grid::unit(arguments[["dimensions"]][["space_between_bars_pct"]], "pt")
+    shrink_width <- grid::unit(dimensions[["space_between_bars_pct"]], "pt")
+
+    color_usage <- arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate rectangles
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Check whether the provided border color is a single hex code. If it is not
     # and is a theme name instead, then get the theme colors to make it visually
@@ -946,19 +998,19 @@ vbar_grob <- function(diagram_info,
 
         # Get color usage to determine which colors to pick for the specific number
         # of segments
-        border_color <- border_color[arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
+        border_color <- border_color[color_usage]
         # TODO: PREVENT ERROR IF MORE NUMBER_OF_SEGMENTS THAN ENTRIES IN COLOR_USAGE
 
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
-        if (arguments[["dimensions"]][["space_between_bars_pct"]] == 0){
+        if (dimensions[["space_between_bars_pct"]] == 0){
             shrink_width <- grid::unit(0.5, "pt")
         }
     }
 
     # Get the colors from the theme which should be used. Reverse them if option
     # is set accordingly.
-    colors_to_use <- theme[["base"]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
+    colors_to_use <- theme[["base"]][color_usage]
 
     if (visuals[["reverse_colors"]]){
         colors_to_use <- rev(colors_to_use)
@@ -975,41 +1027,68 @@ vbar_grob <- function(diagram_info,
                             gp     = grid::gpar(fill = colors_to_use,
                                                 col  = border_color))
 
-    if (visuals[["display_values"]]){
-        # Get adjustment according to specified position and rotation
-        if (visuals[["bar_values_inside"]]){
-            font_color <- "font_inside"
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate value texts
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-            # With no rotation set adjustments like normal
-            if (!visuals[["rotate_values"]]){
-                vjust  <- diagram_info[["values_inner_vjust"]]
-                hjust  <- 0.5
-                rotate <- 0
+    if (visuals[["display_values"]]){
+        number_of_values <- length(value_y_pos)
+
+        hjust      <- numeric(number_of_values)
+        vjust      <- numeric(number_of_values)
+        rotate     <- numeric(number_of_values)
+        font_color <- character(number_of_values)
+
+        # Get the specific font colors for the respective set up of segments
+        colors_inside  <- rep(theme[["font_inside"]][color_usage], diagram_info[["number_of_groups"]])
+        colors_outside <- rep(theme[["font_outside"]][color_usage], diagram_info[["number_of_groups"]])
+
+        # Determine whether a value should be drawn inside or outside the segment
+        values_fit_inside <- diagram_info[["values_fit_vertical"]]
+
+        # Set font color according to whether values are drawn inside or outside the segments
+        font_color[values_fit_inside]  <- colors_inside[values_fit_inside]
+        font_color[!values_fit_inside] <- colors_outside[!values_fit_inside]
+
+        if (!visuals[["rotate_values"]]){
+            hjust  <- 0.5
+            rotate <- 0
+
+            if (visuals[["bar_values_inside"]]){
+                # Set up values drawn inside and outside the segments
+                vjust[values_fit_inside]  <- diagram_info[["values_inner_vjust"]][values_fit_inside]
+                vjust[!values_fit_inside] <- diagram_info[["values_outer_vjust"]][!values_fit_inside]
             }
-            # With rotation swap h and v just
+            # Set up values drawn outside segments
             else{
-                hjust  <- diagram_info[["values_inner_vjust"]]
-                vjust  <- 0.5
-                rotate <- 90
+                vjust      <- diagram_info[["values_outer_vjust"]]
+                font_color <- colors_outside
             }
         }
+        # Set up with rotated values
         else{
-            font_color <- "font_outside"
+            vjust_base  <- 0.35
+            rotate      <- 90
 
-            # With no rotation set adjustments like normal
-            if (!visuals[["rotate_values"]]){
-                vjust  <- diagram_info[["values_outer_vjust"]]
-                hjust  <- 0.5
-                rotate <- 0
+            if (visuals[["bar_values_inside"]]){
+                # Set up values drawn inside segments
+                hjust[values_fit_inside] <- diagram_info[["values_inner_vjust"]][values_fit_inside]
+                vjust[values_fit_inside] <- vjust_base + 0.05
+
+                # Rotated values move further away from the segments with equal adjustment.
+                # This is roughly corrected here.
+                hcorrect <- max(1, nchar(as.character(value_y_pos)) / 5)
+
+                hjust[!values_fit_inside] <- diagram_info[["values_outer_vjust"]][!values_fit_inside] / hcorrect
+                vjust[!values_fit_inside] <- vjust_base
             }
-            # With rotation swap h and v just
             else{
                 # Rotated values move further away from the segments with equal adjustment.
                 # This is roughly corrected here.
-                hcorrect <- max(1, nchar(as.character(diagram_info[["values"]])) / 5)
-                hjust    <- diagram_info[["values_outer_vjust"]] / hcorrect
-                vjust    <- 0.4
-                rotate   <- 90
+                hcorrect   <- max(1, nchar(as.character(diagram_info[["values"]])) / 5)
+                hjust      <- diagram_info[["values_outer_vjust"]] / hcorrect
+                vjust      <- vjust_base
+                font_color <- colors_outside
             }
         }
 
@@ -1018,8 +1097,6 @@ vbar_grob <- function(diagram_info,
 
         # If a small scale is used it can happen that a negative symbol appears in front
         # of 0 values. This gets removed here.
-        value_y_pos <- diagram_info[["values"]]
-
         formatted_values[value_y_pos == 0] <- sub("-", "", formatted_values[value_y_pos == 0])
 
         # Add offset to y axes for values equal to 0 if they are rotated
@@ -1038,25 +1115,21 @@ vbar_grob <- function(diagram_info,
             }
         }
 
-        # TODO: AUTOMATICALLY PUT VALUES OUTSIDE IF THEY ARE NOT COMPLETELY IN THE BAR
-
-        # Get the colors from the theme which should be used. Reverse them if option
-        # is set accordingly.
-        colors_to_use <- theme[[font_color]][arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]]
-
+        # Reverse font colors, if option is set accordingly.
         if (visuals[["reverse_colors"]]){
-            colors_to_use <- rev(colors_to_use)
+            font_color <- rev(font_color)
         }
 
+        # Generate formatted values
         texts <- grid::textGrob(formatted_values,
                                 x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
                                 y      = grid::unit(value_y_pos, "native"),
                                 vjust  = vjust,
                                 hjust  = hjust,
                                 rot    = rotate,
-                                gp     = grid::gpar(col        = colors_to_use,
+                                gp     = grid::gpar(col        = font_color,
                                                     fontfamily = visuals[["font"]],
-                                                    fontsize   = arguments[["dimensions"]][["value_font_size"]],
+                                                    fontsize   = dimensions[["value_font_size"]],
                                                     fontface   = visuals[["value_font_face"]],
                                                     lineheight = 1.1))
     }
@@ -1533,6 +1606,10 @@ direct_vertical_labels <- function(diagram_info,
         return(grid::nullGrob())
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Get base group measurements
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Look up which group of segments gets the labels. If desired group is out of
     # bounds, set the group to one of the extreme points.
     label_group  <- visuals[["label_group"]]
@@ -1570,6 +1647,10 @@ direct_vertical_labels <- function(diagram_info,
         vertical_alignment <- "top"
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Set up segment lines
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Get starting y, which is the height of the segments measured from the y axes
     # zero position.
     distance    <- diagram_info[["primary_y_distance"]]
@@ -1583,15 +1664,24 @@ direct_vertical_labels <- function(diagram_info,
 
     # Generate a static offset for the lines so that they are a bit apart from the
     # segments and labels.
-    offset_y     <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * distance * drawing_direction
+    offset_y <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * distance * drawing_direction
+
+    # Generate a variable offset according to the text size of the displayed values.
+    # If no values are displayed, the offset is 0 and only the static offset counts.
     offset_value <- 0
 
-    if (visuals[["display_values"]] && !visuals[["bar_values_inside"]]){
+    if (visuals[["display_values"]]){
+        # Without rotation the offset is basically static because values are always
+        # drawn on one line and therefor have the same height.
         if (!visuals[["rotate_values"]]){
             offset_value <- get_values_height(diagram_info,
                                               dimensions,
                                               visuals)
+
+            offset_value <- rep(offset_value, diagram_info[["number_of_segments"]])
         }
+        # With rotation the values can be unequaly high. The offset therefor must
+        # be calculated individually.
         else{
             offset_value <- get_values_width(diagram_info,
                                              dimensions,
@@ -1610,6 +1700,11 @@ direct_vertical_labels <- function(diagram_info,
             # Add additional offset for the space between segment and value
             offset_value <- offset_value + (0.2 * offset_value)
         }
+
+        # Reset offset, if values fit inside the segments, because then only the
+        # static offset counts.
+        values_fit_inside <- diagram_info[["values_fit_vertical"]][group_ids_up == label_group]
+        offset_value[values_fit_inside] <- 0
     }
 
     # In case segment lines start at the y axes, the value offset has to be reset
@@ -1636,13 +1731,17 @@ direct_vertical_labels <- function(diagram_info,
 
     # Put together the vector containing start and end points for the lines.
     # In addition double up the x segment centers to match the length of the y vector.
-    line_vector <- as.vector(rbind(segment_start_y, segment_end_y))
+    line_vector   <- as.vector(rbind(segment_start_y, segment_end_y))
     center_vector <- rep(segment_centers_x, each = 2)
 
     # To be able to draw each line as a separate line, the points inside the line_vector
     # need to receive an id. Meaning each point pair gets the same id to be identified
     # as two points of the same line by the grob function.
     line_ids <- rep(seq_along(segment_centers_x), each = 2)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate graphical opbjects
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Set the horizontal label alignment according to whether the segment lines are
     # drawn on equal heights or in stairs.
