@@ -4,12 +4,14 @@
 \alias{output_graphic}
 \title{Output Graphic To Device}
 \usage{
-output_graphic(graphic_object, dimensions, output)
+output_graphic(graphic_object, dimensions, fine_tuning, output)
 }
 \arguments{
 \item{graphic_object}{The complete graphic to be drawn or exported.}
 
 \item{dimensions}{qol package dimensions options.}
+
+\item{fine_tuning}{The list of fine tuning parameters.}
 
 \item{output}{qol package output options.}
 }

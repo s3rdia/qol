@@ -20,14 +20,15 @@ get_value_axes_width(
   axes,
   dimensions,
   visuals,
+  fine_tuning,
   which = "primary"
 )
 
-get_variable_axes_height(wrapped_text, dimensions, visuals)
+get_variable_axes_height(wrapped_text, dimensions, visuals, fine_tuning)
 
 get_values_width(diagram_info, dimensions, visuals, arguments)
 
-get_values_height(diagram_info, dimensions, visuals)
+get_values_height(diagram_info, dimensions, visuals, fine_tuning)
 
 swap_xy_scaling(measuring, dimensions, from = "width", to = "height")
 
@@ -38,7 +39,7 @@ get_group_tick_positions_x(
   segment_pos
 )
 
-get_y_axes_values(values, axes, which = "primary")
+get_y_axes_values(values, axes, fine_tuning, which = "primary")
 
 setup_y_axes(tick_positions, tick_values, arguments, secondary = FALSE)
 
@@ -56,6 +57,8 @@ setup_xy_axes(diagram_info, arguments)
 \item{dimensions}{The list of dimensions parameters.}
 
 \item{visuals}{The list of visual parameters.}
+
+\item{fine_tuning}{The list of fine tuning parameters.}
 
 \item{which}{Primary or secondary axes.}
 
