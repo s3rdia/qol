@@ -3,7 +3,9 @@
 ### New functions
 
 * `design_graphic()`: High level graphics function with many parameters. The focus is around concentrating on designing a graphic rather than engineering. Tedious operations are taken care of by the function. It is also modular and can take in custom diagram functions. (21.02.2026)
-* Graphic options: `graphic_visuals()`, `modify_graphic_visuals()`, `graphic_axes()`, `modify_graphic_axes()`, `graphic_dimensions()`, `modify_graphic_dimensions()`, `graphic_output()`, `modify_graphic_output()`. (21.02.2026)
+* Graphic options:
+	* `graphic_visuals()`, `modify_graphic_visuals()`, `graphic_axes()`, `modify_graphic_axes()`, `graphic_dimensions()`, `modify_graphic_dimensions()`, `graphic_output()`, `modify_graphic_output()`. (21.02.2026)
+	* `graphic_fine_tuning ()`, `modify_graphic_fine_tuning()`: Made all fixed values available as new fine tuning parameters. (16.03.2026)
 * Global graphic options: `graphic_visuals()`, `set_color_theme()`, `get_theme_colors()`, `reset_color_themes()`. (21.02.2026)
 * Main diagrams: `vbars()`. (21.02.2026)
 * View colors and themes: `display_colors()`, `display_themes()`. (21.02.2026)

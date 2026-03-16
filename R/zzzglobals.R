@@ -39,5 +39,6 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["graphic_visuals"]]        <- graphic_visuals()
 .qol_options[["graphic_axes"]]           <- graphic_axes()
 .qol_options[["graphic_dimensions"]]     <- graphic_dimensions()
+.qol_options[["graphic_fine_tuning"]]    <- graphic_fine_tuning()
 .qol_options[["graphic_number_formats"]] <- number_format_style()
 .qol_options[["graphic_output"]]         <- graphic_output()

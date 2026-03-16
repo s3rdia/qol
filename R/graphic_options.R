@@ -585,3 +585,157 @@ modify_graphic_output <- function(output_to_modify, ...){
 
     output_to_modify
 }
+
+
+###############################################################################
+# Fine tuning
+###############################################################################
+#' Graphic Fine Tuning
+#'
+#' @description
+#' Throughout the graphic generation some fixed values are used. These can be adjusted
+#' to make detailed graphical changes in certain areas. These values normally should
+#' only be altered in edge cases.
+#'
+#' @param line_height The height of a single text line.
+#' @param diagram_start_adjust Adjusts the diagram starting position, when it is automatically
+#' determined.
+#' @param diagram_height_adjust Adjusts the diagram height, when it is automatically determined.
+#' @param diagram_margin Margin used within the diagram area.
+#' @param values_vjust_positive Positive vertical adjustment for values in vbars.
+#' @param values_vjust_negative Negative vertical adjustment for values in vbars.
+#' @param values_vjust_90_positive Positive vertical adjustment for rotated values in vbars.
+#' @param values_vjust_90_negative Negative vertical adjustment for rotated values in vbars.
+#' @param value_overlap_factor Used as a multiplier for the value height. If the value height
+#' multiplied by this factor exceeds the segment height of a vbar, the value will be automatically
+#' drawn outside the segment.
+#' @param shrink_segment_width Shrinks the segment width by this factor, if the segment borders
+#' are colored, to prevent the bars from overlapping
+#' @param values_rotation Degrees of segment value rotation.
+#' @param values_hjust Horizontal adjustment of segment values.
+#' @param values_hjust_90 Horizontal adjustment of rotated segment values.
+#' @param values_hjust_90_plus Additional horizontal adjustment of rotated segment values, if
+#' drawn inside segments.
+#' @param values_vjust_90_correction Vertical adjustment correction factor for rotated segment
+#' values.
+#' @param values_zero_line_offset Offset to the x axes for 0 values.
+#' @param values_below_axes_just Adjustment for 0 values, if drawn below x axes.
+#' @param values_below_axes_90_just Adjustment for rotated 0 values, if drawn below x axes.
+#' @param tick_length Length of the axes ticks.
+#' @param value_axes_margin Additional margin when measuring the value axes width
+#' @param variable_axes_margin Additional margin when measuring the variable axes height.
+#' @param value_width_factor Scaling factor when measuring value widths.
+#' @param value_height_factor Scaling factor when measuring value widths.
+#' @param y_axes_scaling Scaling factor for the y axes, if maximum value is calculated
+#' automatically.
+#' @param swap_direction_threshold Determines the threshold for the variable axes at which
+#' the drawing direction is swapped.
+#' @param segment_line_offset A static offset at which segment lines are drawn.
+#' @param segment_line_correction Correction factor for the segment line length.
+#' @param segment_line_treshhold Segment lines won't be drawn further than the maximum
+#' value multiplied by this factor.
+#' @param segment_label_hjust Horizontal adjustment of the segment labels if they are drawn
+#' in stairs.
+#' @param cm_to_inch_factor cm to inc conversion factor.
+#'
+#' @return
+#' Returns a list of named graphic options.
+#'
+#' @seealso
+#' The main graphic function: [design_graphic()]
+#'
+#' Other graphic options:
+#'
+#' Additional graphic functions: [add_textbox()]
+#'
+#' @examples
+#' # For default values
+#' gft <- graphic_fine_tuning()
+#'
+#' # Set specific options, the rest will be set to default values
+#' gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
+#'                            tick_length          = 0.05)
+#'
+#' @export
+graphic_fine_tuning <- function(line_height                = 1.1,
+                                diagram_start_adjust       = 2,
+                                diagram_height_adjust      = 4,
+                                diagram_margin             = 0.01,
+                                values_vjust_positive      = 1.7,
+                                values_vjust_negative      = -0.7,
+                                values_vjust_90_positive   = 1.2,
+                                values_vjust_90_negative   = -0.2,
+                                value_overlap_factor       = 1.35,
+                                shrink_segment_width       = 0.5,
+                                values_rotation            = 90,
+                                values_hjust               = 0.5,
+                                values_hjust_90            = 0.35,
+                                values_hjust_90_plus       = 0.05,
+                                values_vjust_90_correction = 5,
+                                values_zero_line_offset    = 0.2,
+                                values_below_axes_just     = 1.5,
+                                values_below_axes_90_just  = 1.4,
+                                tick_length                = 0.02,
+                                value_axes_margin          = 0.02,
+                                variable_axes_margin       = 0.03,
+                                value_width_factor         = 1.3,
+                                value_height_factor        = 1.5,
+                                y_axes_scaling             = 1.3,
+                                swap_direction_threshold   = 0.75,
+                                segment_line_offset        = 0.5,
+                                segment_line_correction    = 2,
+                                segment_line_treshhold     = 0.95,
+                                segment_label_hjust        = 0.05,
+                                cm_to_inch_factor          = 2.54){
+    as.list(environment())
+}
+
+
+#' Modify Graphic Dimensions
+#'
+#' @description
+#' Modify previously set up graphic dimensions with [graphic_dimensions()].
+#'
+#' @param fine_tune_to_modify A pre created graphic fine tuning object where only
+#' certain elements should be modified while the rest is kept as is.
+#' @param ... Pass in names and corresponding new values for existing graphic
+#' fine tuning elements.
+#'
+#' @return
+#' Returns a modified list of named graphic options.
+#'
+#' @seealso
+#' The main graphic function: [design_graphic()]
+#'
+#' Other graphic options:
+#'
+#' Additional graphic functions: [add_textbox()]
+#'
+#' @examples
+#' # For default values
+#' gft <- graphic_fine_tuning()
+#'
+#' # Set specific options, the rest will be set to default values
+#' gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
+#'                            tick_length          = 0.05)
+#'
+#' # Modify the previously created graphics object
+#' gft <- gft |> modify_graphic_fine_tuning(diagram_margin = 0.02)
+#'
+#' @export
+modify_graphic_fine_tuning <- function(fine_tune_to_modify, ...){
+    fine_tune_elements <- list(...)
+
+    # Loop through all elements to modify and if exists then set new value
+    for (element in seq_along(fine_tune_elements)){
+        name <- names(fine_tune_elements)[element]
+
+        if (!name %in% names(fine_tune_to_modify)){
+            message(" ! WARNING: Fine tune element '", name, "' is invalid and will be omitted.")
+        }
+
+        fine_tune_to_modify[[name]] <- fine_tune_elements[[element]]
+    }
+
+    fine_tune_to_modify
+}
