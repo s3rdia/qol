@@ -19,6 +19,7 @@
 #' @param font_color Font color as hex code.
 #' @param font_size Font size.
 #' @param font_face Valid values are "plain", "bold", "italic", "oblique", and "bold.italic".
+#' @param line_height The height of a single text line.
 #' @param name The internal name of the textbox with which it can be identified.
 #' @param draw FALSE by default. If TRUE, directly draws the textbox onto the canvas.
 #'
@@ -40,16 +41,17 @@
 #'
 #' @export
 add_textbox <- function(text,
-                        x_pos      = .qol_options[["graphic_dimensions"]][["margins"]],
-                        y_pos      = .qol_options[["graphic_dimensions"]][["margins"]],
-                        width      = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-                        alignment  = .qol_options[["graphic_visuals"]][["other_alignment"]],
-                        font       = .qol_options[["graphic_visuals"]][["font"]],
-                        font_color = .qol_options[["graphic_visuals"]][["other_font_color"]],
-                        font_size  = .qol_options[["graphic_dimensions"]][["other_font_size"]],
-                        font_face  = .qol_options[["graphic_visuals"]][["other_font_face"]],
-                        name       = "textbox",
-                        draw       = FALSE){
+                        x_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
+                        y_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
+                        width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+                        alignment   = .qol_options[["graphic_visuals"]][["other_alignment"]],
+                        font        = .qol_options[["graphic_visuals"]][["font"]],
+                        font_color  = .qol_options[["graphic_visuals"]][["other_font_color"]],
+                        font_size   = .qol_options[["graphic_dimensions"]][["other_font_size"]],
+                        font_face   = .qol_options[["graphic_visuals"]][["other_font_face"]],
+                        line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+                        name        = "textbox",
+                        draw        = FALSE){
     # Return if there is no text
     if (is.null(text) || length(text) == 0 || text == ""){
         return(invisible(grid::nullGrob()))
@@ -74,7 +76,7 @@ add_textbox <- function(text,
                                                      fontfamily = font,
                                                      fontsize   = font_size,
                                                      fontface   = font_face,
-                                                     lineheight = 1.1))
+                                                     lineheight = line_height))
         if (draw){
             grid::grid.draw(textbox)
         }
@@ -99,7 +101,7 @@ add_textbox <- function(text,
                                                      fontfamily = font,
                                                      fontsize   = font_size,
                                                      fontface   = font_face,
-                                                     lineheight = 1.1))
+                                                     lineheight = line_height))
         if (draw){
             grid::grid.draw(textbox)
         }
@@ -133,7 +135,7 @@ add_textbox <- function(text,
                                                  fontfamily = font,
                                                  fontsize   = font_size,
                                                  fontface   = font_face,
-                                                 lineheight = 1.1))
+                                                 lineheight = line_height))
     if (draw){
         grid::grid.draw(textbox)
     }
@@ -300,28 +302,31 @@ fix_alignment <- function(dimensions = .qol_options[["graphic_dimensions"]],
 #'
 #' @param dimensions qol package dimensions options.
 #' @param visuals qol package visuals options.
+#' @param fine_tuning qol package fine tuning options.
 #'
 #' @rdname textboxes
 #'
 #' @export
 add_title <- function(text,
-                      dimensions = .qol_options[["graphic_dimensions"]],
-                      visuals    = .qol_options[["graphic_visuals"]],
-                      draw       = FALSE){
+                      dimensions  = .qol_options[["graphic_dimensions"]],
+                      visuals     = .qol_options[["graphic_visuals"]],
+                      fine_tuning = .qol_options[["graphic_fine_tuning"]],
+                      draw        = FALSE){
     x_pos <- fix_alignment(dimensions, visuals)
 
     invisible(
-        add_textbox(text       = text,
-                    x_pos      = x_pos,
-                    y_pos      = dimensions[["graphic_height"]] - dimensions[["margins"]],
-                    width      = get_available_width(dimensions),
-                    alignment  = visuals[["title_alignment"]],
-                    font       = visuals[["font"]],
-                    font_color = visuals[["title_font_color"]],
-                    font_size  = dimensions[["title_font_size"]],
-                    font_face  = visuals[["title_font_face"]],
-                    name       = "title",
-                    draw       = draw))
+        add_textbox(text        = text,
+                    x_pos       = x_pos,
+                    y_pos       = dimensions[["graphic_height"]] - dimensions[["margins"]],
+                    width       = get_available_width(dimensions),
+                    alignment   = visuals[["title_alignment"]],
+                    font        = visuals[["font"]],
+                    font_color  = visuals[["title_font_color"]],
+                    font_size   = dimensions[["title_font_size"]],
+                    font_face   = visuals[["title_font_face"]],
+                    line_height = fine_tuning[["line_height"]],
+                    name        = "title",
+                    draw        = draw))
 }
 
 
@@ -333,22 +338,24 @@ add_title <- function(text,
 #'
 #' @export
 add_footnote <- function(text,
-                         dimensions = .qol_options[["graphic_dimensions"]],
-                         visuals    = .qol_options[["graphic_visuals"]],
-                         draw       = FALSE){
+                         dimensions  = .qol_options[["graphic_dimensions"]],
+                         visuals     = .qol_options[["graphic_visuals"]],
+                         fine_tuning = .qol_options[["graphic_fine_tuning"]],
+                         draw        = FALSE){
     x_pos <- fix_alignment(dimensions, visuals, "footnote")
 
     # Add textbox as normal first
-    footnote <- add_textbox(text       = text,
-                            x_pos      = x_pos,
-                            y_pos      = dimensions[["margins"]],
-                            width      = get_available_width(dimensions),
-                            alignment  = visuals[["footnote_alignment"]],
-                            font       = visuals[["font"]],
-                            font_color = visuals[["footnote_font_color"]],
-                            font_size  = dimensions[["footnote_font_size"]],
-                            font_face  = visuals[["footnote_font_face"]],
-                            name       = "footnote")
+    footnote <- add_textbox(text        = text,
+                            x_pos       = x_pos,
+                            y_pos       = dimensions[["margins"]],
+                            width       = get_available_width(dimensions),
+                            alignment   = visuals[["footnote_alignment"]],
+                            font        = visuals[["font"]],
+                            font_color  = visuals[["footnote_font_color"]],
+                            font_size   = dimensions[["footnote_font_size"]],
+                            font_face   = visuals[["footnote_font_face"]],
+                            line_height = fine_tuning[["line_height"]],
+                            name        = "footnote")
 
     # Adjust position afterwards to the bottom
     footnote <- grid::editGrob(footnote,
@@ -434,6 +441,7 @@ register_windows_font <- function(font){
 #' @param height Viewport height
 #' @param background_color Hex color code of background the rectangle.
 #' @param border_color Hex color code of border around the background rectangle.
+#' @param line_height The height of a single text line.
 #' @param name The internal name of the canvas with which it can be identified.
 #'
 #' @return
@@ -446,7 +454,8 @@ setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["gr
                               height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
                               background_color = .qol_options[["graphic_visuals"]][["graphic_background_color"]],
                               border_color     = .qol_options[["graphic_visuals"]][["graphic_border_color"]],
-                              name   = "main_canvas"){
+                              line_height      = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+                              name = "main_canvas"){
     grid::grid.newpage()
 
     # Set up the main viewport for the entire graphic
@@ -454,7 +463,7 @@ setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["gr
                          height = grid::unit(height, "cm"),
                          xscale = c(0, width),
                          yscale = c(0, height),
-                         gp     = grid::gpar(lineheight = 1.2),
+                         gp     = grid::gpar(lineheight = line_height + 0.1),
                          name   = name)
 
     grid::pushViewport(vp)
@@ -483,6 +492,7 @@ setup_nested_viewport <- function(x_pos   = 0,
                                   y_scale = c(0, 1),
                                   width   = .qol_options[["graphic_dimensions"]][["graphic_width"]],
                                   height  = .qol_options[["graphic_dimensions"]][["graphic_height"]],
+                                  line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
                                   name = "nested_viewport"){
     # Set up a new nested viewport.
     vp <- grid::viewport(x      = grid::unit(x_pos, "native"),
@@ -491,7 +501,7 @@ setup_nested_viewport <- function(x_pos   = 0,
                          height = grid::unit(height, "native"),
                          yscale = y_scale,
                          just   = c("left", "top"),
-                         gp     = grid::gpar(lineheight = 1.2),
+                         gp     = grid::gpar(lineheight = line_height + 0.1),
                          name   = name)
 
     grid::pushViewport(vp)
@@ -510,9 +520,12 @@ setup_nested_viewport <- function(x_pos   = 0,
 #'
 #' @export
 setup_diagram_viewport <- function(arguments){
-    diagram_start  <- arguments[["dimensions"]][["diagram_start"]]
-    diagram_height <- arguments[["dimensions"]][["diagram_height"]]
-    diagram_width  <- arguments[["dimensions"]][["diagram_width"]]
+    dimensions     <- arguments[["dimensions"]]
+    diagram_start  <- dimensions[["diagram_start"]]
+    diagram_height <- dimensions[["diagram_height"]]
+    diagram_width  <- dimensions[["diagram_width"]]
+    diagram_start_adjust  <- arguments[["fine_tuning"]][["diagram_start_adjust"]]
+    diagram_height_adjust <- arguments[["fine_tuning"]][["diagram_height_adjust"]]
 
     # Measure diagram start automatically and set it right under the title or
     # take the manually set start.
@@ -521,12 +534,12 @@ setup_diagram_viewport <- function(arguments){
         # HACK: Using one additional margin here because somehow the height measuring
         #       of multiline text doesn't output the correct values.
         valid_heights <- sum(arguments[["title_height"]] > 0)
-        y_pos         <- (arguments[["dimensions"]][["graphic_height"]]
+        y_pos         <- (dimensions[["graphic_height"]]
                        - (arguments[["title_height"]]
-                       + (arguments[["dimensions"]][["margins"]] * (2 + valid_heights))))
+                       + (dimensions[["margins"]] * (diagram_start_adjust + valid_heights))))
     }
     else{
-        y_pos <- arguments[["dimensions"]][["graphic_height"]] - diagram_start
+        y_pos <- dimensions[["graphic_height"]] - diagram_start
     }
 
     # Measure diagram height automatically and set it to span between title and
@@ -538,10 +551,10 @@ setup_diagram_viewport <- function(arguments){
 
         # HACK: Using two additional margins here because somehow the height measuring
         #       of multiline text doesn't output the correct values.
-        height <- (arguments[["dimensions"]][["graphic_height"]]
+        height <- (dimensions[["graphic_height"]]
                  - arguments[["title_height"]]
                  - arguments[["footnote_height"]]
-                 - (arguments[["dimensions"]][["margins"]] * (4 + valid_heights)))
+                 - (dimensions[["margins"]] * (diagram_height_adjust + valid_heights)))
     }
     else{
         height <- diagram_height
@@ -550,8 +563,8 @@ setup_diagram_viewport <- function(arguments){
     # Measure diagram width automatically and set it to span from side to side or
     # take the manually set height.
     if (diagram_width == "auto"){
-        width <- (arguments[["dimensions"]][["graphic_width"]]
-               - (arguments[["dimensions"]][["margins"]] * 2))
+        width <- (dimensions[["graphic_width"]]
+               - (dimensions[["margins"]] * 2))
     }
     else{
         width <- diagram_width
@@ -559,11 +572,12 @@ setup_diagram_viewport <- function(arguments){
 
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
-    setup_nested_viewport(x_pos   = arguments[["dimensions"]][["margins"]],
+    setup_nested_viewport(x_pos   = dimensions[["margins"]],
                           y_pos   = y_pos,
                           y_scale = c(0, 1),
                           width   = width,
                           height  = height,
+                          line_height = arguments[["fine_tuning"]][["line_height"]],
                           name = "diagram_area")
 }
 
@@ -600,8 +614,9 @@ setup_nested_diagram_viewport <- function(arguments){
                               y_scale = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
                                       - diagram_info[["primary_y_axes_width"]],
-                              height           = 1 - diagram_info[["group_label_height"]],
-                              name             = "main_diagram")
+                              height  = 1 - diagram_info[["group_label_height"]],
+                              line_height = arguments[["fine_tuning"]][["line_height"]],
+                              name    = "main_diagram")
 
     # Draw the graphics background
     grid::grid.rect(gp = grid::gpar(fill = arguments[["visuals"]][["diagram_background_color"]],
@@ -743,6 +758,7 @@ get_available_height <- function(dimensions   = .qol_options[["graphic_dimension
 #' @param values Value vector from the data frame.
 #' @param axes The list of axes parameters.
 #' @param dimensions The list of dimensions parameters.
+#' @param fine_tuning The list of fine tuning parameters.
 #' @param visuals The list of visual parameters.
 #'
 #' @return
@@ -755,9 +771,10 @@ get_diagram_dimensions <- function(graphic_tab,
                                    axes_vars,
                                    segment_vars,
                                    values,
-                                   axes       = .qol_options[["graphic_axes"]],
-                                   dimensions = .qol_options[["graphic_dimensions"]],
-                                   visuals    = .qol_options[["graphic_visuals"]]){
+                                   axes        = .qol_options[["graphic_axes"]],
+                                   dimensions  = .qol_options[["graphic_dimensions"]],
+                                   visuals     = .qol_options[["graphic_visuals"]],
+                                   fine_tuning = .qol_options[["graphic_fine_tuning"]]){
     values <- graphic_tab[[values]]
     # TODO: WHAT IF MULTIPLE VARIABLES ARE PASSED OR "age + sex" COMBINATIONS?
 
@@ -776,7 +793,7 @@ get_diagram_dimensions <- function(graphic_tab,
 
     # Actual space calculation. Add margins for the whole graphic and the individual
     # groups to give everything a bit air to breathe.
-    margin        <- 0.01
+    margin        <- fine_tuning[["diagram_margin"]]
     group_width   <- 1 / number_of_groups
     segment_width <- (group_width - (margin * 2)) / number_of_segments
 
@@ -794,8 +811,8 @@ get_diagram_dimensions <- function(graphic_tab,
 
     # Get the values and tick positions for the y axes, which is basically an even
     # distribution.
-    primary_y_values   <- get_y_axes_values(values, axes)
-    #secondary_y_values <- get_y_axes_values(values, axes, "secondary")
+    primary_y_values   <- get_y_axes_values(values, axes, fine_tuning)
+    #secondary_y_values <- get_y_axes_values(values, axes, fine_tuning, "secondary")
 
     primary_y_tick_width <- 1 / (length(primary_y_values) - 1)
     #secondary_y_tick_width <- 1 / length(primary_y_values)
@@ -842,12 +859,12 @@ get_diagram_dimensions <- function(graphic_tab,
     # whole axes needs in the diagram.
     if (abs(primary_y_max) > abs(primary_y_min)){
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_max, axes, dimensions, visuals)
+            get_value_axes_width(primary_y_max, axes, dimensions, visuals, fine_tuning)
     }
     # In case of negative value having more digits
     else{
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_min, axes, dimensions, visuals)
+            get_value_axes_width(primary_y_min, axes, dimensions, visuals, fine_tuning)
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
@@ -858,12 +875,20 @@ get_diagram_dimensions <- function(graphic_tab,
     # Setup adjustment for vbar values, depending on whether the values are positive
     # or negative and whether they are rotated by 90 degrees or not.
     if (!visuals[["rotate_values"]]){
-        values_inner_vjust <- data.table::fifelse(values >= 0, 1.7, -0.7)
-        values_outer_vjust <- data.table::fifelse(values >= 0, -0.7, 1.7)
+        values_inner_vjust <- data.table::fifelse(values >= 0,
+                                                  fine_tuning[["values_vjust_positive"]],
+                                                  fine_tuning[["values_vjust_negative"]])
+        values_outer_vjust <- data.table::fifelse(values >= 0,
+                                                  fine_tuning[["values_vjust_negative"]],
+                                                  fine_tuning[["values_vjust_positive"]])
     }
     else{
-        values_inner_vjust <- data.table::fifelse(values >= 0, 1.2, -0.2)
-        values_outer_vjust <- data.table::fifelse(values >= 0, -0.2, 1.2)
+        values_inner_vjust <- data.table::fifelse(values >= 0,
+                                                  fine_tuning[["values_vjust_90_positive"]],
+                                                  fine_tuning[["values_vjust_90_negative"]])
+        values_outer_vjust <- data.table::fifelse(values >= 0,
+                                                  fine_tuning[["values_vjust_90_negative"]],
+                                                  fine_tuning[["values_vjust_90_positive"]])
     }
 
     # Get center vbar position
@@ -878,16 +903,17 @@ get_diagram_dimensions <- function(graphic_tab,
             # Determine whether a value should be drawn inside or outside the segment
             values_fit_vertical <- (get_values_height(list(values            = values,
                                                           primary_y_distance = primary_y_distance),
-                                                     dimensions, visuals) * 1.3 < values)
+                                                     dimensions, visuals, fine_tuning) * fine_tuning[["value_overlap_factor"]] < values)
         }
         else{
             # Determine whether a value should be drawn inside or outside the segment
             values_width <- get_values_width(list(values = values),
                                              dimensions,
                                              visuals,
-                                             list(axes = axes)) * primary_y_distance
+                                             list(axes        = axes,
+                                                  fine_tuning = fine_tuning)) * primary_y_distance
 
-            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * 1.3 < values
+            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["value_overlap_factor"]] < values
         }
     }
 
@@ -906,7 +932,7 @@ get_diagram_dimensions <- function(graphic_tab,
                                              visuals[["axes_font_face"]])
 
     # Get dimensions of group labels
-    group_label_height <- get_variable_axes_height(wrapped_group_labels, dimensions, visuals)
+    group_label_height <- get_variable_axes_height(wrapped_group_labels, dimensions, visuals, fine_tuning)
 
     # Get tick positions
     group_ticks_pos_x <- get_group_tick_positions_x(number_of_groups, number_of_segments,
@@ -978,6 +1004,7 @@ vbar_grob <- function(diagram_info,
                       theme){
     visuals     <- arguments[["visuals"]]
     dimensions  <- arguments[["dimensions"]]
+    fine_tuning <- arguments[["fine_tuning"]]
     value_y_pos <- diagram_info[["values"]]
 
     border_color <- visuals[["segment_border_color"]]
@@ -1004,7 +1031,7 @@ vbar_grob <- function(diagram_info,
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
         if (dimensions[["space_between_bars_pct"]] == 0){
-            shrink_width <- grid::unit(0.5, "pt")
+            shrink_width <- grid::unit(fine_tuning[["shrink_segment_width"]], "pt")
         }
     }
 
@@ -1024,6 +1051,7 @@ vbar_grob <- function(diagram_info,
                             width  = grid::unit(diagram_info[["segment_width"]], "native") - shrink_width,
                             height = grid::unit(diagram_info[["actual_drawing_height"]], "native"),
                             just   = c("left", "bottom"),
+                            name   = "segments",
                             gp     = grid::gpar(fill = colors_to_use,
                                                 col  = border_color))
 
@@ -1051,7 +1079,7 @@ vbar_grob <- function(diagram_info,
         font_color[!values_fit_inside] <- colors_outside[!values_fit_inside]
 
         if (!visuals[["rotate_values"]]){
-            hjust  <- 0.5
+            hjust  <- fine_tuning[["values_hjust"]]
             rotate <- 0
 
             if (visuals[["bar_values_inside"]]){
@@ -1067,17 +1095,17 @@ vbar_grob <- function(diagram_info,
         }
         # Set up with rotated values
         else{
-            vjust_base  <- 0.35
-            rotate      <- 90
+            vjust_base  <- fine_tuning[["values_hjust_90"]]
+            rotate      <- fine_tuning[["values_rotation"]]
 
             if (visuals[["bar_values_inside"]]){
                 # Set up values drawn inside segments
                 hjust[values_fit_inside] <- diagram_info[["values_inner_vjust"]][values_fit_inside]
-                vjust[values_fit_inside] <- vjust_base + 0.05
+                vjust[values_fit_inside] <- vjust_base + fine_tuning[["values_hjust_90_plus"]]
 
                 # Rotated values move further away from the segments with equal adjustment.
                 # This is roughly corrected here.
-                hcorrect <- max(1, nchar(as.character(value_y_pos)) / 5)
+                hcorrect <- max(1, nchar(as.character(value_y_pos)) / fine_tuning[["values_vjust_90_correction"]])
 
                 hjust[!values_fit_inside] <- diagram_info[["values_outer_vjust"]][!values_fit_inside] / hcorrect
                 vjust[!values_fit_inside] <- vjust_base
@@ -1085,7 +1113,7 @@ vbar_grob <- function(diagram_info,
             else{
                 # Rotated values move further away from the segments with equal adjustment.
                 # This is roughly corrected here.
-                hcorrect   <- max(1, nchar(as.character(diagram_info[["values"]])) / 5)
+                hcorrect   <- max(1, nchar(as.character(diagram_info[["values"]])) / fine_tuning[["values_vjust_90_correction"]])
                 hjust      <- diagram_info[["values_outer_vjust"]] / hcorrect
                 vjust      <- vjust_base
                 font_color <- colors_outside
@@ -1101,17 +1129,18 @@ vbar_grob <- function(diagram_info,
 
         # Add offset to y axes for values equal to 0 if they are rotated
         if (visuals[["rotate_values"]]){
-            value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(0.2, "cm"), "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
+            value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(fine_tuning[["values_zero_line_offset"]], "cm"),
+                                                               "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
         }
 
         # If all values are negative and the y axes is at the top of the diagram,
         # 0 values should be drawn below the y axes.
         if (collapse::fmax(value_y_pos) == 0){
             if (!visuals[["rotate_values"]]){
-                vjust[value_y_pos == 0] <- 1.5
+                vjust[value_y_pos == 0] <- fine_tuning[["values_below_axes_just"]]
             }
             else{
-                hjust[value_y_pos == 0] <- 1.4
+                hjust[value_y_pos == 0] <- fine_tuning[["values_below_axes_90_just"]]
             }
         }
 
@@ -1127,11 +1156,12 @@ vbar_grob <- function(diagram_info,
                                 vjust  = vjust,
                                 hjust  = hjust,
                                 rot    = rotate,
+                                name   = "values",
                                 gp     = grid::gpar(col        = font_color,
                                                     fontfamily = visuals[["font"]],
                                                     fontsize   = dimensions[["value_font_size"]],
                                                     fontface   = visuals[["value_font_face"]],
-                                                    lineheight = 1.1))
+                                                    lineheight = fine_tuning[["line_height"]]))
     }
     else{
         texts <- grid::nullGrob()
@@ -1158,6 +1188,7 @@ vbar_grob <- function(diagram_info,
 #' @param axes The list of axes parameters.
 #' @param dimensions The list of dimensions parameters.
 #' @param visuals The list of visual parameters.
+#' @param fine_tuning The list of fine tuning parameters.
 #' @param which Primary or secondary axes.
 #'
 #' @return
@@ -1171,6 +1202,7 @@ get_value_axes_width <- function(graphic_tab,
                                  axes,
                                  dimensions,
                                  visuals,
+                                 fine_tuning,
                                  which = "primary"){
     which <- tolower(which)
 
@@ -1184,8 +1216,6 @@ get_value_axes_width <- function(graphic_tab,
                               axes[[paste0(which, "_axes_suffix")]],
                               axes[[paste0(which, "_axes_scale")]])
 
-    tick_width <- grid::convertWidth(grid::unit(0.5, "lines"), "native", valueOnly = TRUE)
-
     # Create test graphical object to measure the actual width
     temp_grob <- grid::textGrob(axes_max,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
@@ -1193,7 +1223,7 @@ get_value_axes_width <- function(graphic_tab,
                                                 fontface   = visuals[[paste0(which, "_axes_font_face")]]))
 
     # Return width
-    grid::convertWidth(grid::grobWidth(temp_grob), "native", valueOnly = TRUE) + tick_width
+    grid::convertWidth(grid::grobWidth(temp_grob), "native", valueOnly = TRUE) + fine_tuning[["value_axes_margin"]]
 }
 
 
@@ -1210,20 +1240,21 @@ get_value_axes_width <- function(graphic_tab,
 #' @export
 get_variable_axes_height <- function(wrapped_text,
                                      dimensions,
-                                     visuals){
+                                     visuals,
+                                     fine_tuning){
     # Create test graphical object to measure the actual height
     temp_grob <- grid::textGrob(wrapped_text,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
                                                 fontface   = visuals[["variable_axes_font_face"]],
-                                                lineheight = 1.2))
+                                                lineheight = fine_tuning[["line_height"]] + 0.1))
 
     # Measure height by manual calculation because the grobHeight comes out way
     # too small.
     height_cm <- (grid::convertHeight(grid::stringHeight(temp_grob[["label"]]), "cm", valueOnly = TRUE)
                   / dimensions[["graphic_height"]])
 
-    collapse::fmax(height_cm) + 0.02
+    collapse::fmax(height_cm) + fine_tuning[["variable_axes_margin"]]
 }
 
 
@@ -1261,7 +1292,7 @@ get_values_width <- function(diagram_info,
     grid::popViewport()
 
     # Width seems to be measured too small. Adding a bit on top seems to help.
-    widths * 1.3
+    widths * arguments[["fine_tuning"]][["value_width_factor"]]
 }
 
 
@@ -1276,7 +1307,8 @@ get_values_width <- function(diagram_info,
 #' @export
 get_values_height <- function(diagram_info,
                               dimensions,
-                              visuals){
+                              visuals,
+                              fine_tuning){
     # The unit measuring functions are checking the font values from the current
     # viewport. Since there are multiple different font options used on the same
     # viewport they can't be set in general. Therefor a temporary viewport with the
@@ -1284,7 +1316,7 @@ get_values_height <- function(diagram_info,
     grid::pushViewport(grid::viewport(gp = grid::gpar(fontfamily = visuals[["font"]],
                                                       fontsize   = dimensions[["value_font_size"]],
                                                       fontface   = visuals[["value_font_face"]],
-                                                      lineheight = 1.2)))
+                                                      lineheight = fine_tuning[["line_height"]] + 0.1)))
 
     # Measure individual widths
     height <- grid::convertHeight(grid::stringHeight(diagram_info[["values"]]),
@@ -1294,7 +1326,7 @@ get_values_height <- function(diagram_info,
     grid::popViewport()
 
     # Height seems to be measured too small. Adding a bit on top seems to help.
-    collapse::fmax(height) * 1.5
+    collapse::fmax(height) * fine_tuning[["value_height_factor"]]
 }
 
 
@@ -1373,6 +1405,7 @@ get_group_tick_positions_x <- function(number_of_groups,
 #' @export
 get_y_axes_values <- function(values,
                               axes,
+                              fine_tuning,
                               which = "primary"){
     which <- tolower(which)
 
@@ -1384,24 +1417,22 @@ get_y_axes_values <- function(values,
     if (global_min != "auto"){
         min_value <- global_min
     }
-    # Get values from the actual data frame and add ten percent to the value, so
-    # that the highest value doesn't go up to the end of the axes. Leave a little
-    # room to breathe.
+    # Get values from the actual data frame and add to the value, so that the highest
+    # value doesn't go up to the end of the axes. Leave a little room to breathe.
     else{
         min_value <- collapse::fmin(c(0, values))
-        min_value <- min_value * 1.3
+        min_value <- min_value * fine_tuning[["y_axes_scaling"]]
     }
 
     # Replace auto generated value by statically set global values
     if (global_max != "auto"){
         max_value <- global_max
     }
-    # Get values from the actual data frame and add ten percent to the value, so
-    # that the highest value doesn't go up to the end of the axes. Leave a little
-    # room to breathe.
+    # Get values from the actual data frame and add to the value, so that the highest
+    # value doesn't go up to the end of the axes. Leave a little room to breathe.
     else{
         max_value <- collapse::fmax(c(0, values))
-        max_value <- max_value * 1.3
+        max_value <- max_value * fine_tuning[["y_axes_scaling"]]
     }
 
     # Return equally spaced round values in given range
@@ -1431,6 +1462,8 @@ setup_y_axes <- function(tick_positions,
                          tick_values,
                          arguments,
                          secondary = FALSE){
+    visuals <- arguments[["visuals"]]
+
     which <- "primary"
 
     if (secondary){
@@ -1441,25 +1474,27 @@ setup_y_axes <- function(tick_positions,
     zero_pos <- sum(secondary)
 
     line <- grid::linesGrob(x = c(zero_pos, zero_pos), y = c(0, 1),
-                            gp = grid::gpar(col = arguments[["visuals"]][[paste0(which, "_axes_color")]]))
+                            gp = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
 
     # Setup the ticks left/right
-    tick_length <- 0.1 + (-0.2 * zero_pos)
+    #tick_length <- 0.1 + (-0.2 * zero_pos)
+    tick_length_cm <- arguments[["fine_tuning"]][["tick_length"]] * 5
+    tick_length    <- tick_length_cm + ((-2 * tick_length_cm) * zero_pos)
 
     ticks <- grid::segmentsGrob(x0 = zero_pos,
                                 x1 = grid::unit(zero_pos, "native") - grid::unit(tick_length, "cm"),
                                 y0 = grid::unit(tick_positions, "npc"),
                                 y1 = grid::unit(tick_positions, "npc"),
-                                gp = grid::gpar(col = arguments[["visuals"]][[paste0(which, "_axes_color")]]))
+                                gp = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
 
     # Draw guiding lines
-    if (arguments[["visuals"]][["guiding_lines"]]){
+    if (visuals[["guiding_lines"]]){
         ticks <- grid::segmentsGrob(x0 = 0,
                                     x1 = 1,
                                     y0 = grid::unit(tick_positions, "npc"),
                                     y1 = grid::unit(tick_positions, "npc"),
-                                    gp = grid::gpar(col = arguments[["visuals"]][["guiding_line_color"]],
-                                                    lty = arguments[["visuals"]][["guiding_line_type"]]))
+                                    gp = grid::gpar(col = visuals[["guiding_line_color"]],
+                                                    lty = visuals[["guiding_line_type"]]))
     }
 
     # Format values according to options
@@ -1478,20 +1513,21 @@ setup_y_axes <- function(tick_positions,
     value_positions <- grid::convertUnit(grid::unit(tick_positions, "native")
                                        + grid::unit(0.1, "char"),   "native", valueOnly = TRUE)
 
-    # Insert the group labels for the variable axes
-    label_offset <- -0.02 + (0.04 * zero_pos)
+    # Insert the formatted values for the value axes
+    axes_margin  <- arguments[["fine_tuning"]][["value_axes_margin"]]
+    label_offset <- -axes_margin + ((2 * axes_margin) * zero_pos)
 
     axes_values <- grid::textGrob(label = formatted_tick_values,
                                   x     = label_offset,
                                   y     = value_positions,
                                   just  = c("right", "center"),
-                                  gp    = grid::gpar(col        = arguments[["visuals"]][[paste0(which, "_axes_font_color")]],
-                                                     fontfamily = arguments[["visuals"]][["font"]],
+                                  gp    = grid::gpar(col        = visuals[[paste0(which, "_axes_font_color")]],
+                                                     fontfamily = visuals[["font"]],
                                                      fontsize   = arguments[["dimensions"]][["axes_font_size"]],
-                                                     fontface   = arguments[["visuals"]][["axes_font_face"]]))
+                                                     fontface   = visuals[["axes_font_face"]]))
 
     # Return the whole axes as one graphical object
-    grid::gTree(children = grid::gList(line, ticks, axes_values))
+    grid::gTree(children = grid::gList(line, ticks, axes_values), name = "y_axes")
 }
 
 
@@ -1513,13 +1549,13 @@ setup_x_axes <- function(tick_positions,
                          labels,
                          zero_pos,
                          arguments){
-    tick_length <- 0.02
+    tick_length <- arguments[["fine_tuning"]][["tick_length"]]
 
     # Ticks point up if the x axes is drawn at the top.
     # TODO: IN THIS CASE THE VIEWPORT SHOULD BE SET UP DIFFERENTLY BEFOREHAND.
     #       LABELS SHOULD BE DRAWN AT THE TOP.
     if (zero_pos == 1){
-        tick_length <- -0.02
+        tick_length <- -tick_length
     }
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
@@ -1537,16 +1573,16 @@ setup_x_axes <- function(tick_positions,
     # Insert the group labels for the variable axes
     group_labels <- grid::textGrob(label = labels,
                                    x     = label_positions,
-                                   y     = -0.02,
+                                   y     = -arguments[["fine_tuning"]][["variable_axes_margin"]],
                                    just  = c("center", "top"),
                                    gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
                                                       fontfamily = arguments[["visuals"]][["font"]],
                                                       fontsize   = arguments[["dimensions"]][["axes_font_size"]],
                                                       fontface   = arguments[["visuals"]][["axes_font_face"]],
-                                                      lineheight = 1.1))
+                                                      lineheight = arguments[["fine_tuning"]][["line_height"]]))
 
     # Return the whole axes as one graphical object
-    grid::gTree(children = grid::gList(line, ticks, group_labels))
+    grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
 }
 
 
@@ -1572,7 +1608,7 @@ setup_xy_axes <- function(diagram_info,
                                    diagram_info[["primary_y_values"]],
                                    arguments)
 
-    grid::gTree(children = grid::gList(axes_x, axes_y_primary))
+    grid::gTree(children = grid::gList(axes_x, axes_y_primary), name = "xy_axes")
 }
 
 
@@ -1599,8 +1635,9 @@ setup_xy_axes <- function(diagram_info,
 #' @export
 direct_vertical_labels <- function(diagram_info,
                                    arguments){
-    visuals    <- arguments[["visuals"]]
-    dimensions <- arguments[["dimensions"]]
+    visuals     <- arguments[["visuals"]]
+    dimensions  <- arguments[["dimensions"]]
+    fine_tuning <- arguments[["fine_tuning"]]
 
     if (visuals[["label_type"]] != "lines"){
         return(grid::nullGrob())
@@ -1642,7 +1679,7 @@ direct_vertical_labels <- function(diagram_info,
     drawing_direction  <- 1
     vertical_alignment <- "bottom"
 
-    if (diagram_info[["zero_pos"]] > 0.75){
+    if (diagram_info[["zero_pos"]] > fine_tuning[["swap_direction_threshold"]]){
         drawing_direction  <- -1
         vertical_alignment <- "top"
     }
@@ -1655,7 +1692,7 @@ direct_vertical_labels <- function(diagram_info,
     # zero position.
     distance    <- diagram_info[["primary_y_distance"]]
     line_length <- grid::convertUnit(grid::unit(dimensions[["segment_line_length"]], "cm"),
-                                     "native", valueOnly = TRUE) * distance * 2
+                                     "native", valueOnly = TRUE) * distance * fine_tuning[["segment_line_correction"]]
 
     values_in_group <- diagram_info[["values"]][label_group_selection]
     segment_start_y <- data.table::fifelse(values_in_group * drawing_direction < 0, 0, values_in_group)
@@ -1664,7 +1701,8 @@ direct_vertical_labels <- function(diagram_info,
 
     # Generate a static offset for the lines so that they are a bit apart from the
     # segments and labels.
-    offset_y <- grid::convertUnit(grid::unit(0.5, "cm"), "native", valueOnly = TRUE) * distance * drawing_direction
+    offset_y <- grid::convertUnit(grid::unit(fine_tuning[["segment_line_offset"]], "cm"),
+                                  "native", valueOnly = TRUE) * distance * drawing_direction
 
     # Generate a variable offset according to the text size of the displayed values.
     # If no values are displayed, the offset is 0 and only the static offset counts.
@@ -1676,7 +1714,8 @@ direct_vertical_labels <- function(diagram_info,
         if (!visuals[["rotate_values"]]){
             offset_value <- get_values_height(diagram_info,
                                               dimensions,
-                                              visuals)
+                                              visuals,
+                                              fine_tuning)
 
             offset_value <- rep(offset_value, diagram_info[["number_of_segments"]])
         }
@@ -1698,7 +1737,7 @@ direct_vertical_labels <- function(diagram_info,
             offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
 
             # Add additional offset for the space between segment and value
-            offset_value <- offset_value + (0.2 * offset_value)
+            offset_value <- offset_value + (fine_tuning[["values_zero_line_offset"]] * offset_value)
         }
 
         # Reset offset, if values fit inside the segments, because then only the
@@ -1723,7 +1762,7 @@ direct_vertical_labels <- function(diagram_info,
     # Get the ending y, which is a fixed height from the segments. The maximum height
     # is right below the highest axes value.
     segment_end_y <- collapse::fmin(c(collapse::fmax(abs(segment_start_y) + line_length),
-                                      abs(max_value) * 0.95)) * drawing_direction
+                                      abs(max_value) * fine_tuning[["segment_line_treshhold"]])) * drawing_direction
 
     # Draw lines in stairs
     line_stairs   <- seq(0, by = dimensions[["segment_line_offset"]], length.out = length(segment_start_y))
@@ -1740,7 +1779,7 @@ direct_vertical_labels <- function(diagram_info,
     line_ids <- rep(seq_along(segment_centers_x), each = 2)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Generate graphical opbjects
+    # Generate graphical objects
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Set the horizontal label alignment according to whether the segment lines are
@@ -1749,31 +1788,33 @@ direct_vertical_labels <- function(diagram_info,
 
     if (dimensions[["segment_line_offset"]] > 0){
         horizontal_alignment <- "left"
-        segment_centers_x    <- segment_centers_x * 0.95
+        segment_centers_x    <- segment_centers_x * (1 - fine_tuning[["segment_label_hjust"]])
     }
     else if (dimensions[["segment_line_offset"]] < 0){
         horizontal_alignment <- "right"
-        segment_centers_x    <- segment_centers_x * 1.05
+        segment_centers_x    <- segment_centers_x * (1 + fine_tuning[["segment_label_hjust"]])
     }
 
     # Generate the lines
-    lines <- grid::polylineGrob(x  = grid::unit(center_vector, "npc"),
-                                y  = grid::unit(line_vector, "native"),
-                                id = line_ids,
-                                gp = grid::gpar(col = visuals[["segment_line_color"]],
-                                                lty = visuals[["segment_line_type"]],
-                                                lwd = dimensions[["line_thickness"]]))
+    lines <- grid::polylineGrob(x    = grid::unit(center_vector, "npc"),
+                                y    = grid::unit(line_vector, "native"),
+                                id   = line_ids,
+                                name = "segment_lines",
+                                gp   = grid::gpar(col = visuals[["segment_line_color"]],
+                                                  lty = visuals[["segment_line_type"]],
+                                                  lwd = dimensions[["line_thickness"]]))
 
     # Generate the labels on top of the lines
     segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
                                      x     = grid::unit(segment_centers_x, "npc"),
                                      y     = grid::unit(segment_end_y + offset_y, "native"),
                                      just  = c(horizontal_alignment, vertical_alignment),
+                                     name  = "segment_labels",
                                      gp    = grid::gpar(col        = visuals[["label_font_color"]],
                                                         fontfamily = visuals[["font"]],
                                                         fontsize   = dimensions[["label_font_size"]],
                                                         fontface   = visuals[["label_font_face"]],
-                                                        lineheight = 1.1))
+                                                        lineheight = fine_tuning[["line_height"]]))
 
     # Return whole label object
     grid::gList(lines, segment_labels)
@@ -1790,6 +1831,7 @@ direct_vertical_labels <- function(diagram_info,
 #'
 #' @param graphic_object The complete graphic to be drawn or exported.
 #' @param dimensions qol package dimensions options.
+#' @param fine_tuning The list of fine tuning parameters.
 #' @param output qol package output options.
 #'
 #' @return
@@ -1798,6 +1840,7 @@ direct_vertical_labels <- function(diagram_info,
 #' @export
 output_graphic <- function(graphic_object,
                            dimensions,
+                           fine_tuning,
                            output){
     # First check if full file path is provided. If not only draw graphic in plot window.
     if (is.null(output[["save_path"]]) || is.null(output[["file"]])){
@@ -1822,8 +1865,8 @@ output_graphic <- function(graphic_object,
             # Output into desired format
             if (extension == "png"){
                 grDevices::png(paste0(output[["save_path"]], "/", output[["file"]]),
-                               width  = dimensions[["width"]]  / 2.54,
-                               height = dimensions[["height"]] / 2.54,
+                               width  = dimensions[["width"]]  / fine_tuning[["cm_to_inch_factor"]],
+                               height = dimensions[["height"]] / fine_tuning[["cm_to_inch_factor"]],
                                units  = "in",
                                res    = output[["resolution"]])
 

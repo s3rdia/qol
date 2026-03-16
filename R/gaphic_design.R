@@ -58,6 +58,7 @@
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #' @param number_formats Number formats set with [number_format_style()].
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
 #' @param output Output parameters set with [graphic_output()].
@@ -65,9 +66,10 @@
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
 #' for a combination.
-#' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
-#' if one only wants to catch the output data frame and workbook with meta information.
-#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
+#' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything.
+#' Can be used if one only wants to catch the output data frame and workbook with meta information.
+#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions
+#' time consumption.
 #'
 #' @details
 #' [design_graphic()] is based on the 'SAS' procedure Proc Tabulate, which provides
@@ -80,7 +82,7 @@
 #' @seealso
 #' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
 #' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()]
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
 #' Global graphic options: [graphic_visuals()], [add_color_theme()], [get_theme_colors()],
 #' [get_theme_base_colors()], [get_theme_font_inside_colors()], [get_theme_font_outside_colors()],
@@ -167,6 +169,7 @@ design_graphic <- function(data_frame,
                            visuals        = .qol_options[["graphic_visuals"]],
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
+                           fine_tuning    = .qol_options[["graphic_fine_tuning"]],
                            number_formats = .qol_options[["graphic_number_formats"]],
                            add_texts      = .qol_options[["graphic_texts"]],
                            output         = .qol_options[["graphic_output"]],
@@ -676,7 +679,7 @@ design_graphic <- function(data_frame,
         graphic_list <- generate_graphic(graphic_tab, axes_vars, segment_vars, statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
                                          diagram, color_theme, color_usage, visuals, axes, dimensions,
-                                         add_texts, output, monitor_df = monitor_df)
+                                         fine_tuning, add_texts, output, monitor_df = monitor_df)
 
         plot_element <- graphic_list[[1]]
         monitor_df   <- graphic_list[[2]]
@@ -686,7 +689,7 @@ design_graphic <- function(data_frame,
         graphic_list <- generate_graphic_by(graphic_tab, axes_vars, segment_vars, statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
                                             diagram, color_theme, color_usage, visuals, axes, dimensions,
-                                            add_texts, output, na.rm, print_miss, monitor_df)
+                                            fine_tuning, add_texts, output, na.rm, print_miss, monitor_df)
 
         plot_element <- graphic_list[[1]]
         monitor_df   <- graphic_list[[2]]
@@ -734,6 +737,7 @@ design_graphic <- function(data_frame,
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
 #' @param output Output parameters set with [graphic_output()].
 #' @param by_info Text which contains the information which variable with which
@@ -762,6 +766,7 @@ generate_graphic <- function(graphic_tab,
                              visuals,
                              axes,
                              dimensions,
+                             fine_tuning,
                              add_texts,
                              output,
                              by_info = NULL,
@@ -780,7 +785,8 @@ generate_graphic <- function(graphic_tab,
     viewport <- setup_main_canvas(width  = dimensions[["graphic_width"]],
                                   height = dimensions[["graphic_height"]],
                                   background_color = visuals[["graphic_background_color"]],
-                                  border_color     = visuals[["graphic_border_color"]])
+                                  border_color     = visuals[["graphic_border_color"]],
+                                  line_height      = fine_tuning[["line_height"]])
 
     # Get titles and footnotes as graphical objects
     title_grob    <- add_title(titles, dimensions, visuals)
@@ -806,6 +812,7 @@ generate_graphic <- function(graphic_tab,
                          visuals,
                          axes,
                          dimensions,
+                         fine_tuning,
                          title_height,
                          footnote_height,
                          origin_height)
@@ -826,10 +833,11 @@ generate_graphic <- function(graphic_tab,
     whole_graphic <- grid::gTree(children = grid::gList(title_grob,
                                                         grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                                                         footnote_grob, origin_grob),
-                                 childrenvp = viewport_tree)
+                                 childrenvp = viewport_tree,
+                                 name       = "graphic")
 
     # Draw and save the graphic
-    output_graphic(whole_graphic, dimensions, output)
+    output_graphic(whole_graphic, dimensions, fine_tuning, output)
 
     grid::popViewport()
 
@@ -873,6 +881,7 @@ generate_graphic <- function(graphic_tab,
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
 #' @param output Output parameters set with [graphic_output()].
 #' @param na.rm If TRUE removes all NA values from the tabulation.
@@ -901,6 +910,7 @@ generate_graphic_by <- function(graphic_tab,
                                 visuals,
                                 axes,
                                 dimensions,
+                                fine_tuning,
                                 add_texts,
                                 output,
                                 na.rm,

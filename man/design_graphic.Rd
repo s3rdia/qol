@@ -24,6 +24,7 @@ design_graphic(
   visuals = .qol_options[["graphic_visuals"]],
   axes = .qol_options[["graphic_axes"]],
   dimensions = .qol_options[["graphic_dimensions"]],
+  fine_tuning = .qol_options[["graphic_fine_tuning"]],
   number_formats = .qol_options[["graphic_number_formats"]],
   add_texts = .qol_options[["graphic_texts"]],
   output = .qol_options[["graphic_output"]],
@@ -102,6 +103,8 @@ from the color scheme are used for which number of segments.}
 
 \item{dimensions}{Dimension parameters set with \code{\link[=graphic_dimensions]{graphic_dimensions()}}.}
 
+\item{fine_tuning}{Fine tuning parameters set with \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}.}
+
 \item{number_formats}{Number formats set with \code{\link[=number_format_style]{number_format_style()}}.}
 
 \item{add_texts}{Use the \code{\link[=add_textbox]{add_textbox()}} function to freely place one or multiple textboxes.}
@@ -114,10 +117,11 @@ from the color scheme are used for which number of segments.}
 grouping variables based on the provided formats, even if there are no observations
 for a combination.}
 
-\item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
-if one only wants to catch the output data frame and workbook with meta information.}
+\item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything.
+Can be used if one only wants to catch the output data frame and workbook with meta information.}
 
-\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.}
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the functions
+time consumption.}
 
 \item{pct_group}{If pct_group is specified in the statistics, this option is used to
 determine which variable of the row and column variables should add up to 100 \%.
@@ -177,7 +181,7 @@ qol_graphic <- my_data |>
 \seealso{
 Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
 \code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
 Global graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
 \code{\link[=get_theme_base_colors]{get_theme_base_colors()}}, \code{\link[=get_theme_font_inside_colors]{get_theme_font_inside_colors()}}, \code{\link[=get_theme_font_outside_colors]{get_theme_font_outside_colors()}},
