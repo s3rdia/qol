@@ -165,3 +165,19 @@ unlist_variables <- function(var_names){
         NULL
     })
 }
+
+
+#' Check For Character Vectors
+#'
+#' @description
+#' Checks for valid character vectors.
+#'
+#' @param vector_to_check A vector to check..
+#'
+#' @return
+#' Returns TRUE or FALSE depending on the result.
+#'
+#' @noRd
+is_character_vector <- function(vector_to_check){
+    is.character(vector_to_check) && length(vector_to_check) > 1
+}

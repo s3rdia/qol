@@ -371,6 +371,27 @@ state_df <- state_df |>
       if.(state == 1, state_b = "State 1") |>
       if.(state < 11, state_b = "West") |>
     else.(            state_b = "East")
+    
+# Use if.() as a do-over-loop. In this kind of loop all vectors will be
+# advanced one iteration at a time in parallel.
+money    <- c("income", "expenses", "balance", "probability")
+new_vars <- c("var1", "var2", "var3", "var4")
+result   <- c(1, 2, 3, 4)
+
+do_over_df <- my_data |>
+      if.(money > 0, new_vars = result) |>
+    else.(           new_vars = 0)
+    
+# All these functions can be used in a do_if() situation and are aware of
+# overarching conditions.
+do_if_df <- my_data |>
+    do_if(state < 11) |>
+          if.(age < 18, age_cat = 1) |>
+        else.(          age_cat = 2) |>
+    else_do() |>
+          if.(age < 18, age_cat = 3) |>
+        else.(          age_cat = 4) |>
+    end_do()
 ```
 
 ## Monitoring
@@ -481,6 +502,11 @@ can be found on GitHub.
   Else if - Else Statements
 - [`where.()`](https://s3rdia.github.io/qol/reference/where..md) :
   Filter Data Frame With Direct View
+- [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md) :
+  Lock In A Condition
 
 ## Monitoring
 

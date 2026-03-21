@@ -3,6 +3,13 @@
 ### New functions
 
 * `row_calculation()`: Perform row wise calculations on numeric variables. (12.03.2026)
+* `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again. (21.03.2026)
+
+### New functionality
+
+* `if.()`, `else_if.()`: The ":" can now be used in conditions as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (21.03.2026)
+* `if.()`, `else_if.()`, `else.()`: All functions are now able to handle vectors in a do over loop. Meaning, that if using vectors in conditions or assignments, the functions will iterate over each vector simultaneously. (21.03.2026)
+* `if.()`, `else_if.()`, `else.()`: Can be used within the new `do_if()` context. (21.03.2026)
 
 ### Fixed
 
@@ -18,6 +25,7 @@
 ### Additionally
 
 * `any_table()`: `statistics` parameter is now NULL by default to enable group percentages to be computed on their own without sums. (11.03.2026)
+* Swapped out a variable in `split_by()` test, because the test didn't trow the expected error. To me this seems like a once in a lifetime error, because I can't reproduce this. (11.03.2026)
 
 # qol 1.2.2
 

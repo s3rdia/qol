@@ -98,7 +98,7 @@ test_that("Split data frame aborts if variable is not part of the data frame", {
 
 test_that("Split data frame aborts if duplicate list entry names are produced", {
     expect_message(split_list <- dummy_df |>
-          split_by(state, sex), " X ERROR: Variable 'sex' caused duplicate list entry names.")
+          split_by(state, age), " X ERROR: Variable 'age' caused duplicate list entry names.")
 })
 
 

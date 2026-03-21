@@ -23,8 +23,15 @@ Filter observations and variables and directly view the result on screen.
 # Example data frame
 my_data <- dummy_data(1000)
 
-# G         et a quick filtered view
+# Get a quick filtered view
 my_data |> where.(sex == 1 & age < 25,
                   c(sex, age, household_id, education))
 
+}
+\seealso{
+The following functions can make use of the \code{\link[=do_if]{do_if()}} filter variables:
+
+Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
+
+Filter Data Frame: \code{\link[=where.]{where.()}}
 }

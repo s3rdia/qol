@@ -66,13 +66,19 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a filtered data frame.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>The following functions can make use of the <code><a href="do_if.html">do_if()</a></code> filter variables:</p>
+<p>Conditions: <code><a href="if_else.html">if.()</a></code>, <code><a href="if_else.html">else_if.()</a></code>, <code><a href="if_else.html">else.()</a></code></p>
+<p>Filter Data Frame: <code>where.()</code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># G         et a quick filtered view</span></span>
+<span><span class="co"># Get a quick filtered view</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">where.</span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;</span> <span class="fl">25</span>,</span>
 <span>                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">age</span>, <span class="va">household_id</span>, <span class="va">education</span><span class="op">)</span><span class="op">)</span></span>
 <span></span></code></pre></div>

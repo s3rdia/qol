@@ -4,6 +4,13 @@ Last CRAN release was on 11.03.2026.
 ### New functions
 
 * `row_calculation()`: Perform row wise calculations on numeric variables.
+* `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again.
+
+### New functionality
+
+* `if.()`, `else_if.()`: The ":" can now be used in conditions as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:").
+* `if.()`, `else_if.()`, `else.()`: All functions are now able to handle vectors in a do over loop. Meaning, that if using vectors in conditions or assignments, the functions will iterate over each vector simultaneously.
+* `if.()`, `else_if.()`, `else.()`: Can be used within the new `do_if()` context.
 
 ### Fixed
 
@@ -19,6 +26,7 @@ Last CRAN release was on 11.03.2026.
 ### Additionally
 
 * `any_table()`: Fixed two of the examples where `list` was missing in formats parameter.
+* Swapped out a variable in `split_by()` test, because the test didn't trow the expected error. To me this seems like a once in a lifetime error, because I can't reproduce this. 
 
 
 ## R CMD check results

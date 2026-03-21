@@ -88,6 +88,11 @@
   Else if - Else Statements
 - [`where.()`](https://s3rdia.github.io/qol/reference/where..md) :
   Filter Data Frame With Direct View
+- [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md)
+  [`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md) :
+  Lock In A Condition
 
 ## Monitoring
 

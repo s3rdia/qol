@@ -189,7 +189,7 @@ deparse_colon <- function(data_frame, variable_vector){
                 variables   <- c(variables, matches)
             }
             # When at the start (":text"), select all variables which end with the characters
-            # following the colon. ":" acts as a placeholder for everything that comes before
+            # following the colon. ":" acts as a placeholder for everything that comes before.
             else if (startsWith(variable, ":")){
                 search_term <- substring(variable, 2)
                 matches     <- names(data_frame)[endsWith(names(data_frame), search_term)]

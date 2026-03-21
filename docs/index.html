@@ -378,7 +378,28 @@
 <span><span class="va">state_df</span> <span class="op">&lt;-</span> <span class="va">state_df</span> <span class="op">|&gt;</span></span>
 <span>      <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">state</span> <span class="op">==</span> <span class="fl">1</span>, state_b <span class="op">=</span> <span class="st">"State 1"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>      <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">state</span> <span class="op">&lt;</span> <span class="fl">11</span>, state_b <span class="op">=</span> <span class="st">"West"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>            state_b <span class="op">=</span> <span class="st">"East"</span><span class="op">)</span></span></code></pre></div>
+<span>    <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>            state_b <span class="op">=</span> <span class="st">"East"</span><span class="op">)</span></span>
+<span>    </span>
+<span><span class="co"># Use if.() as a do-over-loop. In this kind of loop all vectors will be</span></span>
+<span><span class="co"># advanced one iteration at a time in parallel.</span></span>
+<span><span class="va">money</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"income"</span>, <span class="st">"expenses"</span>, <span class="st">"balance"</span>, <span class="st">"probability"</span><span class="op">)</span></span>
+<span><span class="va">new_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"var1"</span>, <span class="st">"var2"</span>, <span class="st">"var3"</span>, <span class="st">"var4"</span><span class="op">)</span></span>
+<span><span class="va">result</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">do_over_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">money</span> <span class="op">&gt;</span> <span class="fl">0</span>, new_vars <span class="op">=</span> <span class="va">result</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>           new_vars <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>    </span>
+<span><span class="co"># All these functions can be used in a do_if() situation and are aware of</span></span>
+<span><span class="co"># overarching conditions.</span></span>
+<span><span class="va">do_if_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/do_if.html">do_if</a></span><span class="op">(</span><span class="va">state</span> <span class="op">&lt;</span> <span class="fl">11</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>          <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">18</span>, age_cat <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>          age_cat <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/do_if.html">else_do</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>          <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">18</span>, age_cat <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>          age_cat <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="reference/do_if.html">end_do</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="monitoring">Monitoring<a class="anchor" aria-label="anchor" href="#monitoring"></a>

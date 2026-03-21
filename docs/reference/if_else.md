@@ -50,6 +50,17 @@ else.(data_frame, ...)
 Returns a data frame with conditionally computed variables. If assigned
 values are of different types a character variable will be returned.
 
+## See also
+
+The following functions can make use of the
+[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) filter
+variables:
+
+Conditions: `if.()`, `else_if.()`, `else.()`
+
+Filter Data Frame:
+[`where.()`](https://s3rdia.github.io/qol/reference/where..md)
+
 ## Examples
 
 ``` r
@@ -80,6 +91,49 @@ state_df <- state_df |>
       if.(state < 11, state_b = "West") |>
     else.(            state_b = "East")
 
+# Add multiple variables based on single conditions
+multi_df <- my_data |>
+         if.(age < 18 & education == "low",                  var1 = 1,
+                                                             var2 = TRUE,
+                                                             var3 = "Category 1") |>
+    else_if.(age >= 18 & education %in% c("middle", "high"), var1 = 2,
+                                                             var2 = FALSE,
+                                                             var3 = "Category 2") |>
+    else.   (                                                var1 = 3,
+                                                             var2 = FALSE,
+                                                             var3 = "Category 3")
+
+# Use if.() as a do-over-loop. In this kind of loop all vectors will be
+# advanced one iteration at a time in parallel.
+money    <- c("income", "expenses", "balance", "probability")
+new_vars <- c("var1", "var2", "var3", "var4")
+result   <- c(1, 2, 3, 4)
+
+do_over_df <- my_data |>
+      if.(money > 0, new_vars = result) |>
+    else.(           new_vars = 0)
+
+# It is also possible to select character expressions based on whether they
+# start/end with or contain a certain text.
+text_select_df <- my_data |>
+    if.(income_class == "01.:",  start    = 1) |>
+    if.(income_class == ":more", end      = 1) |>
+    if.(education    == ":i:",   contains = 1)
+
 # Select observations by condition instead of generating new variable
 subset_df <- my_data |> if.(sex == 1)
+
+# Select all non NA observations by variable
+subset_df <- my_data |> if.(sex)
+
+# All these functions can be used in a do_if() situation and are aware of
+# overarching conditions.
+do_if_df <- my_data |>
+    do_if(state < 11) |>
+          if.(age < 18, new_var = 1) |>
+        else.(          new_var = 2) |>
+    else_do() |>
+          if.(age < 18, new_var = 3) |>
+        else.(          new_var = 4) |>
+    end_do()
 ```

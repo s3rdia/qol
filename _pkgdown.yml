@@ -59,6 +59,10 @@ reference:
   - else_if.
   - else.
   - where.
+  - do_if
+  - else_do
+  - end_do
+  - end_all_do
 - title: Monitoring
   contents:
   - monitor_start

@@ -42,6 +42,17 @@
 <h4 id="new-functions-1-2-3">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-3"></a></h4>
 <ul><li>
 <code><a href="../reference/row_calculation.html">row_calculation()</a></code>: Perform row wise calculations on numeric variables. (12.03.2026)</li>
+<li>
+<code><a href="../reference/do_if.html">do_if()</a></code>, <code><a href="../reference/do_if.html">else_do()</a></code>, <code><a href="../reference/do_if.html">end_do()</a></code>, <code><a href="../reference/do_if.html">end_all_do()</a></code>: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again. (21.03.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-functionality-1-2-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-3"></a></h4>
+<ul><li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>: The “:” can now be used in conditions as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (21.03.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: All functions are now able to handle vectors in a do over loop. Meaning, that if using vectors in conditions or assignments, the functions will iterate over each vector simultaneously. (21.03.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Can be used within the new <code><a href="../reference/do_if.html">do_if()</a></code> context. (21.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
@@ -66,6 +77,7 @@
 <h4 id="additionally-1-2-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-3"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: <code>statistics</code> parameter is now NULL by default to enable group percentages to be computed on their own without sums. (11.03.2026)</li>
+<li>Swapped out a variable in <code><a href="../reference/split_by.html">split_by()</a></code> test, because the test didn’t trow the expected error. To me this seems like a once in a lifetime error, because I can’t reproduce this. (11.03.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
