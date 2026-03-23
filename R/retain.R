@@ -85,9 +85,8 @@ running_number <- function(data_frame,
 
     # In case of a by variable
     if (length(by) == 1){
-        variable <- stats::ave(seq_len(collapse::fnrow(data_frame)),
-                                       data.table::rleid(data_frame[[by]]),
-                                       FUN = seq_along)
+        renumber <- data.table::rleid(data_frame[[by]])
+        variable <- sequence(tabulate(renumber))
     }
     # In case of no by variable
     else{

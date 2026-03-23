@@ -339,37 +339,16 @@ get_duplicate_var_count <- function(data_frame){
 #'
 #' @export
 round_values <- function(values, digits = 0){
-    if (!is.numeric(values)){
-        # Translate ... into a list if possible
-        values <- tryCatch({
-            # Force evaluation to see if it exists
-            unlist(values)
-        }, error = function(e) {
-            # Evaluation failed
-            NULL
-        })
+  if (!is.numeric(values)){
+      message(" X ERROR: Only numeric values allowed. Rounding will be aborted.")
 
-        if (!is.numeric(values)){
-            message(" X ERROR: Only numeric values allowed.")
-            return(invisible(values))
-        }
-    }
+      return(invisible(values))
+  }
 
-    # Get positive and negative signs
-    number_signs <- sign(values)
+  # Pre calculate the multiplier
+  p   <- 10 ^ digits
+  eps <- .Machine[["double.eps"]]
 
-    # Multiply absolute values by number of desired digits to have the desired numbers
-    # before the decimal places.
-    temp_values <- abs(values) * (10 ^ digits)
-
-    # And a half and the tiniest bit
-    temp_values <- temp_values + 0.5 + sqrt(.Machine[["double.eps"]])
-
-    # Remove all decimal places and convert back to the original form with the desired
-    # number of decimal places.
-    temp_values <- trunc(temp_values)
-    temp_values <- temp_values / (10 ^ digits)
-
-    # Bring back the original signs
-    temp_values * number_signs
+  # Using vectorized math to reduce the number of temporary objects created otherwise
+  trunc(abs(values) * p + (0.5 + sqrt(eps))) / p * sign(values)
 }

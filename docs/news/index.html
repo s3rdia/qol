@@ -44,6 +44,8 @@
 <code><a href="../reference/row_calculation.html">row_calculation()</a></code>: Perform row wise calculations on numeric variables. (12.03.2026)</li>
 <li>
 <code><a href="../reference/do_if.html">do_if()</a></code>, <code><a href="../reference/do_if.html">else_do()</a></code>, <code><a href="../reference/do_if.html">end_do()</a></code>, <code><a href="../reference/do_if.html">end_all_do()</a></code>: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again. (21.03.2026)</li>
+<li>
+<code><a href="../reference/compute.html">compute()</a></code>: Compute new variables without having to write the name of the data frame multiple times. (23.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-3"></a></h4>
@@ -53,6 +55,10 @@
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: All functions are now able to handle vectors in a do over loop. Meaning, that if using vectors in conditions or assignments, the functions will iterate over each vector simultaneously. (21.03.2026)</li>
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Can be used within the new <code><a href="../reference/do_if.html">do_if()</a></code> context. (21.03.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Since the functions now make use of the new <code><a href="../reference/compute.html">compute()</a></code>, they are able to do more than just simple variable assignments and can also perform calculations. (23.03.2026)</li>
+<li>
+<code><a href="../reference/row_calculation.html">row_calculation()</a></code>: Now has an optional rounding parameter. (23.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
@@ -74,10 +80,21 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: <code>balance</code> variable wasn’t calculated correctly, which is now fixed. (12.03.2026)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>
+<ul><li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: With the new <code><a href="../reference/compute.html">compute()</a></code> they now perform variable assignments and calculations in a single pass instead of per iteration. (23.03.2026)</li>
+<li>
+<code><a href="../reference/retain.html">running_number()</a></code>: Now uses faster <code>data.table</code> function. (23.03.2026)</li>
+<li>
+<code><a href="../reference/round_values.html">round_values()</a></code>: Now uses vectorized math to reduce memory allocation. (23.03.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="additionally-1-2-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-3"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: <code>statistics</code> parameter is now NULL by default to enable group percentages to be computed on their own without sums. (11.03.2026)</li>
-<li>Swapped out a variable in <code><a href="../reference/split_by.html">split_by()</a></code> test, because the test didn’t trow the expected error. To me this seems like a once in a lifetime error, because I can’t reproduce this. (11.03.2026)</li>
+<li>Swapped out a variable in abort <code><a href="../reference/split_by.html">split_by()</a></code> because of duplicates test, because the test didn’t throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended. (23.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Upped the dummy_data observations in tests to prevent rare errors. (23.03.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

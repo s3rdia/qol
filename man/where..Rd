@@ -34,4 +34,6 @@ The following functions can make use of the \code{\link[=do_if]{do_if()}} filter
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 
 Filter Data Frame: \code{\link[=where.]{where.()}}
+
+Create new Variables: \code{\link[=compute]{compute()}}
 }

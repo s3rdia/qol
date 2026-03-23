@@ -25,7 +25,7 @@ Returns a data frame with a new filter variable.
 }
 \description{
 Creates a filter variable based on the given condition. This variable can be
-accessed by \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}} and \code{\link[=where.]{where.()}}, enabling these
+accessed by \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}} and \code{\link[=compute]{compute()}}, enabling these
 functions to work with an overarching condition. This function can also be
 used to nest multiple overarching conditions.
 
@@ -84,4 +84,6 @@ The following functions can make use of the \code{\link[=do_if]{do_if()}} filter
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 
 Filter Data Frame: \code{\link[=where.]{where.()}}
+
+Create new Variables: \code{\link[=compute]{compute()}}
 }

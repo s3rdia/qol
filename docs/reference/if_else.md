@@ -43,12 +43,11 @@ else.(data_frame, ...)
 
 - ...:
 
-  The Assignment of what should happen when condition becomes TRUE.
+  The assignment of what should happen when condition becomes TRUE.
 
 ## Value
 
-Returns a data frame with conditionally computed variables. If assigned
-values are of different types a character variable will be returned.
+Returns a data frame with conditionally computed variables.
 
 ## See also
 
@@ -60,6 +59,9 @@ Conditions: `if.()`, `else_if.()`, `else.()`
 
 Filter Data Frame:
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md)
+
+Create new Variables:
+[`compute()`](https://s3rdia.github.io/qol/reference/compute.md)
 
 ## Examples
 

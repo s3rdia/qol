@@ -5,7 +5,7 @@ Perform row wise calculations on numeric variables.
 ## Usage
 
 ``` r
-row_calculation(data_frame, statistics, ...)
+row_calculation(data_frame, statistics, ..., round_digits = NULL)
 ```
 
 ## Arguments
@@ -22,6 +22,10 @@ row_calculation(data_frame, statistics, ...)
 - ...:
 
   Variable names of the value variables.
+
+- round_digits:
+
+  The number of decimal places the values should be rounded to.
 
 ## Value
 

@@ -95,19 +95,6 @@ test_that("if. and else_if. are not the same", {
 })
 
 
-test_that("Type conversion in if. block on type mismatch", {
-    expect_message(test_df1 <- dummy_df |>
-             if.(age < 18,             age_group = "under 18") |>
-        else_if.(age >= 18 & age < 65, age_group = 1) |>
-        else.   (                      age_group = "65 and older"), " ! WARNING: Type mismatch")
-
-        expect_message(test_df2 <- dummy_df |>
-             if.(age < 18,             age_group = 1) |>
-        else_if.(age >= 18 & age < 65, age_group = "18 to under 65") |>
-        else.   (                      age_group = 2), " ! WARNING: Type mismatch")
-})
-
-
 test_that("if. can check for variable expressions starting with letter", {
     letter_df <- dummy_df |> if.(education == "m:", edu = 1)
     test_df   <- letter_df |> if.(edu)
@@ -173,8 +160,10 @@ test_that("do_if blocks", {
       male_df <- test_df |> collapse::fsubset(sex == 1)
     female_df <- test_df |> collapse::fsubset(sex == 2)
 
-    expect_true(all(collapse::funique(male_df[["age_group"]]) %in% c(1, 2, 3)))
-    expect_true(all(collapse::funique(female_df[["age_group"]]) %in% c(4, 5, 6)))
+    expect_true( all(collapse::funique(male_df[["age_group"]]) %in% c(1, 2, 3)))
+    expect_true(!all(collapse::funique(male_df[["age_group"]]) %in% c(4, 5, 6)))
+    expect_true( all(collapse::funique(female_df[["age_group"]]) %in% c(4, 5, 6)))
+    expect_true(!all(collapse::funique(female_df[["age_group"]]) %in% c(1, 2, 3)))
 })
 
 
@@ -184,6 +173,33 @@ test_that("do_if blocks with end_all_do", {
         end_all_do()
 
     expect_equal(test_df, dummy_df)
+})
+
+
+test_that("if. can do all kinds of calculations", {
+    variables  <- c("NEW_VAR1", "NEW_VAR2")
+    values     <- c(1, 2)
+
+    result_df <- dummy_df |> if.(state < 11, sum       = state + age,
+                                             col_sum   = collapse::fsum(age),
+                                             row_sum   = row_calculation("sum", state, age),
+                                             var1      = 1,
+                                             var2      = "Hello",
+                                             variables = values) |>
+                       else_if.(state == 11, sum       = state + age,
+                                             col_sum   = collapse::fsum(age),
+                                             row_sum   = row_calculation("sum", state, age),
+                                             var1      = 1,
+                                             var2      = "Hello",
+                                             variables = values) |>
+                                       else.(sum       = state + age,
+                                             col_sum   = collapse::fsum(age),
+                                             row_sum   = row_calculation("sum", state, age),
+                                             var1      = 1,
+                                             var2      = "Hello",
+                                             variables = values)
+
+    expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)))
 })
 
 ###############################################################################
@@ -245,16 +261,6 @@ test_that("Filter data frame with where.", {
 # Warning checks
 ###############################################################################
 
-test_that("if. as do over loop throws a warning when trying to make more than one variable assignment", {
-    vars1  <- c("income", "balance")
-    vars2  <- c("VAR1", "VAR2")
-    values <- c(1, 2)
-
-    expect_message(do_over_df <- dummy_df |> if.(vars1 > 0, vars2 = values, test = 1),
-                   " ! WARNING: When using vectors in conditions or variable assignments, only one")
-})
-
-
 test_that("else_do throws a warning when there is no active filter", {
     expect_message(test_df <- dummy_df |> else_do(),
                    " ! WARNING: No active filter variable found.")
@@ -301,5 +307,5 @@ test_that("if. as do over loop aborts without variable assignment", {
                    " X ERROR: When using vectors in conditions, there must be a variable assignment.")
 
     expect_message(do_over_df <- dummy_df |> else_if.(vars1 > 0),
-                   " X ERROR: When using vectors in conditions, there must be a variable assignment.")
+                   " ! WARNING: No assignments found. If you want to filter observations")
 })

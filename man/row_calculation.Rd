@@ -4,7 +4,7 @@
 \alias{row_calculation}
 \title{Perform Row Wise Calculations}
 \usage{
-row_calculation(data_frame, statistics, ...)
+row_calculation(data_frame, statistics, ..., round_digits = NULL)
 }
 \arguments{
 \item{data_frame}{A data frame in which are the values to be calculated.}
@@ -13,6 +13,8 @@ row_calculation(data_frame, statistics, ...)
 "min", "max".}
 
 \item{...}{Variable names of the value variables.}
+
+\item{round_digits}{The number of decimal places the values should be rounded to.}
 }
 \value{
 Returns a numeric vector.

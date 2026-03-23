@@ -10,6 +10,7 @@
 #' @param statistics Available functions: "sum", "freq", "mean", "median", "mode",
 #' "min", "max".
 #' @param ... Variable names of the value variables.
+#' @param round_digits The number of decimal places the values should be rounded to.
 #'
 #' @return
 #' Returns a numeric vector.
@@ -26,7 +27,8 @@
 #' @export
 row_calculation <- function(data_frame,
                             statistics,
-                            ...){
+                            ...,
+                            round_digits = NULL){
     # Just keep the selected variables and transpose the entire matrix. Since
     # the rows then become the columns, it is possible to just use column wise
     # operations on the matrix.
@@ -67,7 +69,13 @@ row_calculation <- function(data_frame,
                             NULL)
 
     # Compute row result and return as vector
-    stat_function(var_matrix)
+    result <- stat_function(var_matrix)
+
+    if (!is.null(round_digits)){
+        result <- round_values(result, round_digits)
+    }
+
+    result
 }
 
 

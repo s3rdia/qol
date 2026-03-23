@@ -5,12 +5,15 @@ Last CRAN release was on 11.03.2026.
 
 * `row_calculation()`: Perform row wise calculations on numeric variables.
 * `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again.
+* `compute()`: Compute new variables without having to write the name of the data frame multiple times.
 
 ### New functionality
 
 * `if.()`, `else_if.()`: The ":" can now be used in conditions as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:").
 * `if.()`, `else_if.()`, `else.()`: All functions are now able to handle vectors in a do over loop. Meaning, that if using vectors in conditions or assignments, the functions will iterate over each vector simultaneously.
 * `if.()`, `else_if.()`, `else.()`: Can be used within the new `do_if()` context.
+* `if.()`, `else_if.()`, `else.()`: Since the functions now make use of the new `compute()`, they are able to do more than just simple variable assignments and can also perform calculations.
+* `row_calculation()`: Now has an optional rounding parameter.
 
 ### Fixed
 
@@ -23,10 +26,17 @@ Last CRAN release was on 11.03.2026.
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely.
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed.
 
+### Optimization
+
+* `if.()`, `else_if.()`, `else.()`: With the new `compute()` they now perform variable assignments and calculations in a single pass instead of per iteration.
+* `running_number()`: Now uses faster `data.table` function.
+* `round_values()`: Now uses vectorized math to reduce memory allocation.
+
 ### Additionally
 
 * `any_table()`: Fixed two of the examples where `list` was missing in formats parameter.
-* Swapped out a variable in `split_by()` test, because the test didn't trow the expected error. To me this seems like a once in a lifetime error, because I can't reproduce this. 
+* Swapped out a variable in abort `split_by()` because of duplicates test, because the test didn't throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended.
+* `any_table()`: Upped the dummy_data observations in tests to prevent rare errors.
 
 
 ## R CMD check results

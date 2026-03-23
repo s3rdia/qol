@@ -18,11 +18,10 @@ else.(data_frame, ...)
 
 \item{condition}{The condition on which a value should be passed to a variable.}
 
-\item{...}{The Assignment of what should happen when condition becomes TRUE.}
+\item{...}{The assignment of what should happen when condition becomes TRUE.}
 }
 \value{
-Returns a data frame with conditionally computed variables. If assigned values
-are of different types a character variable will be returned.
+Returns a data frame with conditionally computed variables.
 }
 \description{
 These functions make if statements more readable. Especially if an if block becomes bigger
@@ -124,5 +123,7 @@ The following functions can make use of the \code{\link[=do_if]{do_if()}} filter
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 
 Filter Data Frame: \code{\link[=where.]{where.()}}
+
+Create new Variables: \code{\link[=compute]{compute()}}
 }
 \keyword{internal}

@@ -4,10 +4,11 @@ Creates a filter variable based on the given condition. This variable
 can be accessed by
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-[`else.()`](https://s3rdia.github.io/qol/reference/if_else.md) and
-[`where.()`](https://s3rdia.github.io/qol/reference/where..md), enabling
-these functions to work with an overarching condition. This function can
-also be used to nest multiple overarching conditions.
+[`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+[`where.()`](https://s3rdia.github.io/qol/reference/where..md) and
+[`compute()`](https://s3rdia.github.io/qol/reference/compute.md),
+enabling these functions to work with an overarching condition. This
+function can also be used to nest multiple overarching conditions.
 
 `else_do()`: Checks for existing filter variables and reverses the
 condition of the last filter variable.
@@ -53,6 +54,9 @@ Conditions:
 
 Filter Data Frame:
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md)
+
+Create new Variables:
+[`compute()`](https://s3rdia.github.io/qol/reference/compute.md)
 
 ## Examples
 

@@ -178,6 +178,6 @@ unlist_variables <- function(var_names){
 #' Returns TRUE or FALSE depending on the result.
 #'
 #' @noRd
-is_character_vector <- function(vector_to_check){
-    is.character(vector_to_check) && length(vector_to_check) > 1
+is_valid_vector <- function(vector_to_check){
+    length(vector_to_check) > 1
 }

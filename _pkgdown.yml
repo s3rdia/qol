@@ -111,6 +111,7 @@ reference:
   - content_report
 - title: Calculation
   contents:
+  - compute
   - row_calculation
 - title: Small Helpers
   contents:

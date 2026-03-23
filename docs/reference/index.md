@@ -168,6 +168,8 @@
 
 ## Calculation
 
+- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md) :
+  Compute New Variables
 - [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md)
   : Perform Row Wise Calculations
 
