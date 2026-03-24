@@ -150,6 +150,9 @@ thinking hard about how to calculate where to put a border or to even manually p
 a designed workbook.
 }
 \examples{
+# NOTE: Some of the examples use the parameter 'output = "excel_nostyle"' to
+#       make them run faster so that more examples can be provided.
+
 # Example data frame
 my_data <- dummy_data(1000)
 my_data[["person"]] <- 1
@@ -228,6 +231,7 @@ my_data |> any_table(columns = c(            "year", "education + year"),
                      pct_group  = c("sex", "age"),
                      formats    = list(sex = sex., age = age.,
                                        education = education.),
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Percentages based on value variables instead of categories
@@ -322,6 +326,7 @@ my_data |> any_table(rows       = c("sex", "age"),
                      pct_group  = "education",
                      formats    = list(sex = sex., age = age., state = state.,
                                        education = education.),
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # To save a table as xlsx file you have to set the path and filename in the
