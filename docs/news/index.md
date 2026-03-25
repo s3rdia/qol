@@ -75,6 +75,13 @@
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   `balance` variable wasn’t calculated correctly, which is now fixed.
   (12.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  The `output` parameter wasn’t stored in the meta information list
+  which lead to
+  [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md)
+  not able to access it and always output formatted tables. Now the
+  `output` parameter is stored in meta information. (24.03.2026)
 
 #### Optimization
 
@@ -103,6 +110,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Upped the dummy_data observations in tests to prevent rare errors.
   (23.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Omitted table formatting in some tests to make them run quicker.
+  (24.03.2026)
 
 ## qol 1.2.2
 

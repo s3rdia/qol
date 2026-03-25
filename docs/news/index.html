@@ -78,6 +78,8 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren’t lost completely. (11.03.2026)</li>
 <li>
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: <code>balance</code> variable wasn’t calculated correctly, which is now fixed. (12.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: The <code>output</code> parameter wasn’t stored in the meta information list which lead to <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code> not able to access it and always output formatted tables. Now the <code>output</code> parameter is stored in meta information. (24.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>
@@ -95,6 +97,8 @@
 <li>Swapped out a variable in abort <code><a href="../reference/split_by.html">split_by()</a></code> because of duplicates test, because the test didn’t throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended. (23.03.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Upped the dummy_data observations in tests to prevent rare errors. (23.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Omitted table formatting in some tests to make them run quicker. (24.03.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

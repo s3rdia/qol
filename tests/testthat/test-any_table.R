@@ -50,6 +50,7 @@ test_that("any_table with combinations", {
                     columns = "sex + year",
                     values  = income,
                     weight  = weight,
+                    output  = "excel_nostyle",
                     print   = FALSE))
 
     expect_type(result_list, "list")
@@ -239,11 +240,12 @@ test_that("any_table with columns order", {
 
 test_that("any_table with by variables", {
     result_list <- suppressMessages(dummy_df |>
-            any_table(rows    = "age",
-                      columns = "sex",
-                      values  = weight,
-                      by      = education,
-                      print   = FALSE))
+            any_table(rows       = "age",
+                      columns    = "sex",
+                      values     = weight,
+                      by         = education,
+                      print_miss = TRUE,
+                      print      = FALSE))
 
     expect_true("BY" %in% names(result_list[[1]]))
     expect_equal(length(unique(result_list[[1]][["BY"]])), 1)
@@ -252,11 +254,12 @@ test_that("any_table with by variables", {
 
 test_that("any_table with multiple by variables", {
     result_list <- suppressMessages(dummy_df |>
-            any_table(rows    = "age",
-                      columns = "sex",
-                      values  = weight,
-                      by      = c(education, year),
-                      print   = FALSE))
+            any_table(rows       = "age",
+                      columns    = "sex",
+                      values     = weight,
+                      by         = c(education, year),
+                      print_miss = TRUE,
+                      print      = FALSE))
 
     expect_true("BY" %in% names(result_list[["table"]]))
     expect_equal(length(unique(result_list[["table"]][["BY"]])), 2)
@@ -388,9 +391,9 @@ test_that("any_table with applied interval multilabels", {
 
 
 test_that("any_table able to apply format on numeric values stored as character (short route)", {
-    binary. <- discrete_format(
+    binary. <- suppressMessages(discrete_format(
         "binary1" = c("00", "01"),
-        "binary2" = c("10", "11"))
+        "binary2" = c("10", "11")))
 
     result_list <- suppressMessages(dummy_df |>
         any_table(rows    = "binary",
@@ -415,9 +418,9 @@ test_that("any_table doesn't convert numeric values stored as character (short r
 
 
 test_that("any_table able to apply format on numeric values stored as character (long route)", {
-    binary. <- discrete_format(
+    binary. <- suppressMessages(discrete_format(
         "binary1" = c("00", "01"),
-        "binary2" = c("10", "11"))
+        "binary2" = c("10", "11")))
 
     result_list <- suppressMessages(dummy_df |>
             any_table(rows       = "binary",
@@ -517,10 +520,11 @@ test_that("any_table with pre summarised data", {
 
 test_that("any_table with pre summarised data and by variables", {
     result_list <- suppressMessages(sum_df2 |>
-                any_table(rows       = "year",
-                          columns    = "age",
+                any_table(rows       = "age",
+                          columns    = "year",
                           by         = "sex",
                           values     = weight_sum,
+                          print_miss = TRUE,
                           print      = FALSE))
 
     expect_type(result_list, "list")
@@ -581,6 +585,7 @@ test_that("Combine tables into a single workbook", {
          any_table(rows    = "age",
                    columns = "sex",
                    values  = weight,
+                   output  = "excel_nostyle",
                    print   = FALSE))
 
     my_style <- my_style |> modify_output_style(sheet_name = "tab2")
@@ -590,6 +595,7 @@ test_that("Combine tables into a single workbook", {
                    columns = "sex",
                    values  = weight,
                    by      = education,
+                   output  = "excel_nostyle",
                    print   = FALSE))
 
     temp_file <- tempfile(fileext = ".xlsx")

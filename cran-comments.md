@@ -25,6 +25,7 @@ Last CRAN release was on 11.03.2026.
 * `any_table()`: Columns are now sorted correctly, if only row or column percentages are computed.
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely.
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed.
+* `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information.
 
 ### Optimization
 
@@ -37,6 +38,7 @@ Last CRAN release was on 11.03.2026.
 * `any_table()`: Fixed two of the examples where `list` was missing in formats parameter.
 * Swapped out a variable in abort `split_by()` because of duplicates test, because the test didn't throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended.
 * `any_table()`: Upped the dummy_data observations in tests to prevent rare errors.
+* `any_table()`: Omitted table formatting in some tests to make them run quicker.
 
 
 ## R CMD check results

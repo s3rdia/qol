@@ -1635,7 +1635,7 @@ any_table <- function(data_frame,
     meta <- mget(c("rows", "columns", "statistics",
                    "by", "titles", "footnotes", "var_labels", "stat_labels",
                    "box", "any_header", "row_header_dimensions",
-                   "style", "na.rm", "print_miss"))
+                   "style", "output", "na.rm", "print_miss"))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
@@ -2699,7 +2699,7 @@ combine_into_workbook <- function(...,
                                  meta[["statistics"]], meta[["by"]], meta[["titles"]],
                                  meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
                                  meta[["box"]], meta[["any_header"]],
-                                 meta[["style"]], output, monitor_df = monitor_df))
+                                 meta[["style"]], meta[["output"]], monitor_df = monitor_df))
 
             wb <- wb_list[[1]]
         }
@@ -2710,7 +2710,8 @@ combine_into_workbook <- function(...,
                                     meta[["statistics"]], meta[["by"]], meta[["titles"]],
                                     meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
                                     meta[["box"]], meta[["any_header"]],
-                                    meta[["style"]], output, meta[["na.rm"]], meta[["print_miss"]], monitor_df))
+                                    meta[["style"]], meta[["output"]], meta[["na.rm"]], meta[["print_miss"]],
+                                    monitor_df))
 
             wb <- wb_list[[1]]
         }
