@@ -86,6 +86,16 @@ Global style options:
 [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
 [`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
 
+Other global options:
+[`set_titles()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_na.rm()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_output()`](https://s3rdia.github.io/qol/reference/qol_options.md).
+
 Functions that can handle styles:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),

@@ -31,6 +31,9 @@
 #'
 #' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
 #'
+#' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
+#' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
+#'
 #' Functions that can handle styles: [frequencies()], [crosstabs()], [any_table()].
 #'
 #' @examples

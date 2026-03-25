@@ -51,6 +51,9 @@
 #'
 #' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
 #'
+#' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
+#' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
+#'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that can handle formats and styles: [crosstabs()], [any_table()].

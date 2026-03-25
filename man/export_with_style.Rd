@@ -101,5 +101,8 @@ Creating a custom table style: \code{\link[=excel_output_style]{excel_output_sty
 
 Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}.
 
+Other global options: \code{\link[=set_titles]{set_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_monitor]{set_monitor()}},
+\code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=set_output]{set_output()}}.
+
 Functions that can handle styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}.
 }

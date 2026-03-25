@@ -27,7 +27,7 @@ test_that("Get variable names between two variables", {
 test_that("Get variable names from variable to the end", {
     var_names <- dummy_df |> vars_between(body_weight)
 
-    expect_equal(length(var_names), 7)
+    expect_equal(length(var_names), 8)
 })
 
 
@@ -51,7 +51,7 @@ test_that("Providing not existing from-variable throws a warning", {
 test_that("Providing not existing to-variable throws a warning", {
     expect_message(var_names <- dummy_df |> vars_between(state, test), " ! WARNING: 'to' variable '")
 
-    expect_equal(length(var_names), 18)
+    expect_equal(length(var_names), 19)
 })
 
 

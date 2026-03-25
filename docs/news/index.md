@@ -46,6 +46,8 @@
   perform calculations. (23.03.2026)
 - [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md):
   Now has an optional rounding parameter. (23.03.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Added `weight_per_year` variable. (25.03.2026)
 
 #### Fixed
 
@@ -96,6 +98,8 @@
   Now uses faster `data.table` function. (23.03.2026)
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
   Now uses vectorized math to reduce memory allocation. (23.03.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Reduced memory allocation. (25.03.2026)
 
 #### Additionally
 
@@ -113,6 +117,12 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Omitted table formatting in some tests to make them run quicker.
   (24.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Added missing global options function in the `see also` section.
+  (25.03.2026)
 
 ## qol 1.2.2
 

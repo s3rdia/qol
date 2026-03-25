@@ -13,6 +13,7 @@
 * `if.()`, `else_if.()`, `else.()`: Can be used within the new `do_if()` context. (21.03.2026)
 * `if.()`, `else_if.()`, `else.()`: Since the functions now make use of the new `compute()`, they are able to do more than just simple variable assignments and can also perform calculations. (23.03.2026)
 * `row_calculation()`: Now has an optional rounding parameter. (23.03.2026)
+* `dummy_data()`: Added `weight_per_year` variable. (25.03.2026)
 
 ### Fixed
 
@@ -31,6 +32,7 @@
 * `if.()`, `else_if.()`, `else.()`: With the new `compute()` they now perform variable assignments and calculations in a single pass instead of per iteration. (23.03.2026)
 * `running_number()`: Now uses faster `data.table` function. (23.03.2026)
 * `round_values()`: Now uses vectorized math to reduce memory allocation. (23.03.2026)
+* `dummy_data()`: Reduced memory allocation. (25.03.2026)
 
 ### Additionally
 
@@ -38,6 +40,7 @@
 * Swapped out a variable in abort `split_by()` because of duplicates test, because the test didn't throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended. (23.03.2026)
 * `any_table()`: Upped the dummy_data observations in tests to prevent rare errors. (23.03.2026)
 * `any_table()`: Omitted table formatting in some tests to make them run quicker. (24.03.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section. (25.03.2026)
 
 # qol 1.2.2
 
