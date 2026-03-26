@@ -16,6 +16,10 @@
 * `dummy_data()`: Added `weight_per_year` variable. (25.03.2026)
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts. (26.03.2026)
 
+### Changed functionality
+
+* `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (26.03.2026)
+
 ### Fixed
 
 * `any_table()`: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables. (11.03.2026)

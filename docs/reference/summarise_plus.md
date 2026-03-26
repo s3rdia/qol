@@ -250,4 +250,11 @@ certain_types <- my_data |>
                    weight     = weight,
                    nesting    = "all",
                    na.rm      = TRUE)
+
+# Works without grouping
+no_group <- my_data |> summarise_plus(values = income)
+
+# And also without values
+no_values  <- my_data |> summarise_plus(class = c(year, sex, age))
+no_nothing <- my_data |> summarise_plus()
 ```

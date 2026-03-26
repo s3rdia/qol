@@ -586,6 +586,13 @@ test_that("Summarise possible with no class variables provided", {
     expect_equal(collapse::fnrow(result_df), 1)
 })
 
+
+test_that("Summarise uses temporary variable, if no analysis variable is provided", {
+    result_df <- dummy_df |> summarise_plus()
+
+    expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000"))
+})
+
 ###############################################################################
 # Format checks
 ###############################################################################
@@ -976,16 +983,4 @@ test_that("'Invalid statistic will be omitted 'sum' will be chosen as statistic 
                               statistics = "test"), " ! WARNING: No valid <statistic> selected. 'sum' will be used.")
 
     expect_equal(collapse::fncol(result_df), 5)
-})
-
-###############################################################################
-# Abort checks
-###############################################################################
-
-
-test_that("Summarise errors when no analysis variable is provided", {
-    expect_message(result_df <- dummy_df |>
-               summarise_plus(statistics = "sum"), " X ERROR: No <values> provided")
-
-    expect_equal(result_df, NULL)
 })

@@ -17,6 +17,10 @@ Last CRAN release was on 11.03.2026.
 * `dummy_data()`: Added `weight_per_year` variable.
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts.
 
+### Changed functionality
+
+* `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
+
 ### Fixed
 
 * `any_table()`: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables.

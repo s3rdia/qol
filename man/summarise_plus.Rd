@@ -181,6 +181,13 @@ certain_types <- my_data |>
                    nesting    = "all",
                    na.rm      = TRUE)
 
+# Works without grouping
+no_group <- my_data |> summarise_plus(values = income)
+
+# And also without values
+no_values  <- my_data |> summarise_plus(class = c(year, sex, age))
+no_nothing <- my_data |> summarise_plus()
+
 }
 \seealso{
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.

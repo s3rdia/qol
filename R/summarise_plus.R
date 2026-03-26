@@ -152,6 +152,13 @@
 #'                    nesting    = "all",
 #'                    na.rm      = TRUE)
 #'
+#' # Works without grouping
+#' no_group <- my_data |> summarise_plus(values = income)
+#'
+#' # And also without values
+#' no_values  <- my_data |> summarise_plus(class = c(year, sex, age))
+#' no_nothing <- my_data |> summarise_plus()
+#'
 #' @export
 summarise_plus <- function(data_frame,
                            class      = NULL,
@@ -304,8 +311,9 @@ summarise_plus <- function(data_frame,
     # If no value variables are provided abort
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            message(" X ERROR: No <values> provided. Summarise will be aborted.")
-            return(invisible(NULL))
+            values               <- ".temp_values"
+            data_frame[[values]] <- 1
+            statistics           <- statistics[statistics != "sum"]
         }
     }
 
@@ -314,11 +322,6 @@ summarise_plus <- function(data_frame,
 
     # Make sure that the variables provided are part of the data frame.
     values <- data_frame |> part_of_df(values)
-
-    if (length(values) == 0){
-        message(" X ERROR: No <values> variables provided. Summarise will be aborted.")
-        return(invisible(NULL))
-    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Types

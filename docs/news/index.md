@@ -52,6 +52,12 @@
   Added `with_monitor` parameter, which allows to visualize the time
   consumption of the individual scripts. (26.03.2026)
 
+#### Changed functionality
+
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Instead of aborting when no values are passed, the function now
+  generates a variable to output unweighted results. (26.03.2026)
+
 #### Fixed
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
