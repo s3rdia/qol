@@ -12,7 +12,8 @@ build_master(
   author = "",
   with_structure = TRUE,
   with_run_all = TRUE,
-  with_run_folder = TRUE
+  with_run_folder = TRUE,
+  with_monitor = FALSE
 )
 ```
 
@@ -44,6 +45,11 @@ build_master(
 
   Whether a section, which let's the user run all scripts from a
   specific folder, should be written to the master script.
+
+- with_monitor:
+
+  FALSE by default. If TRUE, outputs two charts to visualize the time
+  consumption of the individual scripts.
 
 ## Value
 

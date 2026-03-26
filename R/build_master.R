@@ -13,6 +13,8 @@
 #' should be written to the master script.
 #' @param with_run_folder Whether a section, which let's the user run all scripts from a
 #' specific folder, should be written to the master script.
+#' @param with_monitor FALSE by default. If TRUE, outputs two charts to visualize the
+#' time consumption of the individual scripts.
 #'
 #' @details
 #' The function works with folder structures that look like this:
@@ -62,7 +64,8 @@ build_master <- function(dir,
                          author          = "",
                          with_structure  = TRUE,
                          with_run_all    = TRUE,
-                         with_run_folder = TRUE){
+                         with_run_folder = TRUE,
+                         with_monitor    = FALSE){
     # Measure the time
     start_time <- Sys.time()
 
@@ -76,6 +79,10 @@ build_master <- function(dir,
 
     # Get folders in provided directory
     folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
+
+    if (length(folders) > 1){
+        folders <- folders[-1]
+    }
 
     # Get all .R scripts inside the folders
     scripts <- lapply(folders, function(folder){
@@ -96,6 +103,24 @@ build_master <- function(dir,
         "",
         "```{r load_package, echo = TRUE}",
         "library(qol)",
+        "",
+        "run_scripts <- function(scripts){",
+        '    monitor_df <- NULL |> monitor_start("Script start", "Script start")',
+        "",
+        "    for (file in scripts){",
+        "        start_time <- Sys.time()",
+        '        monitor_df <- monitor_df |> monitor_next(basename(file), basename(file))',
+        "",
+        "        source(file, local = FALSE)",
+        "",
+        '        end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)',
+        '        message("\\n- - - ", basename(file), " execution time: ", end_time, " seconds\\n")',
+        "",
+        "        monitor_df <- monitor_df |> monitor_end()",
+        "    }",
+        "",
+        paste0("    monitor_df |> monitor_plot(draw_plot = ", with_monitor, ")"),
+        "}",
         "```",
         "")
 
@@ -118,6 +143,8 @@ build_master <- function(dir,
         "}",
         "",
         call_text,
+        "",
+        "rm(master_file)",
         "```",
         "")
 
@@ -132,19 +159,24 @@ build_master <- function(dir,
     if (with_run_all){
         message(" > Write all scripts execution")
 
+        # Get blanks for an even padding of the code
+        sub_dirs        <- collapse::funique(sub(dir, "", names(scripts)))
+        max_path_length <- collapse::fmax(nchar(sub_dirs))
+        padding         <- substr(paste0(sub_dirs, strrep(" ", max_path_length)), nchar(sub_dirs) + 1, max_path_length)
+
+        # Put together script block
         run_all_folders <- c(
             "",
             "################################################################################",
             "# Run All Scripts in All Folders",
             "################################################################################",
             "```{r run_all_scripts, echo = TRUE}",
-            paste0('scripts <- c(', paste(paste0('libname("', names(scripts), '", get_files = TRUE)'), collapse = ',\n             '), ')'),
+            paste0('base_folder <- "', dir, '"'),
+            paste0('scripts     <- c(', paste(paste0('libname(paste0(base_folder,"', sub_dirs, '"), ', padding, 'get_files = TRUE)'), collapse = ',\n                 '), ')'),
             "",
-            "for (file in scripts){",
-            "    source(file, local = FALSE)",
-            "}",
+            "run_scripts(scripts)",
             "",
-            "rm(scripts)",
+            "rm(base_folder, scripts)",
             "```")
 
         lines <- c(lines, run_all_folders)
@@ -161,17 +193,16 @@ build_master <- function(dir,
         if (with_run_folder){
             message("   + folder: ", folder)
 
+            # Put together script block
             lines <- c(lines, c("\n#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
                                 paste0("#     Run All Scripts in Folder: ", basename(folder)),
                                 "#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"),
                               paste0("```{r ", folder_name, ", echo = TRUE}"),
                               paste0('      scripts <- libname("', folder, '", get_files = TRUE)'),
                                 "",
-                                "      for (file in scripts){",
-                                "          source(file, local = FALSE)",
-                                "      }",
-                               "",
-                               "      rm(scripts)",
+                                "      run_scripts(scripts)",
+                                "",
+                                "      rm(scripts)",
                                 "```")
         }
 
@@ -183,11 +214,12 @@ build_master <- function(dir,
 
             file_name <- gsub("[^a-zA-Z0-9_]", "_", paste0("run_", basename(file)))
 
+            # Put together script block
             lines <- c(lines, c("#-------------------------------------------------------------------------------#",
                                 paste0("#         Run Script: ", basename(file)),
                                 "#-------------------------------------------------------------------------------#"),
                               paste0("```{r ", file_name, ", echo = TRUE}"),
-                              paste0('          source("', file, '", local = FALSE)'),
+                              paste0('          run_scripts("', file, '")'),
                               "```")
         }
     }

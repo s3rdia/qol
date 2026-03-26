@@ -48,6 +48,9 @@
   Now has an optional rounding parameter. (23.03.2026)
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Added `weight_per_year` variable. (25.03.2026)
+- [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
+  Added `with_monitor` parameter, which allows to visualize the time
+  consumption of the individual scripts. (26.03.2026)
 
 #### Fixed
 

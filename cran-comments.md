@@ -15,6 +15,7 @@ Last CRAN release was on 11.03.2026.
 * `if.()`, `else_if.()`, `else.()`: Since the functions now make use of the new `compute()`, they are able to do more than just simple variable assignments and can also perform calculations.
 * `row_calculation()`: Now has an optional rounding parameter.
 * `dummy_data()`: Added `weight_per_year` variable.
+* `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts.
 
 ### Fixed
 

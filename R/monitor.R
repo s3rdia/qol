@@ -142,7 +142,7 @@ monitor_next <- function(monitor_df, section, group = "Total"){
 #' @export
 monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
     if (!draw_plot){
-        return(FALSE)
+        return(invisible(monitor_df))
     }
 
     old_par <-graphics:: par(no.readonly = TRUE)
@@ -234,4 +234,5 @@ monitor_plot <- function(monitor_df, by = "section", draw_plot = TRUE){
                      inset  = c(0, -0.4),       # Move legend slightly down
                      xpd    = TRUE)             # Legend can be drawn outside th chart area
 
+    invisible(monitor_df)
 }
