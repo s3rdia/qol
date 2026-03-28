@@ -752,7 +752,7 @@ load_file_multi <- function(file_list,
         }
 
         # Load file and add to list
-        result_list[[i]] <- suppress_specific_message(
+        result_list[[basename(infile)]] <- suppress_specific_message(
             load_file(path    = dirname(infile),
                       file    = basename(infile),
                       keep    = vars_to_keep), "- - - ")

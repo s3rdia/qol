@@ -69,11 +69,11 @@ test_that("Loading files with subset", {
     fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
     rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
-    fst_keep <- load_file(dirname(fst_file), basename(fst_file), where = sex == 1)
-    rds_keep <- load_file(dirname(rds_file), basename(rds_file), where = sex == 1)
+    fst_keep <- load_file(dirname(fst_file), basename(fst_file), where = first_person == 1)
+    rds_keep <- load_file(dirname(rds_file), basename(rds_file), where = first_person == 1)
 
-    expect_equal(collapse::funique(fst_keep[["sex"]]), 1)
-    expect_equal(collapse::funique(rds_keep[["sex"]]), 1)
+    expect_equal(collapse::funique(fst_keep[["first_person"]]), 1)
+    expect_equal(collapse::funique(rds_keep[["first_person"]]), 1)
 })
 
 
@@ -181,8 +181,8 @@ test_that("Saving file with subset works correctly", {
     rds_file <- tempfile(fileext = ".rds")
     on.exit(unlink(c(fst_file, rds_file)), add = TRUE)
 
-    dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), where = sex == 1)
-    dummy_df1 |> save_file(dirname(rds_file), basename(rds_file), where = sex == 1)
+    dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), where = first_person == 1)
+    dummy_df1 |> save_file(dirname(rds_file), basename(rds_file), where = first_person == 1)
 
     expect_true(file.exists(fst_file))
     expect_true(file.exists(rds_file))
@@ -190,8 +190,8 @@ test_that("Saving file with subset works correctly", {
     fst_df <- load_file(dirname(fst_file), basename(fst_file))
     rds_df <- load_file(dirname(rds_file), basename(rds_file))
 
-    expect_equal(collapse::funique(fst_df[["sex"]]), 1)
-    expect_equal(collapse::funique(rds_df[["sex"]]), 1)
+    expect_equal(collapse::funique(fst_df[["first_person"]]), 1)
+    expect_equal(collapse::funique(rds_df[["first_person"]]), 1)
 })
 
 
