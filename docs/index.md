@@ -249,7 +249,7 @@ combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8,
                       file = "C:/My_folder/My_workbook.xlsx")
 ```
 
-## Save With Protection And Load As You Like
+## Save with protection and load as you like
 
 The package offers file saving in the standard rds format or the
 incredibly fast [fst](https://github.com/fstpackage/fst) format. By
@@ -268,13 +268,13 @@ my_data |> save_file(path    = tempdir(),
                      where   = sex == 1)
                      
 # Load file
-my_fst_where <- load_file(path  = dirname(fst_file),
-                          file  = basename(rds_file),
+my_fst_where <- load_file(path  = tempdir(),
+                          file  = "testfile.fst",
                           keep  = c(AGE, INCOME_class, State, weight),
                           where = age > 65)
 ```
 
-## One Function to Join Them All
+## One function to join them all
 
 Join two or more data frames together in one operation with multiple
 different join methods and join on differently named variables.
