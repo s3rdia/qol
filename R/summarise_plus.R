@@ -1082,7 +1082,18 @@ matrix_summarise <- function(data_frame,
             levels(data_frame[[column]]) <- gsub("\\.", "!!!", levels(data_frame[[column]]))
         }
         else if(is.character(data_frame[[column]])){
-            data_frame[[column]] <- gsub("\\.", "!!!", data_frame[[column]])
+            # Get unique values from the variable and replace "."
+            unique_values   <- collapse::funique(data_frame[[column]])
+            replaced_values <- gsub(".", "!!!", unique_values, fixed = TRUE)
+
+            # If original and replaced values are identical, the replacing on the larger
+            # vector can be skipped entirely to save time. Only if there was a replacement
+            # the whole vector has to be processed.
+            if (!identical(unique_values, replaced_values)){
+                replace_map <- stats::setNames(replaced_values, unique_values)
+
+                data_frame[[column]] <- replace_map[match(data_frame[[column]], unique_values)]
+            }
         }
     }
 

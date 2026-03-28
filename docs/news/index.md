@@ -128,6 +128,21 @@
   Now uses vectorized math to reduce memory allocation. (23.03.2026)
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Reduced memory allocation. (25.03.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When using character variables in `class` parameter, the check to
+  preserve “.” is now executed on the unique values first and only
+  mapped back to the data frame, if there are any replacements needed,
+  instead of running a `gsub` every time over the whole vector.
+  (28.03.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md)
+  now also accepts a `openxlsx2` workbook as infile and not only a path
+  to a workbook. This enables a massive performance boost for
+  [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  which now passes a workbook to
+  [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md)
+  instead of the file path. (28.03.2026)
 
 #### Additionally
 
@@ -151,6 +166,9 @@
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Added missing global options function in the `see also` section.
   (25.03.2026)
+- [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Added some messages to show progress. (28.03.2026)
 
 ## qol 1.2.2
 

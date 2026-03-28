@@ -108,6 +108,10 @@
 <code><a href="../reference/round_values.html">round_values()</a></code>: Now uses vectorized math to reduce memory allocation. (23.03.2026)</li>
 <li>
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Reduced memory allocation. (25.03.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When using character variables in <code>class</code> parameter, the check to preserve “.” is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a <code>gsub</code> every time over the whole vector. (28.03.2026)</li>
+<li>
+<code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">import_multi()</a></code>: <code><a href="../reference/import_export.html">import_data()</a></code> now also accepts a <code>openxlsx2</code> workbook as infile and not only a path to a workbook. This enables a massive performance boost for <code><a href="../reference/import_export.html">import_multi()</a></code>, which now passes a workbook to <code><a href="../reference/import_export.html">import_data()</a></code> instead of the file path. (28.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-2-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-3"></a></h4>
@@ -120,6 +124,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Omitted table formatting in some tests to make them run quicker. (24.03.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added missing global options function in the <code>see also</code> section. (25.03.2026)</li>
+<li>
+<code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Added some messages to show progress. (28.03.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

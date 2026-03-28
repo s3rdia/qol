@@ -43,6 +43,8 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `running_number()`: Now uses faster `data.table` function.
 * `round_values()`: Now uses vectorized math to reduce memory allocation.
 * `dummy_data()`: Reduced memory allocation.
+* `summarise_plus()`: When using character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector.
+* `import_data()`, `import_multi()`: `import_data()` now also accepts a `openxlsx2` workbook as infile and not only a path to a workbook. This enables a massive performance boost for `import_multi()`, which now passes a workbook to `import_data()` instead of the file path.
 
 ### Additionally
 
@@ -51,6 +53,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`: Upped the dummy_data observations in tests to prevent rare errors.
 * `any_table()`: Omitted table formatting in some tests to make them run quicker.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section.
+* `import_multi()`, `export_multi()`: Added some messages to show progress.
 
 
 ## R CMD check results

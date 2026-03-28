@@ -42,6 +42,8 @@
 * `running_number()`: Now uses faster `data.table` function. (23.03.2026)
 * `round_values()`: Now uses vectorized math to reduce memory allocation. (23.03.2026)
 * `dummy_data()`: Reduced memory allocation. (25.03.2026)
+* `summarise_plus()`: When using character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector. (28.03.2026)
+* `import_data()`, `import_multi()`: `import_data()` now also accepts a `openxlsx2` workbook as infile and not only a path to a workbook. This enables a massive performance boost for `import_multi()`, which now passes a workbook to `import_data()` instead of the file path. (28.03.2026)
 
 ### Additionally
 
@@ -50,6 +52,7 @@
 * `any_table()`: Upped the dummy_data observations in tests to prevent rare errors. (23.03.2026)
 * `any_table()`: Omitted table formatting in some tests to make them run quicker. (24.03.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section. (25.03.2026)
+* `import_multi()`, `export_multi()`: Added some messages to show progress. (28.03.2026)
 
 # qol 1.2.2
 

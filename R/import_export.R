@@ -68,43 +68,48 @@ import_data <- function(infile,
     # Error handling
     ###########################################################################
 
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Path
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Abort on vector provided as path
-    if (!is.character(infile) || length(infile) != 1){
-        message(" X ERROR: <Infile> must be a single character. Import will be aborted.")
-
-        return(invisible(NULL))
+    if (inherits(infile, "wbWorkbook")){
+        extension <- "xlsx"
     }
+    else{
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Path
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Abort on invalid path
-    if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
-        message(" X ERROR: Path does not exist: ", infile, "\n",
-                "          Import will be aborted.")
+        # Abort on vector provided as path
+        if (!is.character(infile) || length(infile) != 1){
+            message(" X ERROR: <Infile> must be a single character. Import will be aborted.")
 
-        return(invisible(NULL))
-    }
+            return(invisible(NULL))
+        }
 
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # File extension
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Abort on invalid path
+        if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
+            message(" X ERROR: Path does not exist: ", infile, "\n",
+                    "          Import will be aborted.")
 
-    extension <- tolower(tools::file_ext(infile))
+            return(invisible(NULL))
+        }
 
-    if (extension == ""){
-        message(" X ERROR: No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.\n",
-                "          Import will be aborted.")
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # File extension
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        return(invisible(NULL))
-    }
+        extension <- tolower(tools::file_ext(infile))
 
-    if (!extension %in% c("csv", "xlsx")){
-        message(" X ERROR: Only 'csv' or 'xlsx' are allowed as file extensions in the <infile>.\n",
-                "          Import will be aborted.")
+        if (extension == ""){
+            message(" X ERROR: No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.\n",
+                    "          Import will be aborted.")
 
-        return(invisible(NULL))
+            return(invisible(NULL))
+        }
+
+        if (!extension %in% c("csv", "xlsx")){
+            message(" X ERROR: Only 'csv' or 'xlsx' are allowed as file extensions in the <infile>.\n",
+                    "          Import will be aborted.")
+
+            return(invisible(NULL))
+        }
     }
 
     ###########################################################################
@@ -281,6 +286,8 @@ import_multi <- function(file_list,
 
         # For CSV files just do a simple import
         if (extension == "csv"){
+            message(" > Importing: ", infile)
+
             result_list[[filename]] <- suppressMessages(
                 import_data(infile    = infile,
                             separator = separator,
@@ -291,15 +298,21 @@ import_multi <- function(file_list,
         else if (extension == "xlsx"){
             # If all sheets should be imported from a single file
             if (sheet == "all"){
+                message(" > Loading file: ", infile)
+
                 # Load file as a workbook first to be able to extract the sheet names
                 wb <- openxlsx2::wb_load(infile)
                 sheet_names <- openxlsx2::wb_get_sheet_names(wb)
 
+                message(" > Importing:")
+
                 # Import all sheets one after another by name
                 for (sheet_name in sheet_names){
+                    message("   + Sheet: ", sheet_name)
+
                     result_list[[paste0(filename, "_", sheet_name)]] <-
                         suppressMessages(
-                            import_data(infile    = infile,
+                            import_data(infile    = wb,
                                         sheet     = sheet_name,
                                         region    = region,
                                         var_names = var_names))
@@ -519,6 +532,8 @@ export_multi <- function(file_list,
     for (i in seq_along(file_list)){
         data_frame <- file_list[[i]]
         filename   <- names(file_list)[[i]]
+
+        message(" > Exporting: ", filename)
 
         # For CSV files just do a simple export
         if (!is.null(separator)){
