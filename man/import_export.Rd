@@ -99,8 +99,8 @@ a parameter wasn't provided in the correct way.
 }
 \examples{
 # Example files
-csv_file  <- system.file("extdata", "qol_example_data.csv",  package = "qol")
-xlsx_file <- system.file("extdata", "qol_example_data.xlsx", package = "qol")
+csv_file  <- system.file("extdata", "qol_example_data_csv.csv",  package = "qol")
+xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
 # Import: Provide full file path
 my_csv  <- import_data(csv_file)

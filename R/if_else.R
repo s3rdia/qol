@@ -119,8 +119,18 @@ if. <- function(data_frame, condition, ...){
     start_time <- Sys.time()
 
     parent_env  <- parent.frame()
-    condition   <- substitute(condition)
+
+    # This step is important to make this function work in a nested situation.
+    # Normally condition would be the name of what was last passed as a parameter.
+    # If "if.()" is used nested inside a function this can basically be any placeholder.
+    # So here we go up the ladder to get the original condition as a call.
+    condition <- substitute(condition)
+    while (is.name(condition) && exists(as.character(condition), parent_env)){
+        condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
+    }
+
     assignments <- as.list(substitute(list(...)))[-1]
+
 
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
@@ -296,7 +306,16 @@ else_if. <- function(data_frame, condition, ...){
     start_time <- Sys.time()
 
     parent_env  <- parent.frame()
-    condition   <- substitute(condition)
+
+    # This step is important to make this function work in a nested situation.
+    # Normally condition would be the name of what was last passed as a parameter.
+    # If "if.()" is used nested inside a function this can basically be any placeholder.
+    # So here we go up the ladder to get the original condition as a call.
+    condition <- substitute(condition)
+    while (is.name(condition) && exists(as.character(condition), parent_env)){
+        condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
+    }
+
     assignments <- as.list(substitute(list(...)))[-1]
 
     # The condition and the variable assignments are torn apart here, so that
@@ -564,8 +583,10 @@ else. <- function(data_frame, ...){
 #' @noRd
 translate_condition <- function(condition){
     if (is.call(condition)){
+        operator <- condition[[1]]
+
         # Only check the expression, if its an equality check
-        if (identical(condition[[1]], as.name("=="))){
+        if (identical(operator, as.name("==")) || identical(operator, as.name("!="))){
             variable   <- condition[[2]]
             expression <- condition[[3]]
 
@@ -580,14 +601,14 @@ translate_condition <- function(condition){
                     if (endsWith(expression, ":")){
                         search_term <- substring(expression, 1, nchar(expression) - 1)
 
-                        return(call("startsWith", variable, search_term))
+                        translated_call <- call("startsWith", variable, search_term)
                     }
                     # When at the start (":text"), select all variables which end with the characters
                     # following the colon. ":" acts as a placeholder for everything that comes before.
                     else if (startsWith(expression, ":")){
                         search_term <- substring(expression, 2)
 
-                        return(call("endsWith", variable, search_term))
+                        translated_call <- call("endsWith", variable, search_term)
                     }
                 }
                 # In case there are two colons, one at the start and one at the end (":text:"),
@@ -596,8 +617,19 @@ translate_condition <- function(condition){
                     if (startsWith(expression, ":") && endsWith(expression, ":")) {
                         search_term <- gsub(":", "", expression)
 
-                        return(call("grepl", search_term, variable, fixed = TRUE))
+                        translated_call <- call("grepl", search_term, variable, fixed = TRUE)
                     }
+                }
+                else{
+                    translated_call <- condition
+                }
+
+                # Return call as is or as NOT depending on the operator
+                if (identical(operator, as.name("!="))){
+                    return(call("!", translated_call))
+                }
+                else{
+                    return(translated_call)
                 }
             }
         }

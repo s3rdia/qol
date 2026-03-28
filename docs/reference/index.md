@@ -154,12 +154,17 @@
   [`apply_macro()`](https://s3rdia.github.io/qol/reference/macro.md) :
   Resolve Macro Variables In A Text
 
-## Loading
+## Saving And Loading
 
 - [`libname()`](https://s3rdia.github.io/qol/reference/libname.md) :
   Check If Path Exists And Retrieve Files
 - [`set()`](https://s3rdia.github.io/qol/reference/set.md) : Stack
   Multiple Data Frames
+- [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md)
+  [`save_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md)
+  [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md)
+  [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md)
+  : Save And Load FST And RDS Files
 
 ## Reporting
 
@@ -238,6 +243,8 @@
   [`get_titles()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`get_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+  [`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+  [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   : Set Global Print Option
 
 ## Other

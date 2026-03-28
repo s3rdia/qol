@@ -102,10 +102,14 @@ reference:
   contents:
   - macro
   - apply_macro
-- title: Loading
+- title: Saving And Loading
   contents:
   - libname
   - set
+  - save_file
+  - save_file_multi
+  - load_file
+  - load_file_multi
 - title: Reporting
   contents:
   - content_report
@@ -161,6 +165,8 @@ reference:
   - get_titles
   - set_footnotes
   - get_footnotes
+  - set_threads
+  - get_threads
 - title: Other
   contents:
   - build_master

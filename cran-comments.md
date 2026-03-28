@@ -1,11 +1,14 @@
 # Resubmission qol 1.2.3
-Last CRAN release was on 11.03.2026.
+Last CRAN release was on 11.03.2026. The package has a new dependency "fst", which is used in the new `save_file()` and `load_file()` functions. 
 
 ### New functions
 
 * `row_calculation()`: Perform row wise calculations on numeric variables.
 * `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again.
 * `compute()`: Compute new variables without having to write the name of the data frame multiple times.
+* `save_file()`, `save_file_multi()`: Saves fst and rds files. Offers variable selection and observation subsetting. By default the function has a write protection, which has to be explicitly turned off to be able to overwrite files.
+* `load_file()`, `load_file_multi()`: Loads fst and rds files. Provided variables to keep are read in case insensitive and are returned in provided order. Additionally a subset can be defined directly. Loaded files in the multi version can be stacked or output as a list.
+* `set_threads()`, `get_threads()`: Globally sets/gets the number of used threads for the save and load file functions.
 
 ### New functionality
 
@@ -32,6 +35,7 @@ Last CRAN release was on 11.03.2026.
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely.
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed.
 * `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information.
+* `import_data()`: In the examples the file names to read in weren't correct. This is fixed now.
 
 ### Optimization
 

@@ -8,6 +8,7 @@ default_print_miss    <- get_print_miss()
 default_output        <- get_output()
 default_titles        <- get_titles()
 default_footnotes     <- get_footnotes()
+default_threads       <- get_threads()
 
 
 test_that("Get global style options", {
@@ -159,6 +160,21 @@ test_that("Set global footnotes", {
 })
 
 
+test_that("Set global threads", {
+    set_threads(1)
+
+    new_options <- get_threads()
+
+    expect_equal(new_options, 1)
+
+    set_threads(NULL)
+
+    new_options <- get_threads()
+
+    expect_equal(new_options, fst::threads_fst())
+})
+
+
 test_that("Reset global options", {
     reset_qol_options()
 
@@ -169,6 +185,7 @@ test_that("Reset global options", {
     new_output     <- get_output()
     new_titles     <- get_titles()
     new_footnotes  <- get_footnotes()
+    new_threads    <- get_threads()
 
     expect_true(default_print      == new_print)
     expect_true(default_monitor    == new_monitor)
@@ -177,6 +194,7 @@ test_that("Reset global options", {
     expect_true(default_output     == new_output)
     expect_equal(new_titles, NULL)
     expect_equal(new_footnotes, NULL)
+    expect_equal(new_threads, fst::threads_fst())
 })
 
 ###############################################################################
@@ -228,4 +246,5 @@ test_that("Abort setting global options on empty list", {
     expect_message(set_output(1),     " X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
     expect_message(set_titles(1),     " X ERROR: Titles must be provided as character. Global titles remain unchanged.")
     expect_message(set_footnotes(1),  " X ERROR: Footnotes must be provided as character. Global footnotes remain unchanged.")
+    expect_message(set_threads(""),   " X ERROR: Number of used threads must be provided as integer value. Global number of used threads remains unchanged.")
 })

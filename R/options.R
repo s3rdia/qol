@@ -777,6 +777,73 @@ get_footnotes <- function(){
 }
 
 
+#' Set Global Number Of Used Threads
+#'
+#' @description
+#' [set_threads()]: Globally sets the number of used threads for the save and load
+#' file functions.
+#'
+#' @param ... [set_threads()]: Put in the number of threads to use or NULL to reset.
+#'
+#' @return
+#' [set_threads()]: Changed global number of used threads.
+#'
+#' @examples
+#' set_threads(8)
+#'
+#' @rdname qol_options
+#'
+#' @export
+set_threads <- function(...){
+    # Translate ... into a list if possible
+    threads_option <- tryCatch({
+        # Force evaluation to see if it exists
+        unlist(list(...))
+    }, error = function(e) {
+        # Evaluation failed
+        "ERROR"
+    })
+
+    if (is.null(threads_option)){
+        .qol_options[["threads"]] <- fst::threads_fst(NULL)
+        return(invisible(.qol_options[["threads"]]))
+    }
+
+    if (length(threads_option) == 1 && threads_option == "ERROR"){
+        message(" X ERROR: Unknown object found. Global number of used threads remains unchanged.")
+        return(invisible(.qol_options[["threads"]]))
+    }
+
+    if (!is.numeric(threads_option)){
+        message(" X ERROR: Number of used threads must be provided as integer value. Global number of used threads remains unchanged.")
+        return(invisible(.qol_options[["threads"]]))
+    }
+
+    .qol_options[["threads"]] <- as.integer(threads_option)
+
+    invisible(.qol_options[["threads"]])
+}
+
+
+#' Get Global Number Of Used Threads
+#'
+#' @description
+#' [get_threads()]: Get the globally stored number of used threads.
+#'
+#' @return
+#' [get_threads()]: Current number of used threads.
+#'
+#' @examples
+#' get_threads()
+#'
+#' @rdname qol_options
+#'
+#' @export
+get_threads <- function(){
+    .qol_options[["threads"]]
+}
+
+
 #' Reset Global Options
 #'
 #' @description
@@ -799,6 +866,7 @@ reset_qol_options <- function(){
     .qol_options[["output"]]     <- "console"
     .qol_options[["titles"]]     <- c()
     .qol_options[["footnotes"]]  <- c()
+    .qol_options[["threads"]]    <- fst::threads_fst(NULL)
 
     invisible(.qol_options)
 }

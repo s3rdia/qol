@@ -16,6 +16,8 @@
 \alias{get_titles}
 \alias{set_footnotes}
 \alias{get_footnotes}
+\alias{set_threads}
+\alias{get_threads}
 \title{Set Global Print Option}
 \usage{
 set_print(...)
@@ -45,9 +47,13 @@ get_titles()
 set_footnotes(...)
 
 get_footnotes()
+
+set_threads(...)
+
+get_threads()
 }
 \arguments{
-\item{...}{\code{\link[=set_footnotes]{set_footnotes()}}: Put in the footnotes that should appear below tables.}
+\item{...}{\code{\link[=set_threads]{set_threads()}}: Put in the number of threads to use or NULL to reset.}
 }
 \value{
 \code{\link[=set_print]{set_print()}}: Changed global print option.
@@ -77,6 +83,10 @@ get_footnotes()
 \code{\link[=set_footnotes]{set_footnotes()}}: Changed global footnotes.
 
 \code{\link[=get_footnotes]{get_footnotes()}}: Current footnotes as character.
+
+\code{\link[=set_threads]{set_threads()}}: Changed global number of used threads.
+
+\code{\link[=get_threads]{get_threads()}}: Current number of used threads.
 }
 \description{
 \code{\link[=set_print]{set_print()}}: Set the print option globally for the tabulation and export to
@@ -113,6 +123,11 @@ above the output table.
 above the output table.
 
 \code{\link[=get_footnotes]{get_footnotes()}}: Get the globally stored footnotes.
+
+\code{\link[=set_threads]{set_threads()}}: Globally sets the number of used threads for the save and load
+file functions.
+
+\code{\link[=get_threads]{get_threads()}}: Get the globally stored number of used threads.
 }
 \examples{
 set_print(FALSE)
@@ -150,5 +165,9 @@ set_footnotes("This is title number 1 link: https://cran.r-project.org/",
            "This is title number 3")
 
 get_footnotes()
+
+set_threads(8)
+
+get_threads()
 
 }

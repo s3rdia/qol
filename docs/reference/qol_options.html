@@ -19,7 +19,10 @@ above the output table.
 get_titles(): Get the globally stored titles.
 set_footnotes(): Set the footnotes globally for each function that can print footnotes
 above the output table.
-get_footnotes(): Get the globally stored footnotes.'><meta property="og:description" content='set_print(): Set the print option globally for the tabulation and export to
+get_footnotes(): Get the globally stored footnotes.
+set_threads(): Globally sets the number of used threads for the save and load
+file functions.
+get_threads(): Get the globally stored number of used threads.'><meta property="og:description" content='set_print(): Set the print option globally for the tabulation and export to
 Excel functions.
 get_print(): Get the globally stored print option.
 set_monitor(): Set the monitor option globally for the heavier functions which are
@@ -39,7 +42,10 @@ above the output table.
 get_titles(): Get the globally stored titles.
 set_footnotes(): Set the footnotes globally for each function that can print footnotes
 above the output table.
-get_footnotes(): Get the globally stored footnotes.'><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
+get_footnotes(): Get the globally stored footnotes.
+set_threads(): Globally sets the number of used threads for the save and load
+file functions.
+get_threads(): Get the globally stored number of used threads.'><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -99,6 +105,9 @@ above the output table.</p>
 <p><code>set_footnotes()</code>: Set the footnotes globally for each function that can print footnotes
 above the output table.</p>
 <p><code>get_footnotes()</code>: Get the globally stored footnotes.</p>
+<p><code>set_threads()</code>: Globally sets the number of used threads for the save and load
+file functions.</p>
+<p><code>get_threads()</code>: Get the globally stored number of used threads.</p>
     </div>
 
     <div class="section level2">
@@ -129,7 +138,11 @@ above the output table.</p>
 <span></span>
 <span><span class="fu">set_footnotes</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_footnotes</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_footnotes</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_threads</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_threads</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -137,7 +150,7 @@ above the output table.</p>
 
 
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p><code>set_footnotes()</code>: Put in the footnotes that should appear below tables.</p></dd>
+<dd><p><code>set_threads()</code>: Put in the number of threads to use or NULL to reset.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -156,6 +169,8 @@ above the output table.</p>
 <p><code>get_titles()</code>: Current titles as character.</p>
 <p><code>set_footnotes()</code>: Changed global footnotes.</p>
 <p><code>get_footnotes()</code>: Current footnotes as character.</p>
+<p><code>set_threads()</code>: Changed global number of used threads.</p>
+<p><code>get_threads()</code>: Current number of used threads.</p>
     </div>
 
     <div class="section level2">
@@ -195,6 +210,10 @@ above the output table.</p>
 <span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_footnotes</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_threads</span><span class="op">(</span><span class="fl">8</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_threads</span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

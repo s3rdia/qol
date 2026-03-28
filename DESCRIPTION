@@ -11,7 +11,8 @@ URL: https://github.com/s3rdia/qol, https://s3rdia.github.io/qol/
 Imports:
 	data.table (>= 1.17.8),
 	collapse (>= 2.1.2),
-	openxlsx2 (>= 1.19)
+	openxlsx2 (>= 1.19),
+	fst (>= 0.9.8)
 Depends:
 	R (>= 4.1.0)
 Roxygen: list(markdown = TRUE)

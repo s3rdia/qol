@@ -35,6 +35,11 @@ print footnotes above the output table.
 
 `get_footnotes()`: Get the globally stored footnotes.
 
+`set_threads()`: Globally sets the number of used threads for the save
+and load file functions.
+
+`get_threads()`: Get the globally stored number of used threads.
+
 ## Usage
 
 ``` r
@@ -65,14 +70,17 @@ get_titles()
 set_footnotes(...)
 
 get_footnotes()
+
+set_threads(...)
+
+get_threads()
 ```
 
 ## Arguments
 
 - ...:
 
-  `set_footnotes()`: Put in the footnotes that should appear below
-  tables.
+  `set_threads()`: Put in the number of threads to use or NULL to reset.
 
 ## Value
 
@@ -103,6 +111,10 @@ get_footnotes()
 `set_footnotes()`: Changed global footnotes.
 
 `get_footnotes()`: Current footnotes as character.
+
+`set_threads()`: Changed global number of used threads.
+
+`get_threads()`: Current number of used threads.
 
 ## Examples
 
@@ -142,4 +154,8 @@ set_footnotes("This is title number 1 link: https://cran.r-project.org/",
            "This is title number 3")
 
 get_footnotes()
+
+set_threads(8)
+
+get_threads()
 ```

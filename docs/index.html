@@ -271,10 +271,28 @@
 <span>                      file <span class="op">=</span> <span class="st">"C:/My_folder/My_workbook.xlsx"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="save-with-protection-and-load-as-you-like">Save With Protection And Load As You Like<a class="anchor" aria-label="anchor" href="#save-with-protection-and-load-as-you-like"></a>
+</h2>
+<p>The package offers file saving in the standard rds format or the incredibly fast <a href="https://github.com/fstpackage/fst" class="external-link">fst</a> format. By default the saving function write protects any existing files. So nothing gets overwritten unless you say so.<br>
+The loading functions are able to keep only the desired variables, but with a twist: You can write the variable names as you like. They are always found, whether you use small letters or big ones or something in between. And they are retrieved in provided order.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Save file</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/save_load.html">save_file</a></span><span class="op">(</span>path    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                     file    <span class="op">=</span> <span class="st">"testfile.fst"</span>,</span>
+<span>                     keep    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">income_class</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">state</span>, <span class="va">weight</span>, <span class="va">NUTS3</span><span class="op">)</span>,</span>
+<span>                     where   <span class="op">=</span> <span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>                     </span>
+<span><span class="co"># Load file</span></span>
+<span><span class="va">my_fst_where</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/save_load.html">load_file</a></span><span class="op">(</span>path  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
+<span>                          file  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span>,</span>
+<span>                          keep  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">INCOME_class</span>, <span class="va">State</span>, <span class="va">weight</span><span class="op">)</span>,</span>
+<span>                          where <span class="op">=</span> <span class="va">age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="one-function-to-join-them-all">One Function to Join Them All<a class="anchor" aria-label="anchor" href="#one-function-to-join-them-all"></a>
 </h2>
 <p>Join two or more data frames together in one operation with multiple different join methods and join on differently named variables. Available methods are: left, right, inner, full, outer, left_inner, right_inner.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simple join</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                  a   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
@@ -307,7 +325,7 @@
 <h2 id="transpose-like-never-before">Transpose like never before<a class="anchor" aria-label="anchor" href="#transpose-like-never-before"></a>
 </h2>
 <p>Transpose, weight results and generate additional categories all in one operation. Put variables side by side or nest them or both, just as you need it. And of course you can transpose multiple variables from wide into long format in one go.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transpose from long to wide and use a multilabel to generate additional categories</span></span>
 <span><span class="va">long_to_wide</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
@@ -327,7 +345,7 @@
 <h2 id="sorting-with-additions">Sorting with additions<a class="anchor" aria-label="anchor" href="#sorting-with-additions"></a>
 </h2>
 <p>Sort cases while preserving the order of certain variables or make use of formats to sort in format order, which can be used to e.g. sort a character variable in another than alphabetical order without creating a temporary variable just for sorting.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">education.</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"1"</span> <span class="op">=</span> <span class="st">"low"</span>,</span>
 <span>    <span class="st">"2"</span> <span class="op">=</span> <span class="st">"middle"</span>,</span>
@@ -352,7 +370,7 @@
 <h2 id="readability">Readability<a class="anchor" aria-label="anchor" href="#readability"></a>
 </h2>
 <p>There are also some functions which enhance the readability of the code. For example if - else if - else statements like in other languages:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>

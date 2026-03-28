@@ -17,6 +17,22 @@
 - [`compute()`](https://s3rdia.github.io/qol/reference/compute.md):
   Compute new variables without having to write the name of the data
   frame multiple times. (23.03.2026)
+- [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+  [`save_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Saves fst and rds files. Offers variable selection and observation
+  subsetting. By default the function has a write protection, which has
+  to be explicitly turned off to be able to overwrite files.
+  (28.03.2026)
+- [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+  [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Loads fst and rds files. Provided variables to keep are read in case
+  insensitive and are returned in provided order. Additionally a subset
+  can be defined directly. Loaded files in the multi version can be
+  stacked or output as a list. (28.03.2026)
+- [`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+  [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md):
+  Globally sets/gets the number of used threads for the save and load
+  file functions. (28.03.2026)
 
 #### New functionality
 
@@ -93,6 +109,9 @@
   [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md)
   not able to access it and always output formatted tables. Now the
   `output` parameter is stored in meta information. (24.03.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  In the examples the file names to read in weren’t correct. This is
+  fixed now. (28.03.2026)
 
 #### Optimization
 

@@ -1,0 +1,198 @@
+# Save And Load FST And RDS Files
+
+`save_file()`: Saves fst and rds files. Offers variable selection and
+observation subsetting. By default the function has a write protection,
+which has to be explicitly turned off to be able to overwrite files.
+
+`save_file_multi()`: Saves multiple files.
+
+`load_file()`: Loads fst and rds files. Provided variables to keep are
+read in case insensitive and are returned in provided order.
+Additionally a subset can be defined directly.
+
+`load_file_multi()`: Loads multiple files and stores them into a list or
+directly stacks the files into one data frame.
+
+## Usage
+
+``` r
+save_file(
+  data_frame,
+  path,
+  file,
+  keep = NULL,
+  where = NULL,
+  compress = 100,
+  protect = TRUE
+)
+
+save_file_multi(
+  data_frame_list,
+  file_list,
+  keep_list = NULL,
+  compress = 100,
+  protect = TRUE
+)
+
+load_file(path, file, keep = NULL, where = NULL)
+
+load_file_multi(file_list, keep_list = NULL, stack_files = TRUE)
+```
+
+## Arguments
+
+- data_frame:
+
+  The data fame to be saved.
+
+- path:
+
+  The file path to save to/load from.
+
+- file:
+
+  The file name including the file extension.
+
+- keep:
+
+  The variables to keep in the file.
+
+- where:
+
+  A condition on which to subset the observations.
+
+- compress:
+
+  The amount of compression to use from 0 to 100. The lower the value,
+  the larger the file size and faster the saving speed. Uses maximum
+  compression by default.
+
+- protect:
+
+  TRUE by default. Throws an error if a file already exists. If FALSE,
+  overwrites existing files.
+
+- data_frame_list:
+
+  A list of data frames.
+
+- file_list:
+
+  A character vector containing full file paths.
+
+- keep_list:
+
+  Can be a single variable name, a vector or a list of vectors
+  containing the variables to keep per file. If there are fewer list
+  entries than files to load, the last list element will be used
+  repeatedly.
+
+- stack_files:
+
+  TRUE by default. Stacks data frames after loading them. If FALSE,
+  returns all data frames in a list.
+
+## Value
+
+Returns a data frame. `load_file_multi()` can also return a list of data
+frame.
+
+## Examples
+
+``` r
+# Example data frame
+my_data <- dummy_data(100)
+
+# Save files
+# NOTE: Normally you would pass in the path and file as character. For the
+#       examples this is handled differently to provide runnable examples.
+my_data |> save_file(path = tempdir(),
+                     file = "testfile.fst")
+my_data |> save_file(path = tempdir(),
+                     file = "testfile.rds")
+
+# Save file and only keep specific variables
+# NOTE: Since the temporary file already exists now if you run the above code,
+#       all the following save operations would throw errors because by default
+#       the function write protects existing files. So for the following examples
+#       the write protection is turned off.
+my_data |> save_file(path    = tempdir(),
+                     file    = "testfile.fst",
+                     keep    = c(sex, age, state),
+                     protect = FALSE)
+
+# Save file and subset observations
+my_data |> save_file(path    = tempdir(),
+                     file    = "testfile.fst",
+                     where   = sex == 1 & age > 65,
+                     protect = FALSE)
+
+# Example lists
+my_df_list <- list(dummy_data(10),
+                   dummy_data(10))
+
+file1 <- file.path(tempdir(), "first.fst")
+file2 <- file.path(tempdir(), "second.rds")
+my_file_list <- list(file1, file2)
+
+# Save multiple files at once
+save_file_multi(data_frame_list = my_df_list,
+                file_list       = my_file_list,
+                protect         = FALSE)
+
+# Save multiple files and only keep specific variables
+save_file_multi(data_frame_list = my_df_list,
+                file_list       = my_file_list,
+                keep_list       = c(sex, age, state),
+                protect         = FALSE)
+
+# Save multiple files and keep different variables per data frame
+save_file_multi(data_frame_list = my_df_list,
+                file_list       = my_file_list,
+                keep_list       = list(c(person_id, first_person),
+                                       c(NUTS3, income, weight)),
+                protect         = FALSE)
+
+unlink(c(file1, file2,
+         file.path(tempdir(), "testfile.fst"),
+         file.path(tempdir(), "testfile.rds")))
+
+# Example files
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
+
+# Load file
+my_fst <- load_file(path = dirname(fst_file),
+                    file = basename(rds_file))
+my_rds <- load_file(path = dirname(rds_file),
+                    file = basename(rds_file))
+
+# Load file and only keep specific variables
+# NOTE: Variable names can be written case insensitive. Meaning if a variable
+#       is stored as "age" and you write "AGE" in keep, the function will find
+#       the variable and rename it to "AGE".
+my_fst_keep<- load_file(path = dirname(fst_file),
+                        file = basename(rds_file),
+                        keep = c(AGE, INCOME_class, State, weight))
+
+# Load file and subset observations
+my_fst_where <- load_file(path  = dirname(fst_file),
+                          file  = basename(rds_file),
+                          where = sex == 1 & age > 65)
+
+# Load multiple files and stack them
+stack_files <- load_file_multi(c(fst_file, rds_file))
+
+# Load multiple files and output them in a list
+list_files <- load_file_multi(file_list   = c(fst_file, rds_file),
+                              stack_files = FALSE)
+
+# Load multiple files and only keep specific variables
+all_files_keep <- load_file_multi(file_list = c(fst_file, rds_file),
+                                  keep_list = c(Sex, AGE, stAte))
+
+# Load multiple files and keep different variables per data frame
+all_files_diff <- load_file_multi(file_list = c(fst_file, rds_file),
+                                  keep_list = list(c(Person_ID, First_Person),
+                                                   c(nuts3, Income, WEIGHT)))
+```

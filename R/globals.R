@@ -34,3 +34,4 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["na.rm"]]       <- FALSE
 .qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"
+.qol_options[["threads"]]     <- fst::threads_fst()
