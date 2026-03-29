@@ -67,6 +67,8 @@
 - [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
   Added `with_monitor` parameter, which allows to visualize the time
   consumption of the individual scripts. (26.03.2026)
+- [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
+  Now also outputs NA values. (29.03.2026)
 
 #### Changed functionality
 
@@ -112,6 +114,8 @@
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
   In the examples the file names to read in weren’t correct. This is
   fixed now. (28.03.2026)
+- [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
+  Should now work inside custom functions. (29.03.2026)
 
 #### Optimization
 
@@ -129,10 +133,10 @@
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Reduced memory allocation. (25.03.2026)
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
-  When using character variables in `class` parameter, the check to
-  preserve “.” is now executed on the unique values first and only
-  mapped back to the data frame, if there are any replacements needed,
-  instead of running a `gsub` every time over the whole vector.
+  When using factor or character variables in `class` parameter, the
+  check to preserve “.” is now executed on the unique values first and
+  only mapped back to the data frame, if there are any replacements
+  needed, instead of running a `gsub` every time over the whole vector.
   (28.03.2026)
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md),
   [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
@@ -169,6 +173,7 @@
 - [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md),
   [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Added some messages to show progress. (28.03.2026)
+- Added repository to DeepWiki and added badge to README. (29.03.2026)
 
 ## qol 1.2.2
 

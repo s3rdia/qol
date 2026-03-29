@@ -3,9 +3,9 @@
 # on how much time they took.
 ###############################################################################
 
-dummy_df1 <- suppressMessages(dummy_data(10))
-dummy_df2 <- suppressMessages(dummy_data(10))
-dummy_df3 <- suppressMessages(dummy_data(10))
+dummy_df1 <- suppressMessages(dummy_data(100))
+dummy_df2 <- suppressMessages(dummy_data(100))
+dummy_df3 <- suppressMessages(dummy_data(100))
 
 external_path <- system.file("extdata",  package = "qol")
 
@@ -14,8 +14,8 @@ test_that("Stack data fames", {
     new_df1 <- set(dummy_df1, dummy_df2, dummy_df3)
     new_df2 <- set(dummy_df1, dummy_df2, dummy_df3, compress = "factor")
 
-    expect_equal(nrow(new_df1), 30)
-    expect_equal(nrow(new_df2), 30)
+    expect_equal(nrow(new_df1), 300)
+    expect_equal(nrow(new_df2), 300)
     expect_equal(class(new_df1[["education"]]), "character")
     expect_equal(class(new_df2[["education"]]), "factor")
 })

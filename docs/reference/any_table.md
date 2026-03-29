@@ -335,27 +335,27 @@ set_footnotes("This is footnote number 1",
               "This is footnote number 3 link: https://cran.r-project.org/")
 
 # Output complex tables with different percentages
-my_data |> any_table(rows       = c("sex + age", "sex", "age"),
-                     columns    = c("year", "education + year"),
-                     values     = weight,
-                     pct_group  = c("row_pct", "col_pct"),
-                     formats    = list(sex = sex., age = age.,
-                                       education = education.),
-                     na.rm      = TRUE)
+my_data |> any_table(rows      = c("sex + age", "sex", "age"),
+                     columns   = c("year", "education + year"),
+                     values    = weight,
+                     pct_group = c("row_pct", "col_pct"),
+                     formats   = list(sex = sex., age = age.,
+                                      education = education.),
+                     na.rm     = TRUE)
 
 # If you want to get a clearer vision of what the result table looks like, in terms
 # of the row and column categories, you can write the code like this, to make out
 # the variable crossings and see the order.
-my_data |> any_table(columns = c(            "year", "education + year"),
-                     rows    = c("sex + age",
-                                 "sex",
-                                 "age"),
-                     values     = weight,
-                     pct_group  = c("sex", "age"),
-                     formats    = list(sex = sex., age = age.,
-                                       education = education.),
-                     output     = "excel_nostyle",
-                     na.rm      = TRUE)
+# my_data |> any_table(columns   = c(            "year", "education + year"),
+#                      rows      = c("sex + age",
+#                                    "sex",
+#                                    "age"),
+#                      values    = weight,
+#                      pct_group = c("sex", "age"),
+#                      formats   = list(sex = sex., age = age.,
+#                                       education = education.),
+#                      output    = "excel_nostyle",
+#                      na.rm     = TRUE)
 
 # Percentages based on value variables instead of categories
 my_data |> any_table(rows       = c("age + year"),

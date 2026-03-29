@@ -478,8 +478,7 @@ summarise_plus <- function(data_frame,
         }
         else{
             # Apply formats first
-            result_df <- data_frame |>
-                apply_format(formats, group_vars)
+            result_df <- data_frame |> apply_format(formats, group_vars)
 
             monitor_df <- monitor_df |> monitor_end()
 
@@ -1079,7 +1078,16 @@ matrix_summarise <- function(data_frame,
     # are any additional dots in the level names, this leads to errors.
     for (column in group_vars){
         if (is.factor(data_frame[[column]])){
-            levels(data_frame[[column]]) <- gsub("\\.", "!!!", levels(data_frame[[column]]))
+            # Get unique values from the variable and replace "."
+            unique_values   <- collapse::funique(levels(data_frame[[column]]))
+            replaced_values <- gsub(".", "!!!", unique_values, fixed = TRUE)
+
+            # If original and replaced values are identical, the replacing on the larger
+            # vector can be skipped entirely to save time. Only if there was a replacement
+            # the whole vector has to be processed.
+            if (!identical(unique_values, replaced_values)){
+                levels(data_frame[[column]]) <- replaced_values
+            }
         }
         else if(is.character(data_frame[[column]])){
             # Get unique values from the variable and replace "."

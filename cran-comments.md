@@ -19,6 +19,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `row_calculation()`: Now has an optional rounding parameter.
 * `dummy_data()`: Added `weight_per_year` variable.
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts.
+* `split_by()`: Now also outputs NA values.
 
 ### Changed functionality
 
@@ -36,6 +37,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed.
 * `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information.
 * `import_data()`: In the examples the file names to read in weren't correct. This is fixed now.
+* `split_by()`: Should now work inside custom functions.
 
 ### Optimization
 
@@ -43,7 +45,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `running_number()`: Now uses faster `data.table` function.
 * `round_values()`: Now uses vectorized math to reduce memory allocation.
 * `dummy_data()`: Reduced memory allocation.
-* `summarise_plus()`: When using character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector.
+* `summarise_plus()`: When using factor or character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector.
 * `import_data()`, `import_multi()`: `import_data()` now also accepts a `openxlsx2` workbook as infile and not only a path to a workbook. This enables a massive performance boost for `import_multi()`, which now passes a workbook to `import_data()` instead of the file path.
 
 ### Additionally

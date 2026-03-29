@@ -69,6 +69,8 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Added <code>weight_per_year</code> variable. (25.03.2026)</li>
 <li>
 <code><a href="../reference/build_master.html">build_master()</a></code>: Added <code>with_monitor</code> parameter, which allows to visualize the time consumption of the individual scripts. (26.03.2026)</li>
+<li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Now also outputs NA values. (29.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
@@ -97,6 +99,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: The <code>output</code> parameter wasn’t stored in the meta information list which lead to <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code> not able to access it and always output formatted tables. Now the <code>output</code> parameter is stored in meta information. (24.03.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_data()</a></code>: In the examples the file names to read in weren’t correct. This is fixed now. (28.03.2026)</li>
+<li>
+<code><a href="../reference/split_by.html">split_by()</a></code>: Should now work inside custom functions. (29.03.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>
@@ -109,7 +113,7 @@
 <li>
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Reduced memory allocation. (25.03.2026)</li>
 <li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When using character variables in <code>class</code> parameter, the check to preserve “.” is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a <code>gsub</code> every time over the whole vector. (28.03.2026)</li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: When using factor or character variables in <code>class</code> parameter, the check to preserve “.” is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a <code>gsub</code> every time over the whole vector. (28.03.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">import_multi()</a></code>: <code><a href="../reference/import_export.html">import_data()</a></code> now also accepts a <code>openxlsx2</code> workbook as infile and not only a path to a workbook. This enables a massive performance boost for <code><a href="../reference/import_export.html">import_multi()</a></code>, which now passes a workbook to <code><a href="../reference/import_export.html">import_data()</a></code> instead of the file path. (28.03.2026)</li>
 </ul></div>
@@ -126,6 +130,7 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added missing global options function in the <code>see also</code> section. (25.03.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Added some messages to show progress. (28.03.2026)</li>
+<li>Added repository to DeepWiki and added badge to README. (29.03.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

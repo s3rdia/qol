@@ -18,6 +18,7 @@
 * `row_calculation()`: Now has an optional rounding parameter. (23.03.2026)
 * `dummy_data()`: Added `weight_per_year` variable. (25.03.2026)
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts. (26.03.2026)
+* `split_by()`: Now also outputs NA values. (29.03.2026)
 
 ### Changed functionality
 
@@ -35,6 +36,7 @@
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed. (12.03.2026)
 * `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information. (24.03.2026)
 * `import_data()`: In the examples the file names to read in weren't correct. This is fixed now. (28.03.2026)
+* `split_by()`: Should now work inside custom functions. (29.03.2026)
 
 ### Optimization
 
@@ -42,7 +44,7 @@
 * `running_number()`: Now uses faster `data.table` function. (23.03.2026)
 * `round_values()`: Now uses vectorized math to reduce memory allocation. (23.03.2026)
 * `dummy_data()`: Reduced memory allocation. (25.03.2026)
-* `summarise_plus()`: When using character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector. (28.03.2026)
+* `summarise_plus()`: When using factor or character variables in `class` parameter, the check to preserve "." is now executed on the unique values first and only mapped back to the data frame, if there are any replacements needed, instead of running a `gsub` every time over the whole vector. (28.03.2026)
 * `import_data()`, `import_multi()`: `import_data()` now also accepts a `openxlsx2` workbook as infile and not only a path to a workbook. This enables a massive performance boost for `import_multi()`, which now passes a workbook to `import_data()` instead of the file path. (28.03.2026)
 
 ### Additionally
@@ -53,6 +55,7 @@
 * `any_table()`: Omitted table formatting in some tests to make them run quicker. (24.03.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section. (25.03.2026)
 * `import_multi()`, `export_multi()`: Added some messages to show progress. (28.03.2026)
+* Added repository to DeepWiki and added badge to README. (29.03.2026)
 
 # qol 1.2.2
 

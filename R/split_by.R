@@ -81,14 +81,35 @@ split_by <- function(data_frame,
     monitor_df <- NULL |> monitor_start("Preparation", "Preparation")
     #-------------------------------------------------------------------------#
 
-    # Convert to character
-    conditions <- as.list(substitute(list(...)))[-1]
+    # Convert to character in case of single variables
+    conditions <- tryCatch({
+        # Force evaluation to see if it exists
+        dots_to_char(...)
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    # Get actual condition or a mix of variables and conditions
+    if (is.null(conditions)){
+        conditions <- as.list(substitute(list(...)))[-1]
+    }
+
+    # If only variables are provided, check if they are part of the data frame
+    if (is.character(conditions)){
+        conditions <- data_frame |> part_of_df(conditions)
+    }
 
     # Split data frame by conditions and store the split data frames into list
     data_list <- list()
 
     # Apply formats if there are any first
-    formats_list <- as.list(substitute(formats))[-1]
+    formats_list <- formats
+
+    if (!is_list_of_dfs(formats)){
+        formats_list <- as.list(substitute(formats))[-1]
+        formats_list <- evaluate_formats(formats_list)
+    }
 
     if (length(formats_list) > 0){
         #-------------------------------------------------------------------------#
@@ -107,14 +128,12 @@ split_by <- function(data_frame,
         if (is.name(condition) || is.character(condition)){
             condition <- as.character(condition)
 
-            if (!condition %in% names(data_frame)){
-                message(" X ERROR: Variable '", condition, "' not found in the input data frame. Splitting will be aborted.")
-                return(data_frame)
-            }
+            # Generate new split list with NA entries
+            new_entry <- data_frame |> collapse::rsplit(by = data_frame[[condition]])
 
-            # Generate new split list with NA entries removed
-            df_to_split <- data_frame  |> collapse::fsubset(!is.na(data_frame[[condition]]))
-            new_entry   <- df_to_split |> collapse::rsplit(by = df_to_split[[condition]])
+            if (NA %in% names(new_entry)){
+                names(new_entry)[length(new_entry)] <- paste0("NA_", condition)
+            }
 
             # Check for duplicate list entry names
             duplicate_entry <- intersect(names(data_list), names(new_entry))

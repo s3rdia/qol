@@ -15,6 +15,9 @@ Version](https://img.shields.io/badge/GitHub-1.2.3-blue.svg)](https://github.com
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
 [![r-universe
 checks](https://s3rdia.r-universe.dev/badges/:registry)](https://s3rdia.r-universe.dev/qol)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/s3rdia/qol)
+[![qol_blog](https://img.shields.io/badge/qol-Blog-036f30)](https://s3rdia.github.io/qol_blog/)
 <!-- badges: end -->
 
 Bringing Powerful ‘SAS’ Inspired Concepts for more Efficient Bigger
