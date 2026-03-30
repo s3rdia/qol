@@ -69,6 +69,12 @@
   consumption of the individual scripts. (26.03.2026)
 - [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
   Now also outputs NA values. (29.03.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`export_data()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Now can import and export csv files with file extension txt.
+  (30.03.2026)
 
 #### Changed functionality
 

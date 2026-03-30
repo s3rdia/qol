@@ -19,6 +19,7 @@
 * `dummy_data()`: Added `weight_per_year` variable. (25.03.2026)
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts. (26.03.2026)
 * `split_by()`: Now also outputs NA values. (29.03.2026)
+* `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt. (30.03.2026)
 
 ### Changed functionality
 

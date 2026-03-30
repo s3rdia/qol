@@ -37,7 +37,8 @@ test_that("Retrieve path with libname", {
 test_that("Retrieve files from path with libname", {
     expect_message(my_path <- libname(external_path, get_files = TRUE), " > Filepaths successfully retrieved: ")
     expect_equal(names(my_path), c("qol_example_data_csv.csv",  "qol_example_data_fst.fst",
-                                   "qol_example_data_rds.rds", "qol_example_data_xlsx.xlsx", "qol_nuts.csv"))
+                                   "qol_example_data_rds.rds", "qol_example_data_txt.txt",
+                                   "qol_example_data_xlsx.xlsx", "qol_nuts.csv"))
 })
 
 ###############################################################################

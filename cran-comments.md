@@ -20,6 +20,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `dummy_data()`: Added `weight_per_year` variable.
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts.
 * `split_by()`: Now also outputs NA values.
+* `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt.
 
 ### Changed functionality
 

@@ -1,8 +1,10 @@
-test_that("Example csv and xlsx files load", {
-    csv_file  <- system.file("extdata", "qol_example_data_csv.csv",  package = "qol")
+test_that("Example csv, txt and xlsx files load", {
+    csv_file  <- system.file("extdata", "qol_example_data_csv.csv",   package = "qol")
+    txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
     xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
     expect_true(file.exists(csv_file))
+    expect_true(file.exists(txt_file))
     expect_true(file.exists(xlsx_file))
 })
 
@@ -11,12 +13,24 @@ test_that("Example csv and xlsx files load", {
 ###############################################################################
 
 export_df <- dummy_data(10)
-export_list <- list(first  = dummy_data(10),
-                    second = dummy_data(10))
+export_list     <- list(first  = export_df,
+                        second = export_df)
+export_list_txt <- list(first.txt  = export_df,
+                        second.txt = export_df)
 
 
 test_that("CSV export works correctly", {
     temp_file <- tempfile(fileext = ".csv")
+    on.exit(unlink(temp_file), add = TRUE)
+
+    export_df |> export_data(temp_file)
+
+    expect_true(file.exists(temp_file))
+})
+
+
+test_that("TXT export works correctly", {
+    temp_file <- tempfile(fileext = ".txt")
     on.exit(unlink(temp_file), add = TRUE)
 
     export_df |> export_data(temp_file)
@@ -63,7 +77,7 @@ test_that("Warning in export on invalid file extension", {
     on.exit(unlink(temp_file), add = TRUE)
 
     expect_message(export_df |> export_data(temp_file),
-                   " ! WARNING: Only 'csv' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.")
+                   " ! WARNING: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.")
 
     temp_file <- sub(".test", ".csv", temp_file, ignore.case = TRUE)
     expect_true(file.exists(temp_file))
@@ -137,6 +151,18 @@ test_that("Multi CSV export works correctly", {
 })
 
 
+test_that("Multi TXT export works correctly", {
+    file1 <- file.path(tempdir(), "first.txt")
+    file2 <- file.path(tempdir(), "second.txt")
+    on.exit(unlink(c(file1, file2)), add = TRUE)
+
+    export_multi(export_list_txt, tempdir(), separator = ";")
+
+    expect_true(file.exists(file1))
+    expect_true(file.exists(file2))
+})
+
+
 test_that("Multi XLSX export works correctly", {
     file1 <- file.path(tempdir(), "first.xlsx")
     file2 <- file.path(tempdir(), "second.xlsx")
@@ -167,6 +193,16 @@ test_that("CSV import works correctly", {
     csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
     infile <- import_data(csv_file)
+
+    expect_equal(nrow(infile), 100)
+    expect_equal(ncol(infile), 11)
+})
+
+
+test_that("TXT import works correctly", {
+    txt_file <- system.file("extdata", "qol_example_data_txt.txt", package = "qol")
+
+    infile <- import_data(txt_file)
 
     expect_equal(nrow(infile), 100)
     expect_equal(ncol(infile), 11)
@@ -245,7 +281,7 @@ test_that("Abort import on invalid file extension", {
     csv_file <- gsub(".csv", ".test", system.file("extdata", "qol_example_data_csv.csv", package = "qol"))
 
     expect_message(infile <- import_data(csv_file),
-                   " X ERROR: Only 'csv' or 'xlsx' are allowed as file extensions in the <infile>.")
+                   " X ERROR: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <infile>.")
 })
 
 
@@ -338,14 +374,15 @@ test_that("Warning in import if region not found", {
 
 
 test_that("Multi file import works correctly (single sheet)", {
-    csv_file  <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
+    csv_file  <- system.file("extdata", "qol_example_data_csv.csv",   package = "qol")
+    txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
     xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
-    files <- c(csv_file, xlsx_file)
+    files <- c(csv_file, txt_file, xlsx_file)
 
     infile <- import_multi(files, 1)
 
     expect_type(infile, "list")
-    expect_equal(length(infile), 2)
+    expect_equal(length(infile), 3)
 })
 
 

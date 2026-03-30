@@ -215,6 +215,8 @@ Useful links:
 
 - <https://s3rdia.github.io/qol/>
 
+- <https://deepwiki.com/s3rdia/qol>
+
 ## Author
 
 Tim Siebenmorgen

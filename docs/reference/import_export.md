@@ -74,11 +74,12 @@ export_multi(
 
 - separator:
 
-  Only used in CSV-export. Defines the single character value separator.
+  Only used in CSV/TXT-export. Defines the single character value
+  separator.
 
 - decimal:
 
-  Only used in CSV-export. Defines the single character decimal
+  Only used in CSV/TXT-export. Defines the single character decimal
   character.
 
 - var_names:
@@ -97,8 +98,8 @@ export_multi(
 
 - outfile:
 
-  Full file path with extension. Allowed extensions are ".csv" and
-  ".xlsx".
+  Full file path with extension. Allowed extensions are ".csv", ".txt"
+  and ".xlsx".
 
 - out_path:
 
@@ -120,8 +121,8 @@ Multi functions: Returns a list of data frames.
 `import_data()` and `export_data()` are based on the 'SAS' procedures
 Proc Import and Proc Export, which provide a very straight forward
 syntax. While 'SAS' can import many different formats with these
-procedures, these 'R' versions concentrate on importing CSV and XLSX
-files.
+procedures, these 'R' versions concentrate on importing CSV, TXT and
+XLSX files.
 
 The main goal here is to just provide as few as possible parameters to
 tackle most of the imports and exports. These error handling also tries
@@ -151,11 +152,13 @@ Global style options:
 
 ``` r
 # Example files
-csv_file  <- system.file("extdata", "qol_example_data_csv.csv",  package = "qol")
+csv_file  <- system.file("extdata", "qol_example_data_csv.csv",   package = "qol")
+txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
 xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
 # Import: Provide full file path
 my_csv  <- import_data(csv_file)
+my_csv  <- import_data(txt_file)
 my_xlsx <- import_data(xlsx_file)
 
 # Import specific regions
@@ -166,22 +169,24 @@ name_import  <- import_data(xlsx_file, region = "test_region")
 sheet_import <- import_data(xlsx_file, sheet = "Sheet 2")
 
 # Import multiple files at once
-all_files <- import_multi(c(csv_file, xlsx_file))
+all_files <- import_multi(c(csv_file, txt_file, xlsx_file))
 
 # Example data frame
 my_data <- dummy_data(100)
 
 # Example export file paths
 export_csv  <- tempfile(fileext = ".csv")
+export_txt  <- tempfile(fileext = ".txt")
 export_xlsx <- tempfile(fileext = ".xlsx")
 
 # Export: Provide full file path
 my_data |> export_data(export_csv)
+my_data |> export_data(export_txt)
 my_data |> export_data(export_xlsx)
 
 # Example data frame list
-my_list <- list(first  = dummy_data(10),
-                second = dummy_data(10))
+my_list <- list(first      = dummy_data(10),
+                second.txt = dummy_data(10))
 
 # Export multiple data frames into one xlsx file
 # with multiple sheets
@@ -190,7 +195,7 @@ export_multi(my_list, tempdir())
 # Export multiple data frames into multiple xlsx files
 export_multi(my_list, tempdir(), into_sheets = FALSE)
 
-# Export multiple data frames into multiple csv files
+# Export multiple data frames into multiple csv/txt files
 export_multi(my_list, tempdir(), separator = ";")
 
 # Manual cleanup for example
@@ -198,7 +203,7 @@ file1 <- file.path(tempdir(), "my_list.xlsx")
 file2 <- file.path(tempdir(), "first.xlsx")
 file3 <- file.path(tempdir(), "second.xlsx")
 file4 <- file.path(tempdir(), "first.csv")
-file5 <- file.path(tempdir(), "second.csv")
+file5 <- file.path(tempdir(), "second.txt")
 
 unlink(c(export_csv, export_xlsx,
          file1, file2, file3, file4, file5))

@@ -140,6 +140,7 @@ Useful links:
 \itemize{
   \item \url{https://github.com/s3rdia/qol}
   \item \url{https://s3rdia.github.io/qol/}
+  \item \url{https://deepwiki.com/s3rdia/qol}
 }
 
 }

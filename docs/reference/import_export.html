@@ -118,11 +118,11 @@ or the name of a named region.</p></dd>
 
 
 <dt id="arg-separator">separator<a class="anchor" aria-label="anchor" href="#arg-separator"></a></dt>
-<dd><p>Only used in CSV-export. Defines the single character value separator.</p></dd>
+<dd><p>Only used in CSV/TXT-export. Defines the single character value separator.</p></dd>
 
 
 <dt id="arg-decimal">decimal<a class="anchor" aria-label="anchor" href="#arg-decimal"></a></dt>
-<dd><p>Only used in CSV-export. Defines the single character decimal character.</p></dd>
+<dd><p>Only used in CSV/TXT-export. Defines the single character decimal character.</p></dd>
 
 
 <dt id="arg-var-names">var_names<a class="anchor" aria-label="anchor" href="#arg-var-names"></a></dt>
@@ -139,7 +139,7 @@ or the name of a named region.</p></dd>
 
 
 <dt id="arg-outfile">outfile<a class="anchor" aria-label="anchor" href="#arg-outfile"></a></dt>
-<dd><p>Full file path with extension. Allowed extensions are ".csv" and ".xlsx".</p></dd>
+<dd><p>Full file path with extension. Allowed extensions are ".csv", ".txt" and ".xlsx".</p></dd>
 
 
 <dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
@@ -160,7 +160,7 @@ sheets of a single xlsx file or into separate xlsx files.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>import_data()</code> and <code>export_data()</code> are based on the 'SAS' procedures Proc Import and Proc Export,
 which provide a very straight forward syntax. While 'SAS' can import many different formats with
-these procedures, these 'R' versions concentrate on importing CSV and XLSX files.</p>
+these procedures, these 'R' versions concentrate on importing CSV, TXT and XLSX files.</p>
 <p>The main goal here is to just provide as few as possible parameters to tackle most of the imports
 and exports. These error handling also tries to let an import and export happen, even though
 a parameter wasn't provided in the correct way.</p>
@@ -177,11 +177,13 @@ a parameter wasn't provided in the correct way.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example files</span></span>
-<span><span class="va">csv_file</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"qol_example_data_csv.csv"</span>,  package <span class="op">=</span> <span class="st">"qol"</span><span class="op">)</span></span>
+<span><span class="va">csv_file</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"qol_example_data_csv.csv"</span>,   package <span class="op">=</span> <span class="st">"qol"</span><span class="op">)</span></span>
+<span><span class="va">txt_file</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"qol_example_data_txt.txt"</span>,   package <span class="op">=</span> <span class="st">"qol"</span><span class="op">)</span></span>
 <span><span class="va">xlsx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"qol_example_data_xlsx.xlsx"</span>, package <span class="op">=</span> <span class="st">"qol"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Import: Provide full file path</span></span>
 <span><span class="va">my_csv</span>  <span class="op">&lt;-</span> <span class="fu">import_data</span><span class="op">(</span><span class="va">csv_file</span><span class="op">)</span></span>
+<span><span class="va">my_csv</span>  <span class="op">&lt;-</span> <span class="fu">import_data</span><span class="op">(</span><span class="va">txt_file</span><span class="op">)</span></span>
 <span><span class="va">my_xlsx</span> <span class="op">&lt;-</span> <span class="fu">import_data</span><span class="op">(</span><span class="va">xlsx_file</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Import specific regions</span></span>
@@ -192,22 +194,24 @@ a parameter wasn't provided in the correct way.</p>
 <span><span class="va">sheet_import</span> <span class="op">&lt;-</span> <span class="fu">import_data</span><span class="op">(</span><span class="va">xlsx_file</span>, sheet <span class="op">=</span> <span class="st">"Sheet 2"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Import multiple files at once</span></span>
-<span><span class="va">all_files</span> <span class="op">&lt;-</span> <span class="fu">import_multi</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">csv_file</span>, <span class="va">xlsx_file</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_files</span> <span class="op">&lt;-</span> <span class="fu">import_multi</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">csv_file</span>, <span class="va">txt_file</span>, <span class="va">xlsx_file</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example export file paths</span></span>
 <span><span class="va">export_csv</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".csv"</span><span class="op">)</span></span>
+<span><span class="va">export_txt</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".txt"</span><span class="op">)</span></span>
 <span><span class="va">export_xlsx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Export: Provide full file path</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">export_data</span><span class="op">(</span><span class="va">export_csv</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">export_data</span><span class="op">(</span><span class="va">export_txt</span><span class="op">)</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">export_data</span><span class="op">(</span><span class="va">export_xlsx</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example data frame list</span></span>
-<span><span class="va">my_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>first  <span class="op">=</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
-<span>                second <span class="op">=</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">my_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>first      <span class="op">=</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
+<span>                second.txt <span class="op">=</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Export multiple data frames into one xlsx file</span></span>
 <span><span class="co"># with multiple sheets</span></span>
@@ -216,7 +220,7 @@ a parameter wasn't provided in the correct way.</p>
 <span><span class="co"># Export multiple data frames into multiple xlsx files</span></span>
 <span><span class="fu">export_multi</span><span class="op">(</span><span class="va">my_list</span>, <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, into_sheets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Export multiple data frames into multiple csv files</span></span>
+<span><span class="co"># Export multiple data frames into multiple csv/txt files</span></span>
 <span><span class="fu">export_multi</span><span class="op">(</span><span class="va">my_list</span>, <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, separator <span class="op">=</span> <span class="st">";"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Manual cleanup for example</span></span>
@@ -224,7 +228,7 @@ a parameter wasn't provided in the correct way.</p>
 <span><span class="va">file2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"first.xlsx"</span><span class="op">)</span></span>
 <span><span class="va">file3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"second.xlsx"</span><span class="op">)</span></span>
 <span><span class="va">file4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"first.csv"</span><span class="op">)</span></span>
-<span><span class="va">file5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"second.csv"</span><span class="op">)</span></span>
+<span><span class="va">file5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"second.txt"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">export_csv</span>, <span class="va">export_xlsx</span>,</span>
 <span>         <span class="va">file1</span>, <span class="va">file2</span>, <span class="va">file3</span>, <span class="va">file4</span>, <span class="va">file5</span><span class="op">)</span><span class="op">)</span></span>
