@@ -18,6 +18,6 @@ Depends:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+    tinytest (>= 1.4.3)
+Config/tinytest/edition: 1
 Config/Needs/website: rmarkdown

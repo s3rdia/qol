@@ -239,7 +239,7 @@ retain_value <- function(data_frame,
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
             message(" X ERROR: Must provide <values> to retain. Retain will be aborted.")
-            return(invisible(data_frame))
+            return(invisible(NA))
         }
     }
 
@@ -315,14 +315,14 @@ retain_sum <- function(data_frame,
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
             message(" X ERROR: Must provide a <values> to retain. Retain will be aborted.")
-            return(invisible(data_frame))
+            return(invisible(NA))
         }
     }
 
     # Abort if non-numeric value provided
     if (!all(collapse::vtypes(data_frame[values]) %in% c("numeric", "integer", "double"))){
         message(" X ERROR: <Values> must be numeric. Retain will be aborted.")
-        return(invisible(data_frame))
+        return(invisible(NA))
     }
 
     ###########################################################################

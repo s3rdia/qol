@@ -81,6 +81,10 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Instead of aborting when no values are passed, the function now
   generates a variable to output unweighted results. (26.03.2026)
+- `Unit tests`: Moved unit tests completely from `testthat` to
+  `tinytest`. `testthat` repeatedly got in the way with its own
+  environment, `tinytest` offers more natural conditions and works
+  faster. (31.01.2026)
 
 #### Fixed
 
@@ -122,6 +126,9 @@
   fixed now. (28.03.2026)
 - [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
   Should now work inside custom functions. (29.03.2026)
+- [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md): On
+  error now return NA instead of the whole data frame. (31.01.2026)
 
 #### Optimization
 

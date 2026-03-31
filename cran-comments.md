@@ -25,6 +25,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 ### Changed functionality
 
 * `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
+* `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster.
 
 ### Fixed
 
@@ -39,6 +40,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information.
 * `import_data()`: In the examples the file names to read in weren't correct. This is fixed now.
 * `split_by()`: Should now work inside custom functions.
+* `retain_value()`, `retain_sum()`: On error now return NA instead of the whole data frame.
 
 ### Optimization
 
