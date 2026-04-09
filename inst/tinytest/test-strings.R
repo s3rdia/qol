@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
@@ -159,70 +161,79 @@ expect_equal(text_df2[["gone_blanks"]], c("This is a text", "Hello World", "this
 ###############################################################################
 
 # Concatenating only possible with single length padding_char
-expect_message(test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
-                                padding_char = "00"),
-               " ! WARNING: <Padding chararacter> must be a single character. Concat will be done without <padding character>.",
+test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
+                                padding_char = "00")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Padding chararacter> must be a single character. Concat will be done without <padding character>.",
                info = "Concatenating only possible with single length padding_char")
 
 expect_equal(test_df[["concat_vec"]], c("11abc", "10NAab", "1003a"), info = "Concatenating only possible with single length padding_char")
 
-expect_message(test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
-                                               padding_char = ""),
-               " ! WARNING: <Padding chararacter> must be a single character. Concat will be done without <padding character>.",
+test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
+                                               padding_char = "")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Padding chararacter> must be a single character. Concat will be done without <padding character>.",
                info = "Concatenating only possible with single length padding_char")
 
 expect_equal(test_df[["concat_vec"]], c("11abc", "10NAab", "1003a"), info = "Concatenating only possible with single length padding_char")
 
 
 # Concatenating with too short individual padding length
-expect_message(test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
+test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
                                                padding_char   = "0",
-                                               padding_length = c(5, 6)),
-               " ! WARNING: <Padding length> is shorter than the number of variables.",
+                                               padding_length = c(5, 6))
+
+expect_warning(print_stack_as_messages("WARNING"), "<Padding length> is shorter than the number of variables.",
                info = "Concatenating with too short individual padding length")
 
 expect_equal(test_df[["concat_vec"]], c("00001000001abc", "000100000000ab", "0010000000300a"), info = "Concatenating with too short individual padding length")
 
 
 # Concatenating with too long individual padding length
-expect_message(test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
+test_df[["concat_vec"]] <- test_df |> concat(var1, var2, var3,
                                 padding_char   = "0",
-                                padding_length = c(5, 6, 7, 8)),
-               " ! WARNING: <Padding length> is longer than the number of variables.",
+                                padding_length = c(5, 6, 7, 8))
+
+expect_warning(print_stack_as_messages("WARNING"), "<Padding length> is longer than the number of variables.",
                info = "Concatenating with too long individual padding length")
 
 expect_equal(test_df[["concat_vec"]], c("000010000010000abc", "0001000000000000ab", "00100000003000000a"), info = "Concatenating with too long individual padding length")
 
 
 # Substring throws a warning when variable is provided as a vector
-expect_message(test_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3),
-               " ! WARNING: <Variable> may only be of length one. The first Element will be used.",
+test_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3)
+
+expect_warning(print_stack_as_messages("WARNING"), "<Variable> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when variable is provided as a vector")
 
 
 # Substring throws a warning when to is provided as a vector
-expect_message(test_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c(3, 5)),
-               " ! WARNING: <To> may only be of length one. The first Element will be used.",
+test_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c(3, 5))
+
+expect_warning(print_stack_as_messages("WARNING"), "<To> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when to is provided as a vector")
 
 
 # Substring throws a warning when from is provided as a vector
-expect_message(test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(3, 5)),
-               " ! WARNING: <From> may only be of length one. The first Element will be used.",
+test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(3, 5))
+
+expect_warning(print_stack_as_messages("WARNING"), "<From> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when from is provided as a vector")
 
 
 # Remove all blanks with invalid <which> option
-expect_message(text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var1, which = "lala"),
-               " ! WARNING: Invalid option for <which> provided. Allowed are 'trim', 'leading', 'trailing', 'all' and",
+text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var1, which = "lala")
+
+expect_warning(print_stack_as_messages("WARNING"), "Invalid option for <which> provided. Allowed are 'trim', 'leading', 'trailing', 'all' and",
                info = "Remove all blanks with invalid <which> option")
 
 expect_equal(text_df2[["gone_blanks"]], c("Thisisatext", "HelloWorld", "thisisaText"), info = "Remove all blanks with invalid <which> option")
 
 
 # Remove blanks only of the first provided variable
-expect_message(text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(c(var1, var2), which = "all"),
-               " ! WARNING: <Variable> may only be of length one. The first Element will be used.",
+text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(c(var1, var2), which = "all")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Variable> may only be of length one. The first Element will be used.",
                info = "Remove blanks only of the first provided variable")
 
 expect_equal(text_df2[["gone_blanks"]], c("Thisisatext", "HelloWorld", "thisisaText"), info = "Remove blanks only of the first provided variable")
@@ -232,35 +243,44 @@ expect_equal(text_df2[["gone_blanks"]], c("Thisisatext", "HelloWorld", "thisisaT
 ###############################################################################
 
 # Substring aborts if variable is not part of the data frame
-expect_message(test_df[["sub_vec"]] <- text_df |> sub_string(var2, to = 3),
-               " X ERROR: The provided <variable> '", info = "Substring aborts if variable is not part of the data frame")
+test_df[["sub_vec"]] <- text_df |> sub_string(var2, to = 3)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided <variable> '", info = "Substring aborts if variable is not part of the data frame")
 
 
 # Substring aborts if variable is not character
-expect_message(test_df[["sub_vec"]] <- test_df |> sub_string(var1, to = 3),
-               " X ERROR: <Variable> type must be character. Substring will be aborted.",
+test_df[["sub_vec"]] <- test_df |> sub_string(var1, to = 3)
+
+expect_error(print_stack_as_messages("ERROR"), "<Variable> type must be character. Substring will be aborted.",
                info = "Substring aborts if variable is not character")
 
 
 # Substring aborts if neither from nor to are provided
-expect_message(test_df[["sub_vec"]] <- text_df |> sub_string(var1),
-               " X ERROR: Neither <from> nor <to> is provided. Substring will be aborted.",
+test_df[["sub_vec"]] <- text_df |> sub_string(var1)
+
+expect_error(print_stack_as_messages("ERROR"), "Neither <from> nor <to> is provided. Substring will be aborted.",
                info = "Substring aborts if neither from nor to are provided")
 
 
 # Abort blank removal with no variable provided
-expect_message(text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(),
-               " X ERROR: No <variable> provided. Blank removal will be aborted.",
+text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks()
+
+expect_error(print_stack_as_messages("ERROR"), "No <variable> provided. Blank removal will be aborted.",
                info = "Abort blank removal with no variable provided")
 
 
 # Abort blank removal if variable is not part of the data frame
-expect_message(text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var3),
-               " X ERROR: No valid <variable> provided. Blank removal will be aborted.",
+text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var3)
+
+expect_error(print_stack_as_messages("ERROR"), "No valid <variable> provided. Blank removal will be aborted.",
                info = "Abort blank removal if variable is not part of the data frame")
 
 
 # Abort blank removal if variable is not character
-expect_message(text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var2),
-               " X ERROR: Blank removal only works with a character <variable>. Blank removal will be aborted.",
+text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var2)
+
+expect_error(print_stack_as_messages("ERROR"), "Blank removal only works with a character <variable>. Blank removal will be aborted.",
                info = "Abort blank removal if variable is not character")
+
+
+set_no_print()

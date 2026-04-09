@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(1000))
+dummy_df <- dummy_data(1000)
 dummy_df[["age"]] <- as.character(dummy_df[["age"]])
 
 
@@ -49,3 +51,6 @@ expect_equal(return_param(age), "age", info = "Convert ellipsis to character vec
 expect_equal(return_param("age"), "age", info = "Convert ellipsis to character vector")
 expect_equal(return_param(c(age, sex, income, weight)), c("age", "sex", "income", "weight"), info = "Convert ellipsis to character vector")
 expect_equal(return_param(c("age", "sex", "income", "weight")), c("age", "sex", "income", "weight"), info = "Convert ellipsis to character vector")
+
+
+set_no_print()

@@ -46,7 +46,7 @@ free_memory <- function(names = NULL,
     # Get objects based on provided names
     if (!is.null(names)){
         if (!is.character(names)){
-            message(" X ERROR: <Names> have to be provided as character. Objects will remain untouched.")
+            print_message("ERROR", "<Names> have to be provided as character. Objects will remain untouched.")
             return(invisible(NULL))
         }
 
@@ -86,7 +86,7 @@ free_memory <- function(names = NULL,
             }
             # If there are more than two colons abort
             else{
-                message(" X ERROR: <Name> has more than two colons which is not allowed. Objects will remain untouched.")
+                print_message("ERROR", "<Name> has more than two colons which is not allowed. Objects will remain untouched.")
                 return(invisible(NULL))
             }
         }
@@ -95,9 +95,9 @@ free_memory <- function(names = NULL,
     }
 
     # Get objects based on provided types
-    if (!is.null(types)) {
-        if (!is.character(types)) {
-            message(" X ERROR: <Types> have to be provided as character. Objects will remain untouched.")
+    if (!is.null(types)){
+        if (!is.character(types)){
+            print_message("ERROR", "<Types> have to be provided as character. Objects will remain untouched.")
             return(invisible(NULL))
         }
 
@@ -115,8 +115,8 @@ free_memory <- function(names = NULL,
     }
 
     # Abort if no object found
-    if (length(objects) == 0) {
-        message(" X ERROR: No object found. Objects will remain untouched.")
+    if (length(objects) == 0){
+        print_message("ERROR", "No object found. Objects will remain untouched.")
         return(invisible(NULL))
     }
 
@@ -129,8 +129,9 @@ free_memory <- function(names = NULL,
 
     total_bytes <- collapse::fsum(object_sizes)
 
-    message("\n- - - 'free_memory' removed ", length(objects), " object(s) and freed approximately ",
-        format(structure(total_bytes, class = "object_size"), units = "auto"), ".")
+    print_step("MAJOR", "'free_memory' removed [objects] object{?s} and freed approximately [memory].",
+                     objects = length(objects),
+                     memory  = format(structure(total_bytes, class = "object_size"), units = "auto"))
 
     # Remove objects from memory
     rm(list = objects, envir = envir)

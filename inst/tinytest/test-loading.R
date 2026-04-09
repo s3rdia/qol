@@ -1,11 +1,13 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df1 <- suppressMessages(dummy_data(100))
-dummy_df2 <- suppressMessages(dummy_data(100))
-dummy_df3 <- suppressMessages(dummy_data(100))
+dummy_df1 <- dummy_data(100)
+dummy_df2 <- dummy_data(100)
+dummy_df3 <- dummy_data(100)
 
 external_path <- system.file("extdata",  package = "qol")
 
@@ -27,12 +29,15 @@ expect_equal(max(new_df[["ID"]]), 3, info = "Stack data fames with id column")
 
 
 # Retrieve path with libname
-expect_message(my_path <- libname(external_path), " > Path successfully assigned: ", info = "Retrieve path with libname")
+my_path <- libname(external_path)
+
+expect_message(print_stack_as_messages("MAJOR"), "Path successfully assigned: ", info = "Retrieve path with libname")
 expect_equal(my_path, external_path, info = "Retrieve path with libname")
 
 
 # Retrieve files from path with libname
-expect_message(my_path <- libname(external_path, get_files = TRUE), " > Filepaths successfully retrieved: ", info = "Retrieve files from path with libname")
+my_path <- libname(external_path, get_files = TRUE)
+
 expect_equal(names(my_path), c("qol_example_data_csv.csv",  "qol_example_data_fst.fst", "qol_example_data_rds.rds",
                                "qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "qol_nuts.csv",
                                "qol_tinytest_results.fst"), info = "Retrieve files from path with libname")
@@ -219,10 +224,11 @@ expect_equal(names(all_df[[2]]), c("income", "state"), info = "Saving multiple f
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
-expect_message(load_file(dirname(fst_file), basename(fst_file), keep = "test"),
-               " ! WARNING: Variables not found:", info = "Loading throws warning when variables are not in loaded file")
-expect_message(load_file(dirname(rds_file), basename(rds_file), keep = "test"),
-               " ! WARNING: Variables not found:", info = "Loading throws warning when variables are not in loaded file")
+load_file(dirname(fst_file), basename(fst_file), keep = "test")
+expect_warning(print_stack_as_messages("WARNING"), "Variables not found:", info = "Loading throws warning when variables are not in loaded file")
+
+load_file(dirname(rds_file), basename(rds_file), keep = "test")
+expect_warning(print_stack_as_messages("WARNING"), "Variables not found:", info = "Loading throws warning when variables are not in loaded file")
 
 
 # Saving sets fst as file extension if it is otherwise invalid
@@ -235,10 +241,11 @@ expected_path2 <- file.path(test_dir, paste0(file, "2.fst"))
 
 on.exit(unlink(c(expected_path1, expected_path2)), add = TRUE)
 
-expect_message(dummy_df1 |> save_file(test_dir, paste0(file, "1")),
-               " ! WARNING: No file extension provided in <file>. 'fst' will be used.", info = "Saving sets fst as file extension if it is otherwise invalid")
-expect_message(dummy_df1 |> save_file(test_dir, paste0(file, "2.test")),
-               " ! WARNING: Only 'fst' or 'rds' are allowed as file extensions in <file>.", info = "Saving sets fst as file extension if it is otherwise invalid")
+dummy_df1 |> save_file(test_dir, paste0(file, "1"))
+expect_warning(print_stack_as_messages("WARNING"), "No file extension provided in <file>. 'fst' will be used.", info = "Saving sets fst as file extension if it is otherwise invalid")
+
+dummy_df1 |> save_file(test_dir, paste0(file, "2.test"))
+expect_warning(print_stack_as_messages("WARNING"), "Only 'fst' or 'rds' are allowed as file extensions in <file>.", info = "Saving sets fst as file extension if it is otherwise invalid")
 
 expect_true(file.exists(expected_path1), info = "Saving sets fst as file extension if it is otherwise invalid")
 expect_true(file.exists(expected_path2), info = "Saving sets fst as file extension if it is otherwise invalid")
@@ -248,23 +255,30 @@ expect_true(file.exists(expected_path2), info = "Saving sets fst as file extensi
 ###############################################################################
 
 # Abort libname on invalid path
-expect_message(my_path <- libname("Test"), " X ERROR: Path does not exist: ", info = "Abort libname on invalid path")
+my_path <- libname("Test")
+
+expect_error(print_stack_as_messages("ERROR"), "Path does not exist: ", info = "Abort libname on invalid path")
 
 
 # Loading aborts with invalid file path
 file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 
-expect_message(load_file(dirname(file), "test.fst",
-                         " X ERROR: File does not exist:"), info = "Loading aborts with invalid file path")
+load_file(dirname(file), "test.fst")
+expect_error(print_stack_as_messages("ERROR"), "File does not exist:", info = "Loading aborts with invalid file path")
 
 
 # Loading aborts with invalid file extension
-file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+temp_file1 <- tempfile(fileext = "")
+temp_file2 <- tempfile(fileext = ".test")
+write("test", temp_file1)
+write("test", temp_file2)
 
-expect_message(load_file(dirname(file), "test",
-                         " X ERROR: No file extension provided in <file>."), info = "Loading aborts with invalid file extension")
-expect_message(load_file(dirname(file), "test.test",
-                         " X ERROR: Only 'fst' or 'rds' are allowed as file extensions in <file>."), info = "Loading aborts with invalid file extension")
+load_file(dirname(temp_file1), basename(temp_file1))
+expect_error(print_stack_as_messages("ERROR"), "No file extension provided in <file>.", info = "Loading aborts with invalid file extension")
+
+load_file(dirname(temp_file2), basename(temp_file2))
+expect_error(print_stack_as_messages("ERROR"), "Only 'fst' or 'rds' are allowed as file extensions in <file>.", info = "Loading aborts with invalid file extension")
+on.exit(unlink(c(temp_file1, temp_file2)), add = TRUE)
 
 
 # Saving file has write protection
@@ -278,18 +292,20 @@ dummy_df1 |> save_file(dirname(rds_file), basename(rds_file))
 expect_true(file.exists(fst_file), info = "Saving file has write protection")
 expect_true(file.exists(rds_file), info = "Saving file has write protection")
 
-expect_message(dummy_df1 |> save_file(dirname(fst_file), basename(fst_file)),
-               " X ERROR: File already exists:", info = "Saving file has write protection")
-expect_message(dummy_df1 |> save_file(dirname(rds_file), basename(rds_file)),
-               " X ERROR: File already exists:", info = "Saving file has write protection")
+dummy_df1 |> save_file(dirname(fst_file), basename(fst_file))
+expect_error(print_stack_as_messages("ERROR"), "File already exists:", info = "Saving file has write protection")
+
+dummy_df1 |> save_file(dirname(rds_file), basename(rds_file))
+expect_error(print_stack_as_messages("ERROR"), "File already exists:", info = "Saving file has write protection")
 
 
 # Saving file aborts with invalid keep variables
 fst_file <- tempfile(fileext = ".fst")
 on.exit(unlink(fst_file), add = TRUE)
 
-expect_message(dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), keep = "test"),
-               " X ERROR: The provided variables to <keep>", info = "Saving file aborts with invalid keep variables")
+dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), keep = "test")
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variables to <keep>", info = "Saving file aborts with invalid keep variables")
 
 expect_false(file.exists(fst_file), info = "Saving file aborts with invalid keep variables")
 
@@ -299,9 +315,12 @@ fst_file <- tempfile(fileext = ".fst")
 rds_file <- tempfile(fileext = ".rds")
 on.exit(unlink(c(fst_file, rds_file)), add = TRUE)
 
-expect_message(save_file_multi(data_frame_list = list(dummy_df1),
-                               file_list       = c(fst_file, rds_file)),
-               " X ERROR: Data frame and file list are of unequal lengths. Saving will be aborted.", info = "Saving multiple files aborts if data frame and file list are of unequal lengths")
+save_file_multi(data_frame_list = list(dummy_df1), file_list = c(fst_file, rds_file))
+
+expect_error(print_stack_as_messages("ERROR"), "Data frame and file list are of unequal lengths. Saving will be aborted.", info = "Saving multiple files aborts if data frame and file list are of unequal lengths")
 
 expect_false(file.exists(fst_file), info = "Saving multiple files aborts if data frame and file list are of unequal lengths")
 expect_false(file.exists(rds_file), info = "Saving multiple files aborts if data frame and file list are of unequal lengths")
+
+
+set_no_print()

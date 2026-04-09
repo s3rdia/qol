@@ -125,7 +125,7 @@ sex. <- discrete_format(
     "Female" = 2)
 
 income. <- interval_format(
-    "Total"              = 0:99999,
+    "Total                   "  = 0:99999,
     "below 500"          = 0:499,
     "500 to under 1000"  = 500:999,
     "1000 to under 2000" = 1000:1999,

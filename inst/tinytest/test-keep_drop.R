@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-test_df <- suppressMessages(dummy_data(10))
+test_df <- dummy_data(10)
 
 ###############################################################################
 # Keep
@@ -74,7 +76,9 @@ expect_true(all(c("person_id", "first_person", "education") %in% names(keep_df))
 
 
 # Variables to keep contain a variable name that isn't part of the data frame
-expect_message(keep_df1 <- test_df |> keep(year, age, sex, cats, dogs), " ! WARNING: The provided variable to keep", info = "Variables to keep contain a variable name that isn't part of the data frame")
+keep_df1 <- test_df |> keep(year, age, sex, cats, dogs)
+expect_warning(print_stack_as_messages("WARNING"), "The provided variable to keep", info = "Variables to keep contain a variable name that isn't part of the data frame")
+
 keep_df2 <- test_df |> keep(year, age, sex)
 
 expect_equal(ncol(keep_df1), 3, info = "Variables to keep contain a variable name that isn't part of the data frame")
@@ -87,7 +91,9 @@ expect_true(!all(c("cats", "dogs") %in% names(keep_df1)), info = "Variables to k
 
 
 # Keep only variables that are not part of the data frame
-expect_message(keep_df <- test_df |> keep(cats, dogs), " ! WARNING: The provided variable to keep", info = "Keep only variables that are not part of the data frame")
+keep_df <- test_df |> keep(cats, dogs)
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided variable to keep", info = "Keep only variables that are not part of the data frame")
 
 expect_true(nrow(keep_df) == 0, info = "Keep only variables that are not part of the data frame")
 expect_true(ncol(keep_df) == 0, info = "Keep only variables that are not part of the data frame")
@@ -162,7 +168,9 @@ expect_true(!all(c("person_id", "first_person", "education") %in% names(drop_df)
 
 
 # Variables to drop contain a variable name that isn't part of the data frame
-expect_message(drop_df1 <- test_df |> dropp(year, age, sex, cats, dogs), " ! WARNING: The provided variable to drop", info = "Variables to drop contain a variable name that isn't part of the data frame")
+drop_df1 <- test_df |> dropp(year, age, sex, cats, dogs)
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided variable to drop", info = "Variables to drop contain a variable name that isn't part of the data frame")
 drop_df2 <- test_df |> dropp(year, age, sex)
 
 expect_equal(ncol(drop_df1), ncol(test_df) - 3, info = "Variables to drop contain a variable name that isn't part of the data frame")
@@ -175,7 +183,9 @@ expect_true(!all(c("cats", "dogs") %in% names(test_df)), info = "Variables to dr
 
 
 # Drop only variables that are not part of the data frame
-expect_message(drop_df <- test_df |> dropp(cats, dogs), " ! WARNING: The provided variable to drop", info = "Drop only variables that are not part of the data frame")
+drop_df <- test_df |> dropp(cats, dogs)
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided variable to drop", info = "Drop only variables that are not part of the data frame")
 
 expect_identical(drop_df, test_df, info = "Drop only variables that are not part of the data frame")
 
@@ -184,3 +194,6 @@ expect_identical(drop_df, test_df, info = "Drop only variables that are not part
 drop_df <- test_df |> dropp()
 
 expect_identical(drop_df, test_df, info = "Drop without any variables provided")
+
+
+set_no_print()

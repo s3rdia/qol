@@ -37,7 +37,7 @@ row_calculation <- function(data_frame,
         t()
 
     if (!is.numeric(var_matrix)){
-        message(" X ERROR: Only numeric values allowed. Calculation will be aborted.")
+        print_message("ERROR", "Only numeric values allowed. Calculation will be aborted.")
 
         return(invisible(NA))
     }
@@ -46,13 +46,13 @@ row_calculation <- function(data_frame,
     statistics <- get_origin_as_char(statistics, substitute(statistics))
 
     if (length(statistics) > 1){
-        message(" ! WARNING: Only one <statistics> allowed at a time. The first element will be used.")
+        print_message("WARNING", "Only one <statistics> allowed at a time. The first element will be used.")
 
         statistics <- statistics[1]
     }
 
     if (!tolower(statistics) %in% c("sum", "mean", "median", "min", "max", "mode", "freq")){
-        message(" ! WARNING: <Statistic> '", tolower(statistics), "' is invalid. 'sum' will be used.")
+        print_message("WARNING", "<Statistics> '[statistics]' [?is/are] invalid. 'sum' will be used.", statistics = tolower(statistics))
 
         statistics <- "sum"
     }
@@ -141,7 +141,8 @@ freq_g0_qol <- function(values, group){
 #' @noRd
 percentiles_qol <- function(values, weight, group, probs){
     if (anyNA(values)){
-        message(" ! WARNING: To calculate percentiles there may be no NAs in the value variables.")
+        print_message("WARNING", "To calculate percentiles there may be no NAs in the value variables.",
+                      always_print = TRUE)
         return(NULL)
     }
 
@@ -182,9 +183,12 @@ get_group_missings <- function(group_vars, notes, na.rm){
         percent   <- round(missings * 100 / nobs, 1)
         none_miss <- nobs - missings
 
-        message(" ~ NOTE: ", format(missings, big.mark = ".", decimal.mark = ","),
-                " missings generated from grouping variables (", percent,
-                " %). Number of observations: ", format(none_miss, big.mark = ".", decimal.mark = ","), "/", format(nobs, big.mark = ".", decimal.mark = ","))
+        print_message("NOTE", "[missings] missings generated from grouping variables ([percent] %). Number of observations: [none_miss]/[nobs]",
+					  missings  = format(missings, big.mark = ".", decimal.mark = ","),
+				      percent   = percent,
+				      none_miss = format(none_miss, big.mark = ".", decimal.mark = ","),
+				      nobs      = format(nobs, big.mark = ".", decimal.mark = ","),
+					  always_print = TRUE)
     }
 }
 
@@ -562,7 +566,7 @@ calculate_percentages <- function(joined_df, values, pct_name, last_group_var){
     new_values  <- paste0(gsub("_sum$", "", values), "_", pct_name)
 
     # Compute percentages for every variable
-    for (i in seq_along(numerator)) {
+    for (i in seq_along(numerator)){
         current_num     <- numerator[i]
         current_den     <- denominator[i]
         current_new_var <- new_values[i]

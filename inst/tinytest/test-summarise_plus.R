@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
@@ -8,7 +10,7 @@ test_df <- data.frame(
     value  = c(0, 1, 2, 2, 3, 4, 4, 100, NA),
     weight = c(7, 8, 6, 5, 3, 7, 9, 2, NA))
 
-dummy_df <- suppressMessages(dummy_data(1000))
+dummy_df <- dummy_data(1000)
 
 dummy_df[["binary"]] <- replicate(nrow(dummy_df), {
     paste0(sample(0:1, 2, replace = TRUE), collapse = "")
@@ -25,7 +27,7 @@ result_df <- test_df |>
                    statistics = "sum") |>
     remove_stat_extension("sum")
 
-expect_equal(result_df[["value"]][1], collapse::fsum(c(0, 1, 2, 2)), info = "Unweighted sum is correct")
+expect_equal(result_df[["value"]][1], collapse::fsum(c(0, 1, 2, 2)),       info = "Unweighted sum is correct")
 expect_equal(result_df[["value"]][2], collapse::fsum(c(3, 4, 4, 100, NA)), info = "Unweighted sum is correct")
 
 
@@ -174,106 +176,124 @@ expect_equal(sum_pct_total, 100, info = "Unweighted percentages are correct")
 ###############################################################################
 
 # Weighted sum is correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "sum",
                    weight     = weight) |>
-        remove_stat_extension("sum"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted sum is correct")
+        remove_stat_extension("sum")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted sum is correct")
 
 expect_equal(result_df[["value"]][1], collapse::fsum(c(0, 1, 2, 2),       w = c(7, 8, 6, 5)), info = "Weighted sum is correct")
 expect_equal(result_df[["value"]][2], collapse::fsum(c(3, 4, 4, 100, NA), w = c(3, 7, 9, 2, NA)), info = "Weighted sum is correct")
 
 
 # sum of weights is correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "sum_wgt",
-                   weight     = weight), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "sum of weights is correct")
+                   weight     = weight)
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "sum of weights is correct")
 
 expect_equal(result_df[["sum_wgt"]][1], collapse::fsum(c(7, 8, 6, 5)), info = "sum of weights is correct")
 expect_equal(result_df[["sum_wgt"]][2], collapse::fsum(c(3, 7, 9, 2, NA)), info = "sum of weights is correct")
 
 
 # Weighted frequency is correct (unweighted count)
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "freq",
                    weight     = weight) |>
-        remove_stat_extension("freq"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted frequency is correct (unweighted count)")
+        remove_stat_extension("freq")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted frequency is correct (unweighted count)")
 
 expect_equal(result_df[["value"]][1], 4, info = "Weighted frequency is correct (unweighted count)")
 expect_equal(result_df[["value"]][2], 4, info = "Weighted frequency is correct (unweighted count)")
 
 
 # Weighted frequency greater zero is correct (unweighted count > 0)
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "freq_g0",
                    weight     = weight) |>
-        remove_stat_extension("freq_g0"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted frequency greater zero is correct (unweighted count > 0)")
+        remove_stat_extension("freq_g0")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted frequency greater zero is correct (unweighted count > 0)")
 
 expect_equal(result_df[["value"]][1], 3, info = "Weighted frequency greater zero is correct (unweighted count > 0)")
 expect_equal(result_df[["value"]][2], 4, info = "Weighted frequency greater zero is correct (unweighted count > 0)")
 
 
 # Weighted missing is correct (unweighted missing count)
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "missing",
                    weight     = weight) |>
-        remove_stat_extension("missing"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted missing is correct (unweighted missing count)")
+        remove_stat_extension("missing")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted missing is correct (unweighted missing count)")
 
 expect_equal(result_df[["value"]][1], 0, info = "Weighted missing is correct (unweighted missing count)")
 expect_equal(result_df[["value"]][2], 1, info = "Weighted missing is correct (unweighted missing count)")
 
 
 # Weighted mean is correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "mean",
                    weight     = weight) |>
-        remove_stat_extension("mean"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted mean is correct")
+        remove_stat_extension("mean")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted mean is correct")
 
 expect_equal(result_df[["value"]][1], collapse::fmean(c(0, 1, 2, 2),       w = c(7, 8, 6, 5)), info = "Weighted mean is correct")
 expect_equal(result_df[["value"]][2], collapse::fmean(c(3, 4, 4, 100, NA), w = c(3, 7, 9, 2, NA)), info = "Weighted mean is correct")
 
 
 # Weighted median is correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "median",
                    weight     = weight) |>
-        remove_stat_extension("median"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted median is correct")
+        remove_stat_extension("median")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted median is correct")
 
 expect_equal(result_df[["value"]][1], collapse::fmedian(c(0, 1, 2, 2),       w = c(7, 8, 6, 5)), info = "Weighted median is correct")
 expect_equal(result_df[["value"]][2], collapse::fmedian(c(3, 4, 4, 100, NA), w = c(3, 7, 9, 2, NA)), info = "Weighted median is correct")
 
 
 # Weighted mode is correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = "mode",
                    weight     = weight) |>
-        remove_stat_extension("mode"), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted mode is correct")
+        remove_stat_extension("mode")
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted mode is correct")
 
 expect_equal(result_df[["value"]][1], 2, info = "Weighted mode is correct")
 expect_equal(result_df[["value"]][2], 4, info = "Weighted mode is correct")
 
 
 # Weighted min and max are correct (same as unweighted)
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = c("min", "max"),
-                   weight     = weight), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted min and max are correct (same as unweighted)")
+                   weight     = weight)
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted min and max are correct (same as unweighted)")
 
 expect_equal(result_df[["value_min"]][1], collapse::fmin(c(0, 1, 2, 2)), info = "Weighted min and max are correct (same as unweighted)")
 expect_equal(result_df[["value_max"]][1], collapse::fmax(c(0, 1, 2, 2)), info = "Weighted min and max are correct (same as unweighted)")
@@ -282,11 +302,13 @@ expect_equal(result_df[["value_max"]][2], collapse::fmax(c(3, 4, 4, 100, NA)), i
 
 
 # Weighted first and last are correct (same as unweighted)
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = c("first", "last"),
-                   weight     = weight), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted first and last are correct (same as unweighted)")
+                   weight     = weight)
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted first and last are correct (same as unweighted)")
 
 expect_equal(result_df[["value_first"]][1], 0, info = "Weighted first and last are correct (same as unweighted)")
 expect_equal(result_df[["value_last"]][1], 2, info = "Weighted first and last are correct (same as unweighted)")
@@ -309,11 +331,13 @@ expect_equal(result_df[["value_p99"]][2], collapse::fquantile(c(3, 4, 4, 100), p
 
 
 # Weighted sd and variance are correct
-expect_message(result_df <- test_df |>
+result_df <- test_df |>
     summarise_plus(class      = group,
                    values     = value,
                    statistics = c("sd", "variance"),
-                   weight     = weight), "~ NOTE: Missing values in weight variable 'weight' will be converted to 0", info = "Weighted sd and variance are correct")
+                   weight     = weight)
+
+expect_message(print_stack_as_messages("NOTE"), "Missing values in weight variable 'weight' will be converted to 0", info = "Weighted sd and variance are correct")
 
 expect_equal(result_df[["value_sd"]][1],       collapse::fsd(c(0, 1, 2, 2),        w = c(7, 8, 6, 5)), info = "Weighted sd and variance are correct")
 expect_equal(result_df[["value_variance"]][1], collapse::fvar(c(0, 1, 2, 2),       w = c(7, 8, 6, 5)), info = "Weighted sd and variance are correct")
@@ -342,15 +366,15 @@ expect_equal(sum_pct_total, 100, info = "Weighted percentages are correct")
 ###############################################################################
 
 # Different way of passing variables in (single variables)
-result_df1 <- suppressMessages(dummy_df |>
+result_df1 <- dummy_df |>
     summarise_plus(class  = year,
                    values = income,
-                   weight = weight))
+                   weight = weight)
 
-result_df2 <- suppressMessages(dummy_df |>
+result_df2 <- dummy_df |>
     summarise_plus(class  = "year",
                    values = "income",
-                   weight = "weight"))
+                   weight = "weight")
 
 expect_identical(result_df1, result_df2, info = "Different way of passing variables in (single variables)")
 
@@ -376,15 +400,15 @@ result_df4 <- dummy_df |>
                    values = list("income", "weight"),
                    weight = "weight")
 
-result_df5 <- suppressMessages(dummy_df |>
+result_df5 <- dummy_df |>
     summarise_plus(class  = year,
                    values = income,
-                   weight = weight))
+                   weight = weight)
 
-result_df6 <- suppressMessages(dummy_df |>
+result_df6 <- dummy_df |>
     summarise_plus(class  = "year",
                    values = "income",
-                   weight = "weight"))
+                   weight = "weight")
 
 expect_identical(result_df1, result_df2, info = "Different way of passing variables in (multiple variables)")
 expect_identical(result_df1, result_df3, info = "Different way of passing variables in (multiple variables)")
@@ -392,23 +416,23 @@ expect_identical(result_df1, result_df4, info = "Different way of passing variab
 
 
 # Simplest form without specifying statistics leads to sum and freq output
-result_df <- suppressMessages(dummy_df |>
+result_df <- dummy_df |>
     summarise_plus(class  = year,
-                   values = income))
+                   values = income)
 
 expect_equal(collapse::fncol(result_df), 6, info = "Simplest form without specifying statistics leads to sum and freq output")
 expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df)), info = "Simplest form without specifying statistics leads to sum and freq output")
 
 
 # Weighted vs. unweighted output
-result_df1 <- suppressMessages(dummy_df |>
+result_df1 <- dummy_df |>
     summarise_plus(class  = year,
-                   values = income))
+                   values = income)
 
-result_df2 <- suppressMessages(dummy_df |>
+result_df2 <- dummy_df |>
     summarise_plus(class  = year,
                    values = income,
-                   weight = weight))
+                   weight = weight)
 
 expect_equal(collapse::fncol(result_df1), 6, info = "Weighted vs. unweighted output")
 expect_equal(collapse::fncol(result_df2), 6, info = "Weighted vs. unweighted output")
@@ -567,15 +591,15 @@ expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000"), 
 ###############################################################################
 
 # Apply single discrete labels
-sex. <- suppressMessages(discrete_format(
+sex. <- discrete_format(
     "Male"   = 1,
-    "Female" = 2))
-age. <- suppressMessages(discrete_format(
+    "Female" = 2)
+age. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
     "25 to under 55" = 25:54,
     "55 to under 65" = 55:64,
-    "65 and older"   = 65:100))
+    "65 and older"   = 65:100)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(sex, age),
@@ -603,17 +627,17 @@ expect_true(all(c("under 18",
 
 
 # Apply discrete multilabels
-sex. <- suppressMessages(discrete_format(
+sex. <- discrete_format(
     "Total"  = 1:2,
     "Male"   = 1,
-    "Female" = 2))
-age. <- suppressMessages(discrete_format(
+    "Female" = 2)
+age. <- discrete_format(
     "Total"          = 0:100,
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
     "25 to under 55" = 25:54,
     "55 to under 65" = 55:64,
-    "65 and older"   = 65:100))
+    "65 and older"   = 65:100)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(sex, age),
@@ -644,11 +668,11 @@ expect_true(all(c("Total",
 
 
 # Apply single interval label
-income. <- suppressMessages(interval_format(
+income. <- interval_format(
     "below 500"          = 0:499,
     "500 to under 1000"  = 500:999,
     "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999))
+    "2000 and more"      = 2000:99999)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(income),
@@ -667,12 +691,12 @@ expect_true(all(c("below 500",
 
 
 # Apply interval multilabel
-income. <- suppressMessages(interval_format(
+income. <- interval_format(
     "Total"              = 0:99999,
     "below 500"          = 0:499,
     "500 to under 1000"  = 500:999,
     "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999))
+    "2000 and more"      = 2000:99999)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(income),
@@ -695,15 +719,15 @@ expect_true(all(c("Total",
                   "2000 and more") %in% format_df[["income"]]), info = "Apply interval multilabel")
 
 # Output missing categories in summarise_plus with deepest nesting
-sex. <- suppressMessages(discrete_format(
+sex. <- discrete_format(
     "Male"   = 1,
-    "Female" = 2))
-age. <- suppressMessages(discrete_format(
+    "Female" = 2)
+age. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
     "25 to under 55" = 25:54,
     "55 to under 65" = 55:64,
-    "65 and older"   = 65:100))
+    "65 and older"   = 65:100)
 
 format_df <- dummy_df |>
     if.(sex == 1 & (age < 25 | age >= 55)) |>
@@ -717,15 +741,15 @@ expect_true("25 to under 55" %in% format_df[["age"]], info = "Output missing cat
 
 
 # Output missing categories in summarise_plus with all combnations
-sex. <- suppressMessages(discrete_format(
+sex. <- discrete_format(
     "Male"   = 1,
-    "Female" = 2))
-age. <- suppressMessages(discrete_format(
+    "Female" = 2)
+age. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
     "25 to under 55" = 25:54,
     "55 to under 65" = 55:64,
-    "65 and older"   = 65:100))
+    "65 and older"   = 65:100)
 
 format_df <- dummy_df |>
     if.(sex == 1 & (age < 25 | age >= 55)) |>
@@ -740,9 +764,9 @@ expect_true("25 to under 55" %in% format_df[["age"]], info = "Output missing cat
 
 
 # Use the 'other' format keyword with summarise_plus
-age. <- suppressMessages(discrete_format(
+age. <- discrete_format(
     "under 18"     = 0:17,
-    "18 and older" = "other"))
+    "18 and older" = "other")
 
 format_df <- dummy_df |>
     summarise_plus(class   = age,
@@ -756,35 +780,35 @@ expect_equal(unique_values,
 
 
 # summarise_plus doesn't convert numeric values stored as character (short route)
-result_df <- suppressMessages(dummy_df |>
+result_df <- dummy_df |>
         summarise_plus(class  = binary,
-                       values = weight))
+                       values = weight)
 
 expect_equal(result_df[["binary"]], c("00", "01", "10", "11"), info = "summarise_plus doesn't convert numeric values stored as character (short route)")
 
 
 # summarise_plus doesn't convert numeric values stored as character (long route)
-result_df <- suppressMessages(dummy_df |>
+result_df <- dummy_df |>
       summarise_plus(class  = binary,
                      values = weight,
-                     statistics = "mean"))
+                     statistics = "mean")
 
 expect_equal(result_df[["binary"]], c("00", "01", "10", "11"), info = "summarise_plus doesn't convert numeric values stored as character (long route)")
 
 
 # summarise_plus converts numeric values back to numeric (short route)
-result_df <- suppressMessages(dummy_df |>
+result_df <- dummy_df |>
       summarise_plus(class  = age,
-                     values = weight))
+                     values = weight)
 
 expect_equal(result_df[["age"]][1:5], c(0, 1, 2, 3, 4), info = "summarise_plus converts numeric values back to numeric (short route)")
 
 
 # summarise_plus converts numeric values back to numeric (long route)
-result_df <- suppressMessages(dummy_df |>
+result_df <- dummy_df |>
       summarise_plus(class  = age,
                      values = weight,
-                     statistics = "mean"))
+                     statistics = "mean")
 
 expect_equal(result_df[["age"]][1:5], c(0, 1, 2, 3, 4), info = "summarise_plus converts numeric values back to numeric (long route)")
 
@@ -794,138 +818,179 @@ expect_equal(result_df[["age"]][1:5], c(0, 1, 2, 3, 4), info = "summarise_plus c
 
 
 # Entering none existing variable as weight leads to unweighted results
-result_df1 <- suppressMessages(dummy_df |>
-                           summarise_plus(class  = year,
-                                          values = income))
+result_df1 <- dummy_df |> summarise_plus(class  = year,
+                                         values = income)
 
-expect_message(result_df2 <- dummy_df |>
+result_df2 <- dummy_df |>
            summarise_plus(class  = year,
                           values = income,
-                          weight = abc), " ! WARNING: Provided weight variable is not part of the data frame", info = "Entering none existing variable as weight leads to unweighted results")
+                          weight = abc)
 
-expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)), info = "Entering none existing variable as weight leads to unweighted results")
-expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)), info = "Entering none existing variable as weight leads to unweighted results")
+expect_warning(print_stack_as_messages("WARNING"), "Provided weight variable is not part of the data frame",
+               info = "Entering none existing variable as weight leads to unweighted results")
+
+expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)),
+            info = "Entering none existing variable as weight leads to unweighted results")
+expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)),
+            info = "Entering none existing variable as weight leads to unweighted results")
 
 expect_identical(result_df1, result_df2, info = "Entering none existing variable as weight leads to unweighted results")
 
 
 # Entering none numeric variable as weight leads to unweighted results
-result_df1 <- suppressMessages(dummy_df |>
-                           summarise_plus(class  = year,
-                                          values = income))
+result_df1 <- dummy_df |> summarise_plus(class  = year,
+                                         values = income)
 
-expect_message(result_df2 <- dummy_df |>
+result_df2 <- dummy_df |>
            summarise_plus(class  = year,
                           values = income,
-                          weight = education), " ! WARNING: Provided weight variable is not numeric", info = "Entering none numeric variable as weight leads to unweighted results")
+                          weight = education)
 
-expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)), info = "Entering none numeric variable as weight leads to unweighted results")
-expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)), info = "Entering none numeric variable as weight leads to unweighted results")
+expect_warning(print_stack_as_messages("WARNING"), "Provided weight variable is not numeric",
+               info = "Entering none numeric variable as weight leads to unweighted results")
+
+expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df1)),
+            info = "Entering none numeric variable as weight leads to unweighted results")
+expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)),
+            info = "Entering none numeric variable as weight leads to unweighted results")
 
 expect_identical(result_df1, result_df2, info = "Entering none numeric variable as weight leads to unweighted results")
 
 
 # Percentiles won't be calculated if value variable has NA values
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
                           values     = c(income, probability),
                           statistics = c("p1", "p99"),
-                          weight     = weight), " ! WARNING: To calculate percentiles there may be no NAs in the value variables", info = "Percentiles won't be calculated if value variable has NA values")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "To calculate percentiles there may be no NAs in the value variables",
+               info = "Percentiles won't be calculated if value variable has NA values")
 
 expect_equal(collapse::fncol(result_df), 5, info = "Percentiles won't be calculated if value variable has NA values")
 
 
 # Percentiles above 100 not allowed
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
                           values     = c(income, probability),
                           statistics = c("p101"),
-                          weight     = weight), " ! WARNING: Percentiles are only possible from p0 to p100", info = "Percentiles above 100 not allowed")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "Percentiles are only possible from p0 to p100",
+               info = "Percentiles above 100 not allowed")
 
 expect_equal(collapse::fncol(result_df), 7, info = "Percentiles above 100 not allowed")
 
 
 # None existent class variables will be omitted
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex, test),
                           values     = c(income, probability),
                           statistics = "sum",
-                          weight     = weight), "This variable will be omitted during computation", info = "None existent class variables will be omitted")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "This variable will be omitted during computation",
+               info = "None existent class variables will be omitted")
 
 expect_equal(collapse::fncol(result_df), 7, info = "None existent class variables will be omitted")
 
 
 # None existent analysis variable will be omitted
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
                           values     = c(income, probability, test),
                           statistics = "sum",
-                          weight     = weight), "This variable will be omitted during computation", info = "None existent analysis variable will be omitted")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "This variable will be omitted during computation",
+               info = "None existent analysis variable will be omitted")
 
 expect_equal(collapse::fncol(result_df), 7, info = "None existent analysis variable will be omitted")
 
 
 # Double class variables will be omitted
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex, sex),
                           values     = c(income, probability),
                           statistics = "sum",
-                          weight     = weight), " ! WARNING: Some <class> variables are provided more than once", info = "Double class variables will be omitted")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "Some <class> variables are provided more than once",
+               info = "Double class variables will be omitted")
 
 expect_equal(collapse::fncol(result_df), 7, info = "Double class variables will be omitted")
 
 
 # Double analysis variables will be omitted
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
                           values     = c(income, probability, income),
                           statistics = "sum",
-                          weight     = weight), " ! WARNING: Some <values> variables are provided more than once", info = "Double analysis variables will be omitted")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "Some <values> variables are provided more than once",
+               info = "Double analysis variables will be omitted")
 
 expect_equal(collapse::fncol(result_df), 7, info = "Double analysis variables will be omitted")
 
 
 # Analysis variable will be omitted if also passed as class variable
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex, age),
                           values     = c(age, probability),
                           statistics = "sum",
-                          weight     = weight), "This variable will be omitted as <values> variable during computation", info = "Analysis variable will be omitted if also passed as class variable")
+                          weight     = weight)
+
+expect_warning(print_stack_as_messages("WARNING"), "This variable will be omitted as <values> variable during computation",
+               info = "Analysis variable will be omitted if also passed as class variable")
 
 expect_equal(collapse::fncol(result_df), 7, info = "Analysis variable will be omitted if also passed as class variable")
 
 
 # Merging variables back works if wrong nesting option ist provided
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
                           values     = c(income),
                           statistics = "sum",
                           weight     = weight,
                           nesting    = "all",
-                          merge_back = TRUE), " ! WARNING: Merging variables back only works with nesting = 'deepest'", info = "Merging variables back works if wrong nesting option ist provided")
+                          merge_back = TRUE)
+
+expect_warning(print_stack_as_messages("WARNING"), "Merging variables back only works with nesting",
+               info = "Merging variables back works if wrong nesting option ist provided")
 
 expect_equal(collapse::fncol(result_df), collapse::fncol(dummy_df) + 1, info = "Merging variables back works if wrong nesting option ist provided")
 expect_equal(collapse::fnrow(result_df), collapse::fnrow(dummy_df), info = "Merging variables back works if wrong nesting option ist provided")
 
 
 # Drop auto generated variables will be omitted if not in data frame
-expect_message(result_df <- dummy_df |>
-           drop_type_vars(), " ! WARNING: The provided variable to drop", info = "Drop auto generated variables will be omitted if not in data frame")
+result_df <- dummy_df |> drop_type_vars()
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided variable to drop", info = "Drop auto generated variables will be omitted if not in data frame")
 
 
 # Invalid statistic will be omitted
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = year,
                           values     = income,
-                          statistics = c("test", "sum")), " ! WARNING: <Statistic> 'test' is invalid and will be omitted.", info = "Invalid statistic will be omitted")
+                          statistics = c("test", "sum"))
+
+expect_warning(print_stack_as_messages("WARNING"), "<Statistic> 'test' is invalid and will be omitted.", info = "Invalid statistic will be omitted")
 
 expect_equal(collapse::fncol(result_df), 5, info = "Invalid statistic will be omitted")
 
 
 # 'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided
-expect_message(result_df <- dummy_df |>
+result_df <- dummy_df |>
            summarise_plus(class      = year,
                           values     = income,
-                          statistics = "test"), " ! WARNING: No valid <statistic> selected. 'sum' will be used.", info = "'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided")
+                          statistics = "test")
+
+expect_warning(print_stack_as_messages("WARNING"), "No valid <statistic> selected. 'sum' will be used.",
+           info = "'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided")
 
 expect_equal(collapse::fncol(result_df), 5, info = "'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided")
+
+
+set_no_print()

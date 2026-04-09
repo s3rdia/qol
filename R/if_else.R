@@ -116,7 +116,7 @@ NULL
 #' @export
 if. <- function(data_frame, condition, ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     parent_env  <- parent.frame()
 
@@ -176,8 +176,8 @@ if. <- function(data_frame, condition, ...){
                 list_entry_lengths <- lengths(content_list)
 
                 if (length(collapse::funique(list_entry_lengths)) != 1){
-                    message(" X ERROR: Passed vectors are of unequal lengths. All vectors must have an\n",
-                            "          equal number of elements. Evaluation will be aborted.")
+                    print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
+											 "equal number of elements. Evaluation will be aborted."))
                     return(invisible(data_frame))
                 }
 
@@ -220,8 +220,8 @@ if. <- function(data_frame, condition, ...){
     # Filter observations, if there are no assignments given
     else{
         if (length(content_list) > 0){
-            message(" X ERROR: When using vectors in conditions, there must be a variable assignment.\n",
-                    "          Evaluation will be aborted.")
+            print_message("ERROR", c("When using vectors in conditions, there must be a variable assignment.",
+									 "Evaluation will be aborted."))
             return(invisible(data_frame))
         }
 
@@ -249,7 +249,7 @@ if. <- function(data_frame, condition, ...){
                 condition <- data_frame |> part_of_df(condition)
 
                 if (length(condition) == 0){
-                    message(" X ERROR: No variable for subsetting provided. Data frame remains as is.")
+                    print_message("ERROR", "No variable for subsetting provided. Data frame remains as is.")
                 }
                 else{
                     # Check whether there are additional conditions active via do_if
@@ -259,7 +259,7 @@ if. <- function(data_frame, condition, ...){
                 }
             }
             else if (length(condition) != collapse::fnrow(data_frame)){
-                message(" X ERROR: Only single variables and conditions allowed. Data frame remains as is.")
+                print_message("ERROR", "Only single variables and conditions allowed. Data frame remains as is.")
             }
             # Evaluate single variable
             else{
@@ -273,13 +273,11 @@ if. <- function(data_frame, condition, ...){
         # Output info message
         rows_after <- data_frame |> collapse::fnrow()
 
-        message("\n > Removed ",
-                format(rows_before - rows_after,
-                       format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
-                " observations. Data frame now has ",
-                format(rows_after,
-                       format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
-                " observations.")
+        print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
+                removed = format(rows_before - rows_after,
+                                 format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+                still_there = format(rows_after,
+                                     format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
     }
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
@@ -287,8 +285,7 @@ if. <- function(data_frame, condition, ...){
         data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'if.' execution time: ", end_time, " seconds")
+    print_closing()
 
     data_frame
 }
@@ -303,7 +300,7 @@ if. <- function(data_frame, condition, ...){
 #' @export
 else_if. <- function(data_frame, condition, ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     parent_env  <- parent.frame()
 
@@ -367,14 +364,14 @@ else_if. <- function(data_frame, condition, ...){
                 list_entry_lengths <- lengths(content_list)
 
                 if (length(collapse::funique(list_entry_lengths)) != 1){
-                    message(" X ERROR: Passed vectors are of unequal lengths. All vectors must have an\n",
-                            "          equal number of elements. Evaluation will be aborted.")
+                    print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
+											 "equal number of elements. Evaluation will be aborted."))
                     return(invisible(data_frame))
                 }
 
                 if (length(assignments) == 0){
-                    message(" X ERROR: When using vectors in conditions, there must be a variable assignment.\n",
-                            "          Evaluation will be aborted.")
+                    print_message("ERROR", c("When using vectors in conditions, there must be a variable assignment.",
+											 "Evaluation will be aborted."))
                     return(invisible(data_frame))
                 }
 
@@ -433,11 +430,10 @@ else_if. <- function(data_frame, condition, ...){
         data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
     }
     else{
-        message(" ! WARNING: No assignments found. If you want to filter observations use if.() instead.")
+        print_message("WARNING", "No assignments found. If you want to filter observations use if.() instead.")
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'else_if.' execution time: ", end_time, " seconds")
+    print_closing()
 
     data_frame
 }
@@ -452,7 +448,7 @@ else_if. <- function(data_frame, condition, ...){
 #' @export
 else. <- function(data_frame, ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     parent_env  <- parent.frame()
     assignments <- as.list(substitute(list(...)))[-1]
@@ -502,14 +498,14 @@ else. <- function(data_frame, ...){
                 list_entry_lengths <- lengths(content_list)
 
                 if (length(collapse::funique(list_entry_lengths)) != 1){
-                    message(" X ERROR: Passed vectors are of unequal lengths. All vectors must have an\n",
-                            "          equal number of elements. Evaluation will be aborted.")
+                    print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
+											 "equal number of elements. Evaluation will be aborted."))
                     return(invisible(data_frame))
                 }
 
                 if (length(assignments) == 0){
-                    message(" X ERROR: When using vectors in conditions, there must be a variable assignment.\n",
-                            "          Evaluation will be aborted.")
+                    print_message("ERROR", c("When using vectors in conditions, there must be a variable assignment.",
+											 "Evaluation will be aborted."))
                     return(invisible(data_frame))
                 }
 
@@ -562,8 +558,7 @@ else. <- function(data_frame, ...){
     # Evaluate calculations conditionally. Making use of hidden parameters.
     data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'else.' execution time: ", end_time, " seconds")
+    print_closing()
 
     data_frame
 }
@@ -614,7 +609,7 @@ translate_condition <- function(condition){
                 # In case there are two colons, one at the start and one at the end (":text:"),
                 # look for the text inbetween inside the variable expressions
                 else if (colon_count == 2){
-                    if (startsWith(expression, ":") && endsWith(expression, ":")) {
+                    if (startsWith(expression, ":") && endsWith(expression, ":")){
                         search_term <- gsub(":", "", expression)
 
                         translated_call <- call("grepl", search_term, variable, fixed = TRUE)
@@ -841,7 +836,7 @@ else_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        message(" ! WARNING: No active filter variable found. else_do() will be ignored.")
+        print_message("WARNING", "No active filter variable found. else_do() will be ignored.")
         return(invisible(data_frame))
     }
 
@@ -864,7 +859,7 @@ end_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        message(" ! WARNING: No active filter variable found. end_do() will be ignored.")
+        print_message("WARNING", "No active filter variable found. end_do() will be ignored.")
         return(invisible(data_frame))
     }
 
@@ -886,7 +881,7 @@ end_all_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        message(" ! WARNING: No active filter variable found. end_all_do() will be ignored.")
+        print_message("WARNING", "No active filter variable found. end_all_do() will be ignored.")
         return(invisible(data_frame))
     }
 

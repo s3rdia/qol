@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 test_env <- function(){
     envir <- new.env(parent = emptyenv())
 
@@ -68,20 +70,23 @@ expect_equal(removed3, c("another_frame", "character", "data_frame"), info = "Fr
 ###############################################################################
 
 # Free memory aborts, if names are not characters
-expect_message(free_memory(names = 123, envir = test_env()),
-                " X ERROR: <Names> have to be provided as character. Objects will remain untouched.", info = "Free memory aborts, if names are not characters")
+free_memory(names = 123, envir = test_env())
+expect_error(print_stack_as_messages("ERROR"), "<Names> have to be provided as character. Objects will remain untouched.", info = "Free memory aborts, if names are not characters")
 
 
 # Free memory aborts, if types are not characters
-expect_message(free_memory(types = 123, envir = test_env()),
-                " X ERROR: <Types> have to be provided as character. Objects will remain untouched.", info = "Free memory aborts, if types are not characters")
+free_memory(types = 123, envir = test_env())
+expect_error(print_stack_as_messages("ERROR"), "<Types> have to be provided as character. Objects will remain untouched.", info = "Free memory aborts, if types are not characters")
 
 
 # Free memory aborts, if name has to many columns
-expect_message(free_memory(names = ":a:b:", envir = test_env()),
-                " X ERROR: <Name> has more than two colons which is not allowed. Objects will remain untouched.", info = "Free memory aborts, if name has to many columns")
+free_memory(names = ":a:b:", envir = test_env())
+expect_error(print_stack_as_messages("ERROR"), "<Name> has more than two colons which is not allowed. Objects will remain untouched.", info = "Free memory aborts, if name has to many columns")
 
 
 # Free memory aborts, if no object is found
-expect_message(free_memory(names = "test", envir = test_env()),
-                " X ERROR: No object found. Objects will remain untouched.", info = "Free memory aborts, if no object is found")
+free_memory(names = "test", envir = test_env())
+expect_error(print_stack_as_messages("ERROR"), "No object found. Objects will remain untouched.", info = "Free memory aborts, if no object is found")
+
+
+set_no_print()

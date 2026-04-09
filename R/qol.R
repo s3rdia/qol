@@ -19,7 +19,7 @@
 #' maximum speed and on the wonderful openxlsx2 package for maximum style.
 #'
 #' @section Imports:
-#' data.table, collapse, openxlsx2
+#' data.table, collapse, openxlsx2, fst
 #'
 #' @section Minimal R Version:
 #' 4.1.0 or higher
@@ -42,7 +42,7 @@
 #'
 #' Sorting: [sort_plus()]
 #'
-#' If-statement: [if.()], [else_if.()], [else.()], [where.()]
+#' If-statement: [if.()], [else_if.()], [else.()], [where.()], [do_if()], [else_do()], [end_do()], [end_all_do()]
 #'
 #' Monitoring: [monitor_start()], [monitor_end()], [monitor_next()], [monitor_plot()]
 #'
@@ -54,13 +54,19 @@
 #'
 #' Generate dummy data: [dummy_data()]
 #'
-#' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()]
+#' Conversion: [args_to_char()], [dots_to_char()], [get_origin_as_char()] [convert_numeric()], [convert_factor()],
+#' [hex_to_256()], [hex_to_ansi()]
 #'
 #' Macros: [macro()], [apply_macro()]
 #'
-#' Loading: [libname()], [set()]
+#' Saving And Loading: [libname()], [set()], [save_file()], [save_file_multi()], [load_file()], [load_file_multi()]
 #'
 #' Reporting: [content_report()]
+#'
+#' Messages: [print_message()], [print_headline()], [print_start_message()], [print_closing()], [print_step()],
+#' [get_message_stack()], [set_no_print()], [print_stack_as_messages()], [convert_square_brackets()]
+#'
+#' Calculation: [compute()], [row_calculation()]
 #'
 #' Small helpers: [setcolorder_by_pattern()], [drop_type_vars()], [fuse_variables()],
 #' [get_excel_range()], [get_integer_length()], [round_values()]
@@ -73,9 +79,9 @@
 #' [set_variable_labels()], [get_variable_labels()], [set_stat_labels()], [get_stat_labels()],
 #' [set_print()], [get_print()], [set_monitor()], [get_monitor()], [set_na.rm()], [get_na.rm()],
 #' [set_output()], [get_output()], [set_titles()], [get_titles()], [set_footnotes()], [get_footnotes()],
-#' [set_print_miss()], [get_print_miss()]
+#' [set_print_miss()], [get_print_miss()], [set_threads()], [get_threads()]
 #'
-#' Other: [build_master()], [build_rstheme()], [free_memory()]
+#' Other: [build_master()], [build_rstheme()], [free_memory()], [qol_news()], [qol_chat()]
 #'
 #' @section Snippets:
 #' \preformatted{

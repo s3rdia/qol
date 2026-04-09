@@ -1,3 +1,7 @@
+###############################################################################
+# Globals
+###############################################################################
+
 # Variables entered here won't appear in Notes during devtools::check().
 # The from - to variables can't be handled otherwise, because they
 # are used in a data.table context which doesn't support the rlang .data
@@ -8,21 +12,29 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                          "mean", "sd", "min", "max", "sum_wgt", ".temp_key", ".temp_weight",
                          "var_pct_row", ".pseudo_preserve", "BY", "by_vars", "VALUE",
                          "first_person", "age", "age_factor", "income", "income_factor",
-                         "expenses", "expenses_factor"))
+                         "expenses", "expenses_factor", "file", "result"))
 
+###############################################################################
+# Start up
+###############################################################################
 
 # Start up message
-.onAttach <- function(libname, pkgname) {
-    current_version <- utils::packageVersion(pkgname)
+.onAttach <- function(libname, pkgname){
+    current_version <- utils::packageVersion("qol")
 
-    packageStartupMessage("    The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier\n",
-                          "    and produce bigger and more complex outputs in less time with less code.\n",
-                          "\n",
-                          "    Current version: ", current_version, "\n",
-                          "    -> Use ?qol to get an overview.\n",
-                          "    -> To view the changelog type: 'qol_news()'")
+    print_headline("[#63C2C9 [b]Quality Of Life][/b]")
+    print_message("NEUTRAL", c("\n The [#32CD32 [b]qol-package[/b]] brings powerful concepts from [#63C2C9 [b]SAS[/b]] to [#C93F3F [b]R[/b]] to make life easier",
+                               "and produce bigger and more complex outputs in less time with less code.",
+                               "",
+                               "> Use [#32CD32 ?qol] to get an overview.",
+                               "> To view the changelog type: [#32CD32 qol_news()]",
+                               "> Chat with the repository:   [#32CD32 qol_chat()]"))
+    print_headline("[#63C2C9 [b]Current version:[/b]] [b][version][/b]", version = current_version)
 }
 
+###############################################################################
+# General global options
+###############################################################################
 
 # Internal environment to store global options
 .qol_options <- new.env(parent = emptyenv())
@@ -35,3 +47,59 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"
 .qol_options[["threads"]]     <- fst::threads_fst()
+.qol_options[["messages"]]    <- list(rule            = list("line-type" = "double"),
+                                      span.note       = list(color = "#63C2C9", "font-weight" = "bold", "before" = "\u2139\ufe0f NOTE: "),
+                                      span.warning    = list(color = "#FFC90E", "font-weight" = "bold", "before" = "\u26a0\ufe0f WARNING: "),
+                                      span.error      = list(color = "#C93F3F", "font-weight" = "bold", "before" = "\u274c ERROR: "),
+                                      span.notePT     = list(color = "#63C2C9", "font-weight" = "bold", "before" = "~ NOTE: "),
+                                      span.warningPT  = list(color = "#FFC90E", "font-weight" = "bold", "before" = "! WARNING: "),
+                                      span.errorPT    = list(color = "#C93F3F", "font-weight" = "bold", "before" = "X ERROR: "),
+                                      span.caller     = list(color = "#63C2C9", "font-weight" = "bold"),
+                                      span.subhead    = list(color = "#32CD32", "font-weight" = "bold", "before" = "\u2794 "),
+                                      span.subheadPT  = list(color = "#32CD32", "font-weight" = "bold", "before" = "> "),
+                                      span.progress   = list(color = "#32CD32", "font-weight" = "bold", "before" = "\u271a"),
+                                      span.progressPT = list(color = "#32CD32", "font-weight" = "bold", "before" = "+"))
+
+###############################################################################
+# Message system
+###############################################################################
+
+# Internal environment to store message styling options
+.qol_messages <- new.env(parent = emptyenv())
+.qol_messages[["format"]] <- list(utf8            = l10n_info()[["UTF-8"]] && .Platform$GUI != "Rgui",
+                                  time_color      = "#565656",
+                                  note_ansi        = hex_to_ansi(" \u2139\ufe0f NOTE: ", hex_color = "#63C2C9", bold = TRUE),
+                                  note_pt          = hex_to_ansi(" ~ NOTE: ",            hex_color = "#63C2C9", bold = TRUE),
+                                  note_indent_ansi = hex_to_ansi(" \u2139\ufe0f\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  note_indent_pt   = hex_to_ansi(" ~\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",            hex_color = "#63C2C9", bold = TRUE),
+                                  warning_ansi        = hex_to_ansi(" \u26a0\ufe0f WARNING: ", hex_color = "#FFC90E", bold = TRUE),
+                                  warning_pt          = hex_to_ansi(" ! WARNING: ",            hex_color = "#FFC90E", bold = TRUE),
+                                  warning_indent_ansi = hex_to_ansi(" \u26a0\ufe0f\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#FFC90E", bold = TRUE),
+                                  warning_indent_pt   = hex_to_ansi(" !\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",            hex_color = "#FFC90E", bold = TRUE),
+                                  error_ansi        = hex_to_ansi(" \u274c ERROR: ", hex_color = "#C93F3F", bold = TRUE),
+                                  error_pt          = hex_to_ansi(" X ERROR: ",      hex_color = "#C93F3F", bold = TRUE),
+                                  error_indent_ansi = hex_to_ansi(" \u274c\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#C93F3F", bold = TRUE),
+                                  error_indent_pt   = hex_to_ansi(" X\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",      hex_color = "#C93F3F", bold = TRUE),
+                                  neutral_ansi        = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  neutral_pt          = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  neutral_indent_ansi = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  neutral_indent_pt   = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  grey_ansi         = hex_to_ansi(" \u2601 ",                 hex_color = "#565656", bold = TRUE),
+                                  grey_pt           = hex_to_ansi(" * ",                      hex_color = "#565656", bold = TRUE),
+                                  grey_indent_ansi  = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#565656", bold = TRUE),
+                                  grey_indent_pt    = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#565656", bold = TRUE),
+                                  major_ansi        = hex_to_ansi(" \u2794 ",                 hex_color = "#32CD32", bold = TRUE),
+                                  major_pt          = hex_to_ansi(" > ",                      hex_color = "#32CD32", bold = TRUE),
+                                  major_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
+                                  major_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#32CD32", bold = TRUE),
+                                  minor_ansi        = hex_to_ansi(" \u00a0\u00a0\u00a0\u271a ",     hex_color = "#32CD32", bold = TRUE),
+                                  minor_pt          = hex_to_ansi(" \u00a0\u00a0+ ",                hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",             hex_color = "#32CD32", bold = TRUE))
+.qol_messages[["stack"]]           <- list()
+.qol_messages[["start_time"]]      <- NULL
+.qol_messages[["timer"]]           <- NULL
+.qol_messages[["last_message"]]    <- NULL
+.qol_messages[["last_session"]]    <- NULL
+.qol_messages[["last_execution"]]  <- NULL
+.qol_messages[["no_print"]]        <- FALSE

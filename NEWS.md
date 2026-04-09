@@ -8,6 +8,14 @@
 * `save_file()`, `save_file_multi()`: Saves fst and rds files. Offers variable selection and observation subsetting. By default the function has a write protection, which has to be explicitly turned off to be able to overwrite files. (28.03.2026)
 * `load_file()`, `load_file_multi()`: Loads fst and rds files. Provided variables to keep are read in case insensitive and are returned in provided order. Additionally a subset can be defined directly. Loaded files in the multi version can be stacked or output as a list. (28.03.2026)
 * `set_threads()`, `get_threads()`: Globally sets/gets the number of used threads for the save and load file functions. (28.03.2026)
+* Base R message system:
+	* `print_message()`, `print_headline()`, `print_start_message()`, `print_closing()`, `print_step()`: Print out different messages with custom styling to the console. (09.04.2026)
+	* `get_message_stack()`: Get the global message stack for inspection. (09.04.2026)
+	* `set_no_print()`: Prevents messages being printed to the console globally. Can e.g. be used in unit test situations. (09.04.2026)
+	* `print_stack_as_messages()`: Print the global message stack as message, warning or error to be able to receive their signals. (09.04.2026)
+	* `convert_square_brackets()`: Transforms the format symbols (like {b}{/b}) into the actual console readable formattings. (09.04.2026)
+* `hex_to_256()`, `hex_to_ansi()`: Generate a 256-color 6x6x6 color cube and apply hex color and font weight to a text as ansi codes. (09.04.2026)
+* `round_multi()`: Rounds multiple variables at once inside a data frame. (09.04.2026)
 
 ### New functionality
 
@@ -20,11 +28,13 @@
 * `build_master()`: Added `with_monitor` parameter, which allows to visualize the time consumption of the individual scripts. (26.03.2026)
 * `split_by()`: Now also outputs NA values. (29.03.2026)
 * `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt. (30.03.2026)
+* `round_values()`: Now is also able to round in multiples of a provided value. (09.04.2026)
 
 ### Changed functionality
 
 * `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (26.03.2026)
 * `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster. (31.01.2026)
+* `transpose_plus()`: Removed macro variable usage. (09.04.2026)
 
 ### Fixed
 
@@ -40,6 +50,7 @@
 * `import_data()`: In the examples the file names to read in weren't correct. This is fixed now. (28.03.2026)
 * `split_by()`: Should now work inside custom functions. (29.03.2026)
 * `retain_value()`, `retain_sum()`: On error now return NA instead of the whole data frame. (31.01.2026)
+* `transpose_plus()`: Wide to long transposition now working again as intended. (09.04.2026)
 
 ### Optimization
 

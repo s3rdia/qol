@@ -77,7 +77,7 @@
 recode <- function(data_frame,
                    ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Early evaluations
@@ -87,13 +87,13 @@ recode <- function(data_frame,
     formats <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(formats)){
-        message('X ERROR: Unknown object found. Recode will be aborted.')
+        print_message("ERROR", "Unknown object found. Recode will be aborted.")
         return(invisible(NULL))
     }
 
@@ -111,25 +111,25 @@ recode <- function(data_frame,
     format_df   <- formats[[current_var]]
 
     if (!current_var %in% names(data_frame)){
-        message(" X ERROR: Variable '", current_var, "' not found in the input data frame. No format will be applied.")
+        print_message("ERROR", "Variable '[var]' not found in the input data frame. No format will be applied.", var = current_var)
         return(invisible(NULL))
     }
 
     if (!data.table::is.data.table(format_df)){
-        message(" X ERROR: The format for '", current_var, "' must be a data table. No format will be applied.")
+        print_message("ERROR", "The format for '[var]' must be a data table. No format will be applied.", var = current_var)
         return(invisible(NULL))
     }
 
     if (names(format_df)[1] == "value" && collapse::any_duplicated(format_df[["value"]])){
-        message(" ! WARNING: The format for '", current_var, "' is a multilabel. A multilabel can't be fully applied in recode.\n",
-                "            Only one of the matching categories will be applied.")
+        print_message("WARNING", c("The format for '[var]' is a multilabel. A multilabel can't be fully applied in recode.",
+								   "Only one of the matching categories will be applied."), var = current_var)
 
         format_df <- format_df |> unique(by = "value", fromLast = FALSE)
     }
 
     if (is.factor(data_frame[[current_var]])){
-        message(" ~ NOTE: '", current_var, "' is a factor variable. Formats only work if the visible character values\n",
-                "         are specified as input values and not the factor levels.")
+        print_message("NOTE", c("'[var]' is a factor variable. Formats only work if the visible character values",
+								"are specified as input values and not the factor levels."), var = current_var)
     }
 
     ###########################################################################
@@ -151,8 +151,8 @@ recode <- function(data_frame,
     if (identical(interval_variables, actual_variables)){
         # Remove NA values
         if (any(is.na(data_frame[[current_var]]))){
-            message(" X ERROR: Variable '", current_var, "' has NA values. Interval merge only works without NA values.\n",
-                    "          NA values have to be removed before calling recode. Recode will be aborted.")
+        print_message("ERROR", c("Variable '[var]' has NA values. Interval merge only works without NA values.",
+								 "NA values have to be removed before calling recode. Recode will be aborted."), var = current_var)
             return(invisible(NULL))
         }
 
@@ -181,8 +181,8 @@ recode <- function(data_frame,
                                   keep("label")
 
         if (collapse::fnrow(data_frame) > original_rows){
-            message(" ! WARNING: The format for '", current_var, "' is a multilabel. For interval formats this leads to\n",
-                    "            doubling observations.")
+            print_message("WARNING", c("The format for '[current_var]' is a multilabel. For interval formats this leads to",
+									   "doubling observations."), current_var = current_var)
         }
     }
 
@@ -204,8 +204,7 @@ recode <- function(data_frame,
             keep("label")
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'recode' execution time: ", end_time, " seconds")
+    print_closing()
 
     as.vector(data_frame)[[1]]
 }
@@ -219,20 +218,20 @@ recode <- function(data_frame,
 #' @export
 recode_multi <- function(data_frame, ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into a list if possible
     formats <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(formats)){
-        message('X ERROR: Unknown object found. Provide recode arguments in the form: variable_name = format_df.\n",
-                "         Recoding will be aborted.')
+        print_message("ERROR", c("Unknown object found. Provide recode arguments in the form: variable_name = format_df.",
+								 "Recoding will be aborted."))
         return(data_frame)
     }
 
@@ -249,8 +248,7 @@ recode_multi <- function(data_frame, ...){
         apply_format(formats, variables) |>
         data.table::setcolorder(var_order)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'recode_multi' execution time: ", end_time, " seconds")
+    print_closing(5)
 
     data_frame
 }

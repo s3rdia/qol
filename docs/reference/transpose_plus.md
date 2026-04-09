@@ -19,7 +19,7 @@ you can even generate new variable expressions at the same time.
 transpose_plus(
   data_frame,
   preserve = NULL,
-  pivot,
+  pivot = NULL,
   values = NULL,
   formats = c(),
   weight = NULL,

@@ -52,6 +52,22 @@
 <code><a href="../reference/save_load.html">load_file()</a></code>, <code><a href="../reference/save_load.html">load_file_multi()</a></code>: Loads fst and rds files. Provided variables to keep are read in case insensitive and are returned in provided order. Additionally a subset can be defined directly. Loaded files in the multi version can be stacked or output as a list. (28.03.2026)</li>
 <li>
 <code><a href="../reference/qol_options.html">set_threads()</a></code>, <code><a href="../reference/qol_options.html">get_threads()</a></code>: Globally sets/gets the number of used threads for the save and load file functions. (28.03.2026)</li>
+<li>Base R message system:
+<ul><li>
+<code><a href="../reference/messages.html">print_message()</a></code>, <code><a href="../reference/messages.html">print_headline()</a></code>, <code><a href="../reference/messages.html">print_start_message()</a></code>, <code><a href="../reference/messages.html">print_closing()</a></code>, <code><a href="../reference/messages.html">print_step()</a></code>: Print out different messages with custom styling to the console. (09.04.2026)</li>
+<li>
+<code><a href="../reference/message_helpers.html">get_message_stack()</a></code>: Get the global message stack for inspection. (09.04.2026)</li>
+<li>
+<code><a href="../reference/message_helpers.html">set_no_print()</a></code>: Prevents messages being printed to the console globally. Can e.g. be used in unit test situations. (09.04.2026)</li>
+<li>
+<code><a href="../reference/message_helpers.html">print_stack_as_messages()</a></code>: Print the global message stack as message, warning or error to be able to receive their signals. (09.04.2026)</li>
+<li>
+<code><a href="../reference/message_helpers.html">convert_square_brackets()</a></code>: Transforms the format symbols (like {b}{/b}) into the actual console readable formattings. (09.04.2026)</li>
+</ul></li>
+<li>
+<code><a href="../reference/hex_ansi.html">hex_to_256()</a></code>, <code><a href="../reference/hex_ansi.html">hex_to_ansi()</a></code>: Generate a 256-color 6x6x6 color cube and apply hex color and font weight to a text as ansi codes. (09.04.2026)</li>
+<li>
+<code><a href="../reference/round_values.html">round_multi()</a></code>: Rounds multiple variables at once inside a data frame. (09.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-2-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-3"></a></h4>
@@ -73,6 +89,8 @@
 <code><a href="../reference/split_by.html">split_by()</a></code>: Now also outputs NA values. (29.03.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_data()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Now can import and export csv files with file extension txt. (30.03.2026)</li>
+<li>
+<code><a href="../reference/round_values.html">round_values()</a></code>: Now is also able to round in multiples of a provided value. (09.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
@@ -80,6 +98,8 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (26.03.2026)</li>
 <li>
 <code>Unit tests</code>: Moved unit tests completely from <code>testthat</code> to <code>tinytest</code>. <code>testthat</code> repeatedly got in the way with its own environment, <code>tinytest</code> offers more natural conditions and works faster. (31.01.2026)</li>
+<li>
+<code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Removed macro variable usage. (09.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
@@ -107,6 +127,8 @@
 <code><a href="../reference/split_by.html">split_by()</a></code>: Should now work inside custom functions. (29.03.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: On error now return NA instead of the whole data frame. (31.01.2026)</li>
+<li>
+<code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Wide to long transposition now working again as intended. (09.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>

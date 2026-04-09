@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(10))
+dummy_df <- dummy_data(10)
 
 
 # Add extensions to limited variables
@@ -50,10 +52,15 @@ expect_equal(nrow(test_df) - 1, nrow(result_df), info = "Renaming based on first
 ###############################################################################
 
 # Renaming aborts if old variable name not found in data frame
-expect_message(new_names_df <- dummy_df |> rename_multi("var1" = "var2"),
-               " X ERROR: The provided <old name> '", info = "Renaming aborts if old variable name not found in data frame")
+new_names_df <- dummy_df |> rename_multi("var1" = "var2")
+
+expect_error(print_stack_as_messages("ERROR"), "The provided <old name> '", info = "Renaming aborts if old variable name not found in data frame")
 
 
 # Renaming aborts if new variable name is already data frame
-expect_message(new_names_df <- dummy_df |> rename_multi("sex" = "age"),
-               " X ERROR: The provided <new name> '", info = "Renaming aborts if new variable name is already data frame")
+new_names_df <- dummy_df |> rename_multi("sex" = "age")
+
+expect_error(print_stack_as_messages("ERROR"), "The provided <new name> '", info = "Renaming aborts if new variable name is already data frame")
+
+
+set_no_print()

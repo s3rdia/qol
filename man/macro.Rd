@@ -59,10 +59,9 @@ text_vector <- apply_macro(char_vector)
 }
 \seealso{
 Functions that can make use of macro variables: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
-\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=transpose_plus]{transpose_plus()}}
+\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}
 
 Within the tabulation functions titles, footnotes, var_labels and stat_labels
 can resolve macros. Additionally they can be used in the \code{\link[=any_table]{any_table()}} rows and
-columns parameter, in the \code{\link[=summarise_plus]{summarise_plus()}} types parameter and in the \code{\link[=transpose_plus]{transpose_plus()}}
-pivot parameter.
+columns parameter and in the \code{\link[=summarise_plus]{summarise_plus()}} types parameter.
 }

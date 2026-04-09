@@ -56,7 +56,7 @@ concat <- function(data_frame,
 
     # Padding character may only be of length one
     if (!is.null(padding_char) && collapse::vlengths(padding_char) != 1){
-        message(" ! WARNING: <Padding chararacter> must be a single character. Concat will be done without <padding character>.")
+        print_message("WARNING", "<Padding chararacter> must be a single character. Concat will be done without <padding character>.")
         return(do.call(paste0, data_frame[variables]))
     }
 
@@ -86,8 +86,8 @@ concat <- function(data_frame,
         # the remaining variables will receive the individual maximum length as
         # padding length like above.
         if (number_of_paddings < number_of_columns){
-            message(" ! WARNING: <Padding length> is shorter than the number of variables.\n",
-                    "            Missing lengths will be filled up using maximum individual variable length.")
+            print_message("WARNING", c("<Padding length> is shorter than the number of variables.",
+									   "Missing lengths will be filled up using maximum individual variable length."))
 
             missing_length <- vapply(data_frame[variables[(number_of_paddings + 1):number_of_columns]],
                                      function(variable){
@@ -100,8 +100,8 @@ concat <- function(data_frame,
         # If the padding vector is longer than the number of provided variables,
         # juts trim it down.
         else if (number_of_paddings > number_of_columns){
-            message(" ! WARNING: <Padding length> is longer than the number of variables.\n",
-                    "            Extra lengths will be ignored.")
+            print_message("WARNING", c("<Padding length> is longer than the number of variables.",
+									   "Extra lengths will be ignored."))
 
             padding_length <- padding_length[seq_len(number_of_columns)]
         }
@@ -187,14 +187,14 @@ sub_string <- function(data_frame,
     # If no value variables are provided abort
     if (length(variable) <= 1){
         if (length(variable) == 0 || variable == ""){
-            message(" X ERROR: No <variables> provided. Blank removal will be aborted.")
+            print_message("ERROR", "No <variables> provided. Blank removal will be aborted.")
             return(invisible(NULL))
         }
     }
 
     # Adjust variable
     if (length(variable) > 1){
-        message(" ! WARNING: <Variable> may only be of length one. The first Element will be used.")
+        print_message("WARNING", "<Variable> may only be of length one. The first Element will be used.")
 
         variable <- variable[[1]]
     }
@@ -203,30 +203,30 @@ sub_string <- function(data_frame,
     variable <- data_frame |> part_of_df(variable, check_only = TRUE)
 
     if (is.list(variable)){
-        message(" X ERROR: The provided <variable> '", variable[[1]], "' is not part of\n",
-                "          the data frame. Substring will be aborted.")
+        print_message("ERROR", c("The provided <variable> '[var]' is not part of",
+								 "the data frame. Substring will be aborted."), var = variable[[1]])
         return(invisible(NULL))
     }
 
     if (!is.character(data_frame[[variable]])){
-        message(" X ERROR: <Variable> type must be character. Substring will be aborted.")
+        print_message("ERROR", "<Variable> type must be character. Substring will be aborted.")
         return(invisible(NULL))
     }
 
     if (is.null(from) && is.null(to)){
-        message(" X ERROR: Neither <from> nor <to> is provided. Substring will be aborted.")
+        print_message("ERROR", "Neither <from> nor <to> is provided. Substring will be aborted.")
         return(invisible(NULL))
     }
 
     # Adjust from and length
     if (length(to) > 1){
-        message(" ! WARNING: <To> may only be of length one. The first Element will be used.")
+        print_message("WARNING", "<To> may only be of length one. The first Element will be used.")
 
         to <- to[[1]]
     }
 
     if (length(from) > 1){
-        message(" ! WARNING: <From> may only be of length one. The first Element will be used.")
+        print_message("WARNING", "<From> may only be of length one. The first Element will be used.")
 
         from <- from[[1]]
     }
@@ -315,14 +315,14 @@ remove_blanks <- function(data_frame,
     # If no value variable are provided abort
     if (length(variable) <= 1){
         if (length(variable) == 0 || variable == ""){
-            message(" X ERROR: No <variable> provided. Blank removal will be aborted.")
+            print_message("ERROR", "No <variable> provided. Blank removal will be aborted.")
             return(invisible(NULL))
         }
     }
 
     # Adjust variable
     if (length(variable) > 1){
-        message(" ! WARNING: <Variable> may only be of length one. The first Element will be used.")
+        print_message("WARNING", "<Variable> may only be of length one. The first Element will be used.")
 
         variable <- variable[[1]]
     }
@@ -331,7 +331,7 @@ remove_blanks <- function(data_frame,
     variable <- data_frame |> part_of_df(variable)
 
     if (length(variable) == 0){
-        message(" X ERROR: No valid <variable> provided. Blank removal will be aborted.")
+        print_message("ERROR", "No valid <variable> provided. Blank removal will be aborted.")
         return(invisible(NULL))
     }
 
@@ -339,7 +339,7 @@ remove_blanks <- function(data_frame,
     variable_vector <- unlist(data_frame[variable])
 
     if (!is.character(variable_vector[[1]])){
-        message(" X ERROR: Blank removal only works with a character <variable>. Blank removal will be aborted.")
+        print_message("ERROR", "Blank removal only works with a character <variable>. Blank removal will be aborted.")
         return(invisible(NULL))
     }
 
@@ -347,8 +347,8 @@ remove_blanks <- function(data_frame,
     which <- tolower(which)
 
     if (!which %in% c("trim", "leading", "trailing", "all", "normalize")){
-        message(" ! WARNING: Invalid option for <which> provided. Allowed are 'trim', 'leading', 'trailing', 'all' and\n",
-                "            'normalize'. 'all' will be used.")
+        print_message("WARNING", c("Invalid option for <which> provided. Allowed are 'trim', 'leading', 'trailing', 'all' and",
+								   "'normalize'. 'all' will be used."))
 
         which <- "all"
     }

@@ -52,17 +52,14 @@ Functions that can make use of macro variables:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
 [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md),
-[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
-[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
 
 Within the tabulation functions titles, footnotes, var_labels and
 stat_labels can resolve macros. Additionally they can be used in the
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
-rows and columns parameter, in the
+rows and columns parameter and in the
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
-types parameter and in the
-[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
-pivot parameter.
+types parameter.
 
 ## Examples
 

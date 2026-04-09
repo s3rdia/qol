@@ -105,7 +105,7 @@ is_multilabel <- function(format_list, variable){
 #' Returns a data frame with interleaved ordered statistics columns.
 #'
 #' @noRd
-order_interleaved <- function(data_frame, patterns) {
+order_interleaved <- function(data_frame, patterns){
     # Find columns for each pattern
     columns <- lapply(patterns, function(pattern){
         grep(pattern, names(data_frame), value = TRUE)
@@ -161,7 +161,7 @@ unlist_variables <- function(var_names){
     # so that the function using this check can abort.
     tryCatch({
         collapse::funique(trimws(unlist(strsplit(var_names, "\\+"))))
-    }, error = function(e) {
+    }, error = function(e){
         NULL
     })
 }
@@ -196,9 +196,9 @@ is_valid_vector <- function(vector_to_check){
 #' Returns the call_functions return value.
 #'
 #' @noRd
-suppress_specific_message <- function(call_function, pattern) {
+suppress_specific_message <- function(call_function, pattern){
     withCallingHandlers(call_function,
-                        message = function(single_message) {
+                        message = function(single_message){
                             if (grepl(pattern, conditionMessage(single_message))){
                                 invokeRestart("muffleMessage")
                             }

@@ -171,7 +171,8 @@ crosstabs <- function(data_frame,
                       monitor    = .qol_options[["monitor"]]){
 
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
+	print_step("GREY", "Error handling")
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
@@ -207,14 +208,14 @@ crosstabs <- function(data_frame,
 
     if (length(rows) <= 1){
         if (length(rows) == 0 || rows == ""){
-            message(" X ERROR: No valid <rows> variable provided. Crosstabs will be aborted.")
+            print_message("ERROR", "No valid <rows> variable provided. Crosstabs will be aborted.")
             return(invisible(NULL))
         }
     }
 
     if (length(rows) > 1){
-        message(" X ERROR: Only one variable for <rows> allowed. Crosstabs will be aborted.")
-        return(invisible(NULL))
+        rows <- rows[[1]]
+        print_message("WARNING", "Only one variable for <rows> allowed. First variable will be used.")
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -230,21 +231,21 @@ crosstabs <- function(data_frame,
     columns <- resolve_intersection(columns, rows, check_only = TRUE)
 
     if (is.list(columns)){
-        message(" X ERROR: The provided <columns> variable '", paste(columns[[1]], collapse = ", "), "' is also part of\n",
-                "          the <rows> variables. Crosstabs will be aborted.")
+        print_message("ERROR", c("The provided <columns> variable '[columns]' is also part of",
+								 "the <rows> variables. Crosstabs will be aborted."), columns = columns[[1]])
         return(invisible(NULL))
     }
 
     if (length(columns) <= 1){
         if (length(columns) == 0 || columns == ""){
-            message(" X ERROR: No valid <columns> variable provided. Crosstabs will be aborted.")
+            print_message("ERROR", "No valid <columns> variable provided. Crosstabs will be aborted.")
             return(invisible(NULL))
         }
     }
 
     if (length(columns) > 1){
-        message(" X ERROR: Only one variable for <columns> allowed. Crosstabs will be aborted.")
-        return(invisible(NULL))
+        columns <- columns[[2]]
+        print_message("WARNING", "Only one variable for <columns> allowed. First variable will be used.")
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -274,7 +275,7 @@ crosstabs <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
-        message(" ! WARNING: <Output> format '", output, "' not available. Using 'console' instead.")
+        print_message("WARNING", "<Output> format '[output]' not available. Using 'console' instead.", output = output)
 
         output <- "console"
     }
@@ -313,7 +314,7 @@ crosstabs <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
     #-------------------------------------------------------------------------#
-    message("\n > Computing stats.")
+    print_step("MAJOR", "Computing stats.")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Summarise data according to provided variables
@@ -389,7 +390,7 @@ crosstabs <- function(data_frame,
         # running numbers instead of the values or labels.
         run_nr_df        <- data.table::data.table(column_names)
         names(run_nr_df) <- columns
-        run_nr_df[["run_nr"]] <- run_nr_df |> running_number()
+        run_nr_df[["run_nr"]] <- suppressMessages(run_nr_df |> running_number())
 
         cross_tab <- cross_tab |>
             collapse::join(run_nr_df,
@@ -406,7 +407,7 @@ crosstabs <- function(data_frame,
     }
 
     if (is.null(cross_tab)){
-        message(" X ERROR: Crosstab could not be computed.")
+        print_message("ERROR", "Crosstab could not be computed.")
         return(invisible(NULL))
     }
 
@@ -414,7 +415,7 @@ crosstabs <- function(data_frame,
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    message(" > Formatting tables.")
+    print_step("MAJOR", "Formatting tables.")
 
     if (output %in% c("console", "text")){
         #---------------------------------------------------------------------#
@@ -468,6 +469,8 @@ crosstabs <- function(data_frame,
         #---------------------------------------------------------------------#
 
         if (output %in% c("console")){
+            print_closing()
+
             cat(paste(complete_table, collapse = "\n"), "\n\n")
         }
         # Open in text editor
@@ -478,6 +481,8 @@ crosstabs <- function(data_frame,
             if (interactive()){
                 file.show(temp_file)
             }
+
+            print_closing()
         }
         else if (output == "excel" || output == "excel_nostyle"){
             # If no save path or file provided just open workbook
@@ -489,7 +494,7 @@ crosstabs <- function(data_frame,
             else{
                 # If save path doesn't exist, just open workbook
                 if (!file.exists(style[["save_path"]])){
-                    message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+                    print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
 
                     if (interactive()){
                         wb$open()
@@ -500,11 +505,13 @@ crosstabs <- function(data_frame,
                     wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
                 }
             }
+
+            print_closing()
         }
     }
-
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'crosstabs' execution time: ", end_time, " seconds\n")
+    else{
+        print_closing()
+    }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -621,8 +628,9 @@ format_cross_text <- function(cross_tab,
 
             if (stat == "pct_row"){
                 if (length(by) == 0){
-                    message(" ~ NOTE: The format for variable '", rows, "' is a multilabel.\n",
-                            "         In this case row percentages aren't computed properly.")
+                    print_message("NOTE", c("The format for variable '[rows]' is a multilabel.",
+											"In this case row percentages aren't computed properly."), rows = rows,
+											always_print = TRUE)
                 }
             }
         }
@@ -898,8 +906,9 @@ format_cross_excel <- function(wb,
 
             if (stat == "pct_row"){
                 if (length(by) == 0){
-                    message(" ~ NOTE: The format for variable '", rows, "' is a multilabel.\n",
-                            "         In this case row percentages aren't computed properly.")
+                    print_message("NOTE", c("The format for variable '[rows]' is a multilabel.",
+											"In this case row percentages aren't computed properly."), rows = rows,
+											always_print = TRUE)
                 }
             }
         }
@@ -1054,12 +1063,13 @@ format_cross_by_text <- function(cross_tab,
                                  titles,
                                  footnotes,
                                  na.rm,
-                                 show_total){
+                                  show_total){
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
         if ("pct_row" %in% statistics){
-            message(" ~ NOTE: The format for variable '", rows, "' is a multilabel.\n",
-                    "         In this case row percentages aren't computed properly.")
+            print_message("NOTE", c("The format for variable '[rows]' is a multilabel.",
+									"In this case row percentages aren't computed properly."), rows = rows,
+									always_print = TRUE)
         }
     }
 
@@ -1189,8 +1199,9 @@ format_cross_by_excel <- function(cross_tab,
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
         if ("pct_row" %in% statistics){
-            message(" ~ NOTE: The format for variable '", rows, "' is a multilabel.\n",
-                    "         In this case row percentages aren't computed properly.")
+            print_message("NOTE", c("The format for variable '[rows]' is a multilabel.",
+									"In this case row percentages aren't computed properly."), rows = rows,
+									always_print = TRUE)
         }
     }
 
@@ -1234,7 +1245,7 @@ format_cross_by_excel <- function(cross_tab,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
             #-----------------------------------------------------------------#
-            message("   + ", paste0(by_var, " = ", value))
+            print_step("MINOR", "[by] = [value]", by = by, value = value)
 
             # Put additional by info together with the information which by variable
             # and which value is currently filtered.

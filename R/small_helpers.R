@@ -96,7 +96,7 @@ fuse_variables <- function(data_frame,
     new_variable_name <- gsub("\"", "", deparse(substitute(new_variable_name)))
 
     if (length(new_variable_name) > 1){
-        message(" X ERROR: No vector allowed. Only one new variable can be generated.")
+        print_message("ERROR", "No vector allowed. Only one new variable can be generated.")
         return(invisible(data_frame))
     }
 
@@ -197,8 +197,8 @@ add_variable_range <- function(data_frame, var_range){
     pattern <- "^([A-Za-z_.]+)([0-9]+):\\1([0-9]+)$"
 
     if (!grepl(pattern, var_range)){
-        message(" X ERROR: Variable range has to be provided in the form 'var_name1:var_name10'.\n",
-                "          Variable names must match. No variables will be added.")
+        print_message("ERROR", c("Variable range has to be provided in the form 'var_name1:var_name10'.",
+								 "Variable names must match. No variables will be added."))
         return(invisible(data_frame))
     }
 
@@ -213,8 +213,8 @@ add_variable_range <- function(data_frame, var_range){
     invalid_variables <- var_names[var_names %in% names(data_frame)]
 
     if (length(invalid_variables) > 0){
-        message(" X ERROR: Some variables are already part of the data frame: ", paste(invalid_variables, collapse = ", "), "\n",
-                "          No variables will be added.")
+        print_message("ERROR", c("Some variables are already part of the data frame: [invalid].",
+								 "No variables will be added."), invalid = invalid_variables)
         return(invisible(data_frame))
     }
 
@@ -249,13 +249,13 @@ add_variable_range <- function(data_frame, var_range){
 #' @export
 get_integer_length <- function(variable){
     if (!is.numeric(variable)){
-        message(" X ERROR: Only numeric values allowed.")
+        print_message("ERROR", "Only numeric values allowed.")
 
         return(invisible(NA_integer_))
     }
 
     if (!is.integer(variable)){
-        message(" ! WARNING: Variable is not an integer and will be floored. Decimal places won't count.")
+        print_message("WARNING", "Variable is not an integer and will be floored. Decimal places won't count.")
 
         variable <- floor(variable)
     }
@@ -321,34 +321,158 @@ get_duplicate_var_count <- function(data_frame){
 }
 
 
-#' Round Values With Half Rounded Up
+#' Round Values With Half Rounded Up And Multiples Of X
+#'
+#' @name round_values
 #'
 #' @description
-#' This function rounds values according to DIN 1333 (round half up).
+#' This function rounds values according to DIN 1333 (round half up) or as an
+#' alternative in multiples of a given value.
 #'
 #' @param values Numeric values to round.
 #' @param digits The number of decimal places the values should be rounded to.
+#' @param multiple The multiple to round the values to.
 #'
 #' @return
-#' Returns rounded values
+#' Returns rounded values.
 #'
 #' @examples
+#' # With vectors
 #' round_numbers1 <- round_values(c(-0.5, -0.4, 0.1, 0.49, 0.5, 1.5, 2.5, 3.2))
 #' round_numbers2 <- round_values(c(-0.5, -0.49, 0.17, 0.499, 0.51, 1.549, 2.51, 3.25),
 #'                                digits = 1)
+#' round_numbers3 <- round_values(c(-0.3, -0.24, 1.17, 2.749, 0.25, 1.549, 2.75, 3.25),
+#'                                multiple = 0.5)
+#'
+#' # With a data frame
+#' my_data <- dummy_data(100)
+#'
+#' my_data[["income_round1"]] <- my_data[["income"]] |>  round_values()
+#' my_data[["income_round2"]] <- my_data[["income"]] |>  round_values(multiple = 100)
+#'
+#'
+#' @rdname round_values
 #'
 #' @export
-round_values <- function(values, digits = 0){
-  if (!is.numeric(values)){
-      message(" X ERROR: Only numeric values allowed. Rounding will be aborted.")
+round_values <- function(values,
+                         digits   = 0,
+                         multiple = NULL){
+    if (!is.numeric(values)){
+        print_message("ERROR", "Only numeric values allowed. Rounding will be aborted.")
 
-      return(invisible(values))
-  }
+        return(invisible(values))
+    }
 
-  # Pre calculate the multiplier
-  p   <- 10 ^ digits
-  eps <- .Machine[["double.eps"]]
+    eps <- .Machine[["double.eps"]]
 
-  # Using vectorized math to reduce the number of temporary objects created otherwise
-  trunc(abs(values) * p + (0.5 + sqrt(eps))) / p * sign(values)
+    if (!is.null(multiple)){
+        # Round in multiples of x
+        values <- trunc(abs(values) / multiple + (0.5 + sqrt(eps))) * multiple * sign(values)
+    }
+    else{
+        # Pre calculate the multiplier
+        p <- 10 ^ digits
+
+        # Using vectorized math to reduce the number of temporary objects created otherwise
+        values <- trunc(abs(values) * p + (0.5 + sqrt(eps))) / p * sign(values)
+    }
+
+    values
+}
+
+
+#' @description
+#' [round_multi()]: Rounds multiple variables at once inside a data frame.
+#'
+#' @param data_frame The data frame in which the variables to be rounded are found.
+#' @param variables The variable names of which to round the values.
+#' @param new_names The new names of the rounded variables. If provided adds variables,
+#' if not overwrites the existing variables with rounded values.
+#'
+#' @return
+#' Returns a data frame with rounded values.
+#'
+#' @examples
+#' # Round multiple variables in a data frame
+#' my_data <- my_data |>  round_multi(variables = c(income,  expenses,  balance),
+#'                                    new_names = c(incomeR, expensesR, balanceR),
+#'                                    digits = 1)
+#'
+#' @rdname round_values
+#'
+#' @export
+round_multi <- function(data_frame,
+                        variables,
+                        new_names = NULL,
+                        digits    = 0,
+                        multiple  = NULL){
+    variables <- get_origin_as_char(variables, substitute(variables))
+    new_names <- get_origin_as_char(new_names, substitute(new_names))
+
+    # Make sure that the variables provided are part of the data frame.
+    variables <- data_frame |> part_of_df(variables)
+
+    # If no variables are provided return data frame without rounding
+    if (length(variables) == 0){
+        return(invisible(data_frame))
+    }
+
+    # If no variables are provided return data frame without rounding
+    if (!is.null(new_names) && length(variables) != length(new_names)){
+        print_message("ERROR", "<Variables> and <new_names> are of unequal length. Rounding will be aborted.")
+        return(invisible(data_frame))
+    }
+
+    # Expand digits and multiples to variable count, if fewer values than variables
+    # are given.
+    var_count    <- length(variables)
+    digits_count <- length(digits)
+
+    digits <- digits[seq_len(min(digits_count, var_count))]
+
+    if (!is.null(digits) && digits_count < var_count){
+        digits <- c(digits, rep(digits[digits_count], var_count - digits_count))
+    }
+
+    multiple_count <- length(multiple)
+
+    multiple <- multiple[seq_len(min(multiple_count, var_count))]
+
+    if (!is.null(multiple) && multiple_count < var_count){
+        multiple <- c(multiple, rep(multiple[multiple_count], var_count - multiple_count))
+    }
+
+    # Loop through all provided variables and check whether they are numeric.
+    # Non numeric variables will be excluded.
+    invalid_vars <- c()
+
+    for (i in seq_along(variables)){
+        variable <- variables[[i]]
+        new_name <- new_names[[i]]
+        digit    <- digits[[i]]
+        multi    <- multiple[[i]]
+
+        # Exclude non numeric variables
+        if (!is.numeric(data_frame[[variable]])){
+            invalid_vars <- c(invalid_vars, variable)
+            variables    <- variables[!variable %in% variables]
+        }
+        # Actual rounding
+        else{
+            # Overwrite existing variables if no new names are provided
+            if (is.null(new_name)){
+                new_name <- variable
+            }
+
+            data_frame[[new_name]] <- data_frame[[variable]] |>
+                round_values(digits = digit, multiple = multi)
+        }
+    }
+
+    if (length(invalid_vars)){
+        print_message("WARNING", c("Only numeric values allowed. [invalid] [?is/are] not numeric, and will",
+                                   "be excluded from rounding."), invalid = invalid_vars)
+    }
+
+    data_frame
 }

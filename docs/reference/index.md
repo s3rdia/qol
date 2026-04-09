@@ -147,6 +147,9 @@
 - [`convert_numeric()`](https://s3rdia.github.io/qol/reference/convert_variables.md)
   [`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md)
   : Convert Variables
+- [`hex_to_256()`](https://s3rdia.github.io/qol/reference/hex_ansi.md)
+  [`hex_to_ansi()`](https://s3rdia.github.io/qol/reference/hex_ansi.md)
+  : Convert Color Codes
 
 ## Macro Variables
 
@@ -170,6 +173,20 @@
 
 - [`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md)
   : Get Detailed Summary About A Data Frame
+
+## Messages
+
+- [`print_message()`](https://s3rdia.github.io/qol/reference/messages.md)
+  [`print_headline()`](https://s3rdia.github.io/qol/reference/messages.md)
+  [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md)
+  [`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md)
+  [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md) :
+  Print Styled Messages
+- [`get_message_stack()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
+  [`set_no_print()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
+  [`print_stack_as_messages()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
+  [`convert_square_brackets()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
+  : Message Helper Functions
 
 ## Calculation
 
@@ -200,7 +217,8 @@
   [`get_duplicate_var_count()`](https://s3rdia.github.io/qol/reference/duplicates.md)
   : Check For Duplicate Variable Names
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md)
-  : Round Values With Half Rounded Up
+  [`round_multi()`](https://s3rdia.github.io/qol/reference/round_values.md)
+  : Round Values With Half Rounded Up And Multiples Of X
 
 ## Split Data Frame
 
@@ -217,8 +235,6 @@
 
 ## Global Options
 
-- [`qol_news()`](https://s3rdia.github.io/qol/reference/qol_news.md) :
-  Go To GitHub NEWS Page
 - [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md)
   [`reset_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md)
   [`get_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md)
@@ -255,3 +271,7 @@
   : Build a Theme From Scratch
 - [`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md)
   : Remove Objects From Memory By Name And Type
+- [`qol_news()`](https://s3rdia.github.io/qol/reference/qol_news.md) :
+  Go To GitHub NEWS Page
+- [`qol_chat()`](https://s3rdia.github.io/qol/reference/qol_chat.md) :
+  Go To GitHub NEWS Page

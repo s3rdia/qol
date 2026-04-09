@@ -75,7 +75,7 @@ split_by <- function(data_frame,
                      inverse = FALSE,
                      monitor = .qol_options[["monitor"]]){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Preparation", "Preparation")
@@ -139,8 +139,8 @@ split_by <- function(data_frame,
             duplicate_entry <- intersect(names(data_list), names(new_entry))
 
             if (length(duplicate_entry) > 0){
-                message(" X ERROR: Variable '", condition, "' caused duplicate list entry names. Try to make them unique\n",
-                        "          using formats. Splitting will be aborted.")
+                print_message("ERROR", c("Variable '[condition]' caused duplicate list entry names. Try to make them unique",
+										 "using formats. Splitting will be aborted."), condition = condition)
                 return(data_frame)
             }
 
@@ -164,13 +164,12 @@ split_by <- function(data_frame,
         }
         # If something else is given abort
         else{
-            message(" X ERROR: Only single variables or conditions allowed. Splitting will be aborted.")
+            print_message("ERROR", "Only single variables or conditions allowed. Splitting will be aborted.")
             return(data_frame)
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'split_by' execution time: ", end_time, " seconds")
+    print_closing()
 
     #---------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()

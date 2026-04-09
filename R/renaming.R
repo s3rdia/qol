@@ -34,7 +34,7 @@
 #' @export
 rename_pattern <- function(data_frame, old_pattern, new_pattern){
     if (length(old_pattern) > 1 || length(new_pattern) > 1){
-        message(" X ERROR: Only single pattern allowed. Rename pattern will be aborted.")
+        print_message("ERROR", "Only single pattern allowed. Rename pattern will be aborted.")
         return(data_frame)
     }
 
@@ -90,7 +90,7 @@ remove_stat_extension <- function(data_frame, statistics){
     }
     # If there are duplicate names abort
     else{
-        message(" ! WARNING: New variable names are not unique. Statistic extensions won't be removed.")
+        print_message("WARNING", "New variable names are not unique. Statistic extensions won't be removed.")
     }
 
     data_frame
@@ -131,22 +131,22 @@ add_extension <- function(data_frame,
                           extensions,
                           reuse = "none"){
     if (!is.numeric(from)){
-        message(" X ERROR: From needs to be numeric. Adding extensions will be aborted.")
+        print_message("ERROR", "From needs to be numeric. Adding extensions will be aborted.")
         return(data_frame)
     }
 
     if (!is.character(extensions)){
-        message(" X ERROR: Extensions need to be characters. Adding extensions will be aborted.")
+        print_message("ERROR", "Extensions need to be characters. Adding extensions will be aborted.")
         return(data_frame)
     }
 
     if (from > collapse::fncol(data_frame)){
-        message(" X ERROR: From is greater than number of columns in data frame. Adding extensions will be aborted.")
+        print_message("ERROR", "From is greater than number of columns in data frame. Adding extensions will be aborted.")
         return(data_frame)
     }
 
     if (!reuse %in% c("none", "last", "repeat")){
-        message(" ! WARNING: Reuse must be one of 'none', 'last', 'repeat'. 'none' will be used.")
+        print_message("WARNING", "Reuse must be one of 'none', 'last', 'repeat'. 'none' will be used.")
         reuse <- "none"
     }
 
@@ -157,7 +157,7 @@ add_extension <- function(data_frame,
     n_target       <- length(target_columns)
     n_extensions   <- length(extensions)
 
-    # generally shorten extensions, if there are more than columns are left in the data frame
+    # Generally shorten extensions, if there are more than columns are left in the data frame
     extensions <- extensions[seq_len(min(n_extensions, n_target))]
 
     # Create the extended names
@@ -261,13 +261,13 @@ replace_except <- function(vector,
 #' @export
 rename_multi <- function(data_frame, ...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into a list if possible
     rename_list <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
@@ -294,8 +294,8 @@ rename_multi <- function(data_frame, ...){
     old_names <- data_frame |> part_of_df(old_names, check_only = TRUE)
 
     if (is.list(old_names)){
-        message(" X ERROR: The provided <old name> '", paste(old_names[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Renaming will be aborted.")
+        print_message("ERROR", c("The provided <old name> '[old]' is not part of",
+								 "the data frame. Renaming will be aborted."), old = old_names[[1]])
         return(data_frame)
     }
 
@@ -304,16 +304,15 @@ rename_multi <- function(data_frame, ...){
 
     # If not all old names are part of the data frame abort
     if (length(invalid_new_names) > 0){
-        message(" X ERROR: The provided <new name> '", paste(invalid_new_names, collapse = ", "), "' is already part of\n",
-                "          the data frame. Renaming will be aborted.")
+        print_message("ERROR", c("The provided <new name> '[new]' is already part of",
+								 "the data frame. Renaming will be aborted."), new = invalid_new_names)
         return(data_frame)
     }
 
     # Rename all variables in one go
     data_frame <- data_frame |> collapse::frename(stats::setNames(old_names, new_names))
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'rename_multi' execution time: ", end_time, " seconds")
+    print_closing()
 
     data_frame
 }
@@ -342,7 +341,7 @@ rename_multi <- function(data_frame, ...){
 #' my_data <- my_data |> first_row_as_names()
 #'
 #' @export
-first_row_as_names <- function(data_frame) {
+first_row_as_names <- function(data_frame){
     # Extract first row and current names
     new_names <- as.character(data_frame[1, ])
     old_names <- names(data_frame)

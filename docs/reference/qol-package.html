@@ -79,7 +79,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
     <h2 id="imports">Imports<a class="anchor" aria-label="anchor" href="#imports"></a></h2>
 
 
-<p>data.table, collapse, openxlsx2</p>
+<p>data.table, collapse, openxlsx2, fst</p>
     </div>
     <div class="section level2">
     <h2 id="minimal-r-version">Minimal R Version<a class="anchor" aria-label="anchor" href="#minimal-r-version"></a></h2>
@@ -100,16 +100,20 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
 <p>Joining: <code><a href="multi_join.html">multi_join()</a></code></p>
 <p>Transposing: <code><a href="transpose_plus.html">transpose_plus()</a></code></p>
 <p>Sorting: <code><a href="sort_plus.html">sort_plus()</a></code></p>
-<p>If-statement: <code><a href="if_else.html">if.()</a></code>, <code><a href="if_else.html">else_if.()</a></code>, <code><a href="if_else.html">else.()</a></code>, <code><a href="where..html">where.()</a></code></p>
+<p>If-statement: <code><a href="if_else.html">if.()</a></code>, <code><a href="if_else.html">else_if.()</a></code>, <code><a href="if_else.html">else.()</a></code>, <code><a href="where..html">where.()</a></code>, <code><a href="do_if.html">do_if()</a></code>, <code><a href="do_if.html">else_do()</a></code>, <code><a href="do_if.html">end_do()</a></code>, <code><a href="do_if.html">end_all_do()</a></code></p>
 <p>Monitoring: <code><a href="monitor.html">monitor_start()</a></code>, <code><a href="monitor.html">monitor_end()</a></code>, <code><a href="monitor.html">monitor_next()</a></code>, <code><a href="monitor.html">monitor_plot()</a></code></p>
 <p>Renaming: <code><a href="rename_pattern.html">rename_pattern()</a></code>, <code><a href="add_extension.html">add_extension()</a></code>, <code><a href="remove_stat_extension.html">remove_stat_extension()</a></code>, <code><a href="replace_except.html">replace_except()</a></code></p>
 <p>Retaining: <code><a href="retain.html">running_number()</a></code>, <code><a href="retain.html">mark_case()</a></code>, <code><a href="retain.html">retain_value()</a></code>, <code><a href="retain.html">retain_sum()</a></code>, <code><a href="retain.html">retain_variables()</a></code></p>
 <p>Character Manipulation: <code><a href="concat.html">concat()</a></code>, <code><a href="sub_string.html">sub_string()</a></code>, <code><a href="remove_blanks.html">remove_blanks()</a></code></p>
 <p>Generate dummy data: <code><a href="dummy_data.html">dummy_data()</a></code></p>
-<p>Conversion: <code><a href="convert_arguments.html">args_to_char()</a></code>, <code><a href="convert_arguments.html">dots_to_char()</a></code>, <code><a href="convert_arguments.html">get_origin_as_char()</a></code> <code><a href="convert_variables.html">convert_numeric()</a></code>, <code><a href="convert_variables.html">convert_factor()</a></code></p>
+<p>Conversion: <code><a href="convert_arguments.html">args_to_char()</a></code>, <code><a href="convert_arguments.html">dots_to_char()</a></code>, <code><a href="convert_arguments.html">get_origin_as_char()</a></code> <code><a href="convert_variables.html">convert_numeric()</a></code>, <code><a href="convert_variables.html">convert_factor()</a></code>,
+<code><a href="hex_ansi.html">hex_to_256()</a></code>, <code><a href="hex_ansi.html">hex_to_ansi()</a></code></p>
 <p>Macros: <code><a href="macro.html">macro()</a></code>, <code><a href="macro.html">apply_macro()</a></code></p>
-<p>Loading: <code><a href="libname.html">libname()</a></code>, <code><a href="set.html">set()</a></code></p>
+<p>Saving And Loading: <code><a href="libname.html">libname()</a></code>, <code><a href="set.html">set()</a></code>, <code><a href="save_load.html">save_file()</a></code>, <code><a href="save_load.html">save_file_multi()</a></code>, <code><a href="save_load.html">load_file()</a></code>, <code><a href="save_load.html">load_file_multi()</a></code></p>
 <p>Reporting: <code><a href="content_report.html">content_report()</a></code></p>
+<p>Messages: <code><a href="messages.html">print_message()</a></code>, <code><a href="messages.html">print_headline()</a></code>, <code><a href="messages.html">print_start_message()</a></code>, <code><a href="messages.html">print_closing()</a></code>, <code><a href="messages.html">print_step()</a></code>,
+<code><a href="message_helpers.html">get_message_stack()</a></code>, <code><a href="message_helpers.html">set_no_print()</a></code>, <code><a href="message_helpers.html">print_stack_as_messages()</a></code>, <code><a href="message_helpers.html">convert_square_brackets()</a></code></p>
+<p>Calculation: <code><a href="compute.html">compute()</a></code>, <code><a href="row_calculation.html">row_calculation()</a></code></p>
 <p>Small helpers: <code><a href="setcolorder_by_pattern.html">setcolorder_by_pattern()</a></code>, <code><a href="drop_type_vars.html">drop_type_vars()</a></code>, <code><a href="fuse_variables.html">fuse_variables()</a></code>,
 <code><a href="get_excel_range.html">get_excel_range()</a></code>, <code><a href="get_integer_length.html">get_integer_length()</a></code>, <code><a href="round_values.html">round_values()</a></code></p>
 <p>Split data frame: <a href="split_by.html">split_by</a></p>
@@ -118,8 +122,8 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.</p>
 <code><a href="style_options.html">set_variable_labels()</a></code>, <code><a href="style_options.html">get_variable_labels()</a></code>, <code><a href="style_options.html">set_stat_labels()</a></code>, <code><a href="style_options.html">get_stat_labels()</a></code>,
 <code><a href="qol_options.html">set_print()</a></code>, <code><a href="qol_options.html">get_print()</a></code>, <code><a href="qol_options.html">set_monitor()</a></code>, <code><a href="qol_options.html">get_monitor()</a></code>, <code><a href="qol_options.html">set_na.rm()</a></code>, <code><a href="qol_options.html">get_na.rm()</a></code>,
 <code><a href="qol_options.html">set_output()</a></code>, <code><a href="qol_options.html">get_output()</a></code>, <code><a href="qol_options.html">set_titles()</a></code>, <code><a href="qol_options.html">get_titles()</a></code>, <code><a href="qol_options.html">set_footnotes()</a></code>, <code><a href="qol_options.html">get_footnotes()</a></code>,
-<code><a href="qol_options.html">set_print_miss()</a></code>, <code><a href="qol_options.html">get_print_miss()</a></code></p>
-<p>Other: <code><a href="build_master.html">build_master()</a></code>, <code><a href="build_rstheme.html">build_rstheme()</a></code>, <code><a href="free_memory.html">free_memory()</a></code></p>
+<code><a href="qol_options.html">set_print_miss()</a></code>, <code><a href="qol_options.html">get_print_miss()</a></code>, <code><a href="qol_options.html">set_threads()</a></code>, <code><a href="qol_options.html">get_threads()</a></code></p>
+<p>Other: <code><a href="build_master.html">build_master()</a></code>, <code><a href="build_rstheme.html">build_rstheme()</a></code>, <code><a href="free_memory.html">free_memory()</a></code>, <code><a href="qol_news.html">qol_news()</a></code>, <code><a href="qol_chat.html">qol_chat()</a></code></p>
     </div>
     <div class="section level2">
     <h2 id="snippets">Snippets<a class="anchor" aria-label="anchor" href="#snippets"></a></h2>

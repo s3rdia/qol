@@ -44,8 +44,10 @@ resolve_intersection <- function(base, vector_to_check, check_only = FALSE){
     # Otherwise throw a warning
     else{
         if (length(invalid_base) > 0){
-            message(" ! WARNING: The provided <", base_name, "> variable '", paste(invalid_base, collapse = ", "), "' is also part of\n",
-                    "            the <", vector_to_check_name, "> variables. This variable will be omitted as <", base_name, "> variable during computation.")
+            print_message("WARNING", c("The provided <{base_name}> variable[?s] '[invalid]' [?is/are] also part of",
+									   "the <[to_check]> variables. [?This/These] variable[?s] will be omitted as <[base_name]> variable[?s] during computation."),
+                          base_name = base_name, invalid = invalid_base, to_check = vector_to_check_name,
+                          always_print = TRUE)
         }
     }
 
@@ -91,8 +93,10 @@ part_of_df <- function(data_frame, var_names, check_only = FALSE){
     # Otherwise throw a warning
     else{
         if (length(invalid_vars) > 0){
-            message(" ! WARNING: The provided <", vector_name, "> variable '", paste(invalid_vars, collapse = ", "), "' is not part of\n",
-                    "            the data frame. This variable will be omitted during computation.")
+            print_message("WARNING", c("The provided <{vector}> variable[?s] '[invalid]' [?is/are] not part of",
+                                       "the data frame. This variable will be omitted during computation."),
+                          invalid = invalid_vars, vector = vector_name,
+                          always_print = TRUE)
         }
     }
 
@@ -122,7 +126,9 @@ remove_doubled_values <- function(var_names){
     var_names_unique <- collapse::funique(var_names)
 
     if (length(var_names) > length(var_names_unique)){
-        message(" ! WARNING: Some <", vector_name, "> variables are provided more than once. The doubled entries will be omitted.")
+        print_message("WARNING", "Some <{vector}> variables are provided more than once. The doubled entries will be omitted.",
+                      vector = vector_name,
+                      always_print = TRUE)
     }
 
     var_names_unique
@@ -149,23 +155,27 @@ check_weight <- function(data_frame, var_names){
         data_frame[[".temp_weight"]] <- 1
 
         if (length(var_names) > 1){
-            message(" ! WARNING: Only one variable for weight allowed. Evaluations will be unweighted.")
+            print_message("WARNING", "Only one variable for weight allowed. Evaluations will be unweighted.",
+                          always_print = TRUE)
         }
     }
     else if (!var_names %in% names(data_frame)){
         data_frame[[".temp_weight"]] <- 1
 
-        message(" ! WARNING: Provided weight variable is not part of the data frame. Unweighted results will be computed.")
+        print_message("WARNING", "Provided weight variable is not part of the data frame. Unweighted results will be computed.",
+                      always_print = TRUE)
     }
     else if (!is.numeric(data_frame[[var_names]])){
         data_frame[[".temp_weight"]] <- 1
 
-        message(" ! WARNING: Provided weight variable is not numeric. Unweighted results will be computed.")
+        print_message("WARNING", "Provided weight variable is not numeric. Unweighted results will be computed.",
+                      always_print = TRUE)
     }
     else{
         # NA values in weight lead to errors therefor convert them to 0
         if (anyNA(data_frame[[var_names]])){
-            message(" ~ NOTE: Missing values in weight variable '", var_names, "' will be converted to 0.")
+            print_message("NOTE", "Missing values in weight variable '[var]' will be converted to 0.", var = var_names,
+                          always_print = TRUE)
         }
         data_frame[[var_names]][is.na(data_frame[[var_names]])] <- 0
 

@@ -18,11 +18,13 @@
 libname <- function(path,
                     get_files = FALSE){
     if (!file.exists(path) || dirname(path) == "."){
-        message(" X ERROR: Path does not exist: ", path)
+        print_message("ERROR", "Path does not exist: [path]", path = path)
         return(invisible(NULL))
     }
 
     if (get_files){
+		print_step("GREY", "Get files")
+
         # Retrieve all file paths from provided path
         files <- list.files(path, full.names = TRUE)
 
@@ -30,17 +32,20 @@ libname <- function(path,
         files <- files[!dir.exists(files)]
 
         if (length(files) == 0){
-            message(" X ERROR: No files found in directory: ", path)
+            print_message("ERROR", "No files found in directory: [path]", path = path)
             return(invisible(NULL))
         }
 
         # Return named character vector
-        message(" > Filepaths successfully retrieved: ", path)
-        message(paste("   + ", basename(files), collapse = "\n"))
-        return(stats::setNames(files, basename(files)))
+        print_step("MAJOR", "Filepaths successfully retrieved: [path]", path = path)
+
+        for (file in files){
+            print_step("MINOR", basename(file))
+        }
+        return(invisible(stats::setNames(files, basename(files))))
     }
 
-    message(" > Path successfully assigned: ", path)
+    print_step("MAJOR", "Path successfully assigned: [path]", path = path)
 
     path
 }
@@ -83,19 +88,19 @@ set <- function(...,
                 compress      = NULL,
                 guessing_rows = 100){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into a list if possible
     df_list <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(df_list)){
-        message('X ERROR: Unknown object found. Retaining will be aborted.')
+        print_message("ERROR", "Unknown object found. Retaining will be aborted.")
         return(invisible(NULL))
     }
 
@@ -165,8 +170,7 @@ set <- function(...,
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'set' execution time: ", end_time, " seconds")
+    print_closing()
 
     data_frame
 }
@@ -191,6 +195,7 @@ set <- function(...,
 #' default.
 #' @param protect TRUE by default. Throws an error if a file already exists. If FALSE,
 #' overwrites existing files.
+#' @param ... Used internally to suppress messages, when using the multi save/load version.
 #'
 #' @return
 #' Returns a data frame. [load_file_multi()] can also return a list of data frame.
@@ -232,8 +237,10 @@ save_file <- function(data_frame,
                       keep     = NULL,
                       where    = NULL,
                       compress = 100,
-                      protect  = TRUE){
-    start_time <- Sys.time()
+                      protect  = TRUE,
+                      ...){
+    print_start_message(suppress = TRUE)
+    suppress <- ifelse(is.null(unlist(list(...))), FALSE, TRUE)
 
     ###########################################################################
     # Error handling
@@ -246,15 +253,15 @@ save_file <- function(data_frame,
     extension <- tolower(tools::file_ext(file))
 
     if (extension == ""){
-        message(" ! WARNING: No file extension provided in <file>. 'fst' will be used.")
+        print_message("WARNING", "No file extension provided in <file>. 'fst' will be used.")
 
         file      <- paste0(file, ".fst")
         extension <- "fst"
     }
 
     if (!extension %in% c("fst", "rds")){
-        message(" ! WARNING: Only 'fst' or 'rds' are allowed as file extensions in <file>.\n",
-                "           'fst' will be used.")
+        print_message("WARNING", c("Only 'fst' or 'rds' are allowed as file extensions in <file>.",
+								   "'fst' will be used."))
 
         file      <- paste0(tools::file_path_sans_ext(file), ".fst")
         extension <- "fst"
@@ -267,14 +274,14 @@ save_file <- function(data_frame,
     full_path <- file.path(path, file)
 
     if (file.exists(full_path) && protect){
-        message(" X ERROR: File already exists: ", full_path, "\n",
-                "          Set <protect> to FALSE to overwrite files.")
+        print_message("ERROR", c("File already exists: [full_path]",
+								 "Set <protect> to FALSE to overwrite files."), full_path = full_path)
 
         return(invisible(data_frame))
     }
 
     if (!file.exists(path)){
-        message(" X ERROR: Path does not exist: ", full_path)
+        print_message("ERROR", "Path does not exist: [full_path]", full_path = full_path)
 
         return(invisible(data_frame))
     }
@@ -294,8 +301,8 @@ save_file <- function(data_frame,
     keep <- data_frame |> part_of_df(keep, check_only = TRUE)
 
     if (is.list(keep)){
-        message(" X ERROR: The provided variables to <keep> '", paste(keep[[1]], collapse = ", "), "' are not part of\n",
-                "          the data frame. Saving will be aborted.")
+        print_message("ERROR", c("The provided variables to <keep> '[keep_vars]' are not part of",
+								 "the data frame. Saving will be aborted."), keep_vars = keep[[1]])
         return(invisible(data_frame))
     }
 
@@ -334,8 +341,12 @@ save_file <- function(data_frame,
     # Revert used threads
     fst::threads_fst(NULL)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'save_file' execution time: ", end_time, " seconds\n")
+    if (extension == "fst"){
+        print_closing(5)
+    }
+    else{
+        print_closing(15)
+    }
 
     invisible(data_frame)
 }
@@ -389,10 +400,10 @@ save_file_multi <- function(data_frame_list,
                             keep_list = NULL,
                             compress  = 100,
                             protect   = TRUE){
-    start_time <- Sys.time()
+    print_start_message()
 
     if (length(data_frame_list) != length(file_list)){
-        message(" X ERROR: Data frame and file list are of unequal lengths. Saving will be aborted.")
+        print_message("ERROR", "Data frame and file list are of unequal lengths. Saving will be aborted.")
 
         return(invisible(file_list))
     }
@@ -436,14 +447,14 @@ save_file_multi <- function(data_frame_list,
     # Loop through all files and import them one after another
     length_keep <- length(keep_list)
 
-    message(" > Saving files")
+    print_step("MAJOR", "Saving files")
 
     # Loop through all files and load them in one after another
     for (i in seq_along(file_list)){
         infile  <- data_frame_list[[i]]
         outfile <- file_list[[i]]
 
-        message("   + ", outfile)
+        print_step("MINOR", "{outfile}", outfile = outfile)
 
         # If there are variables to keep
         if (!is.null(keep_eval)){
@@ -462,19 +473,19 @@ save_file_multi <- function(data_frame_list,
         }
 
         # Load file and add to list
-        suppress_specific_message(save_file(data_frame = infile,
-                                            path       = dirname(outfile),
-                                            file       = basename(outfile),
-                                            keep       = vars_to_keep,
-                                            compress   = compress,
-                                            protect    = protect), "- - - ")
+        save_file(data_frame = infile,
+                  path       = dirname(outfile),
+                  file       = basename(outfile),
+                  keep       = vars_to_keep,
+                  compress   = compress,
+                  protect    = protect,
+                  suppress   = TRUE)
     }
 
     # Revert used threads
     fst::threads_fst(NULL)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'save_file_multi' execution time: ", end_time, " seconds\n")
+    print_closing(15)
 
     invisible(file_list)
 }
@@ -514,9 +525,11 @@ save_file_multi <- function(data_frame_list,
 #' @export
 load_file <- function(path,
                       file,
-                      keep    = NULL,
-                      where   = NULL){
-    start_time <- Sys.time()
+                      keep  = NULL,
+                      where = NULL,
+                      ...){
+    print_start_message(suppress = TRUE)
+    suppress <- ifelse(is.null(unlist(list(...))), FALSE, TRUE)
 
     ###########################################################################
     # Error handling
@@ -529,7 +542,7 @@ load_file <- function(path,
     full_path <- file.path(path, file)
 
     if (!file.exists(full_path)){
-        message(" X ERROR: File does not exist: ", full_path)
+        print_message("ERROR", "File does not exist: [full_path]", full_path = full_path)
 
         return(invisible(NULL))
     }
@@ -541,15 +554,15 @@ load_file <- function(path,
     extension <- tolower(tools::file_ext(file))
 
     if (extension == ""){
-        message(" X ERROR: No file extension provided in <file>. 'fst' and 'rds' are allowed.\n",
-                "          Loading file will be aborted.")
+        print_message("ERROR", c("No file extension provided in <file>. 'fst' and 'rds' are allowed.",
+								 "Loading file will be aborted."))
 
         return(invisible(NULL))
     }
 
     if (!extension %in% c("fst", "rds")){
-        message(" X ERROR: Only 'fst' or 'rds' are allowed as file extensions in <file>.\n",
-                "          Loading file will be aborted.")
+        print_message("ERROR", c("Only 'fst' or 'rds' are allowed as file extensions in <file>.",
+								 "Loading file will be aborted."))
 
         return(invisible(NULL))
     }
@@ -581,7 +594,7 @@ load_file <- function(path,
             invalid_keep <- keep[!tolower(keep) %in% tolower(variable_names)]
 
             if (length(invalid_keep) > 0){
-                message(" ! WARNING: Variables not found: ", paste(invalid_keep, collapse = ", "))
+                print_message("WARNING", "Variables not found: [invalid]", invalid = invalid_keep)
             }
 
             # Use fast match to identify existing columns
@@ -618,7 +631,7 @@ load_file <- function(path,
             invalid_keep <- variable_names[!tolower(keep) %in% tolower(variable_names)]
 
             if (length(invalid_keep) > 0){
-                message(" ! WARNING: Variables not found: ", paste(invalid_keep, collapse = ", "))
+                print_message("WARNING", "Variables not found: [invalid]", invalid = invalid_keep)
             }
 
             # Use fast match to identify existing columns
@@ -631,7 +644,7 @@ load_file <- function(path,
             invalid_names <- keep[is.na(vars_to_keep)]
 
             if (length(invalid_names) > 0){
-                message(" ! WARNING: Variables not found: ", paste(missing, collapse = ", "))
+                print_message("WARNING", "Variables not found: [invalid]", invalid = missing)
             }
 
             # Only keep the desired variables and rename variables to the names provided in keep
@@ -648,8 +661,12 @@ load_file <- function(path,
     # Revert used threads
     fst::threads_fst(NULL)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'load_file' execution time: ", end_time, " seconds\n")
+    if (extension == "fst"){
+        print_closing(5, suppress = suppress)
+    }
+    else{
+        print_closing(15, suppress = suppress)
+    }
 
     invisible(data_frame)
 }
@@ -685,7 +702,7 @@ load_file <- function(path,
 load_file_multi <- function(file_list,
                             keep_list   = NULL,
                             stack_files = TRUE){
-    start_time <- Sys.time()
+    print_start_message()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Keep
@@ -727,13 +744,13 @@ load_file_multi <- function(file_list,
     length_keep <- length(keep_list)
     result_list <- list()
 
-    message(" > Loading files")
+    print_step("MAJOR", "Loading files")
 
     # Loop through all files and load them in one after another
     for (i in seq_along(file_list)){
         infile <- file_list[[i]]
 
-        message("   + ", infile)
+        print_step("MINOR", "{infile}", infile = infile)
 
         # If there are variables to keep
         if (!is.null(keep_eval)){
@@ -752,10 +769,10 @@ load_file_multi <- function(file_list,
         }
 
         # Load file and add to list
-        result_list[[basename(infile)]] <- suppress_specific_message(
-            load_file(path    = dirname(infile),
-                      file    = basename(infile),
-                      keep    = vars_to_keep), "- - - ")
+        result_list[[basename(infile)]] <- load_file(path = dirname(infile),
+                                                     file = basename(infile),
+                                                     keep = vars_to_keep,
+                                                     suppress = TRUE)
     }
 
     # Stack data frames
@@ -766,8 +783,7 @@ load_file_multi <- function(file_list,
     # Revert used threads
     fst::threads_fst(NULL)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'load_file_multi' execution time: ", end_time, " seconds\n")
+    print_closing(15)
 
     invisible(result_list)
 }

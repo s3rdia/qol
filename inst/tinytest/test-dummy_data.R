@@ -1,23 +1,28 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
 # Create dummy data with 1 observations
-test_df <- suppressMessages(dummy_data(1))
+test_df <- dummy_data(1)
 expect_equal(nrow(test_df), 1, info = "Create dummy data with 1 observations")
 
 
 # Create dummy data with 10 observations
-test_df <- suppressMessages(dummy_data(10))
+test_df <- dummy_data(10)
 expect_equal(nrow(test_df), 10, info = "Create dummy data with 10 observations")
 
 
 # Create dummy data with 100 observations
-test_df <- suppressMessages(dummy_data(100))
+test_df <- dummy_data(100)
 expect_equal(nrow(test_df), 100, info = "Create dummy data with 100 observations")
 
 
 # Create dummy data with 100 observations
-test_df <- suppressMessages(dummy_data(1000))
+test_df <- dummy_data(1000)
 expect_equal(nrow(test_df), 1000, info = "Create dummy data with 100 observations")
+
+
+set_no_print()

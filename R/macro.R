@@ -26,12 +26,11 @@
 #'
 #' @seealso
 #' Functions that can make use of macro variables: [any_table()], [frequencies()],
-#' [crosstabs()], [export_with_style()], [summarise_plus()], [transpose_plus()]
+#' [crosstabs()], [export_with_style()], [summarise_plus()]
 #'
 #' Within the tabulation functions titles, footnotes, var_labels and stat_labels
 #' can resolve macros. Additionally they can be used in the [any_table()] rows and
-#' columns parameter, in the [summarise_plus()] types parameter and in the [transpose_plus()]
-#' pivot parameter.
+#' columns parameter and in the [summarise_plus()] types parameter.
 #'
 #' @examples
 #' # Resolving macro variable in single character
@@ -50,12 +49,12 @@
 #' @export
 macro <- function(text){
     if (!is.character(text)){
-        message(" X ERROR: <Text> must be a character. Macro will be aborted.")
+        print_message("ERROR", "<Text> must be a character. Macro will be aborted.")
         return(invisible(text))
     }
 
     if (length(text) > 1){
-        message(" ! WARNING: <Text> may only be of length one. The first Element will be used.")
+        print_message("WARNING", "<Text> may only be of length one. The first Element will be used.")
 
         text <- text[[1]]
     }
@@ -104,7 +103,7 @@ macro <- function(text){
             if (!is.null(original_symbol)){
                 # Individual error handling
                 if (length(original_symbol) > 1){
-                    message(" ! WARNING: Macro variable '", macro_var, "' may only be of length one. The first Element will be used.")
+                    print_message("WARNING", "Macro variable '[macro_var]' may only be of length one. The first Element will be used.", macro_var = macro_var)
 
                     original_symbol <- original_symbol[[1]]
                 }
@@ -116,8 +115,8 @@ macro <- function(text){
                     }
                     # All other types will be skipped
                     else{
-                        message(" ! WARNING: Macro variable '", macro_var, "' is a complex object. Macro variables may only be character or numeric.\n",
-                                "            Resolving will be skipped.")
+                        print_message("WARNING", c("Macro variable '[macro_var]' is a complex object. Macro variables may only be character or numeric.",
+												   "Resolving will be skipped."), macro_var = macro_var)
 
                         text <- gsub(macro_var, var_name, text, fixed = TRUE)
                         next
@@ -129,7 +128,7 @@ macro <- function(text){
             }
             # If the object wasn't found
             else{
-                message(" ! WARNING: Macro variable '", macro_var, "' could not be resolved. Object doesn't exist.")
+                print_message("WARNING", "Macro variable '[macro_var]' could not be resolved. Object doesn't exist.", macro_var = macro_var)
 
                 text <- gsub(macro_var, var_name, text, fixed = TRUE)
             }

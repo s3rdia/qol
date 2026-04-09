@@ -33,13 +33,15 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
         format_df <- arguments[[current_var]]
 
         if (is.null(format_df)){
-            message(" ! WARNING: Format for '", current_var, "' not found. Formatting for variable '", current_var, "' will be omitted.")
+            print_message("WARNING", "Format for '[current_var]' not found. Formatting for variable '[current_var]' will be omitted.",
+                          current_var = current_var, always_print = TRUE)
             next
         }
 
         if (is.factor(temp_data[[current_var]])){
-            message(" ~ NOTE: '", current_var, "' is a factor variable. Formats only work if the visible character values\n",
-                    "         are specified as input values and not the factor levels.")
+            print_message("NOTE", c("'[current_var]' is a factor variable. Formats only work if the visible character values",
+									"are specified as input values and not the factor levels."), current_var = current_var,
+									always_print = TRUE)
         }
 
         # Security checks to ensure types are right
@@ -51,7 +53,8 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
         }
 
         if (!current_var %in% names(temp_data)){
-            message(paste0(" ! WARNING: Variable '", current_var, "' not found in the input data frame. No Format will be applied."))
+            print_message("WARNING", "Variable '[current_var]' not found in the input data frame. No Format will be applied.",
+                          current_var = current_var)
             next
         }
 

@@ -33,6 +33,31 @@
   [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md):
   Globally sets/gets the number of used threads for the save and load
   file functions. (28.03.2026)
+- Base R message system:
+  - [`print_message()`](https://s3rdia.github.io/qol/reference/messages.md),
+    [`print_headline()`](https://s3rdia.github.io/qol/reference/messages.md),
+    [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md),
+    [`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md),
+    [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
+    Print out different messages with custom styling to the console.
+    (09.04.2026)
+  - [`get_message_stack()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
+    Get the global message stack for inspection. (09.04.2026)
+  - [`set_no_print()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
+    Prevents messages being printed to the console globally. Can e.g. be
+    used in unit test situations. (09.04.2026)
+  - [`print_stack_as_messages()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
+    Print the global message stack as message, warning or error to be
+    able to receive their signals. (09.04.2026)
+  - [`convert_square_brackets()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
+    Transforms the format symbols (like {b}{/b}) into the actual console
+    readable formattings. (09.04.2026)
+- [`hex_to_256()`](https://s3rdia.github.io/qol/reference/hex_ansi.md),
+  [`hex_to_ansi()`](https://s3rdia.github.io/qol/reference/hex_ansi.md):
+  Generate a 256-color 6x6x6 color cube and apply hex color and font
+  weight to a text as ansi codes. (09.04.2026)
+- [`round_multi()`](https://s3rdia.github.io/qol/reference/round_values.md):
+  Rounds multiple variables at once inside a data frame. (09.04.2026)
 
 #### New functionality
 
@@ -75,6 +100,9 @@
   [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Now can import and export csv files with file extension txt.
   (30.03.2026)
+- [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
+  Now is also able to round in multiples of a provided value.
+  (09.04.2026)
 
 #### Changed functionality
 
@@ -85,6 +113,8 @@
   `tinytest`. `testthat` repeatedly got in the way with its own
   environment, `tinytest` offers more natural conditions and works
   faster. (31.01.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Removed macro variable usage. (09.04.2026)
 
 #### Fixed
 
@@ -129,6 +159,8 @@
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md): On
   error now return NA instead of the whole data frame. (31.01.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Wide to long transposition now working again as intended. (09.04.2026)
 
 #### Optimization
 

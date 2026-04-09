@@ -34,20 +34,20 @@ set_style_options <- function(...){
     style_list <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(style_list)){
-        message(" X ERROR: Unknown object found. See 'excel_output_style()' and 'number_format_style()'\n",
-                "          for valid function parameters. Global style remains unchanged.")
+        print_message("ERROR", c("Unknown object found. See 'excel_output_style()' and 'number_format_style()'",
+								 "for valid function parameters. Global style remains unchanged."))
         return(invisible(.qol_options[["excel_style"]]))
     }
 
     if (length(style_list) == 0){
-        message(" X ERROR: Empty list found. See 'excel_output_style()' and 'number_format_style()'\n",
-                "          for valid function parameters. Global style remains unchanged.")
+        print_message("ERROR", c("Empty list found. See 'excel_output_style()' and 'number_format_style()'",
+								 "for valid function parameters. Global style remains unchanged."))
         return(invisible(.qol_options[["excel_style"]]))
     }
 
@@ -85,24 +85,24 @@ set_style_options <- function(...){
         value <- style_list[[style_option]]
 
         if (style_option %in% logicals && !is.logical(value)){
-            message(" ! WARNING: '", style_option, "' must be <logical>. Option will be omitted.")
+            print_message("WARNING", "'[style_option]' must be <logical>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
         else if (style_option %in% c(numerics, number_numerics) && !is.numeric(value)){
-            message(" ! WARNING: '", style_option, "' must be <numeric>. Option will be omitted.")
+            print_message("WARNING", "'[style_option]' must be <numeric>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
         else if (style_option %in% c(characters, number_characters) && !is.character(value)){
-            message(" ! WARNING: '", style_option, "' must be <character>. Option will be omitted.")
+            print_message("WARNING", "'[style_option]' must be <character>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
         else if (style_option %in% colors && !grepl("^[A-Fa-f0-9]{6}$", value)){
-            message(" ! WARNING: '", style_option, "' must be a 6 character <hex code>. Option will be omitted.")
+            print_message("WARNING", "'[style_option]' must be a 6 character <hex code>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
         else if (!style_option %in% c(number_numerics, number_characters, logicals, numerics, characters, colors)){
-            message(" ! WARNING: '", style_option, "' is not a valid style option. See 'excel_output_style()' and 'number_format_style()'\n",
-                    "            for valid function parameters. Option will be omitted.")
+            print_message("WARNING", c("'[style_option]' is not a valid style option. See 'excel_output_style()' and 'number_format_style()'",
+                                       "for valid function parameters. Option will be omitted."), style_option = style_option)
             style_list[[style_option]] <- NULL
         }
     }
@@ -215,18 +215,18 @@ set_variable_labels <- function(...){
     label_list <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(label_list)){
-        message(" X ERROR: Unknown object found. Global style remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global style remains unchanged.")
         return(invisible(.qol_options[["var_labels"]]))
     }
 
     if (length(label_list) == 0){
-        message(" X ERROR: Empty list found. Global style remains unchanged.")
+        print_message("ERROR", "Empty list found. Global style remains unchanged.")
         return(invisible(.qol_options[["var_labels"]]))
     }
 
@@ -278,18 +278,18 @@ set_stat_labels <- function(...){
     statistic_list <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(statistic_list)){
-        message(" X ERROR: Unknown object found. Global style remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global style remains unchanged.")
         return(invisible(.qol_options[["stat_labels"]]))
     }
 
     if (length(statistic_list) == 0){
-        message(" X ERROR: Empty list found. Global style remains unchanged.")
+        print_message("ERROR", "Empty list found. Global style remains unchanged.")
         return(invisible(.qol_options[["stat_labels"]]))
     }
 
@@ -343,18 +343,18 @@ set_print <- function(...){
     print_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(print_option)){
-        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global option remains unchanged.")
         return(invisible(.qol_options[["print"]]))
     }
 
     if (!is.logical(print_option)){
-        message(" X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.")
+        print_message("ERROR", "Print option can only be TRUE or FALSE. Global option remains unchanged.")
         return(invisible(.qol_options[["print"]]))
     }
 
@@ -406,18 +406,18 @@ set_monitor <- function(...){
     monitor_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(monitor_option)){
-        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global option remains unchanged.")
         return(invisible(.qol_options[["monitor"]]))
     }
 
     if (!is.logical(monitor_option)){
-        message(" X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
+        print_message("ERROR", "Monitor option can only be TRUE or FALSE. Global option remains unchanged.")
         return(invisible(.qol_options[["monitor"]]))
     }
 
@@ -469,18 +469,18 @@ set_na.rm <- function(...){
     na_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(na_option)){
-        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global option remains unchanged.")
         return(invisible(.qol_options[["na.rm"]]))
     }
 
     if (!is.logical(na_option)){
-        message(" X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
+        print_message("ERROR", "NA removal option can only be TRUE or FALSE. Global option remains unchanged.")
         return(invisible(.qol_options[["na.rm"]]))
     }
 
@@ -532,18 +532,18 @@ set_print_miss <- function(...){
     print_miss_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(print_miss_option)){
-        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global option remains unchanged.")
         return(invisible(.qol_options[["print_miss"]]))
     }
 
     if (!is.logical(print_miss_option)){
-        message(" X ERROR: Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.")
+        print_message("ERROR", "Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.")
         return(invisible(.qol_options[["print_miss"]]))
     }
 
@@ -594,23 +594,23 @@ set_output <- function(...){
     output_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(output_option)){
-        message(" X ERROR: Unknown object found. Global option remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global option remains unchanged.")
         return(invisible(.qol_options[["output"]]))
     }
 
     if (!is.character(output_option)){
-        message(" X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
+        print_message("ERROR", "Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
         return(invisible(.qol_options[["output"]]))
     }
 
     if (!tolower(output_option) %in% c("console", "text", "excel", "excel_nostyle")){
-        message(" X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
+        print_message("ERROR", "Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.")
         return(invisible(.qol_options[["output"]]))
     }
 
@@ -663,7 +663,7 @@ set_titles <- function(...){
     titles_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         "ERROR"
     })
@@ -674,12 +674,12 @@ set_titles <- function(...){
     }
 
     if (length(titles_option) == 1 && titles_option == "ERROR"){
-        message(" X ERROR: Unknown object found. Global titles remain unchanged.")
+        print_message("ERROR", "Unknown object found. Global titles remain unchanged.")
         return(invisible(.qol_options[["titles"]]))
     }
 
     if (!is.character(titles_option)){
-        message(" X ERROR: Titles must be provided as character. Global titles remain unchanged.")
+        print_message("ERROR", "Titles must be provided as character. Global titles remain unchanged.")
         return(invisible(.qol_options[["titles"]]))
     }
 
@@ -732,7 +732,7 @@ set_footnotes <- function(...){
     footnotes_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         "ERROR"
     })
@@ -743,12 +743,12 @@ set_footnotes <- function(...){
     }
 
     if (length(footnotes_option) == 1 && footnotes_option == "ERROR"){
-        message(" X ERROR: Unknown object found. Global footnotes remain unchanged.")
+        print_message("ERROR", "Unknown object found. Global footnotes remain unchanged.")
         return(invisible(.qol_options[["footnotes"]]))
     }
 
     if (!is.character(footnotes_option)){
-        message(" X ERROR: Footnotes must be provided as character. Global footnotes remain unchanged.")
+        print_message("ERROR", "Footnotes must be provided as character. Global footnotes remain unchanged.")
         return(invisible(.qol_options[["footnotes"]]))
     }
 
@@ -799,7 +799,7 @@ set_threads <- function(...){
     threads_option <- tryCatch({
         # Force evaluation to see if it exists
         unlist(list(...))
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         "ERROR"
     })
@@ -810,12 +810,12 @@ set_threads <- function(...){
     }
 
     if (length(threads_option) == 1 && threads_option == "ERROR"){
-        message(" X ERROR: Unknown object found. Global number of used threads remains unchanged.")
+        print_message("ERROR", "Unknown object found. Global number of used threads remains unchanged.")
         return(invisible(.qol_options[["threads"]]))
     }
 
     if (!is.numeric(threads_option)){
-        message(" X ERROR: Number of used threads must be provided as integer value. Global number of used threads remains unchanged.")
+        print_message("ERROR", "Number of used threads must be provided as integer value. Global number of used threads remains unchanged.")
         return(invisible(.qol_options[["threads"]]))
     }
 
@@ -881,6 +881,20 @@ reset_qol_options <- function(){
 #' URL.
 #'
 #' @export
-qol_news <- function() {
+qol_news <- function(){
     utils::browseURL("https://s3rdia.github.io/qol/news/index.html")
+}
+
+
+#' Go To GitHub NEWS Page
+#'
+#' @description
+#' Opens browser and goes to the DeepWiki page
+#'
+#' @return
+#' URL.
+#'
+#' @export
+qol_chat <- function(){
+    utils::browseURL("https://deepwiki.com/s3rdia/qol")
 }

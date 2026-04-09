@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 # Resolving single macro variable
 year <- 2026
 text <- macro("The current year is &year")
@@ -34,24 +36,30 @@ expect_equal(text_vector, c("The current year is 2026",
 
 # Resolving macro variable throws a warning if text is a vector
 year <- 2026
-expect_message(text <- macro(c("The current year is &year", "The current year is &year")),
-               " ! WARNING: <Text> may only be of length one. The first Element will be used.", info = "Resolving macro variable throws a warning if text is a vector")
+text <- macro(c("The current year is &year", "The current year is &year"))
+
+expect_warning(print_stack_as_messages("WARNING"), "<Text> may only be of length one. The first Element will be used.",
+               info = "Resolving macro variable throws a warning if text is a vector")
 
 expect_equal(text, "The current year is 2026", info = "Resolving macro variable throws a warning if text is a vector")
 
 
 # Resolving macro variable throws a warning if macro variable is a vector
 year <- c(2026, 2025)
-expect_message(text <- macro("The current year is &year"),
-               " ! WARNING: Macro variable '&year' may only be of length one. The first Element will be used.", info = "Resolving macro variable throws a warning if macro variable is a vector")
+text <- macro("The current year is &year")
+
+expect_warning(print_stack_as_messages("WARNING"), "Macro variable \'&year\' may only be of length one. The first Element will be used.",
+               info = "Resolving macro variable throws a warning if macro variable is a vector")
 
 expect_equal(text, "The current year is 2026", info = "Resolving macro variable throws a warning if macro variable is a vector")
 
 
 # Resolving macro variable throws a warning if macro variable is neither character nor numeric
 year <- TRUE
-expect_message(text <- macro("The current year is &year"),
-               " ! WARNING: Macro variable '&year' is a complex object. Macro variables may only be character or numeric.", info = "Resolving macro variable throws a warning if macro variable is neither character nor numeric")
+text <- macro("The current year is &year")
+
+expect_warning(print_stack_as_messages("WARNING"), "Macro variable \'&year\' is a complex object. Macro variables may only be character or numeric.",
+               info = "Resolving macro variable throws a warning if macro variable is neither character nor numeric")
 
 expect_equal(text, "The current year is year", info = "Resolving macro variable throws a warning if macro variable is neither character nor numeric")
 
@@ -60,4 +68,10 @@ expect_equal(text, "The current year is year", info = "Resolving macro variable 
 ###############################################################################
 
 # Resolving macro aborts if something other than a text is provided
-expect_message(text <- macro(1), " X ERROR: <Text> must be a character. Macro will be aborted.", info = "Resolving macro aborts if something other than a text is provided")
+text <- macro(1)
+
+expect_error(print_stack_as_messages("ERROR"), "<Text> must be a character. Macro will be aborted.",
+             info = "Resolving macro aborts if something other than a text is provided")
+
+
+set_no_print()

@@ -70,8 +70,8 @@ vars_between <- function(data_frame, from, to){
     # Check if a vector and not a single variable name was given. If a vector was
     # given, only consider the first element.
     if (length(from) > 1 || length(to) > 1){
-        message(" ~ NOTE: Only single variable names allowed for 'from' and 'to'. The respective\n",
-                "         first element will be considered.")
+        print_message("NOTE", c("Only single variable names allowed for 'from' and 'to'. The respective",
+								"first element will be considered."))
 
         from <- from[1]
         to   <- to[1]
@@ -82,14 +82,14 @@ vars_between <- function(data_frame, from, to){
     var_names <- names(data_frame)
 
     if (from != "" && !from %in% var_names){
-        message(" ! WARNING: 'from' variable '", from, "' is not part of the data frame.\n",
-                "            Selection will start from the first variable.")
+        print_message("WARNING", c("'from' variable '[from]' is not part of the data frame.",
+								   "Selection will start from the first variable."), from = from)
 
         from = ""
     }
     if (to != "" && !to %in% var_names){
-        message(" ! WARNING: 'to' variable '", to, "' is not part of the data frame.\n",
-                "            Selection will go until the last variable.")
+        print_message("WARNING", c("'to' variable '[to]' is not part of the data frame.",
+								   "Selection will go until the last variable."), to = to)
 
         to = ""
     }

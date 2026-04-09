@@ -2,24 +2,62 @@
 % Please edit documentation in R/small_helpers.R
 \name{round_values}
 \alias{round_values}
-\title{Round Values With Half Rounded Up}
+\alias{round_multi}
+\title{Round Values With Half Rounded Up And Multiples Of X}
 \usage{
-round_values(values, digits = 0)
+round_values(values, digits = 0, multiple = NULL)
+
+round_multi(
+  data_frame,
+  variables,
+  new_names = NULL,
+  digits = 0,
+  multiple = NULL
+)
 }
 \arguments{
 \item{values}{Numeric values to round.}
 
 \item{digits}{The number of decimal places the values should be rounded to.}
+
+\item{multiple}{The multiple to round the values to.}
+
+\item{data_frame}{The data frame in which the variables to be rounded are found.}
+
+\item{variables}{The variable names of which to round the values.}
+
+\item{new_names}{The new names of the rounded variables. If provided adds variables,
+if not overwrites the existing variables with rounded values.}
 }
 \value{
-Returns rounded values
+Returns rounded values.
+
+Returns a data frame with rounded values.
 }
 \description{
-This function rounds values according to DIN 1333 (round half up).
+This function rounds values according to DIN 1333 (round half up) or as an
+alternative in multiples of a given value.
+
+\code{\link[=round_multi]{round_multi()}}: Rounds multiple variables at once inside a data frame.
 }
 \examples{
+# With vectors
 round_numbers1 <- round_values(c(-0.5, -0.4, 0.1, 0.49, 0.5, 1.5, 2.5, 3.2))
 round_numbers2 <- round_values(c(-0.5, -0.49, 0.17, 0.499, 0.51, 1.549, 2.51, 3.25),
                                digits = 1)
+round_numbers3 <- round_values(c(-0.3, -0.24, 1.17, 2.749, 0.25, 1.549, 2.75, 3.25),
+                               multiple = 0.5)
+
+# With a data frame
+my_data <- dummy_data(100)
+
+my_data[["income_round1"]] <- my_data[["income"]] |>  round_values()
+my_data[["income_round2"]] <- my_data[["income"]] |>  round_values(multiple = 100)
+
+
+# Round multiple variables in a data frame
+my_data <- my_data |>  round_multi(variables = c(income,  expenses,  balance),
+                                   new_names = c(incomeR, expensesR, balanceR),
+                                   digits = 1)
 
 }

@@ -67,11 +67,11 @@ build_master <- function(dir,
                          with_run_folder = TRUE,
                          with_monitor    = FALSE){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     # Check if folder exists
     if (!dir.exists(dir) || dirname(dir) == "."){
-        message(" X ERROR: Directory '", dir, "' does not exist.")
+        print_message("ERROR", "Directory '[dir]' does not exist.", dir = dir)
         return(invisible(NULL))
     }
 
@@ -86,7 +86,7 @@ build_master <- function(dir,
 
     # Get all .R scripts inside the folders
     scripts <- lapply(folders, function(folder){
-        libname(folder, get_files = TRUE)
+        suppressMessages(libname(folder, get_files = TRUE))
     })
     names(scripts) <- folders
     scripts        <- Filter(Negate(is.null), scripts)
@@ -105,19 +105,19 @@ build_master <- function(dir,
         "library(qol)",
         "",
         "run_scripts <- function(scripts){",
+        "    print_start_message()",
         '    monitor_df <- NULL |> monitor_start("Script start", "Script start")',
         "",
         "    for (file in scripts){",
-        "        start_time <- Sys.time()",
         '        monitor_df <- monitor_df |> monitor_next(basename(file), basename(file))',
+        '        print_step("MAJOR", file)',
         "",
         "        source(file, local = FALSE)",
         "",
-        '        end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)',
-        '        message("\\n- - - ", basename(file), " execution time: ", end_time, " seconds\\n")',
-        "",
         "        monitor_df <- monitor_df |> monitor_end()",
         "    }",
+        "",
+        "    print_closing()",
         "",
         paste0("    monitor_df |> monitor_plot(draw_plot = ", with_monitor, ")"),
         "}",
@@ -147,17 +147,17 @@ build_master <- function(dir,
         "rm(master_file)",
         "```",
         "")
-
+    bubu<-.qol_messages[["stack"]]
     # Generate tree view folder structure
     if (with_structure){
-        message(" > Write folder structure")
+        print_step("MAJOR", "Write folder structure")
 
         lines <- c(lines, print_folder_structure(scripts), "")
     }
-
+    bubu<-.qol_messages[["stack"]]
     # Run all scripts in all folders
     if (with_run_all){
-        message(" > Write all scripts execution")
+        print_step("MAJOR", "Write all scripts execution")
 
         # Get blanks for an even padding of the code
         sub_dirs        <- collapse::funique(sub(dir, "", names(scripts)))
@@ -181,8 +181,8 @@ build_master <- function(dir,
 
         lines <- c(lines, run_all_folders)
     }
-
-    message(" > Write script execution")
+    bubu<-.qol_messages[["stack"]]
+    print_step("MAJOR", "Write script execution")
 
     # Run folders and files separate
     for (folder in names(scripts)){
@@ -191,7 +191,7 @@ build_master <- function(dir,
         all_scripts_in_folder <- unlist(scripts[[folder]])
 
         if (with_run_folder){
-            message("   + folder: ", folder)
+            print_step("MINOR", "folder: [folder]", folder = folder)
 
             # Put together script block
             lines <- c(lines, c("\n#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
@@ -210,7 +210,7 @@ build_master <- function(dir,
         files <- scripts[[folder]]
 
         for (file in files){
-            message("     + file: ", file)
+            print_step("MINOR", "    file: [file]", file = file)
 
             file_name <- gsub("[^a-zA-Z0-9_]", "_", paste0("run_", basename(file)))
 
@@ -224,13 +224,12 @@ build_master <- function(dir,
         }
     }
 
-    message(" > Putting together master file")
+    print_step("MAJOR", "Putting together master file")
 
     # Write master file
     writeLines(lines, con = paste0(path, master_name, ".Rmd"))
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'build_master' execution time: ", end_time, " seconds\n")
+    print_closing(5)
 
     invisible(lines)
 }
@@ -247,7 +246,7 @@ build_master <- function(dir,
 #' A formatted character vector.
 #'
 #' @noRd
-print_folder_structure <- function(file_list) {
+print_folder_structure <- function(file_list){
     # Extract root folder
     root <- paste0(dirname(names(file_list)[1]), "/")
 
@@ -271,7 +270,7 @@ print_folder_structure <- function(file_list) {
         # Open folder section
         output <- c(output,
                     paste0("##......", subfolder),
-                    paste0('```{r open_', subfolder, ', echo = TRUE}'),
+                    paste0('```{r open_', subfolder, ', echo = TRUE]'),
                     paste0('        utils::browseURL("', folder_path, '")'),
                     "```")
 
@@ -281,7 +280,7 @@ print_folder_structure <- function(file_list) {
 
             output <- c(output,
                         paste0("###.............", basename(file)),
-                        paste0('```{r open_', basename(file), ', echo = TRUE}'),
+                        paste0('```{r open_', basename(file), ', echo = TRUE]'),
                         paste0('                file.edit("', file_path,'")'),
                         "```")
         }

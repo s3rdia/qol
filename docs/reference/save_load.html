@@ -74,7 +74,8 @@ stacks the files into one data frame.</p>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  where <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compress <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  protect <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">save_file_multi</span><span class="op">(</span></span>
@@ -85,7 +86,7 @@ stacks the files into one data frame.</p>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">load_file</span><span class="op">(</span><span class="va">path</span>, <span class="va">file</span>, keep <span class="op">=</span> <span class="cn">NULL</span>, where <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">load_file</span><span class="op">(</span><span class="va">path</span>, <span class="va">file</span>, keep <span class="op">=</span> <span class="cn">NULL</span>, where <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">load_file_multi</span><span class="op">(</span><span class="va">file_list</span>, keep_list <span class="op">=</span> <span class="cn">NULL</span>, stack_files <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -123,6 +124,10 @@ default.</p></dd>
 <dt id="arg-protect">protect<a class="anchor" aria-label="anchor" href="#arg-protect"></a></dt>
 <dd><p>TRUE by default. Throws an error if a file already exists. If FALSE,
 overwrites existing files.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Used internally to suppress messages, when using the multi save/load version.</p></dd>
 
 
 <dt id="arg-data-frame-list">data_frame_list<a class="anchor" aria-label="anchor" href="#arg-data-frame-list"></a></dt>

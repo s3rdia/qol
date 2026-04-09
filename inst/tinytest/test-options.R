@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 reset_style_options()
 default_style_options <- get_style_options()
 default_var_labels    <- get_variable_labels()
@@ -184,23 +186,33 @@ expect_equal(new_threads, fst::threads_fst(), info = "Reset global options")
 
 
 # Warning on setting wrong logical style in global options
-expect_message(set_style_options(filters = 1), " ! WARNING: 'filters' must be <logical>. Option will be omitted.", info = "Warning on setting wrong logical style in global options")
+set_style_options(filters = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'filters' must be <logical>. Option will be omitted.", info = "Warning on setting wrong logical style in global options")
 
 
 # Warning on setting wrong numeric style in global options
-expect_message(set_style_options(start_row = "1"), " ! WARNING: 'start_row' must be <numeric>. Option will be omitted.", info = "Warning on setting wrong numeric style in global options")
+set_style_options(start_row = "1")
+
+expect_warning(print_stack_as_messages("WARNING"), "'start_row' must be <numeric>. Option will be omitted.", info = "Warning on setting wrong numeric style in global options")
 
 
 # Warning on setting wrong character style in global options
-expect_message(set_style_options(sheet_name = 1), " ! WARNING: 'sheet_name' must be <character>. Option will be omitted.", info = "Warning on setting wrong character style in global options")
+set_style_options(sheet_name = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'sheet_name' must be <character>. Option will be omitted.", info = "Warning on setting wrong character style in global options")
 
 
 # Warning on setting wrong color style in global options
-expect_message(set_style_options(header_back_color = 1), " ! WARNING: 'header_back_color' must be a 6 character <hex code>. Option will be omitted", info = "Warning on setting wrong color style in global options")
+set_style_options(header_back_color = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'header_back_color' must be a 6 character <hex code>. Option will be omitted", info = "Warning on setting wrong color style in global options")
 
 
 # Warning on setting non existent style in global options
-expect_message(set_style_options(test = 1), " ! WARNING: 'test' is not a valid style option. See", info = "Warning on setting non existent style in global options")
+set_style_options(test = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'test' is not a valid style option. See", info = "Warning on setting non existent style in global options")
 
 ###############################################################################
 # Abort checks
@@ -208,17 +220,40 @@ expect_message(set_style_options(test = 1), " ! WARNING: 'test' is not a valid s
 
 
 # Abort setting global style options on empty list
-expect_message(set_style_options(),   " X ERROR: Empty list found.", info = "Abort setting global style options on empty list")
-expect_message(set_variable_labels(), " X ERROR: Empty list found.", info = "Abort setting global style options on empty list")
-expect_message(set_stat_labels(),     " X ERROR: Empty list found.", info = "Abort setting global style options on empty list")
+set_style_options()
+expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
+
+set_variable_labels()
+expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
+
+set_stat_labels()
+expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
 
 
 # Abort setting global options on empty list
-expect_message(set_print(1),      " X ERROR: Print option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_monitor(1),    " X ERROR: Monitor option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_na.rm(1),      " X ERROR: NA removal option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_print_miss(1), " X ERROR: Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_output(1),     " X ERROR: Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_titles(1),     " X ERROR: Titles must be provided as character. Global titles remain unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_footnotes(1),  " X ERROR: Footnotes must be provided as character. Global footnotes remain unchanged.", info = "Abort setting global options on empty list")
-expect_message(set_threads(""),   " X ERROR: Number of used threads must be provided as integer value. Global number of used threads remains unchanged.", info = "Abort setting global options on empty list")
+set_print(1)
+expect_error(print_stack_as_messages("ERROR"), "Print option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
+
+set_monitor(1)
+expect_error(print_stack_as_messages("ERROR"), "Monitor option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
+
+set_na.rm(1)
+expect_error(print_stack_as_messages("ERROR"), "NA removal option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
+
+set_print_miss(1)
+expect_error(print_stack_as_messages("ERROR"), "Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
+
+set_output(1)
+expect_error(print_stack_as_messages("ERROR"), "Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.", info = "Abort setting global options on empty list")
+
+set_titles(1)
+expect_error(print_stack_as_messages("ERROR"), "Titles must be provided as character. Global titles remain unchanged.", info = "Abort setting global options on empty list")
+
+set_footnotes(1)
+expect_error(print_stack_as_messages("ERROR"), "Footnotes must be provided as character. Global footnotes remain unchanged.", info = "Abort setting global options on empty list")
+
+set_threads("")
+expect_error(print_stack_as_messages("ERROR"), "Number of used threads must be provided as integer value. Global number of used threads remains unchanged.", info = "Abort setting global options on empty list")
+
+
+set_no_print()

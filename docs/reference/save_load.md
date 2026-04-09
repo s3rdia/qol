@@ -23,7 +23,8 @@ save_file(
   keep = NULL,
   where = NULL,
   compress = 100,
-  protect = TRUE
+  protect = TRUE,
+  ...
 )
 
 save_file_multi(
@@ -34,7 +35,7 @@ save_file_multi(
   protect = TRUE
 )
 
-load_file(path, file, keep = NULL, where = NULL)
+load_file(path, file, keep = NULL, where = NULL, ...)
 
 load_file_multi(file_list, keep_list = NULL, stack_files = TRUE)
 ```
@@ -71,6 +72,11 @@ load_file_multi(file_list, keep_list = NULL, stack_files = TRUE)
 
   TRUE by default. Throws an error if a file already exists. If FALSE,
   overwrites existing files.
+
+- ...:
+
+  Used internally to suppress messages, when using the multi save/load
+  version.
 
 - data_frame_list:
 

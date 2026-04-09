@@ -73,8 +73,8 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     variables     <- variables[variables %in% names(data_frame)]
 
     if (length(invalid_vars) > 0){
-        message(" ! WARNING: The provided variable to keep '", paste(invalid_vars, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted.")
+        print_message("WARNING", c("The provided variable to keep '[invalid]' is not part of",
+								   "the data frame. This variable will be omitted."), invalid = invalid_vars)
         rm(provided_vars, invalid_vars)
     }
 
@@ -124,8 +124,9 @@ dropp <- function(data_frame, ...){
     variables     <- variables[variables %in% names(data_frame)]
 
     if (length(invalid_vars) > 0){
-        message(" ! WARNING: The provided variable to drop '", paste(invalid_vars, collapse = ", "), "' is not part of\n",
-                "            the data frame. This variable will be omitted.")
+        print_message("WARNING", c("The provided variable to drop '[invalid]' is not part of",
+								   "the data frame. This variable will be omitted."),
+								   invalid = invalid_vars)
 
         if (length(variables) == 0){
             return(data_frame)
@@ -165,8 +166,9 @@ deparse_colon <- function(data_frame, variable_vector){
         only_colons <- gsub(":", "", variable)
 
         # If it's just colons with no text, skip "variable" and put out a warning
-        if (nchar(only_colons) == 0) {
-            message(" ! WARNING: A selection only contained colons. Selection will be ignored.")
+        if (nchar(only_colons) == 0){
+            print_message("WARNING", "A selection only contained colons. Selection will be ignored.",
+                          always_print = TRUE)
             next
         }
 
@@ -215,8 +217,9 @@ deparse_colon <- function(data_frame, variable_vector){
         }
         # If there are more than two colons skip variable
         else{
-            message(" ! WARNING: Selection '", variable, "' contains more than two colons which is\n",
-                    "            not allowed. Selection will be ignored.")
+            print_message("WARNING", c("Selection '[variable]' contains more than two colons which is\n",
+									   "not allowed. Selection will be ignored."), variable = variable,
+									   always_print = TRUE)
         }
     }
 

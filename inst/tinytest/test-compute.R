@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
@@ -87,20 +89,27 @@ expect_true(all(c("sum", "col_sum", "row_sum", "var4", "var5", "NEW_VAR1", "NEW_
 ###############################################################################
 
 # Type conversion in if. block on type mismatch
-expect_message(result_df <- test_df |> compute(var1 = var2), " ! WARNING: Type mismatch", info = "Type conversion in if. block on type mismatch")
+result_df <- test_df |> compute(var1 = var2)
+
+expect_warning(print_stack_as_messages("WARNING"), "Type mismatch", info = "Type conversion in if. block on type mismatch")
 
 ###############################################################################
 # Abort checks
 ###############################################################################
 
 # Compute aborts with no assignment
-expect_message(result_df <- test_df |> compute(),
-               " X ERROR: No assignments. Evaluation will be aborted.", info = "Compute aborts with no assignment")
+result_df <- test_df |> compute()
+
+expect_error(print_stack_as_messages("ERROR"), "No assignments. Evaluation will be aborted.", info = "Compute aborts with no assignment")
 
 
 # Compute aborts with no assignment
 variables  <- c("NEW_VAR1", "NEW_VAR2", "NEW_VAR3")
 values     <- c(1, 2)
 
-expect_message(do_over_df <- test_df |> compute(variables = values),
-               " X ERROR: Passed vectors are of unequal lengths.", info = "Compute aborts with no assignment")
+do_over_df <- test_df |> compute(variables = values)
+
+expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal lengths.", info = "Compute aborts with no assignment")
+
+
+set_no_print()

@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(100))
+dummy_df <- dummy_data(100)
 
 
 # Starting monitoring creates new data table and variables
@@ -46,3 +48,6 @@ monitor_df |> monitor_plot()
 monitor_df |> monitor_plot(by = "group")
 
 expect_identical(old_par, graphics::par(), info = "Plotting monitoring resets par to the values before")
+
+
+set_no_print()

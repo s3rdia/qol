@@ -35,6 +35,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/fuse_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/get_excel_range.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/get_integer_length.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/hex_ansi.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/if_else.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/import_export.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/index.html</loc></url>
@@ -43,12 +44,15 @@
 <url><loc>https://s3rdia.github.io/qol/reference/keep_dropp.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/libname.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/macro.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/messages.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/message_helpers.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/modify_number_formats.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/modify_output_style.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/monitor.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/multi_join.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/number_format_style.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/qol-package.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/qol_chat.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/qol_news.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/qol_options.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/recode.html</loc></url>

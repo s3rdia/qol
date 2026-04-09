@@ -121,14 +121,15 @@
 #' @export
 transpose_plus <- function(data_frame,
                            preserve   = NULL,
-                           pivot,
+                           pivot      = NULL,
                            values     = NULL,
                            formats    = c(),
                            weight     = NULL,
                            na.rm      = .qol_options[["na.rm"]],
                            monitor    = .qol_options[["monitor"]]){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
+    print_step("GREY", "Error handling")
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
@@ -152,7 +153,7 @@ transpose_plus <- function(data_frame,
     # If all pivot list/vector entries have a name, transposition will be wide to long
     long_to_wide <- TRUE
 
-    if (!is.null(names(pivot)) && all(nzchar(names(pivot)))){
+    if (is.null(pivot) || (!is.null(names(pivot)) && all(nzchar(names(pivot))))){
         long_to_wide <- FALSE
     }
 
@@ -170,19 +171,19 @@ transpose_plus <- function(data_frame,
         # listed, abort.
         for (variables in pivot){
             if (any(grepl("+", variables, fixed = TRUE))){
-                message(" X ERROR: Nesting <pivot> variables in a wide to long transposition is not possible.\n",
-                        "          Transposition will be aborted.")
+                print_message("ERROR", c("Nesting <pivot> variables in a wide to long transposition is not possible.",
+										 "Transposition will be aborted."))
                 return(invisible(NULL))
             }
         }
 
         # Values and weight has no effect in wide to long transposition
         if (!is.null(values)){
-            message(" ~ NOTE: <Values> parameter has no effect in wide to long transposition.")
+            print_message("NOTE", "<Values> parameter has no effect in wide to long transposition.")
         }
 
         if (!is.null(weight)){
-            message(" ~ NOTE: <Weight> parameter has no effect in wide to long transposition.")
+            print_message("NOTE", "<Weight> parameter has no effect in wide to long transposition.")
         }
     }
 
@@ -215,8 +216,10 @@ transpose_plus <- function(data_frame,
     # Pivot variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Enable the use of macro variables
-    pivot <- apply_macro(pivot)
+    if (is.null(pivot)){
+        variable_names <- names(data_frame)
+        pivot          <- list(".transposed" = variable_names[!variable_names %in% preserve])
+    }
 
     # Get pivot variables from provided combinations
     if (long_to_wide){
@@ -227,21 +230,21 @@ transpose_plus <- function(data_frame,
     }
 
     if (is.null(pivot_vars)){
-        message(" X ERROR: <Pivot> variables must be provided in quotation marks. Transposition will be aborted.")
+        print_message("ERROR", "<Pivot> variables must be provided in quotation marks. Transposition will be aborted.")
         return(invisible(NULL))
     }
 
     pivot_vars <- data_frame |> part_of_df(pivot_vars, check_only = TRUE)
 
     if (is.list(pivot_vars)){
-        message(" X ERROR: The provided <pivot> variable '", paste(pivot_vars[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Transposition will be aborted.")
+        print_message("ERROR", c("The provided <pivot> variable[?s] '[vars]' [?is/are] not part of",
+								 "the data frame. Transposition will be aborted."), vars = pivot_vars[[1]])
         return(invisible(NULL))
     }
 
     if (length(pivot_vars) <= 1){
         if (length(pivot_vars) == 0 || pivot_vars == ""){
-            message(" X ERROR: No valid <pivot> variables provided. Transposition will be aborted.")
+            print_message("ERROR", "No valid <pivot> variables provided. Transposition will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -250,8 +253,8 @@ transpose_plus <- function(data_frame,
     pivot_vars <- resolve_intersection(pivot_vars, preserve, check_only = TRUE)
 
     if (is.list(pivot_vars)){
-        message(" X ERROR: The provided <pivot> variable '", paste(pivot_vars[[1]], collapse = ", "), "' is also part of\n",
-                "          the <preserve> variables, which is not allowed. Transposition will be aborted.")
+        print_message("ERROR", c("The provided <pivot> variable[?s] '[vars]' [?is/are] also part of",
+								 "the <preserve> variables, which is not allowed. Transposition will be aborted."), vars = pivot_vars[[1]])
         return(invisible(NULL))
     }
 
@@ -265,7 +268,7 @@ transpose_plus <- function(data_frame,
         # If no value variables are provided abort
         if (length(values) <= 1){
             if (length(values) == 0 || values == ""){
-                message(" X ERROR: No <values> provided. Transposition will be aborted.")
+                print_message("ERROR", "No <values> provided. Transposition will be aborted.")
                 return(invisible(NULL))
             }
         }
@@ -277,20 +280,20 @@ transpose_plus <- function(data_frame,
         values <- resolve_intersection(values, pivot_vars, check_only = TRUE)
 
         if (is.list(values)){
-            message(" X ERROR: The provided <values> variable '", paste(values[[1]], collapse = ", "), "' is also part of\n",
-                    "          the <pivot> variables, which is not allowed. Transposition will be aborted.")
+            print_message("ERROR", c("The provided <values> variable[?s] '[vars]' [?is/are] also part of",
+									 "the <pivot> variables, which is not allowed. Transposition will be aborted."), vars = values[[1]])
             return(invisible(NULL))
         }
 
         values <- data_frame |> part_of_df(values, check_only = TRUE)
 
         if (is.list(values)){
-            message(" X ERROR: No valid <values> to transpose provided. Transposition will be aborted.")
+            print_message("ERROR", "No valid <values> to transpose provided. Transposition will be aborted.")
             return(invisible(NULL))
         }
 
         if (length(values) == 0){
-            message(" X ERROR: No <values> variables provided. Summarise will be aborted.")
+            print_message("ERROR", "No <values> variables provided. Summarise will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -339,7 +342,7 @@ transpose_plus <- function(data_frame,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Summarise", "Long to wide")
             #-----------------------------------------------------------------#
-            message("\n > Summarising data.")
+            print_step("MAJOR", "Summarising data.")
 
             group_vars <- c(preserve, pivot_vars)
 
@@ -365,10 +368,10 @@ transpose_plus <- function(data_frame,
         # 'names'. If a variable combination is provided, the variables will be crossed but
         # if they are provided separately, they will be put beside each other. Therefore
         # each pivot has to be done sequentially.
-        message("\n > Transposing long to wide.")
+        print_step("MAJOR", "Transposing long to wide.")
 
         for (method in transpose_methods){
-            message("   + ", paste(method, collapse = " + "))
+            print_step("MINOR", paste(method, collapse = " + "))
 
             transpose_df <- data_frame |>
                 collapse::pivot(id     = preserve,
@@ -395,9 +398,10 @@ transpose_plus <- function(data_frame,
                 # Check for duplicate variable names. If any duplicate is found abort.
                 duplicates <- intersect(names(combined_df), names(transpose_df))
 
-                if (length(duplicates) > 0) {
-                    message(" X ERROR: Duplicate column names found: ", paste(duplicates, collapse = ", "), ".\n",
-                            "          If you are working with original values, consider making them unique by using formats.")
+                if (length(duplicates) > 0){
+                    print_message("ERROR", c("Duplicate column names found: [duplicate].",
+											 "If you are working with original values, consider making them unique by using formats."),
+                                  duplicate = paste(duplicates, collapse = ", "))
                     return(invisible(NULL))
                 }
 
@@ -408,7 +412,7 @@ transpose_plus <- function(data_frame,
     }
     # Wide to long
     else{
-        message("\n > Transposing wide to long")
+        print_step("MAJOR", "Transposing wide to long")
 
         combined_df <- NULL
 
@@ -422,7 +426,7 @@ transpose_plus <- function(data_frame,
             # this step is essential.
             vars_to_keep <- c(preserve, pivot[[variable]])
 
-            message("   + ", paste0(variable, " = "), paste(vars_to_keep[!vars_to_keep %in% preserve], collapse = ", "))
+            print_step("MINOR", "[var] = [keep]", var = variable, keep = vars_to_keep[!vars_to_keep %in% preserve])
 
             # Determine new variable name. If only one new variable provided take the name from
             # the named list, otherwise use a general name.
@@ -500,8 +504,7 @@ transpose_plus <- function(data_frame,
         combined_df <- combined_df |> collapse::fselect(-.pseudo_preserve)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'transpose_plus' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()

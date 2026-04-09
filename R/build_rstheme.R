@@ -101,11 +101,11 @@ build_rstheme <- function(file_path,
                           console_code      = "#C3B79D",
                           markdown_code     = "#083332"){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     # Check if folder exists; ... is for testing
     if (!dir.exists(file_path) || dirname(file_path) == "."){
-        message(" X ERROR: Directory '", file_path, "' does not exist.")
+        print_message("ERROR", "Directory '[file_path]' does not exist.", file_path = file_path)
         return(invisible(NULL))
     }
 
@@ -174,8 +174,7 @@ build_rstheme <- function(file_path,
 
     writeLines(rstheme, paste0(path, theme_name, ".rstheme"))
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'build_rstheme' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     invisible(rstheme)
 }

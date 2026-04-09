@@ -58,7 +58,7 @@ NULL
 running_number <- function(data_frame,
                            by = NULL){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -77,8 +77,8 @@ running_number <- function(data_frame,
     # If the user specified a vector of by variables, only take the last one, as this is
     # most likely the group in which the running number should be generated.
     if (length(by) > 1){
-        message(" ~ NOTE: Running number is generated in current data frame order. Only last variable\n",
-                "         '", by, "' inside provided by vector will be used.")
+        print_message("NOTE", c("Running number is generated in current data frame order. Only last variable",
+								"'[by]' inside provided by vector will be used."), by = by)
 
         by <- by[length(by)]
     }
@@ -93,8 +93,7 @@ running_number <- function(data_frame,
         variable <- seq_len(collapse::fnrow(data_frame))
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'running_number' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     variable
 }
@@ -122,7 +121,7 @@ mark_case <- function(data_frame,
                       by       = NULL,
                       first    = TRUE){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -137,8 +136,8 @@ mark_case <- function(data_frame,
     # If the user specified a vector of by variables, only take the last one, as this is
     # most likely the group in which the first and last cases should be marked.
     if (length(by) > 1){
-        message(" ~ NOTE: Cases are marked in current data frame order. Only last variable\n",
-                "         '", by[length(by)], "' inside provided <by> vector will be used.")
+        print_message("NOTE", c("Cases are marked in current data frame order. Only last variable",
+								"'[by]' inside provided <by> vector will be used."), by = by[length(by)])
 
         by <- by[length(by)]
     }
@@ -181,8 +180,7 @@ mark_case <- function(data_frame,
     # Output as 1/0 instead of TRUE/FALSE
     variable <- as.integer(variable)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'mark_cases' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     variable
 }
@@ -211,7 +209,7 @@ retain_value <- function(data_frame,
                          values,
                          by = NULL){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -238,7 +236,7 @@ retain_value <- function(data_frame,
     # Abort if no value provided
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            message(" X ERROR: Must provide <values> to retain. Retain will be aborted.")
+            print_message("ERROR", "Must provide <values> to retain. Retain will be aborted.")
             return(invisible(NA))
         }
     }
@@ -252,8 +250,7 @@ retain_value <- function(data_frame,
     # If there are as much new variable names provided, as there are values given, then rename them
     data_frame <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'retain_value' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     if (length(values) == 1){
         data_frame[[1]]
@@ -285,9 +282,9 @@ retain_value <- function(data_frame,
 #' @export
 retain_sum <- function(data_frame,
                        values,
-                       by       = NULL){
+                       by = NULL){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -314,14 +311,14 @@ retain_sum <- function(data_frame,
     # Abort if no value provided
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            message(" X ERROR: Must provide a <values> to retain. Retain will be aborted.")
+            print_message("ERROR", "Must provide a <values> to retain. Retain will be aborted.")
             return(invisible(NA))
         }
     }
 
     # Abort if non-numeric value provided
     if (!all(collapse::vtypes(data_frame[values]) %in% c("numeric", "integer", "double"))){
-        message(" X ERROR: <Values> must be numeric. Retain will be aborted.")
+        print_message("ERROR", "<Values> must be numeric. Retain will be aborted.")
         return(invisible(NA))
     }
 
@@ -337,8 +334,7 @@ retain_sum <- function(data_frame,
                           nesting    = "deepest",
                           merge_back = TRUE))
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'retain_sum' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     if (length(values) == 1){
         data_frame[[collapse::fncol(data_frame)]]
@@ -383,9 +379,11 @@ retain_sum <- function(data_frame,
 #' @rdname retain
 #'
 #' @export
-retain_variables <- function(data_frame, ..., order_last = FALSE){
+retain_variables <- function(data_frame,
+                             ...,
+							 order_last = FALSE){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into a list if possible
     retain_list <- tryCatch({
@@ -397,7 +395,7 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
     })
 
     if (is.null(retain_list)){
-        message('X ERROR: Unknown object found. Retaining will be aborted.')
+        print_message("ERROR", "Unknown object found. Retaining will be aborted.")
         return(invisible(data_frame))
     }
 
@@ -461,8 +459,7 @@ retain_variables <- function(data_frame, ..., order_last = FALSE){
                                     after = collapse::fncol(data_frame))
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'retain_variables' execution time: ", end_time, " seconds")
+    print_closing()
 
     ordered_df
 }

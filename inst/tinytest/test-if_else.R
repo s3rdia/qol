@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(1000))
+dummy_df <- dummy_data(1000)
 
 
 # if. can convert values conditionally
@@ -212,16 +214,18 @@ expect_true(!NA %in% test_df[["sex"]], info = "Subset data frame with if., when 
 
 
 # Abort subset with if., if variable is not part of the data frame
-expect_message(test_df <- dummy_df |> if.("test"),
-               " X ERROR: No variable for subsetting provided. Data frame remains as is.",
+test_df <- dummy_df |> if.("test")
+
+expect_error(print_stack_as_messages("ERROR"), "No variable for subsetting provided. Data frame remains as is.",
                info = "Abort subset with if., if variable is not part of the data frame")
 
 expect_equal(test_df, dummy_df, info = "Abort subset with if., if variable is not part of the data frame")
 
 
 # Abort subset with if., if multiple variables are provided
-expect_message(test_df <- dummy_df |> if.(c("age", "sex")),
-               " X ERROR: Only single variables and conditions allowed. Data frame remains as is.",
+test_df <- dummy_df |> if.(c("age", "sex"))
+
+expect_error(print_stack_as_messages("ERROR"), "Only single variables and conditions allowed. Data frame remains as is.",
                info = "Abort subset with if., if multiple variables are provided")
 
 expect_equal(test_df, dummy_df, info = "Abort subset with if., if multiple variables are provided")
@@ -241,20 +245,23 @@ expect_true(!any(c(2, NA) %in% test_df[["sex"]]), info = "Filter data frame with
 ###############################################################################
 
 # else_do throws a warning when there is no active filter
-expect_message(test_df <- dummy_df |> else_do(),
-               " ! WARNING: No active filter variable found.",
+test_df <- dummy_df |> else_do()
+
+expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
                info = "else_do throws a warning when there is no active filter")
 
 
 # end_do throws a warning when there is no active filter
-expect_message(test_df <- dummy_df |> end_do(),
-               " ! WARNING: No active filter variable found.",
+test_df <- dummy_df |> end_do()
+
+expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
                info = "end_do throws a warning when there is no active filter")
 
 
 # end_all_do throws a warning when there is no active filter
-expect_message(test_df <- dummy_df |> end_all_do(),
-               " ! WARNING: No active filter variable found.",
+test_df <- dummy_df |> end_all_do()
+
+expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
                info = "end_all_do throws a warning when there is no active filter")
 
 ###############################################################################
@@ -266,16 +273,19 @@ vars1  <- c("income", "balance")
 vars2  <- c("VAR1", "VAR2", "VAR3")
 values <- c(1, 2)
 
-expect_message(do_over_df <- dummy_df |> if.(vars1 > 0, vars2 = values),
-               " X ERROR: Passed vectors are of unequal lengths.",
+do_over_df <- dummy_df |> if.(vars1 > 0, vars2 = values)
+
+expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal lengths.",
                info = "if. as do over loop aborts on vectors of unequal lengths")
 
-expect_message(do_over_df <- dummy_df |> else_if.(vars1 > 0, vars2 = values),
-               " X ERROR: Passed vectors are of unequal lengths.",
+do_over_df <- dummy_df |> else_if.(vars1 > 0, vars2 = values)
+
+expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal lengths.",
                info = "if. as do over loop aborts on vectors of unequal lengths")
 
-expect_message(do_over_df <- dummy_df |> else.(vars2 = values, vars2 = values),
-               " X ERROR: Passed vectors are of unequal lengths.",
+do_over_df <- dummy_df |> else.(vars2 = values, vars2 = values)
+
+expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal lengths.",
                info = "if. as do over loop aborts on vectors of unequal lengths")
 
 
@@ -284,9 +294,14 @@ vars1  <- c("income", "balance")
 vars2  <- c("VAR1", "VAR2")
 values <- c(1, 2)
 
-expect_message(do_over_df <- dummy_df |> if.(vars1 > 0),
-               " X ERROR: When using vectors in conditions, there must be a variable assignment.",
+do_over_df <- dummy_df |> if.(vars1 > 0)
+
+expect_error(print_stack_as_messages("ERROR"), "When using vectors in conditions, there must be a variable assignment.",
                info = "if. as do over loop aborts without variable assignment")
 
-expect_message(do_over_df <- dummy_df |> else_if.(vars1 > 0),
-               " ! WARNING: No assignments found. If you want to filter observations", info = "if. as do over loop aborts without variable assignment")
+do_over_df <- dummy_df |> else_if.(vars1 > 0)
+
+expect_warning(print_stack_as_messages("WARNING"), "No assignments found. If you want to filter observations", info = "if. as do over loop aborts without variable assignment")
+
+
+set_no_print()

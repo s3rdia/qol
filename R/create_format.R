@@ -127,7 +127,7 @@ NULL
 #' @export
 discrete_format <- function(...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into separately controllable arguments
     list_of_groupings <- tryCatch({
@@ -139,8 +139,8 @@ discrete_format <- function(...){
     })
 
     if (is.null(list_of_groupings)){
-        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
-                "          Creating format will be aborted.")
+        print_message("ERROR", c("Formats must be provided in the form [target category] = [original expressions].",
+								 "Creating format will be aborted."))
         return(invisible(NULL))
     }
 
@@ -149,8 +149,8 @@ discrete_format <- function(...){
     labels <- names(list_of_groupings)
 
     if (is.null(labels) || any(is.na(labels) | labels == "")){
-        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
-                "          Creating format will be aborted.")
+        print_message("ERROR", c("Formats must be provided in the form [target category] = [original expressions].",
+								 "Creating format will be aborted."))
         return(invisible(NULL))
     }
 
@@ -176,8 +176,7 @@ discrete_format <- function(...){
         unwrapped_format <- unwrapped_format |> convert_numeric("value")
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'discrete_format' execution time: ", end_time, " seconds")
+    print_closing()
 
     unwrapped_format
 }
@@ -188,7 +187,7 @@ discrete_format <- function(...){
 #' @export
 interval_format <- function(...){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     # Translate ... into separately controllable arguments
     ranges <- tryCatch({
@@ -200,8 +199,8 @@ interval_format <- function(...){
     })
 
     if (is.null(ranges)){
-        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
-                "          Creating format will be aborted.")
+        print_message("ERROR", c("Formats must be provided in the form [target category] = [original expressions].",
+								 "Creating format will be aborted."))
         return(invisible(NULL))
     }
 
@@ -210,8 +209,8 @@ interval_format <- function(...){
     labels <- names(ranges)
 
     if (is.null(labels) || any(is.na(labels) | labels == "")){
-        message(" X ERROR: Formats must be provided in the form [target category] = [original expressions].\n",
-                "          Creating format will be aborted.")
+        print_message("ERROR", c("Formats must be provided in the form [target category] = [original expressions].",
+								 "Creating format will be aborted."))
         return(invisible(NULL))
     }
 
@@ -223,7 +222,7 @@ interval_format <- function(...){
     if (is.character(to)){
         # First check if there are any other words than low and high in the format. If yes, abort.
         if (!any(c("low", "high") %in% tolower(to))){
-            message(" X ERROR: Unknown keyword found. Creating interval format will be aborted.")
+            print_message("ERROR", "Unknown keyword found. Creating interval format will be aborted.")
             return(invisible(NULL))
         }
 
@@ -248,8 +247,7 @@ interval_format <- function(...){
         to <- as.numeric(to)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'interval_format' execution time: ", end_time, " seconds")
+    print_closing()
 
     # Put everything together in a data frame
     data.table::data.table(from  = from,
@@ -277,8 +275,9 @@ evaluate_formats <- function(formats_list){
     # Fetch all the provided formats and get the original data frames and store them into a list
     formats <- lapply(formats_list, function(format){
         if (length(format) > 1){
-            message(" ! WARNING: Formats not passed correctly. Create format object first and then\n",
-                    "            pass it to the function parameter like: list(my_variable = my_format)")
+            print_message("WARNING", c("Formats not passed correctly. Create format object first and then",
+									   "pass it to the function parameter like: list(my_variable = my_format)"),
+									   always_print = TRUE)
             return(c())
         }
         dynGet(as.character(format), ifnotfound = NULL, inherits = TRUE)
@@ -308,7 +307,7 @@ is_list_of_dfs <- function(formats_list){
         (is.list(formats_list)
          && length(formats_list) > 0
          && all(vapply(formats_list, data.table::is.data.table, logical(1))))
-    }, error = function(e) {
+    }, error = function(e){
         FALSE
     })
 
@@ -349,7 +348,7 @@ is_list_of_dfs <- function(formats_list){
 #' @export
 expand_formats <- function(..., names = NULL){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     # Translate ... into a list if possible
     format_list <- tryCatch({
@@ -367,6 +366,7 @@ expand_formats <- function(..., names = NULL){
             # If there is only one format data frame provided there is nothing to expand,
             # so the function just returns the unique values of the label column.
             if (data.table::is.data.table(formats)){
+                print_closing()
                 return(formats |>
                            keep("label") |>
                            collapse::funique())
@@ -374,14 +374,14 @@ expand_formats <- function(..., names = NULL){
         }
 
         formats
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(format_list)){
-        message(" X ERROR: Formats must be provided as data frames or as a list of data frames.\n",
-                "          Format expansion will be aborted.")
+        print_message("ERROR", c("Formats must be provided as data frames or as a list of data frames.",
+								 "Format expansion will be aborted."))
         return(invisible(NULL))
     }
 
@@ -398,9 +398,9 @@ expand_formats <- function(..., names = NULL){
     # Abort if there is a missing "label" column in one of the data frames. Normally I could drop this
     # and go on, but if used in other functions this could lead to follow up errors. So abort to be safe.
     if (length(format_list[sapply(format_list, is.null)]) > 0){
-        message(" X ERROR: A data frame is missing the 'label' column. This function is especially for expanding formats created\n",
-                "          with 'discrete_format' and 'interval_format'. If you want to include another non format data frame, you have\n",
-                "          to name the desired expansion column 'label'. Format expansion will be aborted.")
+        print_message("ERROR", c("A data frame is missing the 'label' column. This function is especially for expanding formats created",
+								 "with 'discrete_format' and 'interval_format'. If you want to include another non format data frame, you have",
+								 "to name the desired expansion column 'label'. Format expansion will be aborted."))
 
         return(invisible(NULL))
     }
@@ -419,8 +419,7 @@ expand_formats <- function(..., names = NULL){
     var_names <- names(expand_df)
     expand_df <- expand_df |> convert_factor(var_names)
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'expand_formats' execution time: ", end_time, " seconds")
+    print_closing()
 
     expand_df
 }

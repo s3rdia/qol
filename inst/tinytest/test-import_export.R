@@ -1,3 +1,5 @@
+set_no_print(TRUE)
+
 # Example csv, txt and xlsx files load
 csv_file  <- system.file("extdata", "qol_example_data_csv.csv",   package = "qol")
 txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
@@ -46,21 +48,24 @@ expect_true(file.exists(temp_file), info = "XLSX export works correctly")
 
 
 # Abort export with invalid path
-expect_message(export_df |> export_data(1),
-               " X ERROR: <Outfile> must be a single character. Export will be aborted.", info = "Abort export with invalid path")
+export_df |> export_data(1)
+
+expect_error(print_stack_as_messages("ERROR"), "<Outfile> must be a single character. Export will be aborted.", info = "Abort export with invalid path")
 
 
 # Abort export with non existing path
-expect_message(export_df |> export_data("Test"),
-               " X ERROR: Path does not exist:", info = "Abort export with non existing path")
+export_df |> export_data("Test")
+
+expect_error(print_stack_as_messages("ERROR"), "Path does not exist:", info = "Abort export with non existing path")
 
 
 # Warning in export on missing file extension
 temp_file <- tempfile(fileext = "")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file),
-               " ! WARNING: No file extension provided in <outfile>. 'csv' will be used.", info = "Warning in export on missing file extension")
+export_df |> export_data(temp_file)
+
+expect_warning(print_stack_as_messages("WARNING"), "No file extension provided in <outfile>. 'csv' will be used.", info = "Warning in export on missing file extension")
 
 expect_true(file.exists(paste0(temp_file, ".csv")), info = "Warning in export on missing file extension")
 
@@ -69,8 +74,9 @@ expect_true(file.exists(paste0(temp_file, ".csv")), info = "Warning in export on
 temp_file <- tempfile(fileext = ".test")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file),
-               " ! WARNING: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.", info = "Warning in export on invalid file extension")
+export_df |> export_data(temp_file)
+
+expect_warning(print_stack_as_messages("WARNING"), "Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.", info = "Warning in export on invalid file extension")
 
 temp_file <- sub(".test", ".csv", temp_file, ignore.case = TRUE)
 expect_true(file.exists(temp_file), info = "Warning in export on invalid file extension")
@@ -80,8 +86,9 @@ expect_true(file.exists(temp_file), info = "Warning in export on invalid file ex
 temp_file <- tempfile(fileext = ".csv")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file, separator = 1),
-               " ! WARNING: <Separator> must be provided as character. ';' will be used.", info = "Warning in export if separator is not provided as character")
+export_df |> export_data(temp_file, separator = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "<Separator> must be provided as character. ';' will be used.", info = "Warning in export if separator is not provided as character")
 
 expect_true(file.exists(temp_file), info = "Warning in export if separator is not provided as character")
 
@@ -90,8 +97,9 @@ expect_true(file.exists(temp_file), info = "Warning in export if separator is no
 temp_file <- tempfile(fileext = ".csv")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file, separator = ";;"),
-               " ! WARNING: <Separator> may only be one character. ';' will be used.", info = "Warning in export if separator is longer than one character")
+export_df |> export_data(temp_file, separator = ";;")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Separator> may only be one character. ';' will be used.", info = "Warning in export if separator is longer than one character")
 
 expect_true(file.exists(temp_file), info = "Warning in export if separator is longer than one character")
 
@@ -100,8 +108,9 @@ expect_true(file.exists(temp_file), info = "Warning in export if separator is lo
 temp_file <- tempfile(fileext = ".csv")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file, decimal = 1),
-               " ! WARNING: <Decimal> must be provided as character. ',' will be used.", info = "Warning in export if decimal is not provided as character")
+export_df |> export_data(temp_file, decimal = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> must be provided as character. ',' will be used.", info = "Warning in export if decimal is not provided as character")
 
 expect_true(file.exists(temp_file), info = "Warning in export if decimal is not provided as character")
 
@@ -110,8 +119,9 @@ expect_true(file.exists(temp_file), info = "Warning in export if decimal is not 
 temp_file <- tempfile(fileext = ".csv")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file, decimal = ",,"),
-               " ! WARNING: <Decimal> may only be one character. ',' will be used.", info = "Warning in export if decimal is longer than one character")
+export_df |> export_data(temp_file, decimal = ",,")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> may only be one character. ',' will be used.", info = "Warning in export if decimal is longer than one character")
 
 expect_true(file.exists(temp_file), info = "Warning in export if decimal is longer than one character")
 
@@ -120,8 +130,9 @@ expect_true(file.exists(temp_file), info = "Warning in export if decimal is long
 temp_file <- tempfile(fileext = ".csv")
 on.exit(unlink(temp_file), add = TRUE)
 
-expect_message(export_df |> export_data(temp_file, decimal = ";"),
-               " ! WARNING: <Decimal> may not be the same character as the <separator>. ',' will be used.", info = "Warning in export if separator and decimal are equal")
+export_df |> export_data(temp_file, decimal = ";")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> may not be the same character as the <separator>. ',' will be used.", info = "Warning in export if separator and decimal are equal")
 
 expect_true(file.exists(temp_file), info = "Warning in export if separator and decimal are equal")
 
@@ -234,34 +245,39 @@ expect_equal(nrow(infile), 101, info = "XLSX import without first row as column 
 
 
 # Abort import with invalid path
-expect_message(import_data(1),
-               " X ERROR: <Infile> must be a single character. Import will be aborted.", info = "Abort import with invalid path")
+import_data(1)
+
+expect_error(print_stack_as_messages("ERROR"), "<Infile> must be a single character. Import will be aborted.", info = "Abort import with invalid path")
 
 
 # Abort import with non existing path
-expect_message(import_data("Test"),
-               " X ERROR: Path does not exist:", info = "Abort import with non existing path")
+import_data("Test")
+
+expect_error(print_stack_as_messages("ERROR"), "Path does not exist:", info = "Abort import with non existing path")
 
 
 # Abort import on missing file extension
 csv_file <- gsub(".csv", "", system.file("extdata", "qol_example_data_csv.csv", package = "qol"))
 
-expect_message(infile <- import_data(csv_file),
-               " X ERROR: No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.", info = "Abort import on missing file extension")
+infile <- import_data(csv_file)
+
+expect_error(print_stack_as_messages("ERROR"), "No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.", info = "Abort import on missing file extension")
 
 
 # Abort import on invalid file extension
 csv_file <- gsub(".csv", ".test", system.file("extdata", "qol_example_data_csv.csv", package = "qol"))
 
-expect_message(infile <- import_data(csv_file),
-               " X ERROR: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <infile>.", info = "Abort import on invalid file extension")
+infile <- import_data(csv_file)
+
+expect_error(print_stack_as_messages("ERROR"), "Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <infile>.", info = "Abort import on invalid file extension")
 
 
 # Warning in import if separator is not provided as character
 csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
-expect_message(infile <- import_data(csv_file, separator = 1),
-               " ! WARNING: <Separator> must be provided as character. Automatic detection will be used.", info = "Warning in import if separator is not provided as character")
+infile <- import_data(csv_file, separator = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "<Separator> must be provided as character. Automatic detection will be used.", info = "Warning in import if separator is not provided as character")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if separator is not provided as character")
 expect_equal(ncol(infile), 11, info = "Warning in import if separator is not provided as character")
@@ -270,8 +286,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if separator is not pro
 # Warning in import if separator is longer than one character
 csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
-expect_message(infile <- import_data(csv_file, separator = ";;"),
-               " ! WARNING: <Separator> may only be one character. Automatic detection will be used.", info = "Warning in import if separator is longer than one character")
+infile <- import_data(csv_file, separator = ";;")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Separator> may only be one character. Automatic detection will be used.", info = "Warning in import if separator is longer than one character")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if separator is longer than one character")
 expect_equal(ncol(infile), 11, info = "Warning in import if separator is longer than one character")
@@ -280,8 +297,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if separator is longer 
 # Warning in import if decimal is not provided as character
 csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
-expect_message(infile <- import_data(csv_file, decimal = 1),
-               " ! WARNING: <Decimal> must be provided as character. Automatic detection will be used.", info = "Warning in import if decimal is not provided as character")
+infile <- import_data(csv_file, decimal = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> must be provided as character. Automatic detection will be used.", info = "Warning in import if decimal is not provided as character")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if decimal is not provided as character")
 expect_equal(ncol(infile), 11, info = "Warning in import if decimal is not provided as character")
@@ -290,8 +308,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if decimal is not provi
 # Warning in import if decimal is longer than one character
 csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
-expect_message(infile <- import_data(csv_file, decimal = ",,"),
-               " ! WARNING: <Decimal> may only be one character. Automatic detection will be used.", info = "Warning in import if decimal is longer than one character")
+infile <- import_data(csv_file, decimal = ",,")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> may only be one character. Automatic detection will be used.", info = "Warning in import if decimal is longer than one character")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if decimal is longer than one character")
 expect_equal(ncol(infile), 11, info = "Warning in import if decimal is longer than one character")
@@ -300,8 +319,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if decimal is longer th
 # Warning in import if separator and decimal are equal
 csv_file <- system.file("extdata", "qol_example_data_csv.csv", package = "qol")
 
-expect_message(infile <- import_data(csv_file, separator = ";", decimal = ";"),
-               " ! WARNING: <Decimal> may not be the same character as the <separator>. Automatic detection will be used.", info = "Warning in import if separator and decimal are equal")
+infile <- import_data(csv_file, separator = ";", decimal = ";")
+
+expect_warning(print_stack_as_messages("WARNING"), "<Decimal> may not be the same character as the <separator>. Automatic detection will be used.", info = "Warning in import if separator and decimal are equal")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if separator and decimal are equal")
 expect_equal(ncol(infile), 11, info = "Warning in import if separator and decimal are equal")
@@ -310,8 +330,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if separator and decima
 # Warning in import if region is not provided as character
 xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
-expect_message(infile <- import_data(xlsx_file, region = 1),
-                        " ! WARNING: Region must be provided as character. Allowed are specific ranges like 'A1:BY27' or", info = "Warning in import if region is not provided as character")
+infile <- import_data(xlsx_file, region = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "Region must be provided as character. Allowed are specific ranges like 'A1:BY27' or", info = "Warning in import if region is not provided as character")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if region is not provided as character")
 expect_equal(ncol(infile), 11, info = "Warning in import if region is not provided as character")
@@ -320,8 +341,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if region is not provid
 # Warning in import if region is a vector
 xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
-expect_message(infile <- import_data(xlsx_file, region = c("A", "B")),
-                        " ! WARNING: Only one character element allowed for region. The whole file will be read.", info = "Warning in import if region is a vector")
+infile <- import_data(xlsx_file, region = c("A", "B"))
+
+expect_warning(print_stack_as_messages("WARNING"), "Only one character element allowed for region. The whole file will be read.", info = "Warning in import if region is a vector")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if region is a vector")
 expect_equal(ncol(infile), 11, info = "Warning in import if region is a vector")
@@ -330,8 +352,9 @@ expect_equal(ncol(infile), 11, info = "Warning in import if region is a vector")
 # Warning in import if region not found
 xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
 
-expect_message(infile <- import_data(xlsx_file, region = "Test"),
-                        " ! WARNING: Region 'Test' doesn't exist in sheet", info = "Warning in import if region not found")
+infile <- import_data(xlsx_file, region = "Test")
+
+expect_warning(print_stack_as_messages("WARNING"), "Region 'Test' doesn't exist in sheet", info = "Warning in import if region not found")
 
 expect_equal(nrow(infile), 100, info = "Warning in import if region not found")
 expect_equal(ncol(infile), 11, info = "Warning in import if region not found")
@@ -356,3 +379,6 @@ infile <- import_multi(xlsx_file)
 
 expect_inherits(infile, "list", info = "Multi file import works correctly (all sheets)")
 expect_equal(length(infile), 2, info = "Multi file import works correctly (all sheets)")
+
+
+set_no_print()

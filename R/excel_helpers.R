@@ -27,12 +27,12 @@
 #' @export
 get_excel_range <- function(row      = NULL, column      = NULL,
                             from_row = NULL, from_column = NULL,
-                            to_row   = NULL, to_column   = NULL) {
+                            to_row   = NULL, to_column   = NULL){
 
     # Get single cell
     if (!is.null(row) && !is.null(column)){
         if (row <= 0 || column <= 0){
-            message(" X ERROR: Row and column must be greater than 0.")
+            print_message("ERROR", "Row and column must be greater than 0.")
             return(NULL)
         }
 
@@ -335,7 +335,7 @@ handle_col_header_merge <- function(wb, column_header, ranges){
 #' @noRd
 handle_row_header_merge <- function(wb, row_header, ranges){
     # Make sure row_header is treated as a matrix, even though there can be only one column
-    if (is.null(dim(row_header))) {
+    if (is.null(dim(row_header))){
         dim(row_header) <- c(length(row_header), 1)
     }
 
@@ -852,21 +852,21 @@ handle_cell_styles <- function(wb,
 
         apply_font <- NULL
         font_id    <- NULL
-        if (paste0(type, "_font") %in% wb$styles_mgr$font$name) {
+        if (paste0(type, "_font") %in% wb$styles_mgr$font$name){
             apply_font <- TRUE
             font_id    <- wb$styles_mgr$get_font_id(paste0(type, "_font"))
         }
 
         apply_border <- NULL
         border_id    <- NULL
-        if (paste0(type, "_borders") %in% wb$styles_mgr$border$name) {
+        if (paste0(type, "_borders") %in% wb$styles_mgr$border$name){
             apply_border <- TRUE
             border_id    <- wb$styles_mgr$get_border_id(paste0(type, "_borders"))
         }
 
         apply_fill <- NULL
         fill_id    <- NULL
-        if (paste0(type, "_fill") %in% wb$styles_mgr$fill$name) {
+        if (paste0(type, "_fill") %in% wb$styles_mgr$fill$name){
             apply_fill <- TRUE
             fill_id    <- wb$styles_mgr$get_fill_id(paste0(type, "_fill"))
         }
@@ -1609,7 +1609,7 @@ modify_output_style <- function(style_to_modify, ...){
         name <- names(style_elements)[element]
 
         if (!name %in% names(style_to_modify)){
-            message(" ! WARNING: Style element '", name, "' is invalid and will be omitted.")
+            print_message("WARNING", "Style element '[name]' is invalid and will be omitted.", name = name)
         }
 
         style_to_modify[[name]] <- style_elements[[element]]
@@ -1791,7 +1791,7 @@ modify_number_formats <- function(formats_to_modify, ...){
         name <- names(format_elements)[element]
 
         if (!name %in% names(formats_to_modify)){
-            message(" ! WARNING: Number format '", name, "' is invalid and will be omitted.")
+            print_message("WARNING", "Number format '[name]' is invalid and will be omitted.", name = name)
         }
 
         formats_to_modify[[name]] <- format_elements[[element]]

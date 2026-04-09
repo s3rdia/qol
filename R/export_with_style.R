@@ -90,7 +90,8 @@ export_with_style <- function(data_frame,
                               output     = .qol_options[["output"]],
                               print      = .qol_options[["print"]],
                               monitor    = .qol_options[["monitor"]]){
-    start_time <- Sys.time()
+    print_start_message()
+	print_step("GREY", "Error handling")
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Error handling")
@@ -107,7 +108,7 @@ export_with_style <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("excel", "excel_nostyle")){
-        message(" ! WARNING: <Output> format '", output, "' not available. Using 'excel' instead.")
+        print_message("WARNING", "<Output> format '[output]' not available. Using 'excel' instead.", output = output)
 
         output <- "excel"
     }
@@ -159,7 +160,7 @@ export_with_style <- function(data_frame,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#
-        message(" > Output")
+        print_step("MAJOR", "Output")
 
         # If no save path or file provided just open workbook
         if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
@@ -170,7 +171,7 @@ export_with_style <- function(data_frame,
         else{
             # If no save path or file provided just open workbook
             if (!file.exists(style[["save_path"]])){
-                message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+                print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
 
                 if (interactive()){
                     wb$open()
@@ -183,8 +184,7 @@ export_with_style <- function(data_frame,
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'export_with_style' execution time: ", end_time, " seconds\n")
+    print_closing(5)
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -248,7 +248,7 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
     #-------------------------------------------------------------------------#
-    message(" > Writing data to workbook")
+    print_step("MAJOR", "Writing data to workbook", always_print = TRUE)
 
     wb$add_data(x           = data_frame,
                 start_col   = style[["start_column"]],
@@ -264,7 +264,7 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
-    message(" > Formatting data")
+    print_step("MAJOR", "Formatting data", always_print = TRUE)
 
     # Format titles and footnotes if there are any
     wb <- wb |>

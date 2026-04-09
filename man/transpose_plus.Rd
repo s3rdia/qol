@@ -7,7 +7,7 @@
 transpose_plus(
   data_frame,
   preserve = NULL,
-  pivot,
+  pivot = NULL,
   values = NULL,
   formats = c(),
   weight = NULL,

@@ -1,9 +1,11 @@
+set_no_print(TRUE)
+
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
 ###############################################################################
 
-dummy_df <- suppressMessages(dummy_data(1000))
+dummy_df <- dummy_data(1000)
 
 
 # Get inverse variable names from data frame works correct
@@ -38,19 +40,28 @@ expect_equal(length(var_names), 6, info = "Get variable names from beginning to 
 ###############################################################################
 
 # Providing not existing from-variable throws a warning
-expect_message(var_names <- dummy_df |> vars_between(test, person_id), " ! WARNING: 'from' variable '", info = "Providing not existing from-variable throws a warning")
+var_names <- dummy_df |> vars_between(test, person_id)
+
+expect_warning(print_stack_as_messages("WARNING"), "'from' variable '", info = "Providing not existing from-variable throws a warning")
 
 expect_equal(length(var_names), 6, info = "Providing not existing from-variable throws a warning")
 
 
 # Providing not existing to-variable throws a warning
-expect_message(var_names <- dummy_df |> vars_between(state, test), " ! WARNING: 'to' variable '", info = "Providing not existing to-variable throws a warning")
+var_names <- dummy_df |> vars_between(state, test)
+
+expect_warning(print_stack_as_messages("WARNING"), "'to' variable '", info = "Providing not existing to-variable throws a warning")
 
 expect_equal(length(var_names), 19, info = "Providing not existing to-variable throws a warning")
 
 
 # Providing more than one from or to variable throws a note
-expect_message(var_names <- dummy_df |> vars_between(c(state, age), income),
-               " ~ NOTE: Only single variable names allowed for 'from' and 'to'. The respective\n", info = "Providing more than one from or to variable throws a note")
+var_names <- dummy_df |> vars_between(c(state, age), income)
+
+expect_message(print_stack_as_messages("NOTE"), "Only single variable names allowed for",
+               info = "Providing more than one from or to variable throws a note")
 
 expect_equal(length(var_names), 14, info = "Providing more than one from or to variable throws a note")
+
+
+set_no_print()

@@ -64,7 +64,7 @@ import_data <- function(infile,
                         separator = "auto",
                         decimal   = "auto",
                         var_names = TRUE){
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -80,15 +80,15 @@ import_data <- function(infile,
 
         # Abort on vector provided as path
         if (!is.character(infile) || length(infile) != 1){
-            message(" X ERROR: <Infile> must be a single character. Import will be aborted.")
+            print_message("ERROR", "<Infile> must be a single character. Import will be aborted.")
 
             return(invisible(NULL))
         }
 
         # Abort on invalid path
         if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
-            message(" X ERROR: Path does not exist: ", infile, "\n",
-                    "          Import will be aborted.")
+            print_message("ERROR", c("Path does not exist: [infile]",
+									 "Import will be aborted."), infile = infile)
 
             return(invisible(NULL))
         }
@@ -100,15 +100,15 @@ import_data <- function(infile,
         extension <- tolower(tools::file_ext(infile))
 
         if (extension == ""){
-            message(" X ERROR: No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.\n",
-                    "          Import will be aborted.")
+            print_message("ERROR", c("No file extension provided in <infile>. 'csv' and 'xlsx' are allowed.",
+									 "Import will be aborted."))
 
             return(invisible(NULL))
         }
 
         if (!extension %in% c("csv", "txt", "xlsx")){
-            message(" X ERROR: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <infile>.\n",
-                    "          Import will be aborted.")
+            print_message("ERROR", c("Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <infile>.",
+									 "Import will be aborted."))
 
             return(invisible(NULL))
         }
@@ -125,13 +125,13 @@ import_data <- function(infile,
 
         # Separator may only consist of one character
         if (!is.character(separator)){
-            message(" ! WARNING: <Separator> must be provided as character. Automatic detection will be used.")
+            print_message("WARNING", "<Separator> must be provided as character. Automatic detection will be used.")
 
             separator <- "auto"
         }
 
         if (length(separator) != 1L || (separator != "auto" && nchar(separator) != 1L)){
-            message(" ! WARNING: <Separator> may only be one character. Automatic detection will be used.")
+            print_message("WARNING", "<Separator> may only be one character. Automatic detection will be used.")
 
             separator <- "auto"
         }
@@ -142,20 +142,20 @@ import_data <- function(infile,
 
         # Decimal may only consist of one character
         if (!is.character(decimal)){
-            message(" ! WARNING: <Decimal> must be provided as character. Automatic detection will be used.")
+            print_message("WARNING", "<Decimal> must be provided as character. Automatic detection will be used.")
 
             decimal <- "auto"
         }
 
         if (length(decimal) != 1L || (decimal != "auto" && nchar(decimal) != 1L)){
-            message(" ! WARNING: <Decimal> may only be one character. Automatic detection will be used.")
+            print_message("WARNING", "<Decimal> may only be one character. Automatic detection will be used.")
 
             decimal <- "auto"
         }
 
         # Decimal may not be equal to separator
         if (separator != "auto" && decimal != "auto" && separator == decimal){
-            message(" ! WARNING: <Decimal> may not be the same character as the <separator>. Automatic detection will be used.")
+            print_message("WARNING", "<Decimal> may not be the same character as the <separator>. Automatic detection will be used.")
 
             decimal <- "auto"
         }
@@ -174,14 +174,14 @@ import_data <- function(infile,
         if (!is.null(region)){
             # Region may only consist of one character
             if (!is.character(region)){
-                message(" ! WARNING: Region must be provided as character. Allowed are specific ranges like 'A1:BY27' or\n",
-                        "            the names of named regions. The whole file will be read.")
+                print_message("WARNING", c("Region must be provided as character. Allowed are specific ranges like 'A1:BY27' or",
+										   "the names of named regions. The whole file will be read."))
 
                 region <- NULL
             }
 
             if (length(region) != 1L){
-                message(" ! WARNING: Only one character element allowed for region. The whole file will be read.")
+                print_message("WARNING", "Only one character element allowed for region. The whole file will be read.")
 
                 region <- NULL
             }
@@ -216,8 +216,8 @@ import_data <- function(infile,
                                         na.strings      = "")
                 }, error = function(e){
                     # Read whole file on error. In this case the named region didn't exist in the file
-                    message(" ! WARNING: Region '", region, "' doesn't exist in sheet '", sheet, "'.\n",
-                            "            The whole file will be read.")
+                    print_message("WARNING", c("Region '[region]' doesn't exist in sheet '[sheet]'.",
+											   "The whole file will be read."), region = region, sheet = sheet)
 
                     openxlsx2::wb_to_df(file            = infile,
                                         sheet           = sheet,
@@ -244,8 +244,12 @@ import_data <- function(infile,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'import_data' execution time: ", end_time, " seconds\n")
+    if (extension == "xlsx"){
+        print_closing(5)
+    }
+    else{
+        print_closing()
+    }
 
     invisible(data_frame)
 }
@@ -275,7 +279,7 @@ import_multi <- function(file_list,
                          separator = "auto",
                          decimal   = "auto",
                          var_names = TRUE){
-    start_time <- Sys.time()
+    print_start_message()
 
     # Loop through all files and import them one after another
     result_list <- list()
@@ -288,7 +292,7 @@ import_multi <- function(file_list,
 
         # For CSV files just do a simple import
         if (extension %in% c("csv", "txt")){
-            message(" > Importing: ", infile)
+            print_step("MAJOR", "Importing: [infile]", infile = infile)
 
             result_list[[filename]] <- suppressMessages(
                 import_data(infile    = infile,
@@ -300,17 +304,17 @@ import_multi <- function(file_list,
         else if (extension == "xlsx"){
             # If all sheets should be imported from a single file
             if (sheet == "all"){
-                message(" > Loading file: ", infile)
+                print_step("MAJOR", "Loading file: [infile]", infile = infile)
 
                 # Load file as a workbook first to be able to extract the sheet names
                 wb <- openxlsx2::wb_load(infile)
                 sheet_names <- openxlsx2::wb_get_sheet_names(wb)
 
-                message(" > Importing:")
+                print_step("MAJOR", "Importing:")
 
                 # Import all sheets one after another by name
                 for (sheet_name in sheet_names){
-                    message("   + Sheet: ", sheet_name)
+                    print_step("MINOR", "Sheet: [sheet]", sheet = sheet_name)
 
                     result_list[[paste0(filename, "_", sheet_name)]] <-
                         suppressMessages(
@@ -332,8 +336,7 @@ import_multi <- function(file_list,
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'import_multi' execution time: ", end_time, " seconds\n")
+    print_closing(10)
 
     invisible(result_list)
 }
@@ -365,7 +368,7 @@ export_data <- function(data_frame,
                         separator = ";",
                         decimal   = ",",
                         var_names = TRUE){
-    start_time <- Sys.time()
+    print_start_message(suppress = TRUE)
 
     ###########################################################################
     # Error handling
@@ -377,15 +380,15 @@ export_data <- function(data_frame,
 
     # Abort on vector provided as path
     if (!is.character(outfile) || length(outfile) != 1){
-        message(" X ERROR: <Outfile> must be a single character. Export will be aborted.")
+        print_message("ERROR", "<Outfile> must be a single character. Export will be aborted.")
 
         return(invisible(data_frame))
     }
 
     # Abort on invalid path
     if (!dir.exists(dirname(outfile)) || dirname(outfile) == "."){
-        message(" X ERROR: Path does not exist: ", outfile, "\n",
-                "          Export will be aborted.")
+        print_message("ERROR", c("Path does not exist: [outfile]",
+								 "Export will be aborted."), outfile = outfile)
 
         return(invisible(data_frame))
     }
@@ -397,14 +400,14 @@ export_data <- function(data_frame,
     extension <- tolower(tools::file_ext(outfile))
 
     if (extension == ""){
-        message(" ! WARNING: No file extension provided in <outfile>. 'csv' will be used.")
+        print_message("WARNING", "No file extension provided in <outfile>. 'csv' will be used.")
 
         outfile   <- paste0(outfile, ".csv")
         extension <- "csv"
     }
 
     if (!extension %in% c("csv", "txt", "xlsx")){
-        message(" ! WARNING: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.")
+        print_message("WARNING", "Only 'csv', 'txt' or 'xlsx' are allowed as file extensions in the <outfile>. 'csv' will be used.")
 
         outfile <- sub(extension, "csv", outfile, ignore.case = TRUE)
         extension <- "csv"
@@ -417,13 +420,13 @@ export_data <- function(data_frame,
 
         # Separator may only consist of one character
         if (!is.character(separator)){
-            message(" ! WARNING: <Separator> must be provided as character. ';' will be used.")
+            print_message("WARNING", "<Separator> must be provided as character. ';' will be used.")
 
             separator <- ";"
         }
 
         if (length(separator) != 1L || nchar(separator) != 1L){
-            message(" ! WARNING: <Separator> may only be one character. ';' will be used.")
+            print_message("WARNING", "<Separator> may only be one character. ';' will be used.")
 
             separator <- ";"
         }
@@ -434,20 +437,20 @@ export_data <- function(data_frame,
 
         # Decimal may only consist of one character
         if (!is.character(decimal)){
-            message(" ! WARNING: <Decimal> must be provided as character. ',' will be used.")
+            print_message("WARNING", "<Decimal> must be provided as character. ',' will be used.")
 
             decimal <- ","
         }
 
         if (length(decimal) != 1L || nchar(decimal) != 1L){
-            message(" ! WARNING: <Decimal> may only be one character. ',' will be used.")
+            print_message("WARNING", "<Decimal> may only be one character. ',' will be used.")
 
             decimal <- ","
         }
 
         # Decimal may not be equal to separator
         if (separator == decimal){
-            message(" ! WARNING: <Decimal> may not be the same character as the <separator>. ',' will be used.")
+            print_message("WARNING", "<Decimal> may not be the same character as the <separator>. ',' will be used.")
 
             decimal <- ","
         }
@@ -477,8 +480,12 @@ export_data <- function(data_frame,
         wb$save(file = outfile, overwrite = TRUE)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'export_data' execution time: ", end_time, " seconds\n")
+    if (extension == "xlsx"){
+        print_closing(5)
+    }
+    else{
+        print_closing()
+    }
 
     invisible(data_frame)
 }
@@ -526,7 +533,7 @@ export_multi <- function(file_list,
                          separator   = NULL,
                          decimal     = ",",
                          var_names   = TRUE){
-    start_time <- Sys.time()
+    print_start_message()
 
     if (into_sheets && is.null(separator)){
         wb <- openxlsx2::wb_workbook()
@@ -537,7 +544,7 @@ export_multi <- function(file_list,
         data_frame <- file_list[[i]]
         filename   <- names(file_list)[[i]]
 
-        message(" > Exporting: ", filename)
+        print_step("MAJOR", "Exporting: [filename]", filename = filename)
 
         # For CSV files just do a simple export
         if (!is.null(separator)){
@@ -545,7 +552,7 @@ export_multi <- function(file_list,
 
             if (!extension %in% c("csv", "txt")){
                 if (!extension == ""){
-                    message(" ! WARNING: Only 'csv', 'txt' or 'xlsx' are allowed as file extensions. 'csv' will be used.")
+                    print_message("WARNING", "Only 'csv', 'txt' or 'xlsx' are allowed as file extensions. 'csv' will be used.")
                 }
 
                 filename <- paste0(filename, ".csv")
@@ -589,8 +596,7 @@ export_multi <- function(file_list,
         wb$save(file = paste0(out_path, "/", filename, ".xlsx"), overwrite = TRUE)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'export_multi' execution time: ", end_time, " seconds\n")
+    print_closing(10)
 
     invisible(file_list)
 }

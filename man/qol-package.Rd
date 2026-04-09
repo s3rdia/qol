@@ -23,7 +23,7 @@ maximum speed and on the wonderful openxlsx2 package for maximum style.
 }
 \section{Imports}{
 
-data.table, collapse, openxlsx2
+data.table, collapse, openxlsx2, fst
 }
 
 \section{Minimal R Version}{
@@ -50,7 +50,7 @@ Transposing: \code{\link[=transpose_plus]{transpose_plus()}}
 
 Sorting: \code{\link[=sort_plus]{sort_plus()}}
 
-If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}}
+If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}}, \code{\link[=do_if]{do_if()}}, \code{\link[=else_do]{else_do()}}, \code{\link[=end_do]{end_do()}}, \code{\link[=end_all_do]{end_all_do()}}
 
 Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}
 
@@ -62,13 +62,19 @@ Character Manipulation: \code{\link[=concat]{concat()}}, \code{\link[=sub_string
 
 Generate dummy data: \code{\link[=dummy_data]{dummy_data()}}
 
-Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}}
+Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_char]{dots_to_char()}}, \code{\link[=get_origin_as_char]{get_origin_as_char()}} \code{\link[=convert_numeric]{convert_numeric()}}, \code{\link[=convert_factor]{convert_factor()}},
+\code{\link[=hex_to_256]{hex_to_256()}}, \code{\link[=hex_to_ansi]{hex_to_ansi()}}
 
 Macros: \code{\link[=macro]{macro()}}, \code{\link[=apply_macro]{apply_macro()}}
 
-Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}
+Saving And Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=save_file]{save_file()}}, \code{\link[=save_file_multi]{save_file_multi()}}, \code{\link[=load_file]{load_file()}}, \code{\link[=load_file_multi]{load_file_multi()}}
 
 Reporting: \code{\link[=content_report]{content_report()}}
+
+Messages: \code{\link[=print_message]{print_message()}}, \code{\link[=print_headline]{print_headline()}}, \code{\link[=print_start_message]{print_start_message()}}, \code{\link[=print_closing]{print_closing()}}, \code{\link[=print_step]{print_step()}},
+\code{\link[=get_message_stack]{get_message_stack()}}, \code{\link[=set_no_print]{set_no_print()}}, \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}, \code{\link[=convert_square_brackets]{convert_square_brackets()}}
+
+Calculation: \code{\link[=compute]{compute()}}, \code{\link[=row_calculation]{row_calculation()}}
 
 Small helpers: \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}},
 \code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=get_integer_length]{get_integer_length()}}, \code{\link[=round_values]{round_values()}}
@@ -81,9 +87,9 @@ Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\li
 \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=get_variable_labels]{get_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}, \code{\link[=get_stat_labels]{get_stat_labels()}},
 \code{\link[=set_print]{set_print()}}, \code{\link[=get_print]{get_print()}}, \code{\link[=set_monitor]{set_monitor()}}, \code{\link[=get_monitor]{get_monitor()}}, \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=get_na.rm]{get_na.rm()}},
 \code{\link[=set_output]{set_output()}}, \code{\link[=get_output]{get_output()}}, \code{\link[=set_titles]{set_titles()}}, \code{\link[=get_titles]{get_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=get_footnotes]{get_footnotes()}},
-\code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=get_print_miss]{get_print_miss()}}
+\code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=get_print_miss]{get_print_miss()}}, \code{\link[=set_threads]{set_threads()}}, \code{\link[=get_threads]{get_threads()}}
 
-Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=free_memory]{free_memory()}}
+Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=free_memory]{free_memory()}}, \code{\link[=qol_news]{qol_news()}}, \code{\link[=qol_chat]{qol_chat()}}
 }
 
 \section{Snippets}{

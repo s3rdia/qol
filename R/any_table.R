@@ -342,7 +342,8 @@ any_table <- function(data_frame,
                       monitor        = .qol_options[["monitor"]]){
 
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
+	print_step("GREY", "Error handling")
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
@@ -378,21 +379,21 @@ any_table <- function(data_frame,
     row_vars <- unlist_variables(rows)
 
     if (is.null(row_vars)){
-        message(" X ERROR: <Rows> variables must be provided in quotation marks. Tabulation will be aborted.")
+        print_message("ERROR", "<Rows> variables must be provided in quotation marks. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     row_vars <- data_frame |> part_of_df(row_vars, check_only = TRUE)
 
     if (is.list(row_vars)){
-        message(" X ERROR: The provided <rows> variable '", paste(row_vars[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Tabulation will be aborted.")
+        print_message("ERROR", c("The provided <rows> variable[?s] '[vars]' [?is/are] not part of",
+								 "the data frame. Tabulation will be aborted."), vars = row_vars[[1]])
         return(invisible(NULL))
     }
 
     if (length(rows) <= 1){
         if (length(rows) == 0 || rows == ""){
-            message(" X ERROR: No valid <rows> variables provided. Tabulation will be aborted.")
+            print_message("ERROR", "No valid <rows> variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -408,15 +409,15 @@ any_table <- function(data_frame,
     col_vars <- unlist_variables(columns)
 
     if (is.null(col_vars)){
-        message(" X ERROR: <Columns> variables must be provided in quotation marks. Tabulation will be aborted.")
+        print_message("ERROR", "<Columns> variables must be provided in quotation marks. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
     col_vars <- data_frame |> part_of_df(col_vars, check_only = TRUE)
 
     if (is.list(col_vars)){
-        message(" X ERROR: The provided <columns> variable '", paste(col_vars[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Tabulation will be aborted.")
+        print_message("ERROR", c("The provided <columns> variable[?s] '[vars]' [?is/are] not part of",
+								 "the data frame. Tabulation will be aborted."), vars = col_vars[[1]])
         return(invisible(NULL))
     }
 
@@ -424,8 +425,8 @@ any_table <- function(data_frame,
     col_vars <- resolve_intersection(col_vars, row_vars, check_only = TRUE)
 
     if (is.list(col_vars)){
-        message(" X ERROR: The provided <columns> variable '", paste(col_vars[[1]], collapse = ", "), "' is also part of\n",
-                "          the <rows> variables. Tabulation will be aborted.")
+        print_message("ERROR", c("The provided <columns> variable[?s] '[vars]' [?is/are] also part of",
+								 "the <rows> variables. Tabulation will be aborted."), vars = col_vars[[1]])
         return(invisible(NULL))
     }
 
@@ -455,14 +456,14 @@ any_table <- function(data_frame,
     by <- resolve_intersection(by, variables, check_only = TRUE)
 
     if (is.list(by)){
-        message(" X ERROR: The provided <by> variable '", paste(by[[1]], collapse = ", "), "' is also part of\n",
-                "          the <rows> or <columns> variables which is not allowed. Tabulation will be aborted.")
+        print_message("ERROR", c("The provided <by> variable[?s] '[vars]' [?is/are] also part of",
+								 "the <rows> or <columns> variables, which is not allowed. Tabulation will be aborted."), vars = by[[1]])
         return(invisible(NULL))
     }
 
     if (length(by) == 1){
         if (by == ""){
-            message(" X ERROR: No valid <by> variables provided. Tabulation will be aborted.")
+            print_message("ERROR", "No valid <by> variables provided. Tabulation will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -496,8 +497,8 @@ any_table <- function(data_frame,
     values <- resolve_intersection(values, variables, check_only = TRUE)
 
     if (is.list(values)){
-        message(" x ERROR: The provided <rows>/<columns> variable '", paste(values[[1]], collapse = ", "), "' is also part of\n",
-                "          the <values> variables. Tabulation will be aborted.")
+        print_message("ERROR", c("The provided <rows>/<columns> variable[?s] '[vars]' [?is/are] also part of",
+								 "the <values> variables. Tabulation will be aborted."), vars = values[[1]])
         return(invisible(NULL))
     }
 
@@ -505,7 +506,7 @@ any_table <- function(data_frame,
     values <- data_frame |> part_of_df(values)
 
     if (length(values) == 0){
-        message(" X ERROR: No valid <values> variables provided. Tabulation will be aborted.")
+        print_message("ERROR", "No valid <values> variables provided. Tabulation will be aborted.")
         return(invisible(NULL))
     }
 
@@ -522,7 +523,7 @@ any_table <- function(data_frame,
 
     # Check for invalid output option
     if (!tolower(output) %in% c("excel", "excel_nostyle")){
-        message(" ! WARNING: <Output> format '", output, "' not available. Using 'excel' instead.")
+        print_message("WARNING", "<Output> format '[output]' not available. Using 'excel' instead.", output = output)
 
         output <- "excel"
     }
@@ -536,8 +537,8 @@ any_table <- function(data_frame,
 
     # Correct ordering option if not set right
     if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved")){
-        message(" ! WARNING: <Order by> option '", order_by, "' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'\n",
-                "            and 'interleaved' are available. <Order by> will be set to 'stats'.")
+        print_message("WARNING", c("<Order by> option '[order_by]' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'",
+								   "and 'interleaved' are available. <Order by> will be set to 'stats'."), order_by = order_by)
         order_by <- "stats"
     }
 
@@ -594,9 +595,9 @@ any_table <- function(data_frame,
 
         # If one of the value variables hasn't got any of the above extension, add extensions automatically as provided
         if (!all(grepl(pattern, values))){
-            message(" ! WARNING: All <values> variables need to have the <statistic> extension in their variable name.\n",
-                    "            You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.\n",
-                    "            This can lead to a wrong table structure, better add extensions by yourself.")
+            print_message("WARNING", c("All <values> variables need to have the <statistic> extension in their variable name.",
+									   "You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.",
+									   "This can lead to a wrong table structure, better add extensions by yourself."))
 
             data_frame <- data_frame |> add_extension(length(c(by, variables, "TYPE")) + 1,
                                                       rep(statistics, length(values))[1:length(values)])
@@ -644,10 +645,10 @@ any_table <- function(data_frame,
                                                        "pct_group", "pct_total", paste0("p", 1:100))]
 
         if (length(invalid_stats) > 0){
-            message(" ! WARNING: <Statistic> '", invalid_stats, "' is invalid and will be omitted.")
+            print_message("WARNING", "<Statistic> '[invalid]' [?is/are] invalid and will be omitted.", invalid = invalid_stats)
 
             if (length(valid_stats) == 0){
-                message(" ! WARNING: No valid <statistic> selected. 'sum' will be used.")
+                print_message("WARNING", "No valid <statistic> selected. 'sum' will be used.")
 
                 statistics <- "sum"
             }
@@ -693,8 +694,8 @@ any_table <- function(data_frame,
             }
 
             if (length(invalid_pct) > 0){
-                message(" ! WARNING: The variable '", paste(invalid_pct, collapse = ", "), "' provided as <pct_group> is not part\n",
-                        "            of the <rows> and <columns> variables. The variable will be omitted.")
+                print_message("WARNING", c("The variable[?s] '[invalid]' provided as <pct_group> [?is/are] not part",
+										   "of the <rows> and <columns> variables. The variable[?s] will be omitted."), invalid = invalid_pct)
 
             }
 
@@ -737,7 +738,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
     #-------------------------------------------------------------------------#
-    message("\n > Computing stats")
+    print_step("MAJOR", "Computing stats")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Some preparations beforehand
@@ -791,7 +792,7 @@ any_table <- function(data_frame,
     }
 
     if (is.null(any_tab)){
-        message(" X ERROR: Table could not be computed. Execution will be aborted.")
+        print_message("ERROR", "Table could not be computed. Execution will be aborted.")
         return(invisible(NULL))
     }
 
@@ -799,7 +800,7 @@ any_table <- function(data_frame,
     # table header later, the underscore is the sign by which the column names are split.
     # Having additional underscores would mess up this part and lead to errors.
     if (any(grepl("_", unlist(any_tab[col_vars])))){
-        message(" X ERROR: No underscores allowed in <columns> variable values. Execution will be aborted.")
+        print_message("ERROR", "No underscores allowed in <columns> variable values. Execution will be aborted.")
         return(invisible(NULL))
     }
 
@@ -1140,17 +1141,17 @@ any_table <- function(data_frame,
 
                     # Additional warnings for missing variables
                     if (!eval_vars[1] %in% names(data_frame)){
-                        message(" ! WARNING: Variable '", eval_vars[1], "' not found in the data frame.")
+                        print_message("WARNING", "Variable '[eval]' not found in the data frame.", eval = eval_vars[1])
                     }
                     if (!eval_vars[2] %in% names(data_frame)){
-                        message(" ! WARNING: Variable '", eval_vars[2], "' not found in the data frame.")
+                        print_message("WARNING", "Variable '[eval]' not found in the data frame.", eval = eval_vars[2])
                     }
                 }
             }
             else{
                 if (!name %in% names(any_tab)){
-                    message(" ! WARNING: Variable '", name, "' not found in the data frame.\n",
-                            "            Percentages can't be computed.")
+                    print_message("WARNING", c("Variable '[name]' not found in the data frame.",
+											   "Percentages can't be computed."), name = name)
                     next
                 }
 
@@ -1169,8 +1170,8 @@ any_table <- function(data_frame,
                     rename_pattern("_sum", "_sum_super")
 
                 if (collapse::fnrow(super_tab) == 0){
-                    message(" ! WARNING: Subsetting variable '", name, "' by '", value, "' results in an empty data frame.\n",
-                            "            Percentages can't be computed.")
+                    print_message("WARNING", c("Subsetting variable '[name]' by '[value]' results in an empty data frame.",
+											   "Percentages can't be computed."), name = name, value = value)
                     next
                 }
 
@@ -1203,14 +1204,14 @@ any_table <- function(data_frame,
     # Abort if no values could be computed. This can especially happen during the various
     # percentage calculations if e.g. a wrong variable or expression was provided.
     if (length(by) == 0 && length(c(row_vars, col_vars, "TYPE", "TYPE_NR", "DEPTH")) == collapse::fncol(any_tab)){
-        message(" X ERROR: After calculating the results, there are no valid values.\n",
-                "          Tabulation will be aborted.")
+        print_message("ERROR", c("After calculating the results, there are no valid values.",
+								 "Tabulation will be aborted."))
         return(invisible(NULL))
     }
 
     if (length(by) > 0 && length(c(row_vars, col_vars, "by_vars", "TYPE", "TYPE_NR")) == collapse::fncol(any_tab)){
-        message(" X ERROR: After calculating the results, there are no valid values.\n",
-                "          Tabulation will be aborted.")
+        print_message("ERROR", c("After calculating the results, there are no valid values.",
+								 "Tabulation will be aborted."))
         return(invisible(NULL))
     }
 
@@ -1275,7 +1276,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Transform table", "Transform")
     #-------------------------------------------------------------------------#
-    message("\n > Rearranging data for output table")
+    print_step("MAJOR", "Rearranging data for output table")
 
     part_combi_list       <- list()
     header_combi_list     <- list()
@@ -1362,8 +1363,8 @@ any_table <- function(data_frame,
             # observations at this point, which leads to an error down below. If this
             # happens, abort.
             if (collapse::fnrow(combi_df) == 0){
-                message(" X ERROR: The variable combination of '", subset_type, "' is not part of the provided data frame.\n",
-                        "          Tabulation will be aborted.")
+                print_message("ERROR", c("The variable combination of '[subset_type]' is not part of the provided data frame.",
+										 "Tabulation will be aborted."), subset_type = subset_type)
                 return(invisible(NULL))
             }
 
@@ -1496,8 +1497,9 @@ any_table <- function(data_frame,
                                         setdiff(names(combi_df), c(new_row_names, "row.label", "BY", "by_vars")))
 
                 if (length(duplicates) > 0){
-                    message(" X ERROR: Duplicate <columns> names found: ", paste(duplicates, collapse = ", "), ".\n",
-                            "          If you are working with original values, consider making them unique by using formats.")
+                    print_message("ERROR", c("Duplicate <columns> names found: [dup].",
+											 "If you are working with original values, consider making them unique by using formats."),
+								  dup = paste(duplicates, collapse = ", "))
                     return(invisible(NULL))
                 }
 
@@ -1647,7 +1649,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
-    message(" > Formatting tables")
+    print_step("MAJOR", "Formatting tables")
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
@@ -1707,7 +1709,7 @@ any_table <- function(data_frame,
         else{
             # If save path doesn't exist, just open workbook
             if (!file.exists(style[["save_path"]])){
-                message(" ! WARNING: Path does not exist: ", style[["save_path"]])
+                print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
 
                 if (interactive()){
                     wb$open()
@@ -1720,8 +1722,7 @@ any_table <- function(data_frame,
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'any_table' execution time: ", end_time, " seconds\n")
+    print_closing(10)
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -1793,6 +1794,7 @@ format_any_excel <- function(wb,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Setup header
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Build header") }
 
     # Cut down percentage names to just "pct"
     names(any_tab) <- gsub("pct_group_", "pct group ", names(any_tab))
@@ -1857,6 +1859,7 @@ format_any_excel <- function(wb,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Add table data and format according to style options
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Insert data") }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
@@ -1878,11 +1881,12 @@ format_any_excel <- function(wb,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Table styling
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Format titles and footnotes") }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
-    #Format titles and footnotes if there are any
+    # Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, any_ranges, style, output)
 
@@ -1890,6 +1894,8 @@ format_any_excel <- function(wb,
     # option this whole part gets omitted to get a very quick unformatted
     # excel output.
     if (output == "excel"){
+        if (is.null(by_info)){ print_step("MINOR", "Merge headers") }
+
         # Merge top left box
         wb$merge_cells(dims = any_ranges[["box_range"]])
 
@@ -1910,10 +1916,14 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "Add cell styles") }
+
         wb <- wb |> handle_cell_styles(any_ranges, style)
 
         # Format subheaders, if present
         if (style[["by_as_subheaders"]]){
+            if (is.null(by_info)){ print_step("MINOR", "Add subheaders") }
+
             # Get subheader ranges and the ones of the empty column header
             subheader_range     <- any_ranges[["subheader_range"]]
             pre_subheader_range <- any_ranges[["pre_subheader_range"]]
@@ -1934,6 +1944,7 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "Format numbers") }
 
         # Set up inner table number formats
         col_index <- 1
@@ -1952,6 +1963,7 @@ format_any_excel <- function(wb,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
             #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "Add heatmap") }
 
             wb$add_conditional_formatting(dims  = any_ranges[["table_range"]],
                                           style = c(style[["heatmap_low_color"]],
@@ -1977,6 +1989,7 @@ format_any_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "Adjust row heights and column widths") }
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
                                               collapse::fncol(any_tab),
@@ -2076,7 +2089,7 @@ set_col_variable_labels <- function(column_header, var_labels){
 
     # If header only consists of one row it gets converted to a vector when using gsub above.
     # In case this happens, convert the vector back into a one row data frame.
-    if (!is.matrix(column_header)) {
+    if (!is.matrix(column_header)){
         column_header <- data.table::as.data.table(as.list(column_header), stringsAsFactors = FALSE)
     }
 
@@ -2157,7 +2170,7 @@ build_multi_header <- function(var_names,
     header_matrix <- header_matrix |> set_col_variable_labels(var_labels)
 
     # Make sure header_matrix is treated as a matrix, even though there can be only one row
-    if (is.null(dim(header_matrix))) {
+    if (is.null(dim(header_matrix))){
         dim(header_matrix) <- c(1, length(header_matrix))
     }
 
@@ -2307,7 +2320,7 @@ format_any_by_excel <- function(wb,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
             #-----------------------------------------------------------------#
-            message("   + ", paste0(by_var, " = ", value))
+            print_step("MINOR", "[by] = [value]", by = by_var, value = value)
 
             # Put additional by info together with the information which by variable
             # and which value is currently filtered.
@@ -2653,27 +2666,27 @@ combine_into_workbook <- function(...,
     #-------------------------------------------------------------------------#
 
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     # Translate ... into a list if possible
     tables <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
-    }, error = function(e) {
+    }, error = function(e){
         # Evaluation failed
         NULL
     })
 
     if (is.null(tables)){
-        message("X ERROR: Unknown object found. Provide <any_table> results.\n",
-                "         Combining tables to workbook will be aborted.")
+        print_message("ERROR", c("Unknown object found. Provide <any_table> results.",
+								 "Combining tables to workbook will be aborted."))
         return(invisible(NULL))
     }
 
     for (table in tables){
         if (!is.list(table) || !all(c("table", "workbook", "meta") %in% names(table))){
-            message("X ERROR: Unknown object found. Provide <any_table> results.\n",
-                    "         Combining tables to workbook will be aborted.")
+            print_message("ERROR", c("Unknown object found. Provide <any_table> results.",
+									 "Combining tables to workbook will be aborted."))
             return(invisible(NULL))
         }
     }
@@ -2683,13 +2696,13 @@ combine_into_workbook <- function(...,
 
     i <- 1
 
-    message(" > Formatting tables")
+    print_step("MAJOR", "Formatting tables")
 
     for (table in tables){
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next(paste0("Format ", tab_names[i]), "Format tables")
         #---------------------------------------------------------------------#
-        message(paste0("   + ", tab_names[i]))
+        print_step("MINOR", "{tabs}", tabs = tab_names[i])
 
         meta <- table[["meta"]]
 
@@ -2734,7 +2747,7 @@ combine_into_workbook <- function(...,
             }
         }
         else if (!dir.exists(dirname(file)) || dirname(file) == "."){
-            message(" ! WARNING: Directory '", dirname(file), "' does not exist. File won't be saved.")
+            print_message("WARNING", "Directory '[file_name]' does not exist. File won't be saved.", file_name = dirname(file))
 
             if (interactive()){
                 wb$open()
@@ -2745,8 +2758,7 @@ combine_into_workbook <- function(...,
         }
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'combine_into_workbook' execution time: ", end_time, " seconds\n")
+    print_closing(10)
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()

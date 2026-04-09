@@ -77,7 +77,7 @@ compute <- function(data_frame,
                     ...,
                     monitor = .qol_options[["monitor"]]){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Get do_if() condition", "do_if()")
@@ -86,7 +86,7 @@ compute <- function(data_frame,
     assignments <- as.list(substitute(list(...)))[-1]
 
     if (length(assignments) == 0){
-        message(" X ERROR: No assignments. Evaluation will be aborted.")
+        print_message("ERROR", "No assignments. Evaluation will be aborted.")
         return(invisible(data_frame))
     }
 
@@ -125,12 +125,12 @@ compute <- function(data_frame,
     list_entry_lengths <- lengths(content_list)
 
     if (length(collapse::funique(list_entry_lengths)) > 1){
-        message(" X ERROR: Passed vectors are of unequal lengths. All vectors must have an\n",
-                "          equal number of elements. Evaluation will be aborted.")
+        print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
+								 "equal number of elements. Evaluation will be aborted."))
         return(invisible(data_frame))
     }
 
-    message("\n > Computing stats")
+    print_step("MAJOR", "Computing stats")
 
     # Go trough each assignment and collect the translated calls
     call_list <- list()
@@ -146,7 +146,7 @@ compute <- function(data_frame,
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Non vector")
             #-------------------------------------------------------------------------#
-            message("   + ", variable, " = ", calc_text)
+            print_step("MINOR", "[var] = [calc]", var = variable, calc = calc_text)
 
             # This step is important to make this function work in a nested situation.
             # Normally variable would be the name of what was last passed as a parameter.
@@ -265,7 +265,7 @@ compute <- function(data_frame,
                 expression <- get_custom_functions(value_var, parent_env)
                 value      <- eval(expression, envir = data_frame)
 
-                message("   + ", target_variable, " = ", deparse(value_var))
+                print_step("MINOR", "{target} = [value]", target = target_variable, value = deparse(value_var))
 
                 # Look up, if single value was passed or vector of values. Only if a
                 # vector of values is passed, which has fewer observations than the
@@ -350,14 +350,13 @@ compute <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Add variables", "Vector based")
     #-------------------------------------------------------------------------#
-    message("\n > Add variables to data frame")
+    print_step("MAJOR", "Add variables to data frame")
 
     if (length(call_list) > 0){
         data_frame <- collapse::ftransform(data_frame, call_list)
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("- - - 'compute' execution time: ", end_time, " seconds")
+    print_closing()
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -443,8 +442,10 @@ check_types <- function(data_frame, variable, current){
         return(FALSE)
     }
 
-    message(" ! WARNING: Type mismatch: Current value ", current[1], " is of type ", type_c, " but should be of\n",
-            "            type ", type_d, ". ", variable, " will be converted to character.")
+    print_message("WARNING", c("Type mismatch: Current value [current[1]] is of type [type_c] but should be of",
+							   "type [type_d]. [variable] will be converted to character."),
+                  current = current[1], type_c = type_c, type_d = type_d, variable = variable,
+				  always_print = TRUE)
 
     TRUE
 }

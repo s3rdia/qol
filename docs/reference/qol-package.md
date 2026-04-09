@@ -19,7 +19,7 @@ maximum style.
 
 ## Imports
 
-data.table, collapse, openxlsx2
+data.table, collapse, openxlsx2, fst
 
 ## Minimal R Version
 
@@ -69,7 +69,11 @@ If-statement:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-[`where.()`](https://s3rdia.github.io/qol/reference/where..md)
+[`where.()`](https://s3rdia.github.io/qol/reference/where..md),
+[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md),
+[`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+[`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+[`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md)
 
 Monitoring:
 [`monitor_start()`](https://s3rdia.github.io/qol/reference/monitor.md),
@@ -103,17 +107,38 @@ Conversion:
 [`dots_to_char()`](https://s3rdia.github.io/qol/reference/convert_arguments.md),
 [`get_origin_as_char()`](https://s3rdia.github.io/qol/reference/convert_arguments.md)
 [`convert_numeric()`](https://s3rdia.github.io/qol/reference/convert_variables.md),
-[`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md)
+[`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md),
+[`hex_to_256()`](https://s3rdia.github.io/qol/reference/hex_ansi.md),
+[`hex_to_ansi()`](https://s3rdia.github.io/qol/reference/hex_ansi.md)
 
 Macros: [`macro()`](https://s3rdia.github.io/qol/reference/macro.md),
 [`apply_macro()`](https://s3rdia.github.io/qol/reference/macro.md)
 
-Loading:
+Saving And Loading:
 [`libname()`](https://s3rdia.github.io/qol/reference/libname.md),
-[`set()`](https://s3rdia.github.io/qol/reference/set.md)
+[`set()`](https://s3rdia.github.io/qol/reference/set.md),
+[`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+[`save_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md),
+[`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+[`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md)
 
 Reporting:
 [`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md)
+
+Messages:
+[`print_message()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`print_headline()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`print_step()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`get_message_stack()`](https://s3rdia.github.io/qol/reference/message_helpers.md),
+[`set_no_print()`](https://s3rdia.github.io/qol/reference/message_helpers.md),
+[`print_stack_as_messages()`](https://s3rdia.github.io/qol/reference/message_helpers.md),
+[`convert_square_brackets()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
+
+Calculation:
+[`compute()`](https://s3rdia.github.io/qol/reference/compute.md),
+[`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md)
 
 Small helpers:
 [`setcolorder_by_pattern()`](https://s3rdia.github.io/qol/reference/setcolorder_by_pattern.md),
@@ -154,12 +179,16 @@ Global options:
 [`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`get_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
-[`get_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+[`get_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
 
 Other:
 [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md),
 [`build_rstheme()`](https://s3rdia.github.io/qol/reference/build_rstheme.md),
-[`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md)
+[`free_memory()`](https://s3rdia.github.io/qol/reference/free_memory.md),
+[`qol_news()`](https://s3rdia.github.io/qol/reference/qol_news.md),
+[`qol_chat()`](https://s3rdia.github.io/qol/reference/qol_chat.md)
 
 ## Snippets
 

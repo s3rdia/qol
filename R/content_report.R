@@ -37,7 +37,7 @@ content_report <- function(data_frame,
                            output  = "console",
                            monitor = FALSE){
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Global information", "Global information")
@@ -47,7 +47,7 @@ content_report <- function(data_frame,
     # Get global information
     ###########################################################################
 
-    message(" > Collecting global information")
+    print_step("MAJOR", "Collecting global information")
 
     # Get the variable types as a vector
     column_types <- collapse::vtypes(data_frame)
@@ -75,7 +75,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Type", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message(" > Collecting per variable information")
+    print_step("MAJOR", "Collecting per variable information")
 
     variable_report <- data.table::data.table(
         pos = 1:collapse::fncol(data_frame),
@@ -87,7 +87,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Unique values", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message("   + Number of unique values")
+    print_step("MINOR", "Number of unique values")
 
     variable_report[["unique"]] <- sapply(data_frame, data.table::uniqueN)
 
@@ -95,7 +95,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Missing values", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message("   + Number of missing values")
+    print_step("MINOR", "Number of missing values")
 
     variable_report[["na_count"]] <- sapply(data_frame, function(variable) collapse::fsum(is.na(variable)))
     variable_report[["na_pct"]]   <- sapply(data_frame, function(variable) round_values(collapse::fsum(is.na(variable))/length(variable) * 100, 1))
@@ -104,7 +104,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Longest value", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message("   + Longest value")
+    print_step("MINOR", "Longest value")
 
     variable_report[["longest"]] <- sapply(data_frame, get_max_length)
 
@@ -112,7 +112,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Min/Max value", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message("   + Min and max value")
+    print_step("MINOR", "Min and max value")
 
     variable_report[["min_val"]] <- sapply(data_frame, format_value, type_func = collapse::fmin, type = "min")
     variable_report[["max_val"]] <- sapply(data_frame, format_value, type_func = max, type = "max")
@@ -121,7 +121,7 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Top value", "Per variable information")
     #-------------------------------------------------------------------------#
 
-    message("   + Top value")
+    print_step("MINOR", "Top value")
 
     variable_report[["top_freq"]] <- sapply(data_frame, get_top_value)
 
@@ -129,49 +129,62 @@ content_report <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Create report", "Create report")
     #-------------------------------------------------------------------------#
 
-    # Concatenate global information into one character
-    global_text <- c(strrep("#", 100),
-                     "                                     DATA FRAME CONTENT REPORT",
-                     strrep("#", 100),
-                     "",
-                     sprintf("%-15s: %s", "Data frame",     global_info[["name"]]),
-                     sprintf("%-15s: %s", "Type",           global_info[["type"]]),
-                     sprintf("%-15s: %d", "Observations",   global_info[["n_obs"]]),
-                     sprintf("%-15s: %d", "Variables",      global_info[["n_vars"]]),
-                     sprintf("%-15s: %d", "Cells",          global_info[["total_cells"]]),
-                     sprintf("%-15s: %s", "Memory Usage",   global_info[["memory_usage"]]),
-                     sprintf("%-15s: %d", "Duplicate Vars", global_info[["duplicate_vars"]]),
-                     sprintf("%-15s: %d", "Duplicate Rows", global_info[["duplicate_rows"]]),
+    if (!is_no_print_active()){
+        # Concatenate global information into one character
+        headline  <- "--- DATA FRAME CONTENT REPORT "
+        sub_head1 <- "... Variable Type Counts ....."
+        sub_head2 <- "... Variable Details ........."
 
-                    "\n--- Variable Type Counts ---\n",
+        console_width <- getOption("width") - nchar(headline)
 
-                    utils::capture.output(global_info[["type_counts"]]),
+        global_text <- c("",
+                         paste0(headline, strrep("-", console_width)),
+                         "",
+                         sprintf("%-15s: %s", "Data frame",     global_info[["name"]]),
+                         sprintf("%-15s: %s", "Type",           global_info[["type"]]),
+                         sprintf("%-15s: %d", "Observations",   global_info[["n_obs"]]),
+                         sprintf("%-15s: %d", "Variables",      global_info[["n_vars"]]),
+                         sprintf("%-15s: %d", "Cells",          global_info[["total_cells"]]),
+                         sprintf("%-15s: %s", "Memory Usage",   global_info[["memory_usage"]]),
+                         sprintf("%-15s: %d", "Duplicate Vars", global_info[["duplicate_vars"]]),
+                         sprintf("%-15s: %d", "Duplicate Rows", global_info[["duplicate_rows"]]),
 
-                    "\n--- Variable Details ---\n\n")
-    old <- options(max.print = .Machine$integer.max)
-    on.exit(options(old), add = TRUE)
+                         "",
+                         paste0(sub_head1, strrep(".", console_width)),
+                         "",
 
-    # Print global information and data frame with per variable information
-    if (output %in% c("console")){
-        cat(paste(global_text, collapse = "\n"))
-        print.data.frame(variable_report)
-    }
-    else if (output == "text"){
-        # Capture texts to print in variables
-        global_text   <- utils::capture.output(cat(paste(global_text, collapse = "\n")))
-        variable_text <- utils::capture.output(print.data.frame(variable_report))
+                         utils::capture.output(global_info[["type_counts"]]),
 
-        # Write texts to file and open editor
-        temp_file <- tempfile(fileext = ".txt")
-        writeLines(c(global_text, variable_text), temp_file, sep = "\n")
+                         "",
+                         paste0(sub_head2, strrep(".", console_width)),
+                         "\n")
 
-        if (interactive()){
-            file.show(temp_file)
+        old <- options(max.print = .Machine$integer.max)
+        on.exit(options(old), add = TRUE)
+
+        # Print global information and data frame with per variable information
+        if (output %in% c("console")){
+            print_closing(10)
+
+            cat(paste(global_text, collapse = "\n"))
+            print.data.frame(variable_report)
+        }
+        else if (output == "text"){
+            # Capture texts to print in variables
+            global_text   <- utils::capture.output(cat(paste(global_text, collapse = "\n")))
+            variable_text <- utils::capture.output(print.data.frame(variable_report))
+
+            # Write texts to file and open editor
+            temp_file <- tempfile(fileext = ".txt")
+            writeLines(c(global_text, variable_text), temp_file, sep = "\n")
+
+            if (interactive()){
+                file.show(temp_file)
+            }
+
+            print_closing(10)
         }
     }
-
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'content_report' execution time: ", end_time, " seconds\n")
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -299,7 +312,7 @@ format_value <- function(variable, type_func, type){
 #' Returns a character.
 #'
 #' @noRd
-get_top_value <- function(variable) {
+get_top_value <- function(variable){
     if (collapse::allNA(variable)){
         return("All NA")
     }
