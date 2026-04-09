@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
 [![r-universe checks](https://s3rdia.r-universe.dev/badges/:registry)](https://s3rdia.r-universe.dev/qol)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/s3rdia/qol)
 [![qol_blog](https://img.shields.io/badge/qol-Blog-036f30)](https://s3rdia.github.io/qol_blog/)
+[![status](https://tinyverse.netlify.app/badge/qol)](https://CRAN.R-project.org/package=qol)
 <!-- badges: end -->
 
 Bringing Powerful 'SAS' Inspired Concepts for more Efficient Bigger Outputs to 'R'.
@@ -227,14 +228,14 @@ tab1 <- my_data |>
                  output     = "excel_nostyle")
 
 # Now let's asume you create a bunch of different tables
-my_style <- my_style |> set_style_options(sheet_name = "sheet2")
-tab2     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet2")
+tab2 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> set_style_options(sheet_name = "sheet3")
-tab3     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet3")
+tab3 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> set_style_options(sheet_name = "sheet4")
-tab4     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet4")
+tab4 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
 ...
 

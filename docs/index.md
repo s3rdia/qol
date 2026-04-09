@@ -230,14 +230,14 @@ tab1 <- my_data |>
                  output     = "excel_nostyle")
 
 # Now let's asume you create a bunch of different tables
-my_style <- my_style |> set_style_options(sheet_name = "sheet2")
-tab2     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet2")
+tab2 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> set_style_options(sheet_name = "sheet3")
-tab3     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet3")
+tab3 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-my_style <- my_style |> set_style_options(sheet_name = "sheet4")
-tab4     <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
+set_style_options(sheet_name = "sheet4")
+tab4 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
 ...
 

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -252,14 +252,14 @@
 <span>                 output     <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now let's asume you create a bunch of different tables</span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet2"</span><span class="op">)</span></span>
-<span><span class="va">tab2</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet2"</span><span class="op">)</span></span>
+<span><span class="va">tab2</span> <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet3"</span><span class="op">)</span></span>
-<span><span class="va">tab3</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet3"</span><span class="op">)</span></span>
+<span><span class="va">tab3</span> <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="va">my_style</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet4"</span><span class="op">)</span></span>
-<span><span class="va">tab4</span>     <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet4"</span><span class="op">)</span></span>
+<span><span class="va">tab4</span> <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">...</span></span>
 <span></span>
@@ -474,6 +474,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <li><a href="https://s3rdia.r-universe.dev/qol" class="external-link"><img src="https://s3rdia.r-universe.dev/badges/:registry" alt="r-universe checks"></a></li>
 <li><a href="https://deepwiki.com/s3rdia/qol" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a></li>
 <li><a href="https://s3rdia.github.io/qol_blog/"><img src="https://img.shields.io/badge/qol-Blog-036f30" alt="qol_blog"></a></li>
+<li><a href="https://CRAN.R-project.org/package=qol" class="external-link"><img src="https://tinyverse.netlify.app/badge/qol" alt="status"></a></li>
 </ul>
 </div>
 
