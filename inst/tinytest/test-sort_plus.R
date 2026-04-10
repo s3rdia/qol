@@ -38,13 +38,25 @@ expect_equal(sort_df[["var2"]], c("c", "a", "a", "b"), info = "Sort with preserv
 
 # Sort with format
 sort_df <- small_df |>
+    sort_plus(by = c(var1, var2),
+              formats = list(var2 =
+                  discrete_format("1" = "b",
+                                  "2" = "c",
+                                  "3" = "a")))
+
+expect_equal(sort_df[["var1"]], c(1, 2, 2, 3), info = "Sort with format")
+expect_equal(sort_df[["var2"]], c("a", "b", "a", "c"), info = "Sort with format")
+
+
+# Sort normal and with format
+sort_df <- small_df |>
     sort_plus(by = var2,
               formats = list(var2 =
-                  discrete_format("1" = "a",
-                                  "2" = "c",
-                                  "3" = "b")))
+                                 discrete_format("1" = "a",
+                                                 "2" = "c",
+                                                 "3" = "b")))
 
-expect_equal(sort_df[["var2"]], c("a", "a", "c", "b"), info = "Sort with format")
+expect_equal(sort_df[["var2"]], c("a", "a", "c", "b"), info = "Sort normal and with format")
 
 ###############################################################################
 # Warning checks

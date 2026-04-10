@@ -17,7 +17,8 @@ dummy_df[["weight_sum"]] <- dummy_df[["weight"]]
 result_df <- dummy_df |>
         export_with_style(print = FALSE)
 
-expect_inherits(result_df, c("wbWorkbook", "R6"), info = "Simplest form of export_with_style")
+expect_inherits(result_df, "list", info = "Simplest form of export_with_style")
+expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
 # export_with_style with full styling
@@ -29,7 +30,8 @@ result_df <- dummy_df |>
                                                         freeze_row_header = TRUE),
                         print = FALSE)
 
-expect_inherits(result_df, c("wbWorkbook", "R6"), info = "export_with_style with full styling")
+expect_inherits(result_df, "list", info = "export_with_style with full styling")
+expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
 
@@ -38,7 +40,8 @@ result_df <- dummy_df |>
       export_with_style(style = excel_output_style(freeze_row_header = TRUE),
                         print = FALSE)
 
-expect_inherits(result_df, c("wbWorkbook", "R6"), info = "export_with_style with fixed row headers")
+expect_inherits(result_df, "list", info = "export_with_style with fixed row headers")
+expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
 
@@ -47,7 +50,8 @@ result_df <- dummy_df |>
       export_with_style(style = excel_output_style(freeze_col_header = TRUE),
                         print = FALSE)
 
-expect_inherits(result_df, c("wbWorkbook", "R6"), info = "export_with_style with fixed column headers")
+expect_inherits(result_df, "list", info = "export_with_style with fixed column headers")
+expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
 # Save export_with_style as Excel file

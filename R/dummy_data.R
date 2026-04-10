@@ -275,7 +275,8 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp <- collapse::join(dummy_temp, region_temp,
                                  on       = c("state", "household_id"),
                                  how      = "left",
-                                 verbose  = FALSE)
+                                 verbose  = FALSE,
+								 overid   = 2)
 
     # Extract NUTS2 region from NUTS3 code
     dummy_temp[["NUTS2"]] <- substr(dummy_temp[["NUTS3"]], 3, 3)
@@ -323,7 +324,8 @@ dummy_data <- function(no_obs    = 25000,
                                  on       = "temp.",
                                  how      = "left",
                                  multiple = TRUE,
-                                 verbose  = FALSE)
+                                 verbose  = FALSE,
+								 overid   = 2)
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Advance values")

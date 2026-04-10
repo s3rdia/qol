@@ -38,7 +38,7 @@
 #'
 #' @examples
 #' # Example data frame
-#' my_data <- dummy_data(1000)
+#' my_data <- dummy_data(100)
 #'
 #' # Define style
 #' set_style_options(column_widths = c(2, 15, 15, 15, 9))
@@ -64,12 +64,34 @@
 #' # Example files paths
 #' table_file <- tempfile(fileext = ".xlsx")
 #'
-#' # Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").
+#' # Note: Normally you would directly input the path ("C:/MyPath/") and
+#' #       name ("MyFile.xlsx").
 #' set_style_options(save_path  = dirname(table_file),
 #'                   file       = basename(table_file),
 #'                   sheet_name = "MyTable")
 #'
 #' my_data |> export_with_style()
+#'
+#' # In case you have a good amount of tables, you want to combine in a single
+#' # workbook, you can also catch the outputs and combine them afterwards in one go.
+#' set_style_options(sheet_name = "sheet1")
+#' tab1 <- my_data |> export_with_style(print = FALSE)
+#'
+#' set_titles(NULL)
+#' set_style_options(sheet_name = "sheet2")
+#' tab2 <- my_data |> export_with_style(print = FALSE)
+#'
+#' set_footnotes(NULL)
+#' set_style_options(sheet_name = "sheet3")
+#' tab3 <- my_data |> export_with_style(print = FALSE, output = "excel_nostyle")
+#'
+#' # Every of the above tabs is a list, which contains the data table, an unstyled
+#' # workbook and the meta information needed for the individual styling. These tabs
+#' # can be input into the following function, which reads the meta information,
+#' # styles each table individually and combines them as separate sheets into a
+#' # single workbook.
+#' combine_into_workbook(tab1, tab2, tab3)
+#' combine_into_workbook(tab1, tab2, tab3, file = table_file)
 #'
 #' # Manual cleanup for example
 #' unlink(table_file)
@@ -127,6 +149,10 @@ export_with_style <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Grab all information, which is necessary to format the workbook. This list will be
+    # returned at the end and can be grabbed by the workbook combine function.
+    meta <- c(mget(c("titles", "footnotes", "var_labels", "style", "output")), "DATA")
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
@@ -191,7 +217,9 @@ export_with_style <- function(data_frame,
     monitor_df |> monitor_plot(draw_plot = monitor)
     #-------------------------------------------------------------------------#
 
-    invisible(wb)
+    invisible(list("table"    = data_frame,
+                   "workbook" = wb,
+                   "meta"     = meta))
 }
 
 
@@ -248,7 +276,7 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
     #-------------------------------------------------------------------------#
-    print_step("MAJOR", "Writing data to workbook", always_print = TRUE)
+    print_step("MAJOR", "Writing data to workbook")
 
     wb$add_data(x           = data_frame,
                 start_col   = style[["start_column"]],
@@ -264,7 +292,7 @@ format_df_excel <- function(wb,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
-    print_step("MAJOR", "Formatting data", always_print = TRUE)
+    print_step("MAJOR", "Formatting data")
 
     # Format titles and footnotes if there are any
     wb <- wb |>
@@ -274,7 +302,6 @@ format_df_excel <- function(wb,
     # option this whole part gets omitted to get a very quick unformatted
     # excel output.
     if (output == "excel"){
-        # Style table
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
         #---------------------------------------------------------------------#
@@ -290,6 +317,7 @@ format_df_excel <- function(wb,
                 wb$add_cell_style(dims                = df_ranges[[paste0("df_col_ranges", i)]],
                                   apply_number_format = TRUE,
                                   num_fmt_id          = wb$styles_mgr$get_numfmt_id(paste0(df_ranges[[paste0("df_col_types", i)]], "_numfmt")))
+                wb$add_ignore_error(dims = df_ranges[[paste0("df_col_ranges", i)]], number_stored_as_text = TRUE)
             }
         }
 

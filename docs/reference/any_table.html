@@ -410,6 +410,27 @@ a designed workbook.</p>
 <span>                     style      <span class="op">=</span> <span class="va">my_style</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># In case you have a good amount of tables, you want to combine in a single workbook,</span></span>
+<span><span class="co"># you can also catch the outputs and combine them afterwards in one go.</span></span>
+<span><span class="co"># NOTE: This section is commented out to just show the principle. Otherwise the</span></span>
+<span><span class="co">#       example code would run for too long.</span></span>
+<span><span class="co"># set_style_options(sheet_name = "sheet1")</span></span>
+<span><span class="co"># tab1 &lt;- my_data |&gt; any_table(..., print = FALSE, output = "excel_nostyle")</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># set_style_options(sheet_name = "sheet2")</span></span>
+<span><span class="co"># tab2 &lt;- my_data |&gt; any_table(..., print = FALSE, output = "excel_nostyle")</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># set_style_options(sheet_name = "sheet3")</span></span>
+<span><span class="co"># tab3 &lt;- my_data |&gt; any_table(..., print = FALSE, output = "excel_nostyle")</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># ...</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># Every of the above tabs is a list, which contains the data table, an unstyled</span></span>
+<span><span class="co"># workbook and the meta information needed for the individual styling. These tabs</span></span>
+<span><span class="co"># can be input into the following function, which reads the meta information, styles</span></span>
+<span><span class="co"># each table individually and combines them as separate sheets into a single workbook.</span></span>
+<span><span class="co"># combine_into_workbook(tab1, tab2, tab3 file = "C:/My_folder/My_workbook.xlsx")</span></span>
+<span></span>
 <span><span class="co"># The result list from above also carries the transformed data frame if</span></span>
 <span><span class="co"># needed for further usage</span></span>
 <span><span class="va">any_table_df</span> <span class="op">&lt;-</span> <span class="va">result_list</span><span class="op">[[</span><span class="st">"table"</span><span class="op">]</span><span class="op">]</span></span>

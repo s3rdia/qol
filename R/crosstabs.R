@@ -354,7 +354,8 @@ crosstabs <- function(data_frame,
             collapse::join(run_nr_df,
                            on      = columns,
                            how     = "left",
-                           verbose = FALSE)
+                           verbose = FALSE,
+						   overid  = 2)
 
         # Pivot to wider format, which basically is the final format to print the data
         cross_tab <- cross_tab |>
@@ -396,7 +397,8 @@ crosstabs <- function(data_frame,
             collapse::join(run_nr_df,
                            on      = columns,
                            how     = "left",
-                           verbose = FALSE)
+                           verbose = FALSE,
+						   overid  = 2)
 
         # Pivot to wider format, which basically is the final format to print the data
         cross_tab <- cross_tab |>

@@ -30,12 +30,15 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `split_by()`: Now also outputs NA values.
 * `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt.
 * `round_values()`: Now is also able to round in multiples of a provided value.
+* `combine_into_worbook()`: Now can handle `export_with_style()` results.
+* `excel_output_style()`: Now accepts multiple title and footnote colors, sizes and boldings.
 
 ### Changed functionality
 
 * `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
 * `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster.
 * `transpose_plus()`: Removed macro variable usage.
+* `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_worbook`.
 
 ### Fixed
 
@@ -52,6 +55,8 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `split_by()`: Should now work inside custom functions.
 * `retain_value()`, `retain_sum()`: On error now return NA instead of the whole data frame.
 * `transpose_plus()`: Wide to long transposition now working again as intended.
+* `any_table()`: Without column variables each variable in the column header received a "_ " at the end, which is not the case anymore.
+* `sort_plus()`: When formats where used for sorting, the temporary sorting variables where always put up front instead of inserted in sequential order. This is fixed now.
 
 ### Optimization
 
@@ -70,6 +75,8 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`: Omitted table formatting in some tests to make them run quicker.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section.
 * `import_multi()`, `export_multi()`: Added some messages to show progress.
+* `any_table()`, `export_with_style()`: Added examples for `combine_into_worbook()`.
+* `any_table()`: When row header labels are suppressed, the excess slashes are now removed.
 
 
 ## R CMD check results

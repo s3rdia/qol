@@ -52,7 +52,7 @@ as is into a styled table.
 }
 \examples{
 # Example data frame
-my_data <- dummy_data(1000)
+my_data <- dummy_data(100)
 
 # Define style
 set_style_options(column_widths = c(2, 15, 15, 15, 9))
@@ -78,12 +78,34 @@ wb <- my_data |> export_with_style()
 # Example files paths
 table_file <- tempfile(fileext = ".xlsx")
 
-# Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").
+# Note: Normally you would directly input the path ("C:/MyPath/") and
+#       name ("MyFile.xlsx").
 set_style_options(save_path  = dirname(table_file),
                   file       = basename(table_file),
                   sheet_name = "MyTable")
 
 my_data |> export_with_style()
+
+# In case you have a good amount of tables, you want to combine in a single
+# workbook, you can also catch the outputs and combine them afterwards in one go.
+set_style_options(sheet_name = "sheet1")
+tab1 <- my_data |> export_with_style(print = FALSE)
+
+set_titles(NULL)
+set_style_options(sheet_name = "sheet2")
+tab2 <- my_data |> export_with_style(print = FALSE)
+
+set_footnotes(NULL)
+set_style_options(sheet_name = "sheet3")
+tab3 <- my_data |> export_with_style(print = FALSE, output = "excel_nostyle")
+
+# Every of the above tabs is a list, which contains the data table, an unstyled
+# workbook and the meta information needed for the individual styling. These tabs
+# can be input into the following function, which reads the meta information,
+# styles each table individually and combines them as separate sheets into a
+# single workbook.
+combine_into_workbook(tab1, tab2, tab3)
+combine_into_workbook(tab1, tab2, tab3, file = table_file)
 
 # Manual cleanup for example
 unlink(table_file)

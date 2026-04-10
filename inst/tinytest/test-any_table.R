@@ -77,6 +77,7 @@ expect_equal(length(result_list), 3, info = "any_table many combinations don't b
 
 
 # any_table with titles and footnotes
+set_style_options(header_stat_merging = "all")
 result_list <- dummy_df |>
       any_table(rows      = "age",
                 columns   = "sex",
@@ -87,6 +88,27 @@ result_list <- dummy_df |>
 
 expect_inherits(result_list, "list", info = "any_table with titles and footnotes")
 expect_equal(length(result_list), 3, info = "any_table with titles and footnotes")
+
+
+# any_table with multiple titles and footnotes
+set_style_options(header_stat_merging = "none",
+                  title_font_color    = c("FF00FF", "00FF00"),
+                  title_font_size     = c(10, 11),
+                  title_font_bold     = c(TRUE, FALSE),
+                  footnote_font_color = c("FF00FF", "00FF00"),
+                  footnote_font_size  = c(10, 11),
+                  footnote_font_bold  = c(TRUE, FALSE))
+
+result_list <- dummy_df |>
+    any_table(rows      = "age",
+              columns   = "sex",
+              values    = weight,
+              titles    = c("Hello world1", "Hello world2"),
+              footnotes = c("This is a footnote1", "This is a footnote2"),
+              print     = FALSE)
+
+expect_inherits(result_list, "list", info = "any_table with multiple titles and footnotes")
+expect_equal(length(result_list), 3, info = "any_table with multiple titles and footnotes")
 
 
 # any_table with variable and stat labels
@@ -713,19 +735,19 @@ expect_error(print_stack_as_messages("ERROR"), "The variable combination of '",
              info = "any_table aborts with missing variable combination in pre summarised data")
 
 
-# Combine tables into a single workbook aborts, if any not any_table object was found
+# Combine tables into a single workbook aborts, if no any_table or export_with_style object was found
 temp_file <- tempfile(fileext = ".xlsx")
 on.exit(unlink(temp_file), add = TRUE)
 
 result <- combine_into_workbook(1, file = temp_file)
-expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> results.",
-             info = "Combine tables into a single workbook aborts, if any not any_table object was found")
+expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
+             info = "Combine tables into a single workbook aborts, if no any_table object was found")
 
 result <- combine_into_workbook(list(1), file = temp_file)
-expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> results.",
-             info = "Combine tables into a single workbook aborts, if any not any_table object was found")
+expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
+             info = "Combine tables into a single workbook aborts, if no any_table or export_with_style object was found")
 
-expect_true(!file.exists(temp_file), info = "Combine tables into a single workbook aborts, if any not any_table object was found")
+expect_true(!file.exists(temp_file), info = "Combine tables into a single workbook aborts, if no any_table or export_with_style object was found")
 
 
 # any_table aborts with no valid values after calculating the results

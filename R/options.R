@@ -57,7 +57,7 @@ set_style_options <- function(...){
                          "sd_decimals", "variance_decimals", "first_decimals", "last_decimals", "p_decimals",
                          "missing_decimals")
 
-    number_characters <- c("pct_exce", "freq_excel", "freq.g0_excel", "sum_excel", "sum.wgt_excel", "mean_excel",
+    number_characters <- c("pct_excel", "freq_excel", "freq.g0_excel", "sum_excel", "sum.wgt_excel", "mean_excel",
                            "median_excel", "mode_excel", "min_excel", "max_excel", "sd_excel", "variance_excel",
                            "first_excel", "last_excel", "p_excel", "missing_excel")
 
@@ -73,7 +73,7 @@ set_style_options <- function(...){
 
     characters  <- c("sheet_name", "font", "header_alignment", "header_wrap", "subheader_alignment", "subheader_wrap",
                      "cat_col_alignment", "cat_col_wrap", "table_alignment", "box_alignment", "box_wrap", "title_alignment",
-                     "footnote_alignment", "na_symbol", "save_path", "file")
+                     "footnote_alignment", "na_symbol", "save_path", "file", "header_stat_merging")
 
     colors <- c("header_back_color", "header_font_color", "header_border_color", "subheader_back_color", "subheader_font_color",
                 "subheader_border_color", "cat_col_back_color", "cat_col_font_color", "cat_col_border_color", "table_back_color",
@@ -84,19 +84,19 @@ set_style_options <- function(...){
     for (style_option in names(style_list)){
         value <- style_list[[style_option]]
 
-        if (style_option %in% logicals && !is.logical(value)){
+        if (style_option %in% logicals && !all(is.logical(value))){
             print_message("WARNING", "'[style_option]' must be <logical>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
-        else if (style_option %in% c(numerics, number_numerics) && !is.numeric(value)){
+        else if (style_option %in% c(numerics, number_numerics) && !all(is.numeric(value))){
             print_message("WARNING", "'[style_option]' must be <numeric>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
-        else if (style_option %in% c(characters, number_characters) && !is.character(value)){
+        else if (style_option %in% c(characters, number_characters) && !all(is.character(value))){
             print_message("WARNING", "'[style_option]' must be <character>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
-        else if (style_option %in% colors && !grepl("^[A-Fa-f0-9]{6}$", value)){
+        else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value))){
             print_message("WARNING", "'[style_option]' must be a 6 character <hex code>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }

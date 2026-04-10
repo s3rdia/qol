@@ -274,9 +274,10 @@ multi_join <- function(data_frames,
         # On equal names there is just one combination which can be input directly
         if (!unequal_names){
             joined_df <- collapse::join(joined_df, data_frames[[i]],
-                                        on       = on,
-                                        how      = "full",
-                                        verbose  = FALSE)
+                                        on      = on,
+                                        how     = "full",
+                                        verbose = FALSE,
+										overid  = 2)
         }
         # On unequal names each individual variable combination has to be checked on the corresponding data frame
         else{
@@ -288,9 +289,10 @@ multi_join <- function(data_frames,
             }
 
             joined_df <- collapse::join(joined_df, data_frames[[i]],
-                                        on       = stats::setNames(on[[i]], on[[1]]),
-                                        how      = "full",
-                                        verbose  = FALSE)
+                                        on      = stats::setNames(on[[i]], on[[1]]),
+                                        how     = "full",
+                                        verbose = FALSE,
+										overid  = 2)
         }
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

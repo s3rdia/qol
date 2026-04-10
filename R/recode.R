@@ -198,9 +198,10 @@ recode <- function(data_frame,
         # Join format with data frame
         data_frame <- data_frame |>
             collapse::join(format_df,
-                           on = current_var,
-                           how = "left",
-                           verbose = FALSE) |>
+                           on      = current_var,
+                           how     = "left",
+                           verbose = FALSE,
+						   overid  = 2) |>
             keep("label")
     }
 

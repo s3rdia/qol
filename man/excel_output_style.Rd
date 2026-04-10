@@ -28,6 +28,7 @@ excel_output_style(
   header_font_size = 10,
   header_font_bold = TRUE,
   header_alignment = "center",
+  header_stat_merging = "block",
   header_wrap = "1",
   header_indent = 0,
   header_borders = TRUE,
@@ -139,6 +140,9 @@ of single tables on multiple sheets.}
 \item{header_font_bold}{Whether to print the table header in bold letters.}
 
 \item{header_alignment}{Set the text alignment of the table header.}
+
+\item{header_stat_merging}{Set how far the statistics row is merged. Allowed are "all",
+"block" (default), "none".}
 
 \item{header_wrap}{Whether to wrap the texts in the table header.}
 

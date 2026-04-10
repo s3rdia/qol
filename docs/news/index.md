@@ -103,6 +103,12 @@
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
   Now is also able to round in multiples of a provided value.
   (09.04.2026)
+- `combine_into_worbook()`: Now can handle
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md)
+  results. (10.04.2026)
+- [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  Now accepts multiple title and footnote colors, sizes and boldings.
+  (10.04.2026)
 
 #### Changed functionality
 
@@ -115,6 +121,9 @@
   faster. (31.01.2026)
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Removed macro variable usage. (09.04.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Now returns a list with table, workbook and meta information, which
+  can be used with `combine_into_worbook()`. (10.04.2026)
 
 #### Fixed
 
@@ -161,6 +170,13 @@
   error now return NA instead of the whole data frame. (31.01.2026)
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Wide to long transposition now working again as intended. (09.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Without column variables each variable in the column header received a
+  “\_” at the end, which is not the case anymore. (10.04.2026)
+- [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md):
+  When formats where used for sorting, the temporary sorting variables
+  where always put up front instead of inserted in sequential order.
+  This is fixed now. (10.04.2026)
 
 #### Optimization
 
@@ -219,6 +235,12 @@
   [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Added some messages to show progress. (28.03.2026)
 - Added repository to DeepWiki and added badge to README. (29.03.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Added examples for `combine_into_worbook()`. (10.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When row header labels are suppressed, the excess slashes are now
+  removed. (10.04.2026)
 
 ## qol 1.2.2
 

@@ -271,6 +271,27 @@
 #'                      style      = my_style,
 #'                      na.rm      = TRUE)
 #'
+#' # In case you have a good amount of tables, you want to combine in a single workbook,
+#' # you can also catch the outputs and combine them afterwards in one go.
+#' # NOTE: This section is commented out to just show the principle. Otherwise the
+#' #       example code would run for too long.
+#' # set_style_options(sheet_name = "sheet1")
+#' # tab1 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#' #
+#' # set_style_options(sheet_name = "sheet2")
+#' # tab2 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#' #
+#' # set_style_options(sheet_name = "sheet3")
+#' # tab3 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#' #
+#' # ...
+#' #
+#' # Every of the above tabs is a list, which contains the data table, an unstyled
+#' # workbook and the meta information needed for the individual styling. These tabs
+#' # can be input into the following function, which reads the meta information, styles
+#' # each table individually and combines them as separate sheets into a single workbook.
+#' # combine_into_workbook(tab1, tab2, tab3 file = "C:/My_folder/My_workbook.xlsx")
+#'
 #' # The result list from above also carries the transformed data frame if
 #' # needed for further usage
 #' any_table_df <- result_list[["table"]]
@@ -1180,7 +1201,8 @@ any_table <- function(data_frame,
                                           on       = super_group,
                                           how      = "left",
                                           multiple = TRUE,
-                                          verbose  = FALSE)
+                                          verbose  = FALSE,
+										  overid   = 2)
 
                 # Compute percentages
                 eval_vars <- grep("_sum$", names(any_tab), value = TRUE)
@@ -1431,6 +1453,11 @@ any_table <- function(data_frame,
                                 values = value_vars,
                                 how    = "wider")
 
+			# Remove excess underscore. This is created if no column variables are specified
+            if (length(col_combi_vars) == 1 && col_combi_vars == ".temp.var"){
+                names(combi_df) <- gsub("_ $", "", names(combi_df))
+            }
+
             combi_df[id_vars] <- lapply(combi_df[id_vars], as.character)
 
             # Replace NA values with text so that they can be differentiated from empty
@@ -1464,6 +1491,9 @@ any_table <- function(data_frame,
                     # Replace stat texts with provided labels
                     row_labels <- c(row_labels, var_labels[[variable]])
                 }
+
+				# Remove empty row labels so that no unnecessary slashes are created
+                row_labels <- row_labels[row_labels != ""]
 
                 # Insert labels as new variable and sort it to the front
                 if (!all(row_labels == "")){
@@ -1507,7 +1537,8 @@ any_table <- function(data_frame,
                 combined_col_df <- collapse::join(combined_col_df, combi_df,
                                                   on       = id_vars,
                                                   how      = "left",
-                                                  verbose  = FALSE)
+                                                  verbose  = FALSE,
+												  overid   = 2)
 
                 # Remove variables which define the row labels so that they don't appear
                 # when combining the column header below.
@@ -1649,7 +1680,7 @@ any_table <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
-    print_step("MAJOR", "Formatting tables")
+    print_step("MAJOR", "Formatting table")
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
@@ -1698,6 +1729,8 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     if (print){
+        print_step("MAJOR", "Output table")
+
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
         # If no save path or file provided just open workbook
@@ -1904,7 +1937,7 @@ format_any_excel <- function(wb,
         monitor_df <- monitor_df |> monitor_next("Excel format col headers", "Format")
         #---------------------------------------------------------------------#
         wb <- wb |>
-            handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]]), drop = FALSE], any_ranges)
+            handle_col_header_merge(column_header[, -c(1:any_ranges[["cat_col.width"]]), drop = FALSE], any_ranges, style)
 
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel format row headers", "Format")
@@ -2153,6 +2186,13 @@ build_multi_header <- function(var_names,
             var_name    <- parts[1]
             stat        <- strsplit(parts[2], " ")[[1]][1]
             expressions <- parts[-c(1, 2)]
+
+            # In case no column variables are provided, the expression will end
+            # up as empty character vector. This is captured as empty character
+            # of length 1, so that the header can be set up as usual.
+            if (length(expressions) == 0){
+                expressions <- ""
+            }
 
             # Put multi header together: variable name, expressions, stat
             multi_header[1] <- var_name
@@ -2678,14 +2718,14 @@ combine_into_workbook <- function(...,
     })
 
     if (is.null(tables)){
-        print_message("ERROR", c("Unknown object found. Provide <any_table> results.",
+        print_message("ERROR", c("Unknown object found. Provide <any_table> or <export_with_style> results.",
 								 "Combining tables to workbook will be aborted."))
         return(invisible(NULL))
     }
 
     for (table in tables){
         if (!is.list(table) || !all(c("table", "workbook", "meta") %in% names(table))){
-            print_message("ERROR", c("Unknown object found. Provide <any_table> results.",
+            print_message("ERROR", c("Unknown object found. Provide <any_table> or <export_with_style> results.",
 									 "Combining tables to workbook will be aborted."))
             return(invisible(NULL))
         }
@@ -2708,28 +2748,39 @@ combine_into_workbook <- function(...,
 
         wb <- wb |> prepare_styles(meta[["style"]])
 
-        # In case no by variables are provided
-        if (length(meta[["by"]]) == 0){
+        # Style data frame for export
+        if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
             wb_list <- suppressMessages(
-                format_any_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
-                                 meta[["statistics"]], meta[["by"]], meta[["titles"]],
-                                 meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
-                                 meta[["box"]], meta[["any_header"]],
-                                 meta[["style"]], meta[["output"]], monitor_df = monitor_df))
+                format_df_excel(wb, table[["table"]], meta[["titles"]], meta[["footnotes"]],
+                                meta[["var_labels"]], meta[["style"]], meta[["output"]], monitor_df))
 
             wb <- wb_list[[1]]
         }
-        # In case there are  by variables are provided
+        # Style any_table output for export
         else{
-            wb_list <- suppressMessages(
-                format_any_by_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
-                                    meta[["statistics"]], meta[["by"]], meta[["titles"]],
-                                    meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
-                                    meta[["box"]], meta[["any_header"]],
-                                    meta[["style"]], meta[["output"]], meta[["na.rm"]], meta[["print_miss"]],
-                                    monitor_df))
+            # In case no by variables are provided
+            if (length(meta[["by"]]) == 0){
+                wb_list <- suppressMessages(
+                    format_any_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
+                                     meta[["statistics"]], meta[["by"]], meta[["titles"]],
+                                     meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
+                                     meta[["box"]], meta[["any_header"]],
+                                     meta[["style"]], meta[["output"]], monitor_df = monitor_df))
 
-            wb <- wb_list[[1]]
+                wb <- wb_list[[1]]
+            }
+            # In case there are by variables are provided
+            else{
+                wb_list <- suppressMessages(
+                    format_any_by_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
+                                        meta[["statistics"]], meta[["by"]], meta[["titles"]],
+                                        meta[["footnotes"]], meta[["var_labels"]], meta[["stat_labels"]],
+                                        meta[["box"]], meta[["any_header"]],
+                                        meta[["style"]], meta[["output"]], meta[["na.rm"]], meta[["print_miss"]],
+                                        monitor_df))
+
+                wb <- wb_list[[1]]
+            }
         }
 
         i <- i + 1
@@ -2737,6 +2788,8 @@ combine_into_workbook <- function(...,
 
     # Output formatted table into different formats
     if (print){
+        print_step("MAJOR", "Exporting Excel Workbook")
+
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#

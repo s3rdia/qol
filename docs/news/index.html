@@ -91,6 +91,10 @@
 <code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_data()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Now can import and export csv files with file extension txt. (30.03.2026)</li>
 <li>
 <code><a href="../reference/round_values.html">round_values()</a></code>: Now is also able to round in multiples of a provided value. (09.04.2026)</li>
+<li>
+<code>combine_into_worbook()</code>: Now can handle <code><a href="../reference/export_with_style.html">export_with_style()</a></code> results. (10.04.2026)</li>
+<li>
+<code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: Now accepts multiple title and footnote colors, sizes and boldings. (10.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
@@ -100,6 +104,8 @@
 <code>Unit tests</code>: Moved unit tests completely from <code>testthat</code> to <code>tinytest</code>. <code>testthat</code> repeatedly got in the way with its own environment, <code>tinytest</code> offers more natural conditions and works faster. (31.01.2026)</li>
 <li>
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Removed macro variable usage. (09.04.2026)</li>
+<li>
+<code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Now returns a list with table, workbook and meta information, which can be used with <code>combine_into_worbook()</code>. (10.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
@@ -129,6 +135,10 @@
 <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: On error now return NA instead of the whole data frame. (31.01.2026)</li>
 <li>
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Wide to long transposition now working again as intended. (09.04.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Without column variables each variable in the column header received a “_” at the end, which is not the case anymore. (10.04.2026)</li>
+<li>
+<code><a href="../reference/sort_plus.html">sort_plus()</a></code>: When formats where used for sorting, the temporary sorting variables where always put up front instead of inserted in sequential order. This is fixed now. (10.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>
@@ -159,6 +169,10 @@
 <li>
 <code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Added some messages to show progress. (28.03.2026)</li>
 <li>Added repository to DeepWiki and added badge to README. (29.03.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added examples for <code>combine_into_worbook()</code>. (10.04.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

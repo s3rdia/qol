@@ -56,6 +56,11 @@
 #' sort_df4 <- sort_df3 |> sort_plus(by       = age,
 #'                                   preserve = education)
 #'
+#' # Or do all at once
+#' sort_df5 <- my_data |> sort_plus(by       = c(sex, education),
+#'                                  preserve = state,
+#'                                  formats = list(education = education.))
+#'
 #' @export
 sort_plus <- function(data_frame,
                       by,
@@ -157,9 +162,6 @@ sort_plus <- function(data_frame,
     if (!is.null(formats)){
         print_step("MAJOR", "Preparing formats")
 
-        extended_by    <- c()
-        extended_index <- 0
-
         for (variable in names(formats)){
             if (is_multilabel(formats, variable)){
                 print_message("WARNING", c("Applying a multilabel to variable '[variable]' is not allowed.\n",
@@ -182,8 +184,8 @@ sort_plus <- function(data_frame,
             # To make recode work "variable" can't be passed directly, because recode
             # would take it as "variable" instead of e.g. "age". Therefore a named list
             # with all the needed elements has to be constructed beforehand.
-            new_column    <- paste0(".sort_", variable)
-            argument_list <- list(data_frame)
+            new_column      <- paste0(".sort_", variable)
+            argument_list   <- list(data_frame)
             argument_list[[variable]] <- formats[[variable]]
 
             # Now use do.call to run e.g.: recode(data_frame, ".sort_age", age = formats[["age"]])
@@ -202,16 +204,7 @@ sort_plus <- function(data_frame,
                 levels  = label_levels,
                 ordered = TRUE)
 
-            extended_by    <- c(extended_by, new_column)
-            extended_index <- extended_index + 1
-        }
-
-        # Add extended variables before original by variables to sort them first
-        by <- c(extended_by, by)
-
-        # Take order from original by variables and pass them to the extended variables as well
-        if (extended_index > 0){
-            order <- c(order[1:extended_index], order)
+            by[by == variable] <- new_column
         }
     }
 

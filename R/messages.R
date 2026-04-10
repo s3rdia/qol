@@ -553,7 +553,7 @@ print_closing <- function(time_threshold = 2,
         if (!is_no_print_active() && !suppress){
             text      <- paste0("[b][", caller_color, " ", caller, "][/b] execution time: [", hex_color, " ", fomatted_time, "]")
             text_orig <- print_headline(text = text, always_print = TRUE)
-            cat("")
+            cat("\n")
             utils::flush.console()
         }
         else{

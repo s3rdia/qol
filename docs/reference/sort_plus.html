@@ -138,6 +138,11 @@ to keep the simplicity, but with some added features.</p>
 <span><span class="co"># it's current order.</span></span>
 <span><span class="va">sort_df4</span> <span class="op">&lt;-</span> <span class="va">sort_df3</span> <span class="op">|&gt;</span> <span class="fu">sort_plus</span><span class="op">(</span>by       <span class="op">=</span> <span class="va">age</span>,</span>
 <span>                                  preserve <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or do all at once</span></span>
+<span><span class="va">sort_df5</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">sort_plus</span><span class="op">(</span>by       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">education</span><span class="op">)</span>,</span>
+<span>                                 preserve <span class="op">=</span> <span class="va">state</span>,</span>
+<span>                                 formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

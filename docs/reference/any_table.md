@@ -431,6 +431,27 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      style      = my_style,
                      na.rm      = TRUE)
 
+# In case you have a good amount of tables, you want to combine in a single workbook,
+# you can also catch the outputs and combine them afterwards in one go.
+# NOTE: This section is commented out to just show the principle. Otherwise the
+#       example code would run for too long.
+# set_style_options(sheet_name = "sheet1")
+# tab1 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#
+# set_style_options(sheet_name = "sheet2")
+# tab2 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#
+# set_style_options(sheet_name = "sheet3")
+# tab3 <- my_data |> any_table(..., print = FALSE, output = "excel_nostyle")
+#
+# ...
+#
+# Every of the above tabs is a list, which contains the data table, an unstyled
+# workbook and the meta information needed for the individual styling. These tabs
+# can be input into the following function, which reads the meta information, styles
+# each table individually and combines them as separate sheets into a single workbook.
+# combine_into_workbook(tab1, tab2, tab3 file = "C:/My_folder/My_workbook.xlsx")
+
 # The result list from above also carries the transformed data frame if
 # needed for further usage
 any_table_df <- result_list[["table"]]

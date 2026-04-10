@@ -33,6 +33,7 @@ excel_output_style(
   header_font_size = 10,
   header_font_bold = TRUE,
   header_alignment = "center",
+  header_stat_merging = "block",
   header_wrap = "1",
   header_indent = 0,
   header_borders = TRUE,
@@ -198,6 +199,11 @@ excel_output_style(
 - header_alignment:
 
   Set the text alignment of the table header.
+
+- header_stat_merging:
+
+  Set how far the statistics row is merged. Allowed are "all", "block"
+  (default), "none".
 
 - header_wrap:
 

@@ -299,14 +299,16 @@ compute_group_percentages <- function(original_df,
                                     on       = ".temp_key",
                                     how      = "left",
                                     multiple = TRUE,
-                                    verbose  = FALSE)
+                                    verbose  = FALSE,
+								    overid   = 2)
     }
     else{
         # In case there is at least one grouping variable
         joined_df <- collapse::join(summary_df, super_df,
                                     on      = super_group,
                                     how     = "left",
-                                    verbose = FALSE)
+                                    verbose = FALSE,
+								    overid  = 2)
     }
 
     # Return finished data frame
@@ -368,7 +370,8 @@ compute_group_percentages_short <- function(summary_df,
     joined_df <- collapse::join(summary_df, super_df,
                                 on      = super_group,
                                 how     = "left",
-                                verbose = FALSE)
+                                verbose = FALSE,
+								overid  = 2)
 
     # Return finished data frame
     joined_df <- joined_df |>
@@ -464,7 +467,8 @@ compute_total_percentages <- function(original_df,
                                 on       = ".temp_key",
                                 how      = "left",
                                 multiple = TRUE,
-                                verbose  = FALSE)
+                                verbose  = FALSE,
+								overid   = 2)
 
     # Return finished data frame
     joined_df <- joined_df |>
@@ -517,7 +521,8 @@ compute_total_percentages_short <- function(summary_df,
                                 on       = ".temp_key",
                                 how      = "left",
                                 multiple = TRUE,
-                                verbose  = FALSE)
+                                verbose  = FALSE,
+								overid   = 2)
 
     # Return finished data frame
     if (pct_name == "pct_total"){

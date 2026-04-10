@@ -117,7 +117,8 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                                         on       = current_var,
                                         how      = "left",
                                         multiple = TRUE,
-                                        verbose  = FALSE)
+                                        verbose  = FALSE,
+										overid   = 2)
 
             # If not all values are represented in the format container, check where there are gaps
             # and fill them at the affected positions. This implements the "other" keyword in formats.

@@ -567,7 +567,8 @@ summarise_plus <- function(data_frame,
                 collapse::join(result_df,
                                on      = group_vars,
                                how     = "left",
-                               verbose = FALSE) |>
+                               verbose = FALSE,
+                               overid  = 2) |>
                 dropp(".temp_weight")
         }
         # If formats are applied and all format categories schould be output
@@ -1415,7 +1416,8 @@ print_missing <- function(data_frame,
                        on       = group_vars,
                        how      = "left",
                        multiple = TRUE,
-                       verbose  = FALSE) |>
+                       verbose  = FALSE,
+                       overid   = 2) |>
             dropp(".pseudo_join"))
 
     # Re apply automatically generated variables to get rid of NA values

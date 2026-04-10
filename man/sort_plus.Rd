@@ -69,6 +69,11 @@ sort_df3 <- my_data |> sort_plus(by      = education,
 sort_df4 <- sort_df3 |> sort_plus(by       = age,
                                   preserve = education)
 
+# Or do all at once
+sort_df5 <- my_data |> sort_plus(by       = c(sex, education),
+                                 preserve = state,
+                                 formats = list(education = education.))
+
 }
 \seealso{
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.

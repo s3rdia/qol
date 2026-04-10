@@ -102,4 +102,9 @@ sort_df3 <- my_data |> sort_plus(by      = education,
 # it's current order.
 sort_df4 <- sort_df3 |> sort_plus(by       = age,
                                   preserve = education)
+
+# Or do all at once
+sort_df5 <- my_data |> sort_plus(by       = c(sex, education),
+                                 preserve = state,
+                                 formats = list(education = education.))
 ```
