@@ -112,6 +112,14 @@ print_message <- function(type,
     }
     # If messages are not suppressed
     else{
+        last_message <- get_last_active_message()
+
+        # If last message is a timed message, print a new line first, otherwise the
+        # function would print on the same line.
+        if (is_time_stamp_allowed(last_message) && !is_no_print_active()){
+            cat("\n")
+        }
+
         text <- print_to_console(type = tolower(type), text = text, ..., utf8 = utf8)
     }
 
@@ -269,6 +277,9 @@ print_headline <- function(text,
         text_orig  <- text
     }
     else{
+        # Put time stamp at the end of the last message if present
+        print_time_stamp()
+
         # Only get first element, if a vector is given
         if (length(text) > 1){
             text <- text[[1]]
@@ -506,23 +517,7 @@ print_closing <- function(time_threshold = 2,
         }
 
         # Put time stamp at the end of the last message if present
-        if (is_time_stamp_allowed()){
-            if (is_time_stamp_allowed()){
-                # Calculate time difference between provided starting time and current time
-                fomatted_time <- transform_time(.qol_messages[["timer"]])
-
-                # Format message
-                time_stamp <- paste0(.qol_messages[["last_message"]], " [", .qol_messages[["format"]][["time_color"]], " (", fomatted_time, ")]")
-                .qol_messages[["last_message"]] <- convert_square_brackets(time_stamp)
-
-                # Print message
-                if (!is_no_print_active()){
-                    cat("\r", .qol_messages[["last_message"]], "\n", sep = "")
-                    utils::flush.console()
-                }
-            }
-            # Otherwise do nothing and just let the timer run without reset
-        }
+        print_time_stamp()
 
         stop_timer()
 
@@ -681,33 +676,8 @@ print_step <- function(type,
         suppressed <- TRUE
     }
     else{
-        bubu <- get_message_stack()
         # Put time stamp at the end of the last message if present
-        if (is_time_stamp_possible()){
-            if (is_time_stamp_allowed()){
-                # Calculate time difference between provided starting time and current time
-                fomatted_time <- transform_time(.qol_messages[["timer"]])
-                start_timer()
-
-                # Format message
-                time_stamp <- paste0(.qol_messages[["last_message"]], " [", .qol_messages[["format"]][["time_color"]], " (", fomatted_time, ")]")
-                .qol_messages[["last_message"]] <- convert_square_brackets(time_stamp)
-
-                # Print message
-                if (!is_no_print_active()){
-                    cat("\r", .qol_messages[["last_message"]], "\n", sep = "")
-                    utils::flush.console()
-                }
-            }
-            # Otherwise do nothing and just let the timer run without reset
-        }
-        # Start new timer
-        else{
-            # But only if the message before is something else than start
-            if (!is_timer_running()){
-                start_timer()
-            }
-        }
+        print_time_stamp()
 
         # If messages are not suppressed
         text <- print_to_console(type = tolower(type), text = text, ..., utf8 = utf8, new_line = FALSE)
@@ -1015,10 +985,10 @@ is_stack <- function(){
 #' @noRd
 is_full_stack <- function(){
     is_stack() &&
-    .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["type"]] == "END" &&
-   !.qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["suppressed"]] &&
-    .qol_messages[["stack"]][[1]][["caller"]] == .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["caller"]] &&
-    .qol_messages[["stack"]][[1]][["depth"]] == .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["depth"]]
+        .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["type"]] == "END" &&
+        !.qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["suppressed"]] &&
+        .qol_messages[["stack"]][[1]][["caller"]] == .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["caller"]] &&
+        .qol_messages[["stack"]][[1]][["depth"]] == .qol_messages[["stack"]][[length(.qol_messages[["stack"]])]][["depth"]]
 }
 
 
@@ -1070,8 +1040,8 @@ is_last_message_error <- function(){
 #' @noRd
 is_start_fake <- function(){
     length(.qol_messages[["stack"]]) >= 1 &&
-    .qol_messages[["stack"]][[1]][["type"]] == "START" &&
-    .qol_messages[["stack"]][[1]][["text"]] == "FAKE"
+        .qol_messages[["stack"]][[1]][["type"]] == "START" &&
+        .qol_messages[["stack"]][[1]][["text"]] == "FAKE"
 }
 
 
@@ -1097,7 +1067,7 @@ message_stack_needs_reset <- function(){
 is_message_suppressed <- function(){
     any(sapply(sys.calls(), function(calls){
         any(as.character(calls) %in% c("suppressMessages", "suppressPackageStartupMessages", "suppressWarnings"))
-        }))
+    }))
 }
 
 
@@ -1128,29 +1098,24 @@ is_time_stamp_possible <- function(){
 
 
 #' @description
-#' Checks whether the last message allows to put a time
-#' stamp at its end.
+#' Checks whether the last message allows to put a time stamp at its end.
+#'
+#' @param message Message from a message in the stack.
 #'
 #' @returns
 #' Returns TRUE or FALSE.
 #'
 #' @noRd
-is_time_stamp_allowed <- function(){
-    last_entry <- length(.qol_messages[["stack"]])
-
-    if (last_entry == 0){
-        return(FALSE)
+is_time_stamp_allowed <- function(message){
+    if (is.null(message)){
+        return(invisible(FALSE))
     }
 
-    for (i in last_entry:1){
-        entry <- .qol_messages[["stack"]][[i]]
-
-        if (!entry[["suppressed"]]){
-            return(entry[["print_time"]])
-        }
+    if (message[["print_time"]]){
+        return(invisible(TRUE))
     }
 
-    FALSE
+    invisible(FALSE)
 }
 
 
@@ -1180,8 +1145,7 @@ is_no_print_active <- function(){
 
 
 #' @description
-#' Checks whether the last message in the stack awaits a
-#' time stamp.
+#' Checks whether the last message in the stack awaits a time stamp.
 #'
 #' @returns
 #' Returns TRUE or FALSE.
@@ -1206,8 +1170,8 @@ get_execution_token <- function(){
     # Convert call stack to character vector
     call_strings <- vapply(calls, function(call){
         paste(deparse(call), collapse = "")
-        },
-        character(1))
+    },
+    character(1))
 
     # Remove internal wrappers that could potentially surround the current function call
     ignore <- c("withCallingHandlers", "tryCatch", "doTryCatch", "eval", "source",
@@ -1223,6 +1187,32 @@ get_execution_token <- function(){
 
     # Return upper function call
     call_strings[1]
+}
+
+
+#' @description
+#' Gets all information from the last not suppressed message.
+#'
+#' @returns
+#' Returns a list.
+#'
+#' @noRd
+get_last_active_message <- function(){
+    last_entry <- length(.qol_messages[["stack"]])
+
+    if (last_entry == 0){
+        return(invisible(NULL))
+    }
+
+    for (i in last_entry:1){
+        entry <- .qol_messages[["stack"]][[i]]
+
+        if (!entry[["suppressed"]]){
+            return(invisible(entry))
+        }
+    }
+
+    invisible(NULL)
 }
 
 
@@ -1273,4 +1263,83 @@ name_stack_messages <- function(){
     }, character(1))
 
     invisible(.qol_messages[["stack"]])
+}
+
+
+#' @description
+#' Converts the hourglass symbol.
+#'
+#' @param text Text of the last message.
+#' @param last_message The last message from the stack.
+#'
+#' @returns
+#' Returns a converted text.
+#'
+#' @noRd
+convert_hourglass <- function(text,
+                              last_message,
+                              utf8 = .qol_messages[["format"]][["utf8"]]){
+    text <- .qol_messages[["last_message"]]
+
+    if (utf8){
+        if (last_message[["type"]] == "MAJOR"){
+            text <- gsub("\u23f3\ufe0f", "\u2794", text)
+        }
+        else if (last_message[["type"]] == "MINOR"){
+            text <- gsub("\u23f3\ufe0f", "\u271a", text)
+        }
+    }
+    else{
+        if (last_message[["type"]] == "MAJOR"){
+            text <- gsub("?", ">", text)
+        }
+        else if (last_message[["type"]] == "MINOR"){
+            text <- gsub("?", "+", text)
+        }
+    }
+
+    text
+}
+
+
+#' @description
+#' Converts the hourglass symbol.
+#'
+#' @returns
+#' Returns a converted text.
+#'
+#' @noRd
+# Put time stamp at the end of the last message if present
+print_time_stamp <- function(utf8 = .qol_messages[["format"]][["utf8"]]){
+    if (is_time_stamp_possible()){
+        last_message <- get_last_active_message()
+
+        if (is_time_stamp_allowed(last_message)){
+            # Calculate time difference between provided starting time and current time
+            fomatted_time <- transform_time(.qol_messages[["timer"]])
+            start_timer()
+
+            # Format message
+            last_text <- convert_hourglass(.qol_messages[["last_message"]], last_message, utf8)
+
+            time_stamp <- paste0(last_text, " [", .qol_messages[["format"]][["time_color"]], " (", fomatted_time, ")]")
+            .qol_messages[["last_message"]] <- convert_square_brackets(time_stamp)
+
+            # Print message
+            if (!is_no_print_active()){
+                cat("\r", .qol_messages[["last_message"]], "\n", sep = "")
+                utils::flush.console()
+            }
+        }
+        # Otherwise do nothing and just let the timer run without reset
+    }
+    # Start new timer
+    else{
+        # But only if the message before is something else than start
+        if (!is_timer_running()){
+            start_timer()
+        }
+    }
+
+    invisible(NULL)
 }

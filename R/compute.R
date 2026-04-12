@@ -109,6 +109,10 @@ compute <- function(data_frame,
         assignments[[".if_parent_frame"]] <- NULL
     }
 
+    if (".if_suppressed" %in% names(assignments)){
+        assignments[[".if_suppressed"]] <- NULL
+    }
+
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
     used_variables <- unique(c(names(assignments), # Get all variables to which a value should be assigned
@@ -356,7 +360,12 @@ compute <- function(data_frame,
         data_frame <- collapse::ftransform(data_frame, call_list)
     }
 
-    print_closing()
+    if (".if_suppressed" %in% names(assignments)){
+        print_closing(suppress = TRUE)
+    }
+    else{
+        print_closing()
+    }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()

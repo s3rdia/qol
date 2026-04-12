@@ -131,7 +131,6 @@ if. <- function(data_frame, condition, ...){
 
     assignments <- as.list(substitute(list(...)))[-1]
 
-
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
     used_variables <- unique(c(all.vars(condition), # Get all variables from the condition
@@ -354,7 +353,9 @@ if. <- function(data_frame, condition, ...){
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
     if (!flag_filter){
-        data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
+        data_frame <- data_frame |> compute(..., .if_condition   = condition_list,
+                                                 .if_parent_frame = parent_env,
+                                                 .if_suppressed   = TRUE)
     }
 
     print_closing()
@@ -499,7 +500,9 @@ else_if. <- function(data_frame, condition, ...){
         }
 
         # Evaluate calculations conditionally. Making use of hidden parameters.
-        data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
+        data_frame <- data_frame |> compute(..., .if_condition    = condition_list,
+                                                 .if_parent_frame = parent_env,
+                                                 .if_suppressed   = TRUE)
     }
     else{
         print_message("WARNING", "No assignments found. If you want to filter observations use if.() instead.")
@@ -628,7 +631,9 @@ else. <- function(data_frame, ...){
     }
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
-    data_frame <- suppressMessages(data_frame |> compute(..., .if_condition = condition_list, .if_parent_frame = parent_env))
+    data_frame <- data_frame |> compute(..., .if_condition    = condition_list,
+                                             .if_parent_frame = parent_env,
+                                             .if_suppressed   = TRUE)
 
     print_closing()
 

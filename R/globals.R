@@ -88,14 +88,14 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                                   grey_pt           = hex_to_ansi(" * ",                      hex_color = "#565656", bold = TRUE),
                                   grey_indent_ansi  = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#565656", bold = TRUE),
                                   grey_indent_pt    = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#565656", bold = TRUE),
-                                  major_ansi        = hex_to_ansi(" \u2794 ",                 hex_color = "#32CD32", bold = TRUE),
+                                  major_ansi        = hex_to_ansi(" \u23f3\ufe0f ",           hex_color = "#32CD32", bold = TRUE),
                                   major_pt          = hex_to_ansi(" > ",                      hex_color = "#32CD32", bold = TRUE),
                                   major_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
                                   major_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#32CD32", bold = TRUE),
-                                  minor_ansi        = hex_to_ansi(" \u00a0\u00a0\u00a0\u271a ",     hex_color = "#32CD32", bold = TRUE),
-                                  minor_pt          = hex_to_ansi(" \u00a0\u00a0+ ",                hex_color = "#32CD32", bold = TRUE),
-                                  minor_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
-                                  minor_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",             hex_color = "#32CD32", bold = TRUE))
+                                  minor_ansi        = hex_to_ansi(" \u00a0\u00a0\u00a0\u23f3\ufe0f ", hex_color = "#32CD32", bold = TRUE),
+                                  minor_pt          = hex_to_ansi(" \u00a0\u00a0+ ",                  hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0",   hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",               hex_color = "#32CD32", bold = TRUE))
 .qol_messages[["stack"]]           <- list()
 .qol_messages[["start_time"]]      <- NULL
 .qol_messages[["timer"]]           <- NULL
