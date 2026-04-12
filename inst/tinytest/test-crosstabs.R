@@ -238,7 +238,7 @@ expect_message(print_stack_as_messages("NOTE"), "The format for variable 'sex' i
 result_df <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
-              output  = "excel",
+              output  = "excel_nostyle",
               print   = FALSE)
 
 expect_inherits(result_df, "data.table", info = "crosstabs with excel output")
@@ -268,7 +268,8 @@ result_df <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               by      = education,
-              output  = "excel",
+              output  = "excel_nostyle",
+              print_miss = TRUE, # Has no value here but the test runs faster
               print   = FALSE)
 
 expect_true("BY" %in% names(result_df), info = "crosstabs with excel output and by variables (excel)")
@@ -303,7 +304,7 @@ format_df <- dummy_df |>
                                      "55 to under 65" = 55:64,
                                      "65 and older"   = 65:100)),
                  statistics = c("sum", "freq", "pct_row", "pct_column", "pct_total"),
-                 output  = "excel",
+                 output  = "excel_nostyle",
                  print   = FALSE)
 
 expect_message(print_stack_as_messages("NOTE"), "The format for variable 'sex' is a multilabel", info = "crosstabs row multilabel leads to notification (excel)")
@@ -334,8 +335,9 @@ format_df <- dummy_df |>
                      "Male"   = 1,
                      "Female" = 2)),
                  statistics = c("pct_row"),
-                 output  = "excel",
-                 print   = FALSE)
+                 output     = "excel_nostyle",
+                 print_miss = TRUE,
+                 print      = FALSE)
 
 expect_message(print_stack_as_messages("NOTE"), "The format for variable 'sex' is a multilabel", info = "crosstabs row multilabel leads to notification with by variables (excel)")
 

@@ -23,7 +23,8 @@
 #' as is into a styled table.
 #'
 #' @return
-#' Returns a formatted 'Excel' workbook.
+#' Returns a list with the data table containing the results for the table, the formatted
+#' 'Excel' workbook and the meta information needed for styling the final table.
 #'
 #' @seealso
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],

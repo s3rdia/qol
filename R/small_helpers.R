@@ -358,8 +358,12 @@ round_values <- function(values,
                          digits   = 0,
                          multiple = NULL){
     if (!is.numeric(values)){
-        print_message("ERROR", "Only numeric values allowed. Rounding will be aborted.")
+        # Silently return if all values are NA
+        if (is.logical(values)){
+            return(invisible(values))
+        }
 
+        print_message("ERROR", "Only numeric values allowed. Rounding will be aborted.")
         return(invisible(values))
     }
 

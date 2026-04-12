@@ -179,7 +179,7 @@ unlist_variables <- function(var_names){
 #'
 #' @noRd
 is_valid_vector <- function(vector_to_check){
-    length(vector_to_check) > 1
+    length(vector_to_check) > 1 || !is.null(vector_to_check)
 }
 
 

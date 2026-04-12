@@ -32,6 +32,12 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `round_values()`: Now is also able to round in multiples of a provided value.
 * `combine_into_worbook()`: Now can handle `export_with_style()` results.
 * `excel_output_style()`: Now accepts multiple title and footnote colors, sizes and boldings.
+* `excel_output_style()`: New option `header_stat_merging` determines how the statistic symbols or labels are merged in the column header. As a new standard the labels are now not fully merged but in blocks.
+* `if.()`: Observation selection now also works as do over loop.
+* `any_table()`: New parameter `pct_block` enables percentage calculation inside the respective second to last grouping of the row or column variables.
+* `any_table()`: If the result expression of a format starts with an "!", this expression will be used in calculations but will be dropped in the result table. This can be used to calculate block percentages based on a total expression without showing the total in the result table.
+* `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose.
+* `any_table()`: There are new special `var_labels`, which add additional top column headers. When assigning labels to variables that start with "block", e.g. "block1" = "Column Percentages", "block2" = "Row Percentages", these labels will appear as the top line of the column header.
 
 ### Changed functionality
 
@@ -57,6 +63,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `transpose_plus()`: Wide to long transposition now working again as intended.
 * `any_table()`: Without column variables each variable in the column header received a "_ " at the end, which is not the case anymore.
 * `sort_plus()`: When formats where used for sorting, the temporary sorting variables where always put up front instead of inserted in sequential order. This is fixed now.
+* `keep()`, `dropp()`: If a character pattern is used to keep or drop variables and no variable matching the pattern is found, the functions now abort with a warning.
 
 ### Optimization
 

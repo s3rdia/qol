@@ -22,6 +22,24 @@ sum_df2  <- dummy_df |>
                    nesting    = "deepest",
                    na.rm      = TRUE)
 
+age. <- discrete_format(
+    "under 50"    = 0:49,
+    "50 and more" = 50:100)
+
+state. <- discrete_format(
+    "West" = 1:10,
+    "East" = 11:16)
+
+sex. <- discrete_format(
+    "Total"  = 1:2,
+    "Male"   = 1,
+    "Female" = 2)
+
+education. <- discrete_format(
+    "low"    = "low",
+    "middle" = "middle",
+    "high"   = "high")
+
 
 # Simplest form of any_table
 result_list <- dummy_big |>
@@ -159,11 +177,55 @@ result_list <- dummy_df |>
                   values     = c(probability, weight),
                   statistics = c("pct_group"),
                   pct_group  = c("row_pct", "col_pct"),
+                  output     = "excel_nostyle",
                   print      = FALSE)
 
 expect_true(all(c("weight_pct_group_row_1", "probability_pct_group_row_2",
                   "weight_pct_group_col_1", "probability_pct_group_col_2")
                 %in% names(result_list[["table"]])), info = "any_table with keywords for row and column percentages")
+
+
+# any_table with block row percentages
+result_list <- dummy_df |>
+    any_table(rows      = "age + (sex education)",
+              columns   = "state",
+              values    = weight,
+              pct_block = "rows",
+              output    = "excel_nostyle",
+              formats   = list(state = state., age = age., sex = sex., education = education.),
+              print     = FALSE,
+              na.rm     = TRUE)
+
+result_df <- result_list[["table"]] |> if.(var2 == "Total")
+result_df[["weight_pct_block_rows_West"]] <- round(result_df[["weight_pct_block_rows_West"]])
+result_df[["weight_pct_block_rows_East"]] <- round(result_df[["weight_pct_block_rows_East"]])
+
+expect_equal(collapse::funique(result_df[["weight_pct_block_rows_West"]]), 100, info = "any_table with block row percentages")
+expect_equal(collapse::funique(result_df[["weight_pct_block_rows_East"]]), 100, info = "any_table with block row percentages")
+
+
+# any_table with block column percentages
+result_list <- dummy_df |>
+    any_table(rows      = "state",
+              columns   = "age + (sex education)",
+              values    = weight,
+              pct_block = "columns",
+              output    = "excel_nostyle",
+              formats   = list(state = state., age = age., sex = sex., education = education.),
+              order_by  = "blocks",
+              print     = FALSE,
+              na.rm     = TRUE)
+
+result_df <- result_list[["table"]]
+result_df[["weight_pct_block_columns_under 50_Total"]] <- round(result_df[["weight_pct_block_columns_under 50_Total"]])
+
+expect_equal(collapse::funique(result_df[["weight_pct_block_columns_under 50_Total"]]), 100, info = "any_table with block column percentages")
+expect_equal(names(result_df),
+             c("row.label", "var1", "weight_pct_block_columns_under 50_Total",
+               "weight_pct_block_columns_under 50_Male", "weight_pct_block_columns_under 50_Female", "weight_pct_block_columns_under 50_low",
+               "weight_pct_block_columns_under 50_middle", "weight_pct_block_columns_under 50_high", "weight_pct_block_columns_50 and more_Total",
+               "weight_pct_block_columns_50 and more_Male", "weight_pct_block_columns_50 and more_Female", "weight_pct_block_columns_50 and more_low",
+               "weight_pct_block_columns_50 and more_middle", "weight_pct_block_columns_50 and more_high"), info = "any_table with block order")
 
 
 # any_table with a lot of statistics doesn't break
@@ -189,57 +251,53 @@ result_list <- dummy_df |>
                   statistics = c("sum", "freq", "missing"),
                   order_by   = "interleaved",
                   output     = "excel_nostyle",
-                  print      = FALSE)
+                  formats    = list(age = age., sex = sex.),
+                  print      = FALSE,
+                  na.rm      = TRUE)
 
 expect_equal(names(result_list[[1]]),
-               c("row.label", "var1", "weight_sum_1", "weight_freq_1", "weight_missing_1",
-                 "weight_sum_2", "weight_freq_2", "weight_missing_2", "weight_sum_NA", "weight_freq_NA",
-                 "weight_missing_NA"), info = "any_table with interleaved order")
+               c("row.label", "var1", "weight_sum_Total", "weight_freq_Total", "weight_missing_Total",
+                 "weight_sum_Male", "weight_freq_Male", "weight_missing_Male",
+                 "weight_sum_Female", "weight_freq_Female", "weight_missing_Female"),
+             info = "any_table with interleaved order")
 
 
 # any_table with values order
-year_current <- as.integer(format(Sys.Date(), "%Y"))
-
 result_list <- dummy_df |>
         any_table(rows       = "age",
-                  columns    = c("sex", "year"),
+                  columns    = c("sex", "state"),
                   values     = c(weight, income),
                   statistics = "sum",
                   order_by   = "values",
                   output     = "excel_nostyle",
-                  print      = FALSE)
+                  formats    = list(age = age., sex = sex., state = state.),
+                  print      = FALSE,
+                  na.rm      = TRUE)
 
 expect_equal(names(result_list[[1]]),
-             c("row.label", "var1", "weight_sum_1", "weight_sum_2", "weight_sum_NA",
-               paste0("weight_sum_", year_current - 4), paste0("weight_sum_", year_current - 3),
-               paste0("weight_sum_", year_current - 2), paste0("weight_sum_", year_current - 1),
-               paste0("weight_sum_", year_current),
-               "income_sum_1", "income_sum_2", "income_sum_NA", paste0("income_sum_", year_current - 4),
-               paste0("income_sum_", year_current - 3), paste0("income_sum_", year_current - 2),
-               paste0("income_sum_", year_current - 1),
-               paste0("income_sum_", year_current)), info = "any_table with values order")
+             c("row.label", "var1", "weight_sum_Total", "weight_sum_Male", "weight_sum_Female",
+               "weight_sum_West", "weight_sum_East",
+               "income_sum_Total", "income_sum_Male", "income_sum_Female", "income_sum_West",
+               "income_sum_East"), info = "any_table with values order")
 
 
 # any_table with columns order
-year_current <- as.integer(format(Sys.Date(), "%Y"))
-
 result_list <- dummy_df |>
         any_table(rows       = "age",
-                  columns    = c("sex", "year"),
+                  columns    = c("sex", "state"),
                   values     = c(weight, income),
                   statistics = "sum",
                   order_by   = "columns",
                   output     = "excel_nostyle",
-                  print      = FALSE)
+                  formats    = list(age = age., sex = sex., state = state.),
+                  print      = FALSE,
+                  na.rm      = TRUE)
 
 expect_equal(names(result_list[[1]]),
-             c("row.label", "var1", "weight_sum_1", "weight_sum_2", "weight_sum_NA",
-               "income_sum_1", "income_sum_2", "income_sum_NA",
-               paste0("weight_sum_", year_current - 4), paste0("weight_sum_", year_current - 3),
-               paste0("weight_sum_", year_current - 2), paste0("weight_sum_", year_current - 1),
-               paste0("weight_sum_", year_current),paste0("income_sum_", year_current - 4),
-               paste0("income_sum_", year_current - 3), paste0("income_sum_", year_current - 2),
-               paste0("income_sum_", year_current - 1), paste0("income_sum_", year_current)), info = "any_table with columns order")
+             c("row.label", "var1", "weight_sum_Total", "weight_sum_Male", "weight_sum_Female",
+               "income_sum_Total", "income_sum_Male", "income_sum_Female",
+               "weight_sum_West", "weight_sum_East", "income_sum_West",
+               "income_sum_East"), info = "any_table with columns order")
 
 
 # any_table with by variables
@@ -261,6 +319,7 @@ result_list <- dummy_df |>
                   columns    = "sex",
                   values     = weight,
                   by         = c(education, year),
+                  output     = "excel_nostyle",
                   print_miss = TRUE,
                   print      = FALSE)
 
@@ -311,6 +370,7 @@ result_list <- dummy_df |>
         any_table(rows    = "age",
                   columns = "sex",
                   values  = weight,
+                  output  = "excel_nostyle",
                   na.rm   = TRUE,
                   print   = FALSE)
 
@@ -328,7 +388,8 @@ result_list <- dummy_df |>
                       "25 to under 55" = 25:54,
                       "55 to under 65" = 55:64,
                       "65 and older"   = 65:100)),
-                  print   = FALSE)
+                  output = "excel_nostyle",
+                  print  = FALSE)
 
 expect_true(all(c("under 18", "18 to under 25", "25 to under 55",
                   "55 to under 65", "65 and older")
@@ -351,7 +412,8 @@ result_list <- dummy_df |>
                       "25 to under 55" = 25:54,
                       "55 to under 65" = 55:64,
                       "65 and older"   = 65:100)),
-                  print   = FALSE)
+                  output = "excel_nostyle",
+                  print  = FALSE)
 
 expect_true(all(c("under 18", "18 to under 25", "25 to under 55",
                   "55 to under 65", "65 and older")
@@ -373,10 +435,29 @@ result_list <- dummy_df |>
                           "500 to under 1000"  = 500:999,
                           "1000 to under 2000" = 1000:1999,
                           "2000 and more"      = 2000:99999)),
-                  print   = FALSE)
+                  output = "excel_nostyle",
+                  print  = FALSE)
 
 expect_true(all(c("Total", "below 500", "2000 and more")
                 %in% result_list[["table"]][["var1"]]), info = "any_table with applied interval multilabels")
+
+
+# any_table can silence format expressions
+sex. <- discrete_format(
+    "!Total" = 1:2,
+    "Male"   = 1,
+    "Female" = 2)
+
+result_list <- dummy_df |>
+    any_table(rows       = "first_person",
+              columns    = "sex",
+              values     = weight,
+              statistics = "sum",
+              output     = "excel_nostyle",
+              formats    = list(sex = sex.),
+              print      = FALSE)
+
+expect_false(any(grepl("!", names(result_list[["table"]]))), info = "any_table can silence format expressions")
 
 
 # any_table able to apply format on numeric values stored as character (short route)
@@ -389,6 +470,7 @@ result_list <- dummy_df |>
               columns = "sex",
               values  = weight,
               formats = list(binary = binary.),
+              output  = "excel_nostyle",
               print   = FALSE)
 
 expect_equal(result_list[[1]][["var1"]], c("binary1", "binary2"), info = "any_table able to apply format on numeric values stored as character (short route)")
@@ -399,6 +481,7 @@ result_list <- dummy_df |>
         any_table(rows    = "binary",
                   columns = "sex",
                   values  = weight,
+                  output  = "excel_nostyle",
                   print   = FALSE)
 
 expect_equal(result_list[[1]][["var1"]], c("00", "01", "10", "11"), info = "any_table doesn't convert numeric values stored as character (short route)")
@@ -415,6 +498,7 @@ result_list <- dummy_df |>
                   statistics = "mean",
                   values     = weight,
                   formats    = list(binary = binary.),
+                  output     = "excel_nostyle",
                   print      = FALSE)
 
 expect_equal(result_list[[1]][["var1"]], c("binary1", "binary2"), info = "any_table able to apply format on numeric values stored as character (long route)")
@@ -426,6 +510,7 @@ result_list <- dummy_df |>
                   columns    = "sex",
                   statistics = "mean",
                   values     = weight,
+                  output     = "excel_nostyle",
                   print      = FALSE)
 
 expect_equal(result_list[[1]][["var1"]], c("00", "01", "10", "11"), info = "any_table doesn't convert numeric values stored as character (long route)")
@@ -438,6 +523,7 @@ result_list <- dummy_df |>
                   values  = weight,
                   style   = excel_output_style(freeze_col_header = TRUE),
                   na.rm   = TRUE,
+                  output  = "excel_nostyle",
                   print   = FALSE)
 
 expect_true(sum(is.na(result_list[["table"]][["var1"]])) == 0, info = "any_table with fixed column headers")
@@ -450,6 +536,7 @@ result_list <- dummy_df |>
                   values  = weight,
                   style   = excel_output_style(freeze_row_header = TRUE),
                   na.rm   = TRUE,
+                  output  = "excel_nostyle",
                   print   = FALSE)
 
 expect_true(sum(is.na(result_list[["table"]][["var1"]])) == 0, info = "any_table with fixed row headers")
@@ -463,6 +550,7 @@ result_list <- dummy_df |>
                   style   = excel_output_style(freeze_col_header = TRUE,
                                                freeze_row_header = TRUE),
                   na.rm   = TRUE,
+                  output  = "excel_nostyle",
                   print   = FALSE)
 
 expect_true(sum(is.na(result_list[["table"]][["var1"]])) == 0, info = "any_table with fixed column and row headers")
@@ -485,6 +573,7 @@ result_list <- dummy_df |>
                              columns  = "sex",
                              values   = weight,
                              order_by = "test",
+                             output   = "excel_nostyle",
                              print    = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "<Order by> option 'test' doesn't exist", info = "any_table warning with wrong output format")
@@ -495,6 +584,7 @@ result_list <- sum_df |>
    any_table(rows       = "year",
              columns    = "sex",
              values     = weight_sum,
+             output     = "excel_nostyle",
              print      = FALSE)
 
 expect_inherits(result_list, "list", info = "any_table with pre summarised data")
@@ -507,6 +597,7 @@ result_list <- sum_df2 |>
                           columns    = "year",
                           by         = "sex",
                           values     = weight_sum,
+                          output     = "excel_nostyle",
                           print_miss = TRUE,
                           print      = FALSE)
 
@@ -518,6 +609,7 @@ expect_equal(length(result_list), 3, info = "any_table with pre summarised data 
 result_list <- dummy_df |>
        any_table(rows    = "age",
                  values  = weight,
+                 output  = "excel_nostyle",
                  print   = FALSE)
 
 expect_inherits(result_list, "list", info = "any_table with no column variables")
@@ -530,6 +622,7 @@ result_list <- dummy_df |>
                              columns    = "sex",
                              values     = weight,
                              statistics = c("test", "sum"),
+                             output     = "excel_nostyle",
                              print      = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "<Statistic> 'test' is invalid and will be omitted.",
@@ -542,6 +635,7 @@ result_list <- dummy_df |>
                              columns    = "sex",
                              values     = weight,
                              statistics = "test",
+                             output     = "excel_nostyle",
                              print      = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "No valid <statistic> selected. 'sum' will be used.",
@@ -556,6 +650,7 @@ dummy_df |>
     any_table(rows    = "age",
               columns = "sex",
               values  = weight,
+              output  = "excel_nostyle",
               style   = excel_output_style(save_path = dirname(temp_file),
                                            file      = basename(temp_file)))
 
@@ -593,10 +688,11 @@ expect_true(file.exists(temp_file), info = "Combine tables into a single workboo
 
 # any_table throws a warning with missing statistic extension in pre summarised data
 result_list <- sum_df |>
-       any_table(rows       = "year",
-                 columns    = "sex",
-                 values     = DEPTH,
-                 print      = FALSE)
+       any_table(rows    = "year",
+                 columns = "sex",
+                 values  = DEPTH,
+                 output  = "excel_nostyle",
+                 print   = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "All <values> variables need to have the <statistic> extension in their variable name.",
                info = "any_table throws a warning with missing statistic extension in pre summarised data")
@@ -607,10 +703,11 @@ expect_equal(length(result_list), 3, info = "any_table throws a warning with mis
 
 # any_table auto generates missing TYPE variable in pre summarised data
 result_list <- sum_df |>
-       any_table(rows       = "year",
-                 columns    = "sex",
-                 values     = weight_sum,
-                 print      = FALSE)
+       any_table(rows    = "year",
+                 columns = "sex",
+                 values  = weight_sum,
+                 output  = "excel_nostyle",
+                 print   = FALSE)
 
 expect_inherits(result_list, "list", info = "any_table auto generates missing TYPE variable in pre summarised data")
 expect_equal(length(result_list), 3, info = "any_table auto generates missing TYPE variable in pre summarised data")
@@ -620,6 +717,7 @@ expect_equal(length(result_list), 3, info = "any_table auto generates missing TY
 result_list <- dummy_df |>
     any_table(rows    = "age",
               columns = "sex",
+              output  = "excel_nostyle",
               print   = FALSE)
 
 expect_inherits(result_list, "list", info = "any_table outputs unweighted results without values variable")
@@ -751,14 +849,14 @@ expect_true(!file.exists(temp_file), info = "Combine tables into a single workbo
 
 
 # any_table aborts with no valid values after calculating the results
-    dummy_df |>
-        any_table(rows       = "year",
-                  columns    = "sex",
-                  values     = weight,
-                  statistics = "pct_value",
-                  pct_value  = list(sex = "test",
-                                    age = "test"),
-                  print      = FALSE)
+dummy_df |>
+    any_table(rows       = "year",
+              columns    = "sex",
+              values     = weight,
+              statistics = "pct_value",
+              pct_value  = list(sex = "test",
+                                age = "test"),
+              print      = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "Variable 'age' not found in the data frame",
             info = "any_table aborts with no valid values after calculating the results")

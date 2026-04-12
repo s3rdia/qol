@@ -1,5 +1,3 @@
-set_no_print(TRUE)
-
 ###############################################################################
 # Suppressing some functions messages because they only output the information
 # on how much time they took.
@@ -12,6 +10,3 @@ dummy_df <- dummy_data(10)
 result_list <- content_report(dummy_df)
 
 expect_equal(names(result_list), c("global", "variables"), info = "multiplication works")
-
-
-set_no_print()

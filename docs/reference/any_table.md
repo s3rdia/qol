@@ -16,6 +16,7 @@ any_table(
   statistics = NULL,
   pct_group = c(),
   pct_value = list(),
+  pct_block = c(),
   formats = list(),
   by = c(),
   weight = NULL,
@@ -103,18 +104,22 @@ any_table(
 
 - pct_group:
 
-  If pct_group is specified in the statistics, this option is used to
-  determine which variable of the row and column variables should add up
-  to 100 %. Multiple variables can be specified in a vector to generate
-  multiple group percentages. You can also use the keywords "row_pct" or
-  "col_pct" to calculate total percentages for rows and columns
-  regardless of the respective other dimension.
+  This option is used to determine which variable of the row and column
+  variables should add up to 100 %. Multiple variables can be specified
+  in a vector to generate multiple group percentages. You can also use
+  the keywords "row_pct" or "col_pct" to calculate total percentages for
+  rows and columns regardless of the respective other dimension.
 
 - pct_value:
 
-  If pct_value is specified in the statistics, you can pass a list here
-  which contains the information for a new variable name and between
-  which of the value variables percentages should be computed.
+  You can pass a list here, which contains the information for a new
+  variable name and between which of the value variables percentages
+  should be computed.
+
+- pct_block:
+
+  Can be "rows" or "columns". Calculates percentages for the last group
+  of variables inside the individual row or column combinations.
 
 - formats:
 
@@ -274,7 +279,12 @@ Additional functions that can handle formats:
 
 ``` r
 # NOTE: Some of the examples use the parameter 'output = "excel_nostyle"' to
-#       make them run faster so that more examples can be provided.
+#       make them run faster so that more examples can be provided. Take out
+#       the parameter to get the fully styled excel table.
+#       The global option for printing the output is also set to FALSE for
+#       the same reason. When running the examples manually, don't run this
+#       option here.
+set_print(FALSE)
 
 # Example data frame
 my_data <- dummy_data(1000)
@@ -294,8 +304,10 @@ sex. <- discrete_format(
     "Male"   = 1,
     "Female" = 2)
 
+# NOTE: "!" in front of an expression makes the expression available for
+#       calculations but prevents it from beeing printed out.
 education. <- discrete_format(
-    "Total"            = c("low", "middle", "high"),
+    "!Total"           = c("low", "middle", "high"),
     "low education"    = "low",
     "middle education" = "middle",
     "high education"   = "high")
@@ -365,6 +377,7 @@ my_data |> any_table(rows       = c("age + year"),
                      pct_value  = list(rate = "probability / person"),
                      weight     = weight,
                      formats    = list(sex = sex., age = age.),
+                     output    = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Percentages based on a formatted variable expression
@@ -374,6 +387,19 @@ my_data |> any_table(rows       = c("age + year"),
                      pct_value  = list(sex = "Total", age = "Total"),
                      weight     = weight,
                      formats    = list(sex = sex., age = age.),
+                     output    = "excel_nostyle",
+                     na.rm      = TRUE)
+
+# Percentages based on variable combination blocks
+# NOTE: age + (year education) becomes "age + year" and "age + education"
+#       and will be sorted together. Also works in columns.
+my_data |> any_table(rows       = c("sex + (age education)"),
+                     columns    = "year",
+                     values     = weight,
+                     pct_block  = c("rows", "columns"),
+                     formats    = list(sex = sex., age = age.,
+                                       education = education.),
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Customize the visual appearance by adding variable and statistic labels. Both
@@ -391,6 +417,7 @@ my_data |> any_table(rows        = c("age + year"),
                      var_labels  = list(age = "Age categories",
                                         sex = "", weight = ""),
                      stat_labels = list(pct = "%"),
+                     output      = "excel_nostyle",
                      na.rm       = TRUE)
 
 # Individual styling can also be passed directly

@@ -61,9 +61,9 @@ Modify Styling options for Excel workbooks. Available parameters can be seen in
 options are used by all tabulation and output functions, which are capable of
 exporting styled outputs.
 
-\code{\link[=reset_style_options]{reset_style_options()}} resets global style options to the default parameters.
+\code{\link[=reset_style_options]{reset_style_options()}} Resets global style options to the default parameters.
 
-\code{\link[=get_style_options]{get_style_options()}} prints out the currently set global styling options.
+\code{\link[=get_style_options]{get_style_options()}} Prints out the currently set global styling options.
 
 \code{\link[=close_file]{close_file()}} is a simple, more readable wrapper for setting file parameter to NULL.
 

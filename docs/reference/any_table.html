@@ -57,6 +57,7 @@ of variables can be nested and crossed. The output is an individually styled
 <span>  statistics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pct_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pct_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  pct_block <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -123,17 +124,20 @@ should appear in the table rows. To nest variables use the form:
 
 
 <dt id="arg-pct-group">pct_group<a class="anchor" aria-label="anchor" href="#arg-pct-group"></a></dt>
-<dd><p>If pct_group is specified in the statistics, this option is used to
-determine which variable of the row and column variables should add up to 100 %.
-Multiple variables can be specified in a vector to generate multiple group percentages.
-You can also use the keywords "row_pct" or "col_pct" to calculate total percentages for
-rows and columns regardless of the respective other dimension.</p></dd>
+<dd><p>This option is used to determine which variable of the row and column
+variables should add up to 100 %. Multiple variables can be specified in a vector to
+generate multiple group percentages. You can also use the keywords "row_pct" or "col_pct"
+to calculate total percentages for rows and columns regardless of the respective other dimension.</p></dd>
 
 
 <dt id="arg-pct-value">pct_value<a class="anchor" aria-label="anchor" href="#arg-pct-value"></a></dt>
-<dd><p>If pct_value is specified in the statistics, you can pass a list here
-which contains the information for a new variable name and between which of the value
-variables percentages should be computed.</p></dd>
+<dd><p>You can pass a list here, which contains the information for a new
+variable name and between which of the value variables percentages should be computed.</p></dd>
+
+
+<dt id="arg-pct-block">pct_block<a class="anchor" aria-label="anchor" href="#arg-pct-block"></a></dt>
+<dd><p>Can be "rows" or "columns". Calculates percentages for the last
+group of variables inside the individual row or column combinations.</p></dd>
 
 
 <dt id="arg-formats">formats<a class="anchor" aria-label="anchor" href="#arg-formats"></a></dt>
@@ -253,7 +257,12 @@ a designed workbook.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># NOTE: Some of the examples use the parameter 'output = "excel_nostyle"' to</span></span>
-<span><span class="co">#       make them run faster so that more examples can be provided.</span></span>
+<span><span class="co">#       make them run faster so that more examples can be provided. Take out</span></span>
+<span><span class="co">#       the parameter to get the fully styled excel table.</span></span>
+<span><span class="co">#       The global option for printing the output is also set to FALSE for</span></span>
+<span><span class="co">#       the same reason. When running the examples manually, don't run this</span></span>
+<span><span class="co">#       option here.</span></span>
+<span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
@@ -273,8 +282,10 @@ a designed workbook.</p>
 <span>    <span class="st">"Male"</span>   <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># NOTE: "!" in front of an expression makes the expression available for</span></span>
+<span><span class="co">#       calculations but prevents it from beeing printed out.</span></span>
 <span><span class="va">education.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Total"</span>            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"middle"</span>, <span class="st">"high"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"!Total"</span>           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"middle"</span>, <span class="st">"high"</span><span class="op">)</span>,</span>
 <span>    <span class="st">"low education"</span>    <span class="op">=</span> <span class="st">"low"</span>,</span>
 <span>    <span class="st">"middle education"</span> <span class="op">=</span> <span class="st">"middle"</span>,</span>
 <span>    <span class="st">"high education"</span>   <span class="op">=</span> <span class="st">"high"</span><span class="op">)</span></span>
@@ -344,6 +355,7 @@ a designed workbook.</p>
 <span>                     pct_value  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="st">"probability / person"</span><span class="op">)</span>,</span>
 <span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                     output    <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Percentages based on a formatted variable expression</span></span>
@@ -353,6 +365,19 @@ a designed workbook.</p>
 <span>                     pct_value  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="st">"Total"</span>, age <span class="op">=</span> <span class="st">"Total"</span><span class="op">)</span>,</span>
 <span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                     output    <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
+<span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Percentages based on variable combination blocks</span></span>
+<span><span class="co"># NOTE: age + (year education) becomes "age + year" and "age + education"</span></span>
+<span><span class="co">#       and will be sorted together. Also works in columns.</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex + (age education)"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>                     values     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                     pct_block  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rows"</span>, <span class="st">"columns"</span><span class="op">)</span>,</span>
+<span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>,</span>
+<span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
+<span>                     output     <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Customize the visual appearance by adding variable and statistic labels. Both</span></span>
@@ -370,6 +395,7 @@ a designed workbook.</p>
 <span>                     var_labels  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="st">"Age categories"</span>,</span>
 <span>                                        sex <span class="op">=</span> <span class="st">""</span>, weight <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
 <span>                     stat_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="st">"%"</span><span class="op">)</span>,</span>
+<span>                     output      <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
 <span>                     na.rm       <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Individual styling can also be passed directly</span></span>

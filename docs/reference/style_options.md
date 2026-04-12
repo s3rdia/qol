@@ -10,10 +10,10 @@ or
 globally.These options are used by all tabulation and output functions,
 which are capable of exporting styled outputs.
 
-`reset_style_options()` resets global style options to the default
+`reset_style_options()` Resets global style options to the default
 parameters.
 
-`get_style_options()` prints out the currently set global styling
+`get_style_options()` Prints out the currently set global styling
 options.
 
 `close_file()` is a simple, more readable wrapper for setting file

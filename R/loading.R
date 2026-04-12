@@ -328,7 +328,7 @@ save_file <- function(data_frame,
     }
 
     if (extension == "fst"){
-        fst::threads_fst(.qol_options[["threads"]])
+        suppressMessages(fst::threads_fst(.qol_options[["threads"]]))
 
         # Save data frame
         suppressWarnings(suppressMessages(
@@ -339,7 +339,7 @@ save_file <- function(data_frame,
     }
 
     # Revert used threads
-    fst::threads_fst(NULL)
+    suppressMessages(fst::threads_fst(NULL))
 
     if (extension == "fst"){
         print_closing(5)
@@ -483,7 +483,7 @@ save_file_multi <- function(data_frame_list,
     }
 
     # Revert used threads
-    fst::threads_fst(NULL)
+    suppressMessages(fst::threads_fst(NULL))
 
     print_closing(15)
 
@@ -583,11 +583,11 @@ load_file <- function(path,
     ###########################################################################
 
     if (extension == "fst"){
-        fst::threads_fst(.qol_options[["threads"]])
+        suppressMessages(fst::threads_fst(.qol_options[["threads"]]))
 
         if (!is.null(keep)){
             # Get metadata first to be able to read in the variable names case insensitive
-            meta_data      <- fst::metadata_fst(full_path)
+            meta_data      <- suppressMessages(fst::metadata_fst(full_path))
             variable_names <- meta_data[["columnNames"]]
 
             # Check if variables exist in the meta data
@@ -606,9 +606,9 @@ load_file <- function(path,
             keep_names    <- keep[valid_ids]
 
             # Read in existing variables
-            data_frame <- fst::read_fst(full_path,
-                                        columns       = vars_to_keep,
-                                        as.data.table = TRUE)
+            data_frame <- suppressMessages(fst::read_fst(full_path,
+                                                         columns       = vars_to_keep,
+                                                         as.data.table = TRUE))
 
             # Rename variables to the names provided in keep
             data_frame |> data.table::setnames(vars_to_keep, keep_names)
@@ -659,7 +659,7 @@ load_file <- function(path,
     data_frame <- suppressMessages(data_frame |> if.(where))
 
     # Revert used threads
-    fst::threads_fst(NULL)
+    suppressMessages(fst::threads_fst(NULL))
 
     if (extension == "fst"){
         print_closing(5, suppress = suppress)
@@ -781,7 +781,7 @@ load_file_multi <- function(file_list,
     }
 
     # Revert used threads
-    fst::threads_fst(NULL)
+    suppressMessages(fst::threads_fst(NULL))
 
     print_closing(15)
 

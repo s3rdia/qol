@@ -78,12 +78,12 @@ expect_true(!NA %in% test_df2[["age_group"]], info = "else. only alters every ot
 
 # if. and else_if. are not the same
 state_df_a <- dummy_df |>
-         if.(state == 1, state_a = "State 1") |>
+         if.(state <= 3, state_a = "State 1-3") |>
     else_if.(state < 11, state_a = "West") |>
     else.   (            state_a = "East")
 
 state_df_b <- dummy_df |>
-      if.(state == 1, state_b = "State 1") |>
+      if.(state <= 3, state_b = "State 1-3") |>
       if.(state < 11, state_b = "West") |>
     else.(            state_b = "East")
 
@@ -213,6 +213,16 @@ expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if., 
 expect_true(!NA %in% test_df[["sex"]], info = "Subset data frame with if., when only providing single variable as character")
 
 
+# if. as do over loop for subsetting
+vars   <- c("income", "balance")
+values <- c(1000, 0)
+
+do_over_df <- dummy_df |> if.(vars > values)
+
+expect_true(collapse::fmin(do_over_df[["income"]])  > 1000, info = "if. as do over loop for subsetting")
+expect_true(collapse::fmin(do_over_df[["balance"]]) > 0,    info = "if. as do over loop for subsetting")
+
+
 # Abort subset with if., if variable is not part of the data frame
 test_df <- dummy_df |> if.("test")
 
@@ -290,18 +300,12 @@ expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal le
 
 
 # if. as do over loop aborts without variable assignment
-vars1  <- c("income", "balance")
-vars2  <- c("VAR1", "VAR2")
-values <- c(1, 2)
+vars <- c("income", "balance")
 
-do_over_df <- dummy_df |> if.(vars1 > 0)
+do_over_df <- dummy_df |> else_if.(vars > 0)
 
-expect_error(print_stack_as_messages("ERROR"), "When using vectors in conditions, there must be a variable assignment.",
+expect_warning(print_stack_as_messages("WARNING"), "No assignments found. If you want to filter observations",
                info = "if. as do over loop aborts without variable assignment")
-
-do_over_df <- dummy_df |> else_if.(vars1 > 0)
-
-expect_warning(print_stack_as_messages("WARNING"), "No assignments found. If you want to filter observations", info = "if. as do over loop aborts without variable assignment")
 
 
 set_no_print()

@@ -12,7 +12,7 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                          "mean", "sd", "min", "max", "sum_wgt", ".temp_key", ".temp_weight",
                          "var_pct_row", ".pseudo_preserve", "BY", "by_vars", "VALUE",
                          "first_person", "age", "age_factor", "income", "income_factor",
-                         "expenses", "expenses_factor", "file", "result"))
+                         "expenses", "expenses_factor", "file", "result", "TYPE_ORIG"))
 
 ###############################################################################
 # Start up
@@ -46,7 +46,7 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["na.rm"]]       <- FALSE
 .qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"
-.qol_options[["threads"]]     <- fst::threads_fst()
+.qol_options[["threads"]]     <- suppressMessages(fst::threads_fst())
 .qol_options[["messages"]]    <- list(rule            = list("line-type" = "double"),
                                       span.note       = list(color = "#63C2C9", "font-weight" = "bold", "before" = "\u2139\ufe0f NOTE: "),
                                       span.warning    = list(color = "#FFC90E", "font-weight" = "bold", "before" = "\u26a0\ufe0f WARNING: "),

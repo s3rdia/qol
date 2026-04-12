@@ -156,7 +156,7 @@ set_threads(NULL)
 
 new_options <- get_threads()
 
-expect_equal(new_options, fst::threads_fst(), info = "Set global threads")
+expect_equal(new_options, suppressMessages(fst::threads_fst()), info = "Set global threads")
 
 
 # Reset global options
@@ -178,7 +178,7 @@ expect_true(default_print_miss == new_print_miss, info = "Reset global options")
 expect_true(default_output     == new_output, info = "Reset global options")
 expect_equal(new_titles, NULL, info = "Reset global options")
 expect_equal(new_footnotes, NULL, info = "Reset global options")
-expect_equal(new_threads, fst::threads_fst(), info = "Reset global options")
+expect_equal(new_threads, suppressMessages(fst::threads_fst()), info = "Reset global options")
 
 ###############################################################################
 # Warning checks

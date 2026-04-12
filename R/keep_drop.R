@@ -59,13 +59,18 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     variables_temp <- dots_to_char(...)
 
     if (length(variables_temp) == 0){
-        return(data_frame)
+        return(invisible(data_frame))
     }
 
     original_order <- names(data_frame)
 
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
+
+    if (length(variables) == 0){
+        print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")
+        return(invisible(data_frame))
+    }
 
     # Check if all variables are part of the data frame
     provided_vars <- variables
@@ -112,11 +117,16 @@ dropp <- function(data_frame, ...){
     variables_temp <- dots_to_char(...)
 
     if (length(variables_temp) == 0){
-        return(data_frame)
+        return(invisible(data_frame))
     }
 
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
+
+    if (length(variables) == 0){
+        print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")
+        return(invisible(data_frame))
+    }
 
     # Check if all variables are part of the data frame
     provided_vars <- variables
@@ -129,7 +139,7 @@ dropp <- function(data_frame, ...){
 								   invalid = invalid_vars)
 
         if (length(variables) == 0){
-            return(data_frame)
+            return(invisible(data_frame))
         }
     }
 

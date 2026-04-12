@@ -66,7 +66,9 @@ export_with_style(
 
 ## Value
 
-Returns a formatted 'Excel' workbook.
+Returns a list with the data table containing the results for the table,
+the formatted 'Excel' workbook and the meta information needed for
+styling the final table.
 
 ## Details
 

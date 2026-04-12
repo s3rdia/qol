@@ -40,7 +40,8 @@ if one only wants to catch the output workbook.}
 \item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
 }
 \value{
-Returns a formatted 'Excel' workbook.
+Returns a list with the data table containing the results for the table, the formatted
+'Excel' workbook and the meta information needed for styling the final table.
 }
 \description{
 \code{\link[=export_with_style]{export_with_style()}} prints a data frame as an individually styled 'Excel' table. Titles,

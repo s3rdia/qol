@@ -146,6 +146,8 @@ if. <- function(data_frame, condition, ...){
     # variable name and not a vector of variable names.
     content_list <- Filter(is_valid_vector, content_list)
 
+    list_entry_lengths <- lengths(content_list)
+
     # If no vector was passed in the condition or the assignments, then evaluate
     # as normal if statement.
     flag_filter    <- FALSE
@@ -208,76 +210,146 @@ if. <- function(data_frame, condition, ...){
                     # Insert the current variables into the condition
                     current_condition <- do.call(substitute, list(condition, replace_list))
                     current_condition <- translate_condition(current_condition)
-                    current_condition <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
+                    condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
                     # Check whether there are additional conditions active via do_if and
                     # add to call list
-                    condition_list[[element]] <- data_frame |> combined_condition(current_condition)
+                    condition_list[[element]] <- data_frame |> combined_condition(condition_list[[element]])
                 }
             }
         }
     }
     # Filter observations, if there are no assignments given
     else{
-        if (length(content_list) > 0){
-            print_message("ERROR", c("When using vectors in conditions, there must be a variable assignment.",
-									 "Evaluation will be aborted."))
-            return(invisible(data_frame))
-        }
-
         flag_filter <- TRUE
 
-        condition <- translate_condition(condition)
-        condition <- eval(condition, envir = data_frame, enclos = parent_env)
+        # If no vector was passed in the condition, then evaluate as normal
+        if (length(content_list) == 0){
+            condition <- translate_condition(condition)
+            condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
-        # Remember rows to tell the user how many rows have been removed
-        rows_before <- data_frame |> collapse::fnrow()
+            # Remember rows to tell the user how many rows have been removed
+            rows_before <- data_frame |> collapse::fnrow()
 
-        # Evaluate normal condition
-        if (is.logical(condition)){
-            # Check whether there are additional conditions active via do_if
-            full_condition <- data_frame |> combined_condition(condition)
+            # Evaluate normal condition
+            if (is.logical(condition)){
+                # Check whether there are additional conditions active via do_if
+                full_condition <- data_frame |> combined_condition(condition)
 
-            data_frame <- data_frame |> collapse::fsubset(full_condition)
-        }
-        # If a single variable name is given like 'age' this will be evaluated as:
-        # !is.na(age). So it is basically a short form like 'If age;' in SAS.
-        else{
-            # If it is a single character variable it has to be checked first if it is part
-            # of the data frame. If not, no subsetting will take place.
-            if (is.character(condition) && length(condition) == 1){
-                condition <- data_frame |> part_of_df(condition)
+                data_frame <- data_frame |> collapse::fsubset(full_condition)
+            }
+            # If a single variable name is given like 'age' this will be evaluated as:
+            # !is.na(age). So it is basically a short form like 'If age;' in SAS.
+            else{
+                # If it is a single character variable it has to be checked first if it is part
+                # of the data frame. If not, no subsetting will take place.
+                if (is.character(condition) && length(condition) == 1){
+                    condition <- data_frame |> part_of_df(condition)
 
-                if (length(condition) == 0){
-                    print_message("ERROR", "No variable for subsetting provided. Data frame remains as is.")
+                    if (length(condition) == 0){
+                        print_message("ERROR", "No variable for subsetting provided. Data frame remains as is.")
+                    }
+                    else{
+                        # Check whether there are additional conditions active via do_if
+                        full_condition <- data_frame |> combined_condition(!is.na(data_frame[[condition]]))
+
+                        data_frame <- data_frame |> collapse::fsubset(full_condition)
+                    }
                 }
+                else if (length(condition) != collapse::fnrow(data_frame)){
+                    print_message("ERROR", "Only single variables and conditions allowed. Data frame remains as is.")
+                }
+                # Evaluate single variable
                 else{
                     # Check whether there are additional conditions active via do_if
-                    full_condition <- data_frame |> combined_condition(!is.na(data_frame[[condition]]))
+                    full_condition <- data_frame |> combined_condition(!is.na(condition))
 
                     data_frame <- data_frame |> collapse::fsubset(full_condition)
                 }
             }
-            else if (length(condition) != collapse::fnrow(data_frame)){
-                print_message("ERROR", "Only single variables and conditions allowed. Data frame remains as is.")
-            }
-            # Evaluate single variable
-            else{
-                # Check whether there are additional conditions active via do_if
-                full_condition <- data_frame |> combined_condition(!is.na(condition))
 
-                data_frame <- data_frame |> collapse::fsubset(full_condition)
+            # Output info message
+            rows_after <- data_frame |> collapse::fnrow()
+
+            print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
+                    removed = format(rows_before - rows_after,
+                                     format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+                    still_there = format(rows_after,
+                                         format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
+        }
+        # If a vector was passed in the condition, then evaluate the if statement
+        # as a do over loop. Meaning for each vector the same elements are used
+        # simultaneously one after another.
+        else{
+            original_condition <- condition
+
+            for (element in seq_len(list_entry_lengths[1])){
+                # Get the respective first elements as symbols in a new list
+                replace_list <- lapply(content_list, function(vector){
+                    if (is.numeric(vector)){
+                        expression <- vector[element]
+                    }
+                    else{
+                        expression <- as.name(vector[element])
+                    }
+                })
+
+                # Evaluate complete assignment first without condition
+                condition  <- do.call(substitute, list(original_condition, replace_list))
+
+                condition <- translate_condition(condition)
+                condition <- eval(condition, envir = data_frame, enclos = parent_env)
+
+                # Remember rows to tell the user how many rows have been removed
+                rows_before <- data_frame |> collapse::fnrow()
+
+                # Evaluate normal condition
+                if (is.logical(condition)){
+                    # Check whether there are additional conditions active via do_if
+                    full_condition <- data_frame |> combined_condition(condition)
+
+                    data_frame <- data_frame |> collapse::fsubset(full_condition)
+                }
+                # If a single variable name is given like 'age' this will be evaluated as:
+                # !is.na(age). So it is basically a short form like 'If age;' in SAS.
+                else{
+                    # If it is a single character variable it has to be checked first if it is part
+                    # of the data frame. If not, no subsetting will take place.
+                    if (is.character(condition) && length(condition) == 1){
+                        condition <- data_frame |> part_of_df(condition)
+
+                        if (length(condition) == 0){
+                            print_message("ERROR", "No variable for subsetting provided. Data frame remains as is.")
+                        }
+                        else{
+                            # Check whether there are additional conditions active via do_if
+                            full_condition <- data_frame |> combined_condition(!is.na(data_frame[[condition]]))
+
+                            data_frame <- data_frame |> collapse::fsubset(full_condition)
+                        }
+                    }
+                    else if (length(condition) != collapse::fnrow(data_frame)){
+                        print_message("ERROR", "Only single variables and conditions allowed. Data frame remains as is.")
+                    }
+                    # Evaluate single variable
+                    else{
+                        # Check whether there are additional conditions active via do_if
+                        full_condition <- data_frame |> combined_condition(!is.na(condition))
+
+                        data_frame <- data_frame |> collapse::fsubset(full_condition)
+                    }
+                }
+
+                # Output info message
+                rows_after <- data_frame |> collapse::fnrow()
+
+                print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
+                           removed = format(rows_before - rows_after,
+                                            format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+                           still_there = format(rows_after,
+                                                format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
             }
         }
-
-        # Output info message
-        rows_after <- data_frame |> collapse::fnrow()
-
-        print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
-                removed = format(rows_before - rows_after,
-                                 format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
-                still_there = format(rows_after,
-                                     format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
     }
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
@@ -417,11 +489,11 @@ else_if. <- function(data_frame, condition, ...){
                     # Insert the current variables into the condition
                     current_condition <- do.call(substitute, list(condition, replace_list))
                     current_condition <- translate_condition(current_condition)
-                    current_condition <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
+                    condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
                     # Check whether there are additional conditions active via do_if and
                     # add to call list
-                    condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & current_condition)
+                    condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & condition_list[[element]])
                 }
             }
         }

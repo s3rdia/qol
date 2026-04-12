@@ -242,6 +242,7 @@ expect_true(all(c("Total", "below 500", "2000 and more")
 # frequencies with excel output
 result_list <- dummy_df |>
     frequencies(variables = age,
+                means     = TRUE,
                 output    = "excel",
                 print     = FALSE)
 
@@ -252,7 +253,7 @@ expect_equal(length(result_list), 2, info = "frequencies with excel output")
 # frequencies with titles and footnotes and weight
 result_list <- dummy_df |>
     frequencies(variables = sex,
-                output    = "excel",
+                output    = "excel_nostyle",
                 titles    = "Hello world",
                 footnotes = "This is a footnote",
                 weight    = weight,
@@ -264,22 +265,22 @@ expect_equal(length(result_list), 2, info = "frequencies with titles and footnot
 
 # frequencies with excel output and by variables
 result_list <- dummy_df |>
-    frequencies(variables = age,
-                by        = sex,
-                means     = TRUE,
-                output    = "excel",
-                print     = FALSE)
+    frequencies(variables  = age,
+                by         = sex,
+                output     = "excel",
+                print      = FALSE)
 
 expect_true(all(c("by_vars", "BY") %in% names(result_list[["freq"]])), info = "frequencies with excel output and by variables")
 
 
 # frequencies with excel output and by variables and print_miss
 result_list <- dummy_df |>
-                                        frequencies(variables  = age,
-                                                    by         = sex,
-                                                    print_miss = TRUE,
-                                                    output     = "excel",
-                                                    print      = FALSE)
+    frequencies(variables  = age,
+                by         = sex,
+                print_miss = TRUE,
+                means      = TRUE,
+                output     = "excel_nostyle",
+                print      = FALSE)
 
 expect_true(all(c("by_vars", "BY") %in% names(result_list[["freq"]])), info = "frequencies with excel output and by variables and print_miss")
 

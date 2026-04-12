@@ -126,7 +126,7 @@ set_style_options <- function(...){
 #' Reset Global Styling Options For Excel Workbooks
 #'
 #' @description
-#' [reset_style_options()] resets global style options to the default parameters.
+#' [reset_style_options()] Resets global style options to the default parameters.
 #'
 #' @return
 #' [reset_style_options()]: Returns default global styling options.
@@ -141,6 +141,12 @@ reset_style_options <- function(){
     .qol_options[["excel_style"]] <- excel_output_style()
     .qol_options[["var_labels"]]  <- list()
     .qol_options[["stat_labels"]] <- list()
+    .qol_options[["print"]]       <- TRUE
+    .qol_options[["monitor"]]     <- FALSE
+    .qol_options[["na.rm"]]       <- FALSE
+    .qol_options[["print_miss"]]  <- FALSE
+    .qol_options[["output"]]      <- "console"
+    .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst())
 
     invisible(.qol_options)
 }
@@ -149,7 +155,7 @@ reset_style_options <- function(){
 #' Get Global Styling Options For Excel Workbooks
 #'
 #' @description
-#' [get_style_options()] prints out the currently set global styling options.
+#' [get_style_options()] Prints out the currently set global styling options.
 #'
 #' @return
 #' [get_style_options()]: List of global styling options.

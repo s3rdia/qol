@@ -109,6 +109,35 @@
 - [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
   Now accepts multiple title and footnote colors, sizes and boldings.
   (10.04.2026)
+- [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  New option `header_stat_merging` determines how the statistic symbols
+  or labels are merged in the column header. As a new standard the
+  labels are now not fully merged but in blocks. (10.04.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md):
+  Observation selection now also works as do over loop. (12.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  New parameter `pct_block` enables percentage calculation inside the
+  respective second to last grouping of the row or column variables.
+  (12.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If the result expression of a format starts with an “!”, this
+  expression will be used in calculations but will be dropped in the
+  result table. This can be used to calculate block percentages based on
+  a total expression without showing the total in the result table.
+  (12.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Variable combinations in rows and columns can now also be passed like
+  “state + (age sex education)”, which reslts in “state + age”, “state +
+  sex”, “state + education”, with the addition that the results with the
+  same root grouping will be sorted together concerning the row header
+  variables. For the column sorting there is a new `order_by` option
+  with “blocks” for that purpose. (12.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  There are new special `var_labels`, which add additional top column
+  headers. When assigning labels to variables that start with “block”,
+  e.g. “block1” = “Column Percentages”, “block2” = “Row Percentages”,
+  these labels will appear as the top line of the column header.
+  (12.04.2026)
 
 #### Changed functionality
 
@@ -177,6 +206,11 @@
   When formats where used for sorting, the temporary sorting variables
   where always put up front instead of inserted in sequential order.
   This is fixed now. (10.04.2026)
+- [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md): If
+  a character pattern is used to keep or drop variables and no variable
+  matching the pattern is found, the functions now abort with a warning.
+  (12.04.2026)
 
 #### Optimization
 
