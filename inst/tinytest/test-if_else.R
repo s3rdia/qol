@@ -250,6 +250,13 @@ test_df <- dummy_df |> where.(sex == 1, c("sex", "age"))
 expect_equal(names(test_df), c("sex", "age"), info = "Filter data frame with where.")
 expect_true(!any(c(2, NA) %in% test_df[["sex"]]), info = "Filter data frame with where.")
 
+
+# where. aborts with a warning, if no observations left
+test_df <- dummy_df |> where.(sex == 0)
+
+expect_warning(print_stack_as_messages("WARNING"), "No observations left in the data frame.",
+               info = "where. aborts with a warning, if no observations left")
+
 ###############################################################################
 # Warning checks
 ###############################################################################

@@ -63,6 +63,8 @@
 * `any_table()`: Without column variables each variable in the column header received a "_ " at the end, which is not the case anymore. (10.04.2026)
 * `sort_plus()`: When formats where used for sorting, the temporary sorting variables where always put up front instead of inserted in sequential order. This is fixed now. (10.04.2026)
 * `keep()`, `dropp()`: If a character pattern is used to keep or drop variables and no variable matching the pattern is found, the functions now abort with a warning. (12.04.2026)
+* `where.()`: Now aborts with a warning if no observations or variables are left in the data frame. (13.04.2026)
+* `export_with_style()`: Can now rename variables that have blanks in their name. (13.04.2026)
 
 ### Optimization
 

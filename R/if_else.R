@@ -663,6 +663,8 @@ translate_condition <- function(condition){
             expression <- condition[[3]]
 
             if (is.character(expression) && length(expression) == 1){
+                flag_translated <- FALSE
+
                 # Count the colons, there may not be more than two, otherwise the function
                 # should skip the expression.
                 colon_count <- nchar(gsub("[^:]", "", expression))
@@ -674,6 +676,8 @@ translate_condition <- function(condition){
                         search_term <- substring(expression, 1, nchar(expression) - 1)
 
                         translated_call <- call("startsWith", variable, search_term)
+
+                        flag_translated <- TRUE
                     }
                     # When at the start (":text"), select all variables which end with the characters
                     # following the colon. ":" acts as a placeholder for everything that comes before.
@@ -681,6 +685,8 @@ translate_condition <- function(condition){
                         search_term <- substring(expression, 2)
 
                         translated_call <- call("endsWith", variable, search_term)
+
+                        flag_translated <- TRUE
                     }
                 }
                 # In case there are two colons, one at the start and one at the end (":text:"),
@@ -690,6 +696,8 @@ translate_condition <- function(condition){
                         search_term <- gsub(":", "", expression)
 
                         translated_call <- call("grepl", search_term, variable, fixed = TRUE)
+
+                        flag_translated <- TRUE
                     }
                 }
                 else{
@@ -697,7 +705,7 @@ translate_condition <- function(condition){
                 }
 
                 # Return call as is or as NOT depending on the operator
-                if (identical(operator, as.name("!="))){
+                if (identical(operator, as.name("!=")) && flag_translated){
                     return(call("!", translated_call))
                 }
                 else{
@@ -800,6 +808,18 @@ where. <- function(data_frame,
 
     if (!is.null(keep)){
         data_frame <- data_frame |> keep(keep, order_vars = TRUE)
+    }
+
+    # Abort without observations
+    if (collapse::fnrow(data_frame) == 0){
+        print_message("WARNING", "No observations left in the data frame.")
+        return(invisible(data_frame))
+    }
+
+    # Abort without variables
+    if (collapse::fncol(data_frame) == 0){
+        print_message("WARNING", "No variables left in the data frame.")
+        return(invisible(data_frame))
     }
 
     # View data frame in new window

@@ -94,6 +94,7 @@ compute <- function(data_frame,
     # case, then a hidden parameter is passed, carrying the condition. Additionally
     # check, if there are any do_if() conditions active and apply them
     if_condition_list <- NULL
+    if_suppressed     <-  FALSE
 
     if (".if_condition" %in% names(assignments)){
         condition                      <- TRUE
@@ -111,6 +112,7 @@ compute <- function(data_frame,
 
     if (".if_suppressed" %in% names(assignments)){
         assignments[[".if_suppressed"]] <- NULL
+        if_suppressed <- TRUE
     }
 
     # The condition and the variable assignments are torn apart here, so that
@@ -360,7 +362,7 @@ compute <- function(data_frame,
         data_frame <- collapse::ftransform(data_frame, call_list)
     }
 
-    if (".if_suppressed" %in% names(assignments)){
+    if (if_suppressed){
         print_closing(suppress = TRUE)
     }
     else{

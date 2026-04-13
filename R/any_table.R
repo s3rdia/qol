@@ -2436,7 +2436,7 @@ build_multi_header <- function(var_names,
     merged_header <- merge_headers(header_matrix, col_var_headers)
 
     # Get the more detailed blocks
-    if (length(var_labels) > 0 && any(startsWith(names(var_labels), "block"))){
+    if (length(var_labels) > 0 && any(startsWith(tolower(names(var_labels)), "block"))){
         start_var <- (length(var_names) - collapse::fncol(merged_header)) + 1
 
         # Get the root variable names to count the number of group elements

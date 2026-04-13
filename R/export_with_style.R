@@ -391,19 +391,8 @@ set_labels_as_names <- function(data_frame, var_labels){
         return(data_frame)
     }
 
-    # Loop through all provided labels
-    for (i in seq_along(var_labels)){
-        name  <- names(var_labels)[i]
-        label <- var_labels[[i]]
-
-        # Omit label with missing variable name
-        if (is.null(name) || name == ""){
-            next
-        }
-
-        # Replace variable texts with provided labels
-        names(data_frame) <- gsub(name, label, names(data_frame))
-    }
-
-    data_frame
+    collapse::frename(data_frame,
+                      stats::setNames(names(var_labels),
+                                      as.character(var_labels)),
+                      .nse = FALSE)
 }

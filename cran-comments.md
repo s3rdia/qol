@@ -64,6 +64,8 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`: Without column variables each variable in the column header received a "_ " at the end, which is not the case anymore.
 * `sort_plus()`: When formats where used for sorting, the temporary sorting variables where always put up front instead of inserted in sequential order. This is fixed now.
 * `keep()`, `dropp()`: If a character pattern is used to keep or drop variables and no variable matching the pattern is found, the functions now abort with a warning.
+* `where.()`: Now aborts with a warning if no observations or variables are left in the data frame.
+* `export_with_style()`: Can now rename variables that have blanks in their name.
 
 ### Optimization
 
