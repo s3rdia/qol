@@ -11,9 +11,13 @@
 #' warnings, errors, function call headlines, progress and function closing
 #' messages. Or just a neutral one.
 #'
+#' @param type The message type, so that the function knows which symbol and coloring
+#' to use.
 #' @param text The message text to display.
 #' @param ... Additional information to display like variable names. To use
 #' these write &#91;<NAME YOU PUT IN>&#93; in the text.
+#' @param always_print FALSE by default. If TRUE, prints headlines even in deeper
+#' nested situations.
 #' @param utf8 Whether to display complex characters or just plain text.
 #'
 #' @details
@@ -68,7 +72,7 @@ print_message <- function(type,
         caller <- "do.call"
     }
 
-    if (!tolower(type) %in% c("note", "warning", "error", "neutral")){
+    if (!is.list(type) && !tolower(type) %in% c("note", "warning", "error", "neutral")){
         type <- "neutral"
     }
 
@@ -120,9 +124,15 @@ print_message <- function(type,
             cat("\n")
         }
 
-        text <- print_to_console(type = tolower(type), text = text, ..., utf8 = utf8)
+        text <- print_to_console(type = type, text = text, ..., utf8 = utf8)
     }
 
+    # Catch type for message stack on custom messages
+    if (is.list(type)){
+        type <- type[["type"]]
+    }
+
+    # Add message to global stack
     .qol_messages[["stack"]][[entry_nr]] <- list(type       = toupper(type),
                                                  text       = text,
                                                  suppressed = suppressed,
@@ -136,8 +146,6 @@ print_message <- function(type,
     invisible(text)
 }
 
-# TODO: CONVERT STACK TO DATA FRAME
-# TODO: PRINT STACK
 # TODO: Unit tests
 # TODO: Update README
 
@@ -145,8 +153,6 @@ print_message <- function(type,
 #' This is the core printing function which formats the text and prints it to the
 #' console.
 #'
-#' @param type The message type, so that the function knows which symbol and coloring
-#' to use.
 #' @param new_line TRUE by default. Whether to directly add a new line to the console
 #' or not.
 #'
@@ -156,43 +162,91 @@ print_to_console <- function(type,
                              ...,
                              utf8     = .qol_messages[["format"]][["utf8"]],
                              new_line = TRUE){
-    if (!tolower(type) %in% c("note", "warning", "error", "neutral", "major", "minor", "grey")){
-        type <- "neutral"
-    }
+    # If normal pre defined message
+    if (!is.list(type)){
+        type <- tolower(type)
 
-    # Output message
-    if (utf8){
-        # First format all line breaks so that the next text lines are indented
-        seperator <- paste0("\n", .qol_messages[["format"]][[paste0(type, "_indent_ansi")]])
-        text      <- paste(text, collapse = seperator)
-
-        # Insert special grey message format
-        if (type == "grey"){
-            text <- paste0("[i][", .qol_messages[["format"]][["time_color"]], " ", text, "][/i]")
+        if (!type %in% c("note", "warning", "error", "neutral", "major", "minor", "grey")){
+            type <- "neutral"
         }
 
-        # Insert formatting
-        text_orig <- convert_square_brackets(text, ...)
-        text      <- paste(.qol_messages[["format"]][[paste0(type, "_ansi")]], text_orig, sep = "")
+        # Output message
+        if (utf8){
+            # First format all line breaks so that the next text lines are indented
+            seperator <- paste0("\n", .qol_messages[["format"]][[paste0(type, "_indent_ansi")]])
+            text      <- paste(text, collapse = seperator)
+
+            # Insert special grey message format
+            if (type == "grey"){
+                text <- paste0("[i][", .qol_messages[["format"]][["time_color"]], " ", text, "][/i]")
+            }
+
+            # Insert formatting
+            text_orig <- convert_square_brackets(text, ...)
+            text      <- paste(.qol_messages[["format"]][[paste0(type, "_ansi")]], text_orig, sep = "")
+        }
+        else{
+            # First format all line breaks so that the next text lines are indented
+            seperator <- paste0("\n", .qol_messages[["format"]][[paste0(type, "_indent_pt")]])
+            text      <- paste(text, collapse = seperator)
+
+            # Insert special grey message format
+            if (type == "grey"){
+                text <- paste0("[i][", .qol_messages[["format"]][["time_color"]], " ", text, "][/i]")
+            }
+
+            # Insert formatting
+            text_orig <- convert_square_brackets(text, ...)
+            text      <- paste(.qol_messages[["format"]][[paste0(type, "_pt")]], text_orig, sep = "")
+        }
     }
+    # If custom message
     else{
         # First format all line breaks so that the next text lines are indented
-        seperator <- paste0("\n", .qol_messages[["format"]][[paste0(type, "_indent_pt")]])
-        text      <- paste(text, collapse = seperator)
-
-        # Insert special grey message format
-        if (type == "grey"){
-            text <- paste0("[i][", .qol_messages[["format"]][["time_color"]], " ", text, "][/i]")
+        if (utf8){
+            message_start <- paste0(rep("\u00a0", type[["indent"]]), type[["ansi_icon"]])
         }
+        else{
+            message_start <- paste0(rep("\u00a0", type[["indent"]]), type[["text_icon"]])
+        }
+
+        # Build the line indentation for each line after the first one
+        seperator <- paste0("\n", message_start, " ", strrep("\u00a0", nchar(type[["type"]]) + 2))
+
+        # Insert special message format
+        if (!is.null(type[["text_color"]])){
+            text <- paste0("[", type[["text_color"]], " ", text, "]")
+        }
+        if (type[["text_bold"]]){
+            text <- paste0("[b]", text, "[/b]")
+        }
+        if (type[["text_italic"]]){
+            text <- paste0("[i]", text, "[/i]")
+        }
+        if (type[["text_underline"]]){
+            text <- paste0("[u]", text, "[/u]")
+        }
+
+        # Paste multiline text together
+        text <- paste(text, collapse = seperator)
 
         # Insert formatting
         text_orig <- convert_square_brackets(text, ...)
-        text      <- paste(.qol_messages[["format"]][[paste0(type, "_pt")]], text_orig, sep = "")
+
+        # Generate timed type and put final message together
+        if ("timed" %in% names(type)){
+            note_text <- hex_to_ansi(paste(message_start, " ", sep = ""), hex_color = type[["color"]], bold = TRUE)
+            text      <- paste(note_text, text_orig, sep = "")
+        }
+        # Generate colored note type and put final message together
+        else{
+            note_text <- hex_to_ansi(paste(message_start, " ", type[["type"]], ": ", sep = ""), hex_color = type[["color"]], bold = TRUE)
+            text      <- paste(note_text, text_orig, sep = "")
+        }
     }
 
     # Print message to the console conditionally.
     prefix <- ifelse(is_new_line_necessary(), "\n", "")
-
 
     if (!is_no_print_active()){
         # Put a line break afterwards, otherwise the next message would be printed on the same line.
@@ -234,8 +288,6 @@ print_to_console <- function(type,
 #' @param line_char The character that that forms the line.
 #' @param max_width The maximum number of characters drawn, which determines the
 #' line length of the headline.
-#' @param always_print FALSE by default. If TRUE, prints headlines even in deeper
-#' nested situations.
 #'
 #' @examples
 #' # Different headlines
@@ -627,8 +679,13 @@ print_step <- function(type,
         caller <- "do.call"
     }
 
-    if (!tolower(type) %in% c("major", "minor", "grey")){
+    if (!is.list(type) && !tolower(type) %in% c("major", "minor", "grey")){
         type <- "major"
+    }
+    else if (is.list(type)){
+        store_type      <- type[["type"]]
+        type[["type"]]  <- ""
+        type[["timed"]] <- TRUE
     }
 
     # Check how deep nested this function is called.
@@ -680,9 +737,16 @@ print_step <- function(type,
         print_time_stamp()
 
         # If messages are not suppressed
-        text <- print_to_console(type = tolower(type), text = text, ..., utf8 = utf8, new_line = FALSE)
+        text <- paste(text)
+        text <- print_to_console(type = type, text = text, ..., utf8 = utf8, new_line = FALSE)
     }
 
+    # Catch type for message stack on custom messages
+    if (is.list(type)){
+        type <- store_type
+    }
+
+    # Add message to global stack
     .qol_messages[["stack"]][[entry_nr]] <- list(type       = toupper(type),
                                                  text       = text,
                                                  suppressed = suppressed,
@@ -694,6 +758,42 @@ print_step <- function(type,
                                                  time       = Sys.time())
 
     invisible(text)
+}
+
+###############################################################################
+# Custom message
+###############################################################################
+
+#' @description
+#' [set_up_custom_message()]: Sets up the basic items for a custom message.
+#'
+#' @param ansi_icon The icon used when message is displayed in utf8 mode.
+#' @param text_icon The icon used when message is displayed in text only mode.
+#' @param indent How many spaces to indent the message.
+#' @param type If displayed as a normal note, then this is the text displayed
+#' in front of the message. This also appears as type in the message stack.
+#' @param color The color of the message type.
+#' @param text_bold FALSE by default. If TRUE prints the message text in bold letters.
+#' @param text_italic FALSE by default. If TRUE prints the message text in italic letters.
+#' @param text_underline FALSE by default. If TRUE prints the message text underlined.
+#' @param text_color The color of the actual message text.
+#'
+#' @returns
+#' [set_up_custom_message()]: Returns a list.
+#'
+#' @rdname messages
+#'
+#' @export
+set_up_custom_message <- function(ansi_icon      = "\U1F984",
+                                  text_icon      = "^",
+                                  indent         = 1,
+                                  type           = "UNICORN",
+                                  color          = "#FF00FF",
+                                  text_bold      = FALSE,
+                                  text_italic    = FALSE,
+                                  text_underline = FALSE,
+                                  text_color     = NULL){
+    as.list(environment())
 }
 
 ###############################################################################
@@ -712,7 +812,7 @@ print_step <- function(type,
 #'
 #' @seealso
 #' Main printing functions: [print_message()], [print_headline()], [print_start_message()],
-#' [print_closing()], [print_step()]
+#' [print_closing()], [print_step()], [set_up_custom_message()]
 #'
 #' @returns
 #' [get_message_stack()]: Returns a list of messages or a data frame.
@@ -721,7 +821,21 @@ print_step <- function(type,
 #'
 #' @export
 get_message_stack <- function(as_data_frame = FALSE){
-    .qol_messages[["stack"]]
+    # Get stack as is
+    if (!as_data_frame){
+        .qol_messages[["stack"]]
+    }
+    # Convert to data frame without the whole call stack
+    else{
+        stack_df <- do.call(rbind, lapply(.qol_messages[["stack"]], function(message){
+                message[["call_stack"]] <- NULL
+                data.frame(message, stringsAsFactors = FALSE)
+            }))
+
+        rownames(stack_df) <- NULL
+
+        stack_df
+    }
 }
 
 

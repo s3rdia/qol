@@ -7,6 +7,7 @@
 \alias{print_start_message}
 \alias{print_closing}
 \alias{print_step}
+\alias{set_up_custom_message}
 \title{Print Styled Messages}
 \usage{
 print_message(
@@ -47,10 +48,22 @@ print_step(
   always_print = FALSE,
   utf8 = .qol_messages[["format"]][["utf8"]]
 )
+
+set_up_custom_message(
+  ansi_icon = "🦄",
+  text_icon = "^",
+  indent = 1,
+  type = "UNICORN",
+  color = "#FF00FF",
+  text_bold = FALSE,
+  text_italic = FALSE,
+  text_underline = FALSE,
+  text_color = NULL
+)
 }
 \arguments{
-\item{type}{The message type, so that the function knows which symbol and coloring
-to use. Allowed are "note", "warning", "error", "neutral", "major", "minor" and "grey".}
+\item{type}{If displayed as a normal note, then this is the text displayed
+in front of the message. This also appears as type in the message stack.}
 
 \item{text}{The message text to display.}
 
@@ -80,14 +93,34 @@ green over yellow to red, depending on the threshold specified (in seconds).}
 
 \item{start_time}{The time at which the function call started to calculate the
 time difference and output the total time spent.}
+
+\item{ansi_icon}{The icon used when message is displayed in utf8 mode.}
+
+\item{text_icon}{The icon used when message is displayed in text only mode.}
+
+\item{indent}{How many spaces to indent the message.}
+
+\item{color}{The color of the message type.}
+
+\item{text_bold}{FALSE by default. If TRUE prints the message text in bold letters.}
+
+\item{text_italic}{FALSE by default. If TRUE prints the message text in italic letters.}
+
+\item{text_underline}{FALSE by default. If TRUE prints the message text underlined.}
+
+\item{text_color}{The color of the actual message text.}
 }
 \value{
 Return text without styling or total running time.
+
+\code{\link[=set_up_custom_message]{set_up_custom_message()}}: Returns a list.
 }
 \description{
 Printing styled messages for different occasions. There are notifications,
 warnings, errors, function call headlines, progress and function closing
 messages. Or just a neutral one.
+
+\code{\link[=set_up_custom_message]{set_up_custom_message()}}: Sets up the basic items for a custom message.
 }
 \details{
 The message types in which you can enter custom texts, are capable of using

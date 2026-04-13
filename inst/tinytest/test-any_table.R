@@ -813,6 +813,7 @@ result_list <- dummy_df |>
                  values     = weight,
                  statistics = c("pct_value"),
                  pct_value  = list(rate = "Test1 / Test2"),
+                 formats    = list(age = age.),
                  print      = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "Variable 'Test1' not found in the data frame.",

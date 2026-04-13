@@ -52,6 +52,13 @@
   - [`convert_square_brackets()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
     Transforms the format symbols (like {b}{/b}) into the actual console
     readable formattings. (09.04.2026)
+  - [`set_up_custom_message()`](https://s3rdia.github.io/qol/reference/messages.md):
+    Sets up the basic items for a custom message. These custom types can
+    be input into
+    [`print_message()`](https://s3rdia.github.io/qol/reference/messages.md)
+    and
+    [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md).
+    (13.04.2026)
 - [`hex_to_256()`](https://s3rdia.github.io/qol/reference/hex_ansi.md),
   [`hex_to_ansi()`](https://s3rdia.github.io/qol/reference/hex_ansi.md):
   Generate a 256-color 6x6x6 color cube and apply hex color and font

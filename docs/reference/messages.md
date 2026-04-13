@@ -4,6 +4,8 @@ Printing styled messages for different occasions. There are
 notifications, warnings, errors, function call headlines, progress and
 function closing messages. Or just a neutral one.
 
+`set_up_custom_message()`: Sets up the basic items for a custom message.
+
 ## Usage
 
 ``` r
@@ -45,15 +47,26 @@ print_step(
   always_print = FALSE,
   utf8 = .qol_messages[["format"]][["utf8"]]
 )
+
+set_up_custom_message(
+  ansi_icon = "🦄",
+  text_icon = "^",
+  indent = 1,
+  type = "UNICORN",
+  color = "#FF00FF",
+  text_bold = FALSE,
+  text_italic = FALSE,
+  text_underline = FALSE,
+  text_color = NULL
+)
 ```
 
 ## Arguments
 
 - type:
 
-  The message type, so that the function knows which symbol and coloring
-  to use. Allowed are "note", "warning", "error", "neutral", "major",
-  "minor" and "grey".
+  If displayed as a normal note, then this is the text displayed in
+  front of the message. This also appears as type in the message stack.
 
 - text:
 
@@ -105,9 +118,43 @@ print_step(
   The time at which the function call started to calculate the time
   difference and output the total time spent.
 
+- ansi_icon:
+
+  The icon used when message is displayed in utf8 mode.
+
+- text_icon:
+
+  The icon used when message is displayed in text only mode.
+
+- indent:
+
+  How many spaces to indent the message.
+
+- color:
+
+  The color of the message type.
+
+- text_bold:
+
+  FALSE by default. If TRUE prints the message text in bold letters.
+
+- text_italic:
+
+  FALSE by default. If TRUE prints the message text in italic letters.
+
+- text_underline:
+
+  FALSE by default. If TRUE prints the message text underlined.
+
+- text_color:
+
+  The color of the actual message text.
+
 ## Value
 
 Return text without styling or total running time.
+
+`set_up_custom_message()`: Returns a list.
 
 ## Details
 

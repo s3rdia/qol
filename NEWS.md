@@ -14,6 +14,7 @@
 	* `set_no_print()`: Prevents messages being printed to the console globally. Can e.g. be used in unit test situations. (09.04.2026)
 	* `print_stack_as_messages()`: Print the global message stack as message, warning or error to be able to receive their signals. (09.04.2026)
 	* `convert_square_brackets()`: Transforms the format symbols (like {b}{/b}) into the actual console readable formattings. (09.04.2026)
+	* `set_up_custom_message()`: Sets up the basic items for a custom message. These custom types can be input into `print_message()` and `print_step()`. (13.04.2026)
 * `hex_to_256()`, `hex_to_ansi()`: Generate a 256-color 6x6x6 color cube and apply hex color and font weight to a text as ansi codes. (09.04.2026)
 * `round_multi()`: Rounds multiple variables at once inside a data frame. (09.04.2026)
 

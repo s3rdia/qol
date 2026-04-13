@@ -64,5 +64,5 @@ different styling operators. These are:
 }
 \seealso{
 Main printing functions: \code{\link[=print_message]{print_message()}}, \code{\link[=print_headline]{print_headline()}}, \code{\link[=print_start_message]{print_start_message()}},
-\code{\link[=print_closing]{print_closing()}}, \code{\link[=print_step]{print_step()}}
+\code{\link[=print_closing]{print_closing()}}, \code{\link[=print_step]{print_step()}}, \code{\link[=set_up_custom_message]{set_up_custom_message()}}
 }

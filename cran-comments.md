@@ -15,6 +15,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 	* `set_no_print()`: Prevents messages being printed to the console globally. Can e.g. be used in unit test situations.
 	* `print_stack_as_messages()`: Print the global message stack as message, warning or error to be able to receive their signals.
 	* `convert_square_brackets()`: Transforms the format symbols (like {b}{/b}) into the actual console readable formattings.
+	* `set_up_custom_message()`: Sets up the basic items for a custom message. These custom types can be input into `print_message()` and `print_step()`.
 * `hex_to_256()`, `hex_to_ansi()`: Generate a 256-color 6x6x6 color cube and apply hex color and font weight to a text as ansi codes.
 * `round_multi()`: Rounds multiple variables at once inside a data frame.
 

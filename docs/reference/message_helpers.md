@@ -84,4 +84,5 @@ Main printing functions:
 [`print_headline()`](https://s3rdia.github.io/qol/reference/messages.md),
 [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md),
 [`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md),
-[`print_step()`](https://s3rdia.github.io/qol/reference/messages.md)
+[`print_step()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`set_up_custom_message()`](https://s3rdia.github.io/qol/reference/messages.md)
