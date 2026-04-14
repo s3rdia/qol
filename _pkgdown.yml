@@ -122,6 +122,7 @@ reference:
   - print_start_message
   - print_closing
   - print_step
+  - set_up_custom_message
   - get_message_stack
   - print_stack_as_messages
   - convert_square_brackets

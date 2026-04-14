@@ -119,8 +119,6 @@ Return text without styling or total running time.
 Printing styled messages for different occasions. There are notifications,
 warnings, errors, function call headlines, progress and function closing
 messages. Or just a neutral one.
-
-\code{\link[=set_up_custom_message]{set_up_custom_message()}}: Sets up the basic items for a custom message.
 }
 \details{
 The message types in which you can enter custom texts, are capable of using

@@ -764,9 +764,6 @@ print_step <- function(type,
 # Custom message
 ###############################################################################
 
-#' @description
-#' [set_up_custom_message()]: Sets up the basic items for a custom message.
-#'
 #' @param ansi_icon The icon used when message is displayed in utf8 mode.
 #' @param text_icon The icon used when message is displayed in text only mode.
 #' @param indent How many spaces to indent the message.

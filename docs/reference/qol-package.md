@@ -131,6 +131,7 @@ Messages:
 [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md),
 [`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md),
 [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md),
+[`set_up_custom_message()`](https://s3rdia.github.io/qol/reference/messages.md),
 [`get_message_stack()`](https://s3rdia.github.io/qol/reference/message_helpers.md),
 [`set_no_print()`](https://s3rdia.github.io/qol/reference/message_helpers.md),
 [`print_stack_as_messages()`](https://s3rdia.github.io/qol/reference/message_helpers.md),

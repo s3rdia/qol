@@ -4,8 +4,6 @@ Printing styled messages for different occasions. There are
 notifications, warnings, errors, function call headlines, progress and
 function closing messages. Or just a neutral one.
 
-`set_up_custom_message()`: Sets up the basic items for a custom message.
-
 ## Usage
 
 ``` r
