@@ -223,6 +223,12 @@
   data frame. (13.04.2026)
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Can now rename variables that have blanks in their name. (13.04.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If an invalid format is passed, this now throws a warning instead of
+  removing all formats silently. (14.04.2026)
 
 #### Optimization
 

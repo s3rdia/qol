@@ -173,6 +173,15 @@ frequencies <- function(data_frame,
         formats      <- evaluate_formats(formats_list)
     }
 
+    # Remove empty formats and throw a warning. This can happen if there is e.g.
+    # a typo in the format.
+    for (variable in names(formats)){
+        if (is.null(formats[[variable]])){
+            formats[[variable]] <- NULL
+            print_message("WARNING", "Format for variable '[variable]' does not exist and can't be applied.", variable = variable)
+        }
+    }
+
     ###########################################################################
     # Error handling
     ###########################################################################

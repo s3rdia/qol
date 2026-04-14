@@ -233,6 +233,16 @@ no_format_list <- dummy_df |>
 expect_true(all(c("Total", "below 500", "2000 and more")
                 %in% format_list[["freq"]][["fused_vars"]]), info = "Apply interval multilabel")
 
+
+# frequencies throws a warning, if invalid format is used
+result_list <- dummy_df |>
+    frequencies(variables = sex,
+                formats   = list(sex = test),
+                print     = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' does not exist and can't be applied.",
+               info = "frequencies throws a warning, if invalid format is used")
+
 ###############################################################################
 # The Excel tests are kept simpler because the whole stat evaluation is the
 # same as before. It serves mainly to let the code run through all the formatting

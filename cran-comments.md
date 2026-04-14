@@ -67,6 +67,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `keep()`, `dropp()`: If a character pattern is used to keep or drop variables and no variable matching the pattern is found, the functions now abort with a warning.
 * `where.()`: Now aborts with a warning if no observations or variables are left in the data frame.
 * `export_with_style()`: Can now rename variables that have blanks in their name.
+* `summarise_plus()`, `frequencies()`, `crosstabs()`, `any_table()`: If an invalid format is passed, this now throws a warning instead of removing all formats silently. 
 
 ### Optimization
 

@@ -251,8 +251,10 @@ print_to_console <- function(type,
     if (!is_no_print_active()){
         # Put a line break afterwards, otherwise the next message would be printed on the same line.
         if (new_line){
+            caller <- as.character(sys.call(-1))[1]
+
             # Print as normal
-            if (prefix == ""){
+            if (prefix == "" || caller == "print_message"){
                 cat(text, "\n")
             }
             # Print a new line before text, because the previous message didn't put a line break afterwards

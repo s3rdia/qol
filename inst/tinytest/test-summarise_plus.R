@@ -816,7 +816,6 @@ expect_equal(result_df[["age"]][1:5], c(0, 1, 2, 3, 4), info = "summarise_plus c
 # Warning checks
 ###############################################################################
 
-
 # Entering none existing variable as weight leads to unweighted results
 result_df1 <- dummy_df |> summarise_plus(class  = year,
                                          values = income)
@@ -981,7 +980,7 @@ expect_warning(print_stack_as_messages("WARNING"), "<Statistic> 'test' is invali
 expect_equal(collapse::fncol(result_df), 5, info = "Invalid statistic will be omitted")
 
 
-# 'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided
+# Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided
 result_df <- dummy_df |>
            summarise_plus(class      = year,
                           values     = income,
@@ -991,6 +990,15 @@ expect_warning(print_stack_as_messages("WARNING"), "No valid <statistic> selecte
            info = "'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided")
 
 expect_equal(collapse::fncol(result_df), 5, info = "'Invalid statistic will be omitted 'sum' will be chosen as statistic if no valid one is provided")
+
+
+# summarise_plus throws a warning, if invalid format is used
+result_list <- dummy_df |>
+    summarise_plus(class   = "sex",
+                   formats = list(sex = test))
+
+expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' does not exist and can't be applied.",
+               info = "summarise_plus throws a warning, if invalid format is used")
 
 
 set_no_print()

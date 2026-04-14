@@ -724,6 +724,19 @@ expect_inherits(result_list, "list", info = "any_table outputs unweighted result
 expect_equal(length(result_list), 3, info = "any_table outputs unweighted results without values variable")
 
 
+# any_table throws a warning, if invalid format is used
+result_list <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = weight,
+              output  = "excel_nostyle",
+              formats = list(age = age., sex = test),
+              print   = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' does not exist and can't be applied.",
+               info = "any_table throws a warning, if invalid format is used")
+
+
 ###############################################################################
 # Abort checks
 ###############################################################################

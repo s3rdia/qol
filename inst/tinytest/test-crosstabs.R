@@ -228,6 +228,17 @@ format_df <- dummy_df |>
 
 expect_message(print_stack_as_messages("NOTE"), "The format for variable 'sex' is a multilabel", info = "crosstabs row multilabel leads to notification with by variables")
 
+
+# crosstabs throws a warning, if invalid format is used
+result_list <- dummy_df |>
+    crosstabs(rows    = sex,
+              columns = age,
+              formats = list(age = age., sex = test),
+              print   = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' does not exist and can't be applied.",
+               info = "crosstabs throws a warning, if invalid format is used")
+
 ###############################################################################
 # The Excel tests are kept simpler because the whole stat evaluation is the
 # same as before. It serves mainly to let the code run through all the formatting
