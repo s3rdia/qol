@@ -39,6 +39,8 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`: If the result expression of a format starts with an "!", this expression will be used in calculations but will be dropped in the result table. This can be used to calculate block percentages based on a total expression without showing the total in the result table.
 * `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose.
 * `any_table()`: There are new special `var_labels`, which add additional top column headers. When assigning labels to variables that start with "block", e.g. "block1" = "Column Percentages", "block2" = "Row Percentages", these labels will appear as the top line of the column header.
+* `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education".
+* `frequencies()`, `crosstabs()`, `any_table()`, `export_with_style()`: Titles and footnotes can now also link to cells "cell:" and to files "file:".
 
 ### Changed functionality
 
@@ -88,6 +90,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `import_multi()`, `export_multi()`: Added some messages to show progress.
 * `any_table()`, `export_with_style()`: Added examples for `combine_into_worbook()`.
 * `any_table()`: When row header labels are suppressed, the excess slashes are now removed.
+* `compute()`: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables.
 
 
 ## R CMD check results

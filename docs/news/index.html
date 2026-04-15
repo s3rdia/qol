@@ -109,6 +109,10 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Variable combinations in rows and columns can now also be passed like “state + (age sex education)”, which reslts in “state + age”, “state + sex”, “state + education”, with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new <code>order_by</code> option with “blocks” for that purpose. (12.04.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: There are new special <code>var_labels</code>, which add additional top column headers. When assigning labels to variables that start with “block”, e.g. “block1” = “Column Percentages”, “block2” = “Row Percentages”, these labels will appear as the top line of the column header. (12.04.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Variable combinations in types can now also be passed like “state + (age sex education)”, which reslts in “state + age”, “state + sex”, “state + education”. (15.04.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Titles and footnotes can now also link to cells “cell:” and to files “file:”. (15.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
@@ -195,6 +199,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added examples for <code>combine_into_worbook()</code>. (10.04.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)</li>
+<li>
+<code><a href="../reference/compute.html">compute()</a></code>: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

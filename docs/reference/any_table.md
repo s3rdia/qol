@@ -337,13 +337,15 @@ state. <- discrete_format(
 set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
-# adding "link:" followed by the hyperlink to the main text.
+# adding "link:" followed by the hyperlink to the main text. Linking to another
+# cell works with "cell:". To link to a file use "file:" an pass the full file
+#path afterwards.
 set_titles("This is title number 1 link: https://cran.r-project.org/",
-           "This is title number 2",
+           "This is title number 2 cell: W22",
            "This is title number 3")
 
 set_footnotes("This is footnote number 1",
-              "This is footnote number 2",
+              "This is footnote number 2 cell: W22",
               "This is footnote number 3 link: https://cran.r-project.org/")
 
 # Output complex tables with different percentages
@@ -407,7 +409,15 @@ my_data |> any_table(rows       = c("sex + (age education)"),
 # tables.
 # Note: You don't have to describe every element. Sometimes a table can be more
 # readable with less text. To completely remove a variable label just put in an
-# empty text "" as label.
+# empty text "" as label.#'
+set_titles("This is title number 1",
+           "This is title number 2",
+           "This is title number 3")
+
+set_footnotes("This is footnote number 1",
+              "This is footnote number 2",
+              "This is footnote number 3")
+
 my_data |> any_table(rows        = c("age + year"),
                      columns     = "sex",
                      values      = weight,
@@ -444,6 +454,7 @@ result_list <- my_data |>
                      statistics = "sum",
                      formats    = list(sex = sex., age = age.),
                      style      = my_style,
+                     output     = "excel_nostyle",
                      na.rm      = TRUE,
                      print      = FALSE)
 
@@ -456,6 +467,7 @@ my_data |> any_table(workbook   = result_list[["workbook"]],
                      statistics = "pct_group",
                      formats    = list(education = education.),
                      style      = my_style,
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # In case you have a good amount of tables, you want to combine in a single workbook,
@@ -510,10 +522,10 @@ set_style_options(save_path  = dirname(table_file),
                   file       = basename(table_file),
                   sheet_name = "MyTable")
 
-my_data |> any_table(rows       = "sex",
-                     columns    = "year",
-                     values     = weight,
-                     formats    = list(sex = sex.))
+my_data |> any_table(rows    = "sex",
+                     columns = "year",
+                     values  = weight,
+                     formats = list(sex = sex.))
 
 # Manual cleanup for example
 unlink(table_file)

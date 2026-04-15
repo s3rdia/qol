@@ -94,7 +94,7 @@ compute <- function(data_frame,
     # case, then a hidden parameter is passed, carrying the condition. Additionally
     # check, if there are any do_if() conditions active and apply them
     if_condition_list <- NULL
-    if_suppressed     <-  FALSE
+    if_suppressed     <- FALSE
 
     if (".if_condition" %in% names(assignments)){
         condition                      <- TRUE
@@ -146,8 +146,7 @@ compute <- function(data_frame,
         calculation <- assignments[[variable]]
         calc_text   <- deparse(calculation)
 
-        # If no vector was passed in the condition or the assignments, then evaluate
-        # as normal.
+        # If no vector was passed then evaluate as normal.
         if (!variable %in% names(content_list)){
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Non vector")
@@ -233,13 +232,18 @@ compute <- function(data_frame,
             if (length(conditional_value) > 0){
                 new_call <- stats::setNames(list(conditional_value), variable)
 
-                # Add to call list
-                call_list <- c(call_list, new_call)
+                if (names(new_call) %in% names(call_list)){
+                    print_message("WARNING", "Duplicate variable name '{var}' in compute. Only the first entry will be used.",
+                                  var = names(new_call))
+                }
+                else{
+                    # Add to call list
+                    call_list <- c(call_list, new_call)
+                }
             }
         }
-        # If a vector was passed in the condition or the assignments, then evaluate
-        # the if statement as a do over loop. Meaning for each vector the same elements
-        # are used simultaneously one after another.
+        # If a vector was passed, then evaluate as a do over loop. Meaning for each
+        # vector the same elements are used simultaneously one after another.
         else{
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Vector based")
@@ -453,7 +457,7 @@ check_types <- function(data_frame, variable, current){
         return(FALSE)
     }
 
-    print_message("WARNING", c("Type mismatch: Current value [current[1]] is of type [type_c] but should be of",
+    print_message("WARNING", c("Type mismatch: Current value [current] is of type [type_c] but should be of",
 							   "type [type_d]. [variable] will be converted to character."),
                   current = current[1], type_c = type_c, type_d = type_d, variable = variable,
 				  always_print = TRUE)

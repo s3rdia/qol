@@ -145,6 +145,16 @@
   e.g. “block1” = “Column Percentages”, “block2” = “Row Percentages”,
   these labels will appear as the top line of the column header.
   (12.04.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Variable combinations in types can now also be passed like “state +
+  (age sex education)”, which reslts in “state + age”, “state + sex”,
+  “state + education”. (15.04.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Titles and footnotes can now also link to cells “cell:” and to files
+  “file:”. (15.04.2026)
 
 #### Changed functionality
 
@@ -293,6 +303,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   When row header labels are suppressed, the excess slashes are now
   removed. (10.04.2026)
+- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md): Now
+  throws a warning, if duplicate variable names are used, but goes on
+  computing the valid variables. (15.04.2026)
 
 ## qol 1.2.2
 

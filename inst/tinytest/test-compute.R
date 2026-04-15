@@ -88,10 +88,19 @@ expect_true(all(c("sum", "col_sum", "row_sum", "var4", "var5", "NEW_VAR1", "NEW_
 # Warning checks
 ###############################################################################
 
-# Type conversion in if. block on type mismatch
+# Type mismatch in compute
 result_df <- test_df |> compute(var1 = var2)
 
-expect_warning(print_stack_as_messages("WARNING"), "Type mismatch", info = "Type conversion in if. block on type mismatch")
+expect_warning(print_stack_as_messages("WARNING"), "Type mismatch", info = "Type mismatch in compute")
+
+
+# Adding multiple variables of the same name in compute throws a warning
+result_df <- test_df |> compute(var4 = 1, var4 = 2)
+
+expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable name",
+               info = "Adding multiple variables of the same name in compute throws a warning")
+expect_true("var4" %in% names(result_df))
+expect_equal(collapse::funique(result_df[["var4"]]), 1)
 
 ###############################################################################
 # Abort checks

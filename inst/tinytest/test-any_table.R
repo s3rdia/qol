@@ -1,5 +1,4 @@
 set_no_print(TRUE)
-set_style_options(as_heatmap = TRUE)
 
 dummy_df  <- dummy_data(3000)
 dummy_big <- dummy_data(10000)
@@ -94,7 +93,20 @@ expect_inherits(result_list, "list", info = "any_table many combinations don't b
 expect_equal(length(result_list), 3, info = "any_table many combinations don't break")
 
 
-# any_table with titles and footnotes
+# any_table with linked titles and footnotes
+txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
+
+set_titles("Hello world1",
+           "Hello world2 link: https://cran.r-project.org/",
+           "Hello world3 cell: A8",
+           "Hello world4 file: txt_file")
+set_footnotes("This is a footnote1",
+              "This is a footnote2 link: https://cran.r-project.org/",
+              "This is a footnote3 cell: A8",
+              "This is a footnote4 file: txt_file")
+
+set_style_options(as_heatmap = TRUE)
+
 set_style_options(header_stat_merging = "all")
 result_list <- dummy_df |>
       any_table(rows      = "age",
@@ -104,11 +116,14 @@ result_list <- dummy_df |>
                 footnotes = "This is a footnote link: https://cran.r-project.org/",
                 print     = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with titles and footnotes")
-expect_equal(length(result_list), 3, info = "any_table with titles and footnotes")
+expect_inherits(result_list, "list", info = "any_table with linked titles and footnotes")
+expect_equal(length(result_list), 3, info = "any_table with linked titles and footnotes")
 
 
 # any_table with multiple titles and footnotes
+set_titles("Hello world1", "Hello world2")
+set_footnotes("This is a footnote1", "This is a footnote2")
+
 set_style_options(header_stat_merging = "none",
                   title_font_color    = c("FF00FF", "00FF00"),
                   title_font_size     = c(10, 11),
@@ -121,9 +136,9 @@ result_list <- dummy_df |>
     any_table(rows      = "age",
               columns   = "sex",
               values    = weight,
-              titles    = c("Hello world1", "Hello world2"),
-              footnotes = c("This is a footnote1", "This is a footnote2"),
               print     = FALSE)
+
+reset_style_options()
 
 expect_inherits(result_list, "list", info = "any_table with multiple titles and footnotes")
 expect_equal(length(result_list), 3, info = "any_table with multiple titles and footnotes")

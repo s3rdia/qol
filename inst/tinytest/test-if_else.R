@@ -114,6 +114,30 @@ expect_true(all(collapse::funique(letter_df[["edu"]]) %in% c(1, NA)), info = "if
 expect_true(collapse::funique(test_df[["education"]]) == "high", info = "if. can check for variable expressions containing a letter")
 
 
+# if. can check for variable expressions starting with letter (unequal)
+letter_df <- dummy_df |> if.(education != "m:", edu = 1)
+test_df   <- letter_df |> if.(edu)
+
+expect_true(all(collapse::funique(letter_df[["edu"]]) %in% c(1, NA)), info = "if. can check for variable expressions starting with letter (unequal)")
+expect_true(!"middle" %in% collapse::funique(test_df[["education"]]), info = "if. can check for variable expressions starting with letter (unequal)")
+
+
+# if. can check for variable expressions ending with letter (unequal)
+letter_df <- dummy_df |> if.(education != ":w", edu = 1)
+test_df   <- letter_df |> if.(edu)
+
+expect_true(all(collapse::funique(letter_df[["edu"]]) %in% c(1, NA)), info = "if. can check for variable expressions ending with letter (unequal)")
+expect_true(!"low" %in% collapse::funique(test_df[["education"]]), info = "if. can check for variable expressions ending with letter (unequal)")
+
+
+# if. can check for variable expressions containing a letter (unequal)
+letter_df <- dummy_df |> if.(education != ":g:", edu = 1)
+test_df   <- letter_df |> if.(edu)
+
+expect_true(all(collapse::funique(letter_df[["edu"]]) %in% c(1, NA)), info = "if. can check for variable expressions containing a letter (unequal)")
+expect_true(!"high" %in% collapse::funique(test_df[["education"]]), info = "if. can check for variable expressions containing a letter (unequal)")
+
+
 # if. as do over loop
 vars1  <- c("income", "balance")
 vars2  <- c("VAR1", "VAR2")
@@ -197,6 +221,13 @@ test_df <- dummy_df |> if.(sex == 1)
 
 expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if.")
 expect_true(!2 %in% test_df[["sex"]], info = "Subset data frame with if.")
+
+
+# Subset data frame with if. (unequal)
+test_df <- dummy_df |> if.(sex != 1)
+
+expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if. (unequal)")
+expect_true(!1 %in% test_df[["sex"]], info = "Subset data frame with if. (unequal)")
 
 
 # Subset data frame with if., when only providing single variable

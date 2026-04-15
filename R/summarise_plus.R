@@ -340,6 +340,16 @@ summarise_plus <- function(data_frame,
     # Enable the use of macro variables
     types <- apply_macro(types)
 
+    # Expand brackets first to be able to identify the unique variables used afterwards
+    types_expand <- expand_brackets(types)
+
+    if (types_expand[[2]]){
+        types <- names(types_expand[[1]])
+    }
+    else{
+        types_expand <- NULL
+    }
+
     # Get row variables from provided combinations
     type_vars <- unlist_variables(types)
 
@@ -362,8 +372,8 @@ summarise_plus <- function(data_frame,
         invalid_types <- type_vars[!type_vars %in% class]
 
         if (length(invalid_types) > 0){
-            print_message("WARNING", c("The provided <type> '[type_vars]' [?is/are] not part of\n",
-									   "the <class> variables. Types will be ignored."), type_vars = type_vars[[1]])
+            print_message("WARNING", c("The provided <type> '[invalid]' [?is/are] not part of",
+									   "the <class> variables. Types will be ignored."), invalid = invalid_types)
             types <- NULL
         }
 
