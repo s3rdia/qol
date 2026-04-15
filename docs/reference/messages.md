@@ -219,4 +219,29 @@ test_func <- function(){
 }
 
 test_func()
+
+# See what is going on in the message stack
+message_stack <- get_message_stack()
+
+# Set up a custom message
+hotdog <- set_up_custom_message(ansi_icon = "\U0001f32d",
+                                text_icon = "IOI",
+                                indent    = 1,
+                                type      = "HOTDOG",
+                                color     = "#B27A01")
+
+hotdog_print <- function(){
+    print_start_message()
+    print_message(hotdog, c("This is the first hotdog message! Hurray!",
+                            "And it is also multiline in this version."))
+    print_step(hotdog, "Or use as single line message with time stamps.")
+    print_step(hotdog, "Or use as single line message with time stamps.")
+    print_step(hotdog, "Or use as single line message with time stamps.")
+    print_closing()
+}
+
+hotdog_print()
+
+# See new message in the message stack
+hotdog_stack <- get_message_stack()
 ```

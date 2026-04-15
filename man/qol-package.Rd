@@ -69,7 +69,7 @@ Macros: \code{\link[=macro]{macro()}}, \code{\link[=apply_macro]{apply_macro()}}
 
 Saving And Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=save_file]{save_file()}}, \code{\link[=save_file_multi]{save_file_multi()}}, \code{\link[=load_file]{load_file()}}, \code{\link[=load_file_multi]{load_file_multi()}}
 
-Reporting: \code{\link[=content_report]{content_report()}}
+Reporting: \code{\link[=content_report]{content_report()}}, \code{\link[=report_test_results]{report_test_results()}}, \code{\link[=test_package]{test_package()}}, \code{\link[=test_single_file]{test_single_file()}}
 
 Messages: \code{\link[=print_message]{print_message()}}, \code{\link[=print_headline]{print_headline()}}, \code{\link[=print_start_message]{print_start_message()}}, \code{\link[=print_closing]{print_closing()}}, \code{\link[=print_step]{print_step()}},
 \code{\link[=set_up_custom_message]{set_up_custom_message()}}, \code{\link[=get_message_stack]{get_message_stack()}}, \code{\link[=set_no_print]{set_no_print()}}, \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}, \code{\link[=convert_square_brackets]{convert_square_brackets()}}

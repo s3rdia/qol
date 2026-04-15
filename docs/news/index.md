@@ -65,6 +65,10 @@
   weight to a text as ansi codes. (09.04.2026)
 - [`round_multi()`](https://s3rdia.github.io/qol/reference/round_values.md):
   Rounds multiple variables at once inside a data frame. (09.04.2026)
+- [`report_test_results()`](https://s3rdia.github.io/qol/reference/reporter.md),
+  [`test_package()`](https://s3rdia.github.io/qol/reference/reporter.md),
+  [`test_single_file()`](https://s3rdia.github.io/qol/reference/reporter.md):
+  Print out tinytest results with custom reporting style. (15.04.2026)
 
 #### New functionality
 

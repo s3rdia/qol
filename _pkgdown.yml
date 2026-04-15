@@ -115,6 +115,9 @@ reference:
 - title: Reporting
   contents:
   - content_report
+  - report_test_results
+  - test_package
+  - test_single_file
 - title: Messages
   contents:
   - print_message

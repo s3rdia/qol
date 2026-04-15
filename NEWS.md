@@ -17,6 +17,7 @@
 	* `set_up_custom_message()`: Sets up the basic items for a custom message. These custom types can be input into `print_message()` and `print_step()`. (13.04.2026)
 * `hex_to_256()`, `hex_to_ansi()`: Generate a 256-color 6x6x6 color cube and apply hex color and font weight to a text as ansi codes. (09.04.2026)
 * `round_multi()`: Rounds multiple variables at once inside a data frame. (09.04.2026)
+* `report_test_results()`, `test_package()`, `test_single_file()`: Print out tinytest results with custom reporting style. (15.04.2026)
 
 ### New functionality
 

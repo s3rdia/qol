@@ -146,8 +146,6 @@ print_message <- function(type,
     invisible(text)
 }
 
-# TODO: Unit tests
-# TODO: Update README
 
 #' @description
 #' This is the core printing function which formats the text and prints it to the
@@ -211,7 +209,7 @@ print_to_console <- function(type,
         }
 
         # Build the line indentation for each line after the first one
-        seperator <- paste0("\n", message_start, " ", strrep("\u00a0", nchar(type[["type"]]) + 2))
+        seperator <- paste0("\n[b][", type[["color"]], " ", message_start, "][/b] ", strrep("\u00a0", nchar(type[["type"]]) + 2))
 
         # Insert special message format
         if (!is.null(type[["text_color"]])){
@@ -400,6 +398,9 @@ print_headline <- function(text,
 #' }
 #'
 #' test_func()
+#'
+#' # See what is going on in the message stack
+#' message_stack <- get_message_stack()
 #'
 #' @rdname messages
 #'
@@ -779,6 +780,29 @@ print_step <- function(type,
 #'
 #' @returns
 #' [set_up_custom_message()]: Returns a list.
+#'
+#' @examples
+#' # Set up a custom message
+#' hotdog <- set_up_custom_message(ansi_icon = "\U0001f32d",
+#'                                 text_icon = "IOI",
+#'                                 indent    = 1,
+#'                                 type      = "HOTDOG",
+#'                                 color     = "#B27A01")
+#'
+#' hotdog_print <- function(){
+#'     print_start_message()
+#'     print_message(hotdog, c("This is the first hotdog message! Hurray!",
+#'                             "And it is also multiline in this version."))
+#'     print_step(hotdog, "Or use as single line message with time stamps.")
+#'     print_step(hotdog, "Or use as single line message with time stamps.")
+#'     print_step(hotdog, "Or use as single line message with time stamps.")
+#'     print_closing()
+#' }
+#'
+#' hotdog_print()
+#'
+#' # See new message in the message stack
+#' hotdog_stack <- get_message_stack()
 #'
 #' @rdname messages
 #'

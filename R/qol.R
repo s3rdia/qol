@@ -61,7 +61,7 @@
 #'
 #' Saving And Loading: [libname()], [set()], [save_file()], [save_file_multi()], [load_file()], [load_file_multi()]
 #'
-#' Reporting: [content_report()]
+#'Reporting: [content_report()], [report_test_results()], [test_package()], [test_single_file()]
 #'
 #' Messages: [print_message()], [print_headline()], [print_start_message()], [print_closing()], [print_step()],
 #' [set_up_custom_message()], [get_message_stack()], [set_no_print()], [print_stack_as_messages()], [convert_square_brackets()]

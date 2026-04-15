@@ -123,7 +123,10 @@ Saving And Loading:
 [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md)
 
 Reporting:
-[`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md)
+[`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md),
+[`report_test_results()`](https://s3rdia.github.io/qol/reference/reporter.md),
+[`test_package()`](https://s3rdia.github.io/qol/reference/reporter.md),
+[`test_single_file()`](https://s3rdia.github.io/qol/reference/reporter.md)
 
 Messages:
 [`print_message()`](https://s3rdia.github.io/qol/reference/messages.md),
