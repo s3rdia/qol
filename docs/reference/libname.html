@@ -46,7 +46,7 @@ Optional all files from the given path can be retrieved as a named character vec
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">libname</span><span class="op">(</span><span class="va">path</span>, get_files <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">libname</span><span class="op">(</span><span class="va">path</span>, get_files <span class="op">=</span> <span class="cn">FALSE</span>, extensions <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -58,7 +58,12 @@ Optional all files from the given path can be retrieved as a named character vec
 
 
 <dt id="arg-get-files">get_files<a class="anchor" aria-label="anchor" href="#arg-get-files"></a></dt>
-<dd><p>FALSE by default. If TRUE returns a named character vector containing file paths.</p></dd>
+<dd><p>FALSE by default. If TRUE returns a named character vector containing
+file paths.</p></dd>
+
+
+<dt id="arg-extensions">extensions<a class="anchor" aria-label="anchor" href="#arg-extensions"></a></dt>
+<dd><p>Specify file extensions to be kept in the list when retrieving files.</p></dd>
 
 </dl></div>
     <div class="section level2">

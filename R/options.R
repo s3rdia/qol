@@ -12,6 +12,8 @@
 #'
 #' @param ... Put in any styling option from [excel_output_style()] or [number_format_style()]
 #' with the new value.
+#' @param save_file A full file path to an RDS file in which global style options
+#' should be stored.
 #'
 #' @return
 #' [set_style_options()]: Returns modified global styling options.
@@ -29,7 +31,7 @@
 #' @rdname style_options
 #'
 #' @export
-set_style_options <- function(...){
+set_style_options <- function(..., save_file = NULL){
     # Translate ... into a list if possible
     style_list <- tryCatch({
         # Force evaluation to see if it exists
@@ -119,6 +121,28 @@ set_style_options <- function(...){
 
     # Update the internal state
     .qol_options[["excel_style"]] <- utils::modifyList(.qol_options[["excel_style"]], style_list)
+
+    # Save global style options as physical file
+    if (!is.null(save_file)){
+        if (!file.exists(dirname(save_file))){
+            print_message("ERROR", "Path does not exist: [path]", path = save_file)
+        }
+        else{
+            extension <- tolower(tools::file_ext(save_file))
+
+            if (extension == ""){
+                save_file <- paste0(save_file, ".rds")
+                extension <- "rds"
+            }
+
+            if (!extension == "rds"){
+                save_file <- gsub(extension, "rds", save_file)
+            }
+
+            saveRDS(.qol_options[["excel_style"]], file = save_file)
+        }
+    }
+
     invisible(.qol_options[["excel_style"]])
 }
 
@@ -141,12 +165,8 @@ reset_style_options <- function(){
     .qol_options[["excel_style"]] <- excel_output_style()
     .qol_options[["var_labels"]]  <- list()
     .qol_options[["stat_labels"]] <- list()
-    .qol_options[["print"]]       <- TRUE
-    .qol_options[["monitor"]]     <- FALSE
-    .qol_options[["na.rm"]]       <- FALSE
-    .qol_options[["print_miss"]]  <- FALSE
-    .qol_options[["output"]]      <- "console"
-    .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst())
+    .qol_options[["titles"]]     <- c()
+    .qol_options[["footnotes"]]  <- c()
 
     invisible(.qol_options)
 }
@@ -157,6 +177,9 @@ reset_style_options <- function(){
 #' @description
 #' [get_style_options()] Prints out the currently set global styling options.
 #'
+#' @param from_file A full file path to an RDS file in which global style options
+#' are stored.
+#'
 #' @return
 #' [get_style_options()]: List of global styling options.
 #'
@@ -166,8 +189,23 @@ reset_style_options <- function(){
 #' @rdname style_options
 #'
 #' @export
-get_style_options <- function(){
-    .qol_options[["excel_style"]]
+get_style_options <- function(from_file = NULL){
+    # Just get global options, if no file is specified
+    if (is.null(from_file)){
+        .qol_options[["excel_style"]]
+    }
+    # Otherwise load from path
+    else{
+        if (!file.exists(from_file)){
+            print_message("ERROR", "File does not exist: [file]", file = from_file)
+        }
+        else{
+            style_list <- readRDS(file = from_file)
+            set_style_options(style_list)
+        }
+
+        .qol_options[["excel_style"]]
+    }
 }
 
 
@@ -658,8 +696,9 @@ get_output <- function(){
 #'
 #' @examples
 #' set_titles("This is title number 1 link: https://cran.r-project.org/",
-#'            "This is title number 2",
-#'            "This is title number 3")
+#'            "This is title number 2 cell: W22",
+#'            "This is title number 3 file: C:/MyFolder/MyFile.docx",
+#'            "This is title number 4")
 #'
 #' @rdname qol_options
 #'
@@ -726,9 +765,10 @@ get_titles <- function(){
 #' [set_footnotes()]: Changed global footnotes.
 #'
 #' @examples
-#' set_footnotes("This is title number 1 link: https://cran.r-project.org/",
-#'            "This is title number 2",
-#'            "This is title number 3")
+#' set_footnotes("This is footnote number 1 link: https://cran.r-project.org/",
+#'               "This is footnote number 2 cell: W22",
+#'               "This is footnote number 3 file: C:/MyFolder/MyFile.docx",
+#'               "This is footnote number 4")
 #'
 #' @rdname qol_options
 #'
@@ -853,7 +893,7 @@ get_threads <- function(){
 #' Reset Global Options
 #'
 #' @description
-#' [reset_qol_options()] resets global options to the default parameters.
+#' [reset_qol_options()] Resets global options to the default parameters.
 #'
 #' @return
 #' [reset_qol_options()]: Returns default global options.
@@ -865,14 +905,17 @@ get_threads <- function(){
 #'
 #' @export
 reset_qol_options <- function(){
-    .qol_options[["print"]]      <- TRUE
-    .qol_options[["monitor"]]    <- FALSE
-    .qol_options[["na.rm"]]      <- FALSE
-    .qol_options[["print_miss"]] <- FALSE
-    .qol_options[["output"]]     <- "console"
-    .qol_options[["titles"]]     <- c()
-    .qol_options[["footnotes"]]  <- c()
-    .qol_options[["threads"]]    <- fst::threads_fst(NULL)
+    .qol_options[["print"]]       <- TRUE
+    .qol_options[["monitor"]]     <- FALSE
+    .qol_options[["na.rm"]]       <- FALSE
+    .qol_options[["print_miss"]]  <- FALSE
+    .qol_options[["output"]]      <- "console"
+    .qol_options[["excel_style"]] <- excel_output_style()
+    .qol_options[["var_labels"]]  <- list()
+    .qol_options[["stat_labels"]] <- list()
+    .qol_options[["titles"]]      <- c()
+    .qol_options[["footnotes"]]   <- c()
+    .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst(NULL))
 
     invisible(.qol_options)
 }

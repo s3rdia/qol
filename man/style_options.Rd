@@ -13,11 +13,11 @@
 \alias{reset_qol_options}
 \title{Set Global Styling Options For Excel Workbooks}
 \usage{
-set_style_options(...)
+set_style_options(..., save_file = NULL)
 
 reset_style_options()
 
-get_style_options()
+get_style_options(from_file = NULL)
 
 close_file()
 
@@ -33,6 +33,12 @@ reset_qol_options()
 }
 \arguments{
 \item{...}{\code{\link[=set_stat_labels]{set_stat_labels()}}: Put in the statistics and their respective labels.}
+
+\item{save_file}{A full file path to an RDS file in which global style options
+should be stored.}
+
+\item{from_file}{A full file path to an RDS file in which global style options
+are stored.}
 }
 \value{
 \code{\link[=set_style_options]{set_style_options()}}: Returns modified global styling options.
@@ -77,7 +83,7 @@ have to be provided in every output function separately.
 
 \code{\link[=get_stat_labels]{get_stat_labels()}}: Get the globally stored statistic labels.
 
-\code{\link[=reset_qol_options]{reset_qol_options()}} resets global options to the default parameters.
+\code{\link[=reset_qol_options]{reset_qol_options()}} Resets global options to the default parameters.
 }
 \examples{
 set_style_options(save_path    = "C:/My Projects/",

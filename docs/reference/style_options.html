@@ -13,7 +13,7 @@ get_variable_labels(): Get the globally stored variable labels.
 set_stat_labels(): Can set statistic labels globally so that they don't
 have to be provided in every output function separately.
 get_stat_labels(): Get the globally stored statistic labels.
-reset_qol_options() resets global options to the default parameters."><meta property="og:description" content="Modify Styling options for Excel workbooks. Available parameters can be seen in
+reset_qol_options() Resets global options to the default parameters."><meta property="og:description" content="Modify Styling options for Excel workbooks. Available parameters can be seen in
 excel_output_style() or number_format_style().
 set_style_options() sets the styling options for Excel workbooks globally.These
 options are used by all tabulation and output functions, which are capable of
@@ -27,7 +27,7 @@ get_variable_labels(): Get the globally stored variable labels.
 set_stat_labels(): Can set statistic labels globally so that they don't
 have to be provided in every output function separately.
 get_stat_labels(): Get the globally stored statistic labels.
-reset_qol_options() resets global options to the default parameters."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
+reset_qol_options() Resets global options to the default parameters."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -80,16 +80,16 @@ have to be provided in every output function separately.</p>
 <p><code>set_stat_labels()</code>: Can set statistic labels globally so that they don't
 have to be provided in every output function separately.</p>
 <p><code>get_stat_labels()</code>: Get the globally stored statistic labels.</p>
-<p><code>reset_qol_options()</code> resets global options to the default parameters.</p>
+<p><code>reset_qol_options()</code> Resets global options to the default parameters.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_style_options</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_style_options</span><span class="op">(</span><span class="va">...</span>, save_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">reset_style_options</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_style_options</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">get_style_options</span><span class="op">(</span>from_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">close_file</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -110,6 +110,16 @@ have to be provided in every output function separately.</p>
 
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p><code>set_stat_labels()</code>: Put in the statistics and their respective labels.</p></dd>
+
+
+<dt id="arg-save-file">save_file<a class="anchor" aria-label="anchor" href="#arg-save-file"></a></dt>
+<dd><p>A full file path to an RDS file in which global style options
+should be stored.</p></dd>
+
+
+<dt id="arg-from-file">from_file<a class="anchor" aria-label="anchor" href="#arg-from-file"></a></dt>
+<dd><p>A full file path to an RDS file in which global style options
+are stored.</p></dd>
 
 </dl></div>
     <div class="section level2">

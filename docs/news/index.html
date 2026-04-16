@@ -115,6 +115,12 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Variable combinations in types can now also be passed like “state + (age sex education)”, which reslts in “state + age”, “state + sex”, “state + education”. (15.04.2026)</li>
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Titles and footnotes can now also link to cells “cell:” and to files “file:”. (15.04.2026)</li>
+<li>
+<code><a href="../reference/libname.html">libname()</a></code>: Can now optionally filter file list by provided file extensions. (16.04.2026)</li>
+<li>
+<code><a href="../reference/style_options.html">set_style_options()</a></code>: Can now save the currently set global options to a rds file. (16.04.2026)</li>
+<li>
+<code><a href="../reference/style_options.html">get_style_options()</a></code>: Can now load a rds file and set the contents as global style options. (16.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
@@ -126,6 +132,8 @@
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Removed macro variable usage. (09.04.2026)</li>
 <li>
 <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Now returns a list with table, workbook and meta information, which can be used with <code>combine_into_worbook()</code>. (10.04.2026)</li>
+<li>
+<code><a href="../reference/build_master.html">build_master()</a></code>: Now only catches R-script files and ignores files of all other types. (16.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
@@ -147,6 +155,8 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: <code>balance</code> variable wasn’t calculated correctly, which is now fixed. (12.03.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: The <code>output</code> parameter wasn’t stored in the meta information list which lead to <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code> not able to access it and always output formatted tables. Now the <code>output</code> parameter is stored in meta information. (24.03.2026)</li>
+<li>
+<code><a href="../reference/build_master.html">build_master()</a></code>: Now ignores the root folder when building the script, to enable automatic rebuilding of the script. (26.03.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_data()</a></code>: In the examples the file names to read in weren’t correct. This is fixed now. (28.03.2026)</li>
 <li>

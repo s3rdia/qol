@@ -12,7 +12,7 @@ dummy_df3 <- dummy_data(100)
 external_path <- system.file("extdata",  package = "qol")
 
 
-# Stack data fames
+# Stack data frames
 new_df1 <- set(dummy_df1, dummy_df2, dummy_df3)
 new_df2 <- set(dummy_df1, dummy_df2, dummy_df3, compress = "factor")
 
@@ -22,7 +22,7 @@ expect_equal(class(new_df1[["education"]]), "character", info = "Stack data fame
 expect_equal(class(new_df2[["education"]]), "factor", info = "Stack data fames")
 
 
-# Stack data fames with id column
+# Stack data frames with id column
 new_df <- set(dummy_df1, dummy_df2, dummy_df3, id = TRUE)
 
 expect_equal(max(new_df[["ID"]]), 3, info = "Stack data fames with id column")
@@ -41,6 +41,13 @@ my_path <- libname(external_path, get_files = TRUE)
 expect_equal(names(my_path), c("qol_example_data_csv.csv",  "qol_example_data_fst.fst", "qol_example_data_rds.rds",
                                "qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "qol_nuts.csv",
                                "qol_tinytest_results.fst"), info = "Retrieve files from path with libname")
+
+
+# Retrieve files with specific extensions from path with libname
+my_path <- libname(external_path, get_files = TRUE, extensions = c("txt", "xlsx"))
+
+expect_equal(names(my_path), c("qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx"),
+             info = "Retrieve files with specific extensions from path with libname")
 
 ###############################################################################
 # Loading

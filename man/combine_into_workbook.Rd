@@ -63,14 +63,16 @@ set_style_options(column_widths = c(2, 15, 15, 15, 9))
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
 set_titles("This is title number 1 link: https://cran.r-project.org/",
-           "This is title number 2",
-           "This is title number 3")
-set_footnotes("This is footnote number 1",
-              "This is footnote number 2",
-              "This is footnote number 3 link: https://cran.r-project.org/")
+           "This is title number 2 cell: W22",
+           "This is title number 3 file: C:/MyFolder/MyFile.docx",
+           "This is title number 4")
+set_footnotes("This is footnote number 1 cell: W22",
+              "This is footnote number 2 file: C:/MyFolder/MyFile.docx",
+              "This is footnote number 3 link: https://cran.r-project.org/",
+              "This is footnote number 4")
 
 # Catch the output and additionally use the options:
-# pint = FALSE and output = "excel_nostyle".
+# print = FALSE and output = "excel_nostyle".
 # This skips the styling and output part, so that the function runs faster.
 # The styling is done later on.
 set_print(FALSE)

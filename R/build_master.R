@@ -80,13 +80,15 @@ build_master <- function(dir,
     # Get folders in provided directory
     folders <- list.dirs(dir, recursive = TRUE, full.names = TRUE)
 
+    # Remove root folder. Otherwise when rebuilding the master script, the root
+    # folder would be captured as folder with files in it.
     if (length(folders) > 1){
         folders <- folders[-1]
     }
 
     # Get all .R scripts inside the folders
     scripts <- lapply(folders, function(folder){
-        suppressMessages(libname(folder, get_files = TRUE))
+        suppressMessages(libname(folder, get_files = TRUE, extensions = "R"))
     })
     names(scripts) <- folders
     scripts        <- Filter(Negate(is.null), scripts)
@@ -147,14 +149,14 @@ build_master <- function(dir,
         "rm(master_file)",
         "```",
         "")
-    bubu<-.qol_messages[["stack"]]
+
     # Generate tree view folder structure
     if (with_structure){
         print_step("MAJOR", "Write folder structure")
 
         lines <- c(lines, print_folder_structure(scripts), "")
     }
-    bubu<-.qol_messages[["stack"]]
+
     # Run all scripts in all folders
     if (with_run_all){
         print_step("MAJOR", "Write all scripts execution")
@@ -172,7 +174,7 @@ build_master <- function(dir,
             "################################################################################",
             "```{r run_all_scripts, echo = TRUE}",
             paste0('base_folder <- "', dir, '"'),
-            paste0('scripts     <- c(', paste(paste0('libname(paste0(base_folder,"', sub_dirs, '"), ', padding, 'get_files = TRUE)'), collapse = ',\n                 '), ')'),
+            paste0('scripts     <- c(', paste(paste0('libname(paste0(base_folder,"', sub_dirs, '"), ', padding, 'get_files = TRUE, extensions = "R")'), collapse = ',\n                 '), ')'),
             "",
             "run_scripts(scripts)",
             "",
@@ -181,7 +183,7 @@ build_master <- function(dir,
 
         lines <- c(lines, run_all_folders)
     }
-    bubu<-.qol_messages[["stack"]]
+
     print_step("MAJOR", "Write script execution")
 
     # Run folders and files separate
@@ -198,7 +200,7 @@ build_master <- function(dir,
                                 paste0("#     Run All Scripts in Folder: ", basename(folder)),
                                 "#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"),
                               paste0("```{r ", folder_name, ", echo = TRUE}"),
-                              paste0('      scripts <- libname("', folder, '", get_files = TRUE)'),
+                              paste0('      scripts <- libname("', folder, '", get_files = TRUE, extensions = "R")'),
                                 "",
                                 "      run_scripts(scripts)",
                                 "",
@@ -270,7 +272,7 @@ print_folder_structure <- function(file_list){
         # Open folder section
         output <- c(output,
                     paste0("##......", subfolder),
-                    paste0('```{r open_', subfolder, ', echo = TRUE]'),
+                    paste0('```{r open_', subfolder, ', echo = TRUE}'),
                     paste0('        utils::browseURL("', folder_path, '")'),
                     "```")
 
@@ -280,7 +282,7 @@ print_folder_structure <- function(file_list){
 
             output <- c(output,
                         paste0("###.............", basename(file)),
-                        paste0('```{r open_', basename(file), ', echo = TRUE]'),
+                        paste0('```{r open_', basename(file), ', echo = TRUE}'),
                         paste0('                file.edit("', file_path,'")'),
                         "```")
         }

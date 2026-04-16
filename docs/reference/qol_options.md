@@ -144,14 +144,16 @@ set_output("excel")
 get_output()
 
 set_titles("This is title number 1 link: https://cran.r-project.org/",
-           "This is title number 2",
-           "This is title number 3")
+           "This is title number 2 cell: W22",
+           "This is title number 3 file: C:/MyFolder/MyFile.docx",
+           "This is title number 4")
 
 get_titles()
 
-set_footnotes("This is title number 1 link: https://cran.r-project.org/",
-           "This is title number 2",
-           "This is title number 3")
+set_footnotes("This is footnote number 1 link: https://cran.r-project.org/",
+              "This is footnote number 2 cell: W22",
+              "This is footnote number 3 file: C:/MyFolder/MyFile.docx",
+              "This is footnote number 4")
 
 get_footnotes()
 

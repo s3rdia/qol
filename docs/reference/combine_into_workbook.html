@@ -118,14 +118,16 @@ if one only wants to catch the combined workbook.</p></dd>
 <span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text.</span></span>
 <span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
-<span>           <span class="st">"This is title number 2"</span>,</span>
-<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
-<span>              <span class="st">"This is footnote number 2"</span>,</span>
-<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span>           <span class="st">"This is title number 2 cell: W22"</span>,</span>
+<span>           <span class="st">"This is title number 3 file: C:/MyFolder/MyFile.docx"</span>,</span>
+<span>           <span class="st">"This is title number 4"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1 cell: W22"</span>,</span>
+<span>              <span class="st">"This is footnote number 2 file: C:/MyFolder/MyFile.docx"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span>,</span>
+<span>              <span class="st">"This is footnote number 4"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Catch the output and additionally use the options:</span></span>
-<span><span class="co"># pint = FALSE and output = "excel_nostyle".</span></span>
+<span><span class="co"># print = FALSE and output = "excel_nostyle".</span></span>
 <span><span class="co"># This skips the styling and output part, so that the function runs faster.</span></span>
 <span><span class="co"># The styling is done later on.</span></span>
 <span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>

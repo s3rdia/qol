@@ -41,6 +41,9 @@
 * `any_table()`: There are new special `var_labels`, which add additional top column headers. When assigning labels to variables that start with "block", e.g. "block1" = "Column Percentages", "block2" = "Row Percentages", these labels will appear as the top line of the column header. (12.04.2026)
 * `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education". (15.04.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `export_with_style()`: Titles and footnotes can now also link to cells "cell:" and to files "file:". (15.04.2026)
+* `libname()`: Can now optionally filter file list by provided file extensions. (16.04.2026)
+* `set_style_options()`: Can now save the currently set global options to a rds file. (16.04.2026)
+* `get_style_options()`: Can now load a rds file and set the contents as global style options. (16.04.2026)
 
 ### Changed functionality
 
@@ -48,6 +51,7 @@
 * `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster. (31.01.2026)
 * `transpose_plus()`: Removed macro variable usage. (09.04.2026)
 * `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_worbook()`. (10.04.2026)
+* `build_master()`: Now only catches R-script files and ignores files of all other types. (16.04.2026)
 
 ### Fixed
 
@@ -60,6 +64,7 @@
 * `dummy_data()`: Now cuts down observations by random sample instead of just the head, so that the cut expressions aren't lost completely. (11.03.2026)
 * `dummy_data()`: `balance` variable wasn't calculated correctly, which is now fixed. (12.03.2026)
 * `any_table()`, `combine_into_workbook()`: The `output` parameter wasn't stored in the meta information list which lead to `combine_into_workbook()` not able to access it and always output formatted tables. Now the `output` parameter is stored in meta information. (24.03.2026)
+* `build_master()`: Now ignores the root folder when building the script, to enable automatic rebuilding of the script. (26.03.2026)
 * `import_data()`: In the examples the file names to read in weren't correct. This is fixed now. (28.03.2026)
 * `split_by()`: Should now work inside custom functions. (29.03.2026)
 * `retain_value()`, `retain_sum()`: On error now return NA instead of the whole data frame. (31.01.2026)

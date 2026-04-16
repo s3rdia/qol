@@ -4,12 +4,15 @@
 \alias{libname}
 \title{Check If Path Exists And Retrieve Files}
 \usage{
-libname(path, get_files = FALSE)
+libname(path, get_files = FALSE, extensions = NULL)
 }
 \arguments{
 \item{path}{A folder path.}
 
-\item{get_files}{FALSE by default. If TRUE returns a named character vector containing file paths.}
+\item{get_files}{FALSE by default. If TRUE returns a named character vector containing
+file paths.}
+
+\item{extensions}{Specify file extensions to be kept in the list when retrieving files.}
 }
 \value{
 Returns the given file path or a named character vector containing file paths.

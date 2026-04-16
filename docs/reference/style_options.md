@@ -29,16 +29,16 @@ don't have to be provided in every output function separately.
 
 `get_stat_labels()`: Get the globally stored statistic labels.
 
-`reset_qol_options()` resets global options to the default parameters.
+`reset_qol_options()` Resets global options to the default parameters.
 
 ## Usage
 
 ``` r
-set_style_options(...)
+set_style_options(..., save_file = NULL)
 
 reset_style_options()
 
-get_style_options()
+get_style_options(from_file = NULL)
 
 close_file()
 
@@ -59,6 +59,16 @@ reset_qol_options()
 
   `set_stat_labels()`: Put in the statistics and their respective
   labels.
+
+- save_file:
+
+  A full file path to an RDS file in which global style options should
+  be stored.
+
+- from_file:
+
+  A full file path to an RDS file in which global style options are
+  stored.
 
 ## Value
 

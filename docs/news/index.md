@@ -159,6 +159,15 @@
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Titles and footnotes can now also link to cells “cell:” and to files
   “file:”. (15.04.2026)
+- [`libname()`](https://s3rdia.github.io/qol/reference/libname.md): Can
+  now optionally filter file list by provided file extensions.
+  (16.04.2026)
+- [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  Can now save the currently set global options to a rds file.
+  (16.04.2026)
+- [`get_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  Can now load a rds file and set the contents as global style options.
+  (16.04.2026)
 
 #### Changed functionality
 
@@ -174,6 +183,9 @@
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Now returns a list with table, workbook and meta information, which
   can be used with `combine_into_worbook()`. (10.04.2026)
+- [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
+  Now only catches R-script files and ignores files of all other types.
+  (16.04.2026)
 
 #### Fixed
 
@@ -210,6 +222,9 @@
   [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md)
   not able to access it and always output formatted tables. Now the
   `output` parameter is stored in meta information. (24.03.2026)
+- [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
+  Now ignores the root folder when building the script, to enable
+  automatic rebuilding of the script. (26.03.2026)
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
   In the examples the file names to read in weren’t correct. This is
   fixed now. (28.03.2026)

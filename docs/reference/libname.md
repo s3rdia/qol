@@ -7,7 +7,7 @@ retrieved as a named character vector.
 ## Usage
 
 ``` r
-libname(path, get_files = FALSE)
+libname(path, get_files = FALSE, extensions = NULL)
 ```
 
 ## Arguments
@@ -20,6 +20,10 @@ libname(path, get_files = FALSE)
 
   FALSE by default. If TRUE returns a named character vector containing
   file paths.
+
+- extensions:
+
+  Specify file extensions to be kept in the list when retrieving files.
 
 ## Value
 

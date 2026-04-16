@@ -53,6 +53,20 @@ closed_file <- get_style_options()
 expect_equal(closed_file[["file"]], NULL, info = "Close file in global options")
 
 
+# Save global style options to file
+temp_file <- tempfile(fileext = ".rds")
+on.exit(unlink(temp_file), add = TRUE)
+
+set_style_options(title_heights = 1, save_file = temp_file)
+
+expect_true(file.exists(temp_file), info = "Save global style options to file")
+
+new_options <- get_style_options(from_file = temp_file)
+
+expect_equal(new_options[["title_heights"]], 1, info = "Save global style options to file")
+
+
+
 # Get global variable labels
 expect_equal(length(default_var_labels), 0, info = "Get global variable labels")
 

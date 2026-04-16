@@ -47,18 +47,6 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 .qol_options[["print_miss"]]  <- FALSE
 .qol_options[["output"]]      <- "console"
 .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst())
-.qol_options[["messages"]]    <- list(rule            = list("line-type" = "double"),
-                                      span.note       = list(color = "#63C2C9", "font-weight" = "bold", "before" = "\u2139\ufe0f NOTE: "),
-                                      span.warning    = list(color = "#FFC90E", "font-weight" = "bold", "before" = "\u26a0\ufe0f WARNING: "),
-                                      span.error      = list(color = "#C93F3F", "font-weight" = "bold", "before" = "\u274c ERROR: "),
-                                      span.notePT     = list(color = "#63C2C9", "font-weight" = "bold", "before" = "~ NOTE: "),
-                                      span.warningPT  = list(color = "#FFC90E", "font-weight" = "bold", "before" = "! WARNING: "),
-                                      span.errorPT    = list(color = "#C93F3F", "font-weight" = "bold", "before" = "X ERROR: "),
-                                      span.caller     = list(color = "#63C2C9", "font-weight" = "bold"),
-                                      span.subhead    = list(color = "#32CD32", "font-weight" = "bold", "before" = "\u2794 "),
-                                      span.subheadPT  = list(color = "#32CD32", "font-weight" = "bold", "before" = "> "),
-                                      span.progress   = list(color = "#32CD32", "font-weight" = "bold", "before" = "\u271a"),
-                                      span.progressPT = list(color = "#32CD32", "font-weight" = "bold", "before" = "+"))
 
 ###############################################################################
 # Message system
@@ -66,36 +54,36 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
 
 # Internal environment to store message styling options
 .qol_messages <- new.env(parent = emptyenv())
-.qol_messages[["format"]] <- list(utf8            = l10n_info()[["UTF-8"]] && .Platform$GUI != "Rgui",
-                                  time_color      = "#565656",
-                                  note_ansi        = hex_to_ansi(" \u2139\ufe0f NOTE: ", hex_color = "#63C2C9", bold = TRUE),
-                                  note_pt          = hex_to_ansi(" ~ NOTE: ",            hex_color = "#63C2C9", bold = TRUE),
-                                  note_indent_ansi = hex_to_ansi(" \u2139\ufe0f\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#63C2C9", bold = TRUE),
-                                  note_indent_pt   = hex_to_ansi(" ~\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",            hex_color = "#63C2C9", bold = TRUE),
+.qol_messages[["format"]] <- list(utf8                = l10n_info()[["UTF-8"]] && .Platform$GUI != "Rgui",
+                                  time_color          = "#565656",
+                                  note_ansi           = hex_to_ansi(" \u2139\ufe0f NOTE: ", hex_color = "#63C2C9", bold = TRUE),
+                                  note_pt             = hex_to_ansi(" ~ NOTE: ",            hex_color = "#63C2C9", bold = TRUE),
+                                  note_indent_ansi    = hex_to_ansi(" \u2139\ufe0f\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#63C2C9", bold = TRUE),
+                                  note_indent_pt      = hex_to_ansi(" ~\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",            hex_color = "#63C2C9", bold = TRUE),
                                   warning_ansi        = hex_to_ansi(" \u26a0\ufe0f WARNING: ", hex_color = "#FFC90E", bold = TRUE),
                                   warning_pt          = hex_to_ansi(" ! WARNING: ",            hex_color = "#FFC90E", bold = TRUE),
                                   warning_indent_ansi = hex_to_ansi(" \u26a0\ufe0f\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#FFC90E", bold = TRUE),
                                   warning_indent_pt   = hex_to_ansi(" !\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",            hex_color = "#FFC90E", bold = TRUE),
-                                  error_ansi        = hex_to_ansi(" \u274c ERROR: ", hex_color = "#C93F3F", bold = TRUE),
-                                  error_pt          = hex_to_ansi(" X ERROR: ",      hex_color = "#C93F3F", bold = TRUE),
-                                  error_indent_ansi = hex_to_ansi(" \u274c\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#C93F3F", bold = TRUE),
-                                  error_indent_pt   = hex_to_ansi(" X\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",      hex_color = "#C93F3F", bold = TRUE),
+                                  error_ansi          = hex_to_ansi(" \u274c ERROR: ", hex_color = "#C93F3F", bold = TRUE),
+                                  error_pt            = hex_to_ansi(" X ERROR: ",      hex_color = "#C93F3F", bold = TRUE),
+                                  error_indent_ansi   = hex_to_ansi(" \u274c\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", hex_color = "#C93F3F", bold = TRUE),
+                                  error_indent_pt     = hex_to_ansi(" X\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0",      hex_color = "#C93F3F", bold = TRUE),
                                   neutral_ansi        = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
                                   neutral_pt          = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
                                   neutral_indent_ansi = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
                                   neutral_indent_pt   = hex_to_ansi("\u00a0", hex_color = "#63C2C9", bold = TRUE),
-                                  grey_ansi         = hex_to_ansi(" \u2601 ",                 hex_color = "#565656", bold = TRUE),
-                                  grey_pt           = hex_to_ansi(" * ",                      hex_color = "#565656", bold = TRUE),
-                                  grey_indent_ansi  = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#565656", bold = TRUE),
-                                  grey_indent_pt    = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#565656", bold = TRUE),
-                                  major_ansi        = hex_to_ansi(" \u23f3\ufe0f ",           hex_color = "#32CD32", bold = TRUE),
-                                  major_pt          = hex_to_ansi(" > ",                      hex_color = "#32CD32", bold = TRUE),
-                                  major_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
-                                  major_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#32CD32", bold = TRUE),
-                                  minor_ansi        = hex_to_ansi(" \u00a0\u00a0\u00a0\u23f3\ufe0f ", hex_color = "#32CD32", bold = TRUE),
-                                  minor_pt          = hex_to_ansi(" \u00a0\u00a0+ ",                  hex_color = "#32CD32", bold = TRUE),
-                                  minor_indent_ansi = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0",   hex_color = "#32CD32", bold = TRUE),
-                                  minor_indent_pt   = hex_to_ansi("\u00a0\u00a0\u00a0",               hex_color = "#32CD32", bold = TRUE))
+                                  grey_ansi           = hex_to_ansi(" \u2601 ",                 hex_color = "#565656", bold = TRUE),
+                                  grey_pt             = hex_to_ansi(" * ",                      hex_color = "#565656", bold = TRUE),
+                                  grey_indent_ansi    = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#565656", bold = TRUE),
+                                  grey_indent_pt      = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#565656", bold = TRUE),
+                                  major_ansi          = hex_to_ansi(" \u23f3\ufe0f ",           hex_color = "#32CD32", bold = TRUE),
+                                  major_pt            = hex_to_ansi(" > ",                      hex_color = "#32CD32", bold = TRUE),
+                                  major_indent_ansi   = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0", hex_color = "#32CD32", bold = TRUE),
+                                  major_indent_pt     = hex_to_ansi("\u00a0\u00a0\u00a0",       hex_color = "#32CD32", bold = TRUE),
+                                  minor_ansi          = hex_to_ansi(" \u00a0\u00a0\u00a0\u23f3\ufe0f ", hex_color = "#32CD32", bold = TRUE),
+                                  minor_pt            = hex_to_ansi(" \u00a0\u00a0+ ",                  hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_ansi   = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0",   hex_color = "#32CD32", bold = TRUE),
+                                  minor_indent_pt     = hex_to_ansi("\u00a0\u00a0\u00a0",               hex_color = "#32CD32", bold = TRUE))
 .qol_messages[["stack"]]           <- list()
 .qol_messages[["start_time"]]      <- NULL
 .qol_messages[["timer"]]           <- NULL

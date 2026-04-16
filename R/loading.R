@@ -5,7 +5,9 @@
 #' Optional all files from the given path can be retrieved as a named character vector.
 #'
 #' @param path A folder path.
-#' @param get_files FALSE by default. If TRUE returns a named character vector containing file paths.
+#' @param get_files FALSE by default. If TRUE returns a named character vector containing
+#' file paths.
+#' @param extensions Specify file extensions to be kept in the list when retrieving files.
 #'
 #' @return
 #' Returns the given file path or a named character vector containing file paths.
@@ -16,11 +18,14 @@
 #'
 #' @export
 libname <- function(path,
-                    get_files = FALSE){
+                    get_files  = FALSE,
+                    extensions = NULL){
     if (!file.exists(path) || dirname(path) == "."){
         print_message("ERROR", "Path does not exist: [path]", path = path)
         return(invisible(NULL))
     }
+
+    print_start_message(suppress = TRUE)
 
     if (get_files){
 		print_step("GREY", "Get files")
@@ -42,10 +47,28 @@ libname <- function(path,
         for (file in files){
             print_step("MINOR", basename(file))
         }
-        return(invisible(stats::setNames(files, basename(files))))
+
+        # Return all files as list if no extensions where specified
+        if (is.null(extensions)){
+            print_closing(suppress = TRUE)
+            return(invisible(stats::setNames(files, basename(files))))
+        }
+        # Filter extensions
+        else{
+            file_list <- stats::setNames(files, basename(files))
+
+            # Create pattern to grab all extensions at once
+            pattern <- paste0("(", paste(gsub("\\.", "\\\\.", extensions), collapse = "|"), ")$")
+
+            print_step("MAJOR", "Only keeping files with extension[?s]: [extensions]", extensions = extensions)
+            print_closing(suppress = TRUE)
+
+            return(invisible(file_list[grepl(pattern, file_list, ignore.case = TRUE)]))
+        }
     }
 
     print_step("MAJOR", "Path successfully assigned: [path]", path = path)
+    print_closing(suppress = TRUE)
 
     path
 }
