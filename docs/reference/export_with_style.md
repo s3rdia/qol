@@ -98,6 +98,9 @@ Other global options:
 [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`set_output()`](https://s3rdia.github.io/qol/reference/qol_options.md).
 
+Combine Excel workbooks:
+[`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md).
+
 Functions that can handle styles:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),

@@ -127,5 +127,7 @@ Global style options: \code{\link[=set_style_options]{set_style_options()}}, \co
 Other global options: \code{\link[=set_titles]{set_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_monitor]{set_monitor()}},
 \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=set_output]{set_output()}}.
 
+Combine Excel workbooks: \code{\link[=combine_into_workbook]{combine_into_workbook()}}.
+
 Functions that can handle styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}.
 }

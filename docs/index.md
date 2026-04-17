@@ -419,6 +419,14 @@ do_if_df <- my_data |>
     end_do()
 ```
 
+## Styled messages
+
+The functions in this package actually talk to the user and show what
+they are doing during runtime. The message system relies on pure base R
+and does not only provide built in message types, but also custom ones.
+
+![Messages](reference/figures/messages.png)
+
 ## Monitoring
 
 This package also includes some basic yet very effective performance
@@ -427,7 +435,7 @@ use of them and can show how they work internally like this:
 
 ![Monitoring example](reference/figures/monitor.png)
 
-## Customizing Visual Appearance
+## Customizing visual appearance
 
 Don’t like the colors of the built-in in RStudio themes? Can’t find a
 theme online that fits your liking? No Problem. With a simple function

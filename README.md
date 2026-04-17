@@ -13,8 +13,6 @@ Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-p
 Version](https://img.shields.io/badge/GitHub-1.3.0-blue.svg)](https://github.com/s3rdia/qol)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/qol.svg)](https://cran.r-project.org/web/checks/check_results_qol.html)
-[![r-universe
-checks](https://s3rdia.r-universe.dev/badges/:registry)](https://s3rdia.r-universe.dev/qol)
 [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/s3rdia/qol)
 [![qol_blog](https://img.shields.io/badge/qol-Blog-036f30)](https://s3rdia.github.io/qol_blog/)
@@ -440,6 +438,14 @@ do_if_df <- my_data |>
     end_do()
 ```
 
+## Styled messages
+
+The functions in this package actually talk to the user and show what
+they are doing during runtime. The message system relies on pure base R
+and does not only provide built in message types, but also custom ones.
+
+<img src='man/figures/messages.png' alt='Messages'/>
+
 ## Monitoring
 
 This package also includes some basic yet very effective performance
@@ -448,7 +454,7 @@ use of them and can show how they work internally like this:
 
 <img src='man/figures/monitor.png' alt='Monitoring example'/>
 
-## Customizing Visual Appearance
+## Customizing visual appearance
 
 Don’t like the colors of the built-in in RStudio themes? Can’t find a
 theme online that fits your liking? No Problem. With a simple function

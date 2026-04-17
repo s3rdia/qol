@@ -103,6 +103,8 @@
 #' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
 #' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
 #'
+#' Combine Excel workbooks: [combine_into_workbook()].
+#'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that can handle formats and styles: [frequencies()], [crosstabs()].
@@ -2146,8 +2148,8 @@ format_any_excel <- function(wb,
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
     # Format titles and footnotes if there are any
-    wb <- wb |>
-        format_titles_foot_excel(titles, footnotes, any_ranges, style, output)
+    wb <- suppressWarnings(wb |>
+        format_titles_foot_excel(titles, footnotes, any_ranges, style, output))
 
     # Only do the formatting when user specified it. With the excel_nostyle
     # option this whole part gets omitted to get a very quick unformatted

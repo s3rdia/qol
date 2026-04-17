@@ -41,11 +41,11 @@
 #'
 #' # Use compute() as a do-over-loop. In this kind of loop all vectors will be
 #' # advanced one iteration at a time in parallel.
-#' money    <- c("income", "expenses", "balance")
 #' new_vars <- c("var1", "var2", "var3")
+#' money    <- c("income", "expenses", "balance")
 #' multi    <- c(1, 2, 3)
 #'
-#' do_over_df <- my_data |> compute(new_vars = multi * money)
+#' do_over_df <- my_data |> compute(new_vars = money * multi)
 #'
 #' # You can also do all at once
 #' all_df <- my_data |> compute(new_var1 = 1,

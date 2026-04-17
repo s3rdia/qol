@@ -37,9 +37,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.3" id="qol-123---development">qol 1.2.3 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-123---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.3.0" id="qol-130">qol 1.3.0<a class="anchor" aria-label="anchor" href="#qol-130"></a></h2>
 <div class="section level4">
-<h4 id="new-functions-1-2-3">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-3"></a></h4>
+<h4 id="new-functions-1-3-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/row_calculation.html">row_calculation()</a></code>: Perform row wise calculations on numeric variables. (12.03.2026)</li>
 <li>
@@ -74,7 +74,7 @@
 <code><a href="../reference/reporter.html">report_test_results()</a></code>, <code><a href="../reference/reporter.html">test_package()</a></code>, <code><a href="../reference/reporter.html">test_single_file()</a></code>: Print out tinytest results with custom reporting style. (15.04.2026)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="new-functionality-1-2-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-2-3"></a></h4>
+<h4 id="new-functionality-1-3-0">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>: The “:” can now be used in conditions as a placeholder for “starts with” (“text:”), “ends with” (“:text”) and “contains” (“:text:”). (21.03.2026)</li>
 <li>
@@ -96,7 +96,7 @@
 <li>
 <code><a href="../reference/round_values.html">round_values()</a></code>: Now is also able to round in multiples of a provided value. (09.04.2026)</li>
 <li>
-<code>combine_into_worbook()</code>: Now can handle <code><a href="../reference/export_with_style.html">export_with_style()</a></code> results. (10.04.2026)</li>
+<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Now can handle <code><a href="../reference/export_with_style.html">export_with_style()</a></code> results. (10.04.2026)</li>
 <li>
 <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: Now accepts multiple title and footnote colors, sizes and boldings. (10.04.2026)</li>
 <li>
@@ -108,11 +108,11 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: If the result expression of a format starts with an “!”, this expression will be used in calculations but will be dropped in the result table. This can be used to calculate block percentages based on a total expression without showing the total in the result table. (12.04.2026)</li>
 <li>
-<code><a href="../reference/any_table.html">any_table()</a></code>: Variable combinations in rows and columns can now also be passed like “state + (age sex education)”, which reslts in “state + age”, “state + sex”, “state + education”, with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new <code>order_by</code> option with “blocks” for that purpose. (12.04.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Variable combinations in rows and columns can now also be passed like “state + (age sex education)”, which results in “state + age”, “state + sex”, “state + education”, with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new <code>order_by</code> option with “blocks” for that purpose. (12.04.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: There are new special <code>var_labels</code>, which add additional top column headers. When assigning labels to variables that start with “block”, e.g. “block1” = “Column Percentages”, “block2” = “Row Percentages”, these labels will appear as the top line of the column header. (12.04.2026)</li>
 <li>
-<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Variable combinations in types can now also be passed like “state + (age sex education)”, which reslts in “state + age”, “state + sex”, “state + education”. (15.04.2026)</li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Variable combinations in types can now also be passed like “state + (age sex education)”, which results in “state + age”, “state + sex”, “state + education”. (15.04.2026)</li>
 <li>
 <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Titles and footnotes can now also link to cells “cell:” and to files “file:”. (15.04.2026)</li>
 <li>
@@ -123,7 +123,7 @@
 <code><a href="../reference/style_options.html">get_style_options()</a></code>: Can now load a rds file and set the contents as global style options. (16.04.2026)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="changed-functionality-1-2-3">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-2-3"></a></h4>
+<h4 id="changed-functionality-1-3-0">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (26.03.2026)</li>
 <li>
@@ -131,12 +131,12 @@
 <li>
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Removed macro variable usage. (09.04.2026)</li>
 <li>
-<code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Now returns a list with table, workbook and meta information, which can be used with <code>combine_into_worbook()</code>. (10.04.2026)</li>
+<code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Now returns a list with table, workbook and meta information, which can be used with <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>. (10.04.2026)</li>
 <li>
 <code><a href="../reference/build_master.html">build_master()</a></code>: Now only catches R-script files and ignores files of all other types. (16.04.2026)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="fixed-1-2-3">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-2-3"></a></h4>
+<h4 id="fixed-1-3-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Some examples had a too long running time. Additionally shortened the running time of unit tests by ignoring styling options in the larger tables. (11.03.2026)</li>
 <li>
@@ -179,7 +179,7 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>: If an invalid format is passed, this now throws a warning instead of removing all formats silently. (14.04.2026)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="optimization-1-2-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-2-3"></a></h4>
+<h4 id="optimization-1-3-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: With the new <code><a href="../reference/compute.html">compute()</a></code> they now perform variable assignments and calculations in a single pass instead of per iteration. (23.03.2026)</li>
 <li>
@@ -194,7 +194,7 @@
 <code><a href="../reference/import_export.html">import_data()</a></code>, <code><a href="../reference/import_export.html">import_multi()</a></code>: <code><a href="../reference/import_export.html">import_data()</a></code> now also accepts a <code>openxlsx2</code> workbook as infile and not only a path to a workbook. This enables a massive performance boost for <code><a href="../reference/import_export.html">import_multi()</a></code>, which now passes a workbook to <code><a href="../reference/import_export.html">import_data()</a></code> instead of the file path. (28.03.2026)</li>
 </ul></div>
 <div class="section level4">
-<h4 id="additionally-1-2-3">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-2-3"></a></h4>
+<h4 id="additionally-1-3-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-0"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: <code>statistics</code> parameter is now NULL by default to enable group percentages to be computed on their own without sums. (11.03.2026)</li>
 <li>Swapped out a variable in abort <code><a href="../reference/split_by.html">split_by()</a></code> because of duplicates test, because the test didn’t throw the expected error. This was a very rare error because of bad luck with the dummy_data sample. The function works as intended. (23.03.2026)</li>
@@ -208,7 +208,7 @@
 <code><a href="../reference/import_export.html">import_multi()</a></code>, <code><a href="../reference/import_export.html">export_multi()</a></code>: Added some messages to show progress. (28.03.2026)</li>
 <li>Added repository to DeepWiki and added badge to README. (29.03.2026)</li>
 <li>
-<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added examples for <code>combine_into_worbook()</code>. (10.04.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added examples for <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>. (10.04.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)</li>
 <li>
@@ -395,7 +395,7 @@
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>: Now outputs a message on how many observations have been removed and how many are left. (27.01.2026)</li>
 <li>
-<code><a href="../reference/any_table.html">any_table()</a></code>, <code>combine_into_worbook()</code>: Adjusted examples. (02.02.2026)</li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Adjusted examples. (02.02.2026)</li>
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: If used inside a function, these functions should now be able to catch the original variable name passed into the parent function. (10.02.2026)</li>
 <li>

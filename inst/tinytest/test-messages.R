@@ -132,6 +132,19 @@ test_func()
 expect_equal(length(get_message_stack()), 3, info = "Print closing without start creates a fake start")
 
 
+# Message stack resets after new function call
+test_func <- function(){
+    print_start_message()
+    print_message("NEUTRAL", "This is neutral.")
+    print_closing()
+}
+
+test_func()
+test_func()
+
+expect_equal(length(get_message_stack()), 3, info = "Message stack resets after new function call")
+
+
 # Styling messages
 print_message("NEUTRAL", "[b][i][u][#FF00FF This is styled.][/u][/i][/b].")
 

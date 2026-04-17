@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.2.3 - DEVELOPMENT
+## qol 1.3.0
 
 #### New functions
 
@@ -114,7 +114,8 @@
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
   Now is also able to round in multiples of a provided value.
   (09.04.2026)
-- `combine_into_worbook()`: Now can handle
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Now can handle
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md)
   results. (10.04.2026)
 - [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
@@ -138,11 +139,11 @@
   (12.04.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Variable combinations in rows and columns can now also be passed like
-  “state + (age sex education)”, which reslts in “state + age”, “state +
-  sex”, “state + education”, with the addition that the results with the
-  same root grouping will be sorted together concerning the row header
-  variables. For the column sorting there is a new `order_by` option
-  with “blocks” for that purpose. (12.04.2026)
+  “state + (age sex education)”, which results in “state + age”,
+  “state + sex”, “state + education”, with the addition that the results
+  with the same root grouping will be sorted together concerning the row
+  header variables. For the column sorting there is a new `order_by`
+  option with “blocks” for that purpose. (12.04.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   There are new special `var_labels`, which add additional top column
   headers. When assigning labels to variables that start with “block”,
@@ -151,7 +152,7 @@
   (12.04.2026)
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Variable combinations in types can now also be passed like “state +
-  (age sex education)”, which reslts in “state + age”, “state + sex”,
+  (age sex education)”, which results in “state + age”, “state + sex”,
   “state + education”. (15.04.2026)
 - [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
   [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
@@ -182,7 +183,9 @@
   Removed macro variable usage. (09.04.2026)
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Now returns a list with table, workbook and meta information, which
-  can be used with `combine_into_worbook()`. (10.04.2026)
+  can be used with
+  [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md).
+  (10.04.2026)
 - [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
   Now only catches R-script files and ignores files of all other types.
   (16.04.2026)
@@ -318,7 +321,9 @@
 - Added repository to DeepWiki and added badge to README. (29.03.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
-  Added examples for `combine_into_worbook()`. (10.04.2026)
+  Added examples for
+  [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md).
+  (10.04.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   When row header labels are suppressed, the excess slashes are now
   removed. (10.04.2026)
@@ -644,7 +649,8 @@ CRAN release: 2026-02-11
   outputs a message on how many observations have been removed and how
   many are left. (27.01.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
-  `combine_into_worbook()`: Adjusted examples. (02.02.2026)
+  [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Adjusted examples. (02.02.2026)
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): If

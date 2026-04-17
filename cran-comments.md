@@ -32,15 +32,15 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `split_by()`: Now also outputs NA values.
 * `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt.
 * `round_values()`: Now is also able to round in multiples of a provided value.
-* `combine_into_worbook()`: Now can handle `export_with_style()` results.
+* `combine_into_workbook()`: Now can handle `export_with_style()` results.
 * `excel_output_style()`: Now accepts multiple title and footnote colors, sizes and boldings.
 * `excel_output_style()`: New option `header_stat_merging` determines how the statistic symbols or labels are merged in the column header. As a new standard the labels are now not fully merged but in blocks.
 * `if.()`: Observation selection now also works as do over loop.
 * `any_table()`: New parameter `pct_block` enables percentage calculation inside the respective second to last grouping of the row or column variables.
 * `any_table()`: If the result expression of a format starts with an "!", this expression will be used in calculations but will be dropped in the result table. This can be used to calculate block percentages based on a total expression without showing the total in the result table.
-* `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose.
+* `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which results in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose.
 * `any_table()`: There are new special `var_labels`, which add additional top column headers. When assigning labels to variables that start with "block", e.g. "block1" = "Column Percentages", "block2" = "Row Percentages", these labels will appear as the top line of the column header.
-* `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education".
+* `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which results in "state + age", "state + sex", "state + education".
 * `frequencies()`, `crosstabs()`, `any_table()`, `export_with_style()`: Titles and footnotes can now also link to cells "cell:" and to files "file:".
 * `libname()`: Can now optionally filter file list by provided file extensions.
 * `set_style_options()`: Can now save the currently set global options to a rds file.
@@ -51,7 +51,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
 * `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster.
 * `transpose_plus()`: Removed macro variable usage.
-* `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_worbook`.
+* `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_workbook`.
 * `build_master()`: Now only catches R-script files and ignores files of all other types.
 
 ### Fixed
@@ -94,7 +94,7 @@ Last CRAN release was on 11.03.2026. The package has a new dependency "fst", whi
 * `any_table()`: Omitted table formatting in some tests to make them run quicker.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section.
 * `import_multi()`, `export_multi()`: Added some messages to show progress.
-* `any_table()`, `export_with_style()`: Added examples for `combine_into_worbook()`.
+* `any_table()`, `export_with_style()`: Added examples for `combine_into_workbook()`.
 * `any_table()`: When row header labels are suppressed, the excess slashes are now removed.
 * `compute()`: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables.
 

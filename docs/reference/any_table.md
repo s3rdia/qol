@@ -256,6 +256,9 @@ Other global options:
 [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`set_output()`](https://s3rdia.github.io/qol/reference/qol_options.md).
 
+Combine Excel workbooks:
+[`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md).
+
 Creating formats:
 [`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md)
 and

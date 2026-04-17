@@ -1,4 +1,4 @@
-# qol 1.2.3 - DEVELOPMENT
+# qol 1.3.0
 
 ### New functions
 
@@ -31,15 +31,15 @@
 * `split_by()`: Now also outputs NA values. (29.03.2026)
 * `import_data()`, `import_multi()`, `export_data()`, `export_multi()`: Now can import and export csv files with file extension txt. (30.03.2026)
 * `round_values()`: Now is also able to round in multiples of a provided value. (09.04.2026)
-* `combine_into_worbook()`: Now can handle `export_with_style()` results. (10.04.2026)
+* `combine_into_workbook()`: Now can handle `export_with_style()` results. (10.04.2026)
 * `excel_output_style()`: Now accepts multiple title and footnote colors, sizes and boldings. (10.04.2026)
 * `excel_output_style()`: New option `header_stat_merging` determines how the statistic symbols or labels are merged in the column header. As a new standard the labels are now not fully merged but in blocks. (10.04.2026)
 * `if.()`: Observation selection now also works as do over loop. (12.04.2026)
 * `any_table()`: New parameter `pct_block` enables percentage calculation inside the respective second to last grouping of the row or column variables. (12.04.2026)
 * `any_table()`: If the result expression of a format starts with an "!", this expression will be used in calculations but will be dropped in the result table. This can be used to calculate block percentages based on a total expression without showing the total in the result table. (12.04.2026)
-* `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose. (12.04.2026)
+* `any_table()`: Variable combinations in rows and columns can now also be passed like "state + (age sex education)", which results in "state + age", "state + sex", "state + education", with the addition that the results with the same root grouping will be sorted together concerning the row header variables. For the column sorting there is a new `order_by` option with "blocks" for that purpose. (12.04.2026)
 * `any_table()`: There are new special `var_labels`, which add additional top column headers. When assigning labels to variables that start with "block", e.g. "block1" = "Column Percentages", "block2" = "Row Percentages", these labels will appear as the top line of the column header. (12.04.2026)
-* `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which reslts in "state + age", "state + sex", "state + education". (15.04.2026)
+* `summarise_plus()`: Variable combinations in types can now also be passed like "state + (age sex education)", which results in "state + age", "state + sex", "state + education". (15.04.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `export_with_style()`: Titles and footnotes can now also link to cells "cell:" and to files "file:". (15.04.2026)
 * `libname()`: Can now optionally filter file list by provided file extensions. (16.04.2026)
 * `set_style_options()`: Can now save the currently set global options to a rds file. (16.04.2026)
@@ -50,7 +50,7 @@
 * `summarise_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (26.03.2026)
 * `Unit tests`: Moved unit tests completely from `testthat` to `tinytest`. `testthat` repeatedly got in the way with its own environment, `tinytest` offers more natural conditions and works faster. (31.01.2026)
 * `transpose_plus()`: Removed macro variable usage. (09.04.2026)
-* `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_worbook()`. (10.04.2026)
+* `export_with_style()`: Now returns a list with table, workbook and meta information, which can be used with `combine_into_workbook()`. (10.04.2026)
 * `build_master()`: Now only catches R-script files and ignores files of all other types. (16.04.2026)
 
 ### Fixed
@@ -94,7 +94,7 @@
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added missing global options function in the `see also` section. (25.03.2026)
 * `import_multi()`, `export_multi()`: Added some messages to show progress. (28.03.2026)
 * Added repository to DeepWiki and added badge to README. (29.03.2026)
-* `any_table()`, `export_with_style()`: Added examples for `combine_into_worbook()`. (10.04.2026)
+* `any_table()`, `export_with_style()`: Added examples for `combine_into_workbook()`. (10.04.2026)
 * `any_table()`: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)
 * `compute()`: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)
 
@@ -213,7 +213,7 @@
 
 * `any_table()`: Removed c() in examples where not necessary. (24.01.2026)
 * `if.()`: Now outputs a message on how many observations have been removed and how many are left. (27.01.2026)
-* `any_table()`, `combine_into_worbook()`: Adjusted examples. (02.02.2026)
+* `any_table()`, `combine_into_workbook()`: Adjusted examples. (02.02.2026)
 * `if.()`, `else_if.()`, `else.()`: If used inside a function, these functions should now be able to catch the original variable name passed into the parent function. (10.02.2026)
 * `content_report`: Added duplicate variable count to global information. (11.02.2026)
 

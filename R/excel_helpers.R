@@ -702,30 +702,36 @@ get_freq_tab_ranges <- function(freq_tab,
 #'
 #' @noRd
 format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, output){
-    pattern <- "(link|cell|file):"
+    if (output == "excel"){
+        pattern <- "(link|cell|file):"
 
-    if (length(titles) > 0){
-        # Format
-        if (output == "excel"){
+        if (length(titles) > 0){
+            # Format
             if (length(style[["title_font_color"]]) == 1){
-                # Apply cell styles
-                wb$add_cell_style(dims       = ranges[["title_range"]],
-                                  horizontal = style[["title_alignment"]],
-                                  vertical   = "center",
-                                  wrap_text  = "1",
-                                  apply_font = TRUE,
-                                  font_id    = wb$styles_mgr$get_font_id("title_font"))
+                for (i in seq_along(length(style[["title_alignment"]]))){
+                    # Apply cell styles
+                    wb$add_cell_style(dims       = ranges[["title_range"]],
+                                      horizontal = style[["title_alignment"]][i],
+                                      vertical   = "center",
+                                      wrap_text  = "1",
+                                      apply_font = TRUE,
+                                      font_id    = wb$styles_mgr$get_font_id("title_font"))
+                }
             }
             else{
                 # Apply cell styles
                 full_range <- openxlsx2::dims_to_rowcol(ranges[["title_range"]])
+
+                # Adjust alignment vector to fit the rest
+                style[["title_alignment"]] <- fill_or_trim(style[["title_alignment"]],
+                                                           length(titles))
 
                 for (i in seq_along(titles)){
                     specific_range <- openxlsx2::wb_dims(as.integer(full_range[["row"]][i]),
                                                          full_range[["col"]])
 
                     wb$add_cell_style(dims       = specific_range,
-                                      horizontal = style[["title_alignment"]],
+                                      horizontal = style[["title_alignment"]][i],
                                       vertical   = "center",
                                       wrap_text  = "1",
                                       apply_font = TRUE,
@@ -754,84 +760,96 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                 wb$set_row_heights(rows    = start_row:end_row,
                                    heights = title_heights)
             }
-        }
 
-        # Shortcut: if no links found, just add all titles at once
-        if (!any(grepl(pattern, titles))){
-            wb$add_data(x         = titles,
-                        start_col = style[["start_column"]],
-                        start_row = style[["start_row"]])
-        }
-        # Otherwise print title by title
-        else{
-            for (i in seq_along(titles)){
-                title <- titles[[i]]
+            # Shortcut: if no links found, just add all titles at once
+            if (!any(grepl(pattern, titles))){
+                wb$add_data(x         = titles,
+                            start_col = style[["start_column"]],
+                            start_row = style[["start_row"]])
+            }
+            # Otherwise print title by title
+            else{
+                # Adjust alignment vector to fit the rest
+                style[["title_alignment"]] <- fill_or_trim(style[["title_alignment"]],
+                                                           length(titles))
 
-                # If there is a hyperlink in the text
-                if (grepl(pattern, title)){
-                    # Identify which of the patterns was found
-                    matched_pattern <- regexec(pattern, title)
-                    found_pattern   <- regmatches(title, matched_pattern)[[1]][2]
+                for (i in seq_along(titles)){
+                    title <- titles[[i]]
 
-                    # Get the link and the title range
-                    current_link <- sub(paste0(".*", pattern), "", title)
-                    current_pos  <- get_excel_range(row    = ranges[["title.row"]] + (i - 1),
-                                                    column = ranges[["title.column"]])
+                    # If there is a hyperlink in the text
+                    if (grepl(pattern, title)){
+                        # Identify which of the patterns was found
+                        matched_pattern <- regexec(pattern, title)
+                        found_pattern   <- regmatches(title, matched_pattern)[[1]][2]
 
-                    # Remove link from the text
-                    titles[[i]] <- sub(paste0(pattern, ".*"), "", title)
+                        # Get the link and the title range
+                        current_link <- sub(paste0(".*", pattern), "", title)
+                        current_pos  <- get_excel_range(row    = ranges[["title.row"]] + (i - 1),
+                                                        column = ranges[["title.column"]])
 
-                    # Add hyperlink
-                    if (found_pattern == "link"){
-                        formula <- openxlsx2::create_hyperlink(text = titles[[i]], file = current_link)
+                        # Remove link from the text
+                        titles[[i]] <- sub(paste0(pattern, ".*"), "", title)
 
-                        wb$add_formula(x = formula, dims = current_pos)
+                        # Add hyperlink
+                        if (found_pattern == "link"){
+                            formula <- openxlsx2::create_hyperlink(text = titles[[i]], file = current_link)
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+                        # Add link to cell
+                        else if (found_pattern == "cell"){
+                            formula <- paste0('=HYPERLINK(\"#', current_link, '\", "', titles[[i]], '")')
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+                        # Add file link
+                        else if (found_pattern == "file"){
+                            formula <- paste0('=HYPERLINK("[', current_link, ']", "', titles[[i]], '")')
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+
+                        if (length(style[["title_font_color"]]) == 1){
+                            wb$add_cell_style(dims       = current_pos,
+                                              horizontal = style[["title_alignment"]][i],
+                                              vertical   = "center",
+                                              wrap_text  = "1",
+                                              apply_font = TRUE,
+                                              font_id    = wb$styles_mgr$get_font_id(paste0("title", i, "_link_font")))
+                        }
+                        else{
+                            wb$add_cell_style(dims       = current_pos,
+                                              horizontal = style[["title_alignment"]][i],
+                                              vertical   = "center",
+                                              wrap_text  = "1",
+                                              apply_font = TRUE,
+                                              font_id    = wb$styles_mgr$get_font_id("title_link_font"))
+                        }
                     }
-                    # Add link to cell
-                    else if (found_pattern == "cell"){
-                        formula <- paste0('=HYPERLINK(\"#', current_link, '\", "', titles[[i]], '")')
+                    # Without links just insert plain text
+                    else{
+                        current_pos <- get_excel_range(row    = ranges[["title.row"]] + (i - 1),
+                                                       column = ranges[["title.column"]])
 
-                        wb$add_formula(x = formula, dims = current_pos)
+                        wb$add_data(x = title, dims = current_pos)
                     }
-                    # Add file link
-                    else if (found_pattern == "file"){
-                        formula <- paste0('=HYPERLINK("[', current_link, ']", "', titles[[i]], '")')
-
-                        wb$add_formula(x = formula, dims = current_pos)
-                    }
-
-                    if (output == "excel"){
-                        wb$add_cell_style(dims       = current_pos,
-                                          horizontal = style[["title_alignment"]],
-                                          vertical   = "center",
-                                          wrap_text  = "1",
-                                          apply_font = TRUE,
-                                          font_id    = wb$styles_mgr$get_font_id("title_link_font"))
-                    }
-                }
-                # Without links just insert plain text
-                else{
-                    current_pos  <- get_excel_range(row    = ranges[["title.row"]] + (i - 1),
-                                                    column = ranges[["title.column"]])
-
-                    wb$add_data(x = title, dims = current_pos)
                 }
             }
         }
-    }
 
-    # Format footnotes if there are any
-    if (length(footnotes) > 0){
-        # Format
-        if (output == "excel"){
+        # Format footnotes if there are any
+        if (length(footnotes) > 0){
+            # Format
             if (length(style[["footnote_font_color"]]) == 1){
-                # Apply cell styles
-                wb$add_cell_style(dims       = ranges[["footnote_range"]],
-                                  horizontal = style[["footnote_alignment"]],
-                                  vertical   = "center",
-                                  wrap_text  = "1",
-                                  apply_font = TRUE,
-                                  font_id    = wb$styles_mgr$get_font_id("footnote_font"))
+                for (i in seq_along(length(style[["footnote_alignment"]]))){
+                    # Apply cell styles
+                    wb$add_cell_style(dims       = ranges[["footnote_range"]],
+                                      horizontal = style[["footnote_alignment"]][i],
+                                      vertical   = "center",
+                                      wrap_text  = "1",
+                                      apply_font = TRUE,
+                                      font_id    = wb$styles_mgr$get_font_id("footnote_font"))
+                }
 
                 # Format first footnote row special with a separating line
                 full_range    <- openxlsx2::dims_to_rowcol(ranges[["footnote_range"]])
@@ -841,7 +859,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                                  cat_col_range[["col"]])
 
                 wb$add_cell_style(dims         = first_foot,
-                                  horizontal   = style[["footnote_alignment"]],
+                                  horizontal   = style[["footnote_alignment"]][1],
                                   vertical     = "center",
                                   wrap_text    = "1",
                                   apply_font   = TRUE,
@@ -854,13 +872,17 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                 full_range    <- openxlsx2::dims_to_rowcol(ranges[["footnote_range"]])
                 cat_col_range <- openxlsx2::dims_to_rowcol(ranges[["cat_col_range"]])
 
+                # Adjust alignment vector to fit the rest
+                style[["footnote_alignment"]] <- fill_or_trim(style[["footnote_alignment"]],
+                                                           length(footnotes))
+
                 for (i in seq_along(footnotes)){
                     if (i > 1){
                         specific_range <- openxlsx2::wb_dims(as.integer(full_range[["row"]][i]),
                                                              full_range[["col"]])
 
                         wb$add_cell_style(dims       = specific_range,
-                                          horizontal = style[["footnote_alignment"]],
+                                          horizontal = style[["footnote_alignment"]][i],
                                           vertical   = "center",
                                           wrap_text  = "1",
                                           apply_font = TRUE,
@@ -872,7 +894,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                                              cat_col_range[["col"]])
 
                         wb$add_cell_style(dims       = specific_range,
-                                          horizontal = style[["footnote_alignment"]],
+                                          horizontal = style[["footnote_alignment"]][i],
                                           vertical   = "center",
                                           wrap_text  = "1",
                                           apply_font = TRUE,
@@ -904,69 +926,95 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                 wb$set_row_heights(rows    = start_row:end_row,
                                    heights = footnote_heights)
             }
+
+            # Shortcut: if no links found, just add all titles at once
+            if (!any(grepl(pattern, footnotes))){
+                wb$add_data(x         = footnotes,
+                            start_col = style[["start_column"]],
+                            start_row = ranges[["footnote.row"]])
+            }
+            # Otherwise print footnote by footnote
+            else{
+                # Adjust alignment vector to fit the rest
+                style[["footnote_alignment"]] <- fill_or_trim(style[["footnote_alignment"]],
+                                                              length(footnotes))
+
+                for (i in seq_along(footnotes)){
+                    footnote <- footnotes[[i]]
+
+                    # If there is a hyperlink in the text
+                    if (grepl(pattern, footnote)){
+                        # Identify which of the patterns was found
+                        matched_pattern <- regexec(pattern, footnote)
+                        found_pattern   <- regmatches(footnote, matched_pattern)[[1]][2]
+
+                        # Get the link and the footnote range
+                        current_link <- sub(paste0(".*", pattern), "", footnote)
+                        current_pos  <- get_excel_range(row    = ranges[["footnote.row"]] + (i - 1),
+                                                        column = ranges[["title.column"]])
+
+                        # Remove link from the text
+                        footnote[[i]] <- sub(paste0(pattern, ".*"), "", footnote)
+
+                        # Add hyperlink
+                        if (found_pattern == "link"){
+                            formula <- openxlsx2::create_hyperlink(text = footnote[[i]], file = current_link)
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+                        # Add link to cell
+                        else if (found_pattern == "cell"){
+                            formula <- paste0('=HYPERLINK(\"#', current_link, '\", "', footnote[[i]], '")')
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+                        # Add file link
+                        else if (found_pattern == "file"){
+                            formula <- paste0('=HYPERLINK("[', current_link, ']", "', footnote[[i]], '")')
+
+                            wb$add_formula(x = formula, dims = current_pos)
+                        }
+
+                        if (length(style[["footnote_font_color"]]) == 1){
+                            wb$add_cell_style(dims       = current_pos,
+                                              horizontal = style[["footnote_alignment"]][i],
+                                              vertical   = "center",
+                                              wrap_text  = "1",
+                                              apply_font = TRUE,
+                                              font_id    = wb$styles_mgr$get_font_id(paste0("footnote", i, "_link_font")))
+                        }
+                        else{
+                            wb$add_cell_style(dims       = current_pos,
+                                              horizontal = style[["footnote_alignment"]][i],
+                                              vertical   = "center",
+                                              wrap_text  = "1",
+                                              apply_font = TRUE,
+                                              font_id    = wb$styles_mgr$get_font_id("footnote_link_font"))
+                        }
+                    }
+                    # Without links just insert plain text
+                    else{
+                        current_pos <- get_excel_range(row    = ranges[["footnote.row"]] + (i - 1),
+                                                       column = ranges[["title.column"]])
+
+                        wb$add_data(x = footnote, dims = current_pos)
+                    }
+                }
+            }
+        }
+    }
+    # If not a styled export just print titles and footnotes as they are
+    else{
+        if (length(titles) > 0){
+            wb$add_data(x         = titles,
+                        start_col = style[["start_column"]],
+                        start_row = style[["start_row"]])
         }
 
-        # Shortcut: if no links found, just add all titles at once
-        if (!any(grepl(pattern, footnotes))){
+        if (length(footnotes) > 0){
             wb$add_data(x         = footnotes,
                         start_col = style[["start_column"]],
                         start_row = ranges[["footnote.row"]])
-        }
-        # Otherwise print footnote by footnote
-        else{
-            for (i in seq_along(footnotes)){
-                footnote <- footnotes[[i]]
-
-                # If there is a hyperlink in the text
-                if (grepl(pattern, footnote)){
-                    # Identify which of the patterns was found
-                    matched_pattern <- regexec(pattern, footnote)
-                    found_pattern   <- regmatches(footnote, matched_pattern)[[1]][2]
-
-                    # Get the link and the footnote range
-                    current_link <- sub(paste0(".*", pattern), "", footnote)
-                    current_pos  <- get_excel_range(row    = ranges[["footnote.row"]] + (i - 1),
-                                                    column = ranges[["title.column"]])
-
-                    # Remove link from the text
-                    footnote[[i]] <- sub(paste0(pattern, ".*"), "", footnote)
-
-                    # Add hyperlink
-                    if (found_pattern == "link"){
-                        formula <- openxlsx2::create_hyperlink(text = footnote[[i]], file = current_link)
-
-                        wb$add_formula(x = formula, dims = current_pos)
-                    }
-                    # Add link to cell
-                    else if (found_pattern == "cell"){
-                        formula <- paste0('=HYPERLINK(\"#', current_link, '\", "', footnote[[i]], '")')
-
-                        wb$add_formula(x = formula, dims = current_pos)
-                    }
-                    # Add file link
-                    else if (found_pattern == "file"){
-                        formula <- paste0('=HYPERLINK("[', current_link, ']", "', footnote[[i]], '")')
-
-                        wb$add_formula(x = formula, dims = current_pos)
-                    }
-
-                    if (output == "excel"){
-                        wb$add_cell_style(dims       = current_pos,
-                                          horizontal = style[["footnote_alignment"]],
-                                          vertical   = "center",
-                                          wrap_text  = "1",
-                                          apply_font = TRUE,
-                                          font_id    = wb$styles_mgr$get_font_id("footnote_link_font"))
-                    }
-                }
-                # Without links just insert plain text
-                else{
-                    current_pos  <- get_excel_range(row    = ranges[["footnote.row"]] + (i - 1),
-                                                    column = ranges[["footnote.column"]])
-
-                    wb$add_data(x = footnote, dims = current_pos)
-                }
-            }
         }
     }
 
@@ -1107,42 +1155,56 @@ handle_font_styles <- function(wb, style = excel_output_style()){
 
     # Add individual font styles for each table part
     for (type in c("title", "footnote", "header", "subheader", "box", "cat_col", "table")){
-        # For titles and footnotes multiple font colors per line can be specified
-        if (type == "title" && length(style[["title_font_color"]]) > 1){
-            # Look up title font colors
-            for (i in 1:length(style[["title_font_color"]])){
-                wb$styles_mgr$add(
-                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
-                                           color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]][i]),
-                                           b     = style[[paste0(type, "_font_bold")]][i]),
-                    paste0(type, i, "_font"))
+        if (type %in% c("title", "footnote")){
+            multi_style <- max(length(style[[paste0(type, "_font_color")]]),
+                               length(style[[paste0(type, "_font_size")]]),
+                               length(style[[paste0(type, "_font_bold")]]))
+
+            # For titles and footnotes multiple font colors per line can be specified
+            if (multi_style > 1){
+                style[[paste0(type, "_font_color")]] <- fill_or_trim(style[[paste0(type, "_font_color")]], multi_style)
+                style[[paste0(type, "_font_size")]]  <- fill_or_trim(style[[paste0(type, "_font_size")]],  multi_style)
+                style[[paste0(type, "_font_bold")]]  <- fill_or_trim(style[[paste0(type, "_font_bold")]],  multi_style)
+
+                # Look up title font colors
+                for (i in 1:length(style[[paste0(type, "_font_color")]])){
+                    # Normal style
+                    wb$styles_mgr$add(
+                        openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
+                                               color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]][i]),
+                                               b     = style[[paste0(type, "_font_bold")]][i]),
+                        paste0(type, i, "_font"))
+
+                    # Hyperlink style
+                    wb$styles_mgr$add(
+                        openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
+                                               color = openxlsx2::wb_color(hex = "0000FF"),
+                                               u     = "single"),
+                        paste0(type, i, "_link_font"))
+                }
             }
-        }
-        else if (type == "footnote" && length(style[["footnote_font_color"]]) > 1){
-            # Look up title font colors
-            for (i in 1:length(style[["footnote_font_color"]])){
+            else{
+                # Normal style
                 wb$styles_mgr$add(
-                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
-                                           color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]][i]),
-                                           b     = style[[paste0(type, "_font_bold")]][i]),
-                    paste0(type, i, "_font"))
+                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]],
+                                           color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]]),
+                                           b     = style[[paste0(type, "_font_bold")]]),
+                    paste0(type, "_font"))
+
+                # Hyperlink style
+                wb$styles_mgr$add(
+                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]],
+                                           color = openxlsx2::wb_color(hex = "0000FF"),
+                                           u     = "single"),
+                    paste0(type, "_link_font"))
             }
         }
         else{
             wb$styles_mgr$add(
-                openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][1],
-                                       color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]][1]),
-                                       b     = style[[paste0(type, "_font_bold")]][1]),
+                openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]],
+                                       color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]]),
+                                       b     = style[[paste0(type, "_font_bold")]]),
                 paste0(type, "_font"))
-        }
-
-        # Add hyperlink style
-        if (type %in% c("title", "footnote")){
-            wb$styles_mgr$add(
-                openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][1],
-                                       color = openxlsx2::wb_color(hex = "0000FF"),
-                                       u     = "single"),
-                paste0(type, "_link_font"))
         }
     }
 
