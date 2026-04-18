@@ -84,7 +84,7 @@ In it's simplest form it can remember a value from the first observation and tra
 other observations.
 
 All of these functions work on the whole data frame as well as on groups, e.g. to transfer
-a value from the first person in a household to all other persons of the same household.ame retain
+a value from the first person in a household to all other persons of the same household.
 }
 \examples{
 # Example data frame

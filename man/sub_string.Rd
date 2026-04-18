@@ -17,7 +17,7 @@ sub_string(data_frame, variable, from = NULL, to = NULL, case_sensitive = TRUE)
 
 \item{case_sensitive}{TRUE by default. When a character expression is passed as
 from or to it makes a difference whether a letter is written in upper or lower case.
-Pass FALSE to handle upper and lower case equaly.}
+Pass FALSE to handle upper and lower case equally.}
 }
 \value{
 Returns parts of a character vector.

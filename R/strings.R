@@ -146,7 +146,7 @@ concat <- function(data_frame,
 #' @param to A single character which will be used to fill up the empty places.
 #' @param case_sensitive TRUE by default. When a character expression is passed as
 #' from or to it makes a difference whether a letter is written in upper or lower case.
-#' Pass FALSE to handle upper and lower case equaly.
+#' Pass FALSE to handle upper and lower case equally.
 #'
 #' @return
 #' Returns parts of a character vector.

@@ -286,7 +286,7 @@ CRAN release on 13.01.2026
 * `summarise_plus()`: Group percentages with nesting = "all" or "single" and na.rm = TRUE are now computed as intended. (02.01.2026)
 * `handle_cell_styles()`: Set apply_font and font_id in a save way to prevent warnings. (04.01.2026, thanks to @JanMarvin)
 * `summarise_plus()`: Removed conversion to numeric values before applying formats, which could lead to not matching formats, if a numeric value was intentionally stored as character value. (07.01.2026)
-* `any_table()`: When na.rm was TRUE and many table cells where generated while only having few observations, it could happen that some combinations weren't generated and a result mismatch happend. Results are now joined instead of cbind together to be safe. (11.01.2026)
+* `any_table()`: When na.rm was TRUE and many table cells where generated while only having few observations, it could happen that some combinations weren't generated and a result mismatch happened. Results are now joined instead of cbind together to be safe. (11.01.2026)
 
 ### Optimization
 

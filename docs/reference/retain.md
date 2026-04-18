@@ -100,7 +100,7 @@ and transfer it to all other observations.
 
 All of these functions work on the whole data frame as well as on
 groups, e.g. to transfer a value from the first person in a household to
-all other persons of the same household.ame retain
+all other persons of the same household.
 
 ## Examples
 

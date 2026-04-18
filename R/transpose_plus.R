@@ -16,7 +16,7 @@
 #'
 #' @param data_frame A data frame to transpose
 #' @param preserve Variables to keep and preserve in their current form.
-#' @param pivot A vector that provides the expressions of single variables or od
+#' @param pivot A vector that provides the expressions of single variables or
 #' variable combinations that should be transposed. To nest variables use the form:
 #' "var1 + var2 + var3 + ...".
 #' @param values A vector containing all value variables that should be transposed.

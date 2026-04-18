@@ -40,9 +40,9 @@ transpose_plus(
 
 - pivot:
 
-  A vector that provides the expressions of single variables or od
-  variable combinations that should be transposed. To nest variables use
-  the form: "var1 + var2 + var3 + ...".
+  A vector that provides the expressions of single variables or variable
+  combinations that should be transposed. To nest variables use the
+  form: "var1 + var2 + var3 + ...".
 
 - values:
 

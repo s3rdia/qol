@@ -858,7 +858,7 @@ CRAN release on 13.01.2026
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   When na.rm was TRUE and many table cells where generated while only
   having few observations, it could happen that some combinations
-  weren’t generated and a result mismatch happend. Results are now
+  weren’t generated and a result mismatch happened. Results are now
   joined instead of cbind together to be safe. (11.01.2026)
 
 #### Optimization
