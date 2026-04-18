@@ -107,6 +107,15 @@ remaining NA in given variable to the given value.</p>
     <p>Returns a data frame with conditionally computed variables.</p>
     </div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The loop you can use within these functions is based on the 'SAS' do-over-loop. This
+type of loop iterates over every vector that appears in the loop in parallel.
+Means that in the first iteration all the first vector elements are used, in the
+second iteration all second elements of every vector, and so on. With this loop
+you don't have the need to construct an outer loop, but can directly pass in
+different vectors and let the function handle the loop inside.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>The following functions can make use of the <code><a href="do_if.html">do_if()</a></code> filter variables:</p>
 <p>Conditions: <code>if.()</code>, <code>else_if.()</code>, <code>else.()</code></p>

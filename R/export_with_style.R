@@ -47,14 +47,18 @@
 #' set_style_options(column_widths = c(2, 15, 15, 15, 9))
 #'
 #' # Define titles and footnotes. If you want to add hyperlinks you can do so by
-#' # adding "link:" followed by the hyperlink to the main text.
-#' set_titles("This is title number 1 link: https://cran.r-project.org/",
-#'            "This is title number 2",
-#'            "This is title number 3")
+#' # adding "link:" followed by the hyperlink to the main text. Linking to another
+#' # cell works with "cell:". To link to a file use "file:" an pass the full file
+#' # path afterwards.
+#' set_titles("This is title number 1",
+#'            "This is title number 2 link: https://cran.r-project.org/",
+#'            "This is title number 3 cell: W22",
+#'            "This is title number 4 file: C:/MyFolder/MyFile.txt")
 #'
 #' set_footnotes("This is footnote number 1",
-#'               "This is footnote number 2",
-#'               "This is footnote number 3 link: https://cran.r-project.org/")
+#'               "This is footnote number 2 file: C:/MyFolder/MyFile.txt",
+#'               "This is footnote number 3 cell: W22",
+#'               "This is footnote number 4 link: https://cran.r-project.org/")
 #'
 #' # Print styled data frame
 #' my_data |> export_with_style()
@@ -69,6 +73,7 @@
 #'
 #' # Note: Normally you would directly input the path ("C:/MyPath/") and
 #' #       name ("MyFile.xlsx").
+#' #       With the set_style_options you can also set a table style globally.
 #' set_style_options(save_path  = dirname(table_file),
 #'                   file       = basename(table_file),
 #'                   sheet_name = "MyTable")
@@ -164,12 +169,12 @@ export_with_style <- function(data_frame,
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
         workbook <- openxlsx2::wb_workbook() |>
-            prepare_styles(style)
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
     }
     # Update style options in provided workbook
     else{
         workbook <- workbook |>
-            prepare_styles(style)
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
     }
 
     monitor_df <- monitor_df |> monitor_end()
@@ -298,8 +303,8 @@ format_df_excel <- function(wb,
     print_step("MAJOR", "Formatting data")
 
     # Format titles and footnotes if there are any
-    wb <- wb |> suppressWarnings(
-        format_titles_foot_excel(titles, footnotes, df_ranges, style, output))
+    wb <- wb |>
+        format_titles_foot_excel(titles, footnotes, df_ranges, style, output)
 
     # Only do the formatting when user specified it. With the excel_nostyle
     # option this whole part gets omitted to get a very quick unformatted

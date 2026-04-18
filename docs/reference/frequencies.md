@@ -166,15 +166,14 @@ Additional functions that can handle formats:
 # Example data frame
 my_data <- dummy_data(1000)
 
-# Define titles and footnotes. If you want to add hyperlinks you can do so by
-# adding "link:" followed by the hyperlink to the main text.
-set_titles("This is title number 1 link: https://cran.r-project.org/",
+# Define titles and footnotes.
+set_titles("This is title number 1",
            "This is title number 2",
            "This is title number 3")
 
 set_footnotes("This is footnote number 1",
               "This is footnote number 2",
-              "This is footnote number 3 link: https://cran.r-project.org/")
+              "This is footnote number 3")
 
 # Output frequencies tables
 my_data |> frequencies(sex)
@@ -206,6 +205,20 @@ my_data |> frequencies(sex, output = "text")
 # Output to Excel
 my_data |> frequencies(sex, output = "excel")
 
+# If you want to add hyperlinksto titles and footnotes you can do so by
+# adding "link:" followed by the hyperlink to the main text. Linking to another
+# cell works with "cell:". To link to a file use "file:" an pass the full file
+# path afterwards.
+set_titles("This is title number 1",
+           "This is title number 2 link: https://cran.r-project.org/",
+           "This is title number 3 cell: W22",
+           "This is title number 4 file: C:/MyFolder/MyFile.txt")
+
+set_footnotes("This is footnote number 1",
+              "This is footnote number 2 file: C:/MyFolder/MyFile.txt",
+              "This is footnote number 3 cell: W22",
+              "This is footnote number 4 link: https://cran.r-project.org/")
+
 # Individual styling can also be passed directly
 my_style <- excel_output_style(header_back_color = "0077B6",
                                font              = "Times New Roman")
@@ -218,6 +231,7 @@ my_data |> frequencies(sex, output = "excel", style = my_style)
 table_file <- tempfile(fileext = ".xlsx")
 
 # Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").
+#       With the set_style_options you can also set a table style globally.
 set_style_options(save_path  = dirname(table_file),
                   file       = basename(table_file),
                   sheet_name = "MyTable")

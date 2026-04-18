@@ -708,7 +708,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
         if (length(titles) > 0){
             # Format
             if (length(style[["title_font_color"]]) == 1){
-                for (i in seq_along(length(style[["title_alignment"]]))){
+                for (i in seq_len(length(style[["title_alignment"]]))){
                     # Apply cell styles
                     wb$add_cell_style(dims       = ranges[["title_range"]],
                                       horizontal = style[["title_alignment"]][i],
@@ -815,7 +815,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                               vertical   = "center",
                                               wrap_text  = "1",
                                               apply_font = TRUE,
-                                              font_id    = wb$styles_mgr$get_font_id(paste0("title", i, "_link_font")))
+                                              font_id    = wb$styles_mgr$get_font_id("title_link_font"))
                         }
                         else{
                             wb$add_cell_style(dims       = current_pos,
@@ -823,7 +823,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                               vertical   = "center",
                                               wrap_text  = "1",
                                               apply_font = TRUE,
-                                              font_id    = wb$styles_mgr$get_font_id("title_link_font"))
+                                              font_id    = wb$styles_mgr$get_font_id(paste0("title", i, "_link_font")))
                         }
                     }
                     # Without links just insert plain text
@@ -841,7 +841,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
         if (length(footnotes) > 0){
             # Format
             if (length(style[["footnote_font_color"]]) == 1){
-                for (i in seq_along(length(style[["footnote_alignment"]]))){
+                for (i in seq_len(length(style[["footnote_alignment"]]))){
                     # Apply cell styles
                     wb$add_cell_style(dims       = ranges[["footnote_range"]],
                                       horizontal = style[["footnote_alignment"]][i],
@@ -981,7 +981,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                               vertical   = "center",
                                               wrap_text  = "1",
                                               apply_font = TRUE,
-                                              font_id    = wb$styles_mgr$get_font_id(paste0("footnote", i, "_link_font")))
+                                              font_id    = wb$styles_mgr$get_font_id("footnote_link_font"))
                         }
                         else{
                             wb$add_cell_style(dims       = current_pos,
@@ -989,7 +989,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
                                               vertical   = "center",
                                               wrap_text  = "1",
                                               apply_font = TRUE,
-                                              font_id    = wb$styles_mgr$get_font_id("footnote_link_font"))
+                                              font_id    = wb$styles_mgr$get_font_id(paste0("footnote", i, "_link_font")))
                         }
                     }
                     # Without links just insert plain text
@@ -1143,13 +1143,16 @@ handle_fill_styles <- function(wb, style = excel_output_style()){
 #' to apply them more efficiently later.
 #'
 #' @param wb The workbook to modify.
+#' @param texts A list of the actual titles and footnotes.
 #' @param style A list of style elements to format the table.
 #'
 #' @return
 #' Returns a workbook with added style elements.
 #'
 #' @noRd
-handle_font_styles <- function(wb, style = excel_output_style()){
+handle_font_styles <- function(wb,
+                               texts = list("title" = c(), "footnote" = c()),
+                               style = excel_output_style()){
     # Font can only be set globally here. Below in create_font seems to be bugged.
     wb$set_base_font(font_name = style[["font"]])
 
@@ -1162,12 +1165,18 @@ handle_font_styles <- function(wb, style = excel_output_style()){
 
             # For titles and footnotes multiple font colors per line can be specified
             if (multi_style > 1){
+                # If there are multiple titles or footnotes, bring the formatting on
+                # the same amount as the actual titles and footnotes.
+                if (length(texts[[type]]) > 0){
+                    multi_style <- length(texts[[type]])
+                }
+
                 style[[paste0(type, "_font_color")]] <- fill_or_trim(style[[paste0(type, "_font_color")]], multi_style)
                 style[[paste0(type, "_font_size")]]  <- fill_or_trim(style[[paste0(type, "_font_size")]],  multi_style)
                 style[[paste0(type, "_font_bold")]]  <- fill_or_trim(style[[paste0(type, "_font_bold")]],  multi_style)
 
                 # Look up title font colors
-                for (i in 1:length(style[[paste0(type, "_font_color")]])){
+                for (i in seq_len(length(style[[paste0(type, "_font_color")]]))){
                     # Normal style
                     wb$styles_mgr$add(
                         openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
@@ -1329,10 +1338,12 @@ handle_number_styles <- function(wb, style = excel_output_style()){
 #' Returns a workbook with added style elements.
 #'
 #' @noRd
-prepare_styles <- function(wb, style = excel_output_style()){
+prepare_styles <- function(wb,
+                           texts = list("title" = c(), "footnote" = c()),
+                           style = excel_output_style()){
     wb |>
         handle_fill_styles(style) |>
-        handle_font_styles(style) |>
+        handle_font_styles(texts, style) |>
         handle_border_styles(style) |>
         handle_number_styles(style)
 }

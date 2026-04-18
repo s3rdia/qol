@@ -11,7 +11,8 @@ compute(data_frame, ..., monitor = .qol_options[["monitor"]])
 
 \item{...}{The calculations that should be executed.}
 
-\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.}
+\item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
+functions time consumption.}
 }
 \value{
 Returns a data frame with newly computed variables.
@@ -22,6 +23,14 @@ It can handle all kinds of operations like simple value assignment or calculatio
 can make use of other functions.
 
 In addition it can be used in a conditional \code{\link[=do_if]{do_if()}} block.
+}
+\details{
+The loop you can use within \code{\link[=compute]{compute()}} is based on the 'SAS' do-over-loop. This
+type of loop iterates over every vector that appears in the loop in parallel.
+Means that in the first iteration all the first vector elements are used, in the
+second iteration all second elements of every vector, and so on. With this loop
+you don't have the need to construct an outer loop, but can directly pass in
+different vectors and let the function handle the loop inside.
 }
 \examples{
 # Example data frame

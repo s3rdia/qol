@@ -181,24 +181,23 @@ fully designed tables, you can also just output the tables in ASCII style format
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
-<span><span class="co"># adding "link:" followed by the hyperlink to the main text.</span></span>
-<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
+<span><span class="co"># Define titles and footnotes.</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1"</span>,</span>
 <span>           <span class="st">"This is title number 2"</span>,</span>
 <span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
 <span>              <span class="st">"This is footnote number 2"</span>,</span>
-<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span>              <span class="st">"This is footnote number 3"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output cross tables</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span><span class="op">)</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>,</span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>,</span>
 <span>                     weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Also works with characters</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span><span class="op">)</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>,</span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"sex"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"sex"</span>,</span>
 <span>                     weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Applying formats</span></span>
@@ -216,13 +215,13 @@ fully designed tables, you can also just output the tables in ASCII style format
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>,</span>
-<span>                     formats   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span>, sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
+<span>                     formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span>, sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Split cross table by expressions of another variable</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, by <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, by <span class="op">=</span> <span class="va">education</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Compute different stats</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>,</span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"freq"</span>, <span class="st">"pct_row"</span>, <span class="st">"pct_column"</span>, <span class="st">"pct_total"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get a list with two data tables for further usage</span></span>
@@ -230,16 +229,31 @@ fully designed tables, you can also just output the tables in ASCII style format
 <span>                                    formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span>, sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output in text file</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output to Excel</span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># If you want to add hyperlinksto titles and footnotes you can do so by</span></span>
+<span><span class="co"># adding "link:" followed by the hyperlink to the main text. Linking to another</span></span>
+<span><span class="co"># cell works with "cell:". To link to a file use "file:" an pass the full file</span></span>
+<span><span class="co"># path afterwards.</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1"</span>,</span>
+<span>           <span class="st">"This is title number 2 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 3 cell: W22"</span>,</span>
+<span>           <span class="st">"This is title number 4 file: C:/MyFolder/MyFile.txt"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
+<span>              <span class="st">"This is footnote number 2 file: C:/MyFolder/MyFile.txt"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 cell: W22"</span>,</span>
+<span>              <span class="st">"This is footnote number 4 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Individual styling can also be passed directly</span></span>
 <span><span class="va">my_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>header_back_color <span class="op">=</span> <span class="st">"0077B6"</span>,</span>
 <span>                               font              <span class="op">=</span> <span class="st">"Times New Roman"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span>, style <span class="op">=</span> <span class="va">my_style</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span>, style <span class="op">=</span> <span class="va">my_style</span>,</span>
+<span>                     formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span>, sex <span class="op">=</span> <span class="va">sex.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># To save a table as xlsx file you have to set the path and filename in the</span></span>
 <span><span class="co"># style element</span></span>
@@ -247,11 +261,12 @@ fully designed tables, you can also just output the tables in ASCII style format
 <span><span class="va">table_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Note: Normally you would directly input the path ("C:/MyPath/") and name ("MyFile.xlsx").</span></span>
+<span><span class="co">#       With the set_style_options you can also set a table style globally.</span></span>
 <span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>save_path  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
 <span>                  file       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span>,</span>
 <span>                  sheet_name <span class="op">=</span> <span class="st">"MyTable"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">age</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">crosstabs</span><span class="op">(</span><span class="va">state</span>, <span class="va">sex</span>, output <span class="op">=</span> <span class="st">"excel"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Manual cleanup for example</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">table_file</span><span class="op">)</span></span>

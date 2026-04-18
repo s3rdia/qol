@@ -318,14 +318,16 @@ a designed workbook.</p>
 <span><span class="co"># Define titles and footnotes. If you want to add hyperlinks you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text. Linking to another</span></span>
 <span><span class="co"># cell works with "cell:". To link to a file use "file:" an pass the full file</span></span>
-<span><span class="co">#path afterwards.</span></span>
-<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1 link: https://cran.r-project.org/"</span>,</span>
-<span>           <span class="st">"This is title number 2 cell: W22"</span>,</span>
-<span>           <span class="st">"This is title number 3"</span><span class="op">)</span></span>
+<span><span class="co"># path afterwards.</span></span>
+<span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1"</span>,</span>
+<span>           <span class="st">"This is title number 2 link: https://cran.r-project.org/"</span>,</span>
+<span>           <span class="st">"This is title number 3 cell: W22"</span>,</span>
+<span>           <span class="st">"This is title number 4 file: C:/MyFolder/MyFile.txt"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="qol_options.html">set_footnotes</a></span><span class="op">(</span><span class="st">"This is footnote number 1"</span>,</span>
-<span>              <span class="st">"This is footnote number 2 cell: W22"</span>,</span>
-<span>              <span class="st">"This is footnote number 3 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
+<span>              <span class="st">"This is footnote number 2 file: C:/MyFolder/MyFile.txt"</span>,</span>
+<span>              <span class="st">"This is footnote number 3 cell: W22"</span>,</span>
+<span>              <span class="st">"This is footnote number 4 link: https://cran.r-project.org/"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Output complex tables with different percentages</span></span>
 <span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex + age"</span>, <span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span>

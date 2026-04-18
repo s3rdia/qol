@@ -42,6 +42,14 @@ will get new values if condition is TRUE. The existing values will not be overwr
 \code{\link[=else.]{else.()}} only acts if there already is a variable with the given name. Sets every
 remaining NA in given variable to the given value.
 }
+\details{
+The loop you can use within these functions is based on the 'SAS' do-over-loop. This
+type of loop iterates over every vector that appears in the loop in parallel.
+Means that in the first iteration all the first vector elements are used, in the
+second iteration all second elements of every vector, and so on. With this loop
+you don't have the need to construct an outer loop, but can directly pass in
+different vectors and let the function handle the loop inside.
+}
 \examples{
 # Example data frame
 my_data <- dummy_data(1000)

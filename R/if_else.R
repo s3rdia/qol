@@ -12,6 +12,14 @@
 #' @param condition The condition on which a value should be passed to a variable.
 #' @param ... The assignment of what should happen when condition becomes TRUE.
 #'
+#' @details
+#' The loop you can use within these functions is based on the 'SAS' do-over-loop. This
+#' type of loop iterates over every vector that appears in the loop in parallel.
+#' Means that in the first iteration all the first vector elements are used, in the
+#' second iteration all second elements of every vector, and so on. With this loop
+#' you don't have the need to construct an outer loop, but can directly pass in
+#' different vectors and let the function handle the loop inside.
+#'
 #' @return Returns a data frame with conditionally computed variables.
 #'
 #' @seealso

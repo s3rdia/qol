@@ -68,12 +68,22 @@ can make use of other functions.</p>
 
 
 <dt id="arg-monitor">monitor<a class="anchor" aria-label="anchor" href="#arg-monitor"></a></dt>
-<dd><p>FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.</p></dd>
+<dd><p>FALSE by default. If TRUE, outputs two charts to visualize the
+functions time consumption.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a data frame with newly computed variables.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The loop you can use within <code>compute()</code> is based on the 'SAS' do-over-loop. This
+type of loop iterates over every vector that appears in the loop in parallel.
+Means that in the first iteration all the first vector elements are used, in the
+second iteration all second elements of every vector, and so on. With this loop
+you don't have the need to construct an outer loop, but can directly pass in
+different vectors and let the function handle the loop inside.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -9,7 +9,16 @@
 #'
 #' @param data_frame A data frame in which to compute new variables.
 #' @param ... The calculations that should be executed.
-#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions time consumption.
+#' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the
+#' functions time consumption.
+#'
+#' @details
+#' The loop you can use within [compute()] is based on the 'SAS' do-over-loop. This
+#' type of loop iterates over every vector that appears in the loop in parallel.
+#' Means that in the first iteration all the first vector elements are used, in the
+#' second iteration all second elements of every vector, and so on. With this loop
+#' you don't have the need to construct an outer loop, but can directly pass in
+#' different vectors and let the function handle the loop inside.
 #'
 #' @return Returns a data frame with newly computed variables.
 #'
