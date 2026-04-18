@@ -47,7 +47,7 @@ print_step(
 )
 
 set_up_custom_message(
-  ansi_icon = "🦄",
+  ansi_icon = NULL,
   text_icon = "^",
   indent = 1,
   type = "UNICORN",
@@ -73,7 +73,7 @@ set_up_custom_message(
 - ...:
 
   Additional information to display like variable names. To use these
-  write \[\] in the text.
+  write \[NAME YOU PUT IN\] in the text.
 
 - always_print:
 
@@ -191,10 +191,10 @@ print_message("NOTE", c("Just a quick note that you can also insert e.g.[? a / ]
 
 print_message("WARNING", "Just a quick [#FF00FF colored warning]!")
 
-print_message("ERROR", "Or an error")
+print_message("ERROR", "Or a [b]bold[/b], [i]italic[/i] and [u]underlined[/u] error.")
 
 print_message("NEUTRAL", c("You can also just output [u]plain text[/u] if you like and use",
-                           "[#FFFF00[b]all the different[/b] [i]formatting options.[/i]]"))
+                           "[#FFFF00 [b]all the different[/b] [i]formatting options.[/i]]"))
 
 # Different headlines
 print_headline("This is a headline")

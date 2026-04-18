@@ -15,7 +15,7 @@
 #' to use.
 #' @param text The message text to display.
 #' @param ... Additional information to display like variable names. To use
-#' these write &#91;<NAME YOU PUT IN>&#93; in the text.
+#' these write &#91;NAME YOU PUT IN&#93; in the text.
 #' @param always_print FALSE by default. If TRUE, prints headlines even in deeper
 #' nested situations.
 #' @param utf8 Whether to display complex characters or just plain text.
@@ -46,10 +46,10 @@
 #'
 #' print_message("WARNING", "Just a quick [#FF00FF colored warning]!")
 #'
-#' print_message("ERROR", "Or an error")
+#' print_message("ERROR", "Or a [b]bold[/b], [i]italic[/i] and [u]underlined[/u] error.")
 #'
 #' print_message("NEUTRAL", c("You can also just output [u]plain text[/u] if you like and use",
-#'                            "[#FFFF00[b]all the different[/b] [i]formatting options.[/i]]"))
+#'                            "[#FFFF00 [b]all the different[/b] [i]formatting options.[/i]]"))
 #'
 #' @rdname messages
 #'
@@ -807,7 +807,7 @@ print_step <- function(type,
 #' @rdname messages
 #'
 #' @export
-set_up_custom_message <- function(ansi_icon      = "\U1F984",
+set_up_custom_message <- function(ansi_icon      = NULL,
                                   text_icon      = "^",
                                   indent         = 1,
                                   type           = "UNICORN",
@@ -816,6 +816,12 @@ set_up_custom_message <- function(ansi_icon      = "\U1F984",
                                   text_italic    = FALSE,
                                   text_underline = FALSE,
                                   text_color     = NULL){
+    # Set default icon here, because if set as standard argument, roxygen would
+    # convert it into the emoji and then the LaTex pdf conversion would throw errors
+    if (is.null(ansi_icon)){
+        ansi_icon <- "\U0001f984"
+    }
+
     as.list(environment())
 }
 

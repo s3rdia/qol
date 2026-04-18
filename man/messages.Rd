@@ -50,7 +50,7 @@ print_step(
 )
 
 set_up_custom_message(
-  ansi_icon = "🦄",
+  ansi_icon = NULL,
   text_icon = "^",
   indent = 1,
   type = "UNICORN",
@@ -68,7 +68,7 @@ in front of the message. This also appears as type in the message stack.}
 \item{text}{The message text to display.}
 
 \item{...}{Additional information to display like variable names. To use
-these write [\if{html}{\out{<NAME YOU PUT IN>}}] in the text.}
+these write [NAME YOU PUT IN] in the text.}
 
 \item{always_print}{FALSE by default. If TRUE, prints headlines even in deeper
 nested situations.}
@@ -140,10 +140,10 @@ print_message("NOTE", c("Just a quick note that you can also insert e.g.[? a / ]
 
 print_message("WARNING", "Just a quick [#FF00FF colored warning]!")
 
-print_message("ERROR", "Or an error")
+print_message("ERROR", "Or a [b]bold[/b], [i]italic[/i] and [u]underlined[/u] error.")
 
 print_message("NEUTRAL", c("You can also just output [u]plain text[/u] if you like and use",
-                           "[#FFFF00[b]all the different[/b] [i]formatting options.[/i]]"))
+                           "[#FFFF00 [b]all the different[/b] [i]formatting options.[/i]]"))
 
 # Different headlines
 print_headline("This is a headline")
