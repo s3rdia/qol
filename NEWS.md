@@ -1,3 +1,9 @@
+# qol 1.3.1 - DEVELOPMENT
+
+### Fixed
+
+* `combine_into_workbook()`: Titles and footnotes are now styled again. (18.04.2026)
+
 # qol 1.3.0
 
 ### New functions

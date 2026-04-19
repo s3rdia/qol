@@ -3001,7 +3001,7 @@ combine_into_workbook <- function(...,
 
         meta <- table[["meta"]]
 
-        wb <- wb |> prepare_styles(meta[["style"]])
+        wb <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]])
 
         # Style data frame for export
         if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
