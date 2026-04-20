@@ -5,6 +5,10 @@ Last CRAN release was on 18.04.2026.
 
 * `combine_into_workbook()`: Titles and footnotes are now styled again.
 
+### Additionally
+
+* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes 
+
 
 ## R CMD check results
 

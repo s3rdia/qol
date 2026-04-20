@@ -4,6 +4,10 @@
 
 * `combine_into_workbook()`: Titles and footnotes are now styled again. (18.04.2026)
 
+### Additionally
+
+* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes (20.04.2026)
+
 # qol 1.3.0
 
 ### New functions

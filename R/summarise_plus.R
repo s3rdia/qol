@@ -436,6 +436,8 @@ summarise_plus <- function(data_frame,
 
     # Pre summarise data frame if only sums as statistics selected
     if (flag_shortcut){
+        print_step("MAJOR", "Pre summarise")
+
         monitor_df <- monitor_df |> monitor_end()
 
         # Summarise first
