@@ -10,7 +10,13 @@
 #### Additionally
 
 - Message time stamps are now drawn in a lighter grey to enhance
-  visibility on darker themes (20.04.2026)
+  visibility on darker themes. (20.04.2026)
+- [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md):
+  Functions now throw errors instead of warnings, if
+  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) is
+  missing. (23.04.2026)
 
 ## qol 1.3.0
 

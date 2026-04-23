@@ -941,7 +941,7 @@ else_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        print_message("WARNING", "No active filter variable found. else_do() will be ignored.")
+        print_message("ERROR", "No active filter variable found. else_do() will be ignored.")
         return(invisible(data_frame))
     }
 
@@ -964,7 +964,7 @@ end_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        print_message("WARNING", "No active filter variable found. end_do() will be ignored.")
+        print_message("ERROR", "No active filter variable found. end_do() will be ignored.")
         return(invisible(data_frame))
     }
 
@@ -986,7 +986,7 @@ end_all_do <- function(data_frame){
     filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
 
     if (length(filter_variables) == 0){
-        print_message("WARNING", "No active filter variable found. end_all_do() will be ignored.")
+        print_message("ERROR", "No active filter variable found. end_all_do() will be ignored.")
         return(invisible(data_frame))
     }
 

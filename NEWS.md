@@ -6,7 +6,8 @@
 
 ### Additionally
 
-* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes (20.04.2026)
+* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes. (20.04.2026)
+* `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing. (23.04.2026)
 
 # qol 1.3.0
 

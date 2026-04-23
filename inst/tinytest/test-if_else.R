@@ -289,30 +289,6 @@ expect_warning(print_stack_as_messages("WARNING"), "No observations left in the 
                info = "where. aborts with a warning, if no observations left")
 
 ###############################################################################
-# Warning checks
-###############################################################################
-
-# else_do throws a warning when there is no active filter
-test_df <- dummy_df |> else_do()
-
-expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
-               info = "else_do throws a warning when there is no active filter")
-
-
-# end_do throws a warning when there is no active filter
-test_df <- dummy_df |> end_do()
-
-expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
-               info = "end_do throws a warning when there is no active filter")
-
-
-# end_all_do throws a warning when there is no active filter
-test_df <- dummy_df |> end_all_do()
-
-expect_warning(print_stack_as_messages("WARNING"), "No active filter variable found.",
-               info = "end_all_do throws a warning when there is no active filter")
-
-###############################################################################
 # Abort checks
 ###############################################################################
 
@@ -344,6 +320,27 @@ do_over_df <- dummy_df |> else_if.(vars > 0)
 
 expect_warning(print_stack_as_messages("WARNING"), "No assignments found. If you want to filter observations",
                info = "if. as do over loop aborts without variable assignment")
+
+
+# else_do aborts when there is no active filter
+test_df <- dummy_df |> else_do()
+
+expect_error(print_stack_as_messages("ERROR"), "No active filter variable found.",
+               info = "else_do aborts when there is no active filter")
+
+
+# end_do aborts when there is no active filter
+test_df <- dummy_df |> end_do()
+
+expect_error(print_stack_as_messages("ERROR"), "No active filter variable found.",
+               info = "end_do aborts when there is no active filter")
+
+
+# end_all_do aborts when there is no active filter
+test_df <- dummy_df |> end_all_do()
+
+expect_error(print_stack_as_messages("ERROR"), "No active filter variable found.",
+               info = "end_all_do aborts when there is no active filter")
 
 
 set_no_print()

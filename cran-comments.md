@@ -7,7 +7,8 @@ Last CRAN release was on 18.04.2026.
 
 ### Additionally
 
-* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes 
+* Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes.
+* `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing.
 
 
 ## R CMD check results
