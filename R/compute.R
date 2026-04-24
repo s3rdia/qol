@@ -180,7 +180,20 @@ compute <- function(data_frame,
 
                 # Check if existing variable type is of same type as assigned value.
                 # Put out a warning on type mismatch.
-                if (check_types(data_frame, original_var, value)){
+                is_type_missmatch <- check_types(data_frame, original_var, value)
+
+                # If result is NULL, then there is a variable with all NA values
+                # which has to be converted into the right type.
+                if (is.null(is_type_missmatch)){
+                    if (is.character(value)){
+                        data_frame[[variable]] <- NA_character_
+                    }
+                    else if (is.numeric(value)){
+                        data_frame[[variable]] <- NA_real_
+                    }
+                }
+                # Convert to character on type miss match
+                else if (is_type_missmatch){
                     data_frame[[original_var]] <- as.character(data_frame[[original_var]])
                     value <- as.character(value)
                 }
@@ -304,7 +317,20 @@ compute <- function(data_frame,
 
                     # Check if existing variable type is of same type as assigned value.
                     # Put out a warning on type mismatch.
-                    if (check_types(data_frame, target_variable, value)){
+                    is_type_missmatch <- check_types(data_frame, target_variable, value)
+
+                    # If result is NULL, then there is a variable with all NA values
+                    # which has to be converted into the right type.
+                    if (is.null(is_type_missmatch)){
+                        if (is.character(value)){
+                            data_frame[[variable]] <- NA_character_
+                        }
+                        else if (is.numeric(value)){
+                            data_frame[[variable]] <- NA_real_
+                        }
+                    }
+                    # Convert to character on type miss match
+                    else if (is_type_missmatch){
                         data_frame[[target_variable]] <- as.character(data_frame[[target_variable]])
                         value <- as.character(value)
                     }
@@ -451,7 +477,7 @@ get_custom_functions <- function(expression, env){
 check_types <- function(data_frame, variable, current){
     # Abort if all values are NA
     if (all(is.na(data_frame[[variable]]))){
-        return(FALSE)
+        return(NULL)
     }
 
     type_c <- typeof(current)

@@ -6,6 +6,9 @@
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Titles and footnotes are now styled again. (18.04.2026)
+- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md): If a
+  variable was all NA, a type miss match happend, leading to the
+  function beeing aborted. This is fixed now. (24.04.2026)
 
 #### Additionally
 

@@ -87,7 +87,17 @@ state_df_b <- dummy_df |>
       if.(state < 11, state_b = "West") |>
     else.(            state_b = "East")
 
-expect_false(identical(state_df_a[["state_a"]], state_df_b[["state_b"]]), info = "if. and else_if. are not the same")
+expect_false(identical(state_df_a[["state_a"]], state_df_b[["state_b"]]),
+             info = "if. and else_if. are not the same")
+
+
+# if. converts NA values into format of follow up value
+result_df <- dummy_df |>
+         if.(state <= 3, var1 = NA, var2 = NA) |>
+    else_if.(state >  3, var1 = 1,  var2 = "Hello")
+
+expect_equal(collapse::funique(result_df[["var1"]])[-1], 1,       info = "if. converts NA values into format of follow up value")
+expect_equal(collapse::funique(result_df[["var2"]])[-1], "Hello", info = "if. converts NA values into format of follow up value")
 
 
 # if. can check for variable expressions starting with letter
