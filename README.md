@@ -444,6 +444,11 @@ The functions in this package actually talk to the user and show what
 they are doing during runtime. The message system relies on pure base R
 and does not only provide built in message types, but also custom ones.
 
+The standalone, lightweight and zero dependency version of this message
+system is also available with the package
+[printify](https://github.com/s3rdia/printify) and can be downloaded via
+[CRAN](https://CRAN.R-project.org/package=printify).
+
 <img src='man/figures/messages.png' alt='Messages'/>
 
 ## Monitoring
