@@ -520,63 +520,15 @@ setup_nested_viewport <- function(x_pos   = 0,
 #'
 #' @export
 setup_diagram_viewport <- function(arguments){
-    dimensions     <- arguments[["dimensions"]]
-    diagram_start  <- dimensions[["diagram_start"]]
-    diagram_height <- dimensions[["diagram_height"]]
-    diagram_width  <- dimensions[["diagram_width"]]
-    diagram_start_adjust  <- arguments[["fine_tuning"]][["diagram_start_adjust"]]
-    diagram_height_adjust <- arguments[["fine_tuning"]][["diagram_height_adjust"]]
-
-    # Measure diagram start automatically and set it right under the title or
-    # take the manually set start.
-    if (diagram_start == "auto"){
-        # Calculate new diagram viewport y starting position
-        # HACK: Using one additional margin here because somehow the height measuring
-        #       of multiline text doesn't output the correct values.
-        valid_heights <- sum(arguments[["title_height"]] > 0)
-        y_pos         <- (dimensions[["graphic_height"]]
-                       - (arguments[["title_height"]]
-                       + (dimensions[["margins"]] * (diagram_start_adjust + valid_heights))))
-    }
-    else{
-        y_pos <- dimensions[["graphic_height"]] - diagram_start
-    }
-
-    # Measure diagram height automatically and set it to span between title and
-    # footnotes or take the manually set height.
-    if (diagram_height == "auto"){
-        # Calculate new diagram viewport height
-        valid_heights <- sum(arguments[["title_height"]]    > 0,
-                             arguments[["footnote_height"]] > 0)
-
-        # HACK: Using two additional margins here because somehow the height measuring
-        #       of multiline text doesn't output the correct values.
-        height <- (dimensions[["graphic_height"]]
-                 - arguments[["title_height"]]
-                 - arguments[["footnote_height"]]
-                 - (dimensions[["margins"]] * (diagram_height_adjust + valid_heights)))
-    }
-    else{
-        height <- diagram_height
-    }
-
-    # Measure diagram width automatically and set it to span from side to side or
-    # take the manually set height.
-    if (diagram_width == "auto"){
-        width <- (dimensions[["graphic_width"]]
-               - (dimensions[["margins"]] * 2))
-    }
-    else{
-        width <- diagram_width
-    }
+    dimensions <- arguments[["dimensions"]]
 
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
     setup_nested_viewport(x_pos   = dimensions[["margins"]],
-                          y_pos   = y_pos,
+                          y_pos   = dimensions[["diagram_start"]],
                           y_scale = c(0, 1),
-                          width   = width,
-                          height  = height,
+                          width   = dimensions[["diagram_width"]],
+                          height  = dimensions[["diagram_height"]],
                           line_height = arguments[["fine_tuning"]][["line_height"]],
                           name = "diagram_area")
 }
@@ -939,9 +891,9 @@ get_diagram_dimensions <- function(graphic_tab,
                                                     segment_width, segment_pos)
 
     # Format segment labels
-    # TODO: USE VARIABLE LABEL WIDTH INSTEAD OF GROUP WIDTH
+    segment_label_textbox_width <- dimensions[["textbox_width"]] / dimensions[["diagram_width"]]
     wrapped_segment_labels <- wrap_text_vector(unique_segments,
-                                               group_width - (margin * 2),
+                                               segment_label_textbox_width,
                                                visuals[["font"]],
                                                dimensions[["axes_font_size"]],
                                                visuals[["axes_font_face"]])
@@ -951,36 +903,37 @@ get_diagram_dimensions <- function(graphic_tab,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Return information as list
-    list(values                 = values,
-         unique_groups          = unique_groups,
-         number_of_groups       = number_of_groups,
-         unique_segments        = unique_segments,
-         number_of_segments     = number_of_segments,
-         number_of_elements     = number_of_elements,
-         group_width            = group_width,
-         segment_width          = segment_width,
-         running_nr             = running_nr,
-         group_ids              = group_ids,
-         segment_ids            = segment_ids,
-         segment_pos            = segment_pos,
-         primary_y_values       = primary_y_values,
-         primary_y_tick_width   = primary_y_tick_width,
-         primary_y_tick_pos     = primary_y_tick_pos,
-         primary_y_max          = primary_y_max,
-         primary_y_min          = primary_y_min,
-         primary_y_distance     = primary_y_distance,
-         zero_pos               = zero_pos,
-         actual_drawing_height  = actual_drawing_height,
-         primary_y_axes_width   = primary_y_axes_width,
-         values_inner_vjust     = values_inner_vjust,
-         values_outer_vjust     = values_outer_vjust,
-         values_x_pos           = values_x_pos,
-         values_fit_vertical    = values_fit_vertical,
-         group_label_pos        = group_label_pos,
-         wrapped_group_labels   = wrapped_group_labels,
-         group_label_height     = group_label_height,
-         group_ticks_pos_x      = group_ticks_pos_x,
-         wrapped_segment_labels = wrapped_segment_labels)
+    list(values                      = values,
+         unique_groups               = unique_groups,
+         number_of_groups            = number_of_groups,
+         unique_segments             = unique_segments,
+         number_of_segments          = number_of_segments,
+         number_of_elements          = number_of_elements,
+         group_width                 = group_width,
+         segment_width               = segment_width,
+         running_nr                  = running_nr,
+         group_ids                   = group_ids,
+         segment_ids                 = segment_ids,
+         segment_pos                 = segment_pos,
+         primary_y_values            = primary_y_values,
+         primary_y_tick_width        = primary_y_tick_width,
+         primary_y_tick_pos          = primary_y_tick_pos,
+         primary_y_max               = primary_y_max,
+         primary_y_min               = primary_y_min,
+         primary_y_distance          = primary_y_distance,
+         zero_pos                    = zero_pos,
+         actual_drawing_height       = actual_drawing_height,
+         primary_y_axes_width        = primary_y_axes_width,
+         values_inner_vjust          = values_inner_vjust,
+         values_outer_vjust          = values_outer_vjust,
+         values_x_pos                = values_x_pos,
+         values_fit_vertical         = values_fit_vertical,
+         group_label_pos             = group_label_pos,
+         wrapped_group_labels        = wrapped_group_labels,
+         group_label_height          = group_label_height,
+         group_ticks_pos_x           = group_ticks_pos_x,
+         segment_label_textbox_width = segment_label_textbox_width,
+         wrapped_segment_labels      = wrapped_segment_labels)
 }
 
 
