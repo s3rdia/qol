@@ -796,8 +796,8 @@ generate_graphic <- function(graphic_tab,
     # TODO: ADD ADDITIONAL SUB HEADLINE
     # Get graphic element heights
     title_height    <- abs(grid::convertHeight(grid::grobHeight(title_grob),    "cm", valueOnly = TRUE))
-    footnote_height <- abs(grid::convertHeight(grid::grobHeight(footnote_grob), "native", valueOnly = TRUE))
-    origin_height   <- abs(grid::convertHeight(grid::grobHeight(origin_grob),   "native", valueOnly = TRUE))
+    footnote_height <- abs(grid::convertHeight(grid::grobHeight(footnote_grob), "cm", valueOnly = TRUE))
+    origin_height   <- abs(grid::convertHeight(grid::grobHeight(origin_grob),   "cm", valueOnly = TRUE))
 
     # Get automatically set dimensions
     dimensions[["diagram_start"]]  <- get_diagram_start_cm(dimensions, fine_tuning, title_height)
