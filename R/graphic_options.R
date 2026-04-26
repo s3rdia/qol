@@ -419,7 +419,7 @@ graphic_dimensions <- function(graphic_width          = 16,
                                other_font_size        = 9,
                                space_between_bars_pct = 0,
                                line_thickness         = 1,
-                               segment_line_length    = 2,
+                               segment_line_length    = 1,
                                segment_line_offset    = 0,
                                textbox_width          = 2){
     if (is.numeric(diagram_width) && diagram_width > graphic_width){
@@ -631,11 +631,12 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @param swap_direction_threshold Determines the threshold for the variable axes at which
 #' the drawing direction is swapped.
 #' @param segment_line_offset A static offset at which segment lines are drawn.
-#' @param segment_line_correction Correction factor for the segment line length.
 #' @param segment_line_treshhold Segment lines won't be drawn further than the maximum
 #' value multiplied by this factor.
 #' @param segment_label_hjust Horizontal adjustment of the segment labels if they are drawn
 #' in stairs.
+#' @param max_segment_label_shift The maximum percentage of the textbox width the segment
+#' labels can be shifted to achieve a decollision.
 #' @param cm_to_inch_factor cm to inc conversion factor.
 #'
 #' @return
@@ -682,10 +683,10 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 value_height_factor        = 1.5,
                                 y_axes_scaling             = 1.3,
                                 swap_direction_threshold   = 0.75,
-                                segment_line_offset        = 0.5,
-                                segment_line_correction    = 2,
+                                segment_line_offset        = 0.3,
                                 segment_line_treshhold     = 0.95,
                                 segment_label_hjust        = 0.05,
+                                max_segment_label_shift    = 0.25,
                                 cm_to_inch_factor          = 2.54){
     as.list(environment())
 }
