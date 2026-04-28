@@ -616,15 +616,12 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @param values_hjust_90 Horizontal adjustment of rotated segment values.
 #' @param values_hjust_90_plus Additional horizontal adjustment of rotated segment values, if
 #' drawn inside segments.
-#' @param values_vjust_90_correction Vertical adjustment correction factor for rotated segment
-#' values.
 #' @param values_zero_line_offset Offset to the x axes for 0 values.
 #' @param values_below_axes_just Adjustment for 0 values, if drawn below x axes.
 #' @param values_below_axes_90_just Adjustment for rotated 0 values, if drawn below x axes.
 #' @param tick_length Length of the axes ticks.
 #' @param value_axes_margin Additional margin when measuring the value axes width
 #' @param variable_axes_margin Additional margin when measuring the variable axes height.
-#' @param value_width_factor Scaling factor when measuring value widths.
 #' @param value_height_factor Scaling factor when measuring value widths.
 #' @param y_axes_scaling Scaling factor for the y axes, if maximum value is calculated
 #' automatically.
@@ -664,22 +661,20 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 diagram_margin             = 0.01,
                                 values_vjust_positive      = 1.7,
                                 values_vjust_negative      = -0.7,
-                                values_vjust_90_positive   = 1.2,
-                                values_vjust_90_negative   = -0.2,
+                                values_vjust_90_positive   = 1.1,
+                                values_vjust_90_negative   = -0.1,
                                 value_overlap_factor       = 1.35,
                                 shrink_segment_width       = 0.5,
                                 values_rotation            = 90,
                                 values_hjust               = 0.5,
                                 values_hjust_90            = 0.35,
                                 values_hjust_90_plus       = 0.05,
-                                values_vjust_90_correction = 5,
                                 values_zero_line_offset    = 0.2,
                                 values_below_axes_just     = 1.5,
                                 values_below_axes_90_just  = 1.4,
                                 tick_length                = 0.02,
                                 value_axes_margin          = 0.02,
                                 variable_axes_margin       = 0.03,
-                                value_width_factor         = 1.3,
                                 value_height_factor        = 1.5,
                                 y_axes_scaling             = 1.3,
                                 swap_direction_threshold   = 0.75,

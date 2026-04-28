@@ -33,7 +33,8 @@ vbars <- function(...){
     diagram_info <- setup_nested_diagram_viewport(arguments)
 
     # Generate axes
-    axes <- setup_xy_axes(diagram_info, arguments)
+    axes      <- setup_xy_axes(diagram_info, arguments)
+    arguments <- inject_inner_canvas_size(axes, arguments)
 
     # Generate segments
     segments <- vbar_grob(diagram_info, arguments, theme)
