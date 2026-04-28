@@ -855,7 +855,7 @@ get_diagram_dimensions <- function(graphic_tab,
             # Determine whether a value should be drawn inside or outside the segment
             values_fit_vertical <- (get_values_height(list(values            = values,
                                                           primary_y_distance = primary_y_distance),
-                                                     dimensions, visuals, fine_tuning) * fine_tuning[["value_overlap_factor"]] < values)
+                                                      dimensions, visuals, fine_tuning) * fine_tuning[["value_overlap_factor"]] < abs(values))
         }
         else{
             # Determine whether a value should be drawn inside or outside the segment
@@ -865,7 +865,7 @@ get_diagram_dimensions <- function(graphic_tab,
                                              list(axes        = axes,
                                                   fine_tuning = fine_tuning)) * primary_y_distance
 
-            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["value_overlap_factor"]] < values
+            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["value_overlap_factor"]] < abs(values)
         }
     }
 
@@ -1019,6 +1019,13 @@ vbar_grob <- function(diagram_info,
         rotate     <- numeric(number_of_values)
         font_color <- character(number_of_values)
 
+        # Format values and draw them on the segments
+        formatted_values <- format_diagram_values(diagram_info, arguments)
+
+        # If a small scale is used it can happen that a negative symbol appears in front
+        # of 0 values. This gets removed here.
+        formatted_values[value_y_pos == 0] <- sub("-", "", formatted_values[value_y_pos == 0])
+
         # Get the specific font colors for the respective set up of segments
         colors_inside  <- rep(theme[["font_inside"]][color_usage], diagram_info[["number_of_groups"]])
         colors_outside <- rep(theme[["font_outside"]][color_usage], diagram_info[["number_of_groups"]])
@@ -1055,34 +1062,16 @@ vbar_grob <- function(diagram_info,
                 hjust[values_fit_inside] <- diagram_info[["values_inner_vjust"]][values_fit_inside]
                 vjust[values_fit_inside] <- vjust_base + fine_tuning[["values_hjust_90_plus"]]
 
-                # Rotated values move further away from the segments with equal adjustment.
-                # This is roughly corrected here.
-                hcorrect <- max(1, nchar(as.character(value_y_pos)) / fine_tuning[["values_vjust_90_correction"]])
-
-                hjust[!values_fit_inside] <- diagram_info[["values_outer_vjust"]][!values_fit_inside] / hcorrect
+                # Set up justification for values that don't fit inside the bars
+                hjust[!values_fit_inside] <- diagram_info[["values_outer_vjust"]][!values_fit_inside]
                 vjust[!values_fit_inside] <- vjust_base
             }
             else{
-                # Rotated values move further away from the segments with equal adjustment.
-                # This is roughly corrected here.
-                hcorrect   <- max(1, nchar(as.character(diagram_info[["values"]])) / fine_tuning[["values_vjust_90_correction"]])
-                hjust      <- diagram_info[["values_outer_vjust"]] / hcorrect
+                # Set up justification for values that don't fit inside the bars
+                hjust      <- diagram_info[["values_outer_vjust"]]
                 vjust      <- vjust_base
                 font_color <- colors_outside
             }
-        }
-
-        # Format values and draw them on the segments
-        formatted_values <- format_diagram_values(diagram_info, arguments)
-
-        # If a small scale is used it can happen that a negative symbol appears in front
-        # of 0 values. This gets removed here.
-        formatted_values[value_y_pos == 0] <- sub("-", "", formatted_values[value_y_pos == 0])
-
-        # Add offset to y axes for values equal to 0 if they are rotated
-        if (visuals[["rotate_values"]]){
-            value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(fine_tuning[["values_zero_line_offset"]], "cm"),
-                                                               "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
         }
 
         # If all values are negative and the y axes is at the top of the diagram,
@@ -1094,6 +1083,12 @@ vbar_grob <- function(diagram_info,
             else{
                 hjust[value_y_pos == 0] <- fine_tuning[["values_below_axes_90_just"]]
             }
+        }
+
+        # Add offset to y axes for values equal to 0 if they are rotated
+        if (visuals[["rotate_values"]]){
+            value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(fine_tuning[["values_zero_line_offset"]], "cm"),
+                                                               "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
         }
 
         # Reverse font colors, if option is set accordingly.
@@ -1243,7 +1238,7 @@ get_values_width <- function(diagram_info,
     grid::popViewport()
 
     # Width seems to be measured too small. Adding a bit on top seems to help.
-    widths * arguments[["fine_tuning"]][["value_width_factor"]]
+    widths
 }
 
 
@@ -1269,7 +1264,7 @@ get_values_height <- function(diagram_info,
                                                       fontface   = visuals[["value_font_face"]],
                                                       lineheight = fine_tuning[["line_height"]] + 0.1)))
 
-    # Measure individual widths
+    # Measure individual heights
     height <- grid::convertHeight(grid::stringHeight(diagram_info[["values"]]),
                                   "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
 
@@ -1288,6 +1283,8 @@ get_values_height <- function(diagram_info,
 #' @param measuring The values received from [get_values_width()] or [get_values_height()].
 #' @param from Input measuring: Can be "width" or "height".
 #' @param to Output measuring: Can be "width" or "height".
+#' @param part Determine measuring on which part of the graphic. Can be "graphic", "diagram" or
+#' "inner_canvas".
 #'
 #' @return
 #' [swap_xy_scaling()]: Returns a vector of width or heights.
@@ -1298,8 +1295,9 @@ get_values_height <- function(diagram_info,
 swap_xy_scaling <- function(measuring,
                             dimensions,
                             from = "width",
-                            to   = "height"){
-    measuring * dimensions[[paste0("graphic_", from)]] / dimensions[[paste0("graphic_", to)]]
+                            to   = "height",
+                            part = "diagram"){
+    measuring * dimensions[[paste0(part, "_", from)]] / dimensions[[paste0(part, "_", to)]]
 }
 
 
@@ -1562,6 +1560,49 @@ setup_xy_axes <- function(diagram_info,
 }
 
 
+#' @description
+#' [inject_inner_canvas_size()]: Injects the inner canvas size, meaning diagram size
+#' minus axes size, into the dimensions parameter.
+#'
+#' @param axes The axes gTree generated by the setup axes functions.
+#'
+#' @return
+#' [inject_inner_canvas_size()]: Returns the argument list with injected inner canvas
+#' sizes.
+#'
+#' @rdname axes
+#'
+#' @export
+inject_inner_canvas_size <- function(axes, arguments){
+    dimensions <- arguments[["dimensions"]]
+
+    # Measure the y axes width of each children element and get the sum of all elements
+    # as well as the smaller inner canvas width
+    y_widths <- vapply(axes[["children"]][["y_axes"]][["children"]], function(child_grob){
+            grid::convertWidth(grid::grobWidth(child_grob), "cm", valueOnly = TRUE)
+        },
+        numeric(1))
+
+    dimensions[["y_axes_width"]]       <- collapse::fsum(y_widths)
+    dimensions[["inner_canvas_width"]] <- dimensions[["diagram_width"]] - dimensions[["y_axes_width"]]
+
+    # Measure the x axes height of each children element and get the sum of all elements
+    # as well as the smaller inner canvas height
+    x_heights <- vapply(axes[["children"]][["x_axes"]][["children"]], function(child_grob){
+            grid::convertHeight(grid::grobHeight(child_grob), "cm", valueOnly = TRUE)
+        },
+        numeric(1))
+
+    dimensions[["x_axes_height"]]       <- collapse::fsum(x_heights)
+    dimensions[["inner_canvas_height"]] <- dimensions[["diagram_height"]] - dimensions[["x_axes_height"]]
+
+    # Return arguments with injected values
+    arguments[["dimensions"]] <- dimensions
+
+    arguments
+}
+
+
 ###############################################################################
 # Segment labels and legend
 ###############################################################################
@@ -1675,17 +1716,14 @@ direct_vertical_labels <- function(diagram_info,
                                              visuals,
                                              arguments)
 
-            # Rotated value lines move further away from the segments with equal adjustment.
-            # This is roughly corrected here. Additionally the width measuring needs to be
-            # swapped to the height dimension.
-            hcorrect     <- 1 - (nchar(as.character(diagram_info[["values"]])) / 100)
-            offset_value <- swap_xy_scaling(offset_value, dimensions) * hcorrect
+            # The width measuring needs to be swapped to the height dimension.
+            offset_value <- swap_xy_scaling(offset_value, dimensions, part = "inner_canvas")
 
             # Select label group and scale offset to y axes distance
             offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
 
             # Add additional offset for the space between segment and value
-            offset_value <- offset_value + (fine_tuning[["values_zero_line_offset"]] * offset_value)
+            #offset_value <- offset_value + (fine_tuning[["values_zero_line_offset"]] * offset_value)
         }
 
         # Reset offset, if values fit inside the segments, because then only the
