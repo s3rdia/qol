@@ -6,7 +6,7 @@ can be accessed by
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md) and
-[`compute()`](https://s3rdia.github.io/qol/reference/compute.md),
+[`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
 enabling these functions to work with an overarching condition. This
 function can also be used to nest multiple overarching conditions.
 
@@ -56,7 +56,7 @@ Filter Data Frame:
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md)
 
 Create new Variables:
-[`compute()`](https://s3rdia.github.io/qol/reference/compute.md)
+[`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
 
 ## Examples
 

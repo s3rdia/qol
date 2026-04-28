@@ -72,7 +72,7 @@ Functions that also make use of formats:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
-[`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md).
 

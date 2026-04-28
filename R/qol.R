@@ -32,7 +32,7 @@
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()]
 #'
-#' Recoding: [recode()], [recode_multi()]
+#' Recoding: [recode.()], [recode_multi()]
 #'
 #' Selecting: [keep()], [dropp()], [inverse()], [vars_between()]
 #'
@@ -66,7 +66,7 @@
 #' Messages: [print_message()], [print_headline()], [print_start_message()], [print_closing()], [print_step()],
 #' [set_up_custom_message()], [get_message_stack()], [set_no_print()], [print_stack_as_messages()], [convert_square_brackets()]
 #'
-#' Calculation: [compute()], [row_calculation()]
+#' Calculation: [compute.()], [row_calculation()]
 #'
 #' Small helpers: [setcolorder_by_pattern()], [drop_type_vars()], [fuse_variables()],
 #' [get_excel_range()], [get_integer_length()], [round_values()]

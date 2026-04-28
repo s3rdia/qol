@@ -29,7 +29,7 @@
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that also make use of formats: [frequencies()], [crosstabs()],
-#' [any_table()], [recode()], [recode_multi()], [transpose_plus()].
+#' [any_table()], [recode.()], [recode_multi()], [transpose_plus()].
 #'
 #' @examples
 #' # Example formats
@@ -188,8 +188,8 @@ sort_plus <- function(data_frame,
             argument_list   <- list(data_frame)
             argument_list[[variable]] <- formats[[variable]]
 
-            # Now use do.call to run e.g.: recode(data_frame, ".sort_age", age = formats[["age"]])
-            data_frame[new_column] <- suppressMessages(do.call(recode, argument_list))
+            # Now use do.call to run e.g.: recode.(data_frame, ".sort_age", age = formats[["age"]])
+            data_frame[new_column] <- suppressMessages(do.call(recode., argument_list))
 
             # Format new sorting variable as factor to sort in provided format order
             # Extract the number of labels from variable

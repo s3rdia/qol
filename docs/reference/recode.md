@@ -6,7 +6,7 @@ variable, you can use formats to recode a variable into a new one.
 ## Usage
 
 ``` r
-recode(data_frame, ...)
+recode.(data_frame, ...)
 
 recode_multi(data_frame, ...)
 ```
@@ -19,7 +19,7 @@ recode_multi(data_frame, ...)
 
 - ...:
 
-  `recode()` Pass in the original variable name that should be recoded
+  `recode.()` Pass in the original variable name that should be recoded
   along with the corresponding format container in the form: variable =
   format.
 
@@ -31,13 +31,13 @@ recode_multi(data_frame, ...)
 
 ## Value
 
-`recode()`: Returns a vector with recoded values.
+`recode.()`: Returns a vector with recoded values.
 
 `recode_multi()`: Returns a data frame with the newly recoded variable.
 
 ## Details
 
-`recode()` is based on the 'SAS' function put(), which provides an
+`recode.()` is based on the 'SAS' function put(), which provides an
 efficient and readable way, to generate new variables with the help of
 formats.
 
@@ -76,10 +76,10 @@ age. <- discrete_format(
 my_data <- dummy_data(1000)
 
 # Call function
-my_data[["age_group1"]] <- my_data |> recode(age = age.)
+my_data[["age_group1"]] <- my_data |> recode.(age = age.)
 
 # Formats can also be passed as characters
-my_data[["age_group2"]] <- my_data |> recode(age = "age.")
+my_data[["age_group2"]] <- my_data |> recode.(age = "age.")
 
 # Multilabel recode
 sex. <- discrete_format(

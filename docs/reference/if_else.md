@@ -71,7 +71,7 @@ Filter Data Frame:
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md)
 
 Create new Variables:
-[`compute()`](https://s3rdia.github.io/qol/reference/compute.md)
+[`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
 
 ## Examples
 

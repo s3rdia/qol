@@ -79,5 +79,5 @@ sort_df5 <- my_data |> sort_plus(by       = c(sex, education),
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
 
 Functions that also make use of formats: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},
-\code{\link[=any_table]{any_table()}}, \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}.
+\code{\link[=any_table]{any_table()}}, \code{\link[=recode.]{recode.()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}.
 }

@@ -46,7 +46,7 @@ you can use formats to recode a variable into a new one.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recode</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recode.</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">recode_multi</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -60,7 +60,7 @@ you can use formats to recode a variable into a new one.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p><code>recode()</code> Pass in the original variable name that should be recoded
+<dd><p><code>recode.()</code> Pass in the original variable name that should be recoded
 along with the corresponding format container in the form: variable = format.</p>
 <p>In <code>recode_multi()</code> multiple variables can be recoded in one go and multilabels
 can be applied. This overwrites the original variables and duplicates rows if
@@ -71,12 +71,12 @@ principle with this function.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>recode()</code>: Returns a vector with recoded values.</p>
+    <p><code>recode.()</code>: Returns a vector with recoded values.</p>
 <p><code>recode_multi()</code>: Returns a data frame with the newly recoded variable.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>recode()</code> is based on the 'SAS' function put(), which provides an efficient
+    <p><code>recode.()</code> is based on the 'SAS' function put(), which provides an efficient
 and readable way, to generate new variables with the help of formats.</p>
 <p>When creating a format you can basically write code like you think: This new
 category consists of these original values. And after that you just apply these
@@ -104,10 +104,10 @@ if_else statements.</p>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Call function</span></span>
-<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group1"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group1"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode.</span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Formats can also be passed as characters</span></span>
-<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group2"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode</span><span class="op">(</span>age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group2"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode.</span><span class="op">(</span>age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Multilabel recode</span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>

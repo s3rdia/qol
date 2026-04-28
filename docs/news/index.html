@@ -39,11 +39,16 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.1" id="qol-131---development">qol 1.3.1 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-131---development"></a></h2>
 <div class="section level4">
+<h4 id="renamed-functions-1-3-1">Renamed functions<a class="anchor" aria-label="anchor" href="#renamed-functions-1-3-1"></a></h4>
+<ul><li>
+<code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/recode.html">recode.()</a></code>: Both functions have been renamed and now have a “.” at the end to prevent masking errors in combination with <code>dplyr</code>. (28.04.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="fixed-1-3-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-1"></a></h4>
 <ul><li>
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Titles and footnotes are now styled again. (18.04.2026)</li>
 <li>
-<code><a href="../reference/compute.html">compute()</a></code>: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)</li>
+<code><a href="../reference/compute..html">compute.()</a></code>: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-1">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-1"></a></h4>
@@ -61,7 +66,7 @@
 <li>
 <code><a href="../reference/do_if.html">do_if()</a></code>, <code><a href="../reference/do_if.html">else_do()</a></code>, <code><a href="../reference/do_if.html">end_do()</a></code>, <code><a href="../reference/do_if.html">end_all_do()</a></code>: These functions create overarching filter variables. When used with functions capable of handling these filter variables, it is possible to create more readable if-blocks without writing the same condition over and over again. (21.03.2026)</li>
 <li>
-<code><a href="../reference/compute.html">compute()</a></code>: Compute new variables without having to write the name of the data frame multiple times. (23.03.2026)</li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Compute new variables without having to write the name of the data frame multiple times. (23.03.2026)</li>
 <li>
 <code><a href="../reference/save_load.html">save_file()</a></code>, <code><a href="../reference/save_load.html">save_file_multi()</a></code>: Saves fst and rds files. Offers variable selection and observation subsetting. By default the function has a write protection, which has to be explicitly turned off to be able to overwrite files. (28.03.2026)</li>
 <li>
@@ -98,7 +103,7 @@
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Can be used within the new <code><a href="../reference/do_if.html">do_if()</a></code> context. (21.03.2026)</li>
 <li>
-<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Since the functions now make use of the new <code><a href="../reference/compute.html">compute()</a></code>, they are able to do more than just simple variable assignments and can also perform calculations. (23.03.2026)</li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Since the functions now make use of the new <code><a href="../reference/compute..html">compute.()</a></code>, they are able to do more than just simple variable assignments and can also perform calculations. (23.03.2026)</li>
 <li>
 <code><a href="../reference/row_calculation.html">row_calculation()</a></code>: Now has an optional rounding parameter. (23.03.2026)</li>
 <li>
@@ -197,7 +202,7 @@
 <div class="section level4">
 <h4 id="optimization-1-3-0">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-0"></a></h4>
 <ul><li>
-<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: With the new <code><a href="../reference/compute.html">compute()</a></code> they now perform variable assignments and calculations in a single pass instead of per iteration. (23.03.2026)</li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: With the new <code><a href="../reference/compute..html">compute.()</a></code> they now perform variable assignments and calculations in a single pass instead of per iteration. (23.03.2026)</li>
 <li>
 <code><a href="../reference/retain.html">running_number()</a></code>: Now uses faster <code>data.table</code> function. (23.03.2026)</li>
 <li>
@@ -228,7 +233,7 @@
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: When row header labels are suppressed, the excess slashes are now removed. (10.04.2026)</li>
 <li>
-<code><a href="../reference/compute.html">compute()</a></code>: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)</li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Now throws a warning, if duplicate variable names are used, but goes on computing the valid variables. (15.04.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -350,7 +355,7 @@
 <li>
 <code><a href="../reference/retain.html">mark_case()</a></code>: Now outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)</li>
 <li>
-<code><a href="../reference/recode.html">recode()</a></code>: Removed <code>new_var</code> parameter. Recode now doesn’t return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing <code>my_data &lt;- my_data |&gt; recode("age_group", age = age.)</code>, the syntax is now more natural like this <code>my_data[["age_group"]] &lt;- my_data |&gt; recode(age = age.)</code>. (21.01.2026)</li>
+<code><a href="../reference/recode.html">recode.()</a></code>: Removed <code>new_var</code> parameter. Recode now doesn’t return the whole data frame anymore, but only the recoded variable as a vector. So instead of writing <code>my_data &lt;- my_data |&gt; recode.("age_group", age = age.)</code>, the syntax is now more natural like this <code>my_data[["age_group"]] &lt;- my_data |&gt; recode.(age = age.)</code>. (21.01.2026)</li>
 <li>
 <code><a href="../reference/retain.html">running_number()</a></code>, <code><a href="../reference/retain.html">mark_case()</a></code>, <code><a href="../reference/retain.html">retain_value()</a></code>, <code><a href="../reference/retain.html">retain_sum()</a></code>: Removed <code>var_name</code> parameter. Functions now don’t return the whole data frame anymore, but only the retained variable as a vector or list of vectors. So instead of writing e.g. <code>my_data &lt;- my_data |&gt; running_number("running")</code>, the syntax is now more natural like this <code>my_data[["running"]] &lt;- my_data |&gt; running_number()</code>. (22.01.2026)</li>
 <li>

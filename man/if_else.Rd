@@ -132,6 +132,6 @@ Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \cod
 
 Filter Data Frame: \code{\link[=where.]{where.()}}
 
-Create new Variables: \code{\link[=compute]{compute()}}
+Create new Variables: \code{\link[=compute.]{compute.()}}
 }
 \keyword{internal}

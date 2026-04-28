@@ -29,7 +29,7 @@
 #'
 #' Filter Data Frame: [where.()]
 #'
-#' Create new Variables: [compute()]
+#' Create new Variables: [compute.()]
 #'
 #' @examples
 #' # Example data frame
@@ -361,7 +361,7 @@ if. <- function(data_frame, condition, ...){
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
     if (!flag_filter){
-        data_frame <- data_frame |> compute(..., .if_condition   = condition_list,
+        data_frame <- data_frame |> compute.(..., .if_condition   = condition_list,
                                                  .if_parent_frame = parent_env,
                                                  .if_suppressed   = TRUE)
     }
@@ -508,7 +508,7 @@ else_if. <- function(data_frame, condition, ...){
         }
 
         # Evaluate calculations conditionally. Making use of hidden parameters.
-        data_frame <- data_frame |> compute(..., .if_condition    = condition_list,
+        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
                                                  .if_parent_frame = parent_env,
                                                  .if_suppressed   = TRUE)
     }
@@ -639,7 +639,7 @@ else. <- function(data_frame, ...){
     }
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
-    data_frame <- data_frame |> compute(..., .if_condition    = condition_list,
+    data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
                                              .if_parent_frame = parent_env,
                                              .if_suppressed   = TRUE)
 
@@ -788,7 +788,7 @@ combined_condition <- function(data_frame, condition){
 #'
 #' Filter Data Frame: [where.()]
 #'
-#' Create new Variables: [compute()]
+#' Create new Variables: [compute.()]
 #'
 #' @examples
 #' # Example data frame
@@ -848,7 +848,7 @@ where. <- function(data_frame,
 #'
 #' @description
 #' Creates a filter variable based on the given condition. This variable can be
-#' accessed by [if.()], [else_if.()], [else.()], [where.()] and [compute()], enabling these
+#' accessed by [if.()], [else_if.()], [else.()], [where.()] and [compute.()], enabling these
 #' functions to work with an overarching condition. This function can also be
 #' used to nest multiple overarching conditions.
 #'
@@ -864,7 +864,7 @@ where. <- function(data_frame,
 #'
 #' Filter Data Frame: [where.()]
 #'
-#' Create new Variables: [compute()]
+#' Create new Variables: [compute.()]
 #'
 #' @examples
 #' # Example data frame

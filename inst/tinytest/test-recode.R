@@ -17,7 +17,7 @@ age. <- discrete_format(
     "65 and older"   = 65:100)
 
 test_df2 <- test_df
-test_df2[["age_group"]] <- test_df2 |> recode(age = age.)
+test_df2[["age_group"]] <- test_df2 |> recode.(age = age.)
 
 expect_true("age_group" %in% names(test_df2), info = "Recode discrete values into groups with all values covered")
 
@@ -33,7 +33,7 @@ income. <- interval_format(
 
 test_df2 <- test_df
 test_df2 <- test_df2 |> collapse::fsubset(!is.na(income))
-test_df2[["income_group"]] <- test_df2 |> recode(income = income.)
+test_df2[["income_group"]] <- test_df2 |> recode.(income = income.)
 
 expect_true("income_group" %in% names(test_df2), info = "Recode interval values into groups with all values covered")
 
@@ -48,7 +48,7 @@ income. <- interval_format(
     "2000 and more"      = 2000:99999)
 
 test_df2 <- test_df
-test_df2[["income_group"]] <- test_df2 |> recode(income = income.)
+test_df2[["income_group"]] <- test_df2 |> recode.(income = income.)
 
 expect_error(print_stack_as_messages("ERROR"), "Variable 'income' has NA values", info = "Recode interval values with NA values")
 
@@ -62,7 +62,7 @@ age. <- discrete_format(
 
 test_df2 <- test_df
 test_df2 <- test_df2 |> collapse::fsubset(!is.na(income))
-test_df2[["age_group"]] <- test_df2 |> recode(age = age.)
+test_df2[["age_group"]] <- test_df2 |> recode.(age = age.)
 
 expect_true("age_group" %in% names(test_df2), info = "Recode discrete values into groups with not all values covered")
 
@@ -79,7 +79,7 @@ income. <- interval_format(
 
 test_df2 <- test_df
 test_df2 <- test_df2 |> collapse::fsubset(!is.na(income))
-test_df2[["income_group"]] <- test_df2 |> recode(income = income.)
+test_df2[["income_group"]] <- test_df2 |> recode.(income = income.)
 
 expect_true("income_group" %in% names(test_df2), info = "Recode interval values into groups with not all values covered")
 
@@ -93,10 +93,10 @@ age1 <- c(1, 2, 3, 4)
 age2 <- c("a", "b", "c", "d")
 
 test_df2 <- test_df
-test_df2[["age_group"]] <- test_df2 |> recode(age = age1)
+test_df2[["age_group"]] <- test_df2 |> recode.(age = age1)
 
 expect_error(print_stack_as_messages("ERROR"), "The format for 'age' must be a data table", info = "Providing none format data frames")
-test_df2[["age_group"]] <- test_df2 |> recode(age = age2)
+test_df2[["age_group"]] <- test_df2 |> recode.(age = age2)
 
 expect_error(print_stack_as_messages("ERROR"), "The format for 'age' must be a data table", info = "Providing none format data frames")
 
@@ -113,7 +113,7 @@ age. <- discrete_format(
     "65 and older"   = 65:100)
 
 test_df2 <- test_df
-test_df2[["age_group"]] <- test_df2 |> recode(dog = age.)
+test_df2[["age_group"]] <- test_df2 |> recode.(dog = age.)
 
 expect_error(print_stack_as_messages("ERROR"), "Variable 'dog' not found in the input data frame", info = "Given variable is not in data frame")
 
@@ -130,7 +130,7 @@ age. <- discrete_format(
     "65 and older"   = 65:100)
 
 test_df2 <- test_df
-test_df2[["age_group"]] <- test_df2 |> recode(age = age.)
+test_df2[["age_group"]] <- test_df2 |> recode.(age = age.)
 
 expect_warning(print_stack_as_messages("WARNING"), "The format for 'age' is a multilabel", info = "Recoding with multilabel gives a warning")
 
@@ -144,7 +144,7 @@ age. <- discrete_format(
     "65 and older"   = 65:100)
 
 test_df2 <- test_df
-test_df2[["age"]] <- test_df2 |> recode(age = age.)
+test_df2[["age"]] <- test_df2 |> recode.(age = age.)
 
 expect_true(all(c("under 18",
                   "18 to under 25",

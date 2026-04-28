@@ -53,7 +53,7 @@
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that also make use of formats: [frequencies()], [crosstabs()],
-#' [any_table()], [recode()], [recode_multi()], [sort_plus()].
+#' [any_table()], [recode.()], [recode_multi()], [sort_plus()].
 #'
 #' @examples
 #' # Example formats

@@ -2,17 +2,18 @@
 % Please edit documentation in R/recode.R
 \name{recode}
 \alias{recode}
+\alias{recode.}
 \alias{recode_multi}
 \title{Recode New Variables With Formats}
 \usage{
-recode(data_frame, ...)
+recode.(data_frame, ...)
 
 recode_multi(data_frame, ...)
 }
 \arguments{
 \item{data_frame}{A data frame which contains the the original variables to recode.}
 
-\item{...}{\code{\link[=recode]{recode()}} Pass in the original variable name that should be recoded
+\item{...}{\code{\link[=recode.]{recode.()}} Pass in the original variable name that should be recoded
 along with the corresponding format container in the form: variable = format.
 
 In \code{\link[=recode_multi]{recode_multi()}} multiple variables can be recoded in one go and multilabels
@@ -22,7 +23,7 @@ afterwards perform operations with other packages, you can make use of this
 principle with this function.}
 }
 \value{
-\code{\link[=recode]{recode()}}: Returns a vector with recoded values.
+\code{\link[=recode.]{recode.()}}: Returns a vector with recoded values.
 
 \code{\link[=recode_multi]{recode_multi()}}: Returns a data frame with the newly recoded variable.
 }
@@ -31,7 +32,7 @@ Instead of writing multiple if-clauses to recode values into a new variable,
 you can use formats to recode a variable into a new one.
 }
 \details{
-\code{\link[=recode]{recode()}} is based on the 'SAS' function put(), which provides an efficient
+\code{\link[=recode.]{recode.()}} is based on the 'SAS' function put(), which provides an efficient
 and readable way, to generate new variables with the help of formats.
 
 When creating a format you can basically write code like you think: This new
@@ -52,10 +53,10 @@ age. <- discrete_format(
 my_data <- dummy_data(1000)
 
 # Call function
-my_data[["age_group1"]] <- my_data |> recode(age = age.)
+my_data[["age_group1"]] <- my_data |> recode.(age = age.)
 
 # Formats can also be passed as characters
-my_data[["age_group2"]] <- my_data |> recode(age = "age.")
+my_data[["age_group2"]] <- my_data |> recode.(age = "age.")
 
 # Multilabel recode
 sex. <- discrete_format(

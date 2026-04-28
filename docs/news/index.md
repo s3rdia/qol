@@ -2,12 +2,19 @@
 
 ## qol 1.3.1 - DEVELOPMENT
 
+#### Renamed functions
+
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
+  [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md): Both
+  functions have been renamed and now have a “.” at the end to prevent
+  masking errors in combination with `dplyr`. (28.04.2026)
+
 #### Fixed
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Titles and footnotes are now styled again. (18.04.2026)
-- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md): If a
-  variable was all NA, a type miss match happend, leading to the
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): If
+  a variable was all NA, a type miss match happend, leading to the
   function beeing aborted. This is fixed now. (24.04.2026)
 
 #### Additionally
@@ -37,7 +44,7 @@ CRAN release: 2026-04-18
   functions capable of handling these filter variables, it is possible
   to create more readable if-blocks without writing the same condition
   over and over again. (21.03.2026)
-- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md):
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
   Compute new variables without having to write the name of the data
   frame multiple times. (23.03.2026)
 - [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
@@ -116,9 +123,9 @@ CRAN release: 2026-04-18
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Since
   the functions now make use of the new
-  [`compute()`](https://s3rdia.github.io/qol/reference/compute.md), they
-  are able to do more than just simple variable assignments and can also
-  perform calculations. (23.03.2026)
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
+  they are able to do more than just simple variable assignments and can
+  also perform calculations. (23.03.2026)
 - [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md):
   Now has an optional rounding parameter. (23.03.2026)
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
@@ -291,9 +298,9 @@ CRAN release: 2026-04-18
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): With
   the new
-  [`compute()`](https://s3rdia.github.io/qol/reference/compute.md) they
-  now perform variable assignments and calculations in a single pass
-  instead of per iteration. (23.03.2026)
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
+  they now perform variable assignments and calculations in a single
+  pass instead of per iteration. (23.03.2026)
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md):
   Now uses faster `data.table` function. (23.03.2026)
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
@@ -350,9 +357,9 @@ CRAN release: 2026-04-18
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   When row header labels are suppressed, the excess slashes are now
   removed. (10.04.2026)
-- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md): Now
-  throws a warning, if duplicate variable names are used, but goes on
-  computing the valid variables. (15.04.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Now throws a warning, if duplicate variable names are used, but goes
+  on computing the valid variables. (15.04.2026)
 
 ## qol 1.2.2
 
@@ -541,12 +548,12 @@ CRAN release: 2026-02-11
   (17.01.2026)
 - [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md): Now
   outputs a variable with 1/0 instead of TRUE/FALSE. (18.01.2026)
-- [`recode()`](https://s3rdia.github.io/qol/reference/recode.md):
+- [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md):
   Removed `new_var` parameter. Recode now doesn’t return the whole data
   frame anymore, but only the recoded variable as a vector. So instead
-  of writing `my_data <- my_data |> recode("age_group", age = age.)`,
+  of writing `my_data <- my_data |> recode.("age_group", age = age.)`,
   the syntax is now more natural like this
-  `my_data[["age_group"]] <- my_data |> recode(age = age.)`.
+  `my_data[["age_group"]] <- my_data |> recode.(age = age.)`.
   (21.01.2026)
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),

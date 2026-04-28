@@ -193,5 +193,5 @@ no_nothing <- my_data |> summarise_plus()
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
 
 Functions that also make use of formats: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},
-\code{\link[=any_table]{any_table()}}, \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}.
+\code{\link[=any_table]{any_table()}}, \code{\link[=recode.]{recode.()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}.
 }

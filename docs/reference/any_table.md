@@ -273,7 +273,7 @@ Additional functions that can handle styles:
 
 Additional functions that can handle formats:
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
-[`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md),
 [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md)

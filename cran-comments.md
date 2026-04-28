@@ -1,10 +1,14 @@
 # Resubmission qol 1.3.1
 Last CRAN release was on 18.04.2026.
 
+### Renamed functions
+
+* `compute.()`, `recode.()`: Both functions have been renamed and now have a "." at the end to prevent masking errors in combination with `dplyr`.
+
 ### Fixed
 
 * `combine_into_workbook()`: Titles and footnotes are now styled again.
-* `compute()`: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now.
+* `compute.()`: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now.
 
 ### Additionally
 

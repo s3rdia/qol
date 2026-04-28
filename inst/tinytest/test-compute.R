@@ -11,7 +11,7 @@ test_df <- data.frame(var1 = c("a", "a", "a", "b", "b"),
 
 
 # Compute evaluates simple expressions
-result_df <- test_df |> compute(sum = var2 + var3)
+result_df <- test_df |> compute.(sum = var2 + var3)
 
 expected <- test_df[["var2"]] + test_df[["var3"]]
 
@@ -19,7 +19,7 @@ expect_equal(result_df[["sum"]], expected, info = "Compute evaluates simple expr
 
 
 # Compute supports evaluation of functions
-result_df <- test_df |> compute(col_sum = collapse::fsum(var2))
+result_df <- test_df |> compute.(col_sum = collapse::fsum(var2))
 
 expected <- collapse::fsum(test_df[["var2"]])
 
@@ -27,7 +27,7 @@ expect_equal(collapse::funique(result_df[["col_sum"]]), expected, info = "Comput
 
 
 # Compute supports qol functions
-result_df <- test_df |> compute(row_sum = row_calculation("sum", var2, var3))
+result_df <- test_df |> compute.(row_sum = row_calculation("sum", var2, var3))
 
 expected <- test_df[["var2"]] + test_df[["var3"]]
 
@@ -35,7 +35,7 @@ expect_equal(result_df[["row_sum"]], expected, info = "Compute supports qol func
 
 
 # Compute supports value assignment
-result_df <- test_df |> compute(var4 = 1, var5 = "Hello")
+result_df <- test_df |> compute.(var4 = 1, var5 = "Hello")
 
 expect_equal(collapse::funique(result_df[["var4"]]), 1, info = "Compute supports value assignment")
 expect_equal(collapse::funique(result_df[["var5"]]), "Hello", info = "Compute supports value assignment")
@@ -44,7 +44,7 @@ expect_equal(collapse::funique(result_df[["var5"]]), "Hello", info = "Compute su
 # Compute respects do_if filtering
 result_df <- test_df |>
     do_if(var1 == "a") |>
-        compute(sum = var2 + var3) |>
+        compute.(sum = var2 + var3) |>
     end_do()
 
 expected <- test_df[["var2"]] + test_df[["var3"]]
@@ -54,7 +54,7 @@ expect_equal(result_df[["sum"]], expected, info = "Compute respects do_if filter
 
 
 # Compute overwrites existing variable
-result_df <- test_df |> compute(var2 = var3)
+result_df <- test_df |> compute.(var2 = var3)
 
 expect_true(!identical(result_df[["var2"]], test_df[["var2"]]), info = "Compute overwrites existing variable")
 expect_equal(result_df[["var2"]], result_df[["var3"]], info = "Compute overwrites existing variable")
@@ -64,7 +64,7 @@ expect_equal(result_df[["var2"]], result_df[["var3"]], info = "Compute overwrite
 variables  <- c("NEW_VAR1", "NEW_VAR2")
 values     <- c(1, 2)
 
-do_over_df <- test_df |> compute(variables = values)
+do_over_df <- test_df |> compute.(variables = values)
 
 expect_true(all(c("NEW_VAR1", "NEW_VAR2") %in% names(do_over_df)), info = "Compute as do over loop")
 expect_true(collapse::funique(do_over_df[["NEW_VAR1"]]) == 1, info = "Compute as do over loop")
@@ -75,7 +75,7 @@ expect_true(collapse::funique(do_over_df[["NEW_VAR2"]]) == 2, info = "Compute as
 variables  <- c("NEW_VAR1", "NEW_VAR2")
 values     <- c(1, 2)
 
-result_df <- test_df |> compute(sum       = var2 + var3,
+result_df <- test_df |> compute.(sum       = var2 + var3,
                                 col_sum   = collapse::fsum(var2),
                                 row_sum   = row_calculation("sum", var2, var3),
                                 var4      = 1,
@@ -89,13 +89,13 @@ expect_true(all(c("sum", "col_sum", "row_sum", "var4", "var5", "NEW_VAR1", "NEW_
 ###############################################################################
 
 # Type mismatch in compute
-result_df <- test_df |> compute(var1 = var2)
+result_df <- test_df |> compute.(var1 = var2)
 
 expect_warning(print_stack_as_messages("WARNING"), "Type mismatch", info = "Type mismatch in compute")
 
 
 # Adding multiple variables of the same name in compute throws a warning
-result_df <- test_df |> compute(var4 = 1, var4 = 2)
+result_df <- test_df |> compute.(var4 = 1, var4 = 2)
 
 expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable name",
                info = "Adding multiple variables of the same name in compute throws a warning")
@@ -107,7 +107,7 @@ expect_equal(collapse::funique(result_df[["var4"]]), 1)
 ###############################################################################
 
 # Compute aborts with no assignment
-result_df <- test_df |> compute()
+result_df <- test_df |> compute.()
 
 expect_error(print_stack_as_messages("ERROR"), "No assignments. Evaluation will be aborted.", info = "Compute aborts with no assignment")
 
@@ -116,7 +116,7 @@ expect_error(print_stack_as_messages("ERROR"), "No assignments. Evaluation will 
 variables  <- c("NEW_VAR1", "NEW_VAR2", "NEW_VAR3")
 values     <- c(1, 2)
 
-do_over_df <- test_df |> compute(variables = values)
+do_over_df <- test_df |> compute.(variables = values)
 
 expect_error(print_stack_as_messages("ERROR"), "Passed vectors are of unequal lengths.", info = "Compute aborts with no assignment")
 

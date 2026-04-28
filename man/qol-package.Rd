@@ -40,7 +40,7 @@ Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}
 
-Recoding: \code{\link[=recode]{recode()}}, \code{\link[=recode_multi]{recode_multi()}}
+Recoding: \code{\link[=recode.]{recode.()}}, \code{\link[=recode_multi]{recode_multi()}}
 
 Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}, \code{\link[=inverse]{inverse()}}, \code{\link[=vars_between]{vars_between()}}
 
@@ -74,7 +74,7 @@ Reporting: \code{\link[=content_report]{content_report()}}, \code{\link[=report_
 Messages: \code{\link[=print_message]{print_message()}}, \code{\link[=print_headline]{print_headline()}}, \code{\link[=print_start_message]{print_start_message()}}, \code{\link[=print_closing]{print_closing()}}, \code{\link[=print_step]{print_step()}},
 \code{\link[=set_up_custom_message]{set_up_custom_message()}}, \code{\link[=get_message_stack]{get_message_stack()}}, \code{\link[=set_no_print]{set_no_print()}}, \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}, \code{\link[=convert_square_brackets]{convert_square_brackets()}}
 
-Calculation: \code{\link[=compute]{compute()}}, \code{\link[=row_calculation]{row_calculation()}}
+Calculation: \code{\link[=compute.]{compute.()}}, \code{\link[=row_calculation]{row_calculation()}}
 
 Small helpers: \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}},
 \code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=get_integer_length]{get_integer_length()}}, \code{\link[=round_values]{round_values()}}

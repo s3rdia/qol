@@ -10,7 +10,7 @@ In addition it can be used in a conditional
 ## Usage
 
 ``` r
-compute(data_frame, ..., monitor = .qol_options[["monitor"]])
+compute.(data_frame, ..., monitor = .qol_options[["monitor"]])
 ```
 
 ## Arguments
@@ -34,7 +34,7 @@ Returns a data frame with newly computed variables.
 
 ## Details
 
-The loop you can use within `compute()` is based on the 'SAS'
+The loop you can use within `compute.()` is based on the 'SAS'
 do-over-loop. This type of loop iterates over every vector that appears
 in the loop in parallel. Means that in the first iteration all the first
 vector elements are used, in the second iteration all second elements of
@@ -56,7 +56,7 @@ Conditions:
 Filter Data Frame:
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md)
 
-Create new Variables: `compute()`
+Create new Variables: `compute.()`
 
 ## Examples
 
@@ -65,35 +65,35 @@ Create new Variables: `compute()`
 my_data <- dummy_data(1000)
 
 # Simple assignment
-assign_df <- my_data |> compute(new_var1 = 1,
+assign_df <- my_data |> compute.(new_var1 = 1,
                                 new_var2 = "Hello")
 
 # Simple calculation
-sum_df <- my_data |> compute(new_sum = age + sex)
+sum_df <- my_data |> compute.(new_sum = age + sex)
 
 # Using functions
-mean_df <- my_data |> compute(new_mean = collapse::fmean(age))
+mean_df <- my_data |> compute.(new_mean = collapse::fmean(age))
 
 # Using qol functions
-qol_df <- my_data |> compute(row_sum = row_calculation("sum", state, age, sex))
+qol_df <- my_data |> compute.(row_sum = row_calculation("sum", state, age, sex))
 
-# Use compute() as a do-over-loop. In this kind of loop all vectors will be
+# Use compute.() as a do-over-loop. In this kind of loop all vectors will be
 # advanced one iteration at a time in parallel.
 new_vars <- c("var1", "var2", "var3")
 money    <- c("income", "expenses", "balance")
 multi    <- c(1, 2, 3)
 
-do_over_df <- my_data |> compute(new_vars = money * multi)
+do_over_df <- my_data |> compute.(new_vars = money * multi)
 
 # You can also do all at once
-all_df <- my_data |> compute(new_var1 = 1,
+all_df <- my_data |> compute.(new_var1 = 1,
                              new_var2 = "Hello",
                              new_sum  = age + sex,
                              new_mean = mean(age),
                              row_sum  = row_calculation("sum", state, age, sex),
                              new_vars = multi * money)
 
-# compute() can be used in a do_if() situation and is aware of overarching
+# compute.() can be used in a do_if() situation and is aware of overarching
 # conditions.
 age_west. <- discrete_format("under 18"     = 0:17,
                              "18 and older" = 18:100)
@@ -103,10 +103,10 @@ age_east. <- discrete_format("under 65"     = 0:64,
 
 do_if_df <- my_data |>
     do_if(state < 11) |>
-          compute(region    = "West",
-                  age_group = recode(age = age_west.)) |>
+          compute.(region    = "West",
+                  age_group = recode.(age = age_west.)) |>
     else_do() |>
-          compute(region    = "East",
-                  age_group = recode(age = age_east.)) |>
+          compute.(region    = "East",
+                  age_group = recode.(age = age_east.)) |>
     end_do()
 ```

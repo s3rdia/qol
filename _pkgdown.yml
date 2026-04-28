@@ -37,7 +37,7 @@ reference:
   - export_multi
 - title: Recoding
   contents:
-  - recode
+  - recode.
   - recode_multi
 - title: Selecting
   contents:
@@ -131,7 +131,7 @@ reference:
   - convert_square_brackets
 - title: Calculation
   contents:
-  - compute
+  - compute.
   - row_calculation
 - title: Small Helpers
   contents:

@@ -53,7 +53,7 @@
 
 ## Recoding
 
-- [`recode()`](https://s3rdia.github.io/qol/reference/recode.md)
+- [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md)
   [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md) :
   Recode New Variables With Formats
 
@@ -195,7 +195,7 @@
 
 ## Calculation
 
-- [`compute()`](https://s3rdia.github.io/qol/reference/compute.md) :
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md) :
   Compute New Variables
 - [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md)
   : Perform Row Wise Calculations

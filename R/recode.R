@@ -7,7 +7,7 @@
 #' you can use formats to recode a variable into a new one.
 #'
 #' @param data_frame A data frame which contains the the original variables to recode.
-#' @param ... [recode()] Pass in the original variable name that should be recoded
+#' @param ... [recode.()] Pass in the original variable name that should be recoded
 #' along with the corresponding format container in the form: variable = format.
 #'
 #' In [recode_multi()] multiple variables can be recoded in one go and multilabels
@@ -17,7 +17,7 @@
 #' principle with this function.
 #'
 #' @details
-#' [recode()] is based on the 'SAS' function put(), which provides an efficient
+#' [recode.()] is based on the 'SAS' function put(), which provides an efficient
 #' and readable way, to generate new variables with the help of formats.
 #'
 #' When creating a format you can basically write code like you think: This new
@@ -26,7 +26,7 @@
 #' if_else statements.
 #'
 #' @return
-#' [recode()]: Returns a vector with recoded values.
+#' [recode.()]: Returns a vector with recoded values.
 #'
 #' @seealso
 #' Creating formats: [discrete_format()] and [interval_format()].
@@ -47,10 +47,10 @@
 #' my_data <- dummy_data(1000)
 #'
 #' # Call function
-#' my_data[["age_group1"]] <- my_data |> recode(age = age.)
+#' my_data[["age_group1"]] <- my_data |> recode.(age = age.)
 #'
 #' # Formats can also be passed as characters
-#' my_data[["age_group2"]] <- my_data |> recode(age = "age.")
+#' my_data[["age_group2"]] <- my_data |> recode.(age = "age.")
 #'
 #' # Multilabel recode
 #' sex. <- discrete_format(
@@ -74,8 +74,8 @@
 #' @rdname recode
 #'
 #' @export
-recode <- function(data_frame,
-                   ...){
+recode. <- function(data_frame,
+                    ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 

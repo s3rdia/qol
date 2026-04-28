@@ -47,7 +47,7 @@ Creating a custom table style:
 [`modify_number_formats()`](https://s3rdia.github.io/qol/reference/modify_number_formats.md)
 
 Recoding:
-[`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md)
 
 Selecting:
@@ -141,7 +141,7 @@ Messages:
 [`convert_square_brackets()`](https://s3rdia.github.io/qol/reference/message_helpers.md)
 
 Calculation:
-[`compute()`](https://s3rdia.github.io/qol/reference/compute.md),
+[`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
 [`row_calculation()`](https://s3rdia.github.io/qol/reference/row_calculation.md)
 
 Small helpers:

@@ -64,7 +64,7 @@
 #'
 #' Additional functions that can handle styles: [export_with_style()]
 #'
-#' Additional functions that can handle formats: [summarise_plus()], [recode()],
+#' Additional functions that can handle formats: [summarise_plus()], [recode.()],
 #' [recode_multi()], [transpose_plus()], [sort_plus()]
 #'
 #' @examples

@@ -206,6 +206,6 @@ Functions that can handle formats and styles: \code{\link[=frequencies]{frequenc
 
 Additional functions that can handle styles: \code{\link[=export_with_style]{export_with_style()}}
 
-Additional functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=recode]{recode()}},
+Additional functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=recode.]{recode.()}},
 \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}
 }
