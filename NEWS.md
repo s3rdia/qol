@@ -8,6 +8,9 @@
 
 * `combine_into_workbook()`: Titles and footnotes are now styled again. (18.04.2026)
 * `compute.()`: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)
+* `compute.()`, `if.()`, `else_if.()`, `else.()`: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)
+* `compute.()`: Doesn't crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)
+* `dummy_data()`: Variable `income_class` was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)
 
 ### Additionally
 

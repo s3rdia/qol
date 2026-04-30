@@ -49,6 +49,12 @@
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Titles and footnotes are now styled again. (18.04.2026)</li>
 <li>
 <code><a href="../reference/compute..html">compute.()</a></code>: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)</li>
+<li>
+<code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)</li>
+<li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Doesn’t crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)</li>
+<li>
+<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Variable <code>income_class</code> was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-1">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-1"></a></h4>

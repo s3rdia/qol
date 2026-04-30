@@ -74,11 +74,11 @@
 #'
 #' do_if_df <- my_data |>
 #'     do_if(state < 11) |>
-#'           compute.(region    = "West",
-#'                   age_group = recode.(age = age_west.)) |>
+#'         compute.(region    = "West",
+#'                  age_group = recode.(age = age_west.)) |>
 #'     else_do() |>
-#'           compute.(region    = "East",
-#'                   age_group = recode.(age = age_east.)) |>
+#'         compute.(region    = "East",
+#'                  age_group = recode.(age = age_east.)) |>
 #'     end_do()
 #'
 #' @export
@@ -156,7 +156,7 @@ compute. <- function(data_frame,
         calc_text   <- deparse(calculation)
 
         # If no vector was passed then evaluate as normal.
-        if (!variable %in% names(content_list)){
+        if (!any(used_variables %in% names(content_list))){
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Non vector")
             #-------------------------------------------------------------------------#
@@ -398,6 +398,27 @@ compute. <- function(data_frame,
     print_step("MAJOR", "Add variables to data frame")
 
     if (length(call_list) > 0){
+        # If there are any duplicate names in list, the call_list has to be cleaned
+        # up first.
+        if (length(call_list) > 1 && any(duplicated(names(call_list)))){
+            # Group up duplicate list names in their own list
+            call_list <- split(call_list, names(call_list))
+
+            # Lists with duplicate variable names will be merged together, because
+            # it is actually one variable with different expressions. Probably
+            # generated within a do-over-loop. fcoalesce takes the first value
+            # per line which is not NA, so first value beats other values, if there
+            # are any.
+            call_list <- lapply(call_list, function(element){
+                if (length(element) > 1) {
+                    data.table::fcoalesce(element)
+                }
+                else{
+                    element[[1]]
+                }
+            })
+        }
+
         data_frame <- collapse::ftransform(data_frame, call_list)
     }
 

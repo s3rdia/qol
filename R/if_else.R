@@ -168,7 +168,7 @@ if. <- function(data_frame, condition, ...){
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
-            if (!variable %in% names(content_list)){
+            if (!any(used_variables %in% names(content_list))){
                 condition <- translate_condition(condition)
                 condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
@@ -422,7 +422,7 @@ else_if. <- function(data_frame, condition, ...){
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
-            if (!variable %in% names(content_list)){
+            if (!any(used_variables %in% names(content_list))){
                 condition <- translate_condition(condition)
                 condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
@@ -561,7 +561,7 @@ else. <- function(data_frame, ...){
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
-            if (!variable %in% names(content_list)){
+            if (!any(used_variables %in% names(content_list))){
                 # This step is important to make this function work in a nested situation.
                 # Normally variable would be the name of what was last passed as a parameter.
                 # If "if.()" is used nested inside a function this can basically be any placeholder.

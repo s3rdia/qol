@@ -168,6 +168,26 @@ expect_true(all(collapse::funique(do_over_df[["VAR1"]]) %in% c(1, 3, 4)), info =
 expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, 3, 4)), info = "if. as do over loop")
 
 
+# if. as do over loop can but different vlaues in the same variable
+class_df <- dummy_df |>
+         if.(income <     1,                 income1 = 0) |>
+    else_if.(income >=    1 & income < 4000, income1 = 1) |>
+    else_if.(income >= 4000 & income < 5000, income1 = 2) |>
+    else_if.(income >= 5000,                 income1 = 3)
+
+lower_bound <- c(   1, 4000)
+upper_bound <- c(4000, 5000)
+values      <- c(   1,    2)
+
+do_over_df <- class_df |>
+         if.(income == 0,                                  income2 = 0) |>
+    else_if.(income >= lower_bound & income < upper_bound, income2 = values) |>
+    else_if.(income >= 5000,                               income2 = 3)
+
+expect_equal(do_over_df[["income1"]], do_over_df[["income2"]],
+             info = "if. as do over loop can but different vlaues in the same variable")
+
+
 # do_if blocks
 test_df <- dummy_df |>
     do_if(sex == 1) |>

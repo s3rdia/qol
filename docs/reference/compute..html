@@ -137,11 +137,11 @@ different vectors and let the function handle the loop inside.</p>
 <span></span>
 <span><span class="va">do_if_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="do_if.html">do_if</a></span><span class="op">(</span><span class="va">state</span> <span class="op">&lt;</span> <span class="fl">11</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>          <span class="fu">compute.</span><span class="op">(</span>region    <span class="op">=</span> <span class="st">"West"</span>,</span>
-<span>                  age_group <span class="op">=</span> <span class="fu"><a href="recode.html">recode.</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age_west.</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">compute.</span><span class="op">(</span>region    <span class="op">=</span> <span class="st">"West"</span>,</span>
+<span>                 age_group <span class="op">=</span> <span class="fu"><a href="recode.html">recode.</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age_west.</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="do_if.html">else_do</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>          <span class="fu">compute.</span><span class="op">(</span>region    <span class="op">=</span> <span class="st">"East"</span>,</span>
-<span>                  age_group <span class="op">=</span> <span class="fu"><a href="recode.html">recode.</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age_east.</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">compute.</span><span class="op">(</span>region    <span class="op">=</span> <span class="st">"East"</span>,</span>
+<span>                 age_group <span class="op">=</span> <span class="fu"><a href="recode.html">recode.</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age_east.</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="do_if.html">end_do</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>

@@ -16,6 +16,19 @@
 - [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): If
   a variable was all NA, a type miss match happend, leading to the
   function beeing aborted. This is fixed now. (24.04.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
+  [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
+  detect vectors for do-over-loops in every place. Previously do over
+  loop was only detected, if the variable for assignment was a vector.
+  (30.04.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Doesn’t crash anymore, if multiple values are assigned to the same
+  variable in a do over loop. (30.04.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Variable `income_class` was miss matched in some places due to it
+  being generated to early. This is fixed now. (30.04.2026)
 
 #### Additionally
 

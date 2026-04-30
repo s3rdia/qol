@@ -156,19 +156,6 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp[["expenses"]] <- data.table::fifelse(dummy_temp[["state"]] >= 11,                          dummy_temp[["expenses"]] * 0.7,  dummy_temp[["expenses"]])
 
     #-------------------------------------------------------------------------#
-    monitor_df <- monitor_df |> monitor_next("Generate income classes")
-    #-------------------------------------------------------------------------#
-    print_step("MINOR", "income classes")
-
-    dummy_temp[["income_class"]] <- as.character(cut(dummy_temp[["income"]],
-        breaks = c(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, Inf),
-        labels = c("01.         under  500", "02.  500 to under 1000", "03. 1000 to under 1500", "04. 1500 to under 2000",
-                   "05. 2000 to under 2500", "06. 2500 to under 3000", "07. 3000 to under 3500", "08. 3500 to under 4000",
-                   "09. 4000 to under 4500", "10. 4500 to under 5000", "11. 5000 and more"), right = FALSE))
-
-    dummy_temp[dummy_temp[["income"]] == 0, "income_class"] <- "00. no income"
-
-    #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate probability")
     #-------------------------------------------------------------------------#
     print_step("MINOR", "probability")
@@ -290,7 +277,6 @@ dummy_data <- function(no_obs    = 25000,
         dummy_temp[["age"]]          <- collapse::na_insert(dummy_temp[["age"]],    prop = 0.05)
         dummy_temp[["sex"]]          <- collapse::na_insert(dummy_temp[["sex"]],    prop = 0.05)
         dummy_temp[["income"]]       <- collapse::na_insert(dummy_temp[["income"]], prop = 0.05)
-        dummy_temp[["income_class"]] <- data.table::fifelse(is.na(dummy_temp[["income"]]), NA, dummy_temp[["income_class"]])
         dummy_temp[["expenses"]]     <- data.table::fifelse(is.na(dummy_temp[["income"]]), NA, dummy_temp[["expenses"]])
         dummy_temp[["education"]]    <- collapse::na_insert(dummy_temp[["education"]],   prop = 0.05)
         dummy_temp[["body_height"]]  <- collapse::na_insert(dummy_temp[["body_height"]], prop = 0.05)
@@ -349,6 +335,21 @@ dummy_data <- function(no_obs    = 25000,
         dummy_temp[["year"]] > start_year & dummy_temp[["age"]] < 18,
         dummy_temp[["body_weight"]] + (dummy_temp[["age_factor"]] * dummy_temp[["income_factor"]] * 5),
         pmax(5, dummy_temp[["body_weight"]] + sample(-10:10, no_obs, replace = TRUE))))
+
+    #-------------------------------------------------------------------------#
+    monitor_df <- monitor_df |> monitor_next("Generate income classes")
+    #-------------------------------------------------------------------------#
+    print_step("MINOR", "income classes")
+
+    dummy_temp[["income_class"]] <- as.character(cut(dummy_temp[["income"]],
+                                                     breaks = c(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, Inf),
+                                                     labels = c("01.         under  500", "02.  500 to under 1000", "03. 1000 to under 1500", "04. 1500 to under 2000",
+                                                                "05. 2000 to under 2500", "06. 2500 to under 3000", "07. 3000 to under 3500", "08. 3500 to under 4000",
+                                                                "09. 4000 to under 4500", "10. 4500 to under 5000", "11. 5000 and more"), right = FALSE))
+
+    dummy_temp[which(dummy_temp[["income"]] == 0), "income_class"] <- "00. no income"
+
+    dummy_temp[["income_class"]] <- data.table::fifelse(is.na(dummy_temp[["income"]]), NA, dummy_temp[["income_class"]])
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Finish")

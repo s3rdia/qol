@@ -103,10 +103,10 @@ age_east. <- discrete_format("under 65"     = 0:64,
 
 do_if_df <- my_data |>
     do_if(state < 11) |>
-          compute.(region    = "West",
-                  age_group = recode.(age = age_west.)) |>
+        compute.(region    = "West",
+                 age_group = recode.(age = age_west.)) |>
     else_do() |>
-          compute.(region    = "East",
-                  age_group = recode.(age = age_east.)) |>
+        compute.(region    = "East",
+                 age_group = recode.(age = age_east.)) |>
     end_do()
 ```
