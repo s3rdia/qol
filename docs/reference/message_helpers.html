@@ -3,6 +3,8 @@
 set_no_print(): FALSE by default. If set to TRUE the messages will be formatted
 and returned but not printed to the console. Can e.g. be used in unit test
 situations.
+set_no_color(): TRUE by default. Suppresses the color codes so that messages
+can be printed clean.
 print_stack_as_messages(): Prints the message stack as actual messages (only
 not suppressed messages). Can be used to trigger expect_message, expect_warning
 or expect_error in unit tests.
@@ -11,6 +13,8 @@ formatting or passes the context of vectors into the text."><meta property="og:d
 set_no_print(): FALSE by default. If set to TRUE the messages will be formatted
 and returned but not printed to the console. Can e.g. be used in unit test
 situations.
+set_no_color(): TRUE by default. Suppresses the color codes so that messages
+can be printed clean.
 print_stack_as_messages(): Prints the message stack as actual messages (only
 not suppressed messages). Can be used to trigger expect_message, expect_warning
 or expect_error in unit tests.
@@ -58,6 +62,8 @@ formatting or passes the context of vectors into the text."><meta property="og:i
 <p><code>set_no_print()</code>: FALSE by default. If set to TRUE the messages will be formatted
 and returned but not printed to the console. Can e.g. be used in unit test
 situations.</p>
+<p><code>set_no_color()</code>: TRUE by default. Suppresses the color codes so that messages
+can be printed clean.</p>
 <p><code>print_stack_as_messages()</code>: Prints the message stack as actual messages (only
 not suppressed messages). Can be used to trigger expect_message, expect_warning
 or expect_error in unit tests.</p>
@@ -70,6 +76,8 @@ formatting or passes the context of vectors into the text.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_message_stack</span><span class="op">(</span>as_data_frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_no_print</span><span class="op">(</span>value <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_no_color</span><span class="op">(</span>value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">print_stack_as_messages</span><span class="op">(</span>type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
@@ -105,6 +113,7 @@ data frame.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>get_message_stack()</code>: Returns a list of messages or a data frame.</p>
 <p><code>set_no_print()</code>: Returns the global no_print option.</p>
+<p><code>set_no_color()</code>: Returns the global no_color option.</p>
 <p><code>print_stack_as_messages()</code>: Returns NULL.</p>
 <p><code>convert_square_brackets()</code>: Returns formatted text.</p>
     </div>

@@ -44,11 +44,27 @@
 <code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/recode.html">recode.()</a></code>: Both functions have been renamed and now have a “.” at the end to prevent masking errors in combination with <code>dplyr</code>. (28.04.2026)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="new-functionality-1-3-1">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-1"></a></h4>
+<ul><li>
+<code><a href="../reference/message_helpers.html">set_no_color()</a></code>: Suppresses the color codes so that messages can be printed clean. The option is auto controlled on load via the system variable <code>NO_COLOR</code> but can also be set individually by this function. Console output in e.g. RStudio vs. output to a logging system should be handled automatically rightnow. (25.04.2026, thanks to <a href="https://github.com/TroyHernandez" class="external-link">@TroyHernandez</a>)</li>
+<li>
+<code><a href="../reference/messages.html">set_up_custom_message()</a></code>: Waiting symbols as well as the color of the time stamps can now be customized. (25.04.2026)</li>
+<li>
+<code><a href="../reference/messages.html">print_step()</a></code>: Now has a new <code>in_place</code> parameter, which prints the message on the same line as before, instead of in the next line. This can e.g. be used inside loops as follows. (29.04.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="changed-functionality-1-3-1">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-1"></a></h4>
+<ul><li>
+<code><a href="../reference/messages.html">set_up_custom_message()</a></code>: They way custom messages are set up has slightly changed and will break existing code. Custom message types are now stored globally and are called within quotation marks like all the other built-in message types. See updated README for the new handling. (25.04.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="fixed-1-3-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-1"></a></h4>
 <ul><li>
 <code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Titles and footnotes are now styled again. (18.04.2026)</li>
 <li>
 <code><a href="../reference/compute..html">compute.()</a></code>: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)</li>
+<li>
+<code><a href="../reference/messages.html">print_step()</a></code>: Waiting character “?” is now drawn as intended in non-utf8 mode. (25.04.2026)</li>
 <li>
 <code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)</li>
 <li>

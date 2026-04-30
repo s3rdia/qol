@@ -1,3 +1,5 @@
+set_no_color()
+
 # Print normal messages utf8
 test_func <- function(){
     print_start_message()
@@ -10,7 +12,7 @@ test_func <- function(){
 
 test_func()
 
-expect_equal(length(get_message_stack()), 6, info = "Print step messages")
+expect_equal(length(get_message_stack()), 6, info = "Print normal messages utf8")
 expect_message(print_stack_as_messages("NOTE"),    "This is a note.",    info = "Print normal messages utf8")
 expect_warning(print_stack_as_messages("WARNING"), "This is a warning.", info = "Print normal messages utf8")
 expect_error(print_stack_as_messages("ERROR"),     "This is an error.",  info = "Print normal messages utf8")
@@ -29,7 +31,7 @@ test_func <- function(){
 
 test_func()
 
-expect_equal(length(get_message_stack()), 6, info = "Print step messages")
+expect_equal(length(get_message_stack()), 6, info = "Print normal messages non-utf8")
 expect_message(print_stack_as_messages("NOTE"),    "This is a note.",    info = "Print normal messages non-utf8")
 expect_warning(print_stack_as_messages("WARNING"), "This is a warning.", info = "Print normal messages non-utf8")
 expect_error(print_stack_as_messages("ERROR"),     "This is an error.",  info = "Print normal messages non-utf8")
@@ -48,7 +50,7 @@ test_func <- function(){
 
 test_func()
 
-expect_equal(length(get_message_stack()), 6, info = "Print step messages")
+expect_equal(length(get_message_stack()), 6, info = "Print step messages utf8")
 expect_message(print_stack_as_messages("GREY"),  "Grey step.",  info = "Print step messages utf8")
 expect_message(print_stack_as_messages("MAJOR"), "Major step.", info = "Print step messages utf8")
 expect_message(print_stack_as_messages("MINOR"), "Minor step.", info = "Print step messages utf8")
@@ -66,47 +68,65 @@ test_func <- function(){
 
 test_func()
 
-expect_equal(length(get_message_stack()), 6, info = "Print step messages")
+expect_equal(length(get_message_stack()), 6, info = "Print step messages non-utf8")
 expect_message(print_stack_as_messages("GREY"),  "Grey step.",  info = "Print step messages non-utf8")
 expect_message(print_stack_as_messages("MAJOR"), "Major step.", info = "Print step messages non-utf8")
 expect_message(print_stack_as_messages("MINOR"), "Minor step.", info = "Print step messages non-utf8")
 
 
 # Print custom messages utf8
-unicorn <- set_up_custom_message(text_bold      = TRUE,
-                                 text_italic    = TRUE,
-                                 text_underline = TRUE,
-                                 text_color     = "#FF00FF")
+set_up_custom_message(text_bold      = TRUE,
+                      text_italic    = TRUE,
+                      text_underline = TRUE,
+                      text_color     = "#FF00FF")
 
 test_func <- function(){
     print_start_message()
-    print_message(unicorn, "This is a unicorn message.", utf8 = TRUE)
-    print_step(unicorn,    "This is a unicorn step.",    utf8 = TRUE)
+    print_message("unicorn", "This is a unicorn message.", utf8 = TRUE)
+    print_step("unicorn",    "This is a unicorn step.",    utf8 = TRUE)
     print_closing()
 }
 
 test_func()
 
-expect_equal(length(get_message_stack()), 4, info = "Print step messages")
+expect_equal(length(get_message_stack()), 4, info = "Print custom messages utf8")
 expect_message(print_stack_as_messages("UNICORN"), "This is a unicorn message.", info = "Print custom messages utf8")
 expect_message(print_stack_as_messages("UNICORN"), "This is a unicorn step.",    info = "Print custom messages utf8")
 
 
 # Print custom messages non-utf8
-unicorn <- set_up_custom_message()
+set_up_custom_message()
 
 test_func <- function(){
     print_start_message()
-    print_message(unicorn, "This is a unicorn message.", utf8 = FALSE)
-    print_step(unicorn,    "This is a unicorn step.",    utf8 = FALSE)
+    print_message("unicorn", "This is a unicorn message.", utf8 = FALSE)
+    print_step("unicorn",    "This is a unicorn step.",    utf8 = FALSE)
     print_closing()
 }
 
 test_func()
 
-expect_equal(length(get_message_stack()), 4, info = "Print step messages")
+expect_equal(length(get_message_stack()), 4, info = "Print custom messages non-utf8")
 expect_message(print_stack_as_messages("UNICORN"), "This is a unicorn message.", info = "Print custom messages non-utf8")
 expect_message(print_stack_as_messages("UNICORN"), "This is a unicorn step.",    info = "Print custom messages non-utf8")
+
+
+# Print in place messages
+test_func <- function(){
+    print_start_message()
+
+    for (i in seq_len(10)){
+        print_step("Minor", "This is in place step [i] of 10", i = i, in_place = TRUE)
+    }
+
+    print_closing()
+}
+
+test_func()
+
+expect_equal(length(get_message_stack()), 12, info = "Print in place messages")
+expect_message(print_stack_as_messages("MINOR"), "This is in place step 1 of 10",  info = "Print custom messages non-utf8")
+expect_message(print_stack_as_messages("MINOR"), "This is in place step 10 of 10", info = "Print custom messages non-utf8")
 
 
 # Print messages without start and end only return a message stack of length 1
@@ -169,3 +189,5 @@ expect_message(print_stack_as_messages("NEUTRAL"), "These are variables: var1, v
 
 # Get message stack as data frame
 expect_inherits(get_message_stack(as_data_frame = TRUE), "data.frame", info = "Get message stack as data frame")
+
+set_no_color(FALSE)

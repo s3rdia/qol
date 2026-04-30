@@ -7,6 +7,9 @@ data frame.
 formatted and returned but not printed to the console. Can e.g. be used
 in unit test situations.
 
+`set_no_color()`: TRUE by default. Suppresses the color codes so that
+messages can be printed clean.
+
 `print_stack_as_messages()`: Prints the message stack as actual messages
 (only not suppressed messages). Can be used to trigger expect_message,
 expect_warning or expect_error in unit tests.
@@ -20,6 +23,8 @@ into ansi formatting or passes the context of vectors into the text.
 get_message_stack(as_data_frame = FALSE)
 
 set_no_print(value = FALSE)
+
+set_no_color(value = TRUE)
 
 print_stack_as_messages(type = NULL)
 
@@ -54,6 +59,8 @@ convert_square_brackets(text, ...)
 `get_message_stack()`: Returns a list of messages or a data frame.
 
 `set_no_print()`: Returns the global no_print option.
+
+`set_no_color()`: Returns the global no_color option.
 
 `print_stack_as_messages()`: Returns NULL.
 

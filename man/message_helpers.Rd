@@ -4,6 +4,7 @@
 \alias{message_helpers}
 \alias{get_message_stack}
 \alias{set_no_print}
+\alias{set_no_color}
 \alias{print_stack_as_messages}
 \alias{convert_square_brackets}
 \title{Message Helper Functions}
@@ -11,6 +12,8 @@
 get_message_stack(as_data_frame = FALSE)
 
 set_no_print(value = FALSE)
+
+set_no_color(value = TRUE)
 
 print_stack_as_messages(type = NULL)
 
@@ -33,6 +36,8 @@ data frame.}
 
 \code{\link[=set_no_print]{set_no_print()}}: Returns the global no_print option.
 
+\code{\link[=set_no_color]{set_no_color()}}: Returns the global no_color option.
+
 \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}: Returns NULL.
 
 \code{\link[=convert_square_brackets]{convert_square_brackets()}}: Returns formatted text.
@@ -43,6 +48,9 @@ data frame.}
 \code{\link[=set_no_print]{set_no_print()}}: FALSE by default. If set to TRUE the messages will be formatted
 and returned but not printed to the console. Can e.g. be used in unit test
 situations.
+
+\code{\link[=set_no_color]{set_no_color()}}: TRUE by default. Suppresses the color codes so that messages
+can be printed clean.
 
 \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}: Prints the message stack as actual messages (only
 not suppressed messages). Can be used to trigger expect_message, expect_warning

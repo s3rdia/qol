@@ -84,10 +84,12 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                                   minor_pt            = hex_to_ansi(" \u00a0\u00a0+ ",                  hex_color = "#32CD32", bold = TRUE),
                                   minor_indent_ansi   = hex_to_ansi("\u00a0\u00a0\u00a0\u00a0\u00a0",   hex_color = "#32CD32", bold = TRUE),
                                   minor_indent_pt     = hex_to_ansi("\u00a0\u00a0\u00a0",               hex_color = "#32CD32", bold = TRUE))
-.qol_messages[["stack"]]           <- list()
-.qol_messages[["start_time"]]      <- NULL
-.qol_messages[["timer"]]           <- NULL
-.qol_messages[["last_message"]]    <- NULL
-.qol_messages[["last_session"]]    <- NULL
-.qol_messages[["last_execution"]]  <- NULL
-.qol_messages[["no_print"]]        <- FALSE
+.qol_messages[["custom_types"]]   <- list()
+.qol_messages[["stack"]]          <- list()
+.qol_messages[["start_time"]]     <- NULL
+.qol_messages[["timer"]]          <- NULL
+.qol_messages[["last_message"]]   <- NULL
+.qol_messages[["last_session"]]   <- NULL
+.qol_messages[["last_execution"]] <- NULL
+.qol_messages[["no_print"]]       <- FALSE
+.qol_messages[["no_color"]]       <- nzchar(Sys.getenv("NO_COLOR"))

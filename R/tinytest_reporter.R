@@ -59,11 +59,11 @@ report_test_results <- function(tiny_results, utf8 = .qol_messages[["format"]][[
     }
 
     # Set up custom messages
-    m_fail <- set_up_custom_message(ansi_icon = "\u274c",       text_icon = "X", type = "FAIL",       color = "#C93F3F")
-    m_path <- set_up_custom_message(ansi_icon = "\ud83d\udd0d", text_icon = ">", type = "PATH",       color = "#BEDD1A")
-    m_call <- set_up_custom_message(ansi_icon = "\u2699\ufe0f", text_icon = "^", type = "CALL",       color = "#32CD32")
-    m_type <- set_up_custom_message(ansi_icon = "\U0001f4e6",   text_icon = "?", type = "CALL",       color = "#8F8DC7")
-    m_diff <- set_up_custom_message(ansi_icon = "\u26a0\ufe0f", text_icon = "!", type = "DIFFERENCE", color = "#FFC90E")
+    set_up_custom_message(ansi_icon = "\u274c",       text_icon = "X", type = ".FAIL",       color = "#C93F3F")
+    set_up_custom_message(ansi_icon = "\ud83d\udd0d", text_icon = ">", type = ".PATH",       color = "#BEDD1A")
+    set_up_custom_message(ansi_icon = "\u2699\ufe0f", text_icon = "^", type = ".CALL",       color = "#32CD32")
+    set_up_custom_message(ansi_icon = "\U0001f4e6",   text_icon = "?", type = ".TYPE",       color = "#8F8DC7")
+    set_up_custom_message(ansi_icon = "\u26a0\ufe0f", text_icon = "!", type = ".DIFFERENCE", color = "#FFC90E")
 
     # Set up main headline
     print_headline("[b][#63C2C9 Results][/b]: [tests] [b]TESTS:[/b] [total] | [pass] [b][#32CD32 PASSED:][/b] [passed] | [fail] [b][#C93F3F FAILED:][/b] [failed]",
@@ -113,17 +113,17 @@ report_test_results <- function(tiny_results, utf8 = .qol_messages[["format"]][[
             difference <- unlist(strsplit(failed_df[["diff"]][i], "\n"))
 
             # Print out fail block
-            print_message(m_fail, "[info_text]", info_text = info_text)
-            print_message(m_path, 'Line: [line_number], file.edit("[full_path]")', line_number = line_number, full_path = full_path)
-            print_message(m_call, "[expect_call]", expect_call = expect_call)
-            print_message(m_type, "[fail_type]", fail_type = fail_type)
+            print_message(".FAIL", "[info_text]", info_text = info_text)
+            print_message(".PATH", 'Line: [line_number], file.edit("[full_path]")', line_number = line_number, full_path = full_path)
+            print_message(".CALL", "[expect_call]", expect_call = expect_call)
+            print_message(".TYPE", "[fail_type]", fail_type = fail_type)
 
             # Print out formatted difference text or as is depending on failure type
             if (startsWith(difference[1], "Found")){
                 difference <- substr(difference, 1, getOption("width") * 3)
             }
 
-            print_message(m_diff, difference)
+            print_message(".DIFFERENCE", difference)
             cat("\n")
         }
     }

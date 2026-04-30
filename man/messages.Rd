@@ -15,7 +15,8 @@ print_message(
   text,
   ...,
   always_print = FALSE,
-  utf8 = .qol_messages[["format"]][["utf8"]]
+  utf8 = .qol_messages[["format"]][["utf8"]],
+  no_color = .qol_messages[["no_color"]]
 )
 
 print_headline(
@@ -23,14 +24,18 @@ print_headline(
   ...,
   line_char = "=",
   max_width = getOption("width"),
-  always_print = FALSE
+  always_print = FALSE,
+  utf8 = .qol_messages[["format"]][["utf8"]],
+  no_color = .qol_messages[["no_color"]]
 )
 
 print_start_message(
   current_time = Sys.time(),
   caller_color = "#63C2C9",
   always_print = FALSE,
-  suppress = FALSE
+  suppress = FALSE,
+  utf8 = .qol_messages[["format"]][["utf8"]],
+  no_color = .qol_messages[["no_color"]]
 )
 
 print_closing(
@@ -38,27 +43,34 @@ print_closing(
   start_time = .qol_messages[["start_time"]],
   caller_color = "#63C2C9",
   always_print = FALSE,
-  suppress = FALSE
+  suppress = FALSE,
+  utf8 = .qol_messages[["format"]][["utf8"]],
+  no_color = .qol_messages[["no_color"]]
 )
 
 print_step(
   type,
   text,
   ...,
+  in_place = FALSE,
   always_print = FALSE,
-  utf8 = .qol_messages[["format"]][["utf8"]]
+  utf8 = .qol_messages[["format"]][["utf8"]],
+  no_color = .qol_messages[["no_color"]]
 )
 
 set_up_custom_message(
-  ansi_icon = NULL,
-  text_icon = "^",
-  indent = 1,
   type = "UNICORN",
   color = "#FF00FF",
+  ansi_icon = NULL,
+  text_icon = "^",
+  ansi_wait_icon = NULL,
+  text_wait_icon = "?",
+  indent = 1,
   text_bold = FALSE,
   text_italic = FALSE,
   text_underline = FALSE,
-  text_color = NULL
+  text_color = NULL,
+  time_color = "#6B6B6B"
 )
 }
 \arguments{
@@ -74,6 +86,8 @@ these write [NAME YOU PUT IN] in the text.}
 nested situations.}
 
 \item{utf8}{Whether to display complex characters or just plain text.}
+
+\item{no_color}{Whether to display color codes or suppress them.}
 
 \item{line_char}{The character that that forms the line.}
 
@@ -94,13 +108,22 @@ green over yellow to red, depending on the threshold specified (in seconds).}
 \item{start_time}{The time at which the function call started to calculate the
 time difference and output the total time spent.}
 
+\item{in_place}{Prints the step message on the same line as before, instead of in
+the next line. This can e.g. be used inside loops.}
+
+\item{color}{The color of the message type.}
+
 \item{ansi_icon}{The icon used when message is displayed in utf8 mode.}
 
 \item{text_icon}{The icon used when message is displayed in text only mode.}
 
-\item{indent}{How many spaces to indent the message.}
+\item{ansi_wait_icon}{The icon used when a timed message is waiting for the end of
+execution displayed in utf8 mode.}
 
-\item{color}{The color of the message type.}
+\item{text_wait_icon}{The icon used when a timed message is waiting for the end of
+execution displayed in text only mode.}
+
+\item{indent}{How many spaces to indent the message.}
 
 \item{text_bold}{FALSE by default. If TRUE prints the message text in bold letters.}
 
@@ -109,11 +132,13 @@ time difference and output the total time spent.}
 \item{text_underline}{FALSE by default. If TRUE prints the message text underlined.}
 
 \item{text_color}{The color of the actual message text.}
+
+\item{time_color}{The color used for the time stamps.}
 }
 \value{
 Return text without styling or total running time.
 
-\code{\link[=set_up_custom_message]{set_up_custom_message()}}: Returns a list.
+\code{\link[=set_up_custom_message]{set_up_custom_message()}}: Returns the global list of custom messages.
 }
 \description{
 Printing styled messages for different occasions. There are notifications,
@@ -172,20 +197,43 @@ test_func()
 # See what is going on in the message stack
 message_stack <- get_message_stack()
 
+# Print messages on the same line instead of below each other
+in_place_steps <- function(){
+    print_start_message()
+
+    print_step("MAJOR", "Let's get started...")
+
+    for (i in seq_len(10)){
+        print_step("Minor", "This is in place step [i] of 10", i = i, in_place = TRUE)
+        Sys.sleep(0.25)
+    }
+
+    print_step("MAJOR", "Loop has ended")
+
+    print_closing()
+}
+
+in_place_steps()
+
 # Set up a custom message
-hotdog <- set_up_custom_message(ansi_icon = "\U0001f32d",
-                                text_icon = "IOI",
-                                indent    = 1,
-                                type      = "HOTDOG",
-                                color     = "#B27A01")
+set_up_custom_message(type           = "HOTDOG",
+                      color          = "#B27A01",
+                      ansi_icon      = "\U0001f32d",
+                      text_icon      = "IOI",
+                      ansi_wait_icon = "\U00023f1",
+                      text_wait_icon = "/",
+                      indent         = 1)
 
 hotdog_print <- function(){
     print_start_message()
-    print_message(hotdog, c("This is the first hotdog message! Hurray!",
-                            "And it is also multiline in this version."))
-    print_step(hotdog, "Or use as single line message with time stamps.")
-    print_step(hotdog, "Or use as single line message with time stamps.")
-    print_step(hotdog, "Or use as single line message with time stamps.")
+    print_message("HOTDOG", c("This is the first hotdog message! Hurray!",
+                              "And it is also multiline in this version."))
+    print_step("HOTDOG", "Or use as single line message with time stamps.")
+    Sys.sleep(0.5)
+    print_step("HOTDOG", "Or use as single line message with time stamps.")
+    Sys.sleep(0.5)
+    print_step("HOTDOG", "Or use as single line message with time stamps.")
+    Sys.sleep(0.5)
     print_closing()
 }
 
@@ -197,5 +245,5 @@ hotdog_stack <- get_message_stack()
 }
 \seealso{
 Also have a look at the small helpers: \code{\link[=get_message_stack]{get_message_stack()}}, \code{\link[=set_no_print]{set_no_print()}},
-\code{\link[=print_stack_as_messages]{print_stack_as_messages()}}, \code{\link[=convert_square_brackets]{convert_square_brackets()}}
+\code{\link[=set_no_color]{set_no_color()}}, \code{\link[=print_stack_as_messages]{print_stack_as_messages()}}, \code{\link[=convert_square_brackets]{convert_square_brackets()}}
 }

@@ -9,6 +9,31 @@
   functions have been renamed and now have a “.” at the end to prevent
   masking errors in combination with `dplyr`. (28.04.2026)
 
+#### New functionality
+
+- [`set_no_color()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
+  Suppresses the color codes so that messages can be printed clean. The
+  option is auto controlled on load via the system variable `NO_COLOR`
+  but can also be set individually by this function. Console output in
+  e.g. RStudio vs. output to a logging system should be handled
+  automatically rightnow. (25.04.2026, thanks to
+  [@TroyHernandez](https://github.com/TroyHernandez))
+- [`set_up_custom_message()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Waiting symbols as well as the color of the time stamps can now be
+  customized. (25.04.2026)
+- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Now has a new `in_place` parameter, which prints the message on the
+  same line as before, instead of in the next line. This can e.g. be
+  used inside loops as follows. (29.04.2026)
+
+#### Changed functionality
+
+- [`set_up_custom_message()`](https://s3rdia.github.io/qol/reference/messages.md):
+  They way custom messages are set up has slightly changed and will
+  break existing code. Custom message types are now stored globally and
+  are called within quotation marks like all the other built-in message
+  types. See updated README for the new handling. (25.04.2026)
+
 #### Fixed
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
@@ -16,6 +41,9 @@
 - [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): If
   a variable was all NA, a type miss match happend, leading to the
   function beeing aborted. This is fixed now. (24.04.2026)
+- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Waiting character “?” is now drawn as intended in non-utf8 mode.
+  (25.04.2026)
 - [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
   [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),

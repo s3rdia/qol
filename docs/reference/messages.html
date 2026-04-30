@@ -54,7 +54,8 @@ messages. Or just a neutral one.</p>
 <span>  <span class="va">text</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  always_print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span></span>
+<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  no_color <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"no_color"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">print_headline</span><span class="op">(</span></span>
@@ -62,14 +63,18 @@ messages. Or just a neutral one.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  line_char <span class="op">=</span> <span class="st">"="</span>,</span>
 <span>  max_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"width"</span><span class="op">)</span>,</span>
-<span>  always_print <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  always_print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  no_color <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"no_color"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">print_start_message</span><span class="op">(</span></span>
 <span>  current_time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  caller_color <span class="op">=</span> <span class="st">"#63C2C9"</span>,</span>
 <span>  always_print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  suppress <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  suppress <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  no_color <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"no_color"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">print_closing</span><span class="op">(</span></span>
@@ -77,27 +82,34 @@ messages. Or just a neutral one.</p>
 <span>  start_time <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"start_time"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  caller_color <span class="op">=</span> <span class="st">"#63C2C9"</span>,</span>
 <span>  always_print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  suppress <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  suppress <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  no_color <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"no_color"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">print_step</span><span class="op">(</span></span>
 <span>  <span class="va">type</span>,</span>
 <span>  <span class="va">text</span>,</span>
 <span>  <span class="va">...</span>,</span>
+<span>  in_place <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  always_print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span></span>
+<span>  utf8 <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"format"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"utf8"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  no_color <span class="op">=</span> <span class="va">.qol_messages</span><span class="op">[[</span><span class="st">"no_color"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_up_custom_message</span><span class="op">(</span></span>
-<span>  ansi_icon <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  text_icon <span class="op">=</span> <span class="st">"^"</span>,</span>
-<span>  indent <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"UNICORN"</span>,</span>
 <span>  color <span class="op">=</span> <span class="st">"#FF00FF"</span>,</span>
+<span>  ansi_icon <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  text_icon <span class="op">=</span> <span class="st">"^"</span>,</span>
+<span>  ansi_wait_icon <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  text_wait_icon <span class="op">=</span> <span class="st">"?"</span>,</span>
+<span>  indent <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  text_bold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  text_italic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  text_underline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  text_color <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  text_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  time_color <span class="op">=</span> <span class="st">"#6B6B6B"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -126,6 +138,10 @@ nested situations.</p></dd>
 
 <dt id="arg-utf-">utf8<a class="anchor" aria-label="anchor" href="#arg-utf-"></a></dt>
 <dd><p>Whether to display complex characters or just plain text.</p></dd>
+
+
+<dt id="arg-no-color">no_color<a class="anchor" aria-label="anchor" href="#arg-no-color"></a></dt>
+<dd><p>Whether to display color codes or suppress them.</p></dd>
 
 
 <dt id="arg-line-char">line_char<a class="anchor" aria-label="anchor" href="#arg-line-char"></a></dt>
@@ -161,6 +177,15 @@ green over yellow to red, depending on the threshold specified (in seconds).</p>
 time difference and output the total time spent.</p></dd>
 
 
+<dt id="arg-in-place">in_place<a class="anchor" aria-label="anchor" href="#arg-in-place"></a></dt>
+<dd><p>Prints the step message on the same line as before, instead of in
+the next line. This can e.g. be used inside loops.</p></dd>
+
+
+<dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
+<dd><p>The color of the message type.</p></dd>
+
+
 <dt id="arg-ansi-icon">ansi_icon<a class="anchor" aria-label="anchor" href="#arg-ansi-icon"></a></dt>
 <dd><p>The icon used when message is displayed in utf8 mode.</p></dd>
 
@@ -169,12 +194,18 @@ time difference and output the total time spent.</p></dd>
 <dd><p>The icon used when message is displayed in text only mode.</p></dd>
 
 
+<dt id="arg-ansi-wait-icon">ansi_wait_icon<a class="anchor" aria-label="anchor" href="#arg-ansi-wait-icon"></a></dt>
+<dd><p>The icon used when a timed message is waiting for the end of
+execution displayed in utf8 mode.</p></dd>
+
+
+<dt id="arg-text-wait-icon">text_wait_icon<a class="anchor" aria-label="anchor" href="#arg-text-wait-icon"></a></dt>
+<dd><p>The icon used when a timed message is waiting for the end of
+execution displayed in text only mode.</p></dd>
+
+
 <dt id="arg-indent">indent<a class="anchor" aria-label="anchor" href="#arg-indent"></a></dt>
 <dd><p>How many spaces to indent the message.</p></dd>
-
-
-<dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
-<dd><p>The color of the message type.</p></dd>
 
 
 <dt id="arg-text-bold">text_bold<a class="anchor" aria-label="anchor" href="#arg-text-bold"></a></dt>
@@ -192,11 +223,15 @@ time difference and output the total time spent.</p></dd>
 <dt id="arg-text-color">text_color<a class="anchor" aria-label="anchor" href="#arg-text-color"></a></dt>
 <dd><p>The color of the actual message text.</p></dd>
 
+
+<dt id="arg-time-color">time_color<a class="anchor" aria-label="anchor" href="#arg-time-color"></a></dt>
+<dd><p>The color used for the time stamps.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Return text without styling or total running time.</p>
-<p><code>set_up_custom_message()</code>: Returns a list.</p>
+<p><code>set_up_custom_message()</code>: Returns the global list of custom messages.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -210,7 +245,7 @@ different styling operators. These are:</p><ul><li><p>Insert list of elements: [
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Also have a look at the small helpers: <code><a href="message_helpers.html">get_message_stack()</a></code>, <code><a href="message_helpers.html">set_no_print()</a></code>,
-<code><a href="message_helpers.html">print_stack_as_messages()</a></code>, <code><a href="message_helpers.html">convert_square_brackets()</a></code></p></div>
+<code><a href="message_helpers.html">set_no_color()</a></code>, <code><a href="message_helpers.html">print_stack_as_messages()</a></code>, <code><a href="message_helpers.html">convert_square_brackets()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -255,20 +290,43 @@ different styling operators. These are:</p><ul><li><p>Insert list of elements: [
 <span><span class="co"># See what is going on in the message stack</span></span>
 <span><span class="va">message_stack</span> <span class="op">&lt;-</span> <span class="fu"><a href="message_helpers.html">get_message_stack</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Print messages on the same line instead of below each other</span></span>
+<span><span class="va">in_place_steps</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">print_start_message</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">print_step</span><span class="op">(</span><span class="st">"MAJOR"</span>, <span class="st">"Let's get started..."</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="fu">print_step</span><span class="op">(</span><span class="st">"Minor"</span>, <span class="st">"This is in place step [i] of 10"</span>, i <span class="op">=</span> <span class="va">i</span>, in_place <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.25</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="fu">print_step</span><span class="op">(</span><span class="st">"MAJOR"</span>, <span class="st">"Loop has ended"</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">print_closing</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">in_place_steps</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Set up a custom message</span></span>
-<span><span class="va">hotdog</span> <span class="op">&lt;-</span> <span class="fu">set_up_custom_message</span><span class="op">(</span>ansi_icon <span class="op">=</span> <span class="st">"\U0001f32d"</span>,</span>
-<span>                                text_icon <span class="op">=</span> <span class="st">"IOI"</span>,</span>
-<span>                                indent    <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                type      <span class="op">=</span> <span class="st">"HOTDOG"</span>,</span>
-<span>                                color     <span class="op">=</span> <span class="st">"#B27A01"</span><span class="op">)</span></span>
+<span><span class="fu">set_up_custom_message</span><span class="op">(</span>type           <span class="op">=</span> <span class="st">"HOTDOG"</span>,</span>
+<span>                      color          <span class="op">=</span> <span class="st">"#B27A01"</span>,</span>
+<span>                      ansi_icon      <span class="op">=</span> <span class="st">"\U0001f32d"</span>,</span>
+<span>                      text_icon      <span class="op">=</span> <span class="st">"IOI"</span>,</span>
+<span>                      ansi_wait_icon <span class="op">=</span> <span class="st">"\U00023f1"</span>,</span>
+<span>                      text_wait_icon <span class="op">=</span> <span class="st">"/"</span>,</span>
+<span>                      indent         <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">hotdog_print</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="fu">print_start_message</span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="fu">print_message</span><span class="op">(</span><span class="va">hotdog</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is the first hotdog message! Hurray!"</span>,</span>
-<span>                            <span class="st">"And it is also multiline in this version."</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="fu">print_step</span><span class="op">(</span><span class="va">hotdog</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
-<span>    <span class="fu">print_step</span><span class="op">(</span><span class="va">hotdog</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
-<span>    <span class="fu">print_step</span><span class="op">(</span><span class="va">hotdog</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
+<span>    <span class="fu">print_message</span><span class="op">(</span><span class="st">"HOTDOG"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This is the first hotdog message! Hurray!"</span>,</span>
+<span>                              <span class="st">"And it is also multiline in this version."</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu">print_step</span><span class="op">(</span><span class="st">"HOTDOG"</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span></span>
+<span>    <span class="fu">print_step</span><span class="op">(</span><span class="st">"HOTDOG"</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span></span>
+<span>    <span class="fu">print_step</span><span class="op">(</span><span class="st">"HOTDOG"</span>, <span class="st">"Or use as single line message with time stamps."</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span></span>
 <span>    <span class="fu">print_closing</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
