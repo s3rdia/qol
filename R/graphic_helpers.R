@@ -974,7 +974,20 @@ vbar_grob <- function(diagram_info,
     border_color <- visuals[["segment_border_color"]]
     shrink_width <- grid::unit(dimensions[["space_between_bars_pct"]], "pt")
 
-    color_usage <- arguments[["color_usage"]][[diagram_info[["number_of_segments"]]]]
+    # Prevent color usage overflow, when there are more segments than color usage
+    # patterns.
+    color_usage        <- arguments[["color_usage"]]
+    number_of_segments <- diagram_info[["number_of_segments"]]
+
+    if (number_of_segments > length(color_usage)){
+        print_message("WARNING", c("More segments than available colors. Maximum number",
+                                   "of colors will be used."))
+
+        color_usage <- color_usage[[length(color_usage)]]
+    }
+    else{
+        color_usage <- color_usage[[number_of_segments]]
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate rectangles
@@ -990,7 +1003,6 @@ vbar_grob <- function(diagram_info,
         # Get color usage to determine which colors to pick for the specific number
         # of segments
         border_color <- border_color[color_usage]
-        # TODO: PREVENT ERROR IF MORE NUMBER_OF_SEGMENTS THAN ENTRIES IN COLOR_USAGE
 
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
@@ -1761,7 +1773,6 @@ direct_vertical_labels <- function(diagram_info,
         max_value    <- diagram_info[["primary_y_min"]]
     }
 
-    # TODO: MULTILINE GROUP LABELS CAUSE SEGMENT LINE START REACHING INTO THE VALUES
     # Apply offsets to segment start
     segment_start_y <- segment_start_y + offset_y + offset_value
 
