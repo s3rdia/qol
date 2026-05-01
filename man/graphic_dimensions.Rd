@@ -10,7 +10,7 @@ graphic_dimensions(
   diagram_start = "auto",
   diagram_width = "auto",
   diagram_height = "auto",
-  margins = 0.2,
+  margins = 0.25,
   title_font_size = 9,
   footnote_font_size = 8,
   axes_font_size = 9,
@@ -19,8 +19,9 @@ graphic_dimensions(
   origin_font_size = 8,
   other_font_size = 9,
   space_between_bars_pct = 0,
+  bar_overlap = 0,
   line_thickness = 1,
-  segment_line_length = 2,
+  segment_line_length = 1,
   segment_line_offset = 0,
   textbox_width = 2
 )
@@ -52,7 +53,9 @@ graphic_dimensions(
 
 \item{other_font_size}{Font size of every other text element.}
 
-\item{space_between_bars_pct}{The space between adjacent bars in percent.}
+\item{space_between_bars_pct}{The space between adjacent bars.}
+
+\item{bar_overlap}{The factor determines how much bars are overlapping each other.}
 
 \item{line_thickness}{The thickness of lines in points.}
 
