@@ -11,29 +11,27 @@ graphic_fine_tuning(
   diagram_margin = 0.01,
   values_vjust_positive = 1.7,
   values_vjust_negative = -0.7,
-  values_vjust_90_positive = 1.2,
-  values_vjust_90_negative = -0.2,
+  values_vjust_90_positive = 1.1,
+  values_vjust_90_negative = -0.1,
   value_overlap_factor = 1.35,
   shrink_segment_width = 0.5,
   values_rotation = 90,
   values_hjust = 0.5,
   values_hjust_90 = 0.35,
   values_hjust_90_plus = 0.05,
-  values_vjust_90_correction = 5,
   values_zero_line_offset = 0.2,
   values_below_axes_just = 1.5,
   values_below_axes_90_just = 1.4,
   tick_length = 0.02,
   value_axes_margin = 0.02,
   variable_axes_margin = 0.03,
-  value_width_factor = 1.3,
   value_height_factor = 1.5,
   y_axes_scaling = 1.3,
   swap_direction_threshold = 0.75,
-  segment_line_offset = 0.5,
-  segment_line_correction = 2,
+  segment_line_offset = 0.3,
   segment_line_treshhold = 0.95,
   segment_label_hjust = 0.05,
+  max_segment_label_shift = 0.25,
   cm_to_inch_factor = 2.54
 )
 }
@@ -71,9 +69,6 @@ are colored, to prevent the bars from overlapping}
 \item{values_hjust_90_plus}{Additional horizontal adjustment of rotated segment values, if
 drawn inside segments.}
 
-\item{values_vjust_90_correction}{Vertical adjustment correction factor for rotated segment
-values.}
-
 \item{values_zero_line_offset}{Offset to the x axes for 0 values.}
 
 \item{values_below_axes_just}{Adjustment for 0 values, if drawn below x axes.}
@@ -86,8 +81,6 @@ values.}
 
 \item{variable_axes_margin}{Additional margin when measuring the variable axes height.}
 
-\item{value_width_factor}{Scaling factor when measuring value widths.}
-
 \item{value_height_factor}{Scaling factor when measuring value widths.}
 
 \item{y_axes_scaling}{Scaling factor for the y axes, if maximum value is calculated
@@ -98,13 +91,14 @@ the drawing direction is swapped.}
 
 \item{segment_line_offset}{A static offset at which segment lines are drawn.}
 
-\item{segment_line_correction}{Correction factor for the segment line length.}
-
 \item{segment_line_treshhold}{Segment lines won't be drawn further than the maximum
 value multiplied by this factor.}
 
 \item{segment_label_hjust}{Horizontal adjustment of the segment labels if they are drawn
 in stairs.}
+
+\item{max_segment_label_shift}{The maximum percentage of the textbox width the segment
+labels can be shifted to achieve a decollision.}
 
 \item{cm_to_inch_factor}{cm to inc conversion factor.}
 }
