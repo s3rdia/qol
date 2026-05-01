@@ -487,13 +487,13 @@ setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["gr
 #' @rdname viewport
 #'
 #' @export
-setup_nested_viewport <- function(x_pos   = 0,
-                                  y_pos   = 0,
-                                  y_scale = c(0, 1),
-                                  width   = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-                                  height  = .qol_options[["graphic_dimensions"]][["graphic_height"]],
+setup_nested_viewport <- function(x_pos       = 0,
+                                  y_pos       = 0,
+                                  y_scale     = c(0, 1),
+                                  width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+                                  height      = .qol_options[["graphic_dimensions"]][["graphic_height"]],
                                   line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
-                                  name = "nested_viewport"){
+                                  name        = "nested_viewport"){
     # Set up a new nested viewport.
     vp <- grid::viewport(x      = grid::unit(x_pos, "native"),
                          y      = grid::unit(y_pos, "native"),
@@ -559,10 +559,22 @@ setup_nested_diagram_viewport <- function(arguments){
 
     diagram_info[["outer_viewport"]] <- outer_viewport
 
+    # If all values are negative, the group label positions are vertically inverted
+    # later. Which means normally they are drawn below the variable axes (vbars),
+    # but if the values are all negative they are drawn at the top. This means
+    # the viewport has to be set up accordingly and needs to be shifted down by
+    # the size of the group labels.
+    if (diagram_info[["zero_pos"]] != 1){
+        y_pos <- 1
+    }
+    else{
+        y_pos <- 1 - diagram_info[["group_label_height"]]
+    }
+
     # Setup the main inner diagram viewport
     diagram_info[["inner_viewport"]] <-
         setup_nested_viewport(x_pos   = diagram_info[["primary_y_axes_width"]],
-                              y_pos   = grid::unit(1, "native"),
+                              y_pos   = grid::unit(y_pos, "native"),
                               y_scale = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
                                       - diagram_info[["primary_y_axes_width"]],
@@ -1500,11 +1512,18 @@ setup_x_axes <- function(tick_positions,
                          arguments){
     tick_length <- arguments[["fine_tuning"]][["tick_length"]]
 
-    # Ticks point up if the x axes is drawn at the top.
-    # TODO: IN THIS CASE THE VIEWPORT SHOULD BE SET UP DIFFERENTLY BEFOREHAND.
-    #       LABELS SHOULD BE DRAWN AT THE TOP.
-    if (zero_pos == 1){
+    # If all values are negative, the group label positions are vertically inverted.
+    # Which means normally they are drawn below the variable axes (vbars),
+    # but if the values are all negative they are drawn at the top.
+    if (zero_pos != 1){
+        label_y    <- -arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_just <- c("center", "top")
+    }
+    else{
+        # Ticks point up if the x axes is drawn at the top.
         tick_length <- -tick_length
+        label_y     <- 1 + arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_just  <- c("center", "bottom")
     }
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
@@ -1522,8 +1541,8 @@ setup_x_axes <- function(tick_positions,
     # Insert the group labels for the variable axes
     group_labels <- grid::textGrob(label = labels,
                                    x     = label_positions,
-                                   y     = -arguments[["fine_tuning"]][["variable_axes_margin"]],
-                                   just  = c("center", "top"),
+                                   y     = label_y,
+                                   just  = label_just,
                                    gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
                                                       fontfamily = arguments[["visuals"]][["font"]],
                                                       fontsize   = arguments[["dimensions"]][["axes_font_size"]],

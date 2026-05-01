@@ -375,7 +375,8 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param label_font_size Font size of the origin text.
 #' @param origin_font_size Font size of the origin text.
 #' @param other_font_size Font size of every other text element.
-#' @param space_between_bars_pct The space between adjacent bars in percent.
+#' @param space_between_bars_pct The space between adjacent bars.
+#' @param bar_overlap The factor determines how much bars are overlapping each other.
 #' @param line_thickness The thickness of lines in points.
 #' @param segment_line_length The length of the lines leading from segments to labels in cm.
 #' @param segment_line_offset Offset in the height of the leading lines in cm. If 0, all leading lines
@@ -409,7 +410,7 @@ graphic_dimensions <- function(graphic_width          = 16,
                                diagram_start          = "auto",
                                diagram_width          = "auto",
                                diagram_height         = "auto",
-                               margins                = 0.2,
+                               margins                = 0.25,
                                title_font_size        = 9,
                                footnote_font_size     = 8,
                                axes_font_size         = 9,
@@ -418,6 +419,7 @@ graphic_dimensions <- function(graphic_width          = 16,
                                origin_font_size       = 8,
                                other_font_size        = 9,
                                space_between_bars_pct = 0,
+                               bar_overlap            = 0,
                                line_thickness         = 1,
                                segment_line_length    = 1,
                                segment_line_offset    = 0,
