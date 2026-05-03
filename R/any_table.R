@@ -1389,7 +1389,7 @@ any_table <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Tear apart the the summarised data frame by row and column combinations and
+    # Tear apart the summarised data frame by row and column combinations and
     # transpose columns to generate user defined combination. At the end put all
     # the pieces back together to form a fully printable result data frame.
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

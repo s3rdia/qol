@@ -284,7 +284,7 @@ design_graphic <- function(data_frame,
     by <- data_frame |> part_of_df(by)
 
     # Make sure there is no row/column variable that is also a by variable.
-    variables  <- c(axes_variables, segment_vars)
+    variables  <- c(axes_vars, segment_vars)
     by <- resolve_intersection(by, variables, check_only = TRUE)
 
     if (is.list(by)){
@@ -479,7 +479,8 @@ design_graphic <- function(data_frame,
     group_vars <- c(by, variables)
 
     # Put combinations in a single vector
-    combinations <- as.vector(outer(axes_variables, segments, paste, sep = " + "))
+    combinations <- c(axes_variables, sprintf("(%s)", paste(segment_vars, collapse = " ")))
+    combinations <- paste(combinations, collapse = " + ")
 
     # In case by variables are specified, add by to group variables and build
     # additional combinations
@@ -504,7 +505,8 @@ design_graphic <- function(data_frame,
                              notes      = FALSE,
                              na.rm      = na.rm,
                              print_miss = print_miss)) |>
-            collapse::fsubset(TYPE != "total")
+            collapse::fsubset(TYPE != "total") |>
+            fuse_variables("segments", segment_vars)
     }
     else{
         # With pre summarised data just take the input data frame
@@ -615,26 +617,26 @@ design_graphic <- function(data_frame,
     # Round values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Reorder variables according to statistics. This is necessary because pct_value
-    # can only be computed after summarise_plus and therefor isn't ordered.
+    # Reorder variables according to statistics. This is necessary because some
+    # percentages can only be computed after summarise_plus and therefor aren't ordered.
+    if ("pct_group" %in% statistics){
+        graphic_tab <- graphic_tab |> setcolorder_by_pattern(order_pct)
+    }
+
     graphic_tab <- graphic_tab |> setcolorder_by_pattern(statistics)
 
     # Get value variable names
     if (length(by) == 0){
-        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH")
+        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH", "segments")
         value_vars <- graphic_tab |> inverse(var_vector)
     }
     else{
-        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH", "by_vars", "BY")
+        var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH", "by_vars", "BY", "segments")
         value_vars <- graphic_tab |> inverse(var_vector)
     }
 
     # Round values according to number formats
-    for (var_name in names(graphic_tab)){
-        if (!var_name %in% value_vars){
-            next
-        }
-
+    for (var_name in value_vars){
         # Get stat from variable name
         stat <- strsplit(var_name, split = "_")[[1]]
         stat <- stat[length(stat)]
@@ -642,26 +644,65 @@ design_graphic <- function(data_frame,
         # Round values to the decimals places specified in the style
         if (tolower(stat) %in% c("sum", "freq", "freq", "mean", "median", "mode",
                                  "min", "max")){
-            graphic_tab[[var_name]] <- round(graphic_tab[[var_name]],
-                                         number_formats[[paste0(stat, "_decimals")]])
+            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
+                                                    number_formats[[paste0(stat, "_decimals")]])
         }
         else if(stat == "g0"){
-            graphic_tab[[var_name]] <- round(graphic_tab[[var_name]],
-                                         number_formats[["freq_decimals"]])
+            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
+                                                    number_formats[["freq_decimals"]])
         }
         else if(stat == "wgt"){
-            graphic_tab[[var_name]] <- round(graphic_tab[[var_name]],
-                                         number_formats[["sum_decimals"]])
+            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
+                                                    number_formats[["sum_decimals"]])
         }
         else if(grepl("^[0-9]$", substr(stat, 2, 2))){
-            graphic_tab[[var_name]] <- round(graphic_tab[[var_name]],
-                                         number_formats[["p_decimals"]])
+            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
+                                                    number_formats[["p_decimals"]])
         }
         else{
-            graphic_tab[[var_name]] <- round(graphic_tab[[var_name]],
-                                         number_formats[["pct_decimals"]])
+            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
+                                                    number_formats[["pct_decimals"]])
         }
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Sort axes variables if there are expanded combinations. What this does is
+    # putting the combinations together in a way, so that what belongs together is
+    # printed together. Meaning same combination roots are put below each other.
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Sorting order: original not expanded base group, all axes variables
+    # This order keeps the root combinations together but the last variables
+    # apart from another.
+    graphic_tab[["TYPE_ORIG"]] <- sub("\\s*\\+\\s*[^+]*$", "", graphic_tab[["TYPE"]])
+
+    sort_vars <- c("TYPE_ORIG", axes_vars)
+
+    # Get the unique values per variable in order of appearance. This is crucial
+    # to keep the base order as is.
+    levels_list <- lapply(graphic_tab[sort_vars], function(variable){
+        collapse::funique(unlist(variable))
+    })
+
+    # Convert row header variables to factors
+    for (variable in sort_vars){
+        var_levels <- levels_list[[variable]]
+
+        graphic_tab[[variable]] <- factor(graphic_tab[[variable]],
+                                      levels  = var_levels,
+                                      ordered = TRUE,
+                                      exclude = NULL)
+    }
+
+    # Actual sorting
+    data.table::setorderv(graphic_tab, sort_vars)
+    graphic_tab <- graphic_tab |> data.table::setcolorder(axes_vars, before = 1)
+
+    # Convert back to character and drop TYPE variables
+    graphic_tab[sort_vars] <- lapply(graphic_tab[sort_vars], as.character)
+    graphic_tab <- graphic_tab |>
+        drop_type_vars() |>
+        collapse::fselect(-TYPE_ORIG)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
@@ -676,7 +717,7 @@ design_graphic <- function(data_frame,
 
     # In case no by variables are provided
     if (length(by) == 0){
-        graphic_list <- generate_graphic(graphic_tab, axes_vars, segment_vars, statistics,
+        graphic_list <- generate_graphic(graphic_tab, axes_vars, "segments", statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
                                          diagram, color_theme, color_usage, visuals, axes, dimensions,
                                          fine_tuning, add_texts, output, monitor_df = monitor_df)
@@ -686,7 +727,7 @@ design_graphic <- function(data_frame,
     }
     # In case there are  by variables are provided
     else{
-        graphic_list <- generate_graphic_by(graphic_tab, axes_vars, segment_vars, statistics,
+        graphic_list <- generate_graphic_by(graphic_tab, axes_vars, "segments", statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
                                             diagram, color_theme, color_usage, visuals, axes, dimensions,
                                             fine_tuning, add_texts, output, na.rm, print_miss, monitor_df)
