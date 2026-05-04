@@ -22,6 +22,7 @@
 * `compute.()`, `if.()`, `else_if.()`, `else.()`: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)
 * `compute.()`: Doesn't crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)
 * `dummy_data()`: Variable `income_class` was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)
+* `any_table()`: If the `block` keyword was used in `var_labels` parameter and all `block` keywords weren't written in lower case, the column header generation crashed. This is fixed now. (04.05.2026)
 
 ### Additionally
 

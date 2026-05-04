@@ -2469,7 +2469,7 @@ build_multi_header <- function(var_names,
         block_lengths <- rle(root_names)[["lengths"]]
 
         # Generate block headlines
-        block_labels <- var_labels[startsWith(names(var_labels), "block")]
+        block_labels <- var_labels[startsWith(tolower(names(var_labels)), "block")]
         block_labels <- fill_or_trim(block_labels, length(block_lengths))
         block_labels <- rep(block_labels, times = block_lengths)
         block_labels <- data.table::as.data.table(as.list(block_labels), stringsAsFactors = FALSE)

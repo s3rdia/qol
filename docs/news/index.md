@@ -57,6 +57,10 @@
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Variable `income_class` was miss matched in some places due to it
   being generated to early. This is fixed now. (30.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If the `block` keyword was used in `var_labels` parameter and all
+  `block` keywords weren’t written in lower case, the column header
+  generation crashed. This is fixed now. (04.05.2026)
 
 #### Additionally
 
