@@ -65,7 +65,32 @@ dummy_df |>
 expect_true(file.exists(temp_file), info = "Save export_with_style as Excel file")
 
 
+# export_with_style can pass on workbooks
+my_style <- excel_output_style(sheet_name = "tab1")
+
+df1 <- dummy_df |>
+    export_with_style(style = my_style,
+                      print = FALSE)
+
+my_style <- my_style |> modify_output_style(sheet_name = "tab2")
+
+result_list <- dummy_df |>
+    export_with_style(style    = my_style,
+                      workbook = df1,
+                      print    = FALSE)
+
+expect_inherits(result_list, "list", info = "export_with_style can pass on workbooks")
+expect_equal(length(result_list), 3, info = "export_with_style can pass on workbooks")
+
+
+# export_with_style aborts, if invalid workbook is passed
+result_list <- dummy_df |>
+    export_with_style(workbook = list("test" = "test"),
+                      print    = FALSE)
+
+expect_error(print_stack_as_messages("ERROR"), "Workbook object is invalid. You have to provide a workbook object",
+             info = "export_with_style aborts, if invalid workbook is passed")
+
+
 set_style_options(as_heatmap = FALSE)
-
-
 set_no_print()

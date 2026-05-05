@@ -128,6 +128,24 @@ export_with_style <- function(data_frame,
     #-------------------------------------------------------------------------#
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Workbook
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Check whether the whole result list of one of the tabulation functions was passed
+    if (!is.null(workbook) && is.list(workbook)){
+        # If the workbook object is part of the list, extract it
+        if ("workbook" %in% names(workbook)){
+            workbook <- workbook[["workbook"]]
+        }
+        # If the list is some other list without workbook object, abort
+        else{
+            print_message("ERROR", c("Workbook object is invalid. You have to provide a workbook object",
+                                     "created with one of the tabulation functions. Tabulation will be aborted."))
+            return(invisible(NULL))
+        }
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

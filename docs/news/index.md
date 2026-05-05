@@ -25,6 +25,13 @@
   Now has a new `in_place` parameter, which prints the message on the
   same line as before, instead of in the next line. This can e.g. be
   used inside loops as follows. (29.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  If the whole result list from these functions is passed for the
+  `workbook` parameter, the functions now are able to extract the actual
+  workbook from the list and run without error. Additionally if a list
+  is passed, which is not a result list containing the workbook, the
+  functions error and abort execution. (05.05.2026)
 
 #### Changed functionality
 
@@ -76,6 +83,8 @@
 ## qol 1.3.0
 
 CRAN release: 2026-04-18
+
+CRAN release on 18.04.2026
 
 #### New functions
 
@@ -410,6 +419,8 @@ CRAN release: 2026-04-18
 
 CRAN release: 2026-03-10
 
+CRAN release on 10.03.2026
+
 #### New functions
 
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md):
@@ -504,6 +515,8 @@ CRAN release: 2026-03-10
 ## qol 1.2.1
 
 CRAN release: 2026-02-11
+
+CRAN release on 11.02.2026
 
 #### New functions
 

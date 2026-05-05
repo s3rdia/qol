@@ -9,6 +9,7 @@
 * `set_no_color()`: Suppresses the color codes so that messages can be printed clean. The option is auto controlled on load via the system variable `NO_COLOR` but can also be set individually by this function. Console output in e.g. RStudio vs. output to a logging system should be handled automatically rightnow. (25.04.2026, thanks to @TroyHernandez)
 * `set_up_custom_message()`: Waiting symbols as well as the color of the time stamps can now be customized. (25.04.2026)
 * `print_step()`: Now has a new `in_place` parameter, which prints the message on the same line as before, instead of in the next line. This can e.g. be used inside loops as follows. (29.04.2026)
+* `any_table()`, `export_with_style()`: If the whole result list from these functions is passed for the `workbook` parameter, the functions now are able to extract the actual workbook from the list and run without error. Additionally if a list is passed, which is not a result list containing the workbook, the functions error and abort execution. (05.05.2026)
 
 ### Changed functionality
 
@@ -30,6 +31,8 @@
 * `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing. (23.04.2026)
 
 # qol 1.3.0
+
+CRAN release on 18.04.2026
 
 ### New functions
 
@@ -131,6 +134,8 @@
 
 # qol 1.2.2
 
+CRAN release on 10.03.2026
+
 ### New functions
 
 * `round_values()`: Rounds values according to the round half up rule. (20.02.2026)
@@ -177,6 +182,8 @@
 * `frequencies()`: Fixed two of the examples where `list` was missing in formats parameter. (14.02.2026)
 
 # qol 1.2.1
+
+CRAN release on 11.02.2026
 
 ### New functions
 
