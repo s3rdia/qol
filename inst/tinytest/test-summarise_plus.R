@@ -669,10 +669,10 @@ expect_true(all(c("Total",
 
 # Apply single interval label
 income. <- interval_format(
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "below 500"          =    0:500,
+    "500 to under 1000"  =  500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(income),
@@ -692,11 +692,11 @@ expect_true(all(c("below 500",
 
 # Apply interval multilabel
 income. <- interval_format(
-    "Total"              = 0:99999,
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "Total"              =    0:100000,
+    "below 500"          =    0:500,
+    "500 to under 1000"  =  500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 format_df <- dummy_df |>
     summarise_plus(class      = c(income),

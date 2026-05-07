@@ -26,10 +26,10 @@ expect_true(length(unique(test_df2[["age_group"]])) <= 6, info = "Recode discret
 
 # Recode interval values into groups with all values covered
 income. <- interval_format(
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 test_df2 <- test_df
 test_df2 <- test_df2 |> collapse::fsubset(!is.na(income))
@@ -42,10 +42,10 @@ expect_true(length(unique(test_df2[["income_group"]])) <= 5, info = "Recode inte
 
 # Recode interval values with NA values
 income. <- interval_format(
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 test_df2 <- test_df
 test_df2[["income_group"]] <- test_df2 |> recode.(income = income.)
@@ -73,9 +73,9 @@ expect_true(unique_age_group >= 4 & unique_age_group < unique_age, info = "Recod
 
 # Recode interval values into groups with not all values covered
 income. <- interval_format(
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999)
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000)
 
 test_df2 <- test_df
 test_df2 <- test_df2 |> collapse::fsubset(!is.na(income))
@@ -173,11 +173,11 @@ expect_true(collapse::fnrow(recode_df) > collapse::fnrow(test_df),  info = "Reco
 
 # Recode a variable with a multilabel format (interval)
 income. <- interval_format(
-    "Total"              = 0:99999,
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "Total"              = 0:100000,
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 recode_df <- test_df |> recode_multi(income = income.)
 
@@ -195,11 +195,11 @@ age. <- discrete_format(
     "65 and older"   = 65:100)
 
 income. <- interval_format(
-    "Total"              = 0:99999,
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "Total"              = 0:100000,
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 recode_df <- test_df |> recode_multi(age = age., income = income.)
 

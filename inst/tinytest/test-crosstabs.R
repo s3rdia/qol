@@ -189,11 +189,11 @@ format_df <- dummy_df |>
     crosstabs(rows    = income,
               columns = sex,
               formats = list(income = interval_format(
-                    "Total"              = 0:99999,
-                    "below 500"          = 0:499,
-                    "500 to under 1000"  = 500:999,
-                    "1000 to under 2000" = 1000:1999,
-                    "2000 and more"      = 2000:99999)),
+                    "Total"              = 0:100000,
+                    "below 500"          = 0:500,
+                    "500 to under 1000"  = 500:1000,
+                    "1000 to under 2000" = 1000:2000,
+                    "2000 and more"      = 2000:100000)),
               print   = FALSE)
 
 expect_true(all(c("Total", "below 500", "2000 and more")

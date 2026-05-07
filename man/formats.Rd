@@ -8,18 +8,25 @@
 \usage{
 discrete_format(...)
 
-interval_format(...)
+interval_format(..., include_lower = TRUE, include_upper = FALSE)
 }
 \arguments{
-\item{...}{List all the desired recodings/recoding ranges. Every element contains a text for
+\item{...}{List all the desired recodings/recoding ranges. Every element containsa text for
 the new category name and the values/value ranges which should be recoded into this new category.}
+
+\item{include_lower}{TRUE by default. Whether to include lower bound value in
+interval formats.}
+
+\item{include_upper}{FALSE by default. Whether to include upper bound value in
+interval formats.}
 }
 \value{
 Returns a data table which contains the values/value ranges with the corresponding labels
 }
 \description{
 Create a format container which stores discrete or interval values
-with corresponding labels that can be applied by using \code{\link[=summarise_plus]{summarise_plus()}}.
+with corresponding labels that can be applied by using functions capable of
+using formats.
 
 Create a format container independent from any data frame. Define which values
 should be recoded into which new categories, if the format is applied to
@@ -77,11 +84,11 @@ education. <- discrete_format(
     "high education"   = "high")
 
 income. <- interval_format(
-    "Total"              = 0:99999,
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "Total"              =    0:100000,
+    "below 500"          =    0:500,
+    "500 to under 1000"  =  500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 state. <- discrete_format(
     "Germany"                       = 1:16,
@@ -116,14 +123,14 @@ age. <- discrete_format(
 # know exactly what the lowest and highest values are.
 income. <- interval_format(
     "Total"              = c("low", "high"),
-    "below 500"          = c("low", 499),
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
+    "below 500"          = c("low", 500),
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
     "2000 and more"      = c(2000, "high"))
 
 }
 \seealso{
 Functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}},
-\code{\link[=any_table]{any_table()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}.
+\code{\link[=any_table]{any_table()}}, \code{\link[=recode.]{recode.()}}, \code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}.
 }
 \keyword{internal}

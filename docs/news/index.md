@@ -40,6 +40,14 @@
   break existing code. Custom message types are now stored globally and
   are called within quotation marks like all the other built-in message
   types. See updated README for the new handling. (25.04.2026)
+- [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  The function had a flaw in that it always included the lower and upper
+  bound values. The “workaround” in the examples to pass bounds like
+  e.g. 0:499, 500:999, would miss values between 499 and 500 or 999
+  and 1000. The function now got two new parameters `inlcude_lower`
+  (TRUE) and `include_upper` (FALSE), which by default read as “from …
+  to under …”. Which means bounds can be passed like 0:500, 500:1000
+  without overlapping. (07.05.2026)
 
 #### Fixed
 

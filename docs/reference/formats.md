@@ -1,8 +1,8 @@
 # Create Format Container
 
 Create a format container which stores discrete or interval values with
-corresponding labels that can be applied by using
-[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md).
+corresponding labels that can be applied by using functions capable of
+using formats.
 
 Create a format container independent from any data frame. Define which
 values should be recoded into which new categories, if the format is
@@ -15,16 +15,26 @@ recommended to let format names end with a dot to make them stand out.
 ``` r
 discrete_format(...)
 
-interval_format(...)
+interval_format(..., include_lower = TRUE, include_upper = FALSE)
 ```
 
 ## Arguments
 
 - ...:
 
-  List all the desired recodings/recoding ranges. Every element contains
-  a text for the new category name and the values/value ranges which
-  should be recoded into this new category.
+  List all the desired recodings/recoding ranges. Every element
+  containsa text for the new category name and the values/value ranges
+  which should be recoded into this new category.
+
+- include_lower:
+
+  TRUE by default. Whether to include lower bound value in interval
+  formats.
+
+- include_upper:
+
+  FALSE by default. Whether to include upper bound value in interval
+  formats.
 
 ## Value
 
@@ -72,6 +82,7 @@ Functions that can handle formats:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md),
 [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md).
@@ -99,11 +110,11 @@ education. <- discrete_format(
     "high education"   = "high")
 
 income. <- interval_format(
-    "Total"              = 0:99999,
-    "below 500"          = 0:499,
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
-    "2000 and more"      = 2000:99999)
+    "Total"              =    0:100000,
+    "below 500"          =    0:500,
+    "500 to under 1000"  =  500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
 
 state. <- discrete_format(
     "Germany"                       = 1:16,
@@ -138,8 +149,8 @@ age. <- discrete_format(
 # know exactly what the lowest and highest values are.
 income. <- interval_format(
     "Total"              = c("low", "high"),
-    "below 500"          = c("low", 499),
-    "500 to under 1000"  = 500:999,
-    "1000 to under 2000" = 1000:1999,
+    "below 500"          = c("low", 500),
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
     "2000 and more"      = c(2000, "high"))
 ```
