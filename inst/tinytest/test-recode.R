@@ -42,15 +42,27 @@ expect_true(length(unique(test_df2[["income_group"]])) <= 5, info = "Recode inte
 
 # Recode interval values with NA values
 income. <- interval_format(
-    "below 500"          = 0:500,
-    "500 to under 1000"  = 500:1000,
-    "1000 to under 2000" = 1000:2000,
-    "2000 and more"      = 2000:100000)
+    "00. no income"          = 0,
+    "01.         under  500" = c(0.000001, 500),
+    "02.  500 to under 1000" =  500:1000,
+    "03. 1000 to under 1500" = 1000:1500,
+    "04. 1500 to under 2000" = 1500:2000,
+    "05. 2000 to under 2500" = 2000:2500,
+    "06. 2500 to under 3000" = 2500:3000,
+    "07. 3000 to under 3500" = 3000:3500,
+    "08. 3500 to under 4000" = 3500:4000,
+    "09. 4000 to under 4500" = 4000:4500,
+    "10. 4500 to under 5000" = 4500:5000,
+    "11. 5000 and more"      = c(5000, "high"),
+    "99. Total"              = c("low", "high"))
 
 test_df2 <- test_df
 test_df2[["income_group"]] <- test_df2 |> recode.(income = income.)
 
-expect_error(print_stack_as_messages("ERROR"), "Variable 'income' has NA values", info = "Recode interval values with NA values")
+expect_equal(test_df2[["income_class"]], test_df2[["income_group"]],
+             info = "Recode interval values into groups with all values covered")
+expect_warning(print_stack_as_messages("WARNING"), "The format for 'income' is a multilabel. A multilabel can't be fully applied in recode.",
+               info = "Recode interval values with NA values")
 
 
 # Recode discrete values into groups with not all values covered

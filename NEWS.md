@@ -13,8 +13,9 @@
 
 ### Changed functionality
 
-* `set_up_custom_message()`: They way custom messages are set up has slightly changed and will break existing code. Custom message types are now stored globally and are called within quotation marks like all the other built-in message types. See updated README for the new handling. (25.04.2026)
+* `set_up_custom_message()`: The way custom messages are set up has slightly changed and will break existing code. Custom message types are now stored globally and are called within quotation marks like all the other built-in message types. See updated README for the new handling. (25.04.2026)
 * `interval_format()`: The function had a flaw in that it always included the lower and upper bound values. The "workaround" in the examples to pass bounds like e.g. 0:499, 500:999, would miss values between 499 and 500 or 999 and 1000. The function now got two new parameters `inlcude_lower` (TRUE) and `include_upper` (FALSE), which by default read as "from ... to under ...". Which means bounds can be passed like 0:500, 500:1000 without overlapping. (07.05.2026)
+* `recode.()`: Interval formats can now be applied even though a variable has NA values. NA values are taken care of automatically instead of the function aborting with an error. Additionally multilabels are reduced so that no additional observations are created. (08.05.2026)
 
 ### Fixed
 
@@ -25,6 +26,8 @@
 * `compute.()`: Doesn't crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)
 * `dummy_data()`: Variable `income_class` was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)
 * `any_table()`: If the `block` keyword was used in `var_labels` parameter and all `block` keywords weren't written in lower case, the column header generation crashed. This is fixed now. (04.05.2026)
+* `interval_format()`: Now preserves single values. (08.05.2026)
+* `dummy_data()`: `person_id` is now adjusted after taking sample to have continuous numbers. (08.05.2026)
 
 ### Additionally
 

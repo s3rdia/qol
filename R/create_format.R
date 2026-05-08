@@ -235,9 +235,12 @@ interval_format <- function(...,
 
         # Low always ends up in "to", because it is a character value and comes alphabetically after high
         if ("low" %in% tolower(to)){
-            # Swap the real not "low" value to "to" and insert a pseudo low number in "from"
-            to[tolower(to) == "low"]           <- from[tolower(to) == "low"]
-            from[tolower(from) == tolower(to)] <- -.Machine[["double.xmax"]]
+            # Swap the real not "low" value to "to" and insert a pseudo low number in "from".
+            # Capture the original "low" positions first, to just replace these and
+            # preserve single value entries.
+            low_entries              <- to == "low"
+            to[tolower(to) == "low"] <- from[tolower(to) == "low"]
+            from[low_entries & tolower(from) == tolower(to)] <- -.Machine[["double.xmax"]]
 
             from <- as.numeric(from)
         }
@@ -254,14 +257,18 @@ interval_format <- function(...,
         to <- as.numeric(to)
     }
 
+    # Get positions where "from" and "to" are equal. This is necessary to capture
+    # occasions were a single value and not a range should be included in the format.
+    single_value <- from == to
+
     # Add the smallest piece to "from" in case lower bound should not be included
     if (!include_lower){
-        from <- from - .Machine[["double.eps"]] * 1000
+        from[!single_value] <- from[!single_value] - .Machine[["double.eps"]] * 1000
     }
 
     # Subtract the smallest piece from "to" in case upper bound should not be included
     if (!include_upper){
-        to <- to - .Machine[["double.eps"]] * 1000
+        to[!single_value] <- to[!single_value] - .Machine[["double.eps"]] * 1000
     }
 
     print_closing()

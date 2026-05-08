@@ -65,7 +65,7 @@ dummy_data <- function(no_obs    = 25000,
     # Randomly generate sixteen states
     dummy_temp[["state"]] <- as.integer(rep(sample(1:16, number_of_households,
                                                    replace = TRUE, prob = state_probs),
-                                                   times   = persons_per_household))
+                                            times   = persons_per_household))
 
     # Save the original number of observations to later trim the data frame to this number
     orig_obs <- no_obs
@@ -204,7 +204,7 @@ dummy_data <- function(no_obs    = 25000,
     # Generate basic body height around fixed "maximum" values
     dummy_temp[["body_height"]] <- stats::rnorm(no_obs, data.table::fifelse(dummy_temp[["sex"]] == 1,
                                                                             178, 165),
-                                         7) * growth_factor
+                                                7) * growth_factor
 
     # Generate smaller and bigger spikes in steps of five and ten
     probs <- stats::runif(no_obs)
@@ -313,6 +313,15 @@ dummy_data <- function(no_obs    = 25000,
                                  verbose  = FALSE,
 								 overid   = 2)
 
+    # Reduce observations to desired number of observations
+    random_sample <- sort(sample.int(collapse::fnrow(dummy_temp), orig_obs))
+    dummy_temp    <- dummy_temp |> collapse::fsubset(random_sample)
+
+    # Readjust person_id and first_person in household marker because of the sample above
+    renumber                     <- data.table::rleid(dummy_temp[["household_id"]])
+    dummy_temp[["person_id"]]    <- sequence(tabulate(renumber))
+    dummy_temp[["first_person"]] <- data.table::fifelse(dummy_temp[["person_id"]] == 1, 1, 0)
+
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Advance values")
     #-------------------------------------------------------------------------#
@@ -334,7 +343,7 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp[["body_weight"]] <- as.integer(data.table::fifelse(
         dummy_temp[["year"]] > start_year & dummy_temp[["age"]] < 18,
         dummy_temp[["body_weight"]] + (dummy_temp[["age_factor"]] * dummy_temp[["income_factor"]] * 5),
-        pmax(5, dummy_temp[["body_weight"]] + sample(-10:10, no_obs, replace = TRUE))))
+        pmax(5, dummy_temp[["body_weight"]] + sample(-10:10, orig_obs, replace = TRUE))))
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Generate income classes")
@@ -356,14 +365,15 @@ dummy_data <- function(no_obs    = 25000,
     #-------------------------------------------------------------------------#
     print_step("MAJOR", "Finish")
 
-    random_sample <- sort(sample.int(collapse::fnrow(dummy_temp), orig_obs))
+    dummy_temp[["first_person"]] <- as.integer(dummy_temp[["first_person"]])
+    dummy_temp[["sex"]]          <- as.integer(dummy_temp[["sex"]])
+    dummy_temp[["age"]]          <- as.integer(dummy_temp[["age"]])
 
-    dummy_temp <- dummy_temp |> collapse::fsubset(random_sample) |>
-        keep("year", "state", "NUTS2", "NUTS3", "household_id", "person_id",
-             "number_of_persons", "first_person", "age",
-             "sex", "education", "body_height", "body_weight",
-             "income_class", "income", "expenses", "balance", "probability",
-             "weight", "weight_per_year", order_vars = TRUE)
+    dummy_temp <- dummy_temp |> keep("year", "state", "NUTS2", "NUTS3", "household_id", "person_id",
+                                     "number_of_persons", "first_person", "age",
+                                     "sex", "education", "body_height", "body_weight",
+                                     "income_class", "income", "expenses", "balance", "probability",
+                                     "weight", "weight_per_year", order_vars = TRUE)
 
     print_closing(5)
 

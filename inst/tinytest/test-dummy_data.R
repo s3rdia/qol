@@ -25,4 +25,9 @@ test_df <- dummy_data(1000)
 expect_equal(nrow(test_df), 1000, info = "Create dummy data with 100 observations")
 
 
+# Dummy data first_person has always person_id 1
+first <- test_df |> collapse::fsubset(first_person == 1)
+expect_equal(collapse::funique(first[["person_id"]]), 1, info = "Dummy data first_person has always person_id 1")
+
+
 set_no_print()
