@@ -174,7 +174,7 @@ design_graphic <- function(data_frame,
                            add_texts      = .qol_options[["graphic_texts"]],
                            output         = .qol_options[["graphic_output"]],
                            na.rm          = .qol_options[["na.rm"]],
-                           print_miss     = .qol_options[["print_miss"]],
+                           print_miss     = .qol_options[["print_miss"]], # REMOVE?
                            print          = .qol_options[["print"]],
                            monitor        = .qol_options[["monitor"]]){
 
@@ -504,9 +504,17 @@ design_graphic <- function(data_frame,
                              types      = combinations,
                              notes      = FALSE,
                              na.rm      = na.rm,
-                             print_miss = print_miss)) |>
+                             print_miss = TRUE)) |>
             collapse::fsubset(TYPE != "total") |>
             fuse_variables("segments", segment_vars)
+
+        # Convert missing values to 0
+        value_vars <- graphic_tab |> inverse(c(group_vars, "TYPE", "TYPE_NR", "DEPTH", "segments"))
+
+        graphic_tab[value_vars] <- lapply(graphic_tab[value_vars], function(variable){
+            variable[is.na(variable)] <- 0
+            variable
+        })
     }
     else{
         # With pre summarised data just take the input data frame
