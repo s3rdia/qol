@@ -565,10 +565,29 @@ setup_nested_diagram_viewport <- function(arguments){
     # the viewport has to be set up accordingly and needs to be shifted down by
     # the size of the group labels.
     if (diagram_info[["zero_pos"]] != 1){
-        y_pos <- 1
+        # In case of just one group layer, the viewport will be drawn at the top
+        if (length(diagram_info[["group_label_heights"]]) == 1){
+            y_pos <- 1
+        }
+        # If there are more group layers, subtract the first layer height from the
+        # top, because the first layer will be drawn at the top, alls others below
+        # the axes.
+        else{
+            y_pos <- 1 - diagram_info[["group_label_heights"]][1]
+        }
     }
     else{
-        y_pos <- 1 - diagram_info[["group_label_height"]]
+        # In case of just one group layer, the viewport will be shifted down by
+        # the height of this layer.
+        if (length(diagram_info[["group_label_heights"]]) == 1){
+            y_pos <- 1 - diagram_info[["group_label_heights"]][1]
+        }
+        # If there are more group layers, subtract the first layer height from the
+        # overall height, because the first layer will be drawn at the bottom, not
+        # at the top like the others.
+        else{
+            y_pos <- 1 - (diagram_info[["entire_group_label_height"]] - diagram_info[["group_label_heights"]][1])
+        }
     }
 
     # Setup the main inner diagram viewport
@@ -578,7 +597,7 @@ setup_nested_diagram_viewport <- function(arguments){
                               y_scale = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
                               width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
                                       - diagram_info[["primary_y_axes_width"]],
-                              height  = 1 - diagram_info[["group_label_height"]],
+                              height  = 1 - diagram_info[["entire_group_label_height"]],
                               line_height = arguments[["fine_tuning"]][["line_height"]],
                               name    = "main_diagram")
 
@@ -741,6 +760,7 @@ get_diagram_dimensions <- function(graphic_tab,
                                    fine_tuning = .qol_options[["graphic_fine_tuning"]]){
     values <- graphic_tab[[values]]
     # TODO: WHAT IF MULTIPLE VARIABLES ARE PASSED OR "age + sex" COMBINATIONS?
+    # TODO: HOW TO HANDLE ARBITRARY NUMBER OF SEGMENTS PER GROUP?
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Basic horizontal positioning for vbars
@@ -749,17 +769,37 @@ get_diagram_dimensions <- function(graphic_tab,
     # Get the unique values of the axes and segment variables to determine their
     # actual numbers. This is needed to measure the space each group and each
     # segment takes.
-    unique_groups      <- graphic_tab[[axes_vars]] |> as.character() |> collapse::funique()
+    unique_groups      <- do.call(paste, c(graphic_tab[axes_vars], sep = "_")) |> collapse::funique()
     number_of_groups   <- length(unique_groups)
     unique_segments    <- graphic_tab[[segment_vars]] |> as.character() |> collapse::funique()
     number_of_segments <- length(unique_segments)
     number_of_elements <- number_of_groups * number_of_segments
+
+    # Now get the group elements per axes variable to draw them in their individual
+    # space later.
+    individual_groups <- lapply(graphic_tab[axes_vars], function(variable){
+        variable |> collapse::funique()
+    })
+
+    individual_number_of_groups <- sapply(individual_groups, length)
+
+    for (i in seq_along(individual_groups)){
+        if (i == 1){
+            next
+        }
+
+        individual_number_of_groups[i] <- length(individual_groups[[i]]) * individual_number_of_groups[i - 1]
+    }
 
     # Actual space calculation. Add margins for the whole graphic and the individual
     # groups to give everything a bit air to breathe.
     margin        <- fine_tuning[["diagram_margin"]]
     group_width   <- 1 / number_of_groups
     segment_width <- (group_width - (margin * 2)) / number_of_segments
+
+    individual_group_widths <- vapply(individual_number_of_groups, function(no_of_groups){
+        1 / no_of_groups
+    }, numeric(1))
 
     # First get the group numbers zero based, then the segment numbers within
     # each group also zero based. Finally calculate all starting x positions of
@@ -885,18 +925,53 @@ get_diagram_dimensions <- function(graphic_tab,
     # Label positioning
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Calculate the positions of the group labels
-    group_label_pos <- (collapse::funique(group_ids) * group_width) + (group_width * 0.5)
+    # Calculate the positions of the group labels. This is done for each individual
+    # group layer.
+    group_label_x_pos    <- list()
+    group_label_y_pos    <- c()
+    wrapped_group_labels <- list()
+    group_label_heights  <- c()
 
-    # Format group labels on variable x axes
-    wrapped_group_labels <- wrap_text_vector(unique_groups,
-                                             group_width - (margin * 2),
-                                             visuals[["font"]],
-                                             dimensions[["axes_font_size"]],
-                                             visuals[["axes_font_face"]])
+    for (i in seq_along(individual_number_of_groups)){
+        # Get the centered positions where to draw the group labels
+        group_label_x_pos[[i]] <- ((seq_len(individual_number_of_groups[i]) - 1) * individual_group_widths[i]) + (individual_group_widths[i] * 0.5)
 
-    # Get dimensions of group labels
-    group_label_height <- get_variable_axes_height(wrapped_group_labels, dimensions, visuals, fine_tuning)
+        # Format group labels on variable x axes
+        wrapped_group_labels[[i]] <- wrap_text_vector(individual_groups[[i]],
+                                                      individual_group_widths[i] - (margin * 2),
+                                                      visuals[["font"]],
+                                                      dimensions[["axes_font_size"]],
+                                                      visuals[["axes_font_face"]])
+
+        # Get dimensions of group labels
+        group_label_heights[i] <- get_variable_axes_height(wrapped_group_labels[[i]], dimensions, visuals, fine_tuning)
+
+        # Calculate y positions for multi layered group labels
+        if (i <= 2){
+            group_label_y_pos[i] <- 0
+        }
+        else{
+            group_label_y_pos[i] <- group_label_heights[i] + (fine_tuning[["variable_axes_margin"]] * (i - 1)) + group_label_y_pos[i - 1]
+        }
+    }
+
+    # In case there are more than three group layers, the order of the layers below
+    # the axes has to be reversed so that they are drawn in the correct order,
+    # meaning the broadest at the bottom and the finest at the top.
+    if (length(group_label_x_pos) > 2){
+        group_label_x_pos    <- c(group_label_x_pos[1],    rev(group_label_x_pos[-1]))
+        wrapped_group_labels <- c(wrapped_group_labels[1], rev(wrapped_group_labels[-1]))
+        group_label_heights  <- c(group_label_heights[1],  rev(group_label_heights[-1]))
+    }
+
+    # Change symbol of y positions because group label layers are drawn from top to bottom
+    group_label_y_pos <- -group_label_y_pos
+
+    # Marker whether we deal with multi layered grouping labels
+    is_multi_group_label <- length(group_label_x_pos) > 1
+
+    # Determine the height of the entire grouping labels
+    entire_group_label_height <- collapse::fsum(group_label_heights) + (margin * (length(group_label_heights) - 1))
 
     # Get tick positions
     group_ticks_pos_x <- get_group_tick_positions_x(number_of_groups, number_of_segments,
@@ -917,11 +992,14 @@ get_diagram_dimensions <- function(graphic_tab,
     # Return information as list
     list(values                      = values,
          unique_groups               = unique_groups,
+         individual_groups           = individual_groups,
          number_of_groups            = number_of_groups,
+         individual_number_of_groups = individual_number_of_groups,
          unique_segments             = unique_segments,
          number_of_segments          = number_of_segments,
          number_of_elements          = number_of_elements,
          group_width                 = group_width,
+         individual_group_widths     = individual_group_widths,
          segment_width               = segment_width,
          running_nr                  = running_nr,
          group_ids                   = group_ids,
@@ -940,12 +1018,15 @@ get_diagram_dimensions <- function(graphic_tab,
          values_outer_vjust          = values_outer_vjust,
          values_x_pos                = values_x_pos,
          values_fit_vertical         = values_fit_vertical,
-         group_label_pos             = group_label_pos,
+         group_label_x_pos           = group_label_x_pos,
+         group_label_y_pos           = group_label_y_pos,
          wrapped_group_labels        = wrapped_group_labels,
-         group_label_height          = group_label_height,
+         group_label_heights         = group_label_heights,
+         entire_group_label_height   = entire_group_label_height,
          group_ticks_pos_x           = group_ticks_pos_x,
          segment_label_textbox_width = segment_label_textbox_width,
-         wrapped_segment_labels      = wrapped_segment_labels)
+         wrapped_segment_labels      = wrapped_segment_labels,
+         is_multi_group_label        = is_multi_group_label)
 }
 
 
@@ -1510,32 +1591,45 @@ setup_y_axes <- function(tick_positions,
 #' is not on the y axes then the x axes will either be drawn at the bottom, if only
 #' positive values are present, or at the top, if only negative values are present.
 #'
-#' @param label_positions The positions the labels will be drawn at.
-#' @param labels The labels per tick or per segment group.
-#' @param zero_pos The y axes 0 position at which the x axes is drawn.
+#' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
 #'
 #' @rdname axes
 #'
 #' @export
-setup_x_axes <- function(tick_positions,
-                         label_positions,
-                         labels,
-                         zero_pos,
+setup_x_axes <- function(diagram_info,
                          arguments){
-    tick_length <- arguments[["fine_tuning"]][["tick_length"]]
+    tick_length          <- arguments[["fine_tuning"]][["tick_length"]]
+    tick_positions       <- diagram_info[["group_ticks_pos_x"]]
+    label_x_positions    <- diagram_info[["group_label_x_pos"]]
+    label_y_positions    <- diagram_info[["group_label_y_pos"]]
+    labels               <- diagram_info[["wrapped_group_labels"]]
+    zero_pos             <- diagram_info[["zero_pos"]]
+    is_multi_group_label <- diagram_info[["is_multi_group_label"]]
 
     # If all values are negative, the group label positions are vertically inverted.
     # Which means normally they are drawn below the variable axes (vbars),
     # but if the values are all negative they are drawn at the top.
     if (zero_pos != 1){
-        label_y    <- -arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_y    <- label_y_positions - arguments[["fine_tuning"]][["variable_axes_margin"]]
         label_just <- c("center", "top")
+
+        # The first layer of multi layered group labels is drawn at the top of the
+        # diagram, not below the axes.
+        if (is_multi_group_label){
+            label_y[[1]] <- 1 + diagram_info[["group_label_heights"]][1] + arguments[["fine_tuning"]][["variable_axes_margin"]]
+        }
     }
     else{
         # Ticks point up if the x axes is drawn at the top.
         tick_length <- -tick_length
-        label_y     <- 1 + arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_y     <- 1 - label_y_positions + arguments[["fine_tuning"]][["variable_axes_margin"]]
         label_just  <- c("center", "bottom")
+
+        # The first layer of multi layered group labels is drawn at the bottom of the
+        # diagram, not on top of the axes.
+        if (is_multi_group_label){
+            label_y[[1]] <- -diagram_info[["group_label_heights"]][1] - arguments[["fine_tuning"]][["variable_axes_margin"]]
+        }
     }
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
@@ -1551,15 +1645,34 @@ setup_x_axes <- function(tick_positions,
                                 gp = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
 
     # Insert the group labels for the variable axes
-    group_labels <- grid::textGrob(label = labels,
-                                   x     = label_positions,
-                                   y     = label_y,
-                                   just  = label_just,
-                                   gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
-                                                      fontfamily = arguments[["visuals"]][["font"]],
-                                                      fontsize   = arguments[["dimensions"]][["axes_font_size"]],
-                                                      fontface   = arguments[["visuals"]][["axes_font_face"]],
-                                                      lineheight = arguments[["fine_tuning"]][["line_height"]]))
+    if (!is_multi_group_label){
+        group_labels <- grid::textGrob(label = labels[[1]],
+                                       x     = label_x_positions[[1]],
+                                       y     = label_y,
+                                       just  = label_just,
+                                       gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
+                                                          fontfamily = arguments[["visuals"]][["font"]],
+                                                          fontsize   = arguments[["dimensions"]][["axes_font_size"]],
+                                                          fontface   = arguments[["visuals"]][["axes_font_face"]],
+                                                          lineheight = arguments[["fine_tuning"]][["line_height"]]))
+    }
+    # In case of multi layer group labels capture the single individual graphic objects
+    # in a glist.
+    else{
+        # TODO: Insert vertical lines to separate group layers
+        group_labels <- do.call(grid::gList, mapply(function(labels, x_positions, y_positions, i){
+            grid::textGrob(label = labels,
+                           x     = x_positions,
+                           y     = y_positions,
+                           just  = label_just,
+                           name  = paste0("group_labels_", i),
+                           gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
+                                              fontfamily = arguments[["visuals"]][["font"]],
+                                              fontsize   = arguments[["dimensions"]][["axes_font_size"]],
+                                              fontface   = arguments[["visuals"]][["axes_font_face"]],
+                                              lineheight = arguments[["fine_tuning"]][["line_height"]]))
+        }, labels, label_x_positions, label_y, seq_along(labels), SIMPLIFY = FALSE))
+    }
 
     # Return the whole axes as one graphical object
     grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
@@ -1570,18 +1683,12 @@ setup_x_axes <- function(tick_positions,
 #' [setup_xy_axes()]: Uses the currently active viewport to set up both the x and
 #' y axes.
 #'
-#' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
-#'
 #' @rdname axes
 #'
 #' @export
 setup_xy_axes <- function(diagram_info,
                           arguments){
-    axes_x <- setup_x_axes(diagram_info[["group_ticks_pos_x"]],
-                           diagram_info[["group_label_pos"]],
-                           diagram_info[["wrapped_group_labels"]],
-                           diagram_info[["zero_pos"]],
-                           arguments)
+    axes_x <- setup_x_axes(diagram_info, arguments)
 
     axes_y_primary <- setup_y_axes(diagram_info[["primary_y_tick_pos"]],
                                    diagram_info[["primary_y_values"]],
