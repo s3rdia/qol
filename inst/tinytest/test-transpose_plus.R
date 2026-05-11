@@ -101,20 +101,33 @@ wide_to_long <- dummy_wide_df |>
                                             "Female" = "Female")))
 
 expect_equal(names(wide_to_long), c("year", "BY", "VARIABLE", "VALUE"), info = "Transpose multiple variables from wide to long")
-expect_equal(as.character(collapse::funique(wide_to_long[["VARIABLE"]])), c("Total", "Male", "Female", "high", "low", "middle"), info = "Simple wide to long transposition")
+expect_equal(as.character(collapse::funique(wide_to_long[["VARIABLE"]])), c("Total", "Male", "Female", "high", "low", "middle"),
+             info = "Simple wide to long transposition")
+
+
+# Transpose multiple variables from wide to long (side by side)
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex = c("Total", "Male", "Female"),
+                                   sex = c("low", "middle", "high")))
+
+expect_equal(names(wide_to_long), c("year", "sex", "value1", "value2"),
+             info = "Transpose multiple variables from wide to long (side by side)")
+
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex = c("Total", "Male", "Female"),
+                                   sex = c("low", "middle", "high")),
+                   values   = c(hello, world))
+
+expect_equal(names(wide_to_long), c("year", "sex", "hello", "world"),
+             info = "Transpose multiple variables from wide to long (side by side)")
+
+
 
 ###############################################################################
 # Warning checks
 ###############################################################################
-
-
-# Wide to long transposition doesn't support value parameter transposition
-wide_df <- dummy_wide_df |>
-    transpose_plus(preserve = year,
-                   pivot    = list(sex = c("Male", "Female")),
-                   values   = "Total")
-
-expect_message(print_stack_as_messages("NOTE"), "<Values> parameter has no effect in wide to long transposition.", info = "Wide to long transposition doesn't support value parameter transposition")
 
 
 # Wide to long transposition doesn't support weight parameter transposition
@@ -123,7 +136,8 @@ wide_df <- dummy_wide_df |>
                   pivot    = list(sex = c("Male", "Female")),
                   weight   = "Total")
 
-expect_message(print_stack_as_messages("NOTE"), "<Weight> parameter has no effect in wide to long transposition.", info = "Wide to long transposition doesn't support weight parameter transposition")
+expect_message(print_stack_as_messages("NOTE"), "<Weight> parameter has no effect in wide to long transposition.",
+               info = "Wide to long transposition doesn't support weight parameter transposition")
 
 
 # Preserve variable in transposition is not part of the data frame
@@ -132,7 +146,8 @@ wide_df <- dummy_df |>
                   pivot    = "sex",
                   value    = income)
 
-expect_warning(print_stack_as_messages("WARNING"), "The provided <preserve> variable", info = "Preserve variable in transposition is not part of the data frame")
+expect_warning(print_stack_as_messages("WARNING"), "The provided <preserve> variable",
+               info = "Preserve variable in transposition is not part of the data frame")
 
 
 # Value variable in transposition is also part of preserve
@@ -141,7 +156,8 @@ wide_df <- dummy_df |>
                   pivot    = "age",
                   value    = sex)
 
-expect_warning(print_stack_as_messages("WARNING"), "The provided <values> variable", info = "Value variable in transposition is also part of preserve")
+expect_warning(print_stack_as_messages("WARNING"), "The provided <values> variable",
+               info = "Value variable in transposition is also part of preserve")
 
 ###############################################################################
 # Abort checks
@@ -152,7 +168,8 @@ wide_df <- dummy_wide_df |>
 			transpose_plus(preserve = year,
 						   pivot    = list(sex = "Male + Female"))
 
-expect_error(print_stack_as_messages("ERROR"), "Nesting <pivot> variables in a wide to long transposition is not possible.", info = "Wide to long transposition doesn't support nesting variables")
+expect_error(print_stack_as_messages("ERROR"), "Nesting <pivot> variables in a wide to long transposition is not possible.",
+             info = "Wide to long transposition doesn't support nesting variables")
 
 
 # Abort transposition if pivot variable is part of preserve
@@ -161,7 +178,8 @@ wide_df <- dummy_wide_df |>
 						   pivot    = "year",
 						   value    = income)
 
-expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable", info = "Abort transposition if pivot variable is part of preserve")
+expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable",
+             info = "Abort transposition if pivot variable is part of preserve")
 
 
 # Abort transposition if no valid value variable is provided
@@ -169,23 +187,26 @@ wide_df <- dummy_df |>
 			transpose_plus(preserve = year,
 						   pivot    = "sex")
 
-expect_error(print_stack_as_messages("ERROR"), "No <values> provided. Transposition will be aborted.", info = "Abort transposition if no valid value variable is provided")
+expect_error(print_stack_as_messages("ERROR"), "No <values> provided. Transposition will be aborted.",
+             info = "Abort transposition if no valid value variable is provided")
 
 
 # Abort transposition if value variable is not part of the data frame
 wide_df <- dummy_df |>
-			transpose_plus(pivot    = "sex",
-						   value    = test)
+			transpose_plus(pivot = "sex",
+						   value = test)
 
-expect_error(print_stack_as_messages("ERROR"), "No valid <values> to transpose provided. Transposition will be aborted.", info = "Abort transposition if value variable is not part of the data frame")
+expect_error(print_stack_as_messages("ERROR"), "No valid <values> to transpose provided. Transposition will be aborted.",
+             info = "Abort transposition if value variable is not part of the data frame")
 
 
 # Abort if value variable in transposition is also part of pivot
 wide_df <- dummy_df |>
-			transpose_plus(pivot    = "sex",
-						   value    = sex)
+			transpose_plus(pivot = "sex",
+						   value = sex)
 
-expect_error(print_stack_as_messages("ERROR"), "The provided <values> variable", info = "Abort if value variable in transposition is also part of pivot")
+expect_error(print_stack_as_messages("ERROR"), "The provided <values> variable",
+             info = "Abort if value variable in transposition is also part of pivot")
 
 
 # Abort on duplicate variable names after transposition
@@ -194,7 +215,8 @@ wide_df <- dummy_df |>
 						   pivot    = c("sex", "education"),
 						   values   = income)
 
-expect_error(print_stack_as_messages("ERROR"), "Duplicate column names found:", info = "Abort on duplicate variable names after transposition")
+expect_error(print_stack_as_messages("ERROR"), "Duplicate column names found:",
+             info = "Abort on duplicate variable names after transposition")
 
 
 # Abort if no valid pivot variable is provided in transposition
@@ -202,7 +224,29 @@ wide_df <- dummy_df |>
 			transpose_plus(pivot = "test",
 						   value = income)
 
-expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable", info = "Abort if no valid pivot variable is provided in transposition")
+expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable",
+             info = "Abort if no valid pivot variable is provided in transposition")
+
+
+# Abort side by side transposition, if list entries are of unequal lengths
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex = c("Total", "Male", "Female", "low"),
+                                   sex = c("low", "middle", "high")))
+
+expect_error(print_stack_as_messages("ERROR"), "Every <pivot> list entry has to have the same number of variables for a",
+             info = "Abort side by side transposition, if list entries are of unequal lengths")
+
+
+# Abort side by side transposition, if list entries contain a unique variable name but also others
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex  = c("Total", "Male", "Female", "low"),
+                                   sex  = c("low", "middle", "high"),
+                                   test = c("low", "middle", "high")))
+
+expect_error(print_stack_as_messages("ERROR"), "The new result columns can only be set side by side in a wide",
+             info = "Abort side by side transposition, if list entries contain a unique variable name but also others")
 
 
 set_no_print()

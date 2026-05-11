@@ -111,11 +111,30 @@ long_to_wide <- my_data |>
                    weight   = weight,
                    na.rm    = TRUE)
 
-# Transpose back from wide to long
+# Transpose back from wide to long and put results below each other
 wide_to_long <- long_to_wide |>
     transpose_plus(preserve = c(year, age),
                    pivot    = list(sex       = c("Total", "Male", "Female"),
                                    education = c("low", "middle", "high")))
+
+# Transpose from long to wide and use a multilabel to generate additional categories
+long_to_wide <- my_data |>
+    transpose_plus(preserve = c(year, age),
+                   pivot    = "sex",
+                   values   = c(income, weight),
+                   formats  = list(sex = sex., age = age.),
+                   weight   = weight,
+                   na.rm    = TRUE) |>
+    rename_multi("income_Total"  = "Total",
+                 "income_Male"   = "Male",
+                 "income_Female" = "Female")
+
+# Transpose back from wide to long but this time put results side by side
+wide_to_long <- long_to_wide |>
+    transpose_plus(preserve = c(year, age),
+                   values   = c(income, weight),
+                   pivot    = list(sex = c("Total", "Male", "Female"),
+                                   sex = c("weight_Total", "weight_Male", "weight_Female")))
 
 # Nesting variables in long to wide transposition
 nested <- my_data |>

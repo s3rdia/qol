@@ -32,6 +32,9 @@
   workbook from the list and run without error. Additionally if a list
   is passed, which is not a result list containing the workbook, the
   functions error and abort execution. (05.05.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  In a wide to long transposition it is now possible to not only put
+  results below each other, but also side by side. (11.05.2026)
 
 #### Changed functionality
 

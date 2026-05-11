@@ -11,6 +11,7 @@ Last CRAN release was on 18.04.2026.
 * `set_up_custom_message()`: Waiting symbols as well as the color of the time stamps can now be customized.
 * `print_step()`: Now has a new `in_place` parameter, which prints the message on the same line as before, instead of in the next line. This can e.g. be used inside loops as follows.
 * `any_table()`, `export_with_style()`: If the whole result list from these functions is passed for the `workbook` parameter, the functions now are able to extract the actual workbook from the list and run without error. Additionally if a list is passed, which is not a result list containing the workbook, the functions error and abort execution.
+* `transpose_plus()`: In a wide to long transposition it is now possible to not only put results below each other, but also side by side.
 
 ### Changed functionality
 

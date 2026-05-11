@@ -190,11 +190,30 @@ with no effort, just with the help of multilabels.</p>
 <span>                   weight   <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                   na.rm    <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Transpose back from wide to long</span></span>
+<span><span class="co"># Transpose back from wide to long and put results below each other</span></span>
 <span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
 <span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
 <span>                                   education <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"middle"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Transpose from long to wide and use a multilabel to generate additional categories</span></span>
+<span><span class="va">long_to_wide</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                   values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">income</span>, <span class="va">weight</span><span class="op">)</span>,</span>
+<span>                   formats  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                   weight   <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                   na.rm    <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="rename_multi.html">rename_multi</a></span><span class="op">(</span><span class="st">"income_Total"</span>  <span class="op">=</span> <span class="st">"Total"</span>,</span>
+<span>                 <span class="st">"income_Male"</span>   <span class="op">=</span> <span class="st">"Male"</span>,</span>
+<span>                 <span class="st">"income_Female"</span> <span class="op">=</span> <span class="st">"Female"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Transpose back from wide to long but this time put results side by side</span></span>
+<span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
+<span>                   values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">income</span>, <span class="va">weight</span><span class="op">)</span>,</span>
+<span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
+<span>                                   sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weight_Total"</span>, <span class="st">"weight_Male"</span>, <span class="st">"weight_Female"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Nesting variables in long to wide transposition</span></span>
 <span><span class="va">nested</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
