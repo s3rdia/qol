@@ -759,7 +759,6 @@ get_diagram_dimensions <- function(graphic_tab,
                                    visuals     = .qol_options[["graphic_visuals"]],
                                    fine_tuning = .qol_options[["graphic_fine_tuning"]]){
     values <- graphic_tab[[values]]
-    # TODO: WHAT IF MULTIPLE VARIABLES ARE PASSED OR "age + sex" COMBINATIONS?
     # TODO: HOW TO HANDLE ARBITRARY NUMBER OF SEGMENTS PER GROUP?
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -986,6 +985,29 @@ get_diagram_dimensions <- function(graphic_tab,
                                                visuals[["axes_font_face"]])
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Separation lines
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Get the separation line positions by selecting the tick positions which are
+    # centered between two groups
+    number_of_ticks <- length(group_ticks_pos_x) - 1
+
+    group_separation_lines_x <- lapply(individual_number_of_groups[-length(individual_number_of_groups)], function(number){
+        # Build a stepped sequence which captures the number of ticks a group spans over
+        tick_positions <- seq(from = 1, to = number_of_ticks, by = number_of_ticks / number)
+        tick_positions <- tick_positions[-1]
+
+        group_ticks_pos_x[tick_positions]
+    })
+
+    # Some entries are now the same throughout the list vectors. These identical entries
+    # are now cleared from the vectors, so that each layer of separation lines doesn't
+    # intersect any other separation line.
+    for (i in seq(length(group_separation_lines_x), 2)){
+        group_separation_lines_x[[i]] <- setdiff(group_separation_lines_x[[i]], group_separation_lines_x[[i - 1]])
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Return information
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1026,7 +1048,9 @@ get_diagram_dimensions <- function(graphic_tab,
          group_ticks_pos_x           = group_ticks_pos_x,
          segment_label_textbox_width = segment_label_textbox_width,
          wrapped_segment_labels      = wrapped_segment_labels,
-         is_multi_group_label        = is_multi_group_label)
+         is_multi_group_label        = is_multi_group_label,
+         number_of_ticks             = number_of_ticks,
+         group_separation_lines_x    = group_separation_lines_x)
 }
 
 
@@ -1535,20 +1559,22 @@ setup_y_axes <- function(tick_positions,
     tick_length_cm <- arguments[["fine_tuning"]][["tick_length"]] * 5
     tick_length    <- tick_length_cm + ((-2 * tick_length_cm) * zero_pos)
 
-    ticks <- grid::segmentsGrob(x0 = zero_pos,
-                                x1 = grid::unit(zero_pos, "native") - grid::unit(tick_length, "cm"),
-                                y0 = grid::unit(tick_positions, "npc"),
-                                y1 = grid::unit(tick_positions, "npc"),
-                                gp = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
+    ticks <- grid::segmentsGrob(x0   = zero_pos,
+                                x1   = grid::unit(zero_pos, "native") - grid::unit(tick_length, "cm"),
+                                y0   = grid::unit(tick_positions, "npc"),
+                                y1   = grid::unit(tick_positions, "npc"),
+                                name = paste0("y_ticks"),
+                                gp   = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
 
     # Draw guiding lines
     if (visuals[["guiding_lines"]]){
-        ticks <- grid::segmentsGrob(x0 = 0,
-                                    x1 = 1,
-                                    y0 = grid::unit(tick_positions, "npc"),
-                                    y1 = grid::unit(tick_positions, "npc"),
-                                    gp = grid::gpar(col = visuals[["guiding_line_color"]],
-                                                    lty = visuals[["guiding_line_type"]]))
+        ticks <- grid::segmentsGrob(x0   = 0,
+                                    x1   = 1,
+                                    y0   = grid::unit(tick_positions, "npc"),
+                                    y1   = grid::unit(tick_positions, "npc"),
+                                    name = paste0("y_guiding_lines"),
+                                    gp   = grid::gpar(col = visuals[["guiding_line_color"]],
+                                                      lty = visuals[["guiding_line_type"]]))
     }
 
     # Format values according to options
@@ -1575,6 +1601,7 @@ setup_y_axes <- function(tick_positions,
                                   x     = label_offset,
                                   y     = value_positions,
                                   just  = c("right", "center"),
+                                  name  = paste0("y_values"),
                                   gp    = grid::gpar(col        = visuals[[paste0(which, "_axes_font_color")]],
                                                      fontfamily = visuals[["font"]],
                                                      fontsize   = arguments[["dimensions"]][["axes_font_size"]],
@@ -1605,6 +1632,8 @@ setup_x_axes <- function(diagram_info,
     labels               <- diagram_info[["wrapped_group_labels"]]
     zero_pos             <- diagram_info[["zero_pos"]]
     is_multi_group_label <- diagram_info[["is_multi_group_label"]]
+    group_label_heights  <- diagram_info[["group_label_heights"]]
+    group_separation_lines_x <- diagram_info[["group_separation_lines_x"]]
 
     # If all values are negative, the group label positions are vertically inverted.
     # Which means normally they are drawn below the variable axes (vbars),
@@ -1616,7 +1645,25 @@ setup_x_axes <- function(diagram_info,
         # The first layer of multi layered group labels is drawn at the top of the
         # diagram, not below the axes.
         if (is_multi_group_label){
-            label_y[[1]] <- 1 + diagram_info[["group_label_heights"]][1] + arguments[["fine_tuning"]][["variable_axes_margin"]]
+            label_y[[1]] <- 1 + group_label_heights[1] + arguments[["fine_tuning"]][["variable_axes_margin"]]
+
+            # Get the separation lines y coordinates
+            separation_lines_y <- list()
+
+            for (i in seq_len(length(group_separation_lines_x))){
+                # The first separation lines are special in the way that they start higher,
+                # at the top of the upper grouping labels.
+                if (i == 1){
+                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]])
+                }
+                # All other lines start at the top of the diagram and are drawn to the
+                # bottom of nested super group.
+                else{
+                    invers_element <- length(label_y) - (i - 2)
+
+                    separation_lines_y[[i]] <- c(1, label_y[[invers_element]] - group_label_heights[[invers_element]])
+                }
+            }
         }
     }
     else{
@@ -1629,20 +1676,40 @@ setup_x_axes <- function(diagram_info,
         # diagram, not on top of the axes.
         if (is_multi_group_label){
             label_y[[1]] <- -diagram_info[["group_label_heights"]][1] - arguments[["fine_tuning"]][["variable_axes_margin"]]
+
+            # Get the separation lines y coordinates
+            separation_lines_y <- list()
+
+            for (i in seq_len(length(group_separation_lines_x))){
+                # The first separation lines are special in the way that they start higher,
+                # at the top of the upper grouping labels.
+                if (i == 1){
+                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]])
+                }
+                # All other lines start at the top of the diagram and are drawn to the
+                # bottom of nested super group.
+                else{
+                    invers_element <- length(label_y) - (i - 2)
+
+                    separation_lines_y[[i]] <- c(0, label_y[[invers_element]] + group_label_heights[[invers_element]])
+                }
+            }
         }
     }
 
     # Horizontal axes line over the whole viewport. The axes will be drawn at the 0
     # position of the primary y axes if it is there.
-    line <- grid::linesGrob(x = c(0, 1), y = c(zero_pos, zero_pos),
-                            gp = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
+    line <- grid::linesGrob(x    = c(0, 1), y = c(zero_pos, zero_pos),
+                            name = paste0("x_axes"),
+                            gp   = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
 
     # Setup the ticks pointing down
-    ticks <- grid::segmentsGrob(x0 = grid::unit(tick_positions, "native"),
-                                x1 = grid::unit(tick_positions, "native"),
-                                y0 = zero_pos,
-                                y1 = zero_pos - tick_length,
-                                gp = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
+    ticks <- grid::segmentsGrob(x0   = grid::unit(tick_positions, "native"),
+                                x1   = grid::unit(tick_positions, "native"),
+                                y0   = zero_pos,
+                                y1   = zero_pos - tick_length,
+                                name = paste0("x_ticks"),
+                                gp   = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
 
     # Insert the group labels for the variable axes
     if (!is_multi_group_label){
@@ -1650,16 +1717,20 @@ setup_x_axes <- function(diagram_info,
                                        x     = label_x_positions[[1]],
                                        y     = label_y,
                                        just  = label_just,
+                                       name  = paste0("group_labels"),
                                        gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
                                                           fontfamily = arguments[["visuals"]][["font"]],
                                                           fontsize   = arguments[["dimensions"]][["axes_font_size"]],
                                                           fontface   = arguments[["visuals"]][["axes_font_face"]],
                                                           lineheight = arguments[["fine_tuning"]][["line_height"]]))
+
+        # Return the whole axes as one graphical object
+        grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
     }
     # In case of multi layer group labels capture the single individual graphic objects
     # in a glist.
     else{
-        # TODO: Insert vertical lines to separate group layers
+        # Draw the layered label texts
         group_labels <- do.call(grid::gList, mapply(function(labels, x_positions, y_positions, i){
             grid::textGrob(label = labels,
                            x     = x_positions,
@@ -1672,10 +1743,21 @@ setup_x_axes <- function(diagram_info,
                                               fontface   = arguments[["visuals"]][["axes_font_face"]],
                                               lineheight = arguments[["fine_tuning"]][["line_height"]]))
         }, labels, label_x_positions, label_y, seq_along(labels), SIMPLIFY = FALSE))
-    }
 
-    # Return the whole axes as one graphical object
-    grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
+        # Draw the separation lines
+        separation_lines <- do.call(grid::gList, mapply(function(x_positions, y_positions, i){
+            grid::segmentsGrob(x0 = x_positions,
+                               x1 = x_positions,
+                               y0 = y_positions[1],
+                               y1 = y_positions[2],
+                               name  = paste0("separation_line_", i),
+                               gp = grid::gpar(col = arguments[["visuals"]][["separation_line_color"]],
+                                               lty = arguments[["visuals"]][["separation_line_type"]]))
+            }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
+
+        # Return the whole axes as one graphical object
+        grid::gTree(children = grid::gList(line, ticks, group_labels, separation_lines), name = "x_axes")
+    }
 }
 
 
