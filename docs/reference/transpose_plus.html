@@ -190,7 +190,8 @@ with no effort, just with the help of multilabels.</p>
 <span>                   weight   <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                   na.rm    <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Transpose back from wide to long and put results below each other</span></span>
+<span><span class="co"># Transpose back from wide to long and put results below each other. To trigger</span></span>
+<span><span class="co"># this behavior every list entry in pivot has to have a different name.</span></span>
 <span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
 <span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
@@ -208,7 +209,11 @@ with no effort, just with the help of multilabels.</p>
 <span>                 <span class="st">"income_Male"</span>   <span class="op">=</span> <span class="st">"Male"</span>,</span>
 <span>                 <span class="st">"income_Female"</span> <span class="op">=</span> <span class="st">"Female"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Transpose back from wide to long but this time put results side by side</span></span>
+<span><span class="co"># Transpose back from wide to long but this time put results side by side.</span></span>
+<span><span class="co"># To do that every list entry has to have the same name. The values parameter</span></span>
+<span><span class="co"># is then used to give the new value variables a name. For the expressions of</span></span>
+<span><span class="co"># the new categorical variable the variable names from the first pivot list</span></span>
+<span><span class="co"># entry are used.</span></span>
 <span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
 <span>                   values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">income</span>, <span class="va">weight</span><span class="op">)</span>,</span>

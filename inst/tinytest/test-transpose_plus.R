@@ -129,6 +129,15 @@ expect_equal(names(wide_to_long), c("year", "sex", "hello", "world"),
 # Warning checks
 ###############################################################################
 
+# Wide to long transposition doesn't support value parameter transposition
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex = c("Male", "Female")),
+                   values   = "Total")
+
+expect_message(print_stack_as_messages("NOTE"), "<Values> parameter has no effect in wide to long transposition, when results are stacked.",
+			   info = "Wide to long transposition doesn't support value parameter transposition")
+
 
 # Wide to long transposition doesn't support weight parameter transposition
 wide_df <- dummy_wide_df |>

@@ -111,7 +111,8 @@ long_to_wide <- my_data |>
                    weight   = weight,
                    na.rm    = TRUE)
 
-# Transpose back from wide to long and put results below each other
+# Transpose back from wide to long and put results below each other. To trigger
+# this behavior every list entry in pivot has to have a different name.
 wide_to_long <- long_to_wide |>
     transpose_plus(preserve = c(year, age),
                    pivot    = list(sex       = c("Total", "Male", "Female"),
@@ -129,7 +130,11 @@ long_to_wide <- my_data |>
                  "income_Male"   = "Male",
                  "income_Female" = "Female")
 
-# Transpose back from wide to long but this time put results side by side
+# Transpose back from wide to long but this time put results side by side.
+# To do that every list entry has to have the same name. The values parameter
+# is then used to give the new value variables a name. For the expressions of
+# the new categorical variable the variable names from the first pivot list
+# entry are used.
 wide_to_long <- long_to_wide |>
     transpose_plus(preserve = c(year, age),
                    values   = c(income, weight),
