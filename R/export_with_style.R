@@ -214,6 +214,22 @@ export_with_style <- function(data_frame,
         #---------------------------------------------------------------------#
         print_step("MAJOR", "Output")
 
+        # Check if only save path or file name is specified. If only one is specified
+        # print a note. Otherwise the file would not be saved and opened without a
+        # hint to why the file wasn't saved.
+        if (is.null(style[["save_path"]]) + is.null(style[["file"]]) == 1){
+            if (is.null(style[["save_path"]])){
+                print_message("NOTE", c("No save path specified. Both save path and file name with extension",
+                                        "need to be specified in the global options or style parameter for",
+                                        "the file to be saved. File won't be saved."))
+            }
+            else{
+                print_message("NOTE", c("No file name specified. Both save path and file name with extension",
+                                        "need to be specified in the global options or style parameter for",
+                                        "the file to be saved. File won't be saved."))
+            }
+        }
+
         # If no save path or file provided just open workbook
         if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
             if (interactive()){
@@ -231,6 +247,9 @@ export_with_style <- function(data_frame,
             }
             # Save file
             else{
+                # NOTE: A CSV export like in any_table, crosstabs or frequencies makes no sense
+                #       here. export_data should be used for that, since this function here is
+                #       explicitly for styled data frame export.
                 wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
             }
         }

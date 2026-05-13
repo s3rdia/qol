@@ -476,6 +476,22 @@ frequencies <- function(data_frame,
             print_closing()
         }
         else if (output == "excel" || output == "excel_nostyle"){
+            # Check if only save path or file name is specified. If only one is specified
+            # print a note. Otherwise the file would not be saved and opened without a
+            # hint to why the file wasn't saved.
+            if (is.null(style[["save_path"]]) + is.null(style[["file"]]) == 1){
+                if (is.null(style[["save_path"]])){
+                    print_message("NOTE", c("No save path specified. Both save path and file name with extension",
+                                            "need to be specified in the global options or style parameter for",
+                                            "the file to be saved. File won't be saved."))
+                }
+                else{
+                    print_message("NOTE", c("No file name specified. Both save path and file name with extension",
+                                            "need to be specified in the global options or style parameter for",
+                                            "the file to be saved. File won't be saved."))
+                }
+            }
+
             # If no save path or file provided just open workbook
             if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
                 if (interactive()){
@@ -493,7 +509,22 @@ frequencies <- function(data_frame,
                 }
                 # Save file
                 else{
-                    wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+                    extension <- tolower(tools::file_ext(style[["file"]]))
+
+                    # CSV export is based on the actual data frame
+                    if (extension == "csv"){
+                        freq_tab |> data.table::fwrite(file = paste0(style[["save_path"]], "/", style[["file"]]),
+                                                       sep  = ";",
+                                                       dec  = ",")
+                    }
+                    # While XLSX export is based on the workbook
+                    else if (extension == "xlsx"){
+                        wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+                    }
+                    # If there is no extension or a wrong one, auto correct it
+                    else{
+                        wb$save(file = paste0(style[["save_path"]], "/", basename(style[["file"]]), ".xlsx"), overwrite = TRUE)
+                    }
                 }
             }
 

@@ -11,6 +11,7 @@
 * `print_step()`: Now has a new `in_place` parameter, which prints the message on the same line as before, instead of in the next line. This can e.g. be used inside loops as follows. (29.04.2026)
 * `any_table()`, `export_with_style()`: If the whole result list from these functions is passed for the `workbook` parameter, the functions now are able to extract the actual workbook from the list and run without error. Additionally if a list is passed, which is not a result list containing the workbook, the functions error and abort execution. (05.05.2026)
 * `transpose_plus()`: In a wide to long transposition it is now possible to not only put results below each other, but also side by side. (11.05.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`: If 'csv' is specified as extension in the `file name` set in the global options or the style parameter the result table will then be exported as 'csv'. Otherwise the actual workbook will be exported as `xlsx` as normal. (13.05.2026)
 
 ### Changed functionality
 
@@ -34,6 +35,7 @@
 
 * Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes. (20.04.2026)
 * `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing. (23.04.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: If only the `save_path` or the `file name` is specified in the global options or the style parameter there will now be a note stating that something is missing. (13.05.2026)
 
 # qol 1.3.0
 
