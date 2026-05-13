@@ -35,6 +35,13 @@
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   In a wide to long transposition it is now possible to not only put
   results below each other, but also side by side. (11.05.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  If ‘csv’ is specified as extension in the `file name` set in the
+  global options or the style parameter the result table will then be
+  exported as ‘csv’. Otherwise the actual workbook will be exported as
+  `xlsx` as normal. (13.05.2026)
 
 #### Changed functionality
 
@@ -100,6 +107,13 @@
   Functions now throw errors instead of warnings, if
   [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) is
   missing. (23.04.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  If only the `save_path` or the `file name` is specified in the global
+  options or the style parameter there will now be a note stating that
+  something is missing. (13.05.2026)
 
 ## qol 1.3.0
 
