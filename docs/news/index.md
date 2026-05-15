@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.1 - DEVELOPMENT
+## qol 1.3.1
 
 #### Renamed functions
 
