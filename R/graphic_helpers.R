@@ -759,7 +759,6 @@ get_diagram_dimensions <- function(graphic_tab,
                                    visuals     = .qol_options[["graphic_visuals"]],
                                    fine_tuning = .qol_options[["graphic_fine_tuning"]]){
     values <- graphic_tab[[values]]
-    # TODO: HOW TO HANDLE ARBITRARY NUMBER OF SEGMENTS PER GROUP?
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Basic horizontal positioning for vbars
@@ -1003,8 +1002,10 @@ get_diagram_dimensions <- function(graphic_tab,
     # Some entries are now the same throughout the list vectors. These identical entries
     # are now cleared from the vectors, so that each layer of separation lines doesn't
     # intersect any other separation line.
-    for (i in seq(length(group_separation_lines_x), 2)){
-        group_separation_lines_x[[i]] <- setdiff(group_separation_lines_x[[i]], group_separation_lines_x[[i - 1]])
+    if (length(group_separation_lines_x) > 0){
+        for (i in seq(length(group_separation_lines_x), 2)){
+            group_separation_lines_x[[i]] <- setdiff(group_separation_lines_x[[i]], group_separation_lines_x[[i - 1]])
+        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1746,13 +1747,21 @@ setup_x_axes <- function(diagram_info,
 
         # Draw the separation lines
         separation_lines <- do.call(grid::gList, mapply(function(x_positions, y_positions, i){
+            # Determine if this is the first (major) or subsequent (minor) pass
+            type_prefix <- "minor_"
+
+            if (i == 1){
+                type_prefix <- "major_"
+            }
+
+            # Construct the actual separation lines
             grid::segmentsGrob(x0 = x_positions,
                                x1 = x_positions,
                                y0 = y_positions[1],
                                y1 = y_positions[2],
                                name  = paste0("separation_line_", i),
-                               gp = grid::gpar(col = arguments[["visuals"]][["separation_line_color"]],
-                                               lty = arguments[["visuals"]][["separation_line_type"]]))
+                               gp = grid::gpar(col = arguments[["visuals"]][[paste0(type_prefix,"separation_line_color")]],
+                                               lty = arguments[["visuals"]][[paste0(type_prefix,"separation_line_type")]]))
             }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
 
         # Return the whole axes as one graphical object
@@ -1809,7 +1818,12 @@ inject_inner_canvas_size <- function(axes, arguments){
     # Measure the x axes height of each children element and get the sum of all elements
     # as well as the smaller inner canvas height
     x_heights <- vapply(axes[["children"]][["x_axes"]][["children"]], function(child_grob){
-            grid::convertHeight(grid::grobHeight(child_grob), "cm", valueOnly = TRUE)
+            if (grepl("^(x_|group_labels)", child_grob[["name"]])) {
+                grid::convertHeight(grid::grobHeight(child_grob), "cm", valueOnly = TRUE)
+            }
+            else{
+                0
+            }
         },
         numeric(1))
 

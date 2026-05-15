@@ -63,9 +63,6 @@
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
 #' @param output Output parameters set with [graphic_output()].
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
-#' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
-#' grouping variables based on the provided formats, even if there are no observations
-#' for a combination.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything.
 #' Can be used if one only wants to catch the output data frame and workbook with meta information.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the functions
@@ -151,7 +148,7 @@
 #'
 #' @export
 design_graphic <- function(data_frame,
-                           axes_variables,
+                           axes_variables = "",
                            segments,
                            values,
                            statistics     = "pct_group",
@@ -174,7 +171,6 @@ design_graphic <- function(data_frame,
                            add_texts      = .qol_options[["graphic_texts"]],
                            output         = .qol_options[["graphic_output"]],
                            na.rm          = .qol_options[["na.rm"]],
-                           print_miss     = .qol_options[["print_miss"]], # REMOVE?
                            print          = .qol_options[["print"]],
                            monitor        = .qol_options[["monitor"]]){
 
@@ -229,8 +225,12 @@ design_graphic <- function(data_frame,
 
     if (length(axes_variables) <= 1){
         if (length(axes_variables) == 0 || axes_variables == ""){
-            message(" X ERROR: No valid <axes variables> provided. Generating graphic will be aborted.")
-            return(invisible(NULL))
+            # Create empty pseudo variable to let the rest of the program run as normal
+            data_frame[[".temp.var"]] <- 1
+            axes_variables <- ".temp.var"
+            axes_vars      <- ".temp.var"
+            var_labels     <- c(var_labels, ".temp.var" = "")
+            formats[[".temp.var"]] <- suppressMessages(discrete_format(" " = 1))
         }
     }
 
@@ -494,6 +494,8 @@ design_graphic <- function(data_frame,
 
     # Compute statistics
     if (!pre_summed){
+        # NOTE: By setting print_miss to always be TRUE there shouldn't be any arbitrary
+        #       number of segments per group.
         graphic_tab <- suppressMessages(data_frame |>
               summarise_plus(class      = group_vars,
                              values     = values,
@@ -859,8 +861,8 @@ generate_graphic <- function(graphic_tab,
                          c(segment_vars),
                          c(values),
                          c(statistics),
-                         var_labels,
-                         stat_labels,
+                         c(var_labels),
+                         c(stat_labels),
                          c(color_theme),
                          color_usage,
                          visuals,
