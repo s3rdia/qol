@@ -592,7 +592,7 @@ summarise_plus <- function(data_frame,
                                overid  = 2) |>
                 dropp(".temp_weight")
         }
-        # If formats are applied and all format categories schould be output
+        # If formats are applied and all format categories should be output
         else if (print_miss && !is.null(formats)){
             result_df <- result_df |> print_missing(formats, group_vars)
         }
