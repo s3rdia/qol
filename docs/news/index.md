@@ -42,6 +42,15 @@
   global options or the style parameter the result table will then be
   exported as ‘csv’. Otherwise the actual workbook will be exported as
   `xlsx` as normal. (13.05.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md): The
+  “:” can now be used in conditions as a placeholder for “starts with”
+  (“text:”), “ends with” (“:text”) and “contains” (“:text:”).
+  (21.03.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): If the
+  new `delete` keyword is passed instead of a variable assignment, the
+  provided condition deletes observations instead of keeping them.
+  (15.05.2026)
 
 #### Changed functionality
 
@@ -114,6 +123,10 @@
   If only the `save_path` or the `file name` is specified in the global
   options or the style parameter there will now be a note stating that
   something is missing. (13.05.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md):
+  `&&` and `||` will now be converted into `&` and `|`. Additionally a
+  warning is displayed. (15.05.2026)
 
 ## qol 1.3.0
 

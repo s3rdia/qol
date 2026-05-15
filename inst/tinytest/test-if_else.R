@@ -275,6 +275,13 @@ expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if., 
 expect_true(!NA %in% test_df[["sex"]], info = "Subset data frame with if., when only providing single variable as character")
 
 
+# Delete observations with 'delete' keyword
+test_df <- dummy_df |> if.(sex == 1, delete)
+
+expect_true(nrow(test_df) < nrow(dummy_df), info = "Delete observations with 'delete' keyword")
+expect_true(!1 %in% test_df[["sex"]], info = "Delete observations with 'delete' keyword")
+
+
 # if. as do over loop for subsetting
 vars   <- c("income", "balance")
 values <- c(1000, 0)
@@ -283,6 +290,20 @@ do_over_df <- dummy_df |> if.(vars > values)
 
 expect_true(collapse::fmin(do_over_df[["income"]])  > 1000, info = "if. as do over loop for subsetting")
 expect_true(collapse::fmin(do_over_df[["balance"]]) > 0,    info = "if. as do over loop for subsetting")
+
+# Warning on doubled logical operators
+test_df <- dummy_df |> if.((sex == 1 && education == "high") || sex == 2)
+
+expect_warning(print_stack_as_messages("WARNING"), "Replaced",  info = "Warning on doubled logical operators")
+
+unique_male   <- test_df |> if.(sex == 1)
+unique_male   <- collapse::funique(unique_male[["education"]])
+unique_female <- test_df |> if.(sex == 2)
+unique_female <- collapse::funique(unique_female[["education"]])
+
+expect_true("high" %in% unique_male, info = "Warning on doubled logical operators")
+expect_equal(length(unique_male), 1, info = "Warning on doubled logical operators")
+expect_true(all(c("low", "middle", "high") %in% unique_female), info = "Warning on doubled logical operators")
 
 
 # Abort subset with if., if variable is not part of the data frame

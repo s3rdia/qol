@@ -139,6 +139,14 @@ if. <- function(data_frame, condition, ...){
 
     assignments <- as.list(substitute(list(...)))[-1]
 
+    # Check for "delete" keyword
+    flag_delete <- FALSE
+
+    if (length(assignments) == 1 && assignments[[1]] == "delete"){
+        flag_delete      <- TRUE
+        assignments[[1]] <- NULL
+    }
+
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
     used_variables <- unique(c(all.vars(condition), # Get all variables from the condition
@@ -233,6 +241,12 @@ if. <- function(data_frame, condition, ...){
         # If no vector was passed in the condition, then evaluate as normal
         if (length(content_list) == 0){
             condition <- translate_condition(condition)
+
+            # If observations should be deleted, reverse condition before evaluation
+            if (flag_delete){
+                condition <- call("!", condition)
+            }
+
             condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
             # Remember rows to tell the user how many rows have been removed
@@ -664,6 +678,21 @@ else. <- function(data_frame, ...){
 translate_condition <- function(condition){
     if (is.call(condition)){
         operator <- condition[[1]]
+
+        # Replace doubled logical operators
+        if (identical(operator, as.name("&&"))){
+            print_message("WARNING", "Replaced '&&' with '&' for vectorized evaluation.")
+
+            condition[[1]] <- as.name("&")
+            operator       <- condition[[1]]
+        }
+
+        if (identical(operator, as.name("||"))){
+            print_message("WARNING", "Replaced '||' with '|' for vectorized evaluation.")
+
+            condition[[1]] <- as.name("|")
+            operator       <- condition[[1]]
+        }
 
         # Only check the expression, if its an equality check
         if (identical(operator, as.name("==")) || identical(operator, as.name("!="))){

@@ -13,6 +13,7 @@ Last CRAN release was on 18.04.2026.
 * `any_table()`, `export_with_style()`: If the whole result list from these functions is passed for the `workbook` parameter, the functions now are able to extract the actual workbook from the list and run without error. Additionally if a list is passed, which is not a result list containing the workbook, the functions error and abort execution.
 * `transpose_plus()`: In a wide to long transposition it is now possible to not only put results below each other, but also side by side.
 * `any_table()`, `frequencies()`, `crosstabs()`: If 'csv' is specified as extension in the `file name` set in the global options or the style parameter the result table will then be exported as 'csv'. Otherwise the actual workbook will be exported as `xlsx` as normal.
+* `if.()`: If the new `delete` keyword is passed instead of a variable assignment, the provided condition deletes observations instead of keeping them.
 
 ### Changed functionality
 
@@ -37,6 +38,7 @@ Last CRAN release was on 18.04.2026.
 * Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes.
 * `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: If only the `save_path` or the `file name` is specified in the global options or the style parameter there will now be a note stating that something is missing.
+* `if.()`, `else_if.()`: `&&` and `||` will now be converted into `&` and `|`. Additionally a warning is displayed.
 
 
 ## R CMD check results
