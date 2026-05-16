@@ -190,7 +190,12 @@ specified.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example formats</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># NOTE: The used threads are set here to prevent a NOTE from the CRAN checks,</span></span>
+<span><span class="co">#       otherwise this is not necessary.</span></span>
+<span><span class="va">old_threads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">getDTthreads</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example formats</span></span>
 <span><span class="va">age.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Total"</span>          <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">100</span>,</span>
 <span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
@@ -267,6 +272,10 @@ specified.</p>
 <span><span class="co"># And also without values</span></span>
 <span><span class="va">no_values</span>  <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">summarise_plus</span><span class="op">(</span>class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">sex</span>, <span class="va">age</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">no_nothing</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">summarise_plus</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># NOTE: The used threads are set here to prevent a NOTE from the CRAN checks,</span></span>
+<span><span class="co">#       otherwise this is not necessary.</span></span>
+<span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">old_threads</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

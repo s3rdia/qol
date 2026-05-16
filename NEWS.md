@@ -39,6 +39,7 @@
 * `else_do()`, `end_do()`, `end_all_do()`: Functions now throw errors instead of warnings, if `do_if()` is missing. (23.04.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: If only the `save_path` or the `file name` is specified in the global options or the style parameter there will now be a note stating that something is missing. (13.05.2026)
 * `if.()`, `else_if.()`: `&&` and `||` will now be converted into `&` and `|`. Additionally a warning is displayed. (15.05.2026)
+* Set the used threads from data.table to 2 for the `summarise_plus()` examples, because the CRAN server throws a NOTE for the r-devel-linux-x86_64-debian-gcc: "Examples with CPU time > 2.5 times elapsed time". (16.05.2026)
 
 # qol 1.3.0
 

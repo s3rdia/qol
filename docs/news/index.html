@@ -101,6 +101,7 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: If only the <code>save_path</code> or the <code>file name</code> is specified in the global options or the style parameter there will now be a note stating that something is missing. (13.05.2026)</li>
 <li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>: <code>&amp;&amp;</code> and <code>||</code> will now be converted into <code>&amp;</code> and <code>|</code>. Additionally a warning is displayed. (15.05.2026)</li>
+<li>Set the used threads from data.table to 2 for the <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> examples, because the CRAN server throws a NOTE for the r-devel-linux-x86_64-debian-gcc: “Examples with CPU time &gt; 2.5 times elapsed time”. (16.05.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

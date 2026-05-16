@@ -81,6 +81,11 @@
 #' [any_table()], [recode.()], [recode_multi()], [transpose_plus()], [sort_plus()].
 #'
 #' @examples
+#' # NOTE: The used threads are set here to prevent a NOTE from the CRAN checks,
+#' #       otherwise this is not necessary.
+#' old_threads <- data.table::getDTthreads()
+#' data.table::setDTthreads(1)
+#'
 #' # Example formats
 #' age. <- discrete_format(
 #'     "Total"          = 0:100,
@@ -158,6 +163,10 @@
 #' # And also without values
 #' no_values  <- my_data |> summarise_plus(class = c(year, sex, age))
 #' no_nothing <- my_data |> summarise_plus()
+#'
+#' # NOTE: The used threads are set here to prevent a NOTE from the CRAN checks,
+#' #       otherwise this is not necessary.
+#' data.table::setDTthreads(old_threads)
 #'
 #' @export
 summarise_plus <- function(data_frame,

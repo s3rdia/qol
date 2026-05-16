@@ -127,6 +127,11 @@
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md):
   `&&` and `||` will now be converted into `&` and `|`. Additionally a
   warning is displayed. (15.05.2026)
+- Set the used threads from data.table to 2 for the
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
+  examples, because the CRAN server throws a NOTE for the
+  r-devel-linux-x86_64-debian-gcc: “Examples with CPU time \> 2.5 times
+  elapsed time”. (16.05.2026)
 
 ## qol 1.3.0
 

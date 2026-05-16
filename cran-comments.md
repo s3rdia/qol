@@ -1,6 +1,9 @@
 # Resubmission qol 1.3.1
 Last CRAN release was on 18.04.2026.
 
+* Set the used threads from data.table to 2 for the `summarise_plus()` examples, because the CRAN server throws a NOTE for the r-devel-linux-x86_64-debian-gcc: "Examples with CPU time > 2.5 times elapsed time". (16.05.2026)
+
+
 ### Renamed functions
 
 * `compute.()`, `recode.()`: Both functions have been renamed and now have a "." at the end to prevent masking errors in combination with `dplyr`.
