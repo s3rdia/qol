@@ -32,6 +32,11 @@ vbars <- function(...){
     # retrieve the calculated measurements.
     diagram_info <- setup_nested_diagram_viewport(arguments)
 
+    # Draw the diagram background
+    diagram_background <- grid::rectGrob(gp  = grid::gpar(fill = arguments[["visuals"]][["diagram_background_color"]],
+                                         col = arguments[["visuals"]][["diagram_border_color"]]),
+                                         name = "diagram_background")
+
     # Generate axes
     axes      <- setup_xy_axes(diagram_info, arguments)
     arguments <- inject_inner_canvas_size(axes, arguments)
@@ -43,6 +48,6 @@ vbars <- function(...){
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
-    list(graphic = grid::gTree(children = grid::gList(segments, axes, segment_labels), name = "diagram"),
+    list(graphic = grid::gTree(children = grid::gList(diagram_background, segments, axes, segment_labels), name = "diagram"),
          meta    = diagram_info)
 }
