@@ -175,7 +175,8 @@ design_graphic <- function(data_frame,
                            monitor        = .qol_options[["monitor"]]){
 
     # Measure the time
-    start_time <- Sys.time()
+    print_start_message()
+    print_step("GREY", "Error handling")
 
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Error handling", "Preparation")
@@ -211,15 +212,15 @@ design_graphic <- function(data_frame,
     axes_vars <- unlist_variables(axes_variables)
 
     if (is.null(axes_vars)){
-        message(" X ERROR: <Axes variables> must be provided in quotation marks. Generating graphic will be aborted.")
+        print_message("ERROR", "<Axes variables> must be provided in quotation marks. Generating graphic will be aborted.")
         return(invisible(NULL))
     }
 
     axes_vars <- data_frame |> part_of_df(axes_vars, check_only = TRUE)
 
     if (is.list(axes_vars)){
-        message(" X ERROR: The provided <axes variables> '", paste(axes_vars[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Generating graphic will be aborted.")
+        print_message("ERROR", c("The provided <axes variables> '[axes_vars]' is not part of",
+                                 "the data frame. Generating graphic will be aborted."), axes_vars = axes_vars)
         return(invisible(NULL))
     }
 
@@ -252,8 +253,8 @@ design_graphic <- function(data_frame,
     segment_vars <- data_frame |> part_of_df(segment_vars, check_only = TRUE)
 
     if (is.list(segment_vars)){
-        message(" X ERROR: The provided <segments> variable '", paste(segment_vars[[1]], collapse = ", "), "' is not part of\n",
-                "          the data frame. Generating graphic will be aborted.")
+        print_message("ERROR", c("The provided <segments> variable '[segment_vars]' is not part of",
+                                 "the data frame. Generating graphic will be aborted."), segment_vars = segment_vars[[1]])
         return(invisible(NULL))
     }
 
@@ -261,14 +262,15 @@ design_graphic <- function(data_frame,
     segment_vars <- resolve_intersection(segment_vars, axes_vars, check_only = TRUE)
 
     if (is.list(segment_vars)){
-        message(" X ERROR: The provided <segments> variable '", paste(segment_vars[[1]], collapse = ", "), "' is also part of\n",
-                "          the <axes variables> variables. Generating graphic will be aborted.")
+        print_message("ERROR", c("The provided <segments> variable '[segment_vars]' is also part of\n",
+                                 "the <axes variables> variables. Generating graphic will be aborted."),
+                      segment_vars = segment_vars[[1]])
         return(invisible(NULL))
     }
 
     if (length(segments) <= 1){
         if (length(segments) == 0 || segments == ""){
-            message(" X ERROR: No valid <segments> provided. Generating graphic will be aborted.")
+            print_message("ERROR", "No valid <segments> provided. Generating graphic will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -288,8 +290,9 @@ design_graphic <- function(data_frame,
     by <- resolve_intersection(by, variables, check_only = TRUE)
 
     if (is.list(by)){
-        message(" X ERROR: The provided <by> variable '", paste(by[[1]], collapse = ", "), "' is also part of\n",
-                "          the <axes variables> or <segment> variables which is not allowed. Generating graphic will be aborted.")
+        print_message("ERROR", c("The provided <by> variable '[by]' is also part of the <axes variables>",
+                                 "or <segment> variables which is not allowed. Generating graphic will be aborted."),
+                      by = by[[1]])
         return(invisible(NULL))
     }
 
@@ -318,7 +321,7 @@ design_graphic <- function(data_frame,
     # If no value variables are provided abort
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            message(" X ERROR: No <values> provided. Generating graphic will be aborted.")
+            print_message("ERROR", "No <values> provided. Generating graphic will be aborted.")
             return(invisible(NULL))
         }
     }
@@ -327,8 +330,8 @@ design_graphic <- function(data_frame,
     values <- resolve_intersection(values, variables, check_only = TRUE)
 
     if (is.list(values)){
-        message(" x ERROR: The provided <axes>/<segments> variable '", paste(values[[1]], collapse = ", "), "' is also part of\n",
-                "          the <values> variables. Generating graphic will be aborted.")
+        print_message("ERROR", c("The provided <axes>/<segments> variable '[values]' is also part of",
+                                 "the <values> variables. Generating graphic will be aborted."), values = values[[1]])
         return(invisible(NULL))
     }
 
@@ -336,7 +339,7 @@ design_graphic <- function(data_frame,
     values <- data_frame |> part_of_df(values)
 
     if (length(values) == 0){
-        message(" X ERROR: No valid <values> variables provided. Generating graphic will be aborted.")
+        print_message("ERROR", "No valid <values> variables provided. Generating graphic will be aborted.")
         return(invisible(NULL))
     }
 
@@ -383,9 +386,9 @@ design_graphic <- function(data_frame,
 
         # If one of the value variables hasn't got any of the above extension, add extensions automatically as provided
         if (!all(grepl(pattern, values))){
-            message(" ! WARNING: All <values> variables need to have the <statistic> extension in their variable name.\n",
-                    "            You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.\n",
-                    "            This can lead to a wrong table structure, better add extensions by yourself.")
+            print_message("WARNING", c("All <values> variables need to have the <statistic> extension in their variable name.",
+                                       "You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.",
+                                       "This can lead to a wrong table structure, better add extensions by yourself."))
 
             data_frame <- data_frame |> add_extension(length(c(by, variables, "TYPE")) + 1,
                                                       rep(statistics, length(values))[1:length(values)])
@@ -416,10 +419,10 @@ design_graphic <- function(data_frame,
                                                        "pct_group", "pct_total", paste0("p", 1:100))]
 
         if (length(invalid_stats) > 0){
-            message(" ! WARNING: <Statistic> '", invalid_stats, "' is invalid and will be omitted.")
+            print_message("WARNING", "<Statistic> '[invalid]' is invalid and will be omitted.", invalid = invalid_stats)
 
             if (length(valid_stats) == 0){
-                message(" ! WARNING: No valid <statistic> selected. 'sum' will be used.")
+                print_message("WARNING", "No valid <statistic> selected. 'sum' will be used.")
 
                 statistics <- "sum"
             }
@@ -447,8 +450,12 @@ design_graphic <- function(data_frame,
     diagram_name <- get_origin_as_char(diagram, substitute(diagram))
 
     if (!is.function(diagram)){
-        message(" ! WARNING: '", diagram_name, "' is not a function. Vertical bars\n",
-                "            will be used instead.")
+        if (is.null(diagram_name)){
+            diagram_name <- "Missing"
+        }
+
+        print_message("WARNING", "'[diagram_name]' is not a function. Vertical bars will be used instead.",
+                      diagram_name = diagram_name)
 
         diagram <- match.fun("vbars")
     }
@@ -469,7 +476,7 @@ design_graphic <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
     #-------------------------------------------------------------------------#
-    message("\n > Computing stats")
+    print_step("MAJOR", "Computing stats")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Some preparations beforehand
@@ -524,7 +531,7 @@ design_graphic <- function(data_frame,
     }
 
     if (is.null(graphic_tab)){
-        message(" X ERROR: Table could not be computed. Execution will be aborted.")
+        print_message("ERROR", "Table could not be computed. Execution will be aborted.")
         return(invisible(NULL))
     }
 
@@ -606,10 +613,10 @@ design_graphic <- function(data_frame,
 
                 # Additional warnings for missing variables
                 if (!eval_vars[1] %in% names(data_frame)){
-                    message(" ! WARNING: Variable '", eval_vars[1], "' not found in the data frame.")
+                    print_message("WARNING", "Variable '[eval_vars]' not found in the data frame.", eval_vars = eval_vars[1])
                 }
                 if (!eval_vars[2] %in% names(data_frame)){
-                    message(" ! WARNING: Variable '", eval_vars[2], "' not found in the data frame.")
+                    print_message("WARNING", "Variable '[eval_vars]' not found in the data frame.", eval_vars = eval_vars[2])
                 }
             }
         }
@@ -721,7 +728,7 @@ design_graphic <- function(data_frame,
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
-    message(" > Formatting tables")
+    print_step("MAJOR", "Formatting tables")
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -746,8 +753,7 @@ design_graphic <- function(data_frame,
         monitor_df   <- graphic_list[[2]]
     }
 
-    end_time <- round(difftime(Sys.time(), start_time, units = "secs"), 3)
-    message("\n- - - 'design_graphic' execution time: ", end_time, " seconds\n")
+    print_closing()
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -820,12 +826,15 @@ generate_graphic <- function(graphic_tab,
                              fine_tuning,
                              add_texts,
                              output,
-                             by_info = NULL,
-                             index   = NULL,
+                             by_info        = NULL,
+                             index          = NULL,
+                             grid_positions = NULL,
                              monitor_df){
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_start("General design", "Format")
     #-------------------------------------------------------------------------#
+    if (is.null(by_info)){ print_step("MINOR", "Set up viewport") }
+
     values <- utils::tail(names(graphic_tab), 1)
     # TODO: HANDLE MULTIPLE VALUE VARIABLES
 
@@ -833,11 +842,29 @@ generate_graphic <- function(graphic_tab,
     register_windows_font(visuals[["font"]])
 
     # Setup main canvas
-    viewport <- setup_main_canvas(width  = dimensions[["graphic_width"]],
-                                  height = dimensions[["graphic_height"]],
-                                  background_color = visuals[["graphic_background_color"]],
-                                  border_color     = visuals[["graphic_border_color"]],
-                                  line_height      = fine_tuning[["line_height"]])
+    grid_row    <- NULL
+    grid_column <- NULL
+
+    if (!is.null(grid_positions)){
+        grid_row    <- grid_positions[["row"]]
+        grid_column <- grid_positions[["column"]]
+    }
+
+    viewport <- setup_main_canvas(width         = dimensions[["graphic_width"]],
+                                  height        = dimensions[["graphic_height"]],
+                                  line_height   = fine_tuning[["line_height"]],
+                                  layout_row    = grid_row,
+                                  layout_column = grid_column)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Setup titles and footnotes
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Setup titles and footnotes") }
+
+    # Draw the graphics background
+    graphic_background <- grid::rectGrob(gp  = grid::gpar(fill = visuals[["graphic_background_color"]],
+                                                          col  = visuals[["graphic_border_color"]]),
+                                         name = "graphic_background")
 
     # Get titles and footnotes as graphical objects
     title_grob    <- add_title(titles, dimensions, visuals)
@@ -854,6 +881,11 @@ generate_graphic <- function(graphic_tab,
     dimensions[["diagram_start"]]  <- get_diagram_start_cm(dimensions, fine_tuning, title_height)
     dimensions[["diagram_width"]]  <- get_diagram_width_cm(dimensions)
     dimensions[["diagram_height"]] <- get_diagram_height_cm(dimensions, fine_tuning, title_height, footnote_height)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Build main diagram
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Build main diagram") }
 
     # Draw main diagram
     main_grob <- diagram(graphic_tab,
@@ -877,6 +909,7 @@ generate_graphic <- function(graphic_tab,
     back_to_the_root()
 
     # TODO: INSERT CUSTOM TEXTBOXES
+    # Reconstruct viewport so that the diagram children are drawn the righr way
     viewport_path <- c(grid::current.vpPath()[["name"]],
                        main_grob[["meta"]][["outer_viewport"]][["name"]],
                        main_grob[["meta"]][["inner_viewport"]][["name"]])
@@ -886,13 +919,29 @@ generate_graphic <- function(graphic_tab,
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
 
-    whole_graphic <- grid::gTree(children = grid::gList(title_grob,
+    # Put together the whole graphic
+    whole_graphic <- grid::gTree(children = grid::gList(grid::editGrob(graphic_background,     vp = grid::vpPath("main_canvas")),
+                                                        grid::editGrob(title_grob,             vp = grid::vpPath("main_canvas")),
                                                         grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
-                                                        footnote_grob, origin_grob),
+                                                        grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
+                                                        grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
                                  childrenvp = viewport_tree,
                                  name       = "graphic")
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Output graphic
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (is.null(by_info)){ print_step("MINOR", "Output graphic") }
+
+    # TODO: SINGLE FILE/GRID EXPORT WITH BY VARIABLES
+
     # Draw and save the graphic
+    # NOTE: To leave it like this in a situation with by-variables, leads to multiple
+    #       draw calls, meaning one draw call per iteration. This should probably be
+    #       reworked to just one draw call at the end of the by loop of the function
+    #       below. But at the moment I can't get the graphics to draw in a grid with
+    #       a single draw call. I think the master_layout somehow interferes with
+    #       the viewport construction in this function. Revisit some time.
     output_graphic(whole_graphic, dimensions, fine_tuning, output)
 
     grid::popViewport()
@@ -972,23 +1021,45 @@ generate_graphic_by <- function(graphic_tab,
                                 na.rm,
                                 print_miss,
                                 monitor_df){
+    grid::grid.newpage()
 
-    # NOTE: JUST RENAMED PLACEHOLDER FROM ANY_TABLE
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Calculate grid dimensions
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    #---------------------------------------------------------------------#
+    monitor_df <- monitor_df |> monitor_start("Calculate grid", "Calculate grid")
+    #---------------------------------------------------------------------#
+
+    number_of_values <- 0
+
+    # Loop through all by variable and add up the total number of values
+    for (by_var in by){
+        graphic_temp <- graphic_tab |> collapse::fsubset(graphic_tab[["BY"]] == by_var)
+
+        current_values <- collapse::funique(graphic_temp[["by_vars"]])
+
+        number_of_values <- number_of_values + length(current_values)
+    }
+
+    # Calculate the grid dimensions to be equaly distributed among rows and columns
+    number_of_columns <- ceiling(sqrt(number_of_values))
+    number_of_rows    <- ceiling(number_of_values / number_of_columns)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    index <- 1
+    index        <- 1
+    cell_counter <- 1
+    graphic_list <- list()
 
     for (by_var in by){
         #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_start(paste0("Excel prepare (", by_var, ")"), "Format by")
+        monitor_df <- monitor_df |> monitor_start(paste0("Graphic prepare (", by_var, ")"), "Format by")
         #---------------------------------------------------------------------#
 
         # Select by variables one by one
-        graphic_by <- graphic_tab |>
-            collapse::fsubset(graphic_tab[["BY"]] == by_var)
+        graphic_by <- graphic_tab |> collapse::fsubset(graphic_tab[["BY"]] == by_var)
 
         # Extract unique values
         if (anyNA(graphic_by[["by_vars"]])){
@@ -998,11 +1069,32 @@ generate_graphic_by <- function(graphic_tab,
             values <- collapse::funique(graphic_by[["by_vars"]])
         }
 
-        monitor_df <- monitor_df |> monitor_end()
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Set up master viewport to be able to arrange single graphics in grid
+        # layout.
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        # Set up whole grid graphic dimensions in cm
+        grid_width  <- dimensions[["graphic_width"]]  * number_of_columns
+        grid_height <- dimensions[["graphic_height"]] * number_of_rows
+
+        # Define the master viewport with a grid layout
+        master_layout <- grid::viewport(width  = grid::unit(grid_width,  "cm"),
+                                        height = grid::unit(grid_height, "cm"),
+                                        name   = "master_grid",
+                                        layout = grid::grid.layout(nrow = number_of_rows,
+                                                                   ncol = number_of_columns))
+
+        grid::pushViewport(master_layout)
+
+        # Initialize a list which captures all single graphic objects
+        graphic_list <- list()
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Loop through all unique values to generate tables per expression
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        monitor_df <- monitor_df |> monitor_end()
 
         for (value in values){
             # In case NAs are removed
@@ -1013,7 +1105,7 @@ generate_graphic_by <- function(graphic_tab,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_start(paste0("Excel (", by_var, "_", value, ")"), "Format by")
             #-----------------------------------------------------------------#
-            message("   + ", paste0(by_var, " = ", value))
+            print_step("MINOR", "[by] = [value]", by = by_var, value = value)
 
             # Put additional by info together with the information which by variable
             # and which value is currently filtered.
@@ -1031,44 +1123,57 @@ generate_graphic_by <- function(graphic_tab,
 
             graphic_temp <- graphic_temp |> dropp("BY", "by_vars")
 
-            # Add by info below the titles
+            # Replace by info in the titles
             if (length(titles) > 0){
-                titles_temp <- c(titles, "", by_info)
+                titles_temp <- gsub("\\[by_var\\]", value, titles)
             }
             # Or on top if there are no titles
             else{
                 titles_temp <- by_info
             }
 
+            # Calculate the actual position in the grid
+            grid_row    <- ceiling(cell_counter / number_of_columns)
+            grid_column <- cell_counter - ((grid_row - 1) * number_of_columns)
+
+            grid_positions <- list(row = grid_row, column = grid_column)
+
             # Generate tables as normal but base is filtered data frame
-            current_graphic <- generate_graphic(graphic_tab,
+            current_graphic <- generate_graphic(graphic_temp,
                                                 axes_vars,
                                                 segment_vars,
                                                 statistics,
                                                 by,
-                                                titles,
+                                                titles_temp,
                                                 footnotes,
                                                 var_labels,
                                                 stat_labels,
+                                                diagram,
                                                 color_theme,
+                                                color_usage,
                                                 visuals,
                                                 axes,
                                                 dimensions,
+                                                fine_tuning,
                                                 add_texts,
                                                 output,
                                                 by_info,
                                                 index,
+                                                grid_positions,
                                                 NULL)
 
-            index <- index + 1
 
-            graphic_list <- c(graphic_list, current_graphic)
+            # Save the graphic object into a list
+            graphic_list[[cell_counter]] <- current_graphic[[1]]
+
+            index        <- index + 1
+            cell_counter <- cell_counter + 1
 
             monitor_df <- monitor_df |> monitor_end()
         }
-
-        monitor_df <- monitor_df |> monitor_end()
     }
+
+    grid::popViewport()
 
     # Return workbook
     list(graphic_list, monitor_df)
