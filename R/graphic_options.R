@@ -437,7 +437,7 @@ graphic_dimensions <- function(graphic_width          = 16,
         message(" ! WANRING: Diagram height can't be greater than the whole graphic height.\n",
                 "            Diagram height will be reduced to graphic height.")
 
-        diagram_width <- graphic_width
+        diagram_height <- graphic_height
     }
 
     if (is.numeric(diagram_start) && (diagram_start < 0 || diagram_start > graphic_height)){

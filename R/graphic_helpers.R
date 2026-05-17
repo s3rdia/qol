@@ -312,6 +312,10 @@ add_title <- function(text,
                       visuals     = .qol_options[["graphic_visuals"]],
                       fine_tuning = .qol_options[["graphic_fine_tuning"]],
                       draw        = FALSE){
+    if (length(text) == 0){
+        return(invisible(grid::nullGrob()))
+    }
+
     x_pos <- fix_alignment(dimensions, visuals)
 
     invisible(
@@ -342,6 +346,10 @@ add_footnote <- function(text,
                          visuals     = .qol_options[["graphic_visuals"]],
                          fine_tuning = .qol_options[["graphic_fine_tuning"]],
                          draw        = FALSE){
+    if (length(text) == 0){
+        return(invisible(grid::nullGrob()))
+    }
+
     x_pos <- fix_alignment(dimensions, visuals, "footnote")
 
     # Add textbox as normal first
@@ -439,8 +447,6 @@ register_windows_font <- function(font){
 #'
 #' @param width Viewport width.
 #' @param height Viewport height
-#' @param background_color Hex color code of background the rectangle.
-#' @param border_color Hex color code of border around the background rectangle.
 #' @param line_height The height of a single text line.
 #' @param name The internal name of the canvas with which it can be identified.
 #'
@@ -450,13 +456,15 @@ register_windows_font <- function(font){
 #' @rdname viewport
 #'
 #' @export
-setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-                              height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-                              background_color = .qol_options[["graphic_visuals"]][["graphic_background_color"]],
-                              border_color     = .qol_options[["graphic_visuals"]][["graphic_border_color"]],
-                              line_height      = .qol_options[["graphic_fine_tuning"]][["line_height"]],
-                              name = "main_canvas"){
-    grid::grid.newpage()
+setup_main_canvas <- function(width         = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+                              height        = .qol_options[["graphic_dimensions"]][["graphic_height"]],
+                              line_height   = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+                              layout_row    = NULL,
+                              layout_column = NULL,
+                              name          = "main_canvas"){
+    if (is.null(layout_row)){
+        grid::grid.newpage()
+    }
 
     # Set up the main viewport for the entire graphic
     vp <- grid::viewport(width  = grid::unit(width, "cm"),
@@ -464,13 +472,11 @@ setup_main_canvas <- function(width  = .qol_options[["graphic_dimensions"]][["gr
                          xscale = c(0, width),
                          yscale = c(0, height),
                          gp     = grid::gpar(lineheight = line_height + 0.1),
+                         layout.pos.row = layout_row,
+                         layout.pos.col = layout_column,
                          name   = name)
 
     grid::pushViewport(vp)
-
-    # Draw the graphics background
-    grid::grid.rect(gp = grid::gpar(fill = background_color,
-                                    col  = border_color))
 
     invisible(vp)
 }
@@ -600,10 +606,6 @@ setup_nested_diagram_viewport <- function(arguments){
                               height  = 1 - diagram_info[["entire_group_label_height"]],
                               line_height = arguments[["fine_tuning"]][["line_height"]],
                               name    = "main_diagram")
-
-    # Draw the graphics background
-    grid::grid.rect(gp = grid::gpar(fill = arguments[["visuals"]][["diagram_background_color"]],
-                                    col  = arguments[["visuals"]][["diagram_border_color"]]))
 
     invisible(diagram_info)
 }
@@ -2092,8 +2094,8 @@ output_graphic <- function(graphic_object,
             # Output into desired format
             if (extension == "png"){
                 grDevices::png(paste0(output[["save_path"]], "/", output[["file"]]),
-                               width  = dimensions[["width"]]  / fine_tuning[["cm_to_inch_factor"]],
-                               height = dimensions[["height"]] / fine_tuning[["cm_to_inch_factor"]],
+                               width  = dimensions[["graphic_width"]]  / fine_tuning[["cm_to_inch_factor"]],
+                               height = dimensions[["graphic_height"]] / fine_tuning[["cm_to_inch_factor"]],
                                units  = "in",
                                res    = output[["resolution"]])
 
