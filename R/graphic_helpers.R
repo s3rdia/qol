@@ -2070,7 +2070,24 @@ direct_vertical_labels <- function(diagram_info,
 output_graphic <- function(graphic_object,
                            dimensions,
                            fine_tuning,
-                           output){
+                           output,
+                           by_info = NULL){
+    # Check if only save path or file name is specified. If only one is specified
+    # print a note. Otherwise the file would not be saved and opened without a
+    # hint to why the file wasn't saved.
+    if (is.null(output[["save_path"]]) + is.null(output[["file"]]) == 1){
+        if (is.null(output[["save_path"]])){
+            print_message("NOTE", c("No save path specified. Both save path and file name with extension",
+                                    "need to be specified in the global options or style parameter for",
+                                    "the file to be saved. File won't be saved."))
+        }
+        else{
+            print_message("NOTE", c("No file name specified. Both save path and file name with extension",
+                                    "need to be specified in the global options or style parameter for",
+                                    "the file to be saved. File won't be saved."))
+        }
+    }
+
     # First check if full file path is provided. If not only draw graphic in plot window.
     if (is.null(output[["save_path"]]) || is.null(output[["file"]])){
         if (interactive()){
@@ -2080,7 +2097,7 @@ output_graphic <- function(graphic_object,
     else{
         # If save path doesn't exist, just draw graphic in plot window.
         if (!file.exists(output[["save_path"]])){
-            message(" ! WARNING: Path does not exist: ", output[["save_path"]])
+            print_message("WARNING", "Path does not exist: ", output[["save_path"]])
 
             if (interactive()){
                 grid::grid.draw(graphic_object)
@@ -2090,19 +2107,52 @@ output_graphic <- function(graphic_object,
         else{
             # Get file extension to determine output format
             extension <- tolower(tools::file_ext(output[["file"]]))
+            filename  <- tools::file_path_sans_ext(output[["file"]])
 
-            # Output into desired format
-            if (extension == "png"){
-                grDevices::png(paste0(output[["save_path"]], "/", output[["file"]]),
-                               width  = dimensions[["graphic_width"]]  / fine_tuning[["cm_to_inch_factor"]],
-                               height = dimensions[["graphic_height"]] / fine_tuning[["cm_to_inch_factor"]],
-                               units  = "in",
-                               res    = output[["resolution"]])
+            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff")){
+                print_message("WARNING", c("Filetype '[extension]' not supported, 'png' will be used. Valid filetypes are:",
+                                           "png, svg, jpeg, jpg, bmp, tiff"), extension = extension)
 
-                grid::grid.draw(graphic_object)
-
-                grDevices::dev.off()
+                extension <- "png"
             }
+
+            # If there is no by info, the file name is already provided through the option
+            if (is.null(by_info)){
+                filename <- paste0(filename, ".", extension)
+            }
+            # If this function is called via the by variable loop, then add the expression
+            # information to the file name.
+            else{
+                filename <- paste0(filename, "_", by_info, ".", extension)
+            }
+
+            # Put all output functions into a list to call them dynamically
+            devices <- list(png  = grDevices::png,
+                            svg  = grDevices::svg,
+                            jpeg = grDevices::jpeg,
+                            jpg  = grDevices::jpeg,
+                            bmp  = grDevices::bmp,
+                            tiff = grDevices::tiff)
+
+            device_function <- devices[[extension]]
+
+            # Store the base arguments for the output functions
+            arguments <- list(filename = paste0(output[["save_path"]], "/", filename),
+                              width    = dimensions[["graphic_width"]]  / fine_tuning[["cm_to_inch_factor"]],
+                              height   = dimensions[["graphic_height"]] / fine_tuning[["cm_to_inch_factor"]])
+
+            # Add format specific arguments based on file extension
+            if (extension %in% c("png", "jpeg", "jpg", "bmp", "tiff")){
+                args[["units"]] <- "in"
+                args[["res"]]   <- output[["resolution"]]
+            }
+
+            # Export image and draw to plot view
+            do.call(device_function, args)
+
+            grid::grid.draw(graphic_object)
+
+            grDevices::dev.off()
         }
     }
 
