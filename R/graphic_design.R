@@ -933,7 +933,7 @@ generate_graphic <- function(graphic_tab,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if (is.null(by_info)){ print_step("MINOR", "Output graphic") }
 
-    # TODO: SINGLE FILE/GRID EXPORT WITH BY VARIABLES
+    # TODO: EXPORT WHOLE GRID AS IMAGE
 
     # Draw and save the graphic
     # NOTE: To leave it like this in a situation with by-variables, leads to multiple
@@ -942,7 +942,7 @@ generate_graphic <- function(graphic_tab,
     #       below. But at the moment I can't get the graphics to draw in a grid with
     #       a single draw call. I think the master_layout somehow interferes with
     #       the viewport construction in this function. Revisit some time.
-    output_graphic(whole_graphic, dimensions, fine_tuning, output)
+    output_graphic(whole_graphic, dimensions, fine_tuning, output, by_info)
 
     grid::popViewport()
 
@@ -1157,7 +1157,7 @@ generate_graphic_by <- function(graphic_tab,
                                                 fine_tuning,
                                                 add_texts,
                                                 output,
-                                                by_info,
+                                                value, # by_info passed as value, so that value can be added to the file name on saving
                                                 index,
                                                 grid_positions,
                                                 NULL)
