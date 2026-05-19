@@ -91,6 +91,9 @@
 #' # Select observations by condition instead of generating new variable
 #' subset_df <- my_data |> if.(sex == 1)
 #'
+#' # Explicitly delete observations
+#' subset_df <- my_data |> if.(sex == 1, delete)
+#'
 #' # Select all non NA observations by variable
 #' subset_df <- my_data |> if.(sex)
 #'

@@ -1,6 +1,18 @@
 # Changelog
 
+## qol 1.3.2 - DEVELOPMENT
+
+#### Additionally
+
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Updated examples. (19.05.2026)
+
 ## qol 1.3.1
+
+CRAN release: 2026-05-16
+
+CRAN release on 16.05.2026
 
 #### Renamed functions
 
@@ -11,6 +23,11 @@
 
 #### New functionality
 
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md): The
+  “:” can now be used in conditions as a placeholder for “starts with”
+  (“text:”), “ends with” (“:text”) and “contains” (“:text:”).
+  (21.03.2026)
 - [`set_no_color()`](https://s3rdia.github.io/qol/reference/message_helpers.md):
   Suppresses the color codes so that messages can be printed clean. The
   option is auto controlled on load via the system variable `NO_COLOR`
@@ -42,11 +59,6 @@
   global options or the style parameter the result table will then be
   exported as ‘csv’. Otherwise the actual workbook will be exported as
   `xlsx` as normal. (13.05.2026)
-- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md): The
-  “:” can now be used in conditions as a placeholder for “starts with”
-  (“text:”), “ends with” (“:text”) and “contains” (“:text:”).
-  (21.03.2026)
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): If the
   new `delete` keyword is passed instead of a variable assignment, the
   provided condition deletes observations instead of keeping them.

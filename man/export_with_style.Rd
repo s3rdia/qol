@@ -75,8 +75,8 @@ set_footnotes("This is footnote number 1",
 # Print styled data frame
 my_data |> export_with_style()
 
-# Retrieve formatted workbook for further usage
-wb <- my_data |> export_with_style()
+# Retrieve formatted workbook, original table and meta information for further usage
+export_list <- my_data |> export_with_style()
 
 # To save a table as xlsx file you have to set the path and filename in the
 # style element

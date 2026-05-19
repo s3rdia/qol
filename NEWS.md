@@ -1,4 +1,12 @@
+# qol 1.3.2 - DEVELOPMENT
+
+### Additionally
+
+* `if.()`, `export_with_style()`: Updated examples. (19.05.2026)
+
 # qol 1.3.1
+
+CRAN release on 16.05.2026
 
 ### Renamed functions
 
@@ -6,13 +14,13 @@
 
 ### New functionality
 
+* `if.()`, `else_if.()`: The ":" can now be used in conditions as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (21.03.2026)
 * `set_no_color()`: Suppresses the color codes so that messages can be printed clean. The option is auto controlled on load via the system variable `NO_COLOR` but can also be set individually by this function. Console output in e.g. RStudio vs. output to a logging system should be handled automatically rightnow. (25.04.2026, thanks to @TroyHernandez)
 * `set_up_custom_message()`: Waiting symbols as well as the color of the time stamps can now be customized. (25.04.2026)
 * `print_step()`: Now has a new `in_place` parameter, which prints the message on the same line as before, instead of in the next line. This can e.g. be used inside loops as follows. (29.04.2026)
 * `any_table()`, `export_with_style()`: If the whole result list from these functions is passed for the `workbook` parameter, the functions now are able to extract the actual workbook from the list and run without error. Additionally if a list is passed, which is not a result list containing the workbook, the functions error and abort execution. (05.05.2026)
 * `transpose_plus()`: In a wide to long transposition it is now possible to not only put results below each other, but also side by side. (11.05.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`: If 'csv' is specified as extension in the `file name` set in the global options or the style parameter the result table will then be exported as 'csv'. Otherwise the actual workbook will be exported as `xlsx` as normal. (13.05.2026)
-* `if.()`, `else_if.()`: The ":" can now be used in conditions as a placeholder for "starts with" ("text:"), "ends with" (":text") and "contains" (":text:"). (21.03.2026)
 * `if.()`: If the new `delete` keyword is passed instead of a variable assignment, the provided condition deletes observations instead of keeping them. (15.05.2026)
 
 ### Changed functionality
