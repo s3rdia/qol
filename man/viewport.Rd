@@ -13,9 +13,9 @@
 setup_main_canvas(
   width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
   height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-  background_color = .qol_options[["graphic_visuals"]][["graphic_background_color"]],
-  border_color = .qol_options[["graphic_visuals"]][["graphic_border_color"]],
   line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+  layout_row = NULL,
+  layout_column = NULL,
   name = "main_canvas"
 )
 
@@ -41,10 +41,6 @@ is_viewport_pushed()
 \item{width}{Viewport width.}
 
 \item{height}{Viewport height}
-
-\item{background_color}{Hex color code of background the rectangle.}
-
-\item{border_color}{Hex color code of border around the background rectangle.}
 
 \item{line_height}{The height of a single text line.}
 

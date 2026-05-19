@@ -514,6 +514,8 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @param file If NULL, only draws the graphic in the plot window. Otherwise specify
 #' a filename with extension.
 #' @param resolution DPI resolution.
+#' @param by_as_grid FALSE by default. If TRUE exports one single graphic containing the
+#' whole grid when using by variables.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -536,7 +538,8 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @export
 graphic_output <- function(save_path  = NULL,
                            file       = NULL,
-                           resolution = 300){
+                           resolution = 300,
+                           by_as_grid = FALSE){
     as.list(environment())
 }
 

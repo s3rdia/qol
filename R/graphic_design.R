@@ -755,7 +755,7 @@ design_graphic <- function(data_frame,
         monitor_df   <- graphic_list[[2]]
     }
 
-    print_closing()
+    print_closing(5)
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_end()
@@ -934,8 +934,6 @@ generate_graphic <- function(graphic_tab,
     # Output graphic
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if (is.null(by_info)){ print_step("MINOR", "Output graphic") }
-
-    # TODO: EXPORT WHOLE GRID AS IMAGE
 
     # Draw and save the graphic
     # NOTE: To leave it like this in a situation with by-variables, leads to multiple
@@ -1176,6 +1174,9 @@ generate_graphic_by <- function(graphic_tab,
     }
 
     grid::popViewport()
+
+    # Export the whole grid as one graphic
+    output_grid(list(graphic_width = grid_width, graphic_height = grid_height), fine_tuning, output)
 
     # Return workbook
     list(graphic_list, monitor_df)
