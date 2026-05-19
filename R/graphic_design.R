@@ -634,11 +634,13 @@ design_graphic <- function(data_frame,
     # Round values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # TODO: Revisit the ordering some time.
+
     # Reorder variables according to statistics. This is necessary because some
     # percentages can only be computed after summarise_plus and therefor aren't ordered.
-    if ("pct_group" %in% statistics){
-        graphic_tab <- graphic_tab |> setcolorder_by_pattern(order_pct)
-    }
+    #if ("pct_group" %in% statistics){
+    #    graphic_tab <- graphic_tab |> setcolorder_by_pattern(order_pct)
+    #}
 
     graphic_tab <- graphic_tab |> setcolorder_by_pattern(statistics)
 

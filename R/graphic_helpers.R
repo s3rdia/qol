@@ -1004,7 +1004,7 @@ get_diagram_dimensions <- function(graphic_tab,
     # Some entries are now the same throughout the list vectors. These identical entries
     # are now cleared from the vectors, so that each layer of separation lines doesn't
     # intersect any other separation line.
-    if (length(group_separation_lines_x) > 0){
+    if (length(group_separation_lines_x) > 1){
         for (i in seq(length(group_separation_lines_x), 2)){
             group_separation_lines_x[[i]] <- setdiff(group_separation_lines_x[[i]], group_separation_lines_x[[i - 1]])
         }
@@ -2143,12 +2143,12 @@ output_graphic <- function(graphic_object,
 
             # Add format specific arguments based on file extension
             if (extension %in% c("png", "jpeg", "jpg", "bmp", "tiff")){
-                args[["units"]] <- "in"
-                args[["res"]]   <- output[["resolution"]]
+                arguments[["units"]] <- "in"
+                arguments[["res"]]   <- output[["resolution"]]
             }
 
             # Export image and draw to plot view
-            do.call(device_function, args)
+            do.call(device_function, arguments)
 
             grid::grid.draw(graphic_object)
 
