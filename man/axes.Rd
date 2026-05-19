@@ -50,7 +50,7 @@ get_y_axes_values(values, axes, fine_tuning, which = "primary")
 
 setup_y_axes(tick_positions, tick_values, arguments, secondary = FALSE)
 
-setup_x_axes(tick_positions, label_positions, labels, zero_pos, arguments)
+setup_x_axes(diagram_info, arguments)
 
 setup_xy_axes(diagram_info, arguments)
 
@@ -102,12 +102,6 @@ inject_inner_canvas_size(axes, arguments)
 
 \item{secondary}{FALSE by default. If TRUE draws the primary axes on the left side,
 otherwise the secondary axes on the right side.}
-
-\item{label_positions}{The positions the labels will be drawn at.}
-
-\item{labels}{The labels per tick or per segment group.}
-
-\item{zero_pos}{The y axes 0 position at which the x axes is drawn.}
 }
 \value{
 \code{\link[=get_value_axes_width]{get_value_axes_width()}}: Returns a numeric width.

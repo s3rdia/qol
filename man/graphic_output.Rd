@@ -4,7 +4,12 @@
 \alias{graphic_output}
 \title{Graphic Output}
 \usage{
-graphic_output(save_path = NULL, file = NULL, resolution = 300)
+graphic_output(
+  save_path = NULL,
+  file = NULL,
+  resolution = 300,
+  by_as_grid = FALSE
+)
 }
 \arguments{
 \item{save_path}{If NULL, only draws the graphic in the plot window. Otherwise
@@ -14,6 +19,9 @@ specify an output path.}
 a filename with extension.}
 
 \item{resolution}{DPI resolution.}
+
+\item{by_as_grid}{FALSE by default. If TRUE exports one single graphic containing the
+whole grid when using by variables.}
 }
 \value{
 Returns a list of named graphic options.

@@ -4,7 +4,7 @@
 \alias{output_graphic}
 \title{Output Graphic To Device}
 \usage{
-output_graphic(graphic_object, dimensions, fine_tuning, output)
+output_graphic(graphic_object, dimensions, fine_tuning, output, by_info = NULL)
 }
 \arguments{
 \item{graphic_object}{The complete graphic to be drawn or exported.}

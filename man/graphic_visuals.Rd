@@ -41,8 +41,10 @@ graphic_visuals(
   guiding_lines = FALSE,
   guiding_line_type = "dotted",
   guiding_line_color = "#9A9A9A",
-  separation_line_type = "dashed",
-  separation_line_color = "#2B2B2B",
+  major_separation_line_type = "solid",
+  major_separation_line_color = "#2B2B2B",
+  minor_separation_line_type = "dotted",
+  minor_separation_line_color = "#2B2B2B",
   segment_line_type = "solid",
   segment_line_color = "#000000",
   remove_small_values = TRUE,
@@ -135,12 +137,6 @@ Can be "dashed", "dotted" or "solid".}
 
 \item{guiding_line_color}{The color of the guiding lines drawn at the y axes tick positions.}
 
-\item{separation_line_type}{Sets the type of separation lines drawn between top group
-categories. Can be "dashed", "dotted" or "solid".}
-
-\item{separation_line_color}{The color of the separation lines drawn between top group
-categories.}
-
 \item{segment_line_type}{Sets the type of leading lines from segments to labels. Can be
 "dashed", "dotted" or "solid".}
 
@@ -177,6 +173,12 @@ diagram, otherwise if "bottom" they will be drawn belowthe diagram.}
 
 \item{origin}{A character value that will be written in the bottom right corner of the
 graphic.}
+
+\item{separation_line_type}{Sets the type of separation lines drawn between top group
+categories. Can be "dashed", "dotted" or "solid".}
+
+\item{separation_line_color}{The color of the separation lines drawn between top group
+categories.}
 }
 \value{
 Returns a list of named graphic options.
