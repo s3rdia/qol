@@ -910,7 +910,6 @@ generate_graphic <- function(graphic_tab,
     # Go back to the main canvas to be able to draw additional textboxes freely
     back_to_the_root()
 
-    # TODO: INSERT CUSTOM TEXTBOXES
     # Reconstruct viewport so that the diagram children are drawn the righr way
     viewport_path <- c(grid::current.vpPath()[["name"]],
                        main_grob[["meta"]][["outer_viewport"]][["name"]],
@@ -921,14 +920,24 @@ generate_graphic <- function(graphic_tab,
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
 
+    # Make sure custom textboxes have a unique name or otherwise only the first
+    # will be drawn multiple times.
+    custom_textboxes <- lapply(seq_along(add_texts), function(textbox){
+            grid::editGrob(add_texts[[textbox]],
+                           vp   = grid::vpPath("main_canvas"),
+                           name = paste0("custom_textbox", textbox))
+        })
+
     # Put together the whole graphic
-    whole_graphic <- grid::gTree(children = grid::gList(grid::editGrob(graphic_background,     vp = grid::vpPath("main_canvas")),
-                                                        grid::editGrob(title_grob,             vp = grid::vpPath("main_canvas")),
-                                                        grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
-                                                        grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
-                                                        grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
-                                 childrenvp = viewport_tree,
-                                 name       = "graphic")
+    whole_graphic <- grid::gTree(children = do.call(
+        grid::gList, c(list(grid::editGrob(graphic_background,     vp = grid::vpPath("main_canvas")),
+                            grid::editGrob(title_grob,             vp = grid::vpPath("main_canvas")),
+                            grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
+                            grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
+                            grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
+                       custom_textboxes)),
+        childrenvp = viewport_tree,
+        name       = "graphic" )
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output graphic
