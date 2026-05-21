@@ -20,7 +20,7 @@ graphic_dimensions(
   other_font_size = 9,
   space_between_bars_pct = 0,
   bar_overlap = 0,
-  line_thickness = 1,
+  line_thickness = 0,
   segment_line_length = 1,
   segment_line_offset = 0,
   textbox_width = 2
