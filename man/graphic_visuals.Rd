@@ -56,7 +56,6 @@ graphic_visuals(
   legend_x_pos = 11,
   legend_y_pos = 5,
   legend_columns = 1,
-  top_category_position = "top",
   origin = "Graphic: qol"
 )
 }
@@ -167,9 +166,6 @@ group of segments the labels will be drawn.}
 \item{legend_columns}{The number of columns in which the labels should be arranged.
 If 0, all labels will be drawn below each other. If max number of segments, then
 all labels will be drawn beside each other.}
-
-\item{top_category_position}{If "top", the top group categories will be drawn above the
-diagram, otherwise if "bottom" they will be drawn belowthe diagram.}
 
 \item{origin}{A character value that will be written in the bottom right corner of the
 graphic.}

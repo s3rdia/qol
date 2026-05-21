@@ -2066,7 +2066,7 @@ direct_vertical_labels <- function(diagram_info,
 #' @return
 #' Returns the input graphic object.
 #'
-#' @export
+#' @noRd
 output_graphic <- function(graphic_object,
                            dimensions,
                            fine_tuning,
@@ -2170,7 +2170,7 @@ output_graphic <- function(graphic_object,
 }
 
 
-#' @export
+#' @noRd
 output_grid <- function(dimensions,
                         fine_tuning,
                         output){

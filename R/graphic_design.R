@@ -868,6 +868,11 @@ generate_graphic <- function(graphic_tab,
                                                           col  = visuals[["graphic_border_color"]]),
                                          name = "graphic_background")
 
+    # If titles and footnotes are given as a vector instead of single character,
+    # merge the single parts together first.
+    titles    <- paste(titles,    collapse = "\n")
+    footnotes <- paste(footnotes, collapse = "\n")
+
     # Get titles and footnotes as graphical objects
     title_grob    <- add_title(titles, dimensions, visuals)
     footnote_grob <- add_footnote(footnotes, dimensions, visuals)
