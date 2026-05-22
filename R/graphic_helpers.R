@@ -1137,7 +1137,8 @@ vbar_grob <- function(diagram_info,
                             just   = c("left", "bottom"),
                             name   = "segments",
                             gp     = grid::gpar(fill = colors_to_use,
-                                                col  = border_color))
+                                                col  = border_color,
+                                                lwd  = dimensions[["line_thickness"]]))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate value texts
@@ -1543,7 +1544,8 @@ setup_y_axes <- function(tick_positions,
                          tick_values,
                          arguments,
                          secondary = FALSE){
-    visuals <- arguments[["visuals"]]
+    visuals    <- arguments[["visuals"]]
+    dimensions <- arguments[["dimensions"]]
 
     which <- "primary"
 
@@ -1555,7 +1557,8 @@ setup_y_axes <- function(tick_positions,
     zero_pos <- sum(secondary)
 
     line <- grid::linesGrob(x = c(zero_pos, zero_pos), y = c(0, 1),
-                            gp = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
+                            gp = grid::gpar(col = visuals[[paste0(which, "_axes_color")]],
+                                            lwd = dimensions[["axes_line_thickness"]]))
 
     # Setup the ticks left/right
     #tick_length <- 0.1 + (-0.2 * zero_pos)
@@ -1567,17 +1570,22 @@ setup_y_axes <- function(tick_positions,
                                 y0   = grid::unit(tick_positions, "npc"),
                                 y1   = grid::unit(tick_positions, "npc"),
                                 name = paste0("y_ticks"),
-                                gp   = grid::gpar(col = visuals[[paste0(which, "_axes_color")]]))
+                                gp   = grid::gpar(col = visuals[[paste0(which, "_axes_color")]],
+                                                  lwd = dimensions[["axes_line_thickness"]]))
 
     # Draw guiding lines
-    if (visuals[["guiding_lines"]]){
-        ticks <- grid::segmentsGrob(x0   = 0,
-                                    x1   = 1,
-                                    y0   = grid::unit(tick_positions, "npc"),
-                                    y1   = grid::unit(tick_positions, "npc"),
-                                    name = paste0("y_guiding_lines"),
-                                    gp   = grid::gpar(col = visuals[["guiding_line_color"]],
-                                                      lty = visuals[["guiding_line_type"]]))
+    if (visuals[["guiding_lines_y"]]){
+        guiding_lines <- grid::segmentsGrob(x0   = 0,
+                                            x1   = 1,
+                                            y0   = grid::unit(tick_positions, "npc"),
+                                            y1   = grid::unit(tick_positions, "npc"),
+                                            name = paste0("y_guiding_lines"),
+                                            gp   = grid::gpar(col = visuals[["guiding_line_color"]],
+                                                              lty = visuals[["guiding_line_type"]],
+                                                              lwd = dimensions[["guiding_line_thickness"]]))
+    }
+    else{
+        guiding_lines <- grid::nullGrob()
     }
 
     # Format values according to options
@@ -1607,11 +1615,12 @@ setup_y_axes <- function(tick_positions,
                                   name  = paste0("y_values"),
                                   gp    = grid::gpar(col        = visuals[[paste0(which, "_axes_font_color")]],
                                                      fontfamily = visuals[["font"]],
-                                                     fontsize   = arguments[["dimensions"]][["axes_font_size"]],
+                                                     fontsize   = dimensions[["axes_font_size"]],
                                                      fontface   = visuals[["axes_font_face"]]))
 
     # Return the whole axes as one graphical object
-    grid::gTree(children = grid::gList(line, ticks, axes_values), name = "y_axes")
+    grid::gTree(children = grid::gList(guiding_lines, line, ticks, axes_values),
+                name     = "y_axes")
 }
 
 
@@ -1628,7 +1637,11 @@ setup_y_axes <- function(tick_positions,
 #' @export
 setup_x_axes <- function(diagram_info,
                          arguments){
-    tick_length          <- arguments[["fine_tuning"]][["tick_length"]]
+    fine_tuning          <- arguments[["fine_tuning"]]
+    visuals              <- arguments[["visuals"]]
+    dimensions           <- arguments[["dimensions"]]
+
+    tick_length          <- fine_tuning[["tick_length"]]
     tick_positions       <- diagram_info[["group_ticks_pos_x"]]
     label_x_positions    <- diagram_info[["group_label_x_pos"]]
     label_y_positions    <- diagram_info[["group_label_y_pos"]]
@@ -1642,13 +1655,13 @@ setup_x_axes <- function(diagram_info,
     # Which means normally they are drawn below the variable axes (vbars),
     # but if the values are all negative they are drawn at the top.
     if (zero_pos != 1){
-        label_y    <- label_y_positions - arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_y    <- label_y_positions - fine_tuning[["variable_axes_margin"]]
         label_just <- c("center", "top")
 
         # The first layer of multi layered group labels is drawn at the top of the
         # diagram, not below the axes.
         if (is_multi_group_label){
-            label_y[[1]] <- 1 + group_label_heights[1] + arguments[["fine_tuning"]][["variable_axes_margin"]]
+            label_y[[1]] <- 1 + group_label_heights[1] + fine_tuning[["variable_axes_margin"]]
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1672,13 +1685,13 @@ setup_x_axes <- function(diagram_info,
     else{
         # Ticks point up if the x axes is drawn at the top.
         tick_length <- -tick_length
-        label_y     <- 1 - label_y_positions + arguments[["fine_tuning"]][["variable_axes_margin"]]
+        label_y     <- 1 - label_y_positions + fine_tuning[["variable_axes_margin"]]
         label_just  <- c("center", "bottom")
 
         # The first layer of multi layered group labels is drawn at the bottom of the
         # diagram, not on top of the axes.
         if (is_multi_group_label){
-            label_y[[1]] <- -diagram_info[["group_label_heights"]][1] - arguments[["fine_tuning"]][["variable_axes_margin"]]
+            label_y[[1]] <- -diagram_info[["group_label_heights"]][1] - fine_tuning[["variable_axes_margin"]]
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1704,7 +1717,8 @@ setup_x_axes <- function(diagram_info,
     # position of the primary y axes if it is there.
     line <- grid::linesGrob(x    = c(0, 1), y = c(zero_pos, zero_pos),
                             name = paste0("x_axes"),
-                            gp   = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
+                            gp   = grid::gpar(col = visuals[["variable_axes_color"]],
+                                              lwd = dimensions[["axes_line_thickness"]]))
 
     # Setup the ticks pointing down
     ticks <- grid::segmentsGrob(x0   = grid::unit(tick_positions, "native"),
@@ -1712,7 +1726,23 @@ setup_x_axes <- function(diagram_info,
                                 y0   = zero_pos,
                                 y1   = zero_pos - tick_length,
                                 name = paste0("x_ticks"),
-                                gp   = grid::gpar(col = arguments[["visuals"]][["variable_axes_color"]]))
+                                gp   = grid::gpar(col = visuals[["variable_axes_color"]],
+                                                  lwd = dimensions[["axes_line_thickness"]]))
+
+    # Draw guiding lines
+    if (visuals[["guiding_lines_x"]]){
+        guiding_lines <- grid::segmentsGrob(x0   = grid::unit(tick_positions, "npc"),
+                                            x1   = grid::unit(tick_positions, "npc"),
+                                            y0   = 0,
+                                            y1   = 1,
+                                            name = paste0("x_guiding_lines"),
+                                            gp   = grid::gpar(col = visuals[["guiding_line_color"]],
+                                                              lty = visuals[["guiding_line_type"]],
+                                                              lwd = dimensions[["guiding_line_thickness"]]))
+    }
+    else{
+        guiding_lines <- grid::nullGrob()
+    }
 
     # Insert the group labels for the variable axes
     if (!is_multi_group_label){
@@ -1721,11 +1751,11 @@ setup_x_axes <- function(diagram_info,
                                        y     = label_y,
                                        just  = label_just,
                                        name  = paste0("group_labels"),
-                                       gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
-                                                          fontfamily = arguments[["visuals"]][["font"]],
-                                                          fontsize   = arguments[["dimensions"]][["axes_font_size"]],
-                                                          fontface   = arguments[["visuals"]][["axes_font_face"]],
-                                                          lineheight = arguments[["fine_tuning"]][["line_height"]]))
+                                       gp    = grid::gpar(col        = visuals[["variable_axes_font_color"]],
+                                                          fontfamily = visuals[["font"]],
+                                                          fontsize   = dimensions[["axes_font_size"]],
+                                                          fontface   = visuals[["axes_font_face"]],
+                                                          lineheight = fine_tuning[["line_height"]]))
 
         # Return the whole axes as one graphical object
         grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
@@ -1740,11 +1770,11 @@ setup_x_axes <- function(diagram_info,
                            y     = y_positions,
                            just  = label_just,
                            name  = paste0("group_labels_", i),
-                           gp    = grid::gpar(col        = arguments[["visuals"]][["variable_axes_font_color"]],
-                                              fontfamily = arguments[["visuals"]][["font"]],
-                                              fontsize   = arguments[["dimensions"]][["axes_font_size"]],
-                                              fontface   = arguments[["visuals"]][["axes_font_face"]],
-                                              lineheight = arguments[["fine_tuning"]][["line_height"]]))
+                           gp    = grid::gpar(col        = visuals[["variable_axes_font_color"]],
+                                              fontfamily = visuals[["font"]],
+                                              fontsize   = dimensions[["axes_font_size"]],
+                                              fontface   = visuals[["axes_font_face"]],
+                                              lineheight = fine_tuning[["line_height"]]))
         }, labels, label_x_positions, label_y, seq_along(labels), SIMPLIFY = FALSE))
 
         # Draw the separation lines
@@ -1762,12 +1792,14 @@ setup_x_axes <- function(diagram_info,
                                y0 = y_positions[1],
                                y1 = y_positions[2],
                                name  = paste0("separation_line_", i),
-                               gp = grid::gpar(col = arguments[["visuals"]][[paste0(type_prefix,"separation_line_color")]],
-                                               lty = arguments[["visuals"]][[paste0(type_prefix,"separation_line_type")]]))
+                               gp = grid::gpar(col = visuals[[paste0(type_prefix,"separation_line_color")]],
+                                               lty = visuals[[paste0(type_prefix,"separation_line_type")]],
+                                               lwd = dimensions[["separation_line_thickness"]]))
             }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
 
         # Return the whole axes as one graphical object
-        grid::gTree(children = grid::gList(line, ticks, group_labels, separation_lines), name = "x_axes")
+        grid::gTree(children = grid::gList(guiding_lines, line, ticks, group_labels, separation_lines),
+                    name     = "x_axes")
     }
 }
 
@@ -2030,7 +2062,7 @@ direct_vertical_labels <- function(diagram_info,
                                 name = "segment_lines",
                                 gp   = grid::gpar(col = visuals[["segment_line_color"]],
                                                   lty = visuals[["segment_line_type"]],
-                                                  lwd = dimensions[["line_thickness"]]))
+                                                  lwd = dimensions[["segment_line_thickness"]]))
 
     # Generate the labels on top of the lines
     segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],

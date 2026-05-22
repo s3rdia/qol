@@ -42,7 +42,9 @@
 #' doesn't draw markers in line charts.
 #' @param line_markers_change TRUE by default. Uses different markers per line. If
 #' FALSE, dots are used as markers for all lines.
-#' @param guiding_lines FALSE by default. If TRUE draws guiding lines at the y axes tick
+#' @param guiding_lines_y FALSE by default. If TRUE draws guiding lines at the y axes tick
+#' positions.
+#' @param guiding_lines_x FALSE by default. If TRUE draws guiding lines at the x axes tick
 #' positions.
 #' @param guiding_line_type Sets the type of guiding lines drawn at the y axes tick positions.
 #' Can be "dashed", "dotted" or "solid".
@@ -126,7 +128,8 @@ graphic_visuals <- function(font                        = "Arial",
                             segment_border_color        = "#000000",
                             line_markers                = TRUE,
                             line_markers_change         = TRUE,
-                            guiding_lines               = FALSE,
+                            guiding_lines_y             = FALSE,
+                            guiding_lines_x             = FALSE,
                             guiding_line_type           = "dotted",
                             guiding_line_color          = "#9A9A9A",
                             major_separation_line_type  = "solid",
@@ -269,35 +272,35 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #'                    primary_axes_decimals = 1)
 #'
 #' @export
-graphic_axes <- function(primary_axes_max                = "auto",
-                         primary_axes_min                = "auto",
-                         primary_axes_steps              = 5,
-                         primary_axes_decimals           = 0,
-                         primary_axes_big_mark           = ".",
-                         primary_axes_decimal_mark       = ",",
-                         primary_axes_prefix             = "",
-                         primary_axes_suffix             = "",
-                         primary_axes_scale              = 1,
-                         primary_values_decimals         = 1,
-                         primary_values_big_mark         = ".",
-                         primary_values_decimal_mark     = ",",
-                         primary_values_prefix           = "",
-                         primary_values_suffix           = "",
-                         secondary_axes_max              = "auto",
-                         secondary_axes_min              = "auto",
-                         secondary_axes_steps            = 5,
-                         secondary_axes_decimals         = 0,
-                         secondary_axes_big_mark         = ".",
-                         secondary_axes_decimal_mark     = ",",
-                         secondary_axes_prefix           = "",
-                         secondary_axes_suffix           = "",
-                         secondary_axes_scale            = 1,
-                         secondary_values_decimals       = 0,
-                         secondary_values_big_mark       = ".",
-                         secondary_values_decimal_mark   = ",",
-                         secondary_values_prefix         = "",
-                         secondary_values_suffix         = "",
-                         variable_axes_interval          = 1){
+graphic_axes <- function(primary_axes_max              = "auto",
+                         primary_axes_min              = "auto",
+                         primary_axes_steps            = 5,
+                         primary_axes_decimals         = 0,
+                         primary_axes_big_mark         = ".",
+                         primary_axes_decimal_mark     = ",",
+                         primary_axes_prefix           = "",
+                         primary_axes_suffix           = "",
+                         primary_axes_scale            = 1,
+                         primary_values_decimals       = 1,
+                         primary_values_big_mark       = ".",
+                         primary_values_decimal_mark   = ",",
+                         primary_values_prefix         = "",
+                         primary_values_suffix         = "",
+                         secondary_axes_max            = "auto",
+                         secondary_axes_min            = "auto",
+                         secondary_axes_steps          = 5,
+                         secondary_axes_decimals       = 0,
+                         secondary_axes_big_mark       = ".",
+                         secondary_axes_decimal_mark   = ",",
+                         secondary_axes_prefix         = "",
+                         secondary_axes_suffix         = "",
+                         secondary_axes_scale          = 1,
+                         secondary_values_decimals     = 0,
+                         secondary_values_big_mark     = ".",
+                         secondary_values_decimal_mark = ",",
+                         secondary_values_prefix       = "",
+                         secondary_values_suffix       = "",
+                         variable_axes_interval        = 1){
     as.list(environment())
 }
 
@@ -376,7 +379,14 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param other_font_size Font size of every other text element.
 #' @param space_between_bars_pct The space between adjacent bars.
 #' @param bar_overlap The factor determines how much bars are overlapping each other.
-#' @param line_thickness The thickness of lines in points.
+#' @param line_thickness The thickness of lines in a line chart or outlines of segments.
+#' @param segment_line_thickness The thickness of the lines connecting segments with
+#' labels.
+#' @param separation_line_thickness The thickness of the lines which separate label groups.
+#' @param axes_lines_thickness The thickness of the axes lines and ticks.
+#' @param guiding_lines_thickness The thickness of the axes guiding lines.
+#' @param graphic_outline_thickness The thickness of the graphic outline.
+#' @param diagram_outline_thickness The thickness of the diagram outline.
 #' @param segment_line_length The length of the lines leading from segments to labels in cm.
 #' @param segment_line_offset Offset in the height of the leading lines in cm. If 0, all leading lines
 #' will end at the same height, meaning the labels will be drawn at the same height. If
@@ -404,25 +414,31 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #'                          graphic_height = 10)
 #'
 #' @export
-graphic_dimensions <- function(graphic_width          = 16,
-                               graphic_height         = 9,
-                               diagram_start          = "auto",
-                               diagram_width          = "auto",
-                               diagram_height         = "auto",
-                               margins                = 0.25,
-                               title_font_size        = 9,
-                               footnote_font_size     = 8,
-                               axes_font_size         = 9,
-                               value_font_size        = 9,
-                               label_font_size        = 9,
-                               origin_font_size       = 8,
-                               other_font_size        = 9,
-                               space_between_bars_pct = 0,
-                               bar_overlap            = 0,
-                               line_thickness         = 1,
-                               segment_line_length    = 1,
-                               segment_line_offset    = 0,
-                               textbox_width          = 2){
+graphic_dimensions <- function(graphic_width             = 16,
+                               graphic_height            = 9,
+                               diagram_start             = "auto",
+                               diagram_width             = "auto",
+                               diagram_height            = "auto",
+                               margins                   = 0.25,
+                               title_font_size           = 9,
+                               footnote_font_size        = 8,
+                               axes_font_size            = 9,
+                               value_font_size           = 9,
+                               label_font_size           = 9,
+                               origin_font_size          = 8,
+                               other_font_size           = 9,
+                               space_between_bars_pct    = 0,
+                               bar_overlap               = 0,
+                               line_thickness            = 1,
+                               segment_line_thickness    = 1,
+                               separation_line_thickness = 1,
+                               axes_line_thickness       = 1,
+                               guiding_line_thickness    = 1,
+                               graphic_outline_thickness = 1,
+                               diagram_outline_thickness = 1,
+                               segment_line_length       = 1,
+                               segment_line_offset       = 0,
+                               textbox_width             = 2){
     if (is.numeric(diagram_width) && diagram_width > graphic_width){
         message(" ! WANRING: Diagram width can't be greater than the whole graphic width.\n",
                 "            Diagram width will be reduced to graphic width.")

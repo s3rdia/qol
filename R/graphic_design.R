@@ -865,7 +865,8 @@ generate_graphic <- function(graphic_tab,
 
     # Draw the graphics background
     graphic_background <- grid::rectGrob(gp  = grid::gpar(fill = visuals[["graphic_background_color"]],
-                                                          col  = visuals[["graphic_border_color"]]),
+                                                          col  = visuals[["graphic_border_color"]],
+                                                          lwd  = dimensions[["graphic_outline_thickness"]]),
                                          name = "graphic_background")
 
     # If titles and footnotes are given as a vector instead of single character,
