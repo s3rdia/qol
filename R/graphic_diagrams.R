@@ -34,7 +34,8 @@ vbars <- function(...){
 
     # Draw the diagram background
     diagram_background <- grid::rectGrob(gp  = grid::gpar(fill = arguments[["visuals"]][["diagram_background_color"]],
-                                         col = arguments[["visuals"]][["diagram_border_color"]]),
+                                                          col  = arguments[["visuals"]][["diagram_border_color"]],
+                                                          lwd  = arguments[["dimensions"]][["diagram_outline_thickness"]]),
                                          name = "diagram_background")
 
     # Generate axes
@@ -48,6 +49,6 @@ vbars <- function(...){
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
-    list(graphic = grid::gTree(children = grid::gList(diagram_background, segments, axes, segment_labels), name = "diagram"),
+    list(graphic = grid::gTree(children = grid::gList(diagram_background, axes, segments, segment_labels), name = "diagram"),
          meta    = diagram_info)
 }
