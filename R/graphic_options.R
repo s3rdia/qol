@@ -118,9 +118,9 @@ graphic_visuals <- function(font                        = "Arial",
                             hbar_alignment              = "right",
                             other_alignment             = "left",
                             reverse_colors              = FALSE,
-                            primary_axes_color          = "#2B2B2B",
-                            secondary_axes_color        = "#2B2B2B",
-                            variable_axes_color         = "#2B2B2B",
+                            primary_axes_color          = "#9A9A9A",
+                            secondary_axes_color        = "#9A9A9A",
+                            variable_axes_color         = "#9A9A9A",
                             graphic_background_color    = "#FFFFFF",
                             diagram_background_color    = "#FFFFFF",
                             graphic_border_color        = "#000000",
@@ -642,7 +642,6 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @param tick_length Length of the axes ticks.
 #' @param value_axes_margin Additional margin when measuring the value axes width
 #' @param variable_axes_margin Additional margin when measuring the variable axes height.
-#' @param value_height_factor Scaling factor when measuring value widths.
 #' @param y_axes_scaling Scaling factor for the y axes, if maximum value is calculated
 #' automatically.
 #' @param swap_direction_threshold Determines the threshold for the variable axes at which
@@ -681,8 +680,8 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 diagram_margin             = 0.01,
                                 values_vjust_positive      = 1.7,
                                 values_vjust_negative      = -0.7,
-                                values_vjust_90_positive   = 1.1,
-                                values_vjust_90_negative   = -0.1,
+                                values_vjust_90_positive   = 1.3,
+                                values_vjust_90_negative   = -0.2,
                                 value_overlap_factor       = 1.35,
                                 shrink_segment_width       = 0.5,
                                 values_rotation            = 90,
@@ -695,7 +694,6 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 tick_length                = 0.02,
                                 value_axes_margin          = 0.02,
                                 variable_axes_margin       = 0.03,
-                                value_height_factor        = 1.5,
                                 y_axes_scaling             = 1.3,
                                 swap_direction_threshold   = 0.75,
                                 segment_line_offset        = 0.3,
