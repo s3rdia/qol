@@ -917,7 +917,7 @@ get_diagram_dimensions <- function(graphic_tab,
                                              list(axes        = axes,
                                                   fine_tuning = fine_tuning)) * primary_y_distance
 
-            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["value_overlap_factor"]] < abs(values)
+            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["values_vjust_positive"]] < abs(values)
         }
     }
 
@@ -1405,7 +1405,7 @@ get_values_height <- function(diagram_info,
     grid::popViewport()
 
     # Height seems to be measured too small. Adding a bit on top seems to help.
-    collapse::fmax(height) * fine_tuning[["value_height_factor"]]
+    collapse::fmax(height) * fine_tuning[["values_vjust_positive"]]
 }
 
 
@@ -1518,7 +1518,11 @@ get_y_axes_values <- function(values,
     }
 
     # Return equally spaced round values in given range
-    pretty(c(min_value, max_value), n = axes[[paste0(which, "_axes_steps")]])
+    original_steps <- axes[[paste0(which, "_axes_steps")]]
+    step_value     <- (max_value - min_value) / original_steps
+    pretty_steps   <- ceiling(step_value / 10) * 10
+
+    seq(min_value, by = pretty_steps, length.out = original_steps + 1)
 }
 
 
@@ -1670,7 +1674,7 @@ setup_x_axes <- function(diagram_info,
                 # The first separation lines are special in the way that they start higher,
                 # at the top of the upper grouping labels.
                 if (i == 1){
-                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]])
+                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]] - group_label_heights[[length(label_y)]])
                 }
                 # All other lines start at the top of the diagram and are drawn to the
                 # bottom of nested super group.
@@ -1700,7 +1704,7 @@ setup_x_axes <- function(diagram_info,
                 # The first separation lines are special in the way that they start higher,
                 # at the top of the upper grouping labels.
                 if (i == 1){
-                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]])
+                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]] + group_label_heights[[length(label_y)]])
                 }
                 # All other lines start at the top of the diagram and are drawn to the
                 # bottom of nested super group.
