@@ -28,9 +28,9 @@ graphic_visuals(
   hbar_alignment = "right",
   other_alignment = "left",
   reverse_colors = FALSE,
-  primary_axes_color = "#2B2B2B",
-  secondary_axes_color = "#2B2B2B",
-  variable_axes_color = "#2B2B2B",
+  primary_axes_color = "#9A9A9A",
+  secondary_axes_color = "#9A9A9A",
+  variable_axes_color = "#9A9A9A",
   graphic_background_color = "#FFFFFF",
   diagram_background_color = "#FFFFFF",
   graphic_border_color = "#000000",
@@ -38,7 +38,8 @@ graphic_visuals(
   segment_border_color = "#000000",
   line_markers = TRUE,
   line_markers_change = TRUE,
-  guiding_lines = FALSE,
+  guiding_lines_y = FALSE,
+  guiding_lines_x = FALSE,
   guiding_line_type = "dotted",
   guiding_line_color = "#9A9A9A",
   major_separation_line_type = "solid",
@@ -128,7 +129,10 @@ doesn't draw markers in line charts.}
 \item{line_markers_change}{TRUE by default. Uses different markers per line. If
 FALSE, dots are used as markers for all lines.}
 
-\item{guiding_lines}{FALSE by default. If TRUE draws guiding lines at the y axes tick
+\item{guiding_lines_y}{FALSE by default. If TRUE draws guiding lines at the y axes tick
+positions.}
+
+\item{guiding_lines_x}{FALSE by default. If TRUE draws guiding lines at the x axes tick
 positions.}
 
 \item{guiding_line_type}{Sets the type of guiding lines drawn at the y axes tick positions.

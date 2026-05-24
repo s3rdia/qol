@@ -11,8 +11,8 @@ graphic_fine_tuning(
   diagram_margin = 0.01,
   values_vjust_positive = 1.7,
   values_vjust_negative = -0.7,
-  values_vjust_90_positive = 1.1,
-  values_vjust_90_negative = -0.1,
+  values_vjust_90_positive = 1.2,
+  values_vjust_90_negative = -0.2,
   value_overlap_factor = 1.35,
   shrink_segment_width = 0.5,
   values_rotation = 90,
@@ -25,7 +25,6 @@ graphic_fine_tuning(
   tick_length = 0.02,
   value_axes_margin = 0.02,
   variable_axes_margin = 0.03,
-  value_height_factor = 1.5,
   y_axes_scaling = 1.3,
   swap_direction_threshold = 0.75,
   segment_line_offset = 0.3,
@@ -80,8 +79,6 @@ drawn inside segments.}
 \item{value_axes_margin}{Additional margin when measuring the value axes width}
 
 \item{variable_axes_margin}{Additional margin when measuring the variable axes height.}
-
-\item{value_height_factor}{Scaling factor when measuring value widths.}
 
 \item{y_axes_scaling}{Scaling factor for the y axes, if maximum value is calculated
 automatically.}

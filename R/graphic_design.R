@@ -100,7 +100,6 @@
 #' [get_values_height()],[get_group_tick_positions_x()],
 #' [get_y_axes_values()], [setup_y_axes()], [setup_x_axes()], [setup_xy_axes()]
 #' - Labels: [direct_vertical_labels()]
-#' - Output: [output_graphic()]
 #' - Other: [format_values()]
 #'
 #' Creating formats: [discrete_format()] and [interval_format()].
