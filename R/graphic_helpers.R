@@ -1496,7 +1496,7 @@ get_y_axes_values <- function(values,
     global_max <- axes[[paste0(which, "_axes_max")]]
 
     # Replace auto generated value by statically set global values
-    if (global_min != "auto"){
+    if (global_min != "auto" && global_min != global_max){
         min_value <- global_min
     }
     # Get values from the actual data frame and add to the value, so that the highest
@@ -1507,7 +1507,7 @@ get_y_axes_values <- function(values,
     }
 
     # Replace auto generated value by statically set global values
-    if (global_max != "auto"){
+    if (global_max != "auto" && global_min != global_max){
         max_value <- global_max
     }
     # Get values from the actual data frame and add to the value, so that the highest
@@ -1517,12 +1517,93 @@ get_y_axes_values <- function(values,
         max_value <- max_value * fine_tuning[["y_axes_scaling"]]
     }
 
-    # Return equally spaced round values in given range
-    original_steps <- axes[[paste0(which, "_axes_steps")]]
-    step_value     <- (max_value - min_value) / original_steps
-    pretty_steps   <- ceiling(step_value / 10) * 10
+    # In case minimum value is greater than the maximum value, just swap them
+    if (min_value > max_value){
+        temp_value <- max_value
+        min_value  <- max_value
+        max_value  <- temp_value
+    }
 
-    seq(min_value, by = pretty_steps, length.out = original_steps + 1)
+    # Return equally spaced round values in given range
+    even_prettier(min_value, max_value, axes[[paste0(which, "_axes_steps")]])
+}
+
+
+#' @description
+#' [even_prettier()]: Generates a sequence of pretty steps for equal length ticks.
+#' The function calculates more granular results than the base [pretty()] function.
+#'
+#' @param min_value Minimum starting value.
+#' @param max_value Maximum end value.
+#' @param number_of_steps The number of equal length steps to be used to head from
+#' the minimum to the maximum value.
+#'
+#' @return
+#' [even_prettier()]: Returns a pretty sequence of equal length numeric values.
+#'
+#' @rdname axes
+#'
+#' @export
+even_prettier <- function(min_value,
+                          max_value,
+                          number_of_steps){
+    # Define possible intervals
+    standard_intervals <- c(0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.75, 0.8, 0.9,
+                              1,  1.25,  1.5,   2,  2.5,   3,   4,   5,   6,  7.5,   8,   9,
+                             10,  12.5,   15,  20,   25,  30,  40,  50,  60,   75,  80,  90,
+                            100)
+
+    # In case the minimum value is negative and the maximum value is positive,
+    # it has to be made sure, that 0 is always part of the distribution.
+    if (min_value < 0 && max_value > 0){
+        total_span <- max_value - min_value
+
+        # Calculate step distribution and make sure it stays between the given bounds
+        negative_steps <- round((abs(min_value) / total_span) * number_of_steps)
+        negative_steps <- pmax(1, pmin(negative_steps, number_of_steps - 1))
+        positive_steps <- number_of_steps - negative_steps
+
+        # Calculate possible candidate steps
+        needed_step_size <- max(abs(min_value) / negative_steps, max_value / positive_steps)
+        candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
+
+        # Calculate score to determine which of the candidates fits best. The smaller
+        # the score, the nearer the equal length step hits the boundaries.
+        scores <- abs((-negative_steps * candidates) - min_value) +
+                  abs((positive_steps  * candidates) - max_value)
+
+        # Penalize candidates that undershoot the provided boundaries to make sure
+        # that the provided boundaries are basically the minimum edge case values.
+        undershoots         <- (-negative_steps * candidates > min_value) | (positive_steps * candidates < max_value)
+        scores[undershoots] <- scores[undershoots] + (total_span * 10)
+
+        # Select the step with the smallest score which is used as the equal length step
+        pretty_step <- candidates[which.min(scores)]
+
+        # Return the pretty sequence
+        return(seq(-negative_steps * pretty_step, positive_steps * pretty_step, by = pretty_step))
+    }
+
+    # In case there are only positive or negative values
+    # Calculate possible candidate steps
+    needed_step_size <- (max_value - min_value) / number_of_steps
+    candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
+
+    # Calculate possible candidate boundaries
+    lowers <- floor(min_value   / candidates) * candidates
+    uppers <- ceiling(max_value / candidates) * candidates
+
+    # Calculate step sizes and the corresponding score to determine which step size
+    # is nearest to the provided number of steps.
+    step_sizes <- (uppers - lowers) / candidates
+    scores     <- abs(step_sizes - number_of_steps)
+
+    # Select the step with the smallest score which is used as the equal length step
+    score_id    <- which.min(scores)
+    pretty_step <- candidates[which.min(scores)]
+
+    # Return the pretty sequence
+    seq(lowers[score_id], uppers[score_id], by = pretty_step)
 }
 
 

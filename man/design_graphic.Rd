@@ -198,7 +198,6 @@ Mid level functions:
 \code{\link[=get_values_height]{get_values_height()}},\code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}},
 \code{\link[=get_y_axes_values]{get_y_axes_values()}}, \code{\link[=setup_y_axes]{setup_y_axes()}}, \code{\link[=setup_x_axes]{setup_x_axes()}}, \code{\link[=setup_xy_axes]{setup_xy_axes()}}
 \item Labels: \code{\link[=direct_vertical_labels]{direct_vertical_labels()}}
-\item Output: \code{\link[=output_graphic]{output_graphic()}}
 \item Other: \code{\link[=format_values]{format_values()}}
 }
 

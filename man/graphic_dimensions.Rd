@@ -20,7 +20,13 @@ graphic_dimensions(
   other_font_size = 9,
   space_between_bars_pct = 0,
   bar_overlap = 0,
-  line_thickness = 0,
+  line_thickness = 1,
+  segment_line_thickness = 1,
+  separation_line_thickness = 1,
+  axes_line_thickness = 1,
+  guiding_line_thickness = 1,
+  graphic_outline_thickness = 1,
+  diagram_outline_thickness = 1,
   segment_line_length = 1,
   segment_line_offset = 0,
   textbox_width = 2
@@ -57,7 +63,16 @@ graphic_dimensions(
 
 \item{bar_overlap}{The factor determines how much bars are overlapping each other.}
 
-\item{line_thickness}{The thickness of lines in points.}
+\item{line_thickness}{The thickness of lines in a line chart or outlines of segments.}
+
+\item{segment_line_thickness}{The thickness of the lines connecting segments with
+labels.}
+
+\item{separation_line_thickness}{The thickness of the lines which separate label groups.}
+
+\item{graphic_outline_thickness}{The thickness of the graphic outline.}
+
+\item{diagram_outline_thickness}{The thickness of the diagram outline.}
 
 \item{segment_line_length}{The length of the lines leading from segments to labels in cm.}
 
@@ -68,6 +83,10 @@ of the line. Enables the labels to be drawn in steps, if e.g. the labels have a 
 text which would overlap, if they where on the same height.}
 
 \item{textbox_width}{Determines the width of any freely placed textbox.}
+
+\item{axes_lines_thickness}{The thickness of the axes lines and ticks.}
+
+\item{guiding_lines_thickness}{The thickness of the axes guiding lines.}
 }
 \value{
 Returns a list of named graphic options.
