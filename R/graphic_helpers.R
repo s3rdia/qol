@@ -555,13 +555,7 @@ setup_nested_diagram_viewport <- function(arguments){
     outer_viewport <- setup_diagram_viewport(arguments)
 
     # Measure segment, group and axes dimensions
-    diagram_info <- arguments[["graphic_tab"]] |>
-        get_diagram_dimensions(arguments[["axes_vars"]],
-                               arguments[["segment_vars"]],
-                               arguments[["values"]],
-                               arguments[["axes"]],
-                               arguments[["dimensions"]],
-                               arguments[["visuals"]])
+    diagram_info <- get_diagram_dimensions(arguments)
 
     diagram_info[["outer_viewport"]] <- outer_viewport
 
@@ -737,14 +731,7 @@ get_available_height <- function(dimensions   = .qol_options[["graphic_dimension
 #' position of groups and segments. These are e.g. number of groups/segments, width of
 #' groups/segments, ids or positions among other things.
 #'
-#' @param graphic_tab The base data frame for the graphic.
-#' @param axes_vars The names of the axes variables.
-#' @param segment_vars The names of the segment variables.
-#' @param values Value vector from the data frame.
-#' @param axes The list of axes parameters.
-#' @param dimensions The list of dimensions parameters.
-#' @param fine_tuning The list of fine tuning parameters.
-#' @param visuals The list of visual parameters.
+#' @param arguments Argument list passed passed on by [design_graphic()].
 #'
 #' @return
 #' Returns a list of parameters for groups, segments and axes.
@@ -752,15 +739,21 @@ get_available_height <- function(dimensions   = .qol_options[["graphic_dimension
 #' @rdname diagram
 #'
 #' @export
-get_diagram_dimensions <- function(graphic_tab,
-                                   axes_vars,
-                                   segment_vars,
-                                   values,
-                                   axes        = .qol_options[["graphic_axes"]],
-                                   dimensions  = .qol_options[["graphic_dimensions"]],
-                                   visuals     = .qol_options[["graphic_visuals"]],
-                                   fine_tuning = .qol_options[["graphic_fine_tuning"]]){
-    values <- graphic_tab[[values]]
+get_diagram_dimensions <- function(arguments){
+    # Grab necessary values
+    graphic_tab  <- arguments[["graphic_tab"]]
+    axes_vars    <- arguments[["axes_vars"]]
+    segment_vars <- arguments[["segment_vars"]]
+    values       <- arguments[["values"]]
+    axes         <- arguments[["axes"]]
+    dimensions   <- arguments[["dimensions"]]
+    visuals      <- arguments[["visuals"]]
+    fine_tuning  <- arguments[["fine_tuning"]]
+    stat_labels  <- arguments[["stat_labels"]]
+
+    # Get actual values and statistic types
+    value_types <- sub(".*_", "", values)
+    values      <- graphic_tab[[values]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Basic horizontal positioning for vbars
@@ -898,8 +891,19 @@ get_diagram_dimensions <- function(graphic_tab,
     # Get center vbar position
     values_x_pos <- segment_pos + (segment_width * 0.5)
 
+    # Format values to final form
+    formatted_values <- format_diagram_values(list(values = values, value_types = value_types),
+                                              list(axes        = axes,
+                                                   visuals     = visuals,
+                                                   fine_tuning = fine_tuning,
+                                                   stat_labels = stat_labels))
+
     # Check whether values fit in vbar segments. If values don't fit, mark the exact
     # positions so that later functions can decide what to do with these values.
+    values_width <- get_values_width(formatted_values,
+                                     dimensions,
+                                     visuals)
+
     values_fit_vertical <- TRUE
 
     if (visuals[["bar_values_inside"]]){
@@ -911,13 +915,9 @@ get_diagram_dimensions <- function(graphic_tab,
         }
         else{
             # Determine whether a value should be drawn inside or outside the segment
-            values_width <- get_values_width(list(values = values),
-                                             dimensions,
-                                             visuals,
-                                             list(axes        = axes,
-                                                  fine_tuning = fine_tuning)) * primary_y_distance
-
-            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) * fine_tuning[["values_vjust_positive"]] < abs(values)
+            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) *
+                                   primary_y_distance *
+                                   fine_tuning[["values_vjust_positive"]] < abs(values)
         }
     }
 
@@ -1016,6 +1016,7 @@ get_diagram_dimensions <- function(graphic_tab,
 
     # Return information as list
     list(values                      = values,
+         value_types                 = value_types,
          unique_groups               = unique_groups,
          individual_groups           = individual_groups,
          number_of_groups            = number_of_groups,
@@ -1042,6 +1043,8 @@ get_diagram_dimensions <- function(graphic_tab,
          values_inner_vjust          = values_inner_vjust,
          values_outer_vjust          = values_outer_vjust,
          values_x_pos                = values_x_pos,
+         formatted_values            = formatted_values,
+         values_width                = values_width,
          values_fit_vertical         = values_fit_vertical,
          group_label_x_pos           = group_label_x_pos,
          group_label_y_pos           = group_label_y_pos,
@@ -1061,7 +1064,6 @@ get_diagram_dimensions <- function(graphic_tab,
 #' [vbar_grob()]: Set up the main segments for vertical bars.
 #'
 #' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
-#' @param arguments Argument list passed passed on by [design_graphic()].
 #' @param theme Color theme used for the segments.
 #'
 #' @return
@@ -1152,12 +1154,10 @@ vbar_grob <- function(diagram_info,
         rotate     <- numeric(number_of_values)
         font_color <- character(number_of_values)
 
-        # Format values and draw them on the segments
-        formatted_values <- format_diagram_values(diagram_info, arguments)
-
         # If a small scale is used it can happen that a negative symbol appears in front
         # of 0 values. This gets removed here.
-        formatted_values[value_y_pos == 0] <- sub("-", "", formatted_values[value_y_pos == 0])
+        formatted_values                   <- diagram_info[["formatted_values"]]
+        formatted_values[value_y_pos == 0] <- sub("–", "", formatted_values[value_y_pos == 0])
 
         # Get the specific font colors for the respective set up of segments
         colors_inside  <- rep(theme[["font_inside"]][color_usage], diagram_info[["number_of_groups"]])
@@ -1358,7 +1358,7 @@ get_variable_axes_height <- function(wrapped_text,
 #' @description
 #' [get_values_width()]: Get the width of the segment values.
 #'
-#' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
+#' @param formatted_values The formatted values in their final form.
 #'
 #' @return
 #' [get_values_width()]: Returns a numeric width
@@ -1366,12 +1366,9 @@ get_variable_axes_height <- function(wrapped_text,
 #' @rdname axes
 #'
 #' @export
-get_values_width <- function(diagram_info,
+get_values_width <- function(formatted_values,
                              dimensions,
-                             visuals,
-                             arguments){
-    formatted_values <- format_diagram_values(diagram_info, arguments)
-
+                             visuals){
     # The unit measuring functions are checking the font values from the current
     # viewport. Since there are multiple different font options used on the same
     # viewport they can't be set in general. Therefor a temporary viewport with the
@@ -1565,9 +1562,9 @@ even_prettier <- function(min_value,
                           max_value,
                           number_of_steps){
     # Define possible intervals
-    standard_intervals <- c(0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.75, 0.8, 0.9,
-                              1,  1.25,  1.5,   2,  2.5,   3,   4,   5,   6,  7.5,   8,   9,
-                             10,  12.5,   15,  20,   25,  30,  40,  50,  60,   75,  80,  90,
+    standard_intervals <- c(0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9,
+                              1,  1.25,  1.5,   2,  2.5,   3,   4,   5,   6,   7,  7.5,   8,   9,
+                             10,  12.5,   15,  20,   25,  30,  40,  50,  60,  70,   75,  80,  90,
                             100)
 
     # In case the minimum value is negative and the maximum value is positive,
@@ -2081,10 +2078,7 @@ direct_vertical_labels <- function(diagram_info,
         # With rotation the values can be unequaly high. The offset therefor must
         # be calculated individually.
         else{
-            offset_value <- get_values_width(diagram_info,
-                                             dimensions,
-                                             visuals,
-                                             arguments)
+            offset_value <- diagram_info[["values_width"]]
 
             # The width measuring needs to be swapped to the height dimension.
             offset_value <- swap_xy_scaling(offset_value, dimensions, part = "inner_canvas")
@@ -2113,7 +2107,7 @@ direct_vertical_labels <- function(diagram_info,
     }
 
     # Apply offsets to segment start
-    segment_start_y <- segment_start_y + offset_y + offset_value
+    segment_start_y <- segment_start_y + (offset_y * 1.4) + offset_value
 
     # Get the ending y, which is a fixed height from the segments. The maximum height
     # is right below the highest axes value.
@@ -2339,13 +2333,38 @@ format_values <- function(values,
 format_diagram_values <- function(diagram_info,
                                   arguments,
                                   which = "primary"){
-    axes <- arguments[["axes"]]
+    values <- diagram_info[["values"]]
+    axes   <- arguments[["axes"]]
 
-    format_values(values       = diagram_info[["values"]],
-                  decimals     = axes[[paste0(which, "_values_decimals")]],
-                  big_mark     = axes[[paste0(which, "_values_big_mark")]],
-                  decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
-                  prefix       = axes[[paste0(which, "_values_prefix")]],
-                  suffix       = axes[[paste0(which, "_values_suffix")]],
-                  scale        = axes[[paste0(which, "_axes_scale")]])
+    # Look up whether there a statistic labels provided. If this is the case then
+    # insert the label behind the values. In this case the suffix specified in the
+    # axes parameter is overwritten. This version is needed for multiple value variables
+    # in combined diagrams.
+    suffix <- axes[[paste0(which, "_values_suffix")]]
+
+    for (value_type in diagram_info[["value_types"]]){
+        if (value_type %in% names(arguments[["stat_labels"]])){
+            # TODO: MULTIPLE VALUE VARIABLE HANDLING NOT INCLUDED AT THE MOMENT
+            suffix <- arguments[["stat_labels"]][[value_type]]
+        }
+    }
+
+    # Format numeric values first
+    values <- format_values(values       = diagram_info[["values"]],
+                            decimals     = axes[[paste0(which, "_values_decimals")]],
+                            big_mark     = axes[[paste0(which, "_values_big_mark")]],
+                            decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
+                            prefix       = axes[[paste0(which, "_values_prefix")]],
+                            suffix       = suffix,
+                            scale        = axes[[paste0(which, "_axes_scale")]])
+
+    # Convert short minus symbol with long one for better readability
+    values <- sub("-", "–", values)
+
+    # Display the + symbol in front of positive values, if specified
+    if (arguments[["visuals"]][["display_plus_symbol"]]){
+        values[values > 0] <- paste0("+", values[values > 0])
+    }
+
+    values
 }

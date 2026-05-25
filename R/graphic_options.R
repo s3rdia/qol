@@ -56,14 +56,17 @@
 #' @param segment_line_type Sets the type of leading lines from segments to labels. Can be
 #' "dashed", "dotted" or "solid".
 #' @param segment_line_color Sets the color of the leading lines from segments to labels.
-#' @param remove_small_values TRUE by default. Doesn't display values if the corresponding
-#' segment is to small and value would go out of bounds. If FALSE, always displays values.
+#' @param remove_small_values TRUE by default. Doesn't display values in stacked diagrams,
+#' if the corresponding segment is to small and value would go out of bounds. If FALSE,
+#' always displays values.
 #' @param display_values TRUE by default. Displays the values with the segments. If FALSE,
 #' removes all values and just draws the segments.
 #' @param bar_values_inside TRUE by default. In grouped bar charts the segment values
 #' will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.
 #' @param rotate_values FALSE by default. If TRUE rotates values inside the segments by
 #' 90 degrees.
+#' @param display_plus_symbol FALSE by default. If TRUE displays a + symbol in front of
+#' positive values.
 #' @param label_type Can be "lines", which connects labels and segments with leading lines,
 #' or "legend", which allows to position a legend separately.
 #' @param label_group If label_Type is "lines", then this parameter determines above which
@@ -142,6 +145,7 @@ graphic_visuals <- function(font                        = "Arial",
                             display_values              = TRUE,
                             bar_values_inside           = TRUE,
                             rotate_values               = FALSE,
+                            display_plus_symbol         = FALSE,
                             label_type                  = "lines",
                             label_group                 = "auto",
                             legend_x_pos                = 11,
