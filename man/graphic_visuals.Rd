@@ -52,6 +52,7 @@ graphic_visuals(
   display_values = TRUE,
   bar_values_inside = TRUE,
   rotate_values = FALSE,
+  display_plus_symbol = FALSE,
   label_type = "lines",
   label_group = "auto",
   legend_x_pos = 11,
@@ -145,8 +146,9 @@ Can be "dashed", "dotted" or "solid".}
 
 \item{segment_line_color}{Sets the color of the leading lines from segments to labels.}
 
-\item{remove_small_values}{TRUE by default. Doesn't display values if the corresponding
-segment is to small and value would go out of bounds. If FALSE, always displays values.}
+\item{remove_small_values}{TRUE by default. Doesn't display values in stacked diagrams,
+if the corresponding segment is to small and value would go out of bounds. If FALSE,
+always displays values.}
 
 \item{display_values}{TRUE by default. Displays the values with the segments. If FALSE,
 removes all values and just draws the segments.}
@@ -156,6 +158,9 @@ will be drawn inside the bars. If FALSE, values will be drawn above/beside the b
 
 \item{rotate_values}{FALSE by default. If TRUE rotates values inside the segments by
 90 degrees.}
+
+\item{display_plus_symbol}{FALSE by default. If TRUE displays a + symbol in front of
+positive values.}
 
 \item{label_type}{Can be "lines", which connects labels and segments with leading lines,
 or "legend", which allows to position a legend separately.}
