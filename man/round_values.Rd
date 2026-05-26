@@ -30,9 +30,9 @@ round_multi(
 if not overwrites the existing variables with rounded values.}
 }
 \value{
-Returns rounded values.
+\code{\link[=round_values]{round_values()}}: Returns rounded values.
 
-Returns a data frame with rounded values.
+\code{\link[=round_multi]{round_multi()}}: Returns a data frame with rounded values.
 }
 \description{
 This function rounds values according to DIN 1333 (round half up) or as an
@@ -51,13 +51,13 @@ round_numbers3 <- round_values(c(-0.3, -0.24, 1.17, 2.749, 0.25, 1.549, 2.75, 3.
 # With a data frame
 my_data <- dummy_data(100)
 
-my_data[["income_round1"]] <- my_data[["income"]] |>  round_values()
-my_data[["income_round2"]] <- my_data[["income"]] |>  round_values(multiple = 100)
+my_data[["income_round1"]] <- my_data[["income"]] |> round_values()
+my_data[["income_round2"]] <- my_data[["income"]] |> round_values(multiple = 100)
 
 
 # Round multiple variables in a data frame
-my_data <- my_data |>  round_multi(variables = c(income,  expenses,  balance),
-                                   new_names = c(incomeR, expensesR, balanceR),
-                                   digits = 1)
+my_data <- my_data |> round_multi(variables = c(income,  expenses,  balance),
+                                  new_names = c(incomeR, expensesR, balanceR),
+                                  digits = 1)
 
 }

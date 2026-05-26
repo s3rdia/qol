@@ -52,11 +52,24 @@ NULL
 #' # Running number per variable expression
 #' my_data[["run_nr_by"]] <- my_data |> running_number(by = year)
 #'
+#' # Running number within a group of variables which need to be sorted beforehand
+#' my_data[["run_nr_by_sort"]] <- my_data |>
+#'     running_number(by   = c(sex, education, income_class),
+#'                    sort = TRUE)
+#'
+#' # Running number within a group of variables which need to be sorted beforehand
+#' my_data[["run_group"]] <- my_data |>
+#'     running_number(by       = c(sex, education, income_class),
+#'                    sort     = TRUE,
+#'                    group_nr = TRUE)
+#'
 #' @rdname retain
 #'
 #' @export
 running_number <- function(data_frame,
-                           by = NULL){
+                           by       = NULL,
+                           sort     = FALSE,
+                           group_nr = FALSE){
     # Measure the time
     print_start_message(suppress = TRUE)
 
@@ -76,17 +89,34 @@ running_number <- function(data_frame,
 
     # If the user specified a vector of by variables, only take the last one, as this is
     # most likely the group in which the running number should be generated.
-    if (length(by) > 1){
+    if (length(by) > 1 && !sort){
         print_message("NOTE", c("Running number is generated in current data frame order. Only last variable",
-								"'[by]' inside provided by vector will be used."), by = by)
+								"inside provided <by> vector '[by]' will be used. Use the <sort> parameter, if",
+								"you want to create a new order before generating the running number."), by = by)
 
         by <- by[length(by)]
     }
 
-    # In case of a by variable
+    # In case by variables should be sorted
+    if (length(by) > 0 && sort){
+        data_frame <- data_frame |>
+            data.table::setorderv(cols    = by,
+                                  order   = 1,
+                                  na.last = TRUE)
+
+        by <- by[length(by)]
+    }
+
+    # In case of a running number inside a by variable group
     if (length(by) == 1){
-        renumber <- data.table::rleid(data_frame[[by]])
-        variable <- sequence(tabulate(renumber))
+        # Generate a running number where every element of the group has the same
+        # number. Meaning the whole group receives a running number.
+        variable <- data.table::rleid(data_frame[[by]])
+
+        # Generate a running number within the group
+        if (!group_nr){
+            variable <- sequence(tabulate(variable))
+        }
     }
     # In case of no by variable
     else{

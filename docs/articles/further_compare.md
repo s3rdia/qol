@@ -17,6 +17,7 @@ function, which basically does a little check on the given path and
 informs you with the result:
 
 ``` r
+
 # Check if path exists
 my_path <- libname("C/:My_Path/")
 
@@ -39,6 +40,7 @@ Run;
 qol does it just as readable:
 
 ``` r
+
 NewDataSet <- set(MyData1,
                   MyData2,
                   MyData3)
@@ -73,6 +75,7 @@ Run;
 The equivalent in R looks like this:
 
 ``` r
+
 MyData_AgeGr <- MyData |> 
          if.(Age < 18,             AgeGr = 1) |>
     else_if.(Age >= 18 & Age < 25, AgeGr = 2) |>
@@ -103,6 +106,7 @@ Run;
 With the qol-Package you can write:
 
 ``` r
+
 MyData_Do <- MyData |> 
          if.(a < 100, b = 1,
                       c = "Hello",
@@ -133,6 +137,7 @@ The new [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md)
 makes this possible, too:
 
 ``` r
+
 MyData_If <- MyData |>
     if.(Age > 65) |>
     if.(weight)
@@ -171,6 +176,7 @@ Now you can do the same in R with
 easy:
 
 ``` r
+
 AgeGroup. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
@@ -227,6 +233,7 @@ Run;
 qol does it like this:
 
 ``` r
+
 MyData[["MyValue"]] <- MyData |> retain_value(values = income)
 ```
 
@@ -249,6 +256,7 @@ Run;
 qol creates this effect like this:
 
 ``` r
+
 MyData[["FirstCase"]] <- MyData |> mark_case(by = AgeGr)
 MyData[["LastCase"]]  <- MyData |> mark_case(by = AgeGr, first = FALSE)
 ```
@@ -331,6 +339,7 @@ qol offers the function
 split up data frames into a list of multiple new ones:
 
 ``` r
+
 # Using just the expressions of a single variable
 MyData_List <- MyData |> split_by(Sex)
 
@@ -369,6 +378,7 @@ and [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md)
 written alike:
 
 ``` r
+
 MyData_KeepDrop <- MyData |> keep(a, b, c, d)
 MyData_KeepDrop <- MyData |> dropp(a, b, c, d)
 
@@ -408,6 +418,7 @@ The function
 does the same like this:
 
 ``` r
+
 # You can just output a quick ASCII style table in the console
 MyData |> frequencies(Age)
 
@@ -431,6 +442,7 @@ To reproduce this, the function
 comes into play:
 
 ``` r
+
 # Again in ASCII style
 MyData |> crosstabs(Age, Sex)
 
@@ -474,6 +486,7 @@ Run;
 And in R you do it like this:
 
 ``` r
+
 AgeGroup. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
@@ -508,6 +521,7 @@ already established styling options from the tabulation functions,
 offers new options:
 
 ``` r
+
 MyData |> export_with_style(titles    = "This is a title",
                             footnotes = "This is a footnote",
                             style     = excel_output_style(header_back_color = "0000FF",
@@ -522,6 +536,7 @@ Excel output, which can easily be read back in with the help of the
 [openxlsx2](https://github.com/JanMarvin/openxlsx2) package:
 
 ``` r
+
 MyData <- wb_to_df(file  = "C:/MyFile.xlsx",
                    sheet = 1,
                    named_region = "data")
@@ -579,6 +594,7 @@ A data frame in R doesn’t store the same information like a SAS dataset
 but one can get quiet a few information out of it like this:
 
 ``` r
+
 MyData |> content_report()
 ```
 
@@ -618,6 +634,7 @@ additionally, have a look at the reference on
 [transpose_plus](https://s3rdia.github.io/qol/reference/transpose_plus.html):
 
 ``` r
+
 # Wide to long
 wide <- long |>
     transpose_plus(preserve = age,
@@ -646,6 +663,7 @@ Title1 "The current year is &year";
 The R version looks basically the same:
 
 ``` r
+
 year <- 2026
 
 set_titles("The current year is &year")

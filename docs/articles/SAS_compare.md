@@ -68,6 +68,7 @@ Run;
 The equivalent in R now looks like this:
 
 ``` r
+
 sex. <- discrete_format(
     "Total"  = 1:2,
     "Male"   = 1,
@@ -136,6 +137,7 @@ Run;
 The equivalent in R would be this:
 
 ``` r
+
 my_data_agg <- my_data |>
     summarise_plus(class      = c(year, sex, age),
                    values     = weight,
@@ -227,6 +229,7 @@ Run;
 The equivalent in R would be this:
 
 ``` r
+
 my_data |> any_table(rows       = c("sex", "sex + age"),
                      columns    = "year",
                      values     = weight,
@@ -249,6 +252,7 @@ times, but every time filtered by an expression of another variable? I
 need to write some fancy loops, right? … right? Give me a second:
 
 ``` r
+
 # Let's try it with the single states of Germany, Germany as a whole
 # and eastern and western states.
 state. <- discrete_format(
@@ -298,6 +302,7 @@ everything by hand afterwards? Not at all, you can just create your own
 style as simple as this:
 
 ``` r
+
 # Want a blue header color? Sure.
 my_style <- excel_output_style(header_back_color = "0000FF")
 

@@ -9,7 +9,7 @@
 \alias{retain_variables}
 \title{Different Facets of Retain}
 \usage{
-running_number(data_frame, by = NULL)
+running_number(data_frame, by = NULL, sort = FALSE, group_nr = FALSE)
 
 mark_case(data_frame, by = NULL, first = TRUE)
 
@@ -95,6 +95,17 @@ my_data[["run_nr"]] <- my_data |> running_number()
 
 # Running number per variable expression
 my_data[["run_nr_by"]] <- my_data |> running_number(by = year)
+
+# Running number within a group of variables which need to be sorted beforehand
+my_data[["run_nr_by_sort"]] <- my_data |>
+    running_number(by   = c(sex, education, income_class),
+                   sort = TRUE)
+
+# Running number within a group of variables which need to be sorted beforehand
+my_data[["run_group"]] <- my_data |>
+    running_number(by       = c(sex, education, income_class),
+                   sort     = TRUE,
+                   group_nr = TRUE)
 
 # Mark first and last cases
 my_data[["first"]] <- my_data |> mark_case(by = household_id)

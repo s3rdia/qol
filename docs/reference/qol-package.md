@@ -196,6 +196,7 @@ Other:
 
 ## Snippets
 
+
     snippet splus
         summarise_plus(class      = c(var1, var2, ...),
                        values     = c(var1, var2, ...),

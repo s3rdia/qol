@@ -334,7 +334,7 @@ get_duplicate_var_count <- function(data_frame){
 #' @param multiple The multiple to round the values to.
 #'
 #' @return
-#' Returns rounded values.
+#' [round_values()]: Returns rounded values.
 #'
 #' @examples
 #' # With vectors
@@ -347,8 +347,8 @@ get_duplicate_var_count <- function(data_frame){
 #' # With a data frame
 #' my_data <- dummy_data(100)
 #'
-#' my_data[["income_round1"]] <- my_data[["income"]] |>  round_values()
-#' my_data[["income_round2"]] <- my_data[["income"]] |>  round_values(multiple = 100)
+#' my_data[["income_round1"]] <- my_data[["income"]] |> round_values()
+#' my_data[["income_round2"]] <- my_data[["income"]] |> round_values(multiple = 100)
 #'
 #'
 #' @rdname round_values
@@ -394,13 +394,13 @@ round_values <- function(values,
 #' if not overwrites the existing variables with rounded values.
 #'
 #' @return
-#' Returns a data frame with rounded values.
+#' [round_multi()]: Returns a data frame with rounded values.
 #'
 #' @examples
 #' # Round multiple variables in a data frame
-#' my_data <- my_data |>  round_multi(variables = c(income,  expenses,  balance),
-#'                                    new_names = c(incomeR, expensesR, balanceR),
-#'                                    digits = 1)
+#' my_data <- my_data |> round_multi(variables = c(income,  expenses,  balance),
+#'                                   new_names = c(incomeR, expensesR, balanceR),
+#'                                   digits = 1)
 #'
 #' @rdname round_values
 #'

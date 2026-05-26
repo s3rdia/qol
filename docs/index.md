@@ -14,6 +14,7 @@ fast even with datasets of over a million observations.
 ## Installation
 
 ``` r
+
 # Official release
 install.packages("qol")
 
@@ -38,6 +39,7 @@ readable and user friendly for creating larger and more complex outputs
 at the same time.
 
 ``` r
+
 # Creating format containers
 age. <- discrete_format(
     "Total"          = 0:100,
@@ -62,6 +64,7 @@ addition the code is optimized to handle big datasets efficiently with
 the format concept.
 
 ``` r
+
 library(qol)
 
 # If you want to test the raw speed in combination with creating big outputs try this:
@@ -119,6 +122,7 @@ table, instead of thinking hard about how to calculate where to put a
 border or to even manually prepare a designed workbook.
 
 ``` r
+
 my_data <- dummy_data(100000)
 
 # Create format containers
@@ -174,6 +178,7 @@ You can also combine multiple tables in one workbook, each on a
 different sheet, and save the file, instead of just viewing it.
 
 ``` r
+
 # Set output and style options globally
 set_style_options(save_path  = "C:/My_folder/",
                   file       = "My_workbook.xlsx",
@@ -214,6 +219,7 @@ single workbook, you can also catch the outputs and combine them
 afterwards in one go:
 
 ``` r
+
 # Set output and style options globally
 set_style_options(sheet_name = "age_sex")
 
@@ -261,6 +267,7 @@ always found, whether you use small letters or big ones or something in
 between. And they are retrieved in provided order.
 
 ``` r
+
 # Save file
 my_data |> save_file(path    = tempdir(),
                      file    = "testfile.fst",
@@ -282,6 +289,7 @@ Available methods are: left, right, inner, full, outer, left_inner,
 right_inner.
 
 ``` r
+
 # Simple join
 df1 <- data.frame(key = c(1, 1, 1, 2, 2, 2),
                   a   = c("a", "a", "a", "a", "a", "a"))
@@ -319,6 +327,7 @@ need it. And of course you can transpose multiple variables from wide
 into long format in one go.
 
 ``` r
+
 # Transpose from long to wide and use a multilabel to generate additional categories
 long_to_wide <- my_data |>
     transpose_plus(preserve = c(year, age),
@@ -343,6 +352,7 @@ character variable in another than alphabetical order without creating a
 temporary variable just for sorting.
 
 ``` r
+
 education. <- discrete_format(
     "1" = "low",
     "2" = "middle",
@@ -370,6 +380,7 @@ There are also some functions which enhance the readability of the code.
 For example if - else if - else statements like in other languages:
 
 ``` r
+
 # Example data frame
 my_data <- dummy_data(1000)
 

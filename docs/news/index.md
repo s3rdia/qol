@@ -2,6 +2,15 @@
 
 ## qol 1.3.2 - DEVELOPMENT
 
+#### New functionality
+
+- [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md):
+  With the new `sort` parameter a vektor of variable names can be passed
+  as `by`, which then is automatically sorted before generating the
+  running number. There is also a new `group_nr` parameter which creates
+  a running number for each group as a whole instead of a running number
+  within the group. (26.05.2026)
+
 #### Additionally
 
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
