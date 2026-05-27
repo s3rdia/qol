@@ -135,7 +135,20 @@ summarise_plus(
 
 ## Value
 
-Returns a summarised data table.
+Returns a summarised `data.table`.
+
+If `nesting` is set to `"all"` or `"single"`, the returned table
+automatically includes three hierarchical metadata variables:
+
+- **`TYPE`** (character): The active grouping combination for the row
+  (e.g., `"year+sex"`), or `"total"` for the grand total.
+
+- **`TYPE_NR`** (integer): A unique sequential identifier assigned to
+  each distinct grouping combination (`TYPE`).
+
+- **`DEPTH`** (integer): The number of active grouping variables in the
+  row's combination (e.g., `0` for `"total"`, `1` for single variables,
+  etc.).
 
 ## Details
 

@@ -2,9 +2,19 @@
 
 If
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
-is used with the nested options "all" or "single", three variables are
-automatically generated: TYPE, TYPE_NR and DEPTH. With this functions
-these variables are dropped.
+is used with the nested options "all" or "single", three hierarchical
+metadata variables are automatically generated: TYPE, TYPE_NR and DEPTH.
+With this functions these variables are dropped.
+
+- **`TYPE`** (character): The active grouping combination for the row
+  (e.g., `"year+sex"`), or `"total"` for the grand total.
+
+- **`TYPE_NR`** (integer): A unique sequential identifier assigned to
+  each distinct grouping combination (`TYPE`).
+
+- **`DEPTH`** (integer): The number of active grouping variables in the
+  row's combination (e.g., `0` for `"total"`, `1` for single variables,
+  etc.).
 
 ## Usage
 

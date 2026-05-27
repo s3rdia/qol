@@ -78,7 +78,14 @@ functions time consumption.}
 class variables during summarise.}
 }
 \value{
-Returns a summarised data table.
+Returns a summarised \code{data.table}.
+
+If \code{nesting} is set to \code{"all"} or \code{"single"}, the returned table automatically includes three hierarchical metadata variables:
+\itemize{
+\item \strong{\code{TYPE}} (character): The active grouping combination for the row (e.g., \code{"year+sex"}), or \code{"total"} for the grand total.
+\item \strong{\code{TYPE_NR}} (integer): A unique sequential identifier assigned to each distinct grouping combination (\code{TYPE}).
+\item \strong{\code{DEPTH}} (integer): The number of active grouping variables in the row's combination (e.g., \code{0} for \code{"total"}, \code{1} for single variables, etc.).
+}
 }
 \description{
 \code{\link[=summarise_plus]{summarise_plus()}} creates a new aggregated data table with the desired grouping.

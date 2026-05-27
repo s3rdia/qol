@@ -161,8 +161,11 @@ class variables during summarise.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Returns a summarised data table.</p>
-    </div>
+    <p>Returns a summarised <code>data.table</code>.</p>
+<p>If <code>nesting</code> is set to <code>"all"</code> or <code>"single"</code>, the returned table automatically includes three hierarchical metadata variables:</p><ul><li><p><strong><code>TYPE</code></strong> (character): The active grouping combination for the row (e.g., <code>"year+sex"</code>), or <code>"total"</code> for the grand total.</p></li>
+<li><p><strong><code>TYPE_NR</code></strong> (integer): A unique sequential identifier assigned to each distinct grouping combination (<code>TYPE</code>).</p></li>
+<li><p><strong><code>DEPTH</code></strong> (integer): The number of active grouping variables in the row's combination (e.g., <code>0</code> for <code>"total"</code>, <code>1</code> for single variables, etc.).</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>summarise_plus()</code> is based on the 'SAS' procedure Proc Summary, which provides

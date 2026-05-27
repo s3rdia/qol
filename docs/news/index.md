@@ -16,6 +16,12 @@
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Updated examples. (19.05.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`drop_type_vars()`](https://s3rdia.github.io/qol/reference/drop_type_vars.md):
+  Updated documentation with a detailed description of the automatically
+  generated variables TYPE, TYPE_NR and DEPTH when using the
+  `nesting = "all"` or `nesting = "single"` option. (27.05.2026, thanks
+  to [@cyklee](https://github.com/cyklee))
 
 ## qol 1.3.1
 

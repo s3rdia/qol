@@ -8,6 +8,7 @@ Last CRAN release was on 16.05.2026.
 ### Additionally
 
 * `if.()`, `export_with_style()`: Updated examples.
+* `summarise_plus()`, `drop_type_vars()`: Updated documentation with a detailed description of the automatically generated variables TYPE, TYPE_NR and DEPTH when using the `nesting = "all"` or `nesting = "single"` option.
 
 
 ## R CMD check results

@@ -7,6 +7,7 @@
 ### Additionally
 
 * `if.()`, `export_with_style()`: Updated examples. (19.05.2026)
+* `summarise_plus()`, `drop_type_vars()`: Updated documentation with a detailed description of the automatically generated variables TYPE, TYPE_NR and DEPTH when using the `nesting = "all"` or `nesting = "single"` option. (27.05.2026, thanks to @cyklee)
 
 # qol 1.3.1
 

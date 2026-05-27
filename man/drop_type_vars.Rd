@@ -14,8 +14,13 @@ Returns a data frame without the variables TYPE, TYPE_NR and DEPTH.
 }
 \description{
 If \code{\link[=summarise_plus]{summarise_plus()}} is used with the nested options "all" or "single", three
-variables are automatically generated: TYPE, TYPE_NR and DEPTH. With this functions
-these variables are dropped.
+hierarchical metadata variables are automatically generated: TYPE, TYPE_NR and
+DEPTH. With this functions these variables are dropped.
+\itemize{
+\item \strong{\code{TYPE}} (character): The active grouping combination for the row (e.g., \code{"year+sex"}), or \code{"total"} for the grand total.
+\item \strong{\code{TYPE_NR}} (integer): A unique sequential identifier assigned to each distinct grouping combination (\code{TYPE}).
+\item \strong{\code{DEPTH}} (integer): The number of active grouping variables in the row's combination (e.g., \code{0} for \code{"total"}, \code{1} for single variables, etc.).
+}
 }
 \examples{
 # Example format
