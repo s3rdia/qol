@@ -314,7 +314,7 @@ qol_graphic <- my_data |>
 
 <div class="pkgdown-only">
 
-<object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/main/man/figures/interactive_chart.svg" style="width:100%;"></object>
+<object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/refs/heads/graphics/man/figures/interactive_chart.svg" style="width:100%;"></object>
 
 </div>
 
