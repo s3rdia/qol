@@ -842,6 +842,13 @@ generate_graphic <- function(graphic_tab,
     # Register font
     register_windows_font(visuals[["font"]])
 
+    # Don't display values in interactive graphics. Also only single files can
+    # be exported.
+    if (output[["interactive"]]){
+        visuals[["display_values"]] <- FALSE
+        output[["by_as_grid"]]      <- FALSE
+    }
+
     # Setup main canvas
     grid_row    <- NULL
     grid_column <- NULL
@@ -947,7 +954,7 @@ generate_graphic <- function(graphic_tab,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output graphic
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if (is.null(by_info)){ print_step("MINOR", "Output graphic") }
+    if (is.null(by_info)){ print_step("MAJOR", "Output graphic") }
 
     # Draw and save the graphic
     # NOTE: To leave it like this in a situation with by-variables, leads to multiple
@@ -956,7 +963,7 @@ generate_graphic <- function(graphic_tab,
     #       below. But at the moment I can't get the graphics to draw in a grid with
     #       a single draw call. I think the master_layout somehow interferes with
     #       the viewport construction in this function. Revisit some time.
-    output_graphic(whole_graphic, dimensions, fine_tuning, output, by_info)
+    output_graphic(whole_graphic, visuals, dimensions, fine_tuning, output, main_grob[["meta"]], by_info)
 
     grid::popViewport()
 

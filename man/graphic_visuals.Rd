@@ -43,9 +43,9 @@ graphic_visuals(
   guiding_line_type = "dotted",
   guiding_line_color = "#9A9A9A",
   major_separation_line_type = "solid",
-  major_separation_line_color = "#2B2B2B",
+  major_separation_line_color = "#9A9A9A",
   minor_separation_line_type = "dotted",
-  minor_separation_line_color = "#2B2B2B",
+  minor_separation_line_color = "#9A9A9A",
   segment_line_type = "solid",
   segment_line_color = "#000000",
   remove_small_values = TRUE,
@@ -58,7 +58,15 @@ graphic_visuals(
   legend_x_pos = 11,
   legend_y_pos = 5,
   legend_columns = 1,
-  origin = "Graphic: qol"
+  origin = "Graphic: qol",
+  tooltip_font_color = "auto",
+  tooltip_background_color = "auto",
+  tooltip_border_color = "auto",
+  tooltip_border_width = 2,
+  tooltip_background_opacity = 0.8,
+  tooltip_x_padding = 8,
+  tooltip_y_padding = 4,
+  tooltip_corner_radius = 2
 )
 }
 \arguments{
@@ -178,6 +186,29 @@ all labels will be drawn beside each other.}
 
 \item{origin}{A character value that will be written in the bottom right corner of the
 graphic.}
+
+\item{tooltip_font_color}{Font color of the tooltips in interactive charts. If set to "auto"
+the font color will be black or white depending on the tooltip background color.}
+
+\item{tooltip_background_color}{Background color of the tooltips in interactive charts.
+If set to "auto" the background color will match the color of the corresponding segment.}
+
+\item{tooltip_border_color}{Border color of the tooltips in interactive charts.
+If set to "auto" the border color will match the color of the corresponding segment.}
+
+\item{tooltip_border_width}{Width of the border of the tooltips in interactive charts.}
+
+\item{tooltip_background_opacity}{Background opacity of the tooltips in interactive charts.
+0 is fully transparent, while 1 is fully visible.}
+
+\item{tooltip_x_padding}{The horizontal space of the tooltip texts in interactive charts to
+the borders.}
+
+\item{tooltip_y_padding}{The vertical space of the tooltip texts in interactive charts to
+the borders.}
+
+\item{tooltip_corner_radius}{Radius of the corners of the tooltips in interactive charts.
+0 means sharp corners, tooltip displays as rectangle.}
 
 \item{separation_line_type}{Sets the type of separation lines drawn between top group
 categories. Can be "dashed", "dotted" or "solid".}

@@ -8,7 +8,8 @@ graphic_output(
   save_path = NULL,
   file = NULL,
   resolution = 300,
-  by_as_grid = FALSE
+  by_as_grid = FALSE,
+  interactive = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ a filename with extension.}
 
 \item{by_as_grid}{FALSE by default. If TRUE exports one single graphic containing the
 whole grid when using by variables.}
+
+\item{interactive}{FALSE by default. If TRUE exports an interactive SVG files containing
+mouse over tooltips and hover effects.}
 }
 \value{
 Returns a list of named graphic options.
