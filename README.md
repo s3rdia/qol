@@ -312,6 +312,12 @@ qol_graphic <- my_data |>
                     footnotes      = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code.")
 ```
 
+<div class="pkgdown-only">
+
+<object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/main/man/figures/interactive_chart.svg" style="width:100%;"></object>
+
+</div>
+
 ## One Function to Join Them All
 
 Join two or more data frames together in one operation with multiple

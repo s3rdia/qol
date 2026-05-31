@@ -31,7 +31,9 @@ graphic_fine_tuning(
   segment_line_treshhold = 0.95,
   segment_label_hjust = 0.05,
   max_segment_label_shift = 0.25,
-  cm_to_inch_factor = 2.54
+  cm_to_inch_factor = 2.54,
+  svg_anchor_adjust = 0.6,
+  svg_line_height_adjust = 0.65
 )
 }
 \arguments{

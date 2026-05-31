@@ -744,16 +744,25 @@ get_diagram_dimensions <- function(arguments){
     graphic_tab  <- arguments[["graphic_tab"]]
     axes_vars    <- arguments[["axes_vars"]]
     segment_vars <- arguments[["segment_vars"]]
-    values       <- arguments[["values"]]
+    value_vars   <- arguments[["values"]]
     axes         <- arguments[["axes"]]
     dimensions   <- arguments[["dimensions"]]
     visuals      <- arguments[["visuals"]]
     fine_tuning  <- arguments[["fine_tuning"]]
     stat_labels  <- arguments[["stat_labels"]]
 
+    # TODO: THE VALUES THING WILL BREAK AS SOON AS A SECOND VALUE AXES IS IMPLEMENTED
     # Get actual values and statistic types
-    value_types <- sub(".*_", "", values)
-    values      <- graphic_tab[[values]]
+    value_types <- sub(".*_", "", value_vars)
+    values      <- graphic_tab[[value_vars]]
+    value_vars  <- sub("_[^_]*$", "", value_vars)
+
+    # Get the variable labels
+    value_labels <- value_vars
+
+    if (value_vars %in% names(arguments[["var_labels"]])){
+        value_labels <- arguments[["var_labels"]][[value_vars]]
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Basic horizontal positioning for vbars
@@ -1017,6 +1026,8 @@ get_diagram_dimensions <- function(arguments){
     # Return information as list
     list(values                      = values,
          value_types                 = value_types,
+         value_vars                  = value_vars,
+         value_labels                = value_labels,
          unique_groups               = unique_groups,
          individual_groups           = individual_groups,
          number_of_groups            = number_of_groups,
@@ -1081,7 +1092,6 @@ vbar_grob <- function(diagram_info,
     fine_tuning <- arguments[["fine_tuning"]]
     value_y_pos <- diagram_info[["values"]]
 
-    border_color <- visuals[["segment_border_color"]]
     shrink_width <- grid::unit(dimensions[["space_between_bars_pct"]], "pt")
 
     # Prevent color usage overflow, when there are more segments than color usage
@@ -1107,6 +1117,8 @@ vbar_grob <- function(diagram_info,
     # and is a theme name instead, then get the theme colors to make it visually
     # as if there where no borders. This way the borders are colored like the inner
     # space.
+    border_color <- visuals[["segment_border_color"]]
+
     if (!grepl("^#([A-Fa-f0-9]{6})$", border_color)){
         border_color <- get_theme_base_colors(border_color)
 
@@ -1121,26 +1133,33 @@ vbar_grob <- function(diagram_info,
         }
     }
 
+    border_color <- rep(border_color, length.out = diagram_info[["number_of_elements"]])
+
     # Get the colors from the theme which should be used. Reverse them if option
     # is set accordingly.
-    colors_to_use <- theme[["base"]][color_usage]
+    colors_to_use <- rep(theme[["base"]][color_usage], length.out = diagram_info[["number_of_elements"]])
 
     if (visuals[["reverse_colors"]]){
         colors_to_use <- rev(colors_to_use)
         border_color  <- rev(border_color)
     }
 
+    # Every segment is drawn as a separate element so that it can be accessed
+    # individually even after graphic completion.
     # NOTE: For the width a tiny bit is subtracted because the bars would otherwise
     #       overlap by one pixel, in case colored outlines are used.
-    rects <- grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]], "native") + (shrink_width / 2),
-                            y      = diagram_info[["zero_pos"]],
-                            width  = grid::unit(diagram_info[["segment_width"]], "native") - shrink_width,
-                            height = grid::unit(diagram_info[["actual_drawing_height"]], "native"),
-                            just   = c("left", "bottom"),
-                            name   = "segments",
-                            gp     = grid::gpar(fill = colors_to_use,
-                                                col  = border_color,
-                                                lwd  = dimensions[["line_thickness"]]))
+    rects <- do.call(grid::gList,
+                     lapply(seq_len(diagram_info[["number_of_elements"]]), function(i){
+        grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]][i], "native") + (shrink_width / 2),
+                       y      = diagram_info[["zero_pos"]],
+                       width  = grid::unit(diagram_info[["segment_width"]], "native") - shrink_width,
+                       height = grid::unit(diagram_info[["actual_drawing_height"]][i], "native"),
+                       just   = c("left", "bottom"),
+                       name   = paste0("tooltip_segment", i),
+                       gp     = grid::gpar(fill = colors_to_use[i],
+                                           col  = border_color[i],
+                                           lwd  = dimensions[["line_thickness"]]))
+    }))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate value texts
@@ -1170,11 +1189,11 @@ vbar_grob <- function(diagram_info,
         font_color[values_fit_inside]  <- colors_inside[values_fit_inside]
         font_color[!values_fit_inside] <- colors_outside[!values_fit_inside]
 
-        y_offset <- grid::unit(0, "mm")
+        y_offset <- rep(grid::unit(0, "mm"), number_of_values)
 
         if (!visuals[["rotate_values"]]){
-            hjust  <- fine_tuning[["values_hjust"]]
-            rotate <- 0
+            hjust  <- rep(fine_tuning[["values_hjust"]], number_of_values)
+            rotate <- rep(0, number_of_values)
 
             if (visuals[["bar_values_inside"]]){
                 # Set up values drawn inside and outside the segments
@@ -1189,8 +1208,8 @@ vbar_grob <- function(diagram_info,
         }
         # Set up with rotated values
         else{
-            vjust_base  <- fine_tuning[["values_hjust_90"]]
-            rotate      <- fine_tuning[["values_rotation"]]
+            vjust_base <- fine_tuning[["values_hjust_90"]]
+            rotate     <- rep(fine_tuning[["values_rotation"]], number_of_values)
 
             if (visuals[["bar_values_inside"]]){
                 # Set up values drawn inside segments
@@ -1246,26 +1265,35 @@ vbar_grob <- function(diagram_info,
             font_color <- rev(font_color)
         }
 
-        # Generate formatted values
-        texts <- grid::textGrob(formatted_values,
-                                x      = grid::unit(diagram_info[["values_x_pos"]], "native"),
-                                y      = grid::unit(value_y_pos, "native") + y_offset,
-                                vjust  = vjust,
-                                hjust  = hjust,
-                                rot    = rotate,
-                                name   = "values",
-                                gp     = grid::gpar(col        = font_color,
-                                                    fontfamily = visuals[["font"]],
-                                                    fontsize   = dimensions[["value_font_size"]],
-                                                    fontface   = visuals[["value_font_face"]],
-                                                    lineheight = fine_tuning[["line_height"]]))
+        # Generate formatted values. Every value is drawn as a separate element
+        # so that it can be accessed individually even after graphic completion.
+        texts <- do.call(grid::gList,
+                         lapply(seq_len(number_of_values), function(i){
+            grid::textGrob(formatted_values[i],
+                           x      = grid::unit(diagram_info[["values_x_pos"]][i], "native"),
+                           y      = grid::unit(value_y_pos[i], "native") + y_offset[i],
+                           vjust  = vjust[i],
+                           hjust  = hjust[i],
+                           rot    = rotate[i],
+                           name   = paste0("segment_value", i),
+                           gp     = grid::gpar(col        = font_color[i],
+                                               fontfamily = visuals[["font"]],
+                                               fontsize   = dimensions[["value_font_size"]],
+                                               fontface   = visuals[["value_font_face"]],
+                                               lineheight = fine_tuning[["line_height"]]))
+        }))
     }
     else{
         texts <- grid::nullGrob()
     }
 
     # Return final segments
-    grid::gList(rects, texts)
+    if (inherits(texts, "gList")){
+        grid::gList(rects, texts)
+    }
+    else{
+        grid::gList(rects)
+    }
 }
 
 ###############################################################################
@@ -1784,7 +1812,7 @@ setup_x_axes <- function(diagram_info,
     else{
         # Ticks point up if the x axes is drawn at the top.
         tick_length <- -tick_length
-        label_y     <- 1 - label_y_positions + fine_tuning[["variable_axes_margin"]]
+        label_y     <- 1 - label_y_positions + (fine_tuning[["variable_axes_margin"]] * 1.5)
         label_just  <- c("center", "bottom")
 
         # The first layer of multi layered group labels is drawn at the bottom of the

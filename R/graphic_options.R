@@ -78,6 +78,21 @@
 #' all labels will be drawn beside each other.
 #' @param origin A character value that will be written in the bottom right corner of the
 #' graphic.
+#' @param tooltip_font_color Font color of the tooltips in interactive charts. If set to "auto"
+#' the font color will be black or white depending on the tooltip background color.
+#' @param tooltip_background_color Background color of the tooltips in interactive charts.
+#' If set to "auto" the background color will match the color of the corresponding segment.
+#' @param tooltip_border_color Border color of the tooltips in interactive charts.
+#' If set to "auto" the border color will match the color of the corresponding segment.
+#' @param tooltip_border_width Width of the border of the tooltips in interactive charts.
+#' @param tooltip_background_opacity Background opacity of the tooltips in interactive charts.
+#' 0 is fully transparent, while 1 is fully visible.
+#' @param tooltip_x_padding The horizontal space of the tooltip texts in interactive charts to
+#' the borders.
+#' @param tooltip_y_padding The vertical space of the tooltip texts in interactive charts to
+#' the borders.
+#' @param tooltip_corner_radius Radius of the corners of the tooltips in interactive charts.
+#' 0 means sharp corners, tooltip displays as rectangle.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -136,9 +151,9 @@ graphic_visuals <- function(font                        = "Arial",
                             guiding_line_type           = "dotted",
                             guiding_line_color          = "#9A9A9A",
                             major_separation_line_type  = "solid",
-                            major_separation_line_color = "#2B2B2B",
+                            major_separation_line_color = "#9A9A9A",
                             minor_separation_line_type  = "dotted",
-                            minor_separation_line_color = "#2B2B2B",
+                            minor_separation_line_color = "#9A9A9A",
                             segment_line_type           = "solid",
                             segment_line_color          = "#000000",
                             remove_small_values         = TRUE,
@@ -151,7 +166,15 @@ graphic_visuals <- function(font                        = "Arial",
                             legend_x_pos                = 11,
                             legend_y_pos                = 5,
                             legend_columns              = 1,
-                            origin                      = "Graphic: qol"){
+                            origin                      = "Graphic: qol",
+                            tooltip_font_color          = "auto",
+                            tooltip_background_color    = "auto",
+                            tooltip_border_color        = "auto",
+                            tooltip_border_width        = 2,
+                            tooltip_background_opacity  = 0.8,
+                            tooltip_x_padding           = 8,
+                            tooltip_y_padding           = 4,
+                            tooltip_corner_radius       = 2){
     as.list(environment())
 }
 
@@ -381,6 +404,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param label_font_size Font size of the origin text.
 #' @param origin_font_size Font size of the origin text.
 #' @param other_font_size Font size of every other text element.
+#' @param tooltip_font_size Font size of the tooltips in interactive charts.
 #' @param space_between_bars_pct The space between adjacent bars.
 #' @param bar_overlap The factor determines how much bars are overlapping each other.
 #' @param line_thickness The thickness of lines in a line chart or outlines of segments.
@@ -431,6 +455,7 @@ graphic_dimensions <- function(graphic_width             = 16,
                                label_font_size           = 9,
                                origin_font_size          = 8,
                                other_font_size           = 9,
+                               tooltip_font_size         = 12,
                                space_between_bars_pct    = 0,
                                bar_overlap               = 0,
                                line_thickness            = 1,
@@ -533,6 +558,8 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @param resolution DPI resolution.
 #' @param by_as_grid FALSE by default. If TRUE exports one single graphic containing the
 #' whole grid when using by variables.
+#' @param interactive FALSE by default. If TRUE exports an interactive SVG files containing
+#' mouse over tooltips and hover effects.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -553,10 +580,11 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #'                        file      = "MyGraphic.png")
 #'
 #' @export
-graphic_output <- function(save_path  = NULL,
-                           file       = NULL,
-                           resolution = 300,
-                           by_as_grid = FALSE){
+graphic_output <- function(save_path   = NULL,
+                           file        = NULL,
+                           resolution  = 300,
+                           by_as_grid  = FALSE,
+                           interactive = FALSE){
     as.list(environment())
 }
 
@@ -704,7 +732,9 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 segment_line_treshhold     = 0.95,
                                 segment_label_hjust        = 0.05,
                                 max_segment_label_shift    = 0.25,
-                                cm_to_inch_factor          = 2.54){
+                                cm_to_inch_factor          = 2.54,
+                                svg_anchor_adjust          = 0.6,
+                                svg_line_height_adjust     = 0.65){
     as.list(environment())
 }
 

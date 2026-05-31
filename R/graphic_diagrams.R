@@ -49,6 +49,6 @@ vbars <- function(...){
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
-    list(graphic = grid::gTree(children = grid::gList(diagram_background, axes, segments, segment_labels), name = "diagram"),
+    list(graphic = grid::gTree(children = grid::gList(diagram_background, segments, axes, segment_labels), name = "diagram"),
          meta    = diagram_info)
 }
