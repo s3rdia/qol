@@ -205,11 +205,21 @@ if. <- function(data_frame, condition, ...){
                 for (element in seq_len(list_entry_lengths[1])){
                     # Get the respective first elements as symbols in a new list
                     replace_list <- lapply(content_list, function(vector){
-                            if (is.numeric(vector)){
+                            if (is.numeric(vector) || is.logical(vector)){
                                 expression <- vector[element]
                             }
                             else{
-                                expression <- as.name(vector[element])
+                                # Check if vector element is part of the data frame to determine
+                                # whether it is a variable or a character expression. Convert
+                                # it accordingly.
+                                expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
+
+                                if (is.list(expression)){
+                                    expression <- as.character(vector[element])
+                                }
+                                else{
+                                    expression <- as.name(vector[element])
+                                }
                             }
 
                             # Check if there are colons as placeholders. If this is the
@@ -310,11 +320,21 @@ if. <- function(data_frame, condition, ...){
             for (element in seq_len(list_entry_lengths[1])){
                 # Get the respective first elements as symbols in a new list
                 replace_list <- lapply(content_list, function(vector){
-                    if (is.numeric(vector)){
+                    if (is.numeric(vector) || is.logical(vector)){
                         expression <- vector[element]
                     }
                     else{
-                        expression <- as.name(vector[element])
+                        # Check if vector element is part of the data frame to determine
+                        # whether it is a variable or a character expression. Convert
+                        # it accordingly.
+                        expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
+
+                        if (is.list(expression)){
+                            expression <- as.character(vector[element])
+                        }
+                        else{
+                            expression <- as.name(vector[element])
+                        }
                     }
                 })
 
@@ -477,11 +497,21 @@ else_if. <- function(data_frame, condition, ...){
                 for (element in seq_len(list_entry_lengths[1])){
                     # Get the respective first elements as symbols in a new list
                     replace_list <- lapply(content_list, function(vector){
-                        if (is.numeric(vector)){
+                        if (is.numeric(vector) || is.logical(vector)){
                             expression <- vector[element]
                         }
                         else{
-                            expression <- as.name(vector[element])
+                            # Check if vector element is part of the data frame to determine
+                            # whether it is a variable or a character expression. Convert
+                            # it accordingly.
+                            expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
+
+                            if (is.list(expression)){
+                                expression <- as.character(vector[element])
+                            }
+                            else{
+                                expression <- as.name(vector[element])
+                            }
                         }
 
                         # Check if there are colons as placeholders. If this is the
@@ -613,11 +643,21 @@ else. <- function(data_frame, ...){
                 for (element in seq_len(list_entry_lengths[1])){
                     # Get the respective first elements as symbols in a new list
                     replace_list <- lapply(content_list, function(vector){
-                        if (is.numeric(vector)){
+                        if (is.numeric(vector) || is.logical(vector)){
                             expression <- vector[element]
                         }
                         else{
-                            expression <- as.name(vector[element])
+                            # Check if vector element is part of the data frame to determine
+                            # whether it is a variable or a character expression. Convert
+                            # it accordingly.
+                            expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
+
+                            if (is.list(expression)){
+                                expression <- as.character(vector[element])
+                            }
+                            else{
+                                expression <- as.name(vector[element])
+                            }
                         }
 
                         # Check if there are colons as placeholders. If this is the

@@ -778,7 +778,7 @@ print_step <- function(type,
     if (!identical(current_session_token, .qol_messages[["last_session"]]) ||
         !identical(current_execution_token, .qol_messages[["last_execution"]])){
 
-        if (awaits_time_print() && !is_no_print_active()){
+        if (awaits_time_print() && !is_no_print_active() && !is_message_suppressed()){
             cat("\n")
         }
 

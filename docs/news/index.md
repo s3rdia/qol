@@ -11,6 +11,20 @@
   a running number for each group as a whole instead of a running number
   within the group. (26.05.2026)
 
+#### Fixed
+
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Do
+  over loop couldn’t handle logical vectors. Additionally character
+  expresions where always converted to symbols, which was fine if
+  variable names were meant, but crashed if actual character values were
+  passed. This is fixed now. (01.06.2026)
+- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Doesn’t print empty lines anymore, when surrounding the function with
+  [`suppressMessages()`](https://rdrr.io/r/base/message.html).
+  (01.06.2026)
+
 #### Additionally
 
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),

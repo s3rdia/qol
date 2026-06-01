@@ -422,3 +422,32 @@ This package also includes some basic yet very effective performance monitoring 
 Don't like the colors of the built-in in RStudio themes? Can't find a theme online that fits your liking? No Problem. With a simple function you can create a full theme file and decide which parts of the editor receive which colors. The themes shown below and the corresponding code can be found on GitHub.
 
 <img src='man/figures/theme.png' alt='Theme examples'/>
+
+
+## Test
+
+1.
+
+<img src='man/figures/test.svg' alt="test"/>
+
+2.
+
+<div class="test">
+  <object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/refs/heads/graphics/man/figures/test.svg" style="width:100%;"></object>
+</div>
+
+3.
+
+  <object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/refs/heads/graphics/man/figures/test.svg" style="width:100%;"></object>
+
+4.
+
+  <object type="image/svg+xml" data="man/figures/test.svg" style="width:100%;"></object>
+
+5.
+
+  <object type="image/svg+xml" data="reference/figures/test.svg" style="width:100%;"></object>
+  
+6.
+
+<iframe src="https://raw.githubusercontent.com/s3rdia/qol/refs/heads/graphics/man/figures/test.svg" style="width:100%; border:none;" scrolling="no" frameborder="0"></iframe>

@@ -283,13 +283,22 @@ expect_true(!1 %in% test_df[["sex"]], info = "Delete observations with 'delete' 
 
 
 # if. as do over loop for subsetting
-vars   <- c("income", "balance")
-values <- c(1000, 0)
+vars    <- c("income", "balance")
+values1 <- c(1000, 0)
+values2 <- c("low", "high")
+values3 <- FALSE
 
-do_over_df <- dummy_df |> if.(vars > values)
+test_df <- dummy_df
+test_df[["logical"]] <- TRUE
 
-expect_true(collapse::fmin(do_over_df[["income"]])  > 1000, info = "if. as do over loop for subsetting")
-expect_true(collapse::fmin(do_over_df[["balance"]]) > 0,    info = "if. as do over loop for subsetting")
+do_over_df1 <- dummy_df |> if.(vars > values1)
+do_over_df2 <- dummy_df |> if.(education != values2)
+do_over_df3 <- test_df  |> if.(logical == values3)
+
+expect_true(collapse::fmin(do_over_df1[["income"]])  > 1000, info = "if. as do over loop for subsetting")
+expect_true(collapse::fmin(do_over_df1[["balance"]]) > 0,    info = "if. as do over loop for subsetting")
+expect_true(collapse::funique(do_over_df2[["education"]]) == "middle", info = "if. as do over loop for subsetting")
+expect_true(collapse::fnrow(do_over_df3) == 0, info = "if. as do over loop for subsetting")
 
 # Warning on doubled logical operators
 test_df <- dummy_df |> if.((sex == 1 && education == "high") || sex == 2)

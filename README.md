@@ -468,3 +468,36 @@ receive which colors. The themes shown below and the corresponding code
 can be found on GitHub.
 
 <img src='man/figures/theme.png' alt='Theme examples'/>
+
+## Test
+
+1.  
+
+<img src='man/figures/test.svg' alt="test"/>
+
+2.  
+
+<div class="test">
+
+<object type="image/svg+xml" data="https://s3rdia.github.io/qol/reference/figures/test.svg" style="width:100%;"></object>
+
+</div>
+
+3. 
+<object type="image/svg+xml" data="https://s3rdia.github.io/qol/reference/figures/test.svg" style="width:100%;">
+</object>
+
+4. 
+
+<object type="image/svg+xml" data="man/figures/test.svg" style="width:100%;">
+</object>
+
+5. 
+
+<object type="image/svg+xml" data="reference/figures/test.svg" style="width:100%;">
+</object>
+
+6.  
+
+<iframe src="reference/figures/test.svg" style="width:100%; border:none;" scrolling="no" frameborder="0">
+</iframe>

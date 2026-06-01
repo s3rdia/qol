@@ -4,6 +4,11 @@
 
 * `running_number()`: With the new `sort` parameter a vektor of variable names can be passed as `by`, which then is automatically sorted before generating the running number. There is also a new `group_nr` parameter which creates a running number for each group as a whole instead of a running number within the group. (26.05.2026)
 
+### Fixed
+
+* `if.()`, `else_if.()`, `else.()`: Do over loop couldn't handle logical vectors. Additionally character expresions where always converted to symbols, which was fine if variable names were meant, but crashed if actual character values were passed. This is fixed now. (01.06.2026)
+* `print_step()`: Doesn't print empty lines anymore, when surrounding the function with `suppressMessages()`. (01.06.2026)
+
 ### Additionally
 
 * `if.()`, `export_with_style()`: Updated examples. (19.05.2026)
