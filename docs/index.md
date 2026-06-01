@@ -460,22 +460,3 @@ receive which colors. The themes shown below and the corresponding code
 can be found on GitHub.
 
 ![Theme examples](reference/figures/theme.png)
-
-## Test
-
-1.  
-
-![test](reference/figures/test.svg)
-
-2.  
-
-3.  
-4.  
-
-&nbsp;
-
-5.  
-
-&nbsp;
-
-6.  
