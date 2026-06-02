@@ -19,8 +19,8 @@ vbars <- function(...){
     names(arguments) <- dots_to_char(...)
 
     if (is.null(arguments) || !all(expected_parameters %in% names(arguments))){
-        message(" X ERROR: Diagram function doesn't work on it's own. It can only be used\n",
-                "          as the <diagram> parameter in <design_graphic>.")
+        print_message("ERROR", c("Diagram function doesn't work on it's own. It can only be used",
+                                 "as the <diagram> parameter in <design_graphic>."))
 
         return(invisible(grid::nullGrob()))
     }
@@ -39,8 +39,9 @@ vbars <- function(...){
                                          name = "diagram_background")
 
     # Generate axes
-    axes      <- setup_xy_axes(diagram_info, arguments)
-    arguments <- inject_inner_canvas_size(axes, arguments)
+    axes          <- setup_xy_axes(diagram_info, arguments)
+    guiding_lines <- setup_guiding_lines(diagram_info, arguments)
+    arguments     <- inject_inner_canvas_size(axes, arguments)
 
     # Generate segments
     segments <- vbar_grob(diagram_info, arguments, theme)
@@ -49,6 +50,10 @@ vbars <- function(...){
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
-    list(graphic = grid::gTree(children = grid::gList(diagram_background, segments, axes, segment_labels), name = "diagram"),
-         meta    = diagram_info)
+    list(graphic = grid::gTree(children = grid::gList(diagram_background,
+                                                      guiding_lines,
+                                                      segments,
+                                                      axes,
+                                                      segment_labels), name = "diagram"),
+         meta = diagram_info)
 }

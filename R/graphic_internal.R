@@ -267,6 +267,11 @@ output_graphic <- function(graphic_object,
                 extension <- "png"
             }
 
+            # Set extensions to svg on interactive outputs
+            if (output[["interactive"]] && extension != "svg"){
+                extension <- "svg"
+            }
+
             # If there is no by info, the file name is already provided through the option
             if (is.null(by_info)){
                 filename <- paste0(filename, ".", extension)
