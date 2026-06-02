@@ -13,6 +13,7 @@
 
 * `if.()`, `export_with_style()`: Updated examples. (19.05.2026)
 * `summarise_plus()`, `drop_type_vars()`: Updated documentation with a detailed description of the automatically generated variables TYPE, TYPE_NR and DEPTH when using the `nesting = "all"` or `nesting = "single"` option. (27.05.2026, thanks to @cyklee)
+* `expand_formats()`: Added a `NOTE`message if the cartesian product produces over 1 million rows. (02.06.2026)
 
 # qol 1.3.1
 

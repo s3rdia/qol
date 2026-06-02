@@ -429,6 +429,19 @@ expand_formats <- function(..., names = NULL){
         return(invisible(NULL))
     }
 
+    # Calculate the final number of elements beforehand, to give a hint whether
+    # the output becomes very large.
+    final_number_of_rows <- prod(lengths(format_list))
+
+    if (final_number_of_rows > 1000000){
+        final_number_of_rows <- format(final_number_of_rows, big.mark = ".", decimal.mark = ",")
+
+        print_message("NOTE", c("expand_formats() is about to calculate a cartesian product which produces [number] rows.",
+                                "If you didn't call the function directly you should consider setting the print_miss parameter to FALSE.",
+                                "Otherwise this process might take a long time to finish and likely produce lots of empty cells."),
+                      number = final_number_of_rows, always_print = TRUE)
+    }
+
     # Generate the cartesian product of all given labels to get all possible
     # combinations of categories.
     expand_df <- do.call(data.table::CJ, c(format_list,

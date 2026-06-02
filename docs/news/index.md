@@ -36,6 +36,9 @@
   generated variables TYPE, TYPE_NR and DEPTH when using the
   `nesting = "all"` or `nesting = "single"` option. (27.05.2026, thanks
   to [@cyklee](https://github.com/cyklee))
+- [`expand_formats()`](https://s3rdia.github.io/qol/reference/expand_formats.md):
+  Added a `NOTE`message if the cartesian product produces over 1 million
+  rows. (02.06.2026)
 
 ## qol 1.3.1
 
