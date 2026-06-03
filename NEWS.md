@@ -3,11 +3,16 @@
 ### New functionality
 
 * `running_number()`: With the new `sort` parameter a vektor of variable names can be passed as `by`, which then is automatically sorted before generating the running number. There is also a new `group_nr` parameter which creates a running number for each group as a whole instead of a running number within the group. (26.05.2026)
+* `concat()`: Can now concatenate variables inside a data frame with a separator. (03.06.2026)
+* `recode_multi()`: New `convert` parameter converts recoded variables to numeric or character depending on the input format instead of leaving them as factors. (03.06.2026)
+* `any_table()`, `excel_output_style()`: Can now apply a `background_color` to all cells which aren't covered by any other background color parameter. (03.06.2026)
 
 ### Fixed
 
 * `if.()`, `else_if.()`, `else.()`: Do over loop couldn't handle logical vectors. Additionally character expresions where always converted to symbols, which was fine if variable names were meant, but crashed if actual character values were passed. This is fixed now. (01.06.2026)
 * `print_step()`: Doesn't print empty lines anymore, when surrounding the function with `suppressMessages()`. (01.06.2026)
+* `sort_plus()`: Doesn't crash anymore when trying to preserve factor variables. (03.06.2026)
+* `export_data()`: When exporting a csv file characters like ä, ö, ü are displayed correctly, when opening the file in Excel. (03.06.2026)
 
 ### Additionally
 

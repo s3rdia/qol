@@ -462,7 +462,8 @@ export_data <- function(data_frame,
         data_frame |> data.table::fwrite(file = outfile,
                                          sep  = separator,
                                          dec  = decimal,
-                                         col.names = var_names)
+                                         col.names = var_names,
+                                         bom  = TRUE)
     }
     # xlsx
     else if (extension == "xlsx"){

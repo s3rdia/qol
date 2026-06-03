@@ -2224,6 +2224,21 @@ format_any_excel <- function(wb,
         wb <- wb |>
             handle_row_header_merge(any_tab[, 1:any_ranges[["cat_col.width"]]], any_ranges)
 
+        # Fill all cells with background color
+        if (style[["background_color"]] != ""){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+            #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "Fill background") }
+
+            wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+
+            # Titles and footnotes need to get an extra fill
+            wb$add_fill(dims = any_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$add_fill(dims = any_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+        }
+
         # Style table
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")

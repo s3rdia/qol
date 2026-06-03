@@ -232,12 +232,18 @@ sort_plus <- function(data_frame,
 
         # Convert preserve variables back
         for (variable in names(original_class)){
-            if (original_class[[variable]] == "numeric"){
+            # Only check first element. If original type is factor it is stored
+            # in two parts 'ordered' and 'factor'.
+            if (original_class[[variable]][1] == "numeric"){
                 sort_df[[variable]] <- as.numeric(sort_df[[variable]])
             }
-            else if (original_class[[variable]] == "character"){
+            else if (original_class[[variable]][1] == "logical"){
+                sort_df[[variable]] <- as.logical(sort_df[[variable]])
+            }
+            else if (original_class[[variable]][1] == "character"){
                 sort_df[[variable]] <- as.character(sort_df[[variable]])
             }
+
         }
     }
     else{

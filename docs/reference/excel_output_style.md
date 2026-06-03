@@ -28,6 +28,7 @@ excel_output_style(
   filters = TRUE,
   grid_lines = TRUE,
   by_as_subheaders = FALSE,
+  background_color = "",
   header_back_color = "FFFFFF",
   header_font_color = "000000",
   header_font_size = 10,
@@ -179,6 +180,11 @@ excel_output_style(
 
   Whether to format by variables as subheaders in one table instead of
   single tables on multiple sheets.
+
+- background_color:
+
+  Background cell color for any cell which isn't covered by the other
+  background color options.
 
 - header_back_color:
 

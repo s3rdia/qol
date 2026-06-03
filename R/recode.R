@@ -216,13 +216,16 @@ recode. <- function(data_frame,
 }
 
 
+#' @param convert FALSE by default. If TRUE converts recoded variables to numeric
+#' or character depending on the input format instead of leaving them as factors.
+#'
 #' @return
 #' [recode_multi()]: Returns a data frame with the newly recoded variable.
 #'
 #' @rdname recode
 #'
 #' @export
-recode_multi <- function(data_frame, ...){
+recode_multi <- function(data_frame, ..., convert = FALSE){
     # Measure the time
     print_start_message(suppress = TRUE)
 
@@ -250,9 +253,22 @@ recode_multi <- function(data_frame, ...){
     variables <- names(formats)
     var_order <- names(data_frame)
 
+    # Apply formats
     data_frame <- data_frame |>
         apply_format(formats, variables) |>
         data.table::setcolorder(var_order)
+
+    # Convert formatted values to intended type
+    if (convert){
+        for (variable in variables){
+            if (is.numeric(formats[[variable]][["label"]])){
+                data_frame[[variable]] <- as.numeric(data_frame[[variable]])
+            }
+            else{
+                data_frame[[variable]] <- as.character(data_frame[[variable]])
+            }
+        }
+    }
 
     print_closing(5)
 

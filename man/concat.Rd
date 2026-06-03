@@ -7,6 +7,7 @@
 concat(
   data_frame,
   ...,
+  separator = NULL,
   padding_char = NULL,
   padding_length = NULL,
   padding_right = FALSE
@@ -16,6 +17,8 @@ concat(
 \item{data_frame}{A data frame which contains the the variables to concatenate.}
 
 \item{...}{The names of the variables to concatenate.}
+
+\item{separator}{Characters to put in between variables when binding them together.}
 
 \item{padding_char}{A single character which will be used to fill up the empty places.}
 

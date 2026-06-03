@@ -23,6 +23,7 @@ excel_output_style(
   filters = TRUE,
   grid_lines = TRUE,
   by_as_subheaders = FALSE,
+  background_color = "",
   header_back_color = "FFFFFF",
   header_font_color = "000000",
   header_font_size = 10,
@@ -130,6 +131,9 @@ while scrolling sideways in the document.}
 
 \item{by_as_subheaders}{Whether to format by variables as subheaders in one table instead
 of single tables on multiple sheets.}
+
+\item{background_color}{Background cell color for any cell which isn't covered by the other
+background color options.}
 
 \item{header_back_color}{Background cell color of the table header.}
 

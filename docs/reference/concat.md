@@ -12,6 +12,7 @@ The function can also be used to give a single variable a padding.
 concat(
   data_frame,
   ...,
+  separator = NULL,
   padding_char = NULL,
   padding_length = NULL,
   padding_right = FALSE
@@ -27,6 +28,10 @@ concat(
 - ...:
 
   The names of the variables to concatenate.
+
+- separator:
+
+  Characters to put in between variables when binding them together.
 
 - padding_char:
 

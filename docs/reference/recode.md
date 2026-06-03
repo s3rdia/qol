@@ -8,7 +8,7 @@ variable, you can use formats to recode a variable into a new one.
 ``` r
 recode.(data_frame, ...)
 
-recode_multi(data_frame, ...)
+recode_multi(data_frame, ..., convert = FALSE)
 ```
 
 ## Arguments
@@ -28,6 +28,12 @@ recode_multi(data_frame, ...)
   duplicates rows if multilabels are applied. In occasions were you want
   to use format containers to afterwards perform operations with other
   packages, you can make use of this principle with this function.
+
+- convert:
+
+  FALSE by default. If TRUE converts recoded variables to numeric or
+  character depending on the input format instead of leaving them as
+  factors.
 
 ## Value
 

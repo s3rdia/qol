@@ -10,6 +10,17 @@
   running number. There is also a new `group_nr` parameter which creates
   a running number for each group as a whole instead of a running number
   within the group. (26.05.2026)
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md): Can
+  now concatenate variables inside a data frame with a separator.
+  (03.06.2026)
+- [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md):
+  New `convert` parameter converts recoded variables to numeric or
+  character depending on the input format instead of leaving them as
+  factors. (03.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  Can now apply a `background_color` to all cells which aren’t covered
+  by any other background color parameter. (03.06.2026)
 
 #### Fixed
 
@@ -24,6 +35,12 @@
   Doesn’t print empty lines anymore, when surrounding the function with
   [`suppressMessages()`](https://rdrr.io/r/base/message.html).
   (01.06.2026)
+- [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md):
+  Doesn’t crash anymore when trying to preserve factor variables.
+  (03.06.2026)
+- [`export_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  When exporting a csv file characters like ä, ö, ü are displayed
+  correctly, when opening the file in Excel. (03.06.2026)
 
 #### Additionally
 

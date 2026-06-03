@@ -9,6 +9,7 @@
 #'
 #' @param data_frame A data frame which contains the the variables to concatenate.
 #' @param ... The names of the variables to concatenate.
+#' @param separator Characters to put in between variables when binding them together.
 #' @param padding_char A single character which will be used to fill up the empty places.
 #' @param padding_length A numeric vector containing the individual padding length per variable.
 #' @param padding_right FALSE by default. If TRUE insert padding characters on the right side
@@ -44,13 +45,14 @@
 #' @export
 concat <- function(data_frame,
                    ...,
+                   separator      = NULL,
                    padding_char   = NULL,
                    padding_length = NULL,
                    padding_right  = FALSE){
     variables <- dots_to_char(...)
 
-    # If no padding is defined just concatenate provided variables as they are
-    if (is.null(padding_char) && is.null(padding_length)){
+    # If no padding or separator is defined just concatenate provided variables as they are
+    if (is.null(padding_char) && is.null(padding_length) && is.null(separator)){
         return(do.call(paste0, data_frame[variables]))
     }
 
@@ -58,6 +60,13 @@ concat <- function(data_frame,
     if (!is.null(padding_char) && collapse::vlengths(padding_char) != 1){
         print_message("WARNING", "<Padding chararacter> must be a single character. Concat will be done without <padding character>.")
         return(do.call(paste0, data_frame[variables]))
+    }
+
+    # If a separator is provided, concatenate variables with separator in between
+    if (!is.null(separator)){
+        separator <- as.character(separator)
+
+        return(do.call(paste, c(data_frame[variables], sep = separator)))
     }
 
     # If no padding character is given use a blank
@@ -87,7 +96,7 @@ concat <- function(data_frame,
         # padding length like above.
         if (number_of_paddings < number_of_columns){
             print_message("WARNING", c("<Padding length> is shorter than the number of variables.",
-									   "Missing lengths will be filled up using maximum individual variable length."))
+                                       "Missing lengths will be filled up using maximum individual variable length."))
 
             missing_length <- vapply(data_frame[variables[(number_of_paddings + 1):number_of_columns]],
                                      function(variable){
@@ -101,7 +110,7 @@ concat <- function(data_frame,
         # juts trim it down.
         else if (number_of_paddings > number_of_columns){
             print_message("WARNING", c("<Padding length> is longer than the number of variables.",
-									   "Extra lengths will be ignored."))
+                                       "Extra lengths will be ignored."))
 
             padding_length <- padding_length[seq_len(number_of_columns)]
         }
@@ -110,22 +119,22 @@ concat <- function(data_frame,
     # Apply padding to all variables individually
     padded_variables <- Map(function(variable, padding_length){
 
-            # NA values are just filled up with padding character
-            variable[is.na(variable)] <- strrep(padding_char, padding_length)
+        # NA values are just filled up with padding character
+        variable[is.na(variable)] <- strrep(padding_char, padding_length)
 
-            # Get the number of places to fill up with padding character per observation
-            pad_per_observation <- pmax(padding_length - collapse::vlengths(variable), 0)
+        # Get the number of places to fill up with padding character per observation
+        pad_per_observation <- pmax(padding_length - collapse::vlengths(variable), 0)
 
-            # Concatenate padding and variable values
-            if (!padding_right){
-                paste0(strrep(padding_char, pad_per_observation), variable)
-            }
-            else{
-                paste0(variable, strrep(padding_char, pad_per_observation))
-            }
-        },
-        data_frame[variables],
-        padding_length
+        # Concatenate padding and variable values
+        if (!padding_right){
+            paste0(strrep(padding_char, pad_per_observation), variable)
+        }
+        else{
+            paste0(variable, strrep(padding_char, pad_per_observation))
+        }
+    },
+    data_frame[variables],
+    padding_length
     )
 
     # Concatenate all padded variables together to one single variable

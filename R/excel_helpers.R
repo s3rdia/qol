@@ -1620,6 +1620,8 @@ fill_or_trim <- function(format_vector,
 #' @param grid_lines Whether to show grid lines or not.
 #' @param by_as_subheaders Whether to format by variables as subheaders in one table instead
 #' of single tables on multiple sheets.
+#' @param background_color Background cell color for any cell which isn't covered by the other
+#' background color options.
 #' @param header_back_color Background cell color of the table header.
 #' @param header_font_color Font color of the table header.
 #' @param header_font_size Font size of the table header.
@@ -1736,6 +1738,7 @@ excel_output_style <- function(save_path              = NULL,
                                filters                = TRUE,
                                grid_lines             = TRUE,
                                by_as_subheaders       = FALSE,
+                               background_color       = "",
                                header_back_color      = "FFFFFF",
                                header_font_color      = "000000",
                                header_font_size       = 10,

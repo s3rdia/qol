@@ -48,7 +48,7 @@ you can use formats to recode a variable into a new one.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recode.</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">recode_multi</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">recode_multi</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,6 +67,11 @@ can be applied. This overwrites the original variables and duplicates rows if
 multilabels are applied. In occasions were you want to use format containers to
 afterwards perform operations with other packages, you can make use of this
 principle with this function.</p></dd>
+
+
+<dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
+<dd><p>FALSE by default. If TRUE converts recoded variables to numeric
+or character depending on the input format instead of leaving them as factors.</p></dd>
 
 </dl></div>
     <div class="section level2">

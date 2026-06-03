@@ -80,7 +80,7 @@ set_style_options <- function(..., save_file = NULL){
     colors <- c("header_back_color", "header_font_color", "header_border_color", "subheader_back_color", "subheader_font_color",
                 "subheader_border_color", "cat_col_back_color", "cat_col_font_color", "cat_col_border_color", "table_back_color",
                 "table_font_color", "table_border_color", "box_back_color", "box_font_color", "box_border_color", "title_font_color",
-                "footnote_font_color", "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color")
+                "footnote_font_color", "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color", "background_color")
 
     # Loop through passed arguments and check if they are of valid type
     for (style_option in names(style_list)){
@@ -98,9 +98,9 @@ set_style_options <- function(..., save_file = NULL){
             print_message("WARNING", "'[style_option]' must be <character>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
-        else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value))){
+        else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value)) && value != ""){
             print_message("WARNING", "'[style_option]' must be a 6 character <hex code>. Option will be omitted.", style_option = style_option)
-            style_list[[style_option]] <- NULL
+            style_list[[style_option]] <- ""
         }
         else if (!style_option %in% c(number_numerics, number_characters, logicals, numerics, characters, colors)){
             print_message("WARNING", c("'[style_option]' is not a valid style option. See 'excel_output_style()' and 'number_format_style()'",
