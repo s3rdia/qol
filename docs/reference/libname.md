@@ -7,7 +7,7 @@ retrieved as a named character vector.
 ## Usage
 
 ``` r
-libname(path, get_files = FALSE, extensions = NULL)
+libname(path, get_files = FALSE, extensions = NULL, recursive = FALSE)
 ```
 
 ## Arguments
@@ -24,6 +24,12 @@ libname(path, get_files = FALSE, extensions = NULL)
 - extensions:
 
   Specify file extensions to be kept in the list when retrieving files.
+
+- recursive:
+
+  FALSE by default. If TRUE scans the provided folder for additional
+  files inside sub folders. Only work in combination with get_files =
+  TRUE.
 
 ## Value
 

@@ -4,7 +4,7 @@
 \alias{libname}
 \title{Check If Path Exists And Retrieve Files}
 \usage{
-libname(path, get_files = FALSE, extensions = NULL)
+libname(path, get_files = FALSE, extensions = NULL, recursive = FALSE)
 }
 \arguments{
 \item{path}{A folder path.}
@@ -13,6 +13,9 @@ libname(path, get_files = FALSE, extensions = NULL)
 file paths.}
 
 \item{extensions}{Specify file extensions to be kept in the list when retrieving files.}
+
+\item{recursive}{FALSE by default. If TRUE scans the provided folder for additional files
+inside sub folders. Only work in combination with get_files = TRUE.}
 }
 \value{
 Returns the given file path or a named character vector containing file paths.

@@ -173,6 +173,8 @@
 
 - [`content_report()`](https://s3rdia.github.io/qol/reference/content_report.md)
   : Get Detailed Summary About A Data Frame
+- [`code_statistics()`](https://s3rdia.github.io/qol/reference/code_statistics.md)
+  : Analyze R Scripts And Print Out Statistics
 - [`report_test_results()`](https://s3rdia.github.io/qol/reference/reporter.md)
   [`test_package()`](https://s3rdia.github.io/qol/reference/reporter.md)
   [`test_single_file()`](https://s3rdia.github.io/qol/reference/reporter.md)

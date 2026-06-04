@@ -1,12 +1,18 @@
 # Resubmission qol 1.3.2
 Last CRAN release was on 16.05.2026.
 
+### New functions
+
+* `code_statistics()`: Reads in a folder or entire folder structure, grabs all R script files, scans the contents for different patterns and outputs a small report. 
+
 ### New functionality
 
 * `running_number()`: With the new `sort` parameter a vektor of variable names can be passed as `by`, which then is automatically sorted before generating the running number. There is also a new `group_nr` parameter which creates a running number for each group as a whole instead of a running number within the group.
 * `concat()`: Can now concatenate variables with a separator.
 * `recode_multi()`: New `convert` parameter converts recoded variables to numeric or character depending on the input format instead of leaving them as factors.
 * `any_table()`, `excel_output_style()`: Can now apply a `background_color` to all cells which aren't covered by any other background color parameter.
+* `frequencies()`: The `number format` option `sum_decimals` within the `excel_output_style()` function can now be used to set the decimal places in text outputs as well. 
+* `libname()`: With the new `recursive` parameter files can now also be retreived from subfolders.
 
 ### Fixed
 
@@ -14,6 +20,7 @@ Last CRAN release was on 16.05.2026.
 * `print_step()`: Doesn't print empty lines anymore, when surrounding the function with `suppressMessages()`.
 * `sort_plus()`: Doesn't crash anymore when trying to preserve factor variables.
 * `export_data()`: When exporting a csv file characters like ä, ö, ü are displayed correctly, when opening the file in Excel.
+* `libname()`: When using the `extensions` parameter then now only files with these extensions are printed out to the console. Otherwise a `NOTE` is displayed stating that no file has been found.
 
 ### Additionally
 

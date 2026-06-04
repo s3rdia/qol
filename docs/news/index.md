@@ -2,6 +2,13 @@
 
 ## qol 1.3.2 - DEVELOPMENT
 
+#### New functions
+
+- [`code_statistics()`](https://s3rdia.github.io/qol/reference/code_statistics.md):
+  Reads in a folder or entire folder structure, grabs all R script
+  files, scans the contents for different patterns and outputs a small
+  report. (04.06.2026)
+
 #### New functionality
 
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md):
@@ -21,6 +28,14 @@
   [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
   Can now apply a `background_color` to all cells which aren’t covered
   by any other background color parameter. (03.06.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  The `number format` option `sum_decimals` within the
+  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md)
+  function can now be used to set the decimal places in text outputs as
+  well. (04.06.2026)
+- [`libname()`](https://s3rdia.github.io/qol/reference/libname.md): With
+  the new `recursive` parameter files can now also be retreived from
+  subfolders. (04.06.2026)
 
 #### Fixed
 
@@ -41,6 +56,10 @@
 - [`export_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
   When exporting a csv file characters like ä, ö, ü are displayed
   correctly, when opening the file in Excel. (03.06.2026)
+- [`libname()`](https://s3rdia.github.io/qol/reference/libname.md): When
+  using the `extensions` parameter then now only files with these
+  extensions are printed out to the console. Otherwise a `NOTE` is
+  displayed stating that no file has been found. (04.06.2026)
 
 #### Additionally
 

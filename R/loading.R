@@ -8,6 +8,8 @@
 #' @param get_files FALSE by default. If TRUE returns a named character vector containing
 #' file paths.
 #' @param extensions Specify file extensions to be kept in the list when retrieving files.
+#' @param recursive FALSE by default. If TRUE scans the provided folder for additional files
+#' inside sub folders. Only work in combination with get_files = TRUE.
 #'
 #' @return
 #' Returns the given file path or a named character vector containing file paths.
@@ -19,7 +21,8 @@
 #' @export
 libname <- function(path,
                     get_files  = FALSE,
-                    extensions = NULL){
+                    extensions = NULL,
+                    recursive  = FALSE){
     if (!file.exists(path) || dirname(path) == "."){
         print_message("ERROR", "Path does not exist: [path]", path = path)
         return(invisible(NULL))
@@ -31,7 +34,7 @@ libname <- function(path,
 		print_step("GREY", "Get files")
 
         # Retrieve all file paths from provided path
-        files <- list.files(path, full.names = TRUE)
+        files <- list.files(path, full.names = TRUE, recursive = recursive)
 
         # Strip paths and only keep file names with extension
         files <- files[!dir.exists(files)]
@@ -44,12 +47,18 @@ libname <- function(path,
         # Return named character vector
         print_step("MAJOR", "Filepaths successfully retrieved: [path]", path = path)
 
-        for (file in files){
-            print_step("MINOR", basename(file))
-        }
-
         # Return all files as list if no extensions where specified
         if (is.null(extensions)){
+            # Print file names and return
+            if (length(files) > 0){
+                for (file in files){
+                    print_step("MINOR", basename(file))
+                }
+            }
+            else{
+                print_message("NOTE", "No files found.")
+            }
+
             print_closing(suppress = TRUE)
             return(invisible(stats::setNames(files, basename(files))))
         }
@@ -59,11 +68,23 @@ libname <- function(path,
 
             # Create pattern to grab all extensions at once
             pattern <- paste0("(", paste(gsub("\\.", "\\\\.", extensions), collapse = "|"), ")$")
+            files   <- file_list[grepl(pattern, file_list, ignore.case = TRUE)]
 
             print_step("MAJOR", "Only keeping files with extension[?s]: [extensions]", extensions = extensions)
+
+            # Print file names and return
+            if (length(files) > 0){
+                for (file in files){
+                    print_step("MINOR", basename(file))
+                }
+            }
+            else{
+                print_message("NOTE", "No files found.")
+            }
+
             print_closing(suppress = TRUE)
 
-            return(invisible(file_list[grepl(pattern, file_list, ignore.case = TRUE)]))
+            return(invisible(files))
         }
     }
 

@@ -115,6 +115,7 @@ reference:
 - title: Reporting
   contents:
   - content_report
+  - code_statistics
   - report_test_results
   - test_package
   - test_single_file
