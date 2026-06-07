@@ -858,9 +858,7 @@ generate_graphic <- function(graphic_tab,
         grid_column <- grid_positions[["column"]]
     }
 
-    viewport <- setup_main_canvas(width         = dimensions[["graphic_width"]],
-                                  height        = dimensions[["graphic_height"]],
-                                  line_height   = fine_tuning[["line_height"]],
+    viewport <- setup_main_canvas(dimensions    = dimensions,
                                   layout_row    = grid_row,
                                   layout_column = grid_column)
 
@@ -892,9 +890,9 @@ generate_graphic <- function(graphic_tab,
     origin_height   <- abs(grid::convertHeight(grid::grobHeight(origin_grob),   "cm", valueOnly = TRUE))
 
     # Get automatically set dimensions
-    dimensions[["diagram_start"]]  <- get_diagram_start_cm(dimensions, fine_tuning, title_height)
+    dimensions[["diagram_start"]]  <- get_diagram_start_cm(dimensions, title_height)
     dimensions[["diagram_width"]]  <- get_diagram_width_cm(dimensions)
-    dimensions[["diagram_height"]] <- get_diagram_height_cm(dimensions, fine_tuning, title_height, footnote_height)
+    dimensions[["diagram_height"]] <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Build main diagram

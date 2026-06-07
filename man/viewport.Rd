@@ -11,9 +11,7 @@
 \title{Set Up Viewports To Draw On}
 \usage{
 setup_main_canvas(
-  width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-  height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-  line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+  dimensions = .qol_options[["graphic_dimensions"]],
   layout_row = NULL,
   layout_column = NULL,
   name = "main_canvas"
@@ -25,7 +23,7 @@ setup_nested_viewport(
   y_scale = c(0, 1),
   width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
   height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-  line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
   name = "nested_viewport"
 )
 
@@ -38,11 +36,7 @@ back_to_the_root(to_main = TRUE)
 is_viewport_pushed()
 }
 \arguments{
-\item{width}{Viewport width.}
-
-\item{height}{Viewport height}
-
-\item{line_height}{The height of a single text line.}
+\item{dimensions}{qol package dimensions options.}
 
 \item{name}{The internal name of the canvas with which it can be identified.}
 

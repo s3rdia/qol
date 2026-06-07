@@ -49,7 +49,7 @@ add_textbox <- function(text,
                         font_color  = .qol_options[["graphic_visuals"]][["other_font_color"]],
                         font_size   = .qol_options[["graphic_dimensions"]][["other_font_size"]],
                         font_face   = .qol_options[["graphic_visuals"]][["other_font_face"]],
-                        line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+                        line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
                         name        = "textbox",
                         draw        = FALSE){
     # Return if there is no text
@@ -302,7 +302,6 @@ fix_alignment <- function(dimensions = .qol_options[["graphic_dimensions"]],
 #'
 #' @param dimensions qol package dimensions options.
 #' @param visuals qol package visuals options.
-#' @param fine_tuning qol package fine tuning options.
 #'
 #' @rdname textboxes
 #'
@@ -310,7 +309,6 @@ fix_alignment <- function(dimensions = .qol_options[["graphic_dimensions"]],
 add_title <- function(text,
                       dimensions  = .qol_options[["graphic_dimensions"]],
                       visuals     = .qol_options[["graphic_visuals"]],
-                      fine_tuning = .qol_options[["graphic_fine_tuning"]],
                       draw        = FALSE){
     if (length(text) == 0){
         return(invisible(grid::nullGrob()))
@@ -328,7 +326,7 @@ add_title <- function(text,
                     font_color  = visuals[["title_font_color"]],
                     font_size   = dimensions[["title_font_size"]],
                     font_face   = visuals[["title_font_face"]],
-                    line_height = fine_tuning[["line_height"]],
+                    line_height = dimensions[["line_height"]],
                     name        = "title",
                     draw        = draw))
 }
@@ -344,7 +342,6 @@ add_title <- function(text,
 add_footnote <- function(text,
                          dimensions  = .qol_options[["graphic_dimensions"]],
                          visuals     = .qol_options[["graphic_visuals"]],
-                         fine_tuning = .qol_options[["graphic_fine_tuning"]],
                          draw        = FALSE){
     if (length(text) == 0){
         return(invisible(grid::nullGrob()))
@@ -362,7 +359,7 @@ add_footnote <- function(text,
                             font_color  = visuals[["footnote_font_color"]],
                             font_size   = dimensions[["footnote_font_size"]],
                             font_face   = visuals[["footnote_font_face"]],
-                            line_height = fine_tuning[["line_height"]],
+                            line_height = dimensions[["line_height"]],
                             name        = "footnote")
 
     # Adjust position afterwards to the bottom
@@ -445,9 +442,7 @@ register_windows_font <- function(font){
 #' [setup_main_canvas()]: Setup the main graphic viewport and push it to the graphics
 #' tree. Additionally creates a new page before.
 #'
-#' @param width Viewport width.
-#' @param height Viewport height
-#' @param line_height The height of a single text line.
+#' @param dimensions qol package dimensions options.
 #' @param name The internal name of the canvas with which it can be identified.
 #'
 #' @return
@@ -456,12 +451,14 @@ register_windows_font <- function(font){
 #' @rdname viewport
 #'
 #' @export
-setup_main_canvas <- function(width         = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-                              height        = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-                              line_height   = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+setup_main_canvas <- function(dimensions    = .qol_options[["graphic_dimensions"]],
                               layout_row    = NULL,
                               layout_column = NULL,
                               name          = "main_canvas"){
+    width       <- dimensions[["graphic_width"]]
+    height      <- dimensions[["graphic_height"]]
+    line_height <- dimensions[["line_height"]]
+
     if (is.null(layout_row)){
         grid::grid.newpage()
     }
@@ -498,13 +495,13 @@ setup_nested_viewport <- function(x_pos       = 0,
                                   y_scale     = c(0, 1),
                                   width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
                                   height      = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-                                  line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+                                  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
                                   name        = "nested_viewport"){
     # Set up a new nested viewport.
-    vp <- grid::viewport(x      = grid::unit(x_pos, "native"),
-                         y      = grid::unit(y_pos, "native"),
-                         width  = grid::unit(width, "native"),
-                         height = grid::unit(height, "native"),
+    vp <- grid::viewport(x      = grid::unit(x_pos, "cm"),
+                         y      = grid::unit(y_pos, "cm"),
+                         width  = grid::unit(width, "cm"),
+                         height = grid::unit(height, "cm"),
                          yscale = y_scale,
                          just   = c("left", "top"),
                          gp     = grid::gpar(lineheight = line_height + 0.1),
@@ -530,13 +527,13 @@ setup_diagram_viewport <- function(arguments){
 
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
-    setup_nested_viewport(x_pos   = dimensions[["margins"]],
-                          y_pos   = dimensions[["diagram_start"]],
-                          y_scale = c(0, 1),
-                          width   = dimensions[["diagram_width"]],
-                          height  = dimensions[["diagram_height"]],
-                          line_height = arguments[["fine_tuning"]][["line_height"]],
-                          name = "diagram_area")
+    setup_nested_viewport(x_pos       = dimensions[["margins"]],
+                          y_pos       = dimensions[["diagram_start"]],
+                          y_scale     = c(0, 1),
+                          width       = dimensions[["diagram_width"]],
+                          height      = dimensions[["diagram_height"]],
+                          line_height = dimensions[["line_height"]],
+                          name        = "diagram_area")
 }
 
 
@@ -550,6 +547,10 @@ setup_diagram_viewport <- function(arguments){
 #'
 #' @export
 setup_nested_diagram_viewport <- function(arguments){
+    visuals     <- arguments[["visuals"]]
+    dimensions  <- arguments[["dimensions"]]
+    fine_tuning <- arguments[["fine_tuning"]]
+
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
     outer_viewport <- setup_diagram_viewport(arguments)
@@ -557,7 +558,9 @@ setup_nested_diagram_viewport <- function(arguments){
     # Measure segment, group and axes dimensions
     diagram_info <- get_diagram_dimensions(arguments)
 
-    diagram_info[["outer_viewport"]] <- outer_viewport
+    diagram_info[["outer_viewport"]]        <- outer_viewport
+    diagram_info[["outer_viewport_height"]] <- grid::convertHeight(grid::unit(1, "native"), "cm", valueOnly = TRUE)
+    diagram_info[["inner_viewport_height"]] <- diagram_info[["outer_viewport_height"]] - diagram_info[["entire_group_label_height"]]
 
     # If all values are negative, the group label positions are vertically inverted
     # later. Which means normally they are drawn below the variable axes (vbars),
@@ -565,41 +568,76 @@ setup_nested_diagram_viewport <- function(arguments){
     # the viewport has to be set up accordingly and needs to be shifted down by
     # the size of the group labels.
     if (diagram_info[["zero_pos"]] != 1){
-        # In case of just one group layer, the viewport will be drawn at the top
+        # In case of just one group layer, the viewport will be drawn at the top.
+        # Subtract two margins for top and bottom.
         if (length(diagram_info[["group_label_heights"]]) == 1){
-            y_pos <- 1
+            y_pos  <- diagram_info[["outer_viewport_height"]] - dimensions[["margins"]]
+            height <- diagram_info[["outer_viewport_height"]] - (diagram_info[["entire_group_label_height"]] + (2 * dimensions[["margins"]]))
         }
         # If there are more group layers, subtract the first layer height from the
-        # top, because the first layer will be drawn at the top, alls others below
-        # the axes.
+        # top, because the first layer will be drawn at the top, all others below
+        # the axes. Subtract one margin, the other is handled in the axes set up.
         else{
-            y_pos <- 1 - diagram_info[["group_label_heights"]][1]
+            y_pos  <- diagram_info[["outer_viewport_height"]] - (diagram_info[["group_label_heights"]][1]    + dimensions[["margins"]])
+            height <- diagram_info[["outer_viewport_height"]] - (diagram_info[["entire_group_label_height"]] + dimensions[["margins"]])
         }
     }
     else{
         # In case of just one group layer, the viewport will be shifted down by
         # the height of this layer.
         if (length(diagram_info[["group_label_heights"]]) == 1){
-            y_pos <- 1 - diagram_info[["group_label_heights"]][1]
+            y_pos  <- diagram_info[["outer_viewport_height"]] - (diagram_info[["group_label_heights"]][1] + dimensions[["margins"]])
+            height <- diagram_info[["outer_viewport_height"]] - (diagram_info[["entire_group_label_height"]] + (2 * dimensions[["margins"]]))
         }
         # If there are more group layers, subtract the first layer height from the
         # overall height, because the first layer will be drawn at the bottom, not
         # at the top like the others.
         else{
-            y_pos <- 1 - (diagram_info[["entire_group_label_height"]] - diagram_info[["group_label_heights"]][1])
+            y_pos  <- diagram_info[["outer_viewport_height"]] - (diagram_info[["entire_group_label_height"]] + dimensions[["margins"]] - diagram_info[["group_label_heights"]][1])
+            height <- diagram_info[["outer_viewport_height"]] - (diagram_info[["entire_group_label_height"]] + dimensions[["margins"]])
         }
     }
 
     # Setup the main inner diagram viewport
+    width <- dimensions[["graphic_width"]] - (diagram_info[["primary_y_axes_width"]] + (2 * dimensions[["margins"]]))
+
     diagram_info[["inner_viewport"]] <-
-        setup_nested_viewport(x_pos   = diagram_info[["primary_y_axes_width"]],
-                              y_pos   = grid::unit(y_pos, "native"),
-                              y_scale = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
-                              width   = grid::convertUnit(grid::unit(1.0, "npc"), "native", valueOnly = TRUE)
-                                      - diagram_info[["primary_y_axes_width"]],
-                              height  = 1 - diagram_info[["entire_group_label_height"]],
-                              line_height = arguments[["fine_tuning"]][["line_height"]],
-                              name    = "main_diagram")
+        setup_nested_viewport(x_pos       = diagram_info[["primary_y_axes_width"]],
+                              y_pos       = y_pos,
+                              y_scale     = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
+                              width       = width,
+                              height      = height,
+                              line_height = dimensions[["line_height"]],
+                              name        = "main_diagram")
+
+    # Measure whether the value heights fit the segment heights. This is done after
+    # setting up the inner viewport to get the dimensions right. A tiny bit is added
+    # to the padding, so that the values are shifted outside before they reach the axes.
+    diagram_info[["values_width"]]  <- get_values_width(diagram_info[["formatted_values"]], dimensions, visuals)
+    diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
+                                                           "native", valueOnly =TRUE)
+
+    diagram_info[["values_fit_vertical"]] <- TRUE
+
+    if (visuals[["bar_values_inside"]]){
+        if (!visuals[["rotate_values"]]){
+            # Determine whether a value should be drawn inside or outside the segment.
+            # Without rotation just measure the value heights, which is the same for
+            # all values, because all are displayed on a single line, and add the padding.
+            diagram_info[["value_heights"]] <- get_values_height(diagram_info, dimensions, visuals, fine_tuning)
+
+            diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
+                                                    < abs(diagram_info[["actual_drawing_height"]]))
+        }
+        else{
+            # Wit rotation all heights are individual. The widths are captured before
+            # the rotation, then swap the scaling from width to the actual scaled
+            # inner viewport height. Again add the padding here.
+            diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["values_width"]], width, diagram_info[["inner_viewport_height"]]) * diagram_info[["primary_y_distance"]]
+            diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
+                                                    < abs(diagram_info[["actual_drawing_height"]]))
+        }
+    }
 
     invisible(diagram_info)
 }
@@ -865,12 +903,12 @@ get_diagram_dimensions <- function(arguments){
     # whole axes needs in the diagram.
     if (abs(primary_y_max) > abs(primary_y_min)){
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_max, axes, dimensions, visuals, fine_tuning)
+            get_value_axes_width(primary_y_max, axes, dimensions, visuals)
     }
     # In case of negative value having more digits
     else{
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_min, axes, dimensions, visuals, fine_tuning)
+            get_value_axes_width(primary_y_min, axes, dimensions, visuals)
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
@@ -907,29 +945,6 @@ get_diagram_dimensions <- function(arguments){
                                                    fine_tuning = fine_tuning,
                                                    stat_labels = stat_labels))
 
-    # Check whether values fit in vbar segments. If values don't fit, mark the exact
-    # positions so that later functions can decide what to do with these values.
-    values_width <- get_values_width(formatted_values,
-                                     dimensions,
-                                     visuals)
-
-    values_fit_vertical <- TRUE
-
-    if (visuals[["bar_values_inside"]]){
-        if (!visuals[["rotate_values"]]){
-            # Determine whether a value should be drawn inside or outside the segment
-            values_fit_vertical <- (get_values_height(list(values            = values,
-                                                          primary_y_distance = primary_y_distance),
-                                                      dimensions, visuals, fine_tuning) * fine_tuning[["value_overlap_factor"]] < abs(values))
-        }
-        else{
-            # Determine whether a value should be drawn inside or outside the segment
-            values_fit_vertical <- swap_xy_scaling(values_width, dimensions) *
-                                   primary_y_distance *
-                                   fine_tuning[["values_vjust_positive"]] < abs(values)
-        }
-    }
-
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Label positioning
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -953,14 +968,15 @@ get_diagram_dimensions <- function(arguments){
                                                       visuals[["axes_font_face"]])
 
         # Get dimensions of group labels
-        group_label_heights[i] <- get_variable_axes_height(wrapped_group_labels[[i]], dimensions, visuals, fine_tuning)
+        group_label_heights[i] <- get_variable_axes_height(wrapped_group_labels[[i]], dimensions, visuals)
 
-        # Calculate y positions for multi layered group labels
+        # Calculate y positions for multi layered group labels. Change symbol of
+        # y positions because group label layers are drawn from top to bottom
         if (i <= 2){
-            group_label_y_pos[i] <- 0
+            group_label_y_pos[i] <- -(dimensions[["margins"]] / 2)
         }
         else{
-            group_label_y_pos[i] <- group_label_heights[i] + (fine_tuning[["variable_axes_margin"]] * (i - 1)) + group_label_y_pos[i - 1]
+            group_label_y_pos[i] <- group_label_y_pos[i - 1] - (group_label_heights[i] + dimensions[["margins"]])
         }
     }
 
@@ -973,14 +989,12 @@ get_diagram_dimensions <- function(arguments){
         group_label_heights  <- c(group_label_heights[1],  rev(group_label_heights[-1]))
     }
 
-    # Change symbol of y positions because group label layers are drawn from top to bottom
-    group_label_y_pos <- -group_label_y_pos
-
     # Marker whether we deal with multi layered grouping labels
     is_multi_group_label <- length(group_label_x_pos) > 1
 
-    # Determine the height of the entire grouping labels
-    entire_group_label_height <- collapse::fsum(group_label_heights) + (margin * (length(group_label_heights) - 1))
+    # Determine the height of the entire grouping labels including margins between
+    # label groups.
+    entire_group_label_height <- collapse::fsum(group_label_heights) + (dimensions[["margins"]] * (length(group_label_heights) - 2))
 
     # Get tick positions
     group_ticks_pos_x <- get_group_tick_positions_x(number_of_groups, number_of_segments,
@@ -1055,8 +1069,6 @@ get_diagram_dimensions <- function(arguments){
          values_outer_vjust          = values_outer_vjust,
          values_x_pos                = values_x_pos,
          formatted_values            = formatted_values,
-         values_width                = values_width,
-         values_fit_vertical         = values_fit_vertical,
          group_label_x_pos           = group_label_x_pos,
          group_label_y_pos           = group_label_y_pos,
          wrapped_group_labels        = wrapped_group_labels,
@@ -1280,7 +1292,7 @@ vbar_grob <- function(diagram_info,
                                                fontfamily = visuals[["font"]],
                                                fontsize   = dimensions[["value_font_size"]],
                                                fontface   = visuals[["value_font_face"]],
-                                               lineheight = fine_tuning[["line_height"]]))
+                                               lineheight = dimensions[["line_height"]]))
         }))
     }
     else{
@@ -1313,7 +1325,6 @@ vbar_grob <- function(diagram_info,
 #' @param axes The list of axes parameters.
 #' @param dimensions The list of dimensions parameters.
 #' @param visuals The list of visual parameters.
-#' @param fine_tuning The list of fine tuning parameters.
 #' @param which Primary or secondary axes.
 #'
 #' @return
@@ -1327,7 +1338,6 @@ get_value_axes_width <- function(graphic_tab,
                                  axes,
                                  dimensions,
                                  visuals,
-                                 fine_tuning,
                                  which = "primary"){
     which <- tolower(which)
 
@@ -1348,7 +1358,7 @@ get_value_axes_width <- function(graphic_tab,
                                                 fontface   = visuals[[paste0(which, "_axes_font_face")]]))
 
     # Return width
-    grid::convertWidth(grid::grobWidth(temp_grob), "native", valueOnly = TRUE) + fine_tuning[["value_axes_margin"]]
+    grid::convertWidth(grid::grobWidth(temp_grob), "cm", valueOnly = TRUE) + dimensions[["margins"]]
 }
 
 
@@ -1365,21 +1375,20 @@ get_value_axes_width <- function(graphic_tab,
 #' @export
 get_variable_axes_height <- function(wrapped_text,
                                      dimensions,
-                                     visuals,
-                                     fine_tuning){
+                                     visuals){
+    # Only keep the text with the most lines. Otherwise the textGrob measuring
+    # only considers the first text in the vector.
+    wrapped_text <- wrapped_text[which.max(lengths(gregexpr("\n", wrapped_text, fixed = TRUE)))]
+
     # Create test graphical object to measure the actual height
     temp_grob <- grid::textGrob(wrapped_text,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
                                                 fontface   = visuals[["variable_axes_font_face"]],
-                                                lineheight = fine_tuning[["line_height"]] + 0.1))
+                                                lineheight = dimensions[["line_height"]]))
 
-    # Measure height by manual calculation because the grobHeight comes out way
-    # too small.
-    height_cm <- (grid::convertHeight(grid::stringHeight(temp_grob[["label"]]), "cm", valueOnly = TRUE)
-                  / dimensions[["graphic_height"]])
-
-    collapse::fmax(height_cm) + fine_tuning[["variable_axes_margin"]]
+    # Measure the height of the temporary group layer object
+    abs(grid::convertHeight(grid::grobHeight(temp_grob), "cm", valueOnly = TRUE))
 }
 
 
@@ -1430,49 +1439,36 @@ get_values_height <- function(diagram_info,
                               dimensions,
                               visuals,
                               fine_tuning){
-    # The unit measuring functions are checking the font values from the current
-    # viewport. Since there are multiple different font options used on the same
-    # viewport they can't be set in general. Therefor a temporary viewport with the
-    # specific options has to be set up.
-    grid::pushViewport(grid::viewport(gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                      fontsize   = dimensions[["value_font_size"]],
-                                                      fontface   = visuals[["value_font_face"]],
-                                                      lineheight = fine_tuning[["line_height"]] + 0.1)))
+    # Create test graphical object to measure the actual height
+    temp_grob <- grid::textGrob(diagram_info[["values"]],
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[["value_font_size"]],
+                                                fontface   = visuals[["value_font_face"]],
+                                                lineheight = dimensions[["line_height"]]))
 
-    # Measure individual heights
-    height <- grid::convertHeight(grid::stringHeight(diagram_info[["values"]]),
-                                  "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
-
-    # Release viewport
-    grid::popViewport()
-
-    # Height seems to be measured too small. Adding a bit on top seems to help.
-    collapse::fmax(height) * fine_tuning[["values_vjust_positive"]]
+    # Measure the height of the temporary graphical object
+    abs(grid::convertHeight(grid::grobHeight(temp_grob), "native", valueOnly = TRUE))
 }
 
 
 #' @description
-#' [swap_xy_scaling()]: Width and height are measured according to the individual scaling
+#' [swap_scaling()]: Width and height are measured according to the individual scaling
 #' for each dimension. This function converts the measured to the respective other dimension.
 #'
 #' @param measuring The values received from [get_values_width()] or [get_values_height()].
-#' @param from Input measuring: Can be "width" or "height".
-#' @param to Output measuring: Can be "width" or "height".
-#' @param part Determine measuring on which part of the graphic. Can be "graphic", "diagram" or
-#' "inner_canvas".
+#' @param from Input measuring.
+#' @param to Output measuring.
 #'
 #' @return
-#' [swap_xy_scaling()]: Returns a vector of width or heights.
+#' [swap_scaling()]: Returns a vector of width or heights.
 #'
 #' @rdname axes
 #'
 #' @export
-swap_xy_scaling <- function(measuring,
-                            dimensions,
-                            from = "width",
-                            to   = "height",
-                            part = "diagram"){
-    measuring * dimensions[[paste0(part, "_", from)]] / dimensions[[paste0(part, "_", to)]]
+swap_scaling <- function(measuring,
+                         from = "width",
+                         to   = "height"){
+    measuring * from / to
 }
 
 
@@ -1765,13 +1761,15 @@ setup_x_axes <- function(diagram_info,
     # Which means normally they are drawn below the variable axes (vbars),
     # but if the values are all negative they are drawn at the top.
     if (zero_pos != 1){
-        label_y    <- label_y_positions - fine_tuning[["variable_axes_margin"]]
+        # Set base label position adjustment so that the labels are a bit below the
+        # variable axes.
         label_just <- c("center", "top")
+        label_y    <- label_y_positions
 
         # The first layer of multi layered group labels is drawn at the top of the
-        # diagram, not below the axes.
+        # diagram, not below the axes. Add a marging to create some space to the diagram.
         if (is_multi_group_label){
-            label_y[[1]] <- 1 + group_label_heights[1] + fine_tuning[["variable_axes_margin"]]
+            label_y[1] <- diagram_info[["inner_viewport_height"]] + dimensions[["margins"]]
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1780,14 +1778,14 @@ setup_x_axes <- function(diagram_info,
                 # The first separation lines are special in the way that they start higher,
                 # at the top of the upper grouping labels.
                 if (i == 1){
-                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]] - group_label_heights[[length(label_y)]])
+                    separation_lines_y[[i]] <- c(label_y[1], label_y[length(label_y)] - group_label_heights[length(label_y)])
                 }
                 # All other lines start at the top of the diagram and are drawn to the
                 # bottom of nested super group.
                 else{
-                    invers_element <- length(label_y) - (i - 2)
+                    inverse_element <- length(label_y) - (i - 2)
 
-                    separation_lines_y[[i]] <- c(1, label_y[[invers_element]] - group_label_heights[[invers_element]])
+                    separation_lines_y[[i]] <- c(1, label_y[inverse_element] - group_label_heights[inverse_element])
                 }
             }
         }
@@ -1795,13 +1793,22 @@ setup_x_axes <- function(diagram_info,
     else{
         # Ticks point up if the x axes is drawn at the top.
         tick_length <- -tick_length
-        label_y     <- 1 - label_y_positions + (fine_tuning[["variable_axes_margin"]] * 1.5)
-        label_just  <- c("center", "bottom")
+
+        # Set base label position adjustment so that the labels are a bit above the
+        # variable axes. Subtract half a margin to the label group which is drawn above
+        # the diagram, to get it a bit closer to the axes.
+        label_just  <- c("center", "top")
+        label_y     <- diagram_info[["inner_viewport_height"]] - label_y_positions - (dimensions[["margins"]] / 2)
 
         # The first layer of multi layered group labels is drawn at the bottom of the
         # diagram, not on top of the axes.
         if (is_multi_group_label){
-            label_y[[1]] <- -diagram_info[["group_label_heights"]][1] - fine_tuning[["variable_axes_margin"]]
+            # First label is drawn below the diagram
+            label_y[1]  <- label_y_positions[1] - (dimensions[["margins"]] / 2)
+
+            # All other labels are drawn above the diagram and need to be shifted up
+            # by their own height.
+            label_y[-1] <- label_y[-1] + group_label_heights[-1]
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1810,14 +1817,15 @@ setup_x_axes <- function(diagram_info,
                 # The first separation lines are special in the way that they start higher,
                 # at the top of the upper grouping labels.
                 if (i == 1){
-                    separation_lines_y[[i]] <- c(label_y[[1]], label_y[[length(label_y)]] + group_label_heights[[length(label_y)]])
+                    separation_lines_y[[i]] <- c(label_y[1] - group_label_heights[1],
+                                                 label_y[length(label_y)])
                 }
                 # All other lines start at the top of the diagram and are drawn to the
                 # bottom of nested super group.
                 else{
-                    invers_element <- length(label_y) - (i - 2)
+                    inverse_element <- length(label_y) - (i - 2)
 
-                    separation_lines_y[[i]] <- c(0, label_y[[invers_element]] + group_label_heights[[invers_element]])
+                    separation_lines_y[[i]] <- c(0, label_y[inverse_element])
                 }
             }
         }
@@ -1843,14 +1851,14 @@ setup_x_axes <- function(diagram_info,
     if (!is_multi_group_label){
         group_labels <- grid::textGrob(label = labels[[1]],
                                        x     = label_x_positions[[1]],
-                                       y     = label_y,
+                                       y     = grid::unit(label_y, "cm"),
                                        just  = label_just,
                                        name  = paste0("group_labels"),
                                        gp    = grid::gpar(col        = visuals[["variable_axes_font_color"]],
                                                           fontfamily = visuals[["font"]],
                                                           fontsize   = dimensions[["axes_font_size"]],
                                                           fontface   = visuals[["axes_font_face"]],
-                                                          lineheight = fine_tuning[["line_height"]]))
+                                                          lineheight = dimensions[["line_height"]]))
 
         # Return the whole axes as one graphical object
         grid::gTree(children = grid::gList(line, ticks, group_labels), name = "x_axes")
@@ -1862,14 +1870,14 @@ setup_x_axes <- function(diagram_info,
         group_labels <- do.call(grid::gList, mapply(function(labels, x_positions, y_positions, i){
             grid::textGrob(label = labels,
                            x     = x_positions,
-                           y     = y_positions,
+                           y     = grid::unit(y_positions, "cm"),
                            just  = label_just,
                            name  = paste0("group_labels_", i),
                            gp    = grid::gpar(col        = visuals[["variable_axes_font_color"]],
                                               fontfamily = visuals[["font"]],
                                               fontsize   = dimensions[["axes_font_size"]],
                                               fontface   = visuals[["axes_font_face"]],
-                                              lineheight = fine_tuning[["line_height"]]))
+                                              lineheight = dimensions[["line_height"]]))
         }, labels, label_x_positions, label_y, seq_along(labels), SIMPLIFY = FALSE))
 
         # Draw the separation lines
@@ -1884,8 +1892,8 @@ setup_x_axes <- function(diagram_info,
             # Construct the actual separation lines
             grid::segmentsGrob(x0 = x_positions,
                                x1 = x_positions,
-                               y0 = y_positions[1],
-                               y1 = y_positions[2],
+                               y0 = grid::unit(y_positions[1], "cm"),
+                               y1 = grid::unit(y_positions[2], "cm"),
                                name  = paste0("separation_line_", i),
                                gp = grid::gpar(col = visuals[[paste0(type_prefix,"separation_line_color")]],
                                                lty = visuals[[paste0(type_prefix,"separation_line_type")]],
@@ -2123,7 +2131,7 @@ direct_vertical_labels <- function(diagram_info,
             offset_value <- diagram_info[["values_width"]]
 
             # The width measuring needs to be swapped to the height dimension.
-            offset_value <- swap_xy_scaling(offset_value, dimensions, part = "inner_canvas")
+            offset_value <- swap_scaling(offset_value, diagram_info[["inner_canvas_width"]], diagram_info[["inner_canvas_height"]])
 
             # Select label group and scale offset to y axes distance
             offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
@@ -2213,7 +2221,7 @@ direct_vertical_labels <- function(diagram_info,
                                                         fontfamily = visuals[["font"]],
                                                         fontsize   = dimensions[["label_font_size"]],
                                                         fontface   = visuals[["label_font_face"]],
-                                                        lineheight = fine_tuning[["line_height"]]))
+                                                        lineheight = dimensions[["line_height"]]))
 
     # Return whole label object
     grid::gList(lines, segment_labels)
@@ -2358,8 +2366,6 @@ format_values <- function(values,
 }
 
 
-#' Format Values
-#'
 #' @description
 #' [format_diagram_values()]: A wrapper to make the code for formatting segment
 #' values shorter.
@@ -2370,6 +2376,8 @@ format_values <- function(values,
 #'
 #' @return
 #' Returns a formatted value as character.
+#'
+#' @rdname format_values
 #'
 #' @export
 format_diagram_values <- function(diagram_info,

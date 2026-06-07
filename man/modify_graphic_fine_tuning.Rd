@@ -24,8 +24,8 @@ Modify previously set up graphic dimensions with \code{\link[=graphic_dimensions
 gft <- graphic_fine_tuning()
 
 # Set specific options, the rest will be set to default values
-gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
-                           tick_length          = 0.05)
+gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
+                           tick_length           = 0.05)
 
 # Modify the previously created graphics object
 gft <- gft |> modify_graphic_fine_tuning(diagram_margin = 0.02)

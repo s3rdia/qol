@@ -19,6 +19,7 @@ graphic_dimensions(
   origin_font_size = 8,
   other_font_size = 9,
   tooltip_font_size = 12,
+  line_height = 1.1,
   space_between_bars_pct = 0,
   bar_overlap = 0,
   line_thickness = 1,
@@ -61,6 +62,8 @@ graphic_dimensions(
 \item{other_font_size}{Font size of every other text element.}
 
 \item{tooltip_font_size}{Font size of the tooltips in interactive charts.}
+
+\item{line_height}{The height of a single text line.}
 
 \item{space_between_bars_pct}{The space between adjacent bars.}
 
