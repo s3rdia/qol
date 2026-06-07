@@ -21,7 +21,7 @@ add_textbox(
   font_color = .qol_options[["graphic_visuals"]][["other_font_color"]],
   font_size = .qol_options[["graphic_dimensions"]][["other_font_size"]],
   font_face = .qol_options[["graphic_visuals"]][["other_font_face"]],
-  line_height = .qol_options[["graphic_fine_tuning"]][["line_height"]],
+  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
   name = "textbox",
   draw = FALSE
 )
@@ -34,7 +34,6 @@ add_title(
   text,
   dimensions = .qol_options[["graphic_dimensions"]],
   visuals = .qol_options[["graphic_visuals"]],
-  fine_tuning = .qol_options[["graphic_fine_tuning"]],
   draw = FALSE
 )
 
@@ -42,7 +41,6 @@ add_footnote(
   text,
   dimensions = .qol_options[["graphic_dimensions"]],
   visuals = .qol_options[["graphic_visuals"]],
-  fine_tuning = .qol_options[["graphic_fine_tuning"]],
   draw = FALSE
 )
 
@@ -88,8 +86,6 @@ register_windows_font(font)
 \item{dimensions}{qol package dimensions options.}
 
 \item{visuals}{qol package visuals options.}
-
-\item{fine_tuning}{qol package fine tuning options.}
 }
 \value{
 Returns a grid::textGrob object.

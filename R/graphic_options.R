@@ -405,6 +405,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param origin_font_size Font size of the origin text.
 #' @param other_font_size Font size of every other text element.
 #' @param tooltip_font_size Font size of the tooltips in interactive charts.
+#' @param line_height The height of a single text line.
 #' @param space_between_bars_pct The space between adjacent bars.
 #' @param bar_overlap The factor determines how much bars are overlapping each other.
 #' @param line_thickness The thickness of lines in a line chart or outlines of segments.
@@ -456,6 +457,7 @@ graphic_dimensions <- function(graphic_width             = 16,
                                origin_font_size          = 8,
                                other_font_size           = 9,
                                tooltip_font_size         = 12,
+                               line_height               = 1.1,
                                space_between_bars_pct    = 0,
                                bar_overlap               = 0,
                                line_thickness            = 1,
@@ -649,10 +651,6 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' to make detailed graphical changes in certain areas. These values normally should
 #' only be altered in edge cases.
 #'
-#' @param line_height The height of a single text line.
-#' @param diagram_start_adjust Adjusts the diagram starting position, when it is automatically
-#' determined.
-#' @param diagram_height_adjust Adjusts the diagram height, when it is automatically determined.
 #' @param diagram_margin Margin used within the diagram area.
 #' @param values_vjust_positive Positive vertical adjustment for values in vbars.
 #' @param values_vjust_negative Negative vertical adjustment for values in vbars.
@@ -673,7 +671,6 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @param values_below_axes_90_just Adjustment for rotated 0 values, if drawn below x axes.
 #' @param tick_length Length of the axes ticks.
 #' @param value_axes_margin Additional margin when measuring the value axes width
-#' @param variable_axes_margin Additional margin when measuring the variable axes height.
 #' @param y_axes_scaling Scaling factor for the y axes, if maximum value is calculated
 #' automatically.
 #' @param swap_direction_threshold Determines the threshold for the variable axes at which
@@ -702,14 +699,11 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' gft <- graphic_fine_tuning()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
-#'                            tick_length          = 0.05)
+#' gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
+#'                            tick_length           = 0.05)
 #'
 #' @export
-graphic_fine_tuning <- function(line_height                = 1.1,
-                                diagram_start_adjust       = 2,
-                                diagram_height_adjust      = 4,
-                                diagram_margin             = 0.01,
+graphic_fine_tuning <- function(diagram_margin             = 0.01,
                                 values_vjust_positive      = 1.7,
                                 values_vjust_negative      = -0.7,
                                 values_vjust_90_positive   = 1.2,
@@ -725,7 +719,6 @@ graphic_fine_tuning <- function(line_height                = 1.1,
                                 values_below_axes_90_just  = 1.4,
                                 tick_length                = 0.02,
                                 value_axes_margin          = 0.02,
-                                variable_axes_margin       = 0.03,
                                 y_axes_scaling             = 1.3,
                                 swap_direction_threshold   = 0.75,
                                 segment_line_offset        = 0.3,
@@ -764,8 +757,8 @@ graphic_fine_tuning <- function(line_height                = 1.1,
 #' gft <- graphic_fine_tuning()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
-#'                            tick_length          = 0.05)
+#' gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
+#'                            tick_length           = 0.05)
 #'
 #' # Modify the previously created graphics object
 #' gft <- gft |> modify_graphic_fine_tuning(diagram_margin = 0.02)

@@ -6,13 +6,14 @@
 \alias{get_variable_axes_height}
 \alias{get_values_width}
 \alias{get_values_height}
-\alias{swap_xy_scaling}
+\alias{swap_scaling}
 \alias{get_group_tick_positions_x}
 \alias{get_y_axes_values}
 \alias{even_prettier}
 \alias{setup_y_axes}
 \alias{setup_x_axes}
 \alias{setup_xy_axes}
+\alias{setup_guiding_lines}
 \alias{inject_inner_canvas_size}
 \title{Measure And Generate Custom Axes}
 \usage{
@@ -22,23 +23,16 @@ get_value_axes_width(
   axes,
   dimensions,
   visuals,
-  fine_tuning,
   which = "primary"
 )
 
-get_variable_axes_height(wrapped_text, dimensions, visuals, fine_tuning)
+get_variable_axes_height(wrapped_text, dimensions, visuals)
 
 get_values_width(formatted_values, dimensions, visuals)
 
 get_values_height(diagram_info, dimensions, visuals, fine_tuning)
 
-swap_xy_scaling(
-  measuring,
-  dimensions,
-  from = "width",
-  to = "height",
-  part = "diagram"
-)
+swap_scaling(measuring, from = "width", to = "height")
 
 get_group_tick_positions_x(
   number_of_groups,
@@ -51,11 +45,13 @@ get_y_axes_values(values, axes, fine_tuning, which = "primary")
 
 even_prettier(min_value, max_value, number_of_steps)
 
-setup_y_axes(tick_positions, tick_values, arguments, secondary = FALSE)
+setup_y_axes(diagram_info, arguments, secondary = FALSE)
 
 setup_x_axes(diagram_info, arguments)
 
 setup_xy_axes(diagram_info, arguments)
+
+setup_guiding_lines(diagram_info, arguments)
 
 inject_inner_canvas_size(axes, arguments)
 }
@@ -70,8 +66,6 @@ inject_inner_canvas_size(axes, arguments)
 
 \item{visuals}{The list of visual parameters.}
 
-\item{fine_tuning}{The list of fine tuning parameters.}
-
 \item{which}{Primary or secondary axes.}
 
 \item{wrapped_text}{The wrapped text for the variable axes to measure.}
@@ -82,12 +76,9 @@ inject_inner_canvas_size(axes, arguments)
 
 \item{measuring}{The values received from \code{\link[=get_values_width]{get_values_width()}} or \code{\link[=get_values_height]{get_values_height()}}.}
 
-\item{from}{Input measuring: Can be "width" or "height".}
+\item{from}{Input measuring.}
 
-\item{to}{Output measuring: Can be "width" or "height".}
-
-\item{part}{Determine measuring on which part of the graphic. Can be "graphic", "diagram" or
-"inner_canvas".}
+\item{to}{Output measuring.}
 
 \item{number_of_groups}{The number of groups.}
 
@@ -104,10 +95,6 @@ inject_inner_canvas_size(axes, arguments)
 \item{number_of_steps}{The number of equal length steps to be used to head from
 the minimum to the maximum value.}
 
-\item{tick_positions}{The position of the axes ticks.}
-
-\item{tick_values}{The values drawn at the tick positions.}
-
 \item{arguments}{Argument list passed passed on by \code{\link[=design_graphic]{design_graphic()}}.}
 
 \item{secondary}{FALSE by default. If TRUE draws the primary axes on the left side,
@@ -122,7 +109,7 @@ otherwise the secondary axes on the right side.}
 
 \code{\link[=get_values_height]{get_values_height()}}: Returns a numeric height.
 
-\code{\link[=swap_xy_scaling]{swap_xy_scaling()}}: Returns a vector of width or heights.
+\code{\link[=swap_scaling]{swap_scaling()}}: Returns a vector of width or heights.
 
 \code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}}: Returns a vector of numeric tick positions.
 
@@ -147,7 +134,7 @@ the width is measured.
 
 \code{\link[=get_values_height]{get_values_height()}}: Get the height of the segment values.
 
-\code{\link[=swap_xy_scaling]{swap_xy_scaling()}}: Width and height are measured according to the individual scaling
+\code{\link[=swap_scaling]{swap_scaling()}}: Width and height are measured according to the individual scaling
 for each dimension. This function converts the measured to the respective other dimension.
 
 \code{\link[=get_group_tick_positions_x]{get_group_tick_positions_x()}}: Calculates the x axes tick positions. In this
@@ -171,6 +158,10 @@ positive values are present, or at the top, if only negative values are present.
 
 \code{\link[=setup_xy_axes]{setup_xy_axes()}}: Uses the currently active viewport to set up both the x and
 y axes.
+
+\code{\link[=setup_guiding_lines]{setup_guiding_lines()}}: Uses the currently active viewport to set up the x and
+y axes guiding lines. Guiding lines are drawn at the tick positions and reach from
+the axes to the opposite end of the diagram.
 
 \code{\link[=inject_inner_canvas_size]{inject_inner_canvas_size()}}: Injects the inner canvas size, meaning diagram size
 minus axes size, into the dimensions parameter.

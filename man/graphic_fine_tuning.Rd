@@ -5,9 +5,6 @@
 \title{Graphic Fine Tuning}
 \usage{
 graphic_fine_tuning(
-  line_height = 1.1,
-  diagram_start_adjust = 2,
-  diagram_height_adjust = 4,
   diagram_margin = 0.01,
   values_vjust_positive = 1.7,
   values_vjust_negative = -0.7,
@@ -24,7 +21,6 @@ graphic_fine_tuning(
   values_below_axes_90_just = 1.4,
   tick_length = 0.02,
   value_axes_margin = 0.02,
-  variable_axes_margin = 0.03,
   y_axes_scaling = 1.3,
   swap_direction_threshold = 0.75,
   segment_line_offset = 0.3,
@@ -37,13 +33,6 @@ graphic_fine_tuning(
 )
 }
 \arguments{
-\item{line_height}{The height of a single text line.}
-
-\item{diagram_start_adjust}{Adjusts the diagram starting position, when it is automatically
-determined.}
-
-\item{diagram_height_adjust}{Adjusts the diagram height, when it is automatically determined.}
-
 \item{diagram_margin}{Margin used within the diagram area.}
 
 \item{values_vjust_positive}{Positive vertical adjustment for values in vbars.}
@@ -80,8 +69,6 @@ drawn inside segments.}
 
 \item{value_axes_margin}{Additional margin when measuring the value axes width}
 
-\item{variable_axes_margin}{Additional margin when measuring the variable axes height.}
-
 \item{y_axes_scaling}{Scaling factor for the y axes, if maximum value is calculated
 automatically.}
 
@@ -114,8 +101,8 @@ only be altered in edge cases.
 gft <- graphic_fine_tuning()
 
 # Set specific options, the rest will be set to default values
-gft <- graphic_fine_tuning(diagram_start_adjust = 2.5,
-                           tick_length          = 0.05)
+gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
+                           tick_length           = 0.05)
 
 }
 \seealso{
