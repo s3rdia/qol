@@ -741,12 +741,24 @@ any_table <- function(data_frame,
             statistics <- c(statistics, "pct_value")
         }
     }
+    else if(length(pct_value) == 0 && "pct_value" %in% tolower(statistics)){
+        print_message("NOTE", c("'pct_value' is specified in the statistics but the <pct_value> parameter",
+                                " isn't set. 'pct_value' will be removed from statistics."))
+
+        statistics <- statistics[!statistics %in% "pct_value"]
+    }
 
     # If pct_block parameter is passed but is not selected as statistic, add it
     if (length(pct_block) > 0 && !"pct_block" %in% tolower(statistics)){
         if (!(length(pct_block) == 1 && pct_block == "")){
             statistics <- c(statistics, "pct_block")
         }
+    }
+    else if(length(pct_block) == 0 && "pct_block" %in% tolower(statistics)){
+        print_message("NOTE", c("'pct_block' is specified in the statistics but the <pct_block> parameter",
+                                " isn't set. 'pct_block' will be removed from statistics."))
+
+        statistics <- statistics[!statistics %in% "pct_block"]
     }
 
     if (!pre_summed){

@@ -27,6 +27,7 @@ Last CRAN release was on 16.05.2026.
 * `if.()`, `export_with_style()`: Updated examples.
 * `summarise_plus()`, `drop_type_vars()`: Updated documentation with a detailed description of the automatically generated variables TYPE, TYPE_NR and DEPTH when using the `nesting = "all"` or `nesting = "single"` option.
 * `expand_formats()`: Added a `NOTE`message if the cartesian product produces over 1 million rows.
+* `any_table()`: Added two new `NOTE` messages in case `pct_value` or `pct_block` is specified in statistics put corresponding parameter isn't set. In this case the statistic will be removed.
 
 
 ## R CMD check results
