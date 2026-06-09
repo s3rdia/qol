@@ -60,6 +60,11 @@
   using the `extensions` parameter then now only files with these
   extensions are printed out to the console. Otherwise a `NOTE` is
   displayed stating that no file has been found. (04.06.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md): If
+  a colon “:” was written somewhere in a character expression inside a
+  condition the function crashed because it was looking for the return
+  value of the special “:” symbol. This is fixed now. (09.06.2026)
 
 #### Additionally
 

@@ -21,6 +21,7 @@ Last CRAN release was on 16.05.2026.
 * `sort_plus()`: Doesn't crash anymore when trying to preserve factor variables.
 * `export_data()`: When exporting a csv file characters like ä, ö, ü are displayed correctly, when opening the file in Excel.
 * `libname()`: When using the `extensions` parameter then now only files with these extensions are printed out to the console. Otherwise a `NOTE` is displayed stating that no file has been found.
+* `if.()`, `else_if.()`: If a colon ":" was written somewhere in a character expression inside a condition the function crashed because it was looking for the return value of the special ":" symbol. This is fixed now.
 
 ### Additionally
 

@@ -744,6 +744,7 @@ translate_condition <- function(condition){
 
             if (is.character(expression) && length(expression) == 1){
                 flag_translated <- FALSE
+                translated_call <- condition
 
                 # Count the colons, there may not be more than two, otherwise the function
                 # should skip the expression.
@@ -779,9 +780,6 @@ translate_condition <- function(condition){
 
                         flag_translated <- TRUE
                     }
-                }
-                else{
-                    translated_call <- condition
                 }
 
                 # Return call as is or as NOT depending on the operator
