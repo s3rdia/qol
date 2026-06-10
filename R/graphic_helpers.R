@@ -847,7 +847,26 @@ get_diagram_dimensions <- function(arguments){
     running_nr  <- seq_len(number_of_elements) - 1
     group_ids   <- floor(running_nr / number_of_segments)
     segment_ids <- running_nr %% number_of_segments
-    segment_pos <- margin + (group_ids * group_width) + (segment_ids * segment_width)
+
+    # Scale overlap factor from -1 to +1
+    bar_overlap <- min(max(0, dimensions[["bar_overlap"]]), 100) / 100
+
+    # Calculate reduced segment width
+    overlap_segment_width <- segment_width * (1 - bar_overlap)
+
+    # Calculate the space which all segments occupy together with the reduced size.
+    # NOTE: The right most segment will always be visible with it's full size. It
+    #       is unique in that sense. So there has to be one full segment width in
+    #       the calculation, while the other segments flow in with the reduced width.
+    overlap_group_width <- segment_width + (number_of_segments - 1) * overlap_segment_width
+
+    # The segments should all move to the center of each group. Depending on the
+    # overlap value a dynamic offset has to be calculated, which uses a base margin
+    # and half of the saved space from the overlap.
+    group_offset <- margin + ((group_width - (2 * margin)) - overlap_group_width) / 2
+
+    # At last calculate the exact segment positions within each group
+    segment_pos <- group_offset + (group_ids * group_width) + (segment_ids * overlap_segment_width)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # y axes calculations
@@ -1104,7 +1123,7 @@ vbar_grob <- function(diagram_info,
     fine_tuning <- arguments[["fine_tuning"]]
     value_y_pos <- diagram_info[["values"]]
 
-    shrink_width <- grid::unit(dimensions[["space_between_bars_pct"]], "pt")
+    shrink_width <- grid::unit(dimensions[["space_between_bars"]], "pt")
 
     # Prevent color usage overflow, when there are more segments than color usage
     # patterns.
@@ -1140,7 +1159,7 @@ vbar_grob <- function(diagram_info,
 
         # If borders are colored, it becomes obvious that the segments actually overlap
         # by one pixel. To conceal this the segment width will be reduced by a bit.
-        if (dimensions[["space_between_bars_pct"]] == 0){
+        if (dimensions[["space_between_bars"]] == 0){
             shrink_width <- grid::unit(fine_tuning[["shrink_segment_width"]], "pt")
         }
     }

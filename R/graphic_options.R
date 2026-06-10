@@ -406,7 +406,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param other_font_size Font size of every other text element.
 #' @param tooltip_font_size Font size of the tooltips in interactive charts.
 #' @param line_height The height of a single text line.
-#' @param space_between_bars_pct The space between adjacent bars.
+#' @param space_between_bars The space between adjacent bars.
 #' @param bar_overlap The factor determines how much bars are overlapping each other.
 #' @param line_thickness The thickness of lines in a line chart or outlines of segments.
 #' @param segment_line_thickness The thickness of the lines connecting segments with
@@ -458,7 +458,7 @@ graphic_dimensions <- function(graphic_width             = 16,
                                other_font_size           = 9,
                                tooltip_font_size         = 12,
                                line_height               = 1.1,
-                               space_between_bars_pct    = 0,
+                               space_between_bars        = 0,
                                bar_overlap               = 0,
                                line_thickness            = 1,
                                segment_line_thickness    = 1,
@@ -709,7 +709,7 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
                                 values_vjust_90_positive   = 1.2,
                                 values_vjust_90_negative   = -0.2,
                                 value_overlap_factor       = 1.35,
-                                shrink_segment_width       = 0.5,
+                                shrink_segment_width       = 0.55,
                                 values_rotation            = 90,
                                 values_hjust               = 0.5,
                                 values_hjust_90            = 0.35,
