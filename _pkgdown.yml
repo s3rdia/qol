@@ -81,7 +81,7 @@ reference:
   - running_number
   - mark_case
   - retain_value
-  - retain_sum
+  - retain_stat
   - retain_variables
 - title: Character Manipulation
   contents:

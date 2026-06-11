@@ -14,6 +14,7 @@ export_with_style(
   var_labels = .qol_options[["var_labels"]],
   workbook = NULL,
   style = .qol_options[["excel_style"]],
+  column_align = NULL,
   output = .qol_options[["output"]],
   print = .qol_options[["print"]],
   monitor = .qol_options[["monitor"]]
@@ -49,6 +50,10 @@ export_with_style(
   A list of options can be passed to control the appearance of 'Excel'
   outputs. Styles can be created with
   [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md).
+
+- column_align:
+
+  Individually align the data frame columns in the final 'Excel' output.
 
 - output:
 

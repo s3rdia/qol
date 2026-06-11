@@ -91,7 +91,7 @@ Retaining:
 [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md),
 [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
 [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-[`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md),
+[`retain_stat()`](https://s3rdia.github.io/qol/reference/retain.md),
 [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md)
 
 Character Manipulation:

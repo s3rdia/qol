@@ -13,6 +13,7 @@
 #' creating a new file.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
+#' @param column_align Individually align the data frame columns in the final 'Excel' output.
 #' @param output The following output formats are available: excel and excel_nostyle.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output workbook.
@@ -112,14 +113,15 @@
 #'
 #' @export
 export_with_style <- function(data_frame,
-                              titles     = .qol_options[["titles"]],
-                              footnotes  = .qol_options[["footnotes"]],
-                              var_labels = .qol_options[["var_labels"]],
-                              workbook   = NULL,
-                              style      = .qol_options[["excel_style"]],
-                              output     = .qol_options[["output"]],
-                              print      = .qol_options[["print"]],
-                              monitor    = .qol_options[["monitor"]]){
+                              titles       = .qol_options[["titles"]],
+                              footnotes    = .qol_options[["footnotes"]],
+                              var_labels   = .qol_options[["var_labels"]],
+                              workbook     = NULL,
+                              style        = .qol_options[["excel_style"]],
+                              column_align = NULL,
+                              output       = .qol_options[["output"]],
+                              print        = .qol_options[["print"]],
+                              monitor      = .qol_options[["monitor"]]){
     print_start_message()
 	print_step("GREY", "Error handling")
 
@@ -178,7 +180,7 @@ export_with_style <- function(data_frame,
 
     # Grab all information, which is necessary to format the workbook. This list will be
     # returned at the end and can be grabbed by the workbook combine function.
-    meta <- c(mget(c("titles", "footnotes", "var_labels", "style", "output")), "DATA")
+    meta <- c(mget(c("titles", "footnotes", "var_labels", "style", "column_align", "output")), "DATA")
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
@@ -199,7 +201,7 @@ export_with_style <- function(data_frame,
 
     # Style data frame for export
     wb_list <- format_df_excel(workbook, data_frame, titles, footnotes, var_labels,
-                               style, output, monitor_df)
+                               style, column_align, output, monitor_df)
 
     wb         <- wb_list[[1]]
     monitor_df <- wb_list[[2]]
@@ -283,6 +285,7 @@ export_with_style <- function(data_frame,
 #' @param footnotes Character vector of footnotes to display under the table.
 #' @param var_labels List which contains column variable names and their respective labels.
 #' @param style A list containing the styling elements.
+#' @param column_align Individually align the data frame columns in the final 'Excel' output.
 #' @param output Determines whether to style the output or to just quickly paste
 #' the data.
 #' @param monitor_df Data frame which stores the monitoring values.
@@ -298,6 +301,7 @@ format_df_excel <- function(wb,
                             footnotes,
                             var_labels,
                             style,
+                            column_align,
                             output,
                             monitor_df){
 
@@ -338,6 +342,7 @@ format_df_excel <- function(wb,
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
     print_step("MAJOR", "Formatting data")
+    print_step("MINOR", "Format titles and footnotes")
 
     # Format titles and footnotes if there are any
     wb <- wb |>
@@ -350,12 +355,44 @@ format_df_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
         #---------------------------------------------------------------------#
+        print_step("MINOR", "Add cell styles")
+
         wb <- wb |> handle_cell_styles(df_ranges, style)
 
+        # Fill all cells with background color
+        if (style[["background_color"]] != ""){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+            #-----------------------------------------------------------------#
+            print_step("MINOR", "Fill background")
+
+            wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+
+            # Titles and footnotes need to get an extra fill
+            wb$add_fill(dims = df_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$add_fill(dims = df_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+        }
+
+        # Format individual column alignments
+        if (!is.null(column_align)){
+            print_step("MINOR", "Individual column alignment")
+
+            single_columns <- split_up_ranges(df_ranges[["table_range"]])
+            column_align   <- fill_or_trim(column_align, length(single_columns))
+
+            for (i in seq_len(length(single_columns))){
+                wb$add_cell_style(dims       = single_columns[i],
+                                  horizontal = column_align[i])
+            }
+        }
+
+        # Apply number formats
         if (df_ranges[["num_format.length"]] > 0){
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel number formats", "Format")
             #-----------------------------------------------------------------#
+            print_step("MINOR", "Format numbers")
 
             # Set up inner table number formats
             for (i in 1:df_ranges[["num_format.length"]]){
@@ -371,6 +408,7 @@ format_df_excel <- function(wb,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
             #-----------------------------------------------------------------#
+            print_step("MINOR", "Add heatmap")
 
             wb$add_conditional_formatting(dims  = df_ranges[["table_range"]],
                                           style = c(style[["heatmap_low_color"]],
@@ -396,6 +434,7 @@ format_df_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
         #---------------------------------------------------------------------#
+        print_step("MINOR", "Adjust row heights and column widths")
 
         wb <- wb |> handle_col_row_dimensions(df_ranges,
                                               collapse::fncol(data_frame) + (style[["start_column"]] - 1),
@@ -435,6 +474,17 @@ set_labels_as_names <- function(data_frame, var_labels){
         return(data_frame)
     }
 
+    valid_labels <- data_frame |> part_of_df(names(var_labels))
+
+    # If no valid variable names for renaming are provided, return
+    if (length(valid_labels) == 0){
+        return(data_frame)
+    }
+
+    # Only keep valid labels
+    var_labels <- var_labels[names(var_labels) %in% valid_labels]
+
+    # Rename variables according to specified labels
     collapse::frename(data_frame,
                       stats::setNames(names(var_labels),
                                       as.character(var_labels)),

@@ -109,7 +109,7 @@ summarise_plus(
 - merge_back:
 
   Newly summarised variables can be merged back to the original data
-  frame if TRUE. Only works if nested = "deepest and no formats are
+  frame if TRUE. Only works if nested = "deepest" and no formats are
   defined.
 
 - na.rm:

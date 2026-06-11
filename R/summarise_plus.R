@@ -40,7 +40,7 @@
 #' possible combinations will be computed in one data table. The option "single"
 #' only outputs the ungrouped summary of all class variables in one data table.
 #' @param merge_back Newly summarised variables can be merged back to the original
-#' data frame if TRUE. Only works if nested = "deepest and no formats are defined.
+#' data frame if TRUE. Only works if nested = "deepest" and no formats are defined.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the class variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations

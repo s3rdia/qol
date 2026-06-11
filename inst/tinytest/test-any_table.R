@@ -563,7 +563,8 @@ result_list <- dummy_df |>
                   columns = "sex",
                   values  = weight,
                   style   = excel_output_style(freeze_col_header = TRUE,
-                                               freeze_row_header = TRUE),
+                                               freeze_row_header = TRUE,
+                                               background_color  = "FF00FF"),
                   na.rm   = TRUE,
                   output  = "excel_nostyle",
                   print   = FALSE)

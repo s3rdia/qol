@@ -9,6 +9,12 @@
   files, scans the contents for different patterns and outputs a small
   report. (04.06.2026)
 
+#### Renamed functions
+
+- [`retain_stat()`](https://s3rdia.github.io/qol/reference/retain.md):
+  `retain_sum` got a new name because it can now generate any statistic
+  not only sums with the new `statistics` parameter. (11.06.2026)
+
 #### New functionality
 
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md):
@@ -36,6 +42,12 @@
 - [`libname()`](https://s3rdia.github.io/qol/reference/libname.md): With
   the new `recursive` parameter files can now also be retreived from
   subfolders. (04.06.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Can now apply a `background_color` to all cells which aren’t covered
+  by any other background color parameter. (11.06.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Added a new `column_align` parameter with which every column alignment
+  can be controlled individually. (11.06.2026)
 
 #### Fixed
 
@@ -65,6 +77,13 @@
   a colon “:” was written somewhere in a character expression inside a
   condition the function crashed because it was looking for the return
   value of the special “:” symbol. This is fixed now. (09.06.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Function doesn’t crash anymore, if a variable label is provided, but
+  the corresponding variable doesn’t exist in the data frame.
+  (11.06.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Variable `number_of_persons` now has the right values. Before it was
+  generated too early. (11.06.2026)
 
 #### Additionally
 
@@ -84,6 +103,9 @@
   Added two new `NOTE` messages in case `pct_value` or `pct_block` is
   specified in statistics put corresponding parameter isn’t set. In this
   case the statistic will be removed. (08.06.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Added some more messages informing the user about the formatting
+  timings. (11.06.2026)
 
 ## qol 1.3.1
 
@@ -460,8 +482,8 @@ CRAN release on 18.04.2026
 - [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
   Should now work inside custom functions. (29.03.2026)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md): On
-  error now return NA instead of the whole data frame. (31.01.2026)
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
+  On error now return NA instead of the whole data frame. (31.01.2026)
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Wide to long transposition now working again as intended. (09.04.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
@@ -758,7 +780,7 @@ CRAN release on 11.02.2026
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
   Removed `var_name` parameter. Functions now don’t return the whole
   data frame anymore, but only the retained variable as a vector or list
   of vectors. So instead of writing
@@ -1170,11 +1192,11 @@ CRAN release on 13.01.2026
 - In general: Added more messages to display what functions do.
   (03.01.2026)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
   `value` parameter is now called `values`. (10.01.2026)
 - [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
+  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
   Adjusted unit tests to something that actually makes sense.
   (10.01.2026)
 - In general: Added some unit tests on file saving and retrieving.
@@ -1255,7 +1277,7 @@ CRAN release on 20.11.2025
   Marks first or last cases within a provided group. (31.10.2025)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md):
   Retains the first value for all cases of the same group. (31.10.2025)
-- [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.md):
+- [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
   Retains the summarised values for all cases of the same group.
   (31.10.2025)
 

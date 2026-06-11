@@ -63,7 +63,7 @@ possible combinations will be computed in one data table. The option "single"
 only outputs the ungrouped summary of all class variables in one data table.}
 
 \item{merge_back}{Newly summarised variables can be merged back to the original
-data frame if TRUE. Only works if nested = "deepest and no formats are defined.}
+data frame if TRUE. Only works if nested = "deepest" and no formats are defined.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the class variables.}
 

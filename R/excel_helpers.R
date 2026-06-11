@@ -1562,7 +1562,7 @@ handle_header_table_dim <- function(wb,
 #' @param number_to_format Needed length to be adjusted.
 #'
 #' @return
-#' Returns a an adjusted format vector.
+#' Returns an adjusted format vector.
 #'
 #' @noRd
 fill_or_trim <- function(format_vector,
@@ -1581,6 +1581,36 @@ fill_or_trim <- function(format_vector,
     }
 
     format_vector
+}
+
+
+#' Split Up 'Excel' Ranges
+#'
+#' @description
+#' Split up a range into individual column ranges.
+#'
+#' @param range Range to be split up.
+#'
+#' @return
+#' Returns vector of column ranges.
+#'
+#' @noRd
+split_up_ranges <- function(range){
+    # Extract the row numbers from range
+    rows <- unlist(regmatches(range, gregexpr("[0-9]+", range)))
+
+    start_row <- rows[1]
+    end_row   <- rows[2]
+
+    # Extract the column letters from range
+    columns <- unlist(regmatches(range, gregexpr("[A-Z]+", range)))
+
+    # Build a sequence of letters for the provided range
+    column_numbers  <- openxlsx2::col2int(paste(columns[1], columns[2], sep = ":"))
+    column_sequence <- openxlsx2::int2col(column_numbers)
+
+    # Combine everything back together to individual columns
+    paste0(column_sequence, start_row, ":", column_sequence, end_row)
 }
 
 ###############################################################################
@@ -1770,7 +1800,7 @@ excel_output_style <- function(save_path              = NULL,
                                table_back_color       = "FFFFFF",
                                table_font_color       = "000000",
                                table_font_size        = 10,
-                               table_font_bold       = FALSE,
+                               table_font_bold        = FALSE,
                                table_alignment        = "right",
                                table_indent           = 1,
                                table_borders          = FALSE,

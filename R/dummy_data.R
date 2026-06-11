@@ -59,8 +59,7 @@ dummy_data <- function(no_obs    = 25000,
     dummy_temp <- data.table::data.table(
         household_id = rep(1:number_of_households, times = persons_per_household))
 
-    dummy_temp[["person_id"]]         <- sequence(persons_per_household)
-    dummy_temp[["number_of_persons"]] <- as.integer(rep(persons_per_household, times = persons_per_household))
+    dummy_temp[["person_id"]] <- sequence(persons_per_household)
 
     # Randomly generate sixteen states
     dummy_temp[["state"]] <- as.integer(rep(sample(1:16, number_of_households,
@@ -321,6 +320,10 @@ dummy_data <- function(no_obs    = 25000,
     renumber                     <- data.table::rleid(dummy_temp[["household_id"]])
     dummy_temp[["person_id"]]    <- sequence(tabulate(renumber))
     dummy_temp[["first_person"]] <- data.table::fifelse(dummy_temp[["person_id"]] == 1, 1, 0)
+
+    # Get the number of persons per household
+    dummy_temp[["number_of_persons"]] <- suppressMessages(as.integer(dummy_temp |>
+                                             retain_stat("temp.", by = c("year", "state", "household_id"))))
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Advance values")

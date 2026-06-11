@@ -91,23 +91,23 @@ expect_equal(test_df[["var_char_first"]], c("a", "a", NA, "b", "b"), info = "Ret
 
 
 # Retain sum without by
-test_df[["retain_sum"]] <- test_df |>
-      retain_sum(values = var_sum)
+test_df[["retain_stat"]] <- test_df |>
+      retain_stat(values = var_sum)
 
-expect_equal(test_df[["retain_sum"]], c(5, 5, 5, 5, 5), info = "Retain sum without by")
+expect_equal(test_df[["retain_stat"]], c(5, 5, 5, 5, 5), info = "Retain sum without by")
 
 
 # Retain sum with by
-test_df[["retain_sum"]] <- test_df |>
-      retain_sum(values = var_sum, by = var_by)
+test_df[["retain_stat"]] <- test_df |>
+      retain_stat(values = var_sum, by = var_by)
 
-expect_equal(test_df[["retain_sum"]], c(2, 2, 1, 2, 2), info = "Retain sum with by")
+expect_equal(test_df[["retain_stat"]], c(2, 2, 1, 2, 2), info = "Retain sum with by")
 
 
 # Retain multiple sums
 test_df[, c("var_num_sum", "var_num2_sum")] <-
     test_df |>
-      retain_sum(values = c(var_num, var_num2),
+      retain_stat(values = c(var_num, var_num2),
                   by    = c(var_sum, var_by))
 
 expect_equal(test_df[["var_num_sum"]],  c(1, 1, NA, 2, 2), info = "Retain multiple sums")
@@ -223,7 +223,7 @@ expect_error(print_stack_as_messages("ERROR"), "Must provide <values> to retain.
 
 
 # Retain sum without providing sum_of
-dummy_df[["retain_sum"]] <- dummy_df |> retain_sum()
+dummy_df[["retain_stat"]] <- dummy_df |> retain_stat()
 
 expect_error(print_stack_as_messages("ERROR"), "Must provide a <values> to retain. Retain will be aborted.", info = "Retain sum without providing sum_of")
 

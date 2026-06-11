@@ -3083,7 +3083,8 @@ combine_into_workbook <- function(...,
         if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
             wb_list <- suppressMessages(
                 format_df_excel(wb, table[["table"]], meta[["titles"]], meta[["footnotes"]],
-                                meta[["var_labels"]], meta[["style"]], meta[["output"]], monitor_df))
+                                meta[["var_labels"]], meta[["style"]], meta[["column_align"]],
+                                meta[["output"]], monitor_df))
 
             wb <- wb_list[[1]]
         }

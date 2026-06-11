@@ -48,7 +48,7 @@
 #'
 #' Renaming: [rename_pattern()], [add_extension()], [remove_stat_extension()], [replace_except()]
 #'
-#' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_sum()], [retain_variables()]
+#' Retaining: [running_number()], [mark_case()], [retain_value()], [retain_stat()], [retain_variables()]
 #'
 #' Character Manipulation: [concat()], [sub_string()], [remove_blanks()]
 #'
