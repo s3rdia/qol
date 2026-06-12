@@ -130,44 +130,58 @@ file functions.
 \code{\link[=get_threads]{get_threads()}}: Get the globally stored number of used threads.
 }
 \examples{
+# Set and get the global print option
 set_print(FALSE)
 set_print(TRUE)
 
 get_print()
 
+# Set and get the global monitor option
 set_monitor(TRUE)
 set_monitor(FALSE)
 
 get_monitor()
 
+# Set and get the global NA removal option
 set_na.rm(TRUE)
 set_na.rm(FALSE)
 
 get_na.rm()
 
+# Set and get the global print missing option
 set_print_miss(TRUE)
 set_print_miss(FALSE)
 
 get_print_miss()
 
+# Set and get the global output option
 set_output("excel")
 
 get_output()
 
+# Set and get table titles globally
 set_titles("This is title number 1 link: https://cran.r-project.org/",
            "This is title number 2 cell: W22",
            "This is title number 3 file: C:/MyFolder/MyFile.docx",
            "This is title number 4")
 
+# To reset titles do
+set_titles(NULL)
+
 get_titles()
 
+# Set and get table footnotes globally
 set_footnotes("This is footnote number 1 link: https://cran.r-project.org/",
               "This is footnote number 2 cell: W22",
               "This is footnote number 3 file: C:/MyFolder/MyFile.docx",
               "This is footnote number 4")
 
+# To reset footnotes do
+set_footnotes(NULL)
+
 get_footnotes()
 
+# Set and get used threads globally
 set_threads(8)
 
 get_threads()

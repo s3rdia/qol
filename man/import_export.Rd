@@ -163,5 +163,5 @@ Functions that can export with style: \code{\link[=frequencies]{frequencies()}},
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.
 
-Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_variable_labels]{set_variable_labels()}}, \code{\link[=set_stat_labels]{set_stat_labels()}}.
+Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_labels]{set_labels()}}.
 }

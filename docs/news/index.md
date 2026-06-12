@@ -14,6 +14,15 @@
 - [`retain_stat()`](https://s3rdia.github.io/qol/reference/retain.md):
   `retain_sum` got a new name because it can now generate any statistic
   not only sums with the new `statistics` parameter. (11.06.2026)
+- [`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
+  [`get_labels()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  The global setters and getters for variable and statistic labels
+  [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+  [`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html)
+  and
+  [`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+  [`get_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html)
+  have been put together in one function. (12.06.2026)
 
 #### New functionality
 
@@ -106,6 +115,10 @@
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Added some more messages informing the user about the formatting
   timings. (11.06.2026)
+- Global options documentation received some more comments. Additionally
+  the functions themselves received some messages stating whether
+  options have been set. Also the getters which retrieve a list have a
+  nicer output. (12.06.2026)
 
 ## qol 1.3.1
 
@@ -977,9 +990,10 @@ CRAN release on 13.01.2026
   - [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md):
     A simple, more readable wrapper for setting file parameter to NULL.
     (07.01.2026)
-  - [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-    [`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-    `set_statistic_labels()`, `get_statistic_labels()`,
+  - [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+    [`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+    [`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+    [`get_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
     [`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
     [`get_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
     [`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md),

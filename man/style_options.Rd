@@ -3,36 +3,30 @@
 \name{style_options}
 \alias{style_options}
 \alias{set_style_options}
-\alias{reset_style_options}
 \alias{get_style_options}
+\alias{reset_style_options}
 \alias{close_file}
-\alias{set_variable_labels}
-\alias{get_variable_labels}
-\alias{set_stat_labels}
-\alias{get_stat_labels}
+\alias{set_labels}
+\alias{get_labels}
 \alias{reset_qol_options}
 \title{Set Global Styling Options For Excel Workbooks}
 \usage{
 set_style_options(..., save_file = NULL)
 
-reset_style_options()
-
 get_style_options(from_file = NULL)
+
+reset_style_options()
 
 close_file()
 
-set_variable_labels(...)
+set_labels(...)
 
-get_variable_labels()
-
-set_stat_labels(...)
-
-get_stat_labels()
+get_labels()
 
 reset_qol_options()
 }
 \arguments{
-\item{...}{\code{\link[=set_stat_labels]{set_stat_labels()}}: Put in the statistics and their respective labels.}
+\item{...}{\code{\link[=set_labels]{set_labels()}}: Put in the variable names and their respective labels.}
 
 \item{save_file}{A full file path to an RDS file in which global style options
 should be stored.}
@@ -43,19 +37,15 @@ are stored.}
 \value{
 \code{\link[=set_style_options]{set_style_options()}}: Returns modified global styling options.
 
-\code{\link[=reset_style_options]{reset_style_options()}}: Returns default global styling options.
-
 \code{\link[=get_style_options]{get_style_options()}}: List of global styling options.
+
+\code{\link[=reset_style_options]{reset_style_options()}}: Returns default global styling options.
 
 \code{\link[=close_file]{close_file()}}: List of global styling options with file = NULL.
 
-\code{\link[=set_variable_labels]{set_variable_labels()}}: List of variable labels.
+\code{\link[=set_labels]{set_labels()}}: List of variable and statistic labels.
 
-\code{\link[=get_variable_labels]{get_variable_labels()}}: List of variable labels.
-
-\code{\link[=set_stat_labels]{set_stat_labels()}}: List of statistic labels.
-
-\code{\link[=get_stat_labels]{get_stat_labels()}}: List of statistic labels.
+\code{\link[=get_labels]{get_labels()}}: List of variable and statistic labels.
 
 \code{\link[=reset_qol_options]{reset_qol_options()}}: Returns default global options.
 }
@@ -67,52 +57,54 @@ Modify Styling options for Excel workbooks. Available parameters can be seen in
 options are used by all tabulation and output functions, which are capable of
 exporting styled outputs.
 
-\code{\link[=reset_style_options]{reset_style_options()}} Resets global style options to the default parameters.
-
 \code{\link[=get_style_options]{get_style_options()}} Prints out the currently set global styling options.
+
+\code{\link[=reset_style_options]{reset_style_options()}} Resets global style options to the default parameters.
+This includes all options set with \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_labels]{set_labels()}},
+\code{\link[=set_titles]{set_titles()}} and \code{\link[=set_footnotes]{set_footnotes()}}.
 
 \code{\link[=close_file]{close_file()}} is a simple, more readable wrapper for setting file parameter to NULL.
 
-\code{\link[=set_variable_labels]{set_variable_labels()}}: Can set variable labels globally so that they don't
+\code{\link[=set_labels]{set_labels()}}: Can set variable and statistic labels globally so that they don't
 have to be provided in every output function separately.
 
-\code{\link[=get_variable_labels]{get_variable_labels()}}: Get the globally stored variable labels.
-
-\code{\link[=set_stat_labels]{set_stat_labels()}}: Can set statistic labels globally so that they don't
-have to be provided in every output function separately.
-
-\code{\link[=get_stat_labels]{get_stat_labels()}}: Get the globally stored statistic labels.
+\code{\link[=get_labels]{get_labels()}}: Get the globally stored variable and statistic labels as a list
+and print the contents to the console.
 
 \code{\link[=reset_qol_options]{reset_qol_options()}} Resets global options to the default parameters.
 }
 \examples{
+# This function can process any parameter from excel_output_style() or
+# number_format_style() and sets the option globally.
 set_style_options(save_path    = "C:/My Projects/",
                   sum_decimals = 8)
 
-reset_style_options()
-
 get_style_options()
 
+# Reset all the style options including variable and statistic labels as well
+# as titles and footnotes.
+reset_style_options()
+
+# Reset the file parameter
 close_file()
 
-set_variable_labels(age_gr = "Group of ages",
-                    status = "Current status")
+# Set variable and statistic labels globally, retrieve and reset them
+set_labels(age_gr = "Group of ages",
+           status = "Current status",
+           pct    = "\%")
 
-get_variable_labels()
+# To reset labels do this
+set_labels(NULL)
 
-set_stat_labels(pct  = "\%",
-                freq = "Count")
+get_labels()
 
-get_stat_labels()
-
+# Reset all globally set options
 reset_qol_options()
 
 }
 \seealso{
 Functions that use global styling options: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
-\code{\link[=crosstabs]{crosstabs()}}.
-
-Functions that also use global variable labels: \code{\link[=export_with_style]{export_with_style()}}.
+\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}.
 
 Functions that use global variable and statistic labels: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
 \code{\link[=crosstabs]{crosstabs()}}.

@@ -47,6 +47,8 @@
 <h4 id="renamed-functions-1-3-2">Renamed functions<a class="anchor" aria-label="anchor" href="#renamed-functions-1-3-2"></a></h4>
 <ul><li>
 <code><a href="../reference/retain.html">retain_stat()</a></code>: <code>retain_sum</code> got a new name because it can now generate any statistic not only sums with the new <code>statistics</code> parameter. (11.06.2026)</li>
+<li>
+<code><a href="../reference/style_options.html">set_labels()</a></code>, <code><a href="../reference/style_options.html">get_labels()</a></code>: The global setters and getters for variable and statistic labels <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">set_variable_labels()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">get_variable_labels()</a></code> and <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">set_stat_labels()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">get_stat_labels()</a></code> have been put together in one function. (12.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-functionality-1-3-2">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-2"></a></h4>
@@ -98,6 +100,7 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Added two new <code>NOTE</code> messages in case <code>pct_value</code> or <code>pct_block</code> is specified in statistics put corresponding parameter isn’t set. In this case the statistic will be removed. (08.06.2026)</li>
 <li>
 <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added some more messages informing the user about the formatting timings. (11.06.2026)</li>
+<li>Global options documentation received some more comments. Additionally the functions themselves received some messages stating whether options have been set. Also the getters which retrieve a list have a nicer output. (12.06.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -581,7 +584,7 @@
 <li>
 <code><a href="../reference/style_options.html">close_file()</a></code>: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)</li>
 <li>
-<code><a href="../reference/style_options.html">set_variable_labels()</a></code>, <code><a href="../reference/style_options.html">get_variable_labels()</a></code>, <code>set_statistic_labels()</code>, <code>get_statistic_labels()</code>, <code><a href="../reference/qol_options.html">set_print()</a></code>, <code><a href="../reference/qol_options.html">get_print()</a></code>, <code><a href="../reference/qol_options.html">set_monitor()</a></code>, <code><a href="../reference/qol_options.html">get_monitor()</a></code>, <code><a href="../reference/qol_options.html">set_na.rm()</a></code>, <code><a href="../reference/qol_options.html">get_na.rm()</a></code>: Additional global setters and getters. (07.01.2026)</li>
+<code><a href="https://s3rdia.github.io/qol/reference/style_options.html">set_variable_labels()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">get_variable_labels()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">set_stat_labels()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/style_options.html">get_stat_labels()</a></code>, <code><a href="../reference/qol_options.html">set_print()</a></code>, <code><a href="../reference/qol_options.html">get_print()</a></code>, <code><a href="../reference/qol_options.html">set_monitor()</a></code>, <code><a href="../reference/qol_options.html">get_monitor()</a></code>, <code><a href="../reference/qol_options.html">set_na.rm()</a></code>, <code><a href="../reference/qol_options.html">get_na.rm()</a></code>: Additional global setters and getters. (07.01.2026)</li>
 <li>
 <code><a href="../reference/qol_options.html">set_output()</a></code>, <code><a href="../reference/qol_options.html">get_output()</a></code>: Additional global setters and getters. (11.01.2026)</li>
 <li>

@@ -20,11 +20,11 @@
 #'
 #' @seealso
 #' Functions that use global styling options: [any_table()], [frequencies()],
-#' [crosstabs()].
-#'
-#' Functions that also use global variable labels: [export_with_style()].
+#' [crosstabs()], [export_with_style()].
 #'
 #' @examples
+#' # This function can process any parameter from excel_output_style() or
+#' # number_format_style() and sets the option globally.
 #' set_style_options(save_path    = "C:/My Projects/",
 #'                   sum_decimals = 8)
 #'
@@ -100,7 +100,7 @@ set_style_options <- function(..., save_file = NULL){
         }
         else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value)) && value != ""){
             print_message("WARNING", "'[style_option]' must be a 6 character <hex code>. Option will be omitted.", style_option = style_option)
-            style_list[[style_option]] <- ""
+            style_list[[style_option]] <- NULL
         }
         else if (!style_option %in% c(number_numerics, number_characters, logicals, numerics, characters, colors)){
             print_message("WARNING", c("'[style_option]' is not a valid style option. See 'excel_output_style()' and 'number_format_style()'",
@@ -120,7 +120,11 @@ set_style_options <- function(..., save_file = NULL){
     }
 
     # Update the internal state
-    .qol_options[["excel_style"]] <- utils::modifyList(.qol_options[["excel_style"]], style_list)
+    if (length(style_list) > 0){
+        .qol_options[["excel_style"]] <- utils::modifyList(.qol_options[["excel_style"]], style_list)
+
+        print_message("NOTE", "Global style options successfully changed.")
+    }
 
     # Save global style options as physical file
     if (!is.null(save_file)){
@@ -140,35 +144,13 @@ set_style_options <- function(..., save_file = NULL){
             }
 
             saveRDS(.qol_options[["excel_style"]], file = save_file)
+
+            print_message("NOTE", "Global style has been saved to: [save_file]",
+                          save_file = save_file)
         }
     }
 
     invisible(.qol_options[["excel_style"]])
-}
-
-
-#' Reset Global Styling Options For Excel Workbooks
-#'
-#' @description
-#' [reset_style_options()] Resets global style options to the default parameters.
-#'
-#' @return
-#' [reset_style_options()]: Returns default global styling options.
-#'
-#' @examples
-#' reset_style_options()
-#'
-#' @rdname style_options
-#'
-#' @export
-reset_style_options <- function(){
-    .qol_options[["excel_style"]] <- excel_output_style()
-    .qol_options[["var_labels"]]  <- list()
-    .qol_options[["stat_labels"]] <- list()
-    .qol_options[["titles"]]     <- c()
-    .qol_options[["footnotes"]]  <- c()
-
-    invisible(.qol_options)
 }
 
 
@@ -190,12 +172,8 @@ reset_style_options <- function(){
 #'
 #' @export
 get_style_options <- function(from_file = NULL){
-    # Just get global options, if no file is specified
-    if (is.null(from_file)){
-        .qol_options[["excel_style"]]
-    }
-    # Otherwise load from path
-    else{
+    # If a saved file is specified, check if it exists and read it in
+    if (!is.null(from_file)){
         if (!file.exists(from_file)){
             print_message("ERROR", "File does not exist: [file]", file = from_file)
         }
@@ -203,9 +181,58 @@ get_style_options <- function(from_file = NULL){
             style_list <- readRDS(file = from_file)
             set_style_options(style_list)
         }
-
-        .qol_options[["excel_style"]]
     }
+
+    # To make the console output more readable the list will be formatted before
+    # outputting it. First expand the number format list inside the excel style
+    # list, to be able to handle all formatting in one go.
+    style_list <- c(.qol_options[["excel_style"]], unlist(.qol_options[["excel_style"]]["number_formats"]))
+    style_list[["number_formats"]] <- NULL
+    style_names <- gsub("\\.", " - ", names(style_list))
+
+    # Add padding to names to make the values display in one column
+    padded_names <- sprintf(paste0("%-", max(nchar(style_names)), "s"), style_names)
+
+    # Join complete lines and print
+    output_vector <- paste0(padded_names, " : ", style_list)
+
+    print_message("NEUTRAL", output_vector)
+
+    # Return style list
+    invisible(.qol_options[["excel_style"]])
+}
+
+
+#' Reset Global Styling Options For Excel Workbooks
+#'
+#' @description
+#' [reset_style_options()] Resets global style options to the default parameters.
+#' This includes all options set with [set_style_options()], [set_labels()],
+#' [set_titles()] and [set_footnotes()].
+#'
+#' @return
+#' [reset_style_options()]: Returns default global styling options.
+#'
+#' @examples
+#' # Reset all the style options including variable and statistic labels as well
+#' # as titles and footnotes.
+#' reset_style_options()
+#'
+#' @rdname style_options
+#'
+#' @export
+reset_style_options <- function(){
+    .qol_options[["excel_style"]] <- excel_output_style()
+    .qol_options[["var_labels"]]  <- list()
+    .qol_options[["stat_labels"]] <- list()
+    .qol_options[["titles"]]      <- c()
+    .qol_options[["footnotes"]]   <- c()
+
+    print_message("NOTE", c("Style options have been reset, this includes:",
+                            "Everything from excel_output_style(), variable and statistic labels,",
+                            "as well as titles and footnotes"))
+
+    invisible(.qol_options)
 }
 
 
@@ -218,12 +245,15 @@ get_style_options <- function(from_file = NULL){
 #' [close_file()]: List of global styling options with file = NULL.
 #'
 #' @examples
+#' # Reset the file parameter
 #' close_file()
 #'
 #' @rdname style_options
 #'
 #' @export
 close_file <- function(){
+    print_message("NOTE", "File '[file]' has been closed.", file = .qol_options[["excel_style"]][["file"]])
+
     .qol_options[["excel_style"]][["file"]] <- NULL
 
     invisible(.qol_options[["excel_style"]][["file"]])
@@ -233,13 +263,13 @@ close_file <- function(){
 #' Set Global Variable Labels
 #'
 #' @description
-#' [set_variable_labels()]: Can set variable labels globally so that they don't
+#' [set_labels()]: Can set variable and statistic labels globally so that they don't
 #' have to be provided in every output function separately.
 #'
-#' @param ... [set_variable_labels()]: Put in the variable names and their respective labels.
+#' @param ... [set_labels()]: Put in the variable names and their respective labels.
 #'
 #' @return
-#' [set_variable_labels()]: List of variable labels.
+#' [set_labels()]: List of variable and statistic labels.
 #'
 #' @seealso
 #' Functions that use global variable and statistic labels: [any_table()], [frequencies()],
@@ -248,13 +278,18 @@ close_file <- function(){
 #' Functions that also use global variable labels: [export_with_style()].
 #'
 #' @examples
-#' set_variable_labels(age_gr = "Group of ages",
-#'                     status = "Current status")
+#' # Set variable and statistic labels globally, retrieve and reset them
+#' set_labels(age_gr = "Group of ages",
+#'            status = "Current status",
+#'            pct    = "%")
+#'
+#' # To reset labels do this
+#' set_labels(NULL)
 #'
 #' @rdname style_options
 #'
 #' @export
-set_variable_labels <- function(...){
+set_labels <- function(...){
     # Translate ... into a list if possible
     label_list <- tryCatch({
         # Force evaluation to see if it exists
@@ -265,100 +300,100 @@ set_variable_labels <- function(...){
     })
 
     if (is.null(label_list)){
-        print_message("ERROR", "Unknown object found. Global style remains unchanged.")
-        return(invisible(.qol_options[["var_labels"]]))
+        .qol_options[["var_labels"]]  <- list()
+        .qol_options[["stat_labels"]] <- list()
+
+        print_message("NOTE", "Global labels have been removed.")
+
+        return(invisible(list("var_labels"  = .qol_options[["var_labels"]],
+                              "stat_labels" = .qol_options[["stat_labels"]])))
+    }
+
+    if (is.null(names(label_list))){
+        print_message("ERROR", "List must have names to set labels. Global labels remain unchanged.")
+
+        return(invisible(list("var_labels"  = .qol_options[["var_labels"]],
+                              "stat_labels" = .qol_options[["stat_labels"]])))
     }
 
     if (length(label_list) == 0){
-        print_message("ERROR", "Empty list found. Global style remains unchanged.")
-        return(invisible(.qol_options[["var_labels"]]))
+        print_message("ERROR", "Empty list found. Global labels remain unchanged.")
+        return(invisible(list("var_labels"  = .qol_options[["var_labels"]],
+                              "stat_labels" = .qol_options[["stat_labels"]])))
     }
 
-    .qol_options[["var_labels"]] <- label_list
+    # Define explicit list of statistic names. Percentile names will be checked
+    # inside the loop on the fly.
+    statistics <- c("sum", "sum_wgt", "freq", "freq_g0", "pct", "mean", "median",
+                    "mode", "min", "max", "sd", "variance", "first", "last", "pn",
+                    "missing")
 
-    invisible(.qol_options[["var_labels"]])
+    # Check which label type is passed in the list and sort it to the according
+    # label list.
+    if (length(.qol_options[["var_labels"]]) == 0){
+        .qol_options[["var_labels"]] <- list()
+    }
+    if (length(.qol_options[["stat_labels"]]) == 0){
+        .qol_options[["stat_labels"]] <- list()
+    }
+
+    for (i in seq_len(length(label_list))){
+        label <- names(label_list)[i]
+
+        # Check if the name is in the explicit list OR matches the pattern p1 to p99
+        is_statistic_label <- (label %in% statistics) || grepl("^p[1-9][0-9]?$", label)
+
+        if (is_statistic_label){
+            .qol_options[["stat_labels"]][[label]] <- label_list[[i]]
+        }
+        else{
+            .qol_options[["var_labels"]][[label]] <- label_list[[i]]
+        }
+    }
+
+    print_message("NOTE", "Labels where succesfully added to global label lists.")
+
+    invisible(list("var_labels"  = .qol_options[["var_labels"]],
+                   "stat_labels" = .qol_options[["stat_labels"]]))
 }
 
 
 #' Get Global Variable Labels
 #'
 #' @description
-#' [get_variable_labels()]: Get the globally stored variable labels.
+#' [get_labels()]: Get the globally stored variable and statistic labels as a list
+#' and print the contents to the console.
 #'
 #' @return
-#' [get_variable_labels()]: List of variable labels.
+#' [get_labels()]: List of variable and statistic labels.
 #'
 #' @examples
-#' get_variable_labels()
+#' get_labels()
 #'
 #' @rdname style_options
 #'
 #' @export
-get_variable_labels <- function(){
-    .qol_options[["var_labels"]]
-}
+get_labels <- function(){
+    # To make the console output more readable the list will be formatted before
+    # outputting it. First expand the number format list inside the excel style
+    # list, to be able to handle all formatting in one go.
+    label_list <- c(.qol_options[["var_labels"]], unlist(.qol_options[["stat_labels"]]))
 
+    if (length(label_list) > 0){
+        label_names <- names(label_list)
 
-#' Set Global Statistic Labels
-#'
-#' @description
-#' [set_stat_labels()]: Can set statistic labels globally so that they don't
-#' have to be provided in every output function separately.
-#'
-#' @param ... [set_stat_labels()]: Put in the statistics and their respective labels.
-#'
-#' @return
-#' [set_stat_labels()]: List of statistic labels.
-#'
-#' @examples
-#' set_stat_labels(pct  = "%",
-#'                 freq = "Count")
-#'
-#' @rdname style_options
-#'
-#' @export
-set_stat_labels <- function(...){
-    # Translate ... into a list if possible
-    statistic_list <- tryCatch({
-        # Force evaluation to see if it exists
-        list(...)
-    }, error = function(e){
-        # Evaluation failed
-        NULL
-    })
+        # Add padding to names to make the values display in one column
+        padded_names <- sprintf(paste0("%-", max(nchar(label_names)), "s"), label_names)
 
-    if (is.null(statistic_list)){
-        print_message("ERROR", "Unknown object found. Global style remains unchanged.")
-        return(invisible(.qol_options[["stat_labels"]]))
+        # Join complete lines and print
+        output_vector <- paste0(padded_names, " : ", label_list)
+
+        print_message("NEUTRAL", output_vector)
     }
 
-    if (length(statistic_list) == 0){
-        print_message("ERROR", "Empty list found. Global style remains unchanged.")
-        return(invisible(.qol_options[["stat_labels"]]))
-    }
-
-    .qol_options[["stat_labels"]] <- statistic_list
-
-    invisible(.qol_options[["stat_labels"]])
-}
-
-
-#' Get Global Statistic Labels
-#'
-#' @description
-#' [get_stat_labels()]: Get the globally stored statistic labels.
-#'
-#' @return
-#' [get_stat_labels()]: List of statistic labels.
-#'
-#' @examples
-#' get_stat_labels()
-#'
-#' @rdname style_options
-#'
-#' @export
-get_stat_labels <- function(){
-    .qol_options[["stat_labels"]]
+    # Return style list
+    invisible(list("var_labels"  = .qol_options[["var_labels"]],
+                   "stat_labels" = .qol_options[["stat_labels"]]))
 }
 
 
@@ -376,6 +411,7 @@ get_stat_labels <- function(){
 #' [set_print()]: Changed global print option.
 #'
 #' @examples
+#' # Set and get the global print option
 #' set_print(FALSE)
 #' set_print(TRUE)
 #'
@@ -403,6 +439,8 @@ set_print <- function(...){
     }
 
     .qol_options[["print"]] <- print_option
+
+    print_message("NOTE", "Global print option is now [option].", option = print_option)
 
     invisible(.qol_options[["print"]])
 }
@@ -439,6 +477,7 @@ get_print <- function(){
 #' [set_monitor()]: Changed global monitor option.
 #'
 #' @examples
+#' # Set and get the global monitor option
 #' set_monitor(TRUE)
 #' set_monitor(FALSE)
 #'
@@ -466,6 +505,8 @@ set_monitor <- function(...){
     }
 
     .qol_options[["monitor"]] <- monitor_option
+
+    print_message("NOTE", "Global monitor option is now [option].", option = monitor_option)
 
     invisible(.qol_options[["monitor"]])
 }
@@ -502,6 +543,7 @@ get_monitor <- function(){
 #' [set_na.rm()]: Changed global na.rm option.
 #'
 #' @examples
+#' # Set and get the global NA removal option
 #' set_na.rm(TRUE)
 #' set_na.rm(FALSE)
 #'
@@ -529,6 +571,8 @@ set_na.rm <- function(...){
     }
 
     .qol_options[["na.rm"]] <- na_option
+
+    print_message("NOTE", "Global NA removal option is now [option].", option = na_option)
 
     invisible(.qol_options[["na.rm"]])
 }
@@ -565,6 +609,7 @@ get_na.rm <- function(){
 #' [set_print_miss()]: Changed global print_miss option.
 #'
 #' @examples
+#' # Set and get the global print missing option
 #' set_print_miss(TRUE)
 #' set_print_miss(FALSE)
 #'
@@ -592,6 +637,8 @@ set_print_miss <- function(...){
     }
 
     .qol_options[["print_miss"]] <- print_miss_option
+
+    print_message("NOTE", "Global print missing option is now [option].", option = print_miss_option)
 
     invisible(.qol_options[["print_miss"]])
 }
@@ -628,6 +675,7 @@ get_print_miss <- function(){
 #' [set_output()]: Changed global output option.
 #'
 #' @examples
+#' # Set and get the global output option
 #' set_output("excel")
 #'
 #' @rdname qol_options
@@ -659,6 +707,8 @@ set_output <- function(...){
     }
 
     .qol_options[["output"]] <- tolower(output_option)
+
+    print_message("NOTE", "Global output option is now [option].", option = .qol_options[["output"]])
 
     invisible(.qol_options[["output"]])
 }
@@ -695,10 +745,14 @@ get_output <- function(){
 #' [set_titles()]: Changed global titles.
 #'
 #' @examples
+#' # Set and get table titles globally
 #' set_titles("This is title number 1 link: https://cran.r-project.org/",
 #'            "This is title number 2 cell: W22",
 #'            "This is title number 3 file: C:/MyFolder/MyFile.docx",
 #'            "This is title number 4")
+#'
+#' # To reset titles do
+#' set_titles(NULL)
 #'
 #' @rdname qol_options
 #'
@@ -715,6 +769,9 @@ set_titles <- function(...){
 
     if (is.null(titles_option)){
         .qol_options[["titles"]] <- c()
+
+        print_message("NOTE", "Global titles have been removed.")
+
         return(invisible(.qol_options[["titles"]]))
     }
 
@@ -729,6 +786,8 @@ set_titles <- function(...){
     }
 
     .qol_options[["titles"]] <- titles_option
+
+    print_message("NOTE", "Global titles have been successfully set.")
 
     invisible(.qol_options[["titles"]])
 }
@@ -749,7 +808,9 @@ set_titles <- function(...){
 #'
 #' @export
 get_titles <- function(){
-    .qol_options[["titles"]]
+    print_message("NEUTRAL", c("", .qol_options[["titles"]], ""))
+
+    invisible(.qol_options[["titles"]])
 }
 
 
@@ -765,10 +826,14 @@ get_titles <- function(){
 #' [set_footnotes()]: Changed global footnotes.
 #'
 #' @examples
+#' # Set and get table footnotes globally
 #' set_footnotes("This is footnote number 1 link: https://cran.r-project.org/",
 #'               "This is footnote number 2 cell: W22",
 #'               "This is footnote number 3 file: C:/MyFolder/MyFile.docx",
 #'               "This is footnote number 4")
+#'
+#' # To reset footnotes do
+#' set_footnotes(NULL)
 #'
 #' @rdname qol_options
 #'
@@ -785,6 +850,9 @@ set_footnotes <- function(...){
 
     if (is.null(footnotes_option)){
         .qol_options[["footnotes"]] <- c()
+
+        print_message("NOTE", "Global footnotes have been removed.")
+
         return(invisible(.qol_options[["footnotes"]]))
     }
 
@@ -799,6 +867,8 @@ set_footnotes <- function(...){
     }
 
     .qol_options[["footnotes"]] <- footnotes_option
+
+    print_message("NOTE", "Global footnotes have been successfully set.")
 
     invisible(.qol_options[["footnotes"]])
 }
@@ -819,7 +889,9 @@ set_footnotes <- function(...){
 #'
 #' @export
 get_footnotes <- function(){
-    .qol_options[["footnotes"]]
+    print_message("NEUTRAL", c("", .qol_options[["footnotes"]], ""))
+
+    invisible(.qol_options[["footnotes"]])
 }
 
 
@@ -835,6 +907,7 @@ get_footnotes <- function(){
 #' [set_threads()]: Changed global number of used threads.
 #'
 #' @examples
+#' # Set and get used threads globally
 #' set_threads(8)
 #'
 #' @rdname qol_options
@@ -866,6 +939,8 @@ set_threads <- function(...){
     }
 
     .qol_options[["threads"]] <- as.integer(threads_option)
+
+    print_message("NOTE", "Global number of used threads is now [option].", option = .qol_options[["threads"]])
 
     invisible(.qol_options[["threads"]])
 }
@@ -899,6 +974,7 @@ get_threads <- function(){
 #' [reset_qol_options()]: Returns default global options.
 #'
 #' @examples
+#' # Reset all globally set options
 #' reset_qol_options()
 #'
 #' @rdname style_options
@@ -916,6 +992,8 @@ reset_qol_options <- function(){
     .qol_options[["titles"]]      <- c()
     .qol_options[["footnotes"]]   <- c()
     .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst(NULL))
+
+    print_message("NOTE", c("All qol package options have been reset."))
 
     invisible(.qol_options)
 }

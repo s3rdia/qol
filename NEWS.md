@@ -7,6 +7,7 @@
 ### Renamed functions
 
 * `retain_stat()`: `retain_sum` got a new name because it can now generate any statistic not only sums with the new `statistics` parameter. (11.06.2026)
+* `set_labels()`, `get_labels()`: The global setters and getters for variable and statistic labels `set_variable_labels()`, `get_variable_labels()` and `set_stat_labels()`, `get_stat_labels()` have been put together in one function. (12.06.2026)
 
 ### New functionality
 
@@ -37,6 +38,7 @@
 * `expand_formats()`: Added a `NOTE`message if the cartesian product produces over 1 million rows. (02.06.2026)
 * `any_table()`: Added two new `NOTE` messages in case `pct_value` or `pct_block` is specified in statistics put corresponding parameter isn't set. In this case the statistic will be removed. (08.06.2026)
 * `export_with_style()`: Added some more messages informing the user about the formatting timings. (11.06.2026)
+* Global options documentation received some more comments. Additionally the functions themselves received some messages stating whether options have been set. Also the getters which retrieve a list have a nicer output. (12.06.2026)
 
 # qol 1.3.1
 
@@ -334,7 +336,7 @@ CRAN release on 13.01.2026
 	* `get_style_options()`: Print the currently set global options. (06.01.2026)
 	* `reset_style_options()`: Set global style options to default values of `excel_output_style()` and `number_format_style()`. (06.01.2026)
 	* `close_file()`: A simple, more readable wrapper for setting file parameter to NULL. (07.01.2026)
-	* `set_variable_labels()`, `get_variable_labels()`, `set_statistic_labels()`, `get_statistic_labels()`, `set_print()`, `get_print()`, `set_monitor()`, `get_monitor()`, `set_na.rm()`, `get_na.rm()`: Additional global setters and getters. (07.01.2026)
+	* `set_variable_labels()`, `get_variable_labels()`, `set_stat_labels()`, `get_stat_labels()`, `set_print()`, `get_print()`, `set_monitor()`, `get_monitor()`, `set_na.rm()`, `get_na.rm()`: Additional global setters and getters. (07.01.2026)
 	* `set_output()`, `get_output()`: Additional global setters and getters. (11.01.2026)
 	* `set_titles()`, `get_titles()`, `set_footnotes()`, `get_footnotes()`: Additional global setters and getters. (11.01.2026)
 * `content_report()`: Collects and prints global and per variable information about the provided data frame. (08.01.2026)

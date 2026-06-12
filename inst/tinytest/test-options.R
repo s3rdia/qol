@@ -2,8 +2,7 @@ set_no_print(TRUE)
 
 reset_style_options()
 default_style_options <- get_style_options()
-default_var_labels    <- get_variable_labels()
-default_stat_labels   <- get_stat_labels()
+default_labels        <- get_labels()
 default_print         <- get_print()
 default_monitor       <- get_monitor()
 default_na            <- get_na.rm()
@@ -67,12 +66,9 @@ expect_equal(new_options[["title_heights"]], 1, info = "Save global style option
 
 
 
-# Get global variable labels
-expect_equal(length(default_var_labels), 0, info = "Get global variable labels")
-
-
-# Get global statistic labels
-expect_equal(length(default_stat_labels), 0, info = "Get global statistic labels")
+# Get global labels
+expect_equal(length(default_labels), 2, info = "Get global labels")
+expect_true(all(c("var_labels", "stat_labels") %in% names(default_labels)), info = "Get global labels")
 
 
 # Get global print option
@@ -88,19 +84,13 @@ expect_equal(default_na, FALSE, info = "Get global na.rm option")
 
 
 # Set global variable labels
-set_variable_labels(var1 = "Variable 1")
+set_labels(var1 = "Variable 1",
+           pct  = "Percent")
 
-new_options <- get_variable_labels()
+new_options <- get_labels()
 
-expect_equal(new_options[["var1"]], "Variable 1", info = "Set global variable labels")
-
-
-# Set global statistic labels
-set_stat_labels(pct = "Percent")
-
-new_options <- get_stat_labels()
-
-expect_equal(new_options[["pct"]], "Percent", info = "Set global statistic labels")
+expect_equal(new_options[["var_labels"]][["var1"]], "Variable 1", info = "Set global labels")
+expect_equal(new_options[["stat_labels"]][["pct"]], "Percent",    info = "Set global labels")
 
 
 # Set global print option
@@ -237,11 +227,10 @@ expect_warning(print_stack_as_messages("WARNING"), "'test' is not a valid style 
 set_style_options()
 expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
 
-set_variable_labels()
-expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
 
-set_stat_labels()
-expect_error(print_stack_as_messages("ERROR"), "Empty list found.", info = "Abort setting global style options on empty list")
+# Abort setting global labels on list without names.
+set_labels(1)
+expect_error(print_stack_as_messages("ERROR"), "List must have names to set labels.", info = "Abort setting global labels on list without names.")
 
 
 # Abort setting global options on empty list

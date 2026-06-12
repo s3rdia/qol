@@ -1733,7 +1733,7 @@ split_up_ranges <- function(range){
 #' Creating a custom table style: [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].
 #'
-#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
+#' Global style options: [set_style_options()], [set_labels()].
 #'
 #' Functions that can handle styles: [frequencies()], [crosstabs()], [any_table()],
 #' [export_with_style()]
@@ -1861,7 +1861,7 @@ excel_output_style <- function(save_path              = NULL,
 #' Creating a custom table style: [excel_output_style()],
 #' [number_format_style()], [modify_number_formats()].
 #'
-#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
+#' Global style options: [set_style_options()], [set_labels()].
 #'
 #' Functions that can handle styles: [frequencies()], [crosstabs()], [any_table()],
 #' [export_with_style()]
@@ -1958,7 +1958,7 @@ modify_output_style <- function(style_to_modify, ...){
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [modify_number_formats()].
 #'
-#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
+#' Global style options: [set_style_options()], [set_labels()].
 #'
 #' Functions that can handle styles: [frequencies()], [crosstabs()], [any_table()],
 #' [export_with_style()]
@@ -2042,7 +2042,7 @@ number_format_style <- function(pct_excel         = "0.0",
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()].
 #'
-#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
+#' Global style options: [set_style_options()], [set_labels()].
 #'
 #' Functions that can handle styles: [frequencies()], [crosstabs()], [any_table()],
 #' [export_with_style()].

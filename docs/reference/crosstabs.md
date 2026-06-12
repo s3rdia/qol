@@ -144,8 +144,7 @@ Creating a custom table style:
 
 Global style options:
 [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
+[`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
 
 Other global options:
 [`set_titles()`](https://s3rdia.github.io/qol/reference/qol_options.md),

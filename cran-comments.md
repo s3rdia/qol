@@ -8,6 +8,7 @@ Last CRAN release was on 16.05.2026.
 ### Renamed functions
 
 * `retain_stat()`: `retain_sum` got a new name because it can now generate any statistic not only sums with the new `statistics` parameter.
+* `set_labels()`, `get_labels()`: The global setters and getters for variable and statistic labels `set_variable_labels()`, `get_variable_labels()` and `set_stat_labels()`, `get_stat_labels()` have been put together in one function.
 
 ### New functionality
 
@@ -38,6 +39,7 @@ Last CRAN release was on 16.05.2026.
 * `expand_formats()`: Added a `NOTE`message if the cartesian product produces over 1 million rows.
 * `any_table()`: Added two new `NOTE` messages in case `pct_value` or `pct_block` is specified in statistics put corresponding parameter isn't set. In this case the statistic will be removed.
 * `export_with_style()`: Added some more messages informing the user about the formatting timings.
+* Global options documentation received some more comments. Additionally the functions themselves received some messages stating whether options have been set. Also the getters which retrieve a list have a nicer output.
 
 
 ## R CMD check results

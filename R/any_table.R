@@ -98,7 +98,7 @@
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()].
 #'
-#' Global style options: [set_style_options()], [set_variable_labels()], [set_stat_labels()].
+#' Global style options: [set_style_options()], [set_labels()].
 #'
 #' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
 #' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].

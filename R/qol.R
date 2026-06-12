@@ -75,11 +75,11 @@
 #'
 #' Error handling: [resolve_intersection()], [part_of_df()], [remove_doubled_values()], [check_weight()]
 #'
-#' Global options: [set_style_options()], [reset_style_options()], [get_style_options()], [close_file()],
-#' [set_variable_labels()], [get_variable_labels()], [set_stat_labels()], [get_stat_labels()],
-#' [set_print()], [get_print()], [set_monitor()], [get_monitor()], [set_na.rm()], [get_na.rm()],
-#' [set_output()], [get_output()], [set_titles()], [get_titles()], [set_footnotes()], [get_footnotes()],
-#' [set_print_miss()], [get_print_miss()], [set_threads()], [get_threads()]
+#' Global options: [set_style_options()], [get_style_options()], [reset_style_options()], [close_file()],
+#' [set_labels()], [get_labels()], [set_print()], [get_print()], [set_monitor()],
+#' [get_monitor()], [set_na.rm()], [get_na.rm()], [set_output()], [get_output()], [set_titles()],
+#' [get_titles()], [set_footnotes()], [get_footnotes()], [set_print_miss()], [get_print_miss()],
+#' [set_threads()], [get_threads()]
 #'
 #' Other: [build_master()], [build_rstheme()], [free_memory()], [qol_news()], [qol_chat()]
 #'

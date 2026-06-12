@@ -4,29 +4,29 @@ excel_output_style() or number_format_style().
 set_style_options() sets the styling options for Excel workbooks globally.These
 options are used by all tabulation and output functions, which are capable of
 exporting styled outputs.
-reset_style_options() Resets global style options to the default parameters.
 get_style_options() Prints out the currently set global styling options.
+reset_style_options() Resets global style options to the default parameters.
+This includes all options set with set_style_options(), set_labels(),
+set_titles() and set_footnotes().
 close_file() is a simple, more readable wrapper for setting file parameter to NULL.
-set_variable_labels(): Can set variable labels globally so that they don't
+set_labels(): Can set variable and statistic labels globally so that they don't
 have to be provided in every output function separately.
-get_variable_labels(): Get the globally stored variable labels.
-set_stat_labels(): Can set statistic labels globally so that they don't
-have to be provided in every output function separately.
-get_stat_labels(): Get the globally stored statistic labels.
+get_labels(): Get the globally stored variable and statistic labels as a list
+and print the contents to the console.
 reset_qol_options() Resets global options to the default parameters."><meta property="og:description" content="Modify Styling options for Excel workbooks. Available parameters can be seen in
 excel_output_style() or number_format_style().
 set_style_options() sets the styling options for Excel workbooks globally.These
 options are used by all tabulation and output functions, which are capable of
 exporting styled outputs.
-reset_style_options() Resets global style options to the default parameters.
 get_style_options() Prints out the currently set global styling options.
+reset_style_options() Resets global style options to the default parameters.
+This includes all options set with set_style_options(), set_labels(),
+set_titles() and set_footnotes().
 close_file() is a simple, more readable wrapper for setting file parameter to NULL.
-set_variable_labels(): Can set variable labels globally so that they don't
+set_labels(): Can set variable and statistic labels globally so that they don't
 have to be provided in every output function separately.
-get_variable_labels(): Get the globally stored variable labels.
-set_stat_labels(): Can set statistic labels globally so that they don't
-have to be provided in every output function separately.
-get_stat_labels(): Get the globally stored statistic labels.
+get_labels(): Get the globally stored variable and statistic labels as a list
+and print the contents to the console.
 reset_qol_options() Resets global options to the default parameters."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -71,15 +71,15 @@ reset_qol_options() Resets global options to the default parameters."><meta prop
 <p><code>set_style_options()</code> sets the styling options for Excel workbooks globally.These
 options are used by all tabulation and output functions, which are capable of
 exporting styled outputs.</p>
-<p><code>reset_style_options()</code> Resets global style options to the default parameters.</p>
 <p><code>get_style_options()</code> Prints out the currently set global styling options.</p>
+<p><code>reset_style_options()</code> Resets global style options to the default parameters.
+This includes all options set with <code>set_style_options()</code>, <code>set_labels()</code>,
+<code><a href="qol_options.html">set_titles()</a></code> and <code><a href="qol_options.html">set_footnotes()</a></code>.</p>
 <p><code>close_file()</code> is a simple, more readable wrapper for setting file parameter to NULL.</p>
-<p><code>set_variable_labels()</code>: Can set variable labels globally so that they don't
+<p><code>set_labels()</code>: Can set variable and statistic labels globally so that they don't
 have to be provided in every output function separately.</p>
-<p><code>get_variable_labels()</code>: Get the globally stored variable labels.</p>
-<p><code>set_stat_labels()</code>: Can set statistic labels globally so that they don't
-have to be provided in every output function separately.</p>
-<p><code>get_stat_labels()</code>: Get the globally stored statistic labels.</p>
+<p><code>get_labels()</code>: Get the globally stored variable and statistic labels as a list
+and print the contents to the console.</p>
 <p><code>reset_qol_options()</code> Resets global options to the default parameters.</p>
     </div>
 
@@ -87,19 +87,15 @@ have to be provided in every output function separately.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_style_options</span><span class="op">(</span><span class="va">...</span>, save_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">reset_style_options</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">get_style_options</span><span class="op">(</span>from_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">reset_style_options</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">close_file</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_variable_labels</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">set_labels</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_variable_labels</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">set_stat_labels</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">get_stat_labels</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">get_labels</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">reset_qol_options</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -109,7 +105,7 @@ have to be provided in every output function separately.</p>
 
 
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p><code>set_stat_labels()</code>: Put in the statistics and their respective labels.</p></dd>
+<dd><p><code>set_labels()</code>: Put in the variable names and their respective labels.</p></dd>
 
 
 <dt id="arg-save-file">save_file<a class="anchor" aria-label="anchor" href="#arg-save-file"></a></dt>
@@ -125,20 +121,17 @@ are stored.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>set_style_options()</code>: Returns modified global styling options.</p>
-<p><code>reset_style_options()</code>: Returns default global styling options.</p>
 <p><code>get_style_options()</code>: List of global styling options.</p>
+<p><code>reset_style_options()</code>: Returns default global styling options.</p>
 <p><code>close_file()</code>: List of global styling options with file = NULL.</p>
-<p><code>set_variable_labels()</code>: List of variable labels.</p>
-<p><code>get_variable_labels()</code>: List of variable labels.</p>
-<p><code>set_stat_labels()</code>: List of statistic labels.</p>
-<p><code>get_stat_labels()</code>: List of statistic labels.</p>
+<p><code>set_labels()</code>: List of variable and statistic labels.</p>
+<p><code>get_labels()</code>: List of variable and statistic labels.</p>
 <p><code>reset_qol_options()</code>: Returns default global options.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Functions that use global styling options: <code><a href="any_table.html">any_table()</a></code>, <code><a href="frequencies.html">frequencies()</a></code>,
-<code><a href="crosstabs.html">crosstabs()</a></code>.</p>
-<p>Functions that also use global variable labels: <code><a href="export_with_style.html">export_with_style()</a></code>.</p>
+<code><a href="crosstabs.html">crosstabs()</a></code>, <code><a href="export_with_style.html">export_with_style()</a></code>.</p>
 <p>Functions that use global variable and statistic labels: <code><a href="any_table.html">any_table()</a></code>, <code><a href="frequencies.html">frequencies()</a></code>,
 <code><a href="crosstabs.html">crosstabs()</a></code>.</p>
 <p>Functions that also use global variable labels: <code><a href="export_with_style.html">export_with_style()</a></code>.</p></div>
@@ -146,25 +139,31 @@ are stored.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_style_options</span><span class="op">(</span>save_path    <span class="op">=</span> <span class="st">"C:/My Projects/"</span>,</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># This function can process any parameter from excel_output_style() or</span></span>
+<span><span class="co"># number_format_style() and sets the option globally.</span></span>
+<span><span class="fu">set_style_options</span><span class="op">(</span>save_path    <span class="op">=</span> <span class="st">"C:/My Projects/"</span>,</span>
 <span>                  sum_decimals <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">reset_style_options</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_style_options</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Reset all the style options including variable and statistic labels as well</span></span>
+<span><span class="co"># as titles and footnotes.</span></span>
+<span><span class="fu">reset_style_options</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Reset the file parameter</span></span>
 <span><span class="fu">close_file</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_variable_labels</span><span class="op">(</span>age_gr <span class="op">=</span> <span class="st">"Group of ages"</span>,</span>
-<span>                    status <span class="op">=</span> <span class="st">"Current status"</span><span class="op">)</span></span>
+<span><span class="co"># Set variable and statistic labels globally, retrieve and reset them</span></span>
+<span><span class="fu">set_labels</span><span class="op">(</span>age_gr <span class="op">=</span> <span class="st">"Group of ages"</span>,</span>
+<span>           status <span class="op">=</span> <span class="st">"Current status"</span>,</span>
+<span>           pct    <span class="op">=</span> <span class="st">"%"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_variable_labels</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># To reset labels do this</span></span>
+<span><span class="fu">set_labels</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_stat_labels</span><span class="op">(</span>pct  <span class="op">=</span> <span class="st">"%"</span>,</span>
-<span>                freq <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span></span>
+<span><span class="fu">get_labels</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_stat_labels</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
+<span><span class="co"># Reset all globally set options</span></span>
 <span><span class="fu">reset_qol_options</span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>

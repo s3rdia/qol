@@ -201,8 +201,7 @@ Creating a custom table style:
 
 Global style options:
 [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
+[`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
 
 Functions that can handle styles:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),

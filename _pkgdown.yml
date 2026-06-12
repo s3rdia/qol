@@ -163,10 +163,8 @@ reference:
   - reset_style_options
   - get_style_options
   - close_file
-  - set_variable_labels
-  - get_variable_labels
-  - set_stat_labels
-  - get_stat_labels
+  - set_labels
+  - get_labels
   - set_print
   - get_print
   - set_monitor

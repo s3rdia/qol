@@ -164,13 +164,11 @@ Error handling:
 
 Global options:
 [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`reset_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
 [`get_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
+[`reset_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
 [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
-[`get_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
+[`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
+[`get_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
 [`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`get_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md),
