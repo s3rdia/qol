@@ -152,9 +152,7 @@ if. <- function(data_frame, condition, ...){
 
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
-    used_variables <- unique(c(all.vars(condition), # Get all variables from the condition
-                               names(assignments), # Get all variables to which a value should be assigned
-                               unlist(lapply(assignments, all.names)))) # Get all assigned variables
+    used_variables <- unique(all.vars(condition)) # Get all assigned variables
 
     # Get the original contents of vectors if there are any and put them in a list.
     # List names are the symbols names from above and the elements hold the actual contents.
@@ -172,78 +170,70 @@ if. <- function(data_frame, condition, ...){
     condition_list <- list()
 
     if (length(assignments) > 0){
-        for (entry in seq_along(assignments)){
-            variable    <- names(assignments)[[entry]]
-            calculation <- assignments[[variable]]
-            calc_text   <- deparse(calculation)
+        # If a vector was passed in the condition or the assignments, then evaluate
+        # the if statement as a do over loop. Meaning for each vector the same elements
+        # are used simultaneously one after another.
+        list_entry_lengths <- lengths(content_list)
 
-            # If no vector was passed in the condition or the assignments, then evaluate
-            # as normal.
-            if (!any(used_variables %in% names(content_list))){
-                condition <- translate_condition(condition)
-                condition <- eval(condition, envir = data_frame, enclos = parent_env)
+        if (length(list_entry_lengths) > 0 && length(collapse::funique(list_entry_lengths)) != 1){
+            print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
+									 "equal number of elements. Evaluation will be aborted."))
+            return(invisible(data_frame))
+        }
 
-                # Check whether there are additional conditions active via do_if
-                full_condition <- data_frame |> combined_condition(condition)
+        if (length(list_entry_lengths) == 0){
+            condition <- translate_condition(condition)
+            condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
-                # Add to call list
-                condition_list <- c(condition_list, list(full_condition))
-            }
-            # If a vector was passed in the condition or the assignments, then evaluate
-            # the if statement as a do over loop. Meaning for each vector the same elements
-            # are used simultaneously one after another.
-            else{
-                list_entry_lengths <- lengths(content_list)
+            # Check whether there are additional conditions active via do_if
+            full_condition <- data_frame |> combined_condition(condition)
 
-                if (length(collapse::funique(list_entry_lengths)) != 1){
-                    print_message("ERROR", c("Passed vectors are of unequal lengths. All vectors must have an",
-											 "equal number of elements. Evaluation will be aborted."))
-                    return(invisible(data_frame))
-                }
+            # Add to call list
+            condition_list <- list(full_condition)
+        }
+        else{
+            # Do over loop per element
+            for (element in seq_len(list_entry_lengths[1])){
+                # Get the respective first elements as symbols in a new list
+                replace_list <- lapply(content_list, function(vector){
+                    if (is.numeric(vector) || is.logical(vector)){
+                        expression <- vector[element]
+                    }
+                    else{
+                        # Check if vector element is part of the data frame to determine
+                        # whether it is a variable or a character expression. Convert
+                        # it accordingly.
+                        expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
 
-                # Do over loop per element
-                for (element in seq_len(list_entry_lengths[1])){
-                    # Get the respective first elements as symbols in a new list
-                    replace_list <- lapply(content_list, function(vector){
-                            if (is.numeric(vector) || is.logical(vector)){
-                                expression <- vector[element]
-                            }
-                            else{
-                                # Check if vector element is part of the data frame to determine
-                                # whether it is a variable or a character expression. Convert
-                                # it accordingly.
-                                expression <- data_frame |> part_of_df(vector[element], check_only = TRUE)
+                        if (is.list(expression)){
+                            expression <- as.character(vector[element])
+                        }
+                        else{
+                            expression <- as.name(vector[element])
+                        }
+                    }
 
-                                if (is.list(expression)){
-                                    expression <- as.character(vector[element])
-                                }
-                                else{
-                                    expression <- as.name(vector[element])
-                                }
-                            }
+                    # Check if there are colons as placeholders. If this is the
+                    # case, convert these expressions to character so that they
+                    # can be evaluated correctly later on.
+                    number_of_colons <- nchar(gsub("[^:]", "", as.character(expression)))
 
-                            # Check if there are colons as placeholders. If this is the
-                            # case, convert these expressions to character so that they
-                            # can be evaluated correctly later on.
-                            number_of_colons <- nchar(gsub("[^:]", "", as.character(expression)))
+                    if (number_of_colons > 0){
+                        as.character(expression)
+                    }
+                    else{
+                        expression
+                    }
+                })
 
-                            if (number_of_colons > 0){
-                                as.character(expression)
-                            }
-                            else{
-                                expression
-                            }
-                        })
+                # Insert the current variables into the condition
+                current_condition <- do.call(substitute, list(condition, replace_list))
+                current_condition <- translate_condition(current_condition)
+                condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
-                    # Insert the current variables into the condition
-                    current_condition <- do.call(substitute, list(condition, replace_list))
-                    current_condition <- translate_condition(current_condition)
-                    condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
-
-                    # Check whether there are additional conditions active via do_if and
-                    # add to call list
-                    condition_list[[element]] <- data_frame |> combined_condition(condition_list[[element]])
-                }
+                # Check whether there are additional conditions active via do_if and
+                # add to call list
+                condition_list[[element]] <- data_frame |> combined_condition(condition_list[[element]])
             }
         }
     }
@@ -398,9 +388,9 @@ if. <- function(data_frame, condition, ...){
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
     if (!flag_filter){
-        data_frame <- data_frame |> compute.(..., .if_condition   = condition_list,
-                                                 .if_parent_frame = parent_env,
-                                                 .if_suppressed   = TRUE)
+        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
+                                                  .if_parent_frame = parent_env,
+                                                  .if_suppressed   = TRUE)
     }
 
     print_closing()
@@ -456,6 +446,12 @@ else_if. <- function(data_frame, condition, ...){
             variable    <- names(assignments)[[entry]]
             calculation <- assignments[[variable]]
             calc_text   <- deparse(calculation)
+
+            # Get used variables especially for this condition in combination mit
+            # assigned variables.
+            used_variables <- unique(c(all.vars(condition), # Get all variables from the condition
+                                       variable, # Get all variables to which a value should be assigned
+                                       unlist(lapply(calculation, all.names)))) # Get all assigned variables
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
@@ -556,8 +552,8 @@ else_if. <- function(data_frame, condition, ...){
 
         # Evaluate calculations conditionally. Making use of hidden parameters.
         data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                                 .if_parent_frame = parent_env,
-                                                 .if_suppressed   = TRUE)
+                                                  .if_parent_frame = parent_env,
+                                                  .if_suppressed   = TRUE)
     }
     else{
         print_message("WARNING", "No assignments found. If you want to filter observations use if.() instead.")
@@ -605,6 +601,11 @@ else. <- function(data_frame, ...){
             variable    <- names(assignments)[[entry]]
             calculation <- assignments[[variable]]
             calc_text   <- deparse(calculation)
+
+            # Get used variables especially for this condition in combination mit
+            # assigned variables.
+            used_variables <- unique(c(variable, # Get all variables to which a value should be assigned
+                                       unlist(lapply(calculation, all.names)))) # Get all assigned variables
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
@@ -697,8 +698,8 @@ else. <- function(data_frame, ...){
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
     data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                             .if_parent_frame = parent_env,
-                                             .if_suppressed   = TRUE)
+                                              .if_parent_frame = parent_env,
+                                              .if_suppressed   = TRUE)
 
     print_closing()
 

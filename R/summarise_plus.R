@@ -1211,7 +1211,7 @@ matrix_summarise <- function(data_frame,
 
     # Do sum separately as in the loop stated
     stat_function <- list_of_statistics[["sum"]]
-    sum_result <- stat_function(value_matrix, w = weight, g = grouping)
+    sum_result    <- stat_function(value_matrix, w = weight, g = grouping)
 
     # Restore grouping variables from combined matrix row names (format a.b.c.d)
     # by splitting them up and transposing them back to columns. Also restore

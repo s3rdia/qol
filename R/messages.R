@@ -88,7 +88,7 @@ print_message <- function(type,
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token()
+    current_execution_token <- get_execution_token(depth)
 
     # In case it is the first starting message in the current run or if the stack
     # has a not suppressed end not. Meaning a function or pipe operation has finished.
@@ -491,7 +491,7 @@ print_start_message <- function(current_time = Sys.time(),
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token()
+    current_execution_token <- get_execution_token(depth)
 
     # Don't print starting message, if messages are suppressed
     if (!always_print && is_message_suppressed()){
@@ -610,7 +610,7 @@ print_closing <- function(time_threshold = 2,
         # have a new token) or we keep the current stack (in case of multiple functions
         # running as a block)
         current_session_token   <- format(sys.frame(1))
-        current_execution_token <- get_execution_token()
+        current_execution_token <- get_execution_token(depth)
 
         if (is_stack() && (!identical(current_session_token, .qol_messages[["last_session"]]) ||
                            !identical(current_execution_token, .qol_messages[["last_execution"]]))){
@@ -771,7 +771,7 @@ print_step <- function(type,
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token()
+    current_execution_token <- get_execution_token(depth)
 
     # In case it is the first starting message in the current run or if the stack
     # has a not suppressed end not. Meaning a function or pipe operation has finished.
@@ -1436,34 +1436,43 @@ awaits_time_print <- function(){
 #' @description
 #' Get a unique token for the current code block execution.
 #'
+#' @param depth The current sysframe depth this function is called from.
+#'
 #' @returns
 #' Returns upper function call as string.
 #'
 #' @noRd
-get_execution_token <- function(){
-    # Get the whole call stack
-    calls <- sys.calls()
+get_execution_token <- function(depth){
+    # Only get the execution token, if the nesting is not too deep. Otherwise this
+    # will become very resource heavy.
+    if (depth < 20){
+        # Get the whole call stack
+        calls <- sys.calls()
 
-    # Convert call stack to character vector
-    call_strings <- vapply(calls, function(call){
-        paste(deparse(call), collapse = "")
-    },
-    character(1))
+        # Convert call stack to character vector
+        call_strings <- vapply(calls, function(call){
+            paste(deparse(call), collapse = "")
+        },
+        character(1))
 
-    # Remove internal wrappers that could potentially surround the current function call
-    ignore <- c("withCallingHandlers", "tryCatch", "doTryCatch", "eval", "source",
-                "local", "test_package", "test_single_file", "tinytest", "testthat",
-                "expect_", "rlang", "run_test_dir", "run_test_dir", "run_test_file",
-                "lapply", "FUN")
+        # Remove internal wrappers that could potentially surround the current function call
+        ignore <- c("withCallingHandlers", "tryCatch", "doTryCatch", "eval", "source",
+                    "local", "test_package", "test_single_file", "tinytest", "testthat",
+                    "expect_", "rlang", "run_test_dir", "run_test_dir", "run_test_file",
+                    "lapply", "FUN")
 
-    call_strings <- call_strings[!Reduce(`|`, lapply(ignore, grepl, x = call_strings))]
+        call_strings <- call_strings[!Reduce(`|`, lapply(ignore, grepl, x = call_strings))]
 
-    # If there is nothing left, the function was called from the global environment
-    if (length(call_strings) == 0)
-        return("global")
+        # If there is nothing left, the function was called from the global environment
+        if (length(call_strings) == 0)
+            return("global")
 
-    # Return upper function call
-    call_strings[1]
+        # Return upper function call
+        call_strings[1]
+    }
+    else{
+        NULL
+    }
 }
 
 

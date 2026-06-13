@@ -21,6 +21,10 @@ Last CRAN release was on 16.05.2026.
 * `export_with_style()`: Can now apply a `background_color` to all cells which aren't covered by any other background color parameter.
 * `export_with_style()`: Added a new `column_align` parameter with which every column alignment can be controlled individually.
 
+### Changed functionality
+
+* `compute.()`: Now handles calls sequential, so that a new variable generated within `compute.()` can directly be accesses and used within the same `compute.()` call. 
+
 ### Fixed
 
 * `if.()`, `else_if.()`, `else.()`: Do over loop couldn't handle logical vectors. Additionally character expresions where always converted to symbols, which was fine if variable names were meant, but crashed if actual character values were passed. This is fixed now.
@@ -31,6 +35,12 @@ Last CRAN release was on 16.05.2026.
 * `if.()`, `else_if.()`: If a colon ":" was written somewhere in a character expression inside a condition the function crashed because it was looking for the return value of the special ":" symbol. This is fixed now.
 * `export_with_style()`: Function doesn't crash anymore, if a variable label is provided, but the corresponding variable doesn't exist in the data frame.
 * `dummy_data()`: Variable `number_of_persons` now has the right values. Before it was generated too early.
+* `compute.()`: If do-over-loop behaviour is combined with normal variable generation, then the loop now doesn't occur for the normal variable generation anymore.
+
+### Optimization
+
+* `if.()`: Got rid of an unnecessary loop.
+* `print_step()`, `print_start_message()`, `print_headline()`, `print_closing()`: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy.
 
 ### Additionally
 

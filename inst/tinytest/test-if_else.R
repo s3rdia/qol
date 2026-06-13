@@ -228,18 +228,18 @@ result_df <- dummy_df |> if.(state < 11, sum       = state + age,
                                          var1      = 1,
                                          var2      = "Hello",
                                          variables = values) |>
-                       else_if.(state == 11, sum       = state + age,
-                                             col_sum   = collapse::fsum(age),
-                                             row_sum   = row_calculation("sum", state, age),
-                                             var1      = 1,
-                                             var2      = "Hello",
-                                             variables = values) |>
-                                     else.(sum       = state + age,
-                                           col_sum   = collapse::fsum(age),
-                                           row_sum   = row_calculation("sum", state, age),
-                                           var1      = 1,
-                                           var2      = "Hello",
-                                           variables = values)
+                   else_if.(state == 11, sum       = state + age,
+                                         col_sum   = collapse::fsum(age),
+                                         row_sum   = row_calculation("sum", state, age),
+                                         var1      = 1,
+                                         var2      = "Hello",
+                                         variables = values) |>
+                                   else.(sum       = state + age,
+                                         col_sum   = collapse::fsum(age),
+                                         row_sum   = row_calculation("sum", state, age),
+                                         var1      = 1,
+                                         var2      = "Hello",
+                                         variables = values)
 
 expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)), info = "if. can do all kinds of calculations")
 
@@ -250,35 +250,35 @@ expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_
 # Subset data frame with if.
 test_df <- dummy_df |> if.(sex == 1)
 
-expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if.")
+expect_true(collapse::fnrow(test_df) < collapse::fnrow(dummy_df), info = "Subset data frame with if.")
 expect_true(!2 %in% test_df[["sex"]], info = "Subset data frame with if.")
 
 
 # Subset data frame with if. (unequal)
 test_df <- dummy_df |> if.(sex != 1)
 
-expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if. (unequal)")
+expect_true(collapse::fnrow(test_df) < collapse::fnrow(dummy_df), info = "Subset data frame with if. (unequal)")
 expect_true(!1 %in% test_df[["sex"]], info = "Subset data frame with if. (unequal)")
 
 
 # Subset data frame with if., when only providing single variable
 test_df <- dummy_df |> if.(sex)
 
-expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if., when only providing single variable")
+expect_true(collapse::fnrow(test_df) < collapse::fnrow(dummy_df), info = "Subset data frame with if., when only providing single variable")
 expect_true(!NA %in% test_df[["sex"]], info = "Subset data frame with if., when only providing single variable")
 
 
 # Subset data frame with if., when only providing single variable as character
 test_df <- dummy_df |> if.("sex")
 
-expect_true(nrow(test_df) < nrow(dummy_df), info = "Subset data frame with if., when only providing single variable as character")
+expect_true(collapse::fnrow(test_df) < collapse::fnrow(dummy_df), info = "Subset data frame with if., when only providing single variable as character")
 expect_true(!NA %in% test_df[["sex"]], info = "Subset data frame with if., when only providing single variable as character")
 
 
 # Delete observations with 'delete' keyword
 test_df <- dummy_df |> if.(sex == 1, delete)
 
-expect_true(nrow(test_df) < nrow(dummy_df), info = "Delete observations with 'delete' keyword")
+expect_true(collapse::fnrow(test_df) < collapse::fnrow(dummy_df), info = "Delete observations with 'delete' keyword")
 expect_true(!1 %in% test_df[["sex"]], info = "Delete observations with 'delete' keyword")
 
 

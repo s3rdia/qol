@@ -20,6 +20,10 @@
 * `export_with_style()`: Can now apply a `background_color` to all cells which aren't covered by any other background color parameter. (11.06.2026)
 * `export_with_style()`: Added a new `column_align` parameter with which every column alignment can be controlled individually. (11.06.2026)
 
+### Changed functionality
+
+* `compute.()`: Now handles calls sequential, so that a new variable generated within `compute.()` can directly be accesses and used within the same `compute.()` call. (13.06.2026)
+
 ### Fixed
 
 * `if.()`, `else_if.()`, `else.()`: Do over loop couldn't handle logical vectors. Additionally character expresions where always converted to symbols, which was fine if variable names were meant, but crashed if actual character values were passed. This is fixed now. (01.06.2026)
@@ -30,6 +34,12 @@
 * `if.()`, `else_if.()`: If a colon ":" was written somewhere in a character expression inside a condition the function crashed because it was looking for the return value of the special ":" symbol. This is fixed now. (09.06.2026)
 * `export_with_style()`: Function doesn't crash anymore, if a variable label is provided, but the corresponding variable doesn't exist in the data frame. (11.06.2026)
 * `dummy_data()`: Variable `number_of_persons` now has the right values. Before it was generated too early. (11.06.2026)
+* `compute.()`, `if.()`, `else_if.()`, `else.()`: If do-over-loop behavior is combined with normal variable generation, then the do over loop now doesn't run for the normal variable generation and condition set up anymore. (13.06.2026)
+
+### Optimization
+
+* `if.()`: Got rid of an unnecessary loop. (13.06.2026)
+* `print_step()`, `print_start_message()`, `print_headline()`, `print_closing()`: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy. (13.06.2026)
 
 ### Additionally
 

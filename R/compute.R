@@ -145,15 +145,31 @@ compute. <- function(data_frame,
         return(invisible(data_frame))
     }
 
+    # Check for duplicate variable names
+    duplicate_vars <- duplicated(names(assignments))
+
+    if (any(duplicate_vars)){
+        duplicate_vars <- names(assignments)[duplicate_vars]
+
+        print_message("WARNING", "Duplicate variable name[?s] '{var}' in compute. The last entry will overwrite the others before.",
+                      var = duplicate_vars)
+    }
+
     print_step("MAJOR", "Computing stats")
 
-    # Go trough each assignment and collect the translated calls
-    call_list <- list()
+    variable_names <- names(data_frame)
+    number_of_rows <- collapse::fnrow(data_frame)
 
+    # Go trough each assignment and collect the translated calls
     for (entry in seq_along(assignments)){
         variable    <- names(assignments)[[entry]]
         calculation <- assignments[[variable]]
         calc_text   <- deparse(calculation)
+
+        # Get used variables especially for this condition in combination mit
+        # assigned variables.
+        used_variables <- unique(c(names(assignments)[[entry]], # Get all variables to which a value should be assigned
+                                   unlist(lapply(assignments[[variable]], all.names)))) # Get all assigned variables
 
         # If no vector was passed then evaluate as normal.
         if (!any(used_variables %in% names(content_list))){
@@ -175,7 +191,7 @@ compute. <- function(data_frame,
             # If there already is a variable with the given name pick the existing value as fallback
             flag_var_in_data <- FALSE
 
-            if (original_var %in% names(data_frame)){
+            if (original_var %in% variable_names){
                 flag_var_in_data <- TRUE
 
                 # Check if existing variable type is of same type as assigned value.
@@ -199,39 +215,48 @@ compute. <- function(data_frame,
                 }
             }
 
-            # Merge the given condition as well as the active filter variables together
-            # into one logical vector
-            if (!is.null(if_condition_list)){
-                full_condition <- condition & unlist(if_condition_list[[entry]])
-            }
-            else{
-                full_condition <- condition
-            }
-
             # Values are now conditionally evaluated. Which route is used depends on whether
             # this function is called on its own or via an if statement.
             if (!is.null(if_condition_list)){
-                # When function is called via if statement and variable is in the
-                # data frame, then variable will be created, but fallback value is
-                # not NA, but the values which are already there. This is in case of
-                # else_if.() or else.().
-                if (flag_var_in_data){
-                    conditional_value <- data.table::fifelse(full_condition, value, data_frame[[original_var]])
-                }
-                # When function is called via if statement and variable is not already in the
-                # data frame, then variable will be created.
-                else{
-                    if (length(full_condition) == 1){
-                        conditional_value <- value
+                for (i in seq_len(length(if_condition_list))){
+                    # Merge the given condition as well as the active filter variables together
+                    # into one logical vector
+                    full_condition <- condition & unlist(if_condition_list[[i]])
+
+                    # When function is called via if statement and variable is in the
+                    # data frame, then variable will be created, but fallback value is
+                    # not NA, but the values which are already there. This is in case of
+                    # else_if.() or else.().
+                    if (flag_var_in_data){
+                        conditional_value <- data.table::fifelse(full_condition, value, data_frame[[original_var]])
                     }
+                    # When function is called via if statement and variable is not already in the
+                    # data frame, then variable will be created.
                     else{
-                        conditional_value <- data.table::fifelse(full_condition, value, NA)
+                        if (length(full_condition) == 1){
+                            conditional_value <- value
+                        }
+                        else{
+                            conditional_value <- data.table::fifelse(full_condition, value, NA)
+                        }
+                    }
+
+                    # Only add call, if there are evaluated values. With else_if.() or else.()
+                    # it can happen that no values are generated, in case there is no original
+                    # variable in the data frame.
+                    if (length(conditional_value) > 0){
+                        new_call <- stats::setNames(list(conditional_value), variable)
+
+                        # Add to call list
+                        data_frame <- collapse::ftransform(data_frame, new_call)
                     }
                 }
             }
             # When function is called on its own, variable will be created, ignoring whether
             # it is already in the data frame or not.
             else{
+                full_condition <- condition
+
                 if (length(full_condition) == 1){
                     conditional_value <- value
                 }
@@ -246,21 +271,15 @@ compute. <- function(data_frame,
                         conditional_value <- data.table::fifelse(full_condition, value, NA)
                     }
                 }
-            }
 
-            # Only add call, if there are evaluated values. With else_if.() or else.()
-            # it can happen that no values are generated, in case there is no original
-            # variable in the data frame.
-            if (length(conditional_value) > 0){
-                new_call <- stats::setNames(list(conditional_value), variable)
+                # Only add call, if there are evaluated values. With else_if.() or else.()
+                # it can happen that no values are generated, in case there is no original
+                # variable in the data frame.
+                if (length(conditional_value) > 0){
+                    new_call <- stats::setNames(list(conditional_value), variable)
 
-                if (names(new_call) %in% names(call_list)){
-                    print_message("WARNING", "Duplicate variable name '{var}' in compute. Only the first entry will be used.",
-                                  var = names(new_call))
-                }
-                else{
                     # Add to call list
-                    call_list <- c(call_list, new_call)
+                    data_frame <- collapse::ftransform(data_frame, new_call)
                 }
             }
         }
@@ -270,6 +289,8 @@ compute. <- function(data_frame,
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Vector based")
             #-------------------------------------------------------------------------#
+
+            call_list <- list()
 
             # Do over loop per element
             for (element in seq_len(list_entry_lengths[1])){
@@ -295,7 +316,7 @@ compute. <- function(data_frame,
                 # Evaluate complete assignment first without condition
                 value_var  <- do.call(substitute, list(calculation, replace_list))
                 expression <- get_custom_functions(value_var, parent_env)
-                value      <- eval(expression, envir = data_frame)
+                value      <- suppressMessages(eval(expression, envir = data_frame))
 
                 print_step("MINOR", "{target} = [value]", target = target_variable, value = deparse(value_var))
 
@@ -303,7 +324,6 @@ compute. <- function(data_frame,
                 # vector of values is passed, which has fewer observations than the
                 # data frame, it will be processed element wise.
                 number_of_values <- length(value)
-                number_of_rows   <- collapse::fnrow(data_frame)
 
                 if (number_of_values > 1 && number_of_values < number_of_rows){
                     value <- value[element]
@@ -312,7 +332,7 @@ compute. <- function(data_frame,
                 # If there already is a variable with the given name pick the existing value as fallback
                 flag_var_in_data <- FALSE
 
-                if (target_variable %in% names(data_frame)){
+                if (target_variable %in% variable_names){
                     flag_var_in_data <- TRUE
 
                     # Check if existing variable type is of same type as assigned value.
@@ -336,17 +356,19 @@ compute. <- function(data_frame,
                     }
                 }
 
-                # Check whether there are additional conditions active via do_if
-                if (!is.null(if_condition_list)){
-                    full_condition <- condition & if_condition_list[[element]]
-                }
-                else{
-                    full_condition <- condition
-                }
-
                 # Values are now conditionally evaluated. Which route is used depends on whether
                 # this function is called on its own or via an if statement.
                 if (!is.null(if_condition_list)){
+                    # In case there is a condition without do over behavior always
+                    # take the first element, because there is no other.
+                    if (length(if_condition_list) == 1){
+                        full_condition <- condition & if_condition_list[[1]]
+                    }
+                    # Otherwise move along the list
+                    else{
+                        full_condition <- condition & if_condition_list[[element]]
+                    }
+
                     # When function is called via if statement and variable is in the
                     # data frame, then variable will be created, but fallback value is
                     # not NA, but the values which are already there. This is in case of
@@ -368,6 +390,8 @@ compute. <- function(data_frame,
                 # When function is called on its own, variable will be created, ignoring whether
                 # it is already in the data frame or not.
                 else{
+                    full_condition <- condition
+
                     if (length(full_condition) == 1){
                         conditional_value <- value
                     }
@@ -389,6 +413,31 @@ compute. <- function(data_frame,
                 # Add to call list
                 call_list <- c(call_list, new_call)
             }
+
+            if (length(call_list) > 0){
+                # If there are any duplicate names in list, the call_list has to be cleaned
+                # up first.
+                if (length(call_list) > 1 && any(duplicated(names(call_list)))){
+                    # Group up duplicate list names in their own list
+                    call_list <- split(call_list, names(call_list))
+
+                    # Lists with duplicate variable names will be merged together, because
+                    # it is actually one variable with different expressions. Probably
+                    # generated within a do-over-loop. fcoalesce takes the first value
+                    # per line which is not NA, so first value beats other values, if there
+                    # are any.
+                    call_list <- lapply(call_list, function(element){
+                        if (length(element) > 1) {
+                            data.table::fcoalesce(element)
+                        }
+                        else{
+                            element[[1]]
+                        }
+                    })
+                }
+
+                data_frame <- collapse::ftransform(data_frame, call_list)
+            }
         }
     }
 
@@ -396,31 +445,6 @@ compute. <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Add variables", "Vector based")
     #-------------------------------------------------------------------------#
     print_step("MAJOR", "Add variables to data frame")
-
-    if (length(call_list) > 0){
-        # If there are any duplicate names in list, the call_list has to be cleaned
-        # up first.
-        if (length(call_list) > 1 && any(duplicated(names(call_list)))){
-            # Group up duplicate list names in their own list
-            call_list <- split(call_list, names(call_list))
-
-            # Lists with duplicate variable names will be merged together, because
-            # it is actually one variable with different expressions. Probably
-            # generated within a do-over-loop. fcoalesce takes the first value
-            # per line which is not NA, so first value beats other values, if there
-            # are any.
-            call_list <- lapply(call_list, function(element){
-                if (length(element) > 1) {
-                    data.table::fcoalesce(element)
-                }
-                else{
-                    element[[1]]
-                }
-            })
-        }
-
-        data_frame <- collapse::ftransform(data_frame, call_list)
-    }
 
     if (if_suppressed){
         print_closing(suppress = TRUE)

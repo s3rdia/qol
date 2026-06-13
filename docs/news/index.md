@@ -58,6 +58,15 @@
   Added a new `column_align` parameter with which every column alignment
   can be controlled individually. (11.06.2026)
 
+#### Changed functionality
+
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Now handles calls sequential, so that a new variable generated within
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md) can
+  directly be accesses and used within the same
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
+  call. (13.06.2026)
+
 #### Fixed
 
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
@@ -93,6 +102,25 @@
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   Variable `number_of_persons` now has the right values. Before it was
   generated too early. (11.06.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
+  [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): If
+  do-over-loop behavior is combined with normal variable generation,
+  then the do over loop now doesn’t run for the normal variable
+  generation and condition set up anymore. (13.06.2026)
+
+#### Optimization
+
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): Got rid
+  of an unnecessary loop. (13.06.2026)
+- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md),
+  [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md),
+  [`print_headline()`](https://s3rdia.github.io/qol/reference/messages.md),
+  [`print_closing()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Execution token is now only retrieved, if the print function is called
+  from a low depth. Meaning deeply nested print statements wont retrieve
+  the token because this becomes very resource heavy. (13.06.2026)
 
 #### Additionally
 

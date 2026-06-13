@@ -76,13 +76,23 @@ variables  <- c("NEW_VAR1", "NEW_VAR2")
 values     <- c(1, 2)
 
 result_df <- test_df |> compute.(sum       = var2 + var3,
-                                col_sum   = collapse::fsum(var2),
-                                row_sum   = row_calculation("sum", var2, var3),
-                                var4      = 1,
-                                var5      = "Hello",
-                                variables = values)
+                                 col_sum   = collapse::fsum(var2),
+                                 row_sum   = row_calculation("sum", var2, var3),
+                                 var4      = 1,
+                                 var5      = "Hello",
+                                 variables = values)
 
-expect_true(all(c("sum", "col_sum", "row_sum", "var4", "var5", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)), info = "Compute handles multiple assignments")
+expect_true(all(c("sum", "col_sum", "row_sum", "var4", "var5", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)),
+            info = "Compute handles multiple assignments")
+
+
+# Compute evaluates calls sequentially
+result_df <- test_df |> compute.(sum1 = var2 + var3,
+                                 sum2 = sum1 + var2)
+
+expected <- test_df[["var2"]] * 2 + test_df[["var3"]]
+
+expect_equal(result_df[["sum2"]], expected, info = "Compute evaluates calls sequentially")
 
 ###############################################################################
 # Warning checks
