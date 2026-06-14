@@ -286,6 +286,23 @@ summarise_plus <- function(data_frame,
     # only valid actions are passed down
     requested      <- collapse::funique(unlist(list(statistics)))
     valid_stats    <- requested[requested %in% names(list_of_statistics)]
+
+    # If percentages are selected, make sure sum and sum_wgt are also part of statistics
+    flag_remove_sum     <- FALSE
+    flag_remove_sum_wgt <- FALSE
+
+    if (any(c("pct_group", "pct_total") %in% tolower(requested))){
+        if (!"sum" %in% valid_stats){
+            valid_stats     <- c(valid_stats, "sum")
+            flag_remove_sum <- TRUE
+        }
+
+        if (!"sum_wgt" %in% valid_stats){
+            valid_stats         <- c(valid_stats, "sum_wgt")
+            flag_remove_sum_wgt <- TRUE
+        }
+    }
+
     selected_stats <- list_of_statistics[valid_stats]
 
     # Check if there are any statistics selected which aren't any kind of sums.
@@ -307,7 +324,7 @@ summarise_plus <- function(data_frame,
             statistics     <- "sum"
             requested      <- "sum"
             valid_stats    <- "sum"
-            selected_stats <- "sum"
+            selected_stats <- list_of_statistics[valid_stats]
         }
     }
 
@@ -459,7 +476,7 @@ summarise_plus <- function(data_frame,
             matrix_summarise(values,
                              group_vars,
                              data_frame[[weight_var]],
-                             selected_stats,
+                             valid_stats,
                              list_of_statistics,
                              monitor_df,
                              !flag_shortcut)
@@ -526,7 +543,7 @@ summarise_plus <- function(data_frame,
                 matrix_summarise(values,
                                  group_vars,
                                  result_df[[weight_var]],
-                                 selected_stats,
+                                 valid_stats,
                                  list_of_statistics,
                                  monitor_df,
                                  !flag_shortcut)
@@ -579,7 +596,7 @@ summarise_plus <- function(data_frame,
 
         # Reorder new variables in order of requested statistics
         result_df <- result_df |>
-            handle_sum_drops(statistics) |>
+            handle_sum_drops(flag_remove_sum, flag_remove_sum_wgt) |>
             reorder_summarised_columns(requested)
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -655,7 +672,7 @@ summarise_plus <- function(data_frame,
                 matrix_summarise(values,
                                  NULL,
                                  data_frame[[weight_var]],
-                                 selected_stats,
+                                 valid_stats,
                                  list_of_statistics,
                                  monitor_df,
                                  !flag_shortcut)
@@ -677,13 +694,15 @@ summarise_plus <- function(data_frame,
         # Total percentages
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        # Copy total sums to have them ready for the group data frames. This way
-        # they can be easily joined to compute total percentages faster.
-        new_columns <- paste0(sum_columns, "_qol")
+        if (any(c("pct_group", "pct_total") %in% statistics)){
+            # Copy total sums to have them ready for the group data frames. This way
+            # they can be easily joined to compute total percentages faster.
+            new_columns <- paste0(sum_columns, "_qol")
 
-        total_df_copy <- data.table::copy(total_df) |>
-            keep(sum_columns) |>
-            collapse::frename(stats::setNames(new_columns, sum_columns))
+            total_df_copy <- data.table::copy(total_df) |>
+                keep(sum_columns) |>
+                collapse::frename(stats::setNames(new_columns, sum_columns))
+        }
 
         # Compute percentages
         if ("pct_group" %in% statistics){
@@ -828,7 +847,7 @@ summarise_plus <- function(data_frame,
                             matrix_summarise(values,
                                              combination,
                                              group_df[[weight_var]],
-                                             selected_stats,
+                                             valid_stats,
                                              list_of_statistics,
                                              monitor_df,
                                              !flag_shortcut)
@@ -980,7 +999,7 @@ summarise_plus <- function(data_frame,
         # Reorder new variables in order of requested statistics
         result_df <- result_df |>
             data.table::setcolorder(c(group_vars, "TYPE", "TYPE_NR", "DEPTH")) |>
-            handle_sum_drops(statistics) |>
+            handle_sum_drops(flag_remove_sum, flag_remove_sum_wgt) |>
             reorder_summarised_columns(requested)
 
         # Automatically fuse variables of depth 0 and 1 if only single nested combinations
@@ -1020,6 +1039,7 @@ summarise_plus <- function(data_frame,
 # List of all possible actions
 ###############################################################################
 static_statistics <- list(sum      = collapse::fsum,
+                          sum_wgt  = collapse::fsum,
                           freq     = function(x, w, g) collapse::fnobs(x, g = g),
                           freq_g0  = function(x, w, g) freq_g0_qol(x, group = g),
                           mean     = collapse::fmean,
@@ -1031,7 +1051,7 @@ static_statistics <- list(sum      = collapse::fsum,
                           variance = collapse::fvar,
                           first    = function(x, w, g) collapse::ffirst(x, g = g),
                           last     = function(x, w, g) collapse::flast(x, g = g),
-                          missing  = function(x, w, g) collapse::fsum(is.na(x), g = g))
+                          missing  = function(x, w, g) collapse::fsum(data.table::as.data.table(is.na(x)), g = g))
 
 
 #' Compute Percentile Functions
@@ -1116,41 +1136,6 @@ matrix_summarise <- function(data_frame,
     # Store original types of grouping variables to later reapply them.
     original_types <- lapply(data_frame[group_vars], class)
 
-    # Temporarily rename "." in factor variable levels, if there are any. This is
-    # necessary because later the matrix row names need to be split by ".". If there
-    # are any additional dots in the level names, this leads to errors.
-    for (column in group_vars){
-        if (is.factor(data_frame[[column]])){
-            # Get unique values from the variable and replace "."
-            unique_values   <- collapse::funique(levels(data_frame[[column]]))
-            replaced_values <- gsub(".", "!!!", unique_values, fixed = TRUE)
-
-            # If original and replaced values are identical, the replacing on the larger
-            # vector can be skipped entirely to save time. Only if there was a replacement
-            # the whole vector has to be processed.
-            if (!identical(unique_values, replaced_values)){
-                levels(data_frame[[column]]) <- replaced_values
-            }
-        }
-        else if(is.character(data_frame[[column]])){
-            # Get unique values from the variable and replace "."
-            unique_values   <- collapse::funique(data_frame[[column]])
-            replaced_values <- gsub(".", "!!!", unique_values, fixed = TRUE)
-
-            # If original and replaced values are identical, the replacing on the larger
-            # vector can be skipped entirely to save time. Only if there was a replacement
-            # the whole vector has to be processed.
-            if (!identical(unique_values, replaced_values)){
-                replace_map <- stats::setNames(replaced_values, unique_values)
-
-                data_frame[[column]] <- replace_map[match(data_frame[[column]], unique_values)]
-            }
-        }
-    }
-
-    # Convert the value columns of the data frame into a matrix
-    value_matrix <- collapse::qM(data_frame |> collapse::fselect(values))
-
     # Create group
     if (is.null(group_vars)){
         # In case there is no grouping (e.g. total percentages) create pseudo group
@@ -1163,109 +1148,45 @@ matrix_summarise <- function(data_frame,
         grouping <- collapse::GRP(data_frame, group_vars, sort = flag_shortcut)
     }
 
+    # Extract group and value columns
+    result_df <- data.table::as.data.table(grouping[["groups"]])
+    value_df  <- data_frame |> collapse::fselect(values)
+
     monitor_df <- monitor_df |> monitor_end()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Compute statistics and put results into a list
+    # Compute statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    result_list <- lapply(names(statistics), function(single_stat){
-        # Skip sum and do it separately to keep group text information.
-        if (single_stat != "sum"){
-            #-----------------------------------------------------------------#
-            monitor_df <- monitor_df |> monitor_start(single_stat, paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-            #-----------------------------------------------------------------#
+    for (single_stat in statistics) {
+        #-----------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_start(single_stat, paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
+        #-----------------------------------------------------------------#
 
-            # Get functions one by one from the global list
-            stat_function <- list_of_statistics[[single_stat]]
+        stat_function <- list_of_statistics[[single_stat]]
 
-            # Do computation as matrix and put results back into a data table
-            stat_result <- data.table::as.data.table(
-                stat_function(value_matrix, w = weight, g = grouping))
+        # All functions are handled the same and called from the statistic function
+        # list.
+        if (single_stat != "sum_wgt"){
+            stat_result <- stat_function(value_df, w = weight, g = grouping)
 
-            # Put stat name at the end of variable name
-            if (collapse::fnrow(stat_result) > 0){
-                data.table::setnames(stat_result, paste0(values, "_", single_stat))
-            }
-
-            monitor_df <- monitor_df |> monitor_end()
-
-            list(stat_result, monitor_df[collapse::fnrow(monitor_df), ])
+            result_df[, c(paste0(values, "_", single_stat))] <- stat_result
         }
-    })
+        # With one exception. The sum of weights.
+        else{
+            stat_result <- data.table::as.data.table(weight) |>
+                collapse::fsum(g = grouping) |>
+                collapse::frename("weight" = "sum_wgt")
 
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Put results back together
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Separate results from monitoring
-    monitor_list <- lapply(result_list, `[[`, 2)
-    monitor_df   <- rbind(monitor_df,
-                          do.call(rbind, monitor_list))
-
-    #-------------------------------------------------------------------------#
-    monitor_df  <- monitor_df |> monitor_start("sum", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #-------------------------------------------------------------------------#
-
-    result_list <- lapply(result_list, `[[`, 1)
-
-    # Do sum separately as in the loop stated
-    stat_function <- list_of_statistics[["sum"]]
-    sum_result    <- stat_function(value_matrix, w = weight, g = grouping)
-
-    # Restore grouping variables from combined matrix row names (format a.b.c.d)
-    # by splitting them up and transposing them back to columns. Also restore
-    # their actual variable names.
-    # This has to be done only once because every value and statistic uses the
-    # same grouping.
-    restored_group  <- data.table::as.data.table(
-        data.table::tstrsplit(rownames(sum_result), split = ".", fixed = TRUE))
-
-    # Restore temporarily renamed dots
-    for (column in names(restored_group)){
-        if (is.character(restored_group[[column]])){
-            restored_group[[column]] <- gsub("!!!", ".", restored_group[[column]])
+            result_df <- cbind(result_df, stat_result)
         }
+
+        monitor_df <- monitor_df |> monitor_end()
     }
 
-    if (length(names(restored_group)) > length(group_vars)){
-        print_message("ERROR", "One of the grouping variables is not suited for grouping.")
-        restored_group <- restored_group[-2]
-    }
-
-    data.table::setnames(restored_group, group_vars)
-    restored_group[restored_group == "NA"] <- NA
-
-    # Convert sum matrix to data.table
-    sum_result <- data.table::as.data.table(sum_result)
-    data.table::setnames(sum_result, paste0(values, "_sum"))
-
-    # Do weight of sums separately because this only needs to be computed once
-    # and not per value variable.
-    #-------------------------------------------------------------------------#
-    monitor_df <- monitor_df |> monitor_next("sum_wgt", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #-------------------------------------------------------------------------#
-
-    sum_wgt <- data.table::as.data.table(
-        sum_wgt_qol(values = weight, group = grouping))
-
-    data.table::setnames(sum_wgt, "sum_wgt")
-
-    # Combine grouping variables with results to a full data table
-    #-------------------------------------------------------------------------#
-    monitor_df <- monitor_df |> monitor_next("Combine evaluations", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-    #-------------------------------------------------------------------------#
-
-    if (!"pseudo_group" %in% names(restored_group)){
-        # Normal case with grouping variables
-        result_df <- cbind(restored_group,
-              sum_wgt, sum_result,
-              do.call(cbind, result_list))
-    }
-    else{
-        # Case where there are no grouping variables
-        result_df <- cbind(sum_wgt, sum_result,
-              do.call(cbind, result_list))
+    # Drop pseudo group, if no grouping variables where specified
+    if ("pseudo_group" %in% names(result_df)){
+        result_df <- result_df |> collapse::fselect(-pseudo_group)
     }
 
     # Restore original variable types of numeric variables
@@ -1308,18 +1229,15 @@ matrix_summarise <- function(data_frame,
 #' Returns an adjusted result data frame.
 #'
 #' @noRd
-handle_sum_drops <- function(result_df, statistics){
+handle_sum_drops <- function(result_df, flag_sum, flag_sum_wgt){
     # Handle sum and sum of weights
-    # @Speed: Probably not ideal to always generate sum and sum of weights
-    # and delete it conditionally, but it can be handled with less code this way.
-    # Also sum so so fast even with big data that it shouldn't make much difference.
-    if (!"sum_wgt" %in% statistics){
+    if (flag_sum_wgt){
         result_df <- result_df |> dropp("sum_wgt")
     }
 
     sum_columns <- grep("_sum$", names(result_df), value = TRUE)
 
-    if (!"sum" %in% statistics){
+    if (flag_sum){
         result_df <- result_df |> dropp(sum_columns)
     }
 

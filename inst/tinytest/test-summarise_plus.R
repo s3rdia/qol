@@ -584,7 +584,8 @@ expect_equal(collapse::fnrow(result_df), 1, info = "Summarise possible with no c
 # Summarise uses temporary variable, if no analysis variable is provided
 result_df <- dummy_df |> summarise_plus()
 
-expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000"), info = "Summarise uses temporary variable, if no analysis variable is provided")
+expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000", "1000"),
+             info = "Summarise uses temporary variable, if no analysis variable is provided")
 
 ###############################################################################
 # Format checks

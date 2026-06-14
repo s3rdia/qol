@@ -324,8 +324,7 @@ frequencies <- function(data_frame,
         for (variable in vars_mean){
             # Extract all stats for a single variable and give them uniform names
             var_columns <- grep(variable, names(mean_tab), value = TRUE)
-            var_row <- suppressMessages(mean_tab |>
-                keep("TYPE", "by_vars", var_columns))
+            var_row <- suppressMessages(mean_tab |> keep("TYPE", "by_vars", var_columns))
 
             if (length(by) == 0){
                 names(var_row) <- mean_columns

@@ -13,7 +13,7 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                          "var_pct_row", ".pseudo_preserve", "BY", "by_vars", "VALUE",
                          "first_person", "age", "age_factor", "income", "income_factor",
                          "expenses", "expenses_factor", "file", "result", "TYPE_ORIG",
-                         "total", "value"))
+                         "total", "value", "pseudo_group"))
 
 ###############################################################################
 # Start up

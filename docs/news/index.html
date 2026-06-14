@@ -101,6 +101,8 @@
 <code><a href="../reference/if_else.html">if.()</a></code>: Got rid of an unnecessary loop. (13.06.2026)</li>
 <li>
 <code><a href="../reference/messages.html">print_step()</a></code>, <code><a href="../reference/messages.html">print_start_message()</a></code>, <code><a href="../reference/messages.html">print_headline()</a></code>, <code><a href="../reference/messages.html">print_closing()</a></code>: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy. (13.06.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Tackled a performance nightmare in the core summarisation function. Basically every statistic operation is now up to 10+ times faster than before and uses less than half the memory. This also has an impact on all the tabulation functions. (14.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-2">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-2"></a></h4>

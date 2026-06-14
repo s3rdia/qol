@@ -1201,7 +1201,7 @@ any_table <- function(data_frame,
         # This basically is the same approach as in the shortcut route of summarise_plus.
         current_values <- paste0(values, "_sum")
 
-        result_list <- data_frame |>
+        group_df <- data_frame |>
             matrix_summarise(values,
                              group_vars,
                              data_frame[[weight_var]],
@@ -1210,9 +1210,7 @@ any_table <- function(data_frame,
                              monitor_df,
                              FALSE)
 
-        group_df <- result_list[[1]] |>
-            collapse::fselect(-sum_wgt) |>
-            collapse::frename(stats::setNames(current_values, values))
+        group_df <- group_df[[1]] |> collapse::frename(stats::setNames(current_values, values))
 
         group_df[[".temp_weight"]] <- 1
 
@@ -1256,7 +1254,7 @@ any_table <- function(data_frame,
                                verbose = FALSE,
                                overid  = 2)
         }
-        rm(group, group_tab, group_df, result_list, current_values)
+        rm(group, group_tab, group_df, current_values)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -82,26 +82,6 @@ row_calculation <- function(data_frame,
 ################################################################################
 # Internal functions used in summarise_plus
 ################################################################################
-
-#' Sum of Weights
-#'
-#' @description
-#' If specifying this stat with a provided weight variable, the sum of all weights
-#' is computed.
-#'
-#' @param values The weights to sum up.
-#' @param group Grouping variables.
-#'
-#' @return
-#' Returns the sum of weights.
-#'
-#' @noRd
-sum_wgt_qol <- function(values, group){
-    # Sum up only the weight values
-    collapse::fsum(x = values, g = group)
-}
-
-
 #' Unweighted Frequencies of Values Greater Than Zero
 #'
 #' @description
@@ -250,16 +230,15 @@ compute_group_percentages <- function(original_df,
     if (!fast_pct){
         # It is faster to summarise first without formats
         # and then apply the formats to a much smaller data frame.
-        result_list <- original_df |>
+        super_df <- original_df |>
             matrix_summarise(values,
                              super_group,
                              original_df[[weight]],
-                             NULL,
+                             c("sum", "sum_wgt"),
                              list_of_statistics,
                              monitor_df)
 
-        super_df <- result_list[[1]]
-        rm(result_list)
+        super_df <- super_df[[1]]
 
         super_df <- super_df |>
             apply_format(formats, super_group) |>
@@ -426,16 +405,16 @@ compute_total_percentages <- function(original_df,
 
     # If no fast percentage (means original_df is the full data frame)
     if (!fast_pct){
-        result_list <- super_df |>
+        super_df <- super_df |>
             matrix_summarise(values,
                              NULL,
                              super_df[[weight]],
-                             NULL,
+                             c("sum", "sum_wgt"),
                              list_of_statistics,
                              monitor_df)
 
         # Split results and monitor
-        super_df <- result_list[[1]]
+        super_df <- super_df[[1]]
 
         # Catch new variable names
         values <- super_df |>

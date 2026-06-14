@@ -41,6 +41,7 @@ Last CRAN release was on 16.05.2026.
 
 * `if.()`: Got rid of an unnecessary loop.
 * `print_step()`, `print_start_message()`, `print_headline()`, `print_closing()`: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy.
+* `summarise_plus()`: Tackled a performance nightmare in the core summarisation function. Basically every statistic operation is now up to 10+ times faster than before and uses less than half the memory. This also has an impact on all the tabulation functions.
 
 ### Additionally
 
