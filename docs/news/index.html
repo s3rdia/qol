@@ -94,6 +94,8 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Variable <code>number_of_persons</code> now has the right values. Before it was generated too early. (11.06.2026)</li>
 <li>
 <code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: If do-over-loop behavior is combined with normal variable generation, then the do over loop now doesn’t run for the normal variable generation and condition set up anymore. (13.06.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The statistic <code>freq_g0</code> couldn’t be renamed correctly. It can now be renamed by just doing <code>stat_labels = list("freq" = "Some label")</code>. (15.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-2">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-2"></a></h4>
@@ -103,6 +105,8 @@
 <code><a href="../reference/messages.html">print_step()</a></code>, <code><a href="../reference/messages.html">print_start_message()</a></code>, <code><a href="../reference/messages.html">print_headline()</a></code>, <code><a href="../reference/messages.html">print_closing()</a></code>: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy. (13.06.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Tackled a performance nightmare in the core summarisation function. Basically every statistic operation is now up to 10+ times faster than before and uses less than half the memory. This also has an impact on all the tabulation functions. (14.06.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The cell merging for the column and row headers was handled range by range, meaning a merge per range. Now the ranges to be merged are collected first and then merged in one go. This gives a massive performance gain for larger tables. (15.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-2">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-2"></a></h4>

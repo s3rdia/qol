@@ -109,6 +109,10 @@
   do-over-loop behavior is combined with normal variable generation,
   then the do over loop now doesn’t run for the normal variable
   generation and condition set up anymore. (13.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The statistic `freq_g0` couldn’t be renamed correctly. It can now be
+  renamed by just doing `stat_labels = list("freq" = "Some label")`.
+  (15.06.2026)
 
 #### Optimization
 
@@ -126,6 +130,11 @@
   Basically every statistic operation is now up to 10+ times faster than
   before and uses less than half the memory. This also has an impact on
   all the tabulation functions. (14.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The cell merging for the column and row headers was handled range by
+  range, meaning a merge per range. Now the ranges to be merged are
+  collected first and then merged in one go. This gives a massive
+  performance gain for larger tables. (15.06.2026)
 
 #### Additionally
 

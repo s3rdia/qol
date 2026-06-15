@@ -35,12 +35,14 @@
 * `export_with_style()`: Function doesn't crash anymore, if a variable label is provided, but the corresponding variable doesn't exist in the data frame. (11.06.2026)
 * `dummy_data()`: Variable `number_of_persons` now has the right values. Before it was generated too early. (11.06.2026)
 * `compute.()`, `if.()`, `else_if.()`, `else.()`: If do-over-loop behavior is combined with normal variable generation, then the do over loop now doesn't run for the normal variable generation and condition set up anymore. (13.06.2026)
+* `any_table()`: The statistic `freq_g0` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("freq" = "Some label")`. (15.06.2026)
 
 ### Optimization
 
 * `if.()`: Got rid of an unnecessary loop. (13.06.2026)
 * `print_step()`, `print_start_message()`, `print_headline()`, `print_closing()`: Execution token is now only retrieved, if the print function is called from a low depth. Meaning deeply nested print statements wont retrieve the token because this becomes very resource heavy. (13.06.2026)
 * `summarise_plus()`: Tackled a performance nightmare in the core summarisation function. Basically every statistic operation is now up to 10+ times faster than before and uses less than half the memory. This also has an impact on all the tabulation functions. (14.06.2026)
+* `any_table()`: The cell merging for the column and row headers was handled range by range, meaning a merge per range. Now the ranges to be merged are collected first and then merged in one go. This gives a massive performance gain for larger tables. (15.06.2026)
 
 ### Additionally
 

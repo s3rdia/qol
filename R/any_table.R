@@ -2122,10 +2122,10 @@ format_any_excel <- function(wb,
     names(any_tab) <- gsub("pct_total",  "pct total",  names(any_tab))
     names(any_tab) <- gsub("pct_value",  "pct value",  names(any_tab))
     names(any_tab) <- gsub("pct_block_", "pct block ", names(any_tab))
+    names(any_tab) <- gsub("freq_g0",    "freq g0",    names(any_tab))
 
     # Replace underscore in the following stats to preserve them
     names(any_tab) <- gsub("sum_wgt", "weight_sum.wgt", names(any_tab))
-    names(any_tab) <- gsub("freq_g0", "freq.g0", names(any_tab))
 
     # Build header from variable names
     multi_header <- build_multi_header(names(any_tab), any_header, var_labels, style)
@@ -2176,7 +2176,6 @@ format_any_excel <- function(wb,
 
     # Rename the following stats back to match number formats in style element
     names(any_tab) <- gsub("sum.wgt", "sum_wgt", names(any_tab))
-    names(any_tab) <- gsub("freq.g0", "freq_g0", names(any_tab))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Add table data and format according to style options
@@ -2272,10 +2271,10 @@ format_any_excel <- function(wb,
                             start_row  = any_ranges[["table.row"]] + (style[["subheader_rows"]][[sub_range]] - 1),
                             col_names  = FALSE,
                             na.strings = style[["na_symbol"]])
-
-                wb$merge_cells(dims = pre_subheader_range[[sub_range]])
-                wb$merge_cells(dims = subheader_range[[sub_range]])
             }
+
+            wb$merge_cells(dims = pre_subheader_range)
+            wb$merge_cells(dims = subheader_range)
         }
 
         #---------------------------------------------------------------------#

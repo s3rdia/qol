@@ -287,7 +287,7 @@ handle_col_header_merge <- function(wb, column_header, ranges, style){
                                   values  = ranges[["block_values"]])
     }
     # No merging, every statistic is written over every column. This is identical
-    # behaviour in comparison to SAS.
+    # behavior in comparison to SAS.
     else if (style[["header_stat_merging"]] == "none"){
         row <- length(row_values)
         row_values[[row]] <- list(lengths = rep(1, collapse::fncol(column_header)),
@@ -300,6 +300,7 @@ handle_col_header_merge <- function(wb, column_header, ranges, style){
 
     # Loop through all rows
     number_of_rows <- length(row_values)
+    merge_dims     <- character()
 
     for (row in seq_along(row_values)){
         current_row <- row_values[[row]]
@@ -342,15 +343,19 @@ handle_col_header_merge <- function(wb, column_header, ranges, style){
                     next
                 }
 
-                wb$merge_cells(dims = get_excel_range(from_row    = row_offset + from_row,
-                                                      from_column = col_offset + from_col,
-                                                      to_row      = row_offset + to_row,
-                                                      to_column   = col_offset + to_col))
+                # Collect all the dims that need to be merged in a vector
+                merge_dims <- c(merge_dims, get_excel_range(from_row    = row_offset + from_row,
+                                                            from_column = col_offset + from_col,
+                                                            to_row      = row_offset + to_row,
+                                                            to_column   = col_offset + to_col))
             }
 
             start_col <- start_col + max(1, space)
         }
     }
+
+    # Merge all dims in one go
+    wb$merge_cells(dims = merge_dims)
 
     wb
 }
@@ -387,6 +392,7 @@ handle_row_header_merge <- function(wb, row_header, ranges){
 
     # Loop through all columns
     number_of_columns <- length(col_values)
+    merge_dims <- character()
 
     for (column in seq_along(col_values)){
         current_col <- col_values[[column]]
@@ -429,15 +435,19 @@ handle_row_header_merge <- function(wb, row_header, ranges){
                     next
                 }
 
-                wb$merge_cells(dims = get_excel_range(from_row    = row_offset + from_row,
-                                                      from_column = col_offset + from_col,
-                                                      to_row      = row_offset + to_row,
-                                                      to_column   = col_offset + to_col))
+                # Collect all the dims that need to be merged in a vector
+                merge_dims <- c(merge_dims, get_excel_range(from_row    = row_offset + from_row,
+                                                            from_column = col_offset + from_col,
+                                                            to_row      = row_offset + to_row,
+                                                            to_column   = col_offset + to_col))
             }
 
             start_row <- start_row + space
         }
     }
+
+    # Merge all dims in one go
+    wb$merge_cells(dims = merge_dims)
 
     wb
 }
