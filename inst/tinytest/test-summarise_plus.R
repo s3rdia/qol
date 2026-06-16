@@ -125,9 +125,9 @@ result_df <- test_df |>
                    values     = value,
                    statistics = c("first", "last"))
 
-expect_equal(result_df[["value_first"]][1], 0, info = "Unweighted first and last are correct")
-expect_equal(result_df[["value_last"]][1], 2, info = "Unweighted first and last are correct")
-expect_equal(result_df[["value_first"]][2], 3, info = "Unweighted first and last are correct")
+expect_equal(result_df[["value_first"]][1],  0, info = "Unweighted first and last are correct")
+expect_equal(result_df[["value_last"]][1],   2, info = "Unweighted first and last are correct")
+expect_equal(result_df[["value_first"]][2],  3, info = "Unweighted first and last are correct")
 expect_equal(result_df[["value_last"]][2], 100, info = "Unweighted first and last are correct")
 
 
@@ -136,12 +136,16 @@ result_df <- test_df |>
     collapse::fsubset(!is.na(value)) |>
     summarise_plus(class      = group,
                    values     = value,
-                   statistics = c("p1", "p99"))
+                   statistics = c("p1", "p50", "median", "p99"))
 
-expect_equal(result_df[["value_p1"]][1],  collapse::fquantile(c(0, 1, 2, 2),   probs = 0.01, names = FALSE), info = "Unweighted percentiles are correct")
-expect_equal(result_df[["value_p99"]][1], collapse::fquantile(c(0, 1, 2, 2),   probs = 0.99, names = FALSE), info = "Unweighted percentiles are correct")
-expect_equal(result_df[["value_p1"]][2],  collapse::fquantile(c(3, 4, 4, 100), probs = 0.01, names = FALSE), info = "Unweighted percentiles are correct")
-expect_equal(result_df[["value_p99"]][2], collapse::fquantile(c(3, 4, 4, 100), probs = 0.99, names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p1"]][1],  quantile(c(0, 1, 2, 2),   probs = 0.01, names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][1], quantile(c(0, 1, 2, 2),   probs = 0.5,  names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p99"]][1], quantile(c(0, 1, 2, 2),   probs = 0.99, names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p1"]][2],  quantile(c(3, 4, 4, 100), probs = 0.01, names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][2], quantile(c(3, 4, 4, 100), probs = 0.5,  names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p99"]][2], quantile(c(3, 4, 4, 100), probs = 0.99, names = FALSE), info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][1], result_df[["value_median"]][1], info = "Unweighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][2], result_df[["value_median"]][2], info = "Unweighted percentiles are correct")
 
 
 # Unweighted sd and variance are correct
@@ -321,13 +325,20 @@ result_df <- test_df |>
     collapse::fsubset(!is.na(value)) |>
     summarise_plus(class      = group,
                    values     = value,
-                   statistics = c("p1", "p99"),
+                   statistics = c("p50", "median"),
                    weight     = weight)
 
-expect_equal(result_df[["value_p1"]][1],  collapse::fquantile(c(0, 1, 2, 2),   probs = 0.01, w = c(7, 8, 6, 5), names = FALSE), info = "Weighted percentiles are correct")
-expect_equal(result_df[["value_p99"]][1], collapse::fquantile(c(0, 1, 2, 2),   probs = 0.99, w = c(7, 8, 6, 5), names = FALSE), info = "Weighted percentiles are correct")
-expect_equal(result_df[["value_p1"]][2],  collapse::fquantile(c(3, 4, 4, 100), probs = 0.01, w = c(3, 7, 9, 2), names = FALSE), info = "Weighted percentiles are correct")
-expect_equal(result_df[["value_p99"]][2], collapse::fquantile(c(3, 4, 4, 100), probs = 0.99, w = c(3, 7, 9, 2), names = FALSE), info = "Weighted percentiles are correct")
+test_df2 <- test_df |>
+    collapse::fsubset(!is.na(value))
+
+result_collapse <- collapse::fmedian(x = test_df2[["value"]],
+                                     w = test_df2[["weight"]],
+                                     g = collapse::GRP(test_df2, ~group))
+
+expect_true(result_df[["value_p50"]][1] == result_collapse[1], info = "Weighted percentiles are correct")
+expect_true(result_df[["value_p50"]][2] == result_collapse[2], info = "Weighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][1], result_df[["value_median"]][1], info = "Weighted percentiles are correct")
+expect_equal(result_df[["value_p50"]][2], result_df[["value_median"]][2], info = "Weighted percentiles are correct")
 
 
 # Weighted sd and variance are correct
@@ -857,19 +868,6 @@ expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)),
 expect_identical(result_df1, result_df2, info = "Entering none numeric variable as weight leads to unweighted results")
 
 
-# Percentiles won't be calculated if value variable has NA values
-result_df <- dummy_df |>
-           summarise_plus(class      = c(year, sex),
-                          values     = c(income, probability),
-                          statistics = c("p1", "p99"),
-                          weight     = weight)
-
-expect_warning(print_stack_as_messages("WARNING"), "To calculate percentiles there may be no NAs in the value variables",
-               info = "Percentiles won't be calculated if value variable has NA values")
-
-expect_equal(collapse::fncol(result_df), 5, info = "Percentiles won't be calculated if value variable has NA values")
-
-
 # Percentiles above 100 not allowed
 result_df <- dummy_df |>
            summarise_plus(class      = c(year, sex),
@@ -877,7 +875,7 @@ result_df <- dummy_df |>
                           statistics = c("p101"),
                           weight     = weight)
 
-expect_warning(print_stack_as_messages("WARNING"), "Percentiles are only possible from p0 to p100",
+expect_warning(print_stack_as_messages("WARNING"), "<Statistic> 'p101' is invalid and will be omitted",
                info = "Percentiles above 100 not allowed")
 
 expect_equal(collapse::fncol(result_df), 7, info = "Percentiles above 100 not allowed")

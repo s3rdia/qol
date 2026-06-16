@@ -28,6 +28,16 @@ expect_true("income_new" %in% names(test_df), info = "if. can handle vectors")
 expect_equal(test_df[["income_new"]], test_df[["income"]], info = "if. can handle vectors")
 
 
+# if. doesn't overwrite existing values with NA
+test_df           <- dummy_df
+test_df[["var1"]] <- ifelse(test_df[["first_person"]] == 1, NA, 1)
+test_df[["var2"]] <- 1
+test_df           <- test_df |> if.(var1 == 1, var2 = 2)
+
+expect_true(all(collapse::funique(test_df[["var2"]]) %in% c(1, 2)), info = "if. doesn't overwrite existing values with NA")
+expect_true(!anyNA(test_df[["var2"]]), info = "if. doesn't overwrite existing values with NA")
+
+
 # else_if. doesn't work without if.
 test_df <- dummy_df |>
     else_if.(age >= 18 & age < 65, age_group = "18 to under 65") |>
@@ -166,6 +176,19 @@ expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, 3, NA)), info 
 do_over_df <- do_over_df |> else.(vars2 = 4)
 expect_true(all(collapse::funique(do_over_df[["VAR1"]]) %in% c(1, 3, 4)), info = "if. as do over loop")
 expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, 3, 4)), info = "if. as do over loop")
+
+
+# if. as do over loop doesn't overwrite existing values with NA
+vars   <- c("var2", "var2")
+values <- c(2, 3)
+
+test_df           <- dummy_df
+test_df[["var1"]] <- ifelse(test_df[["first_person"]] == 1, NA, 1)
+test_df[["var2"]] <- 1
+test_df           <- test_df |> if.(var1 == 1, vars = values)
+
+expect_true(all(collapse::funique(test_df[["var2"]]) %in% c(1, 3)), info = "if. as do over loop doesn't overwrite existing values with NA")
+expect_true(!anyNA(test_df[["var2"]]), info = "if. as do over loop doesn't overwrite existing values with NA")
 
 
 # if. as do over loop can handle different values in the same variable

@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.2 - DEVELOPMENT
+## qol 1.3.2
 
 #### New functions
 
@@ -66,6 +66,12 @@
   directly be accesses and used within the same
   [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
   call. (13.06.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): In
+  a do over loop, if different values are assigned to the same variable,
+  then now the last value is assigned instead of the first. (16.06.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Percentiles are now calculated the SAS way, which is Type 2 described
+  in [`quantile()`](https://rdrr.io/r/stats/quantile.html). (16.06.2026)
 
 #### Fixed
 
@@ -113,6 +119,13 @@
   The statistic `freq_g0` couldn’t be renamed correctly. It can now be
   renamed by just doing `stat_labels = list("freq" = "Some label")`.
   (15.06.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): If the
+  variable to which a value should be assigned already existed in the
+  data frame, then the existing values were overwritten with NA, if
+  there were NA values in a variable that was used in the condition.
+  Values are now preserved. (16.06.2026)
 
 #### Optimization
 

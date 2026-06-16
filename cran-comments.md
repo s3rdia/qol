@@ -23,7 +23,9 @@ Last CRAN release was on 16.05.2026.
 
 ### Changed functionality
 
-* `compute.()`: Now handles calls sequential, so that a new variable generated within `compute.()` can directly be accesses and used within the same `compute.()` call. 
+* `compute.()`: Now handles calls sequential, so that a new variable generated within `compute.()` can directly be accesses and used within the same `compute.()` call.
+* `compute.()`: In a do over loop, if different values are assigned to the same variable, then now the last value is assigned instead of the first.
+* `summarise_plus()`: Percentiles are now calculated the SAS way, which is Type 2 described in `quantile()`.
 
 ### Fixed
 
@@ -37,6 +39,7 @@ Last CRAN release was on 16.05.2026.
 * `dummy_data()`: Variable `number_of_persons` now has the right values. Before it was generated too early.
 * `compute.()`: If do-over-loop behaviour is combined with normal variable generation, then the loop now doesn't occur for the normal variable generation anymore.
 * `any_table()`: The statistic `freq_g0` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("freq" = "Some label")`.
+* `if.()`, `else_if.()`, `else.()`: If the variable to which a value should be assigned already existed in the data frame, then the existing values were overwritten with NA, if there were NA values in a variable that was used in the condition. Values are now preserved.
 
 ### Optimization
 

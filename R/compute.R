@@ -418,6 +418,10 @@ compute. <- function(data_frame,
                 # If there are any duplicate names in list, the call_list has to be cleaned
                 # up first.
                 if (length(call_list) > 1 && any(duplicated(names(call_list)))){
+                    # Reverse order of the list, so that the last applyed value
+                    # beats the others.
+                    call_list <- rev(call_list)
+
                     # Group up duplicate list names in their own list
                     call_list <- split(call_list, names(call_list))
 
@@ -425,7 +429,8 @@ compute. <- function(data_frame,
                     # it is actually one variable with different expressions. Probably
                     # generated within a do-over-loop. fcoalesce takes the first value
                     # per line which is not NA, so first value beats other values, if there
-                    # are any.
+                    # are any. Since the list was reversed before it is actually the last
+                    # assigned value that beats the others.
                     call_list <- lapply(call_list, function(element){
                         if (length(element) > 1) {
                             data.table::fcoalesce(element)

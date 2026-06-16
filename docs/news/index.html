@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.2" id="qol-132---development">qol 1.3.2 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-132---development"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.3.2" id="qol-132">qol 1.3.2<a class="anchor" aria-label="anchor" href="#qol-132"></a></h2>
 <div class="section level4">
 <h4 id="new-functions-1-3-2">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-2"></a></h4>
 <ul><li>
@@ -73,6 +73,10 @@
 <h4 id="changed-functionality-1-3-2">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-2"></a></h4>
 <ul><li>
 <code><a href="../reference/compute..html">compute.()</a></code>: Now handles calls sequential, so that a new variable generated within <code><a href="../reference/compute..html">compute.()</a></code> can directly be accesses and used within the same <code><a href="../reference/compute..html">compute.()</a></code> call. (13.06.2026)</li>
+<li>
+<code><a href="../reference/compute..html">compute.()</a></code>: In a do over loop, if different values are assigned to the same variable, then now the last value is assigned instead of the first. (16.06.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Percentiles are now calculated the SAS way, which is Type 2 described in <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile()</a></code>. (16.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-3-2">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-2"></a></h4>
@@ -96,6 +100,8 @@
 <code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: If do-over-loop behavior is combined with normal variable generation, then the do over loop now doesn’t run for the normal variable generation and condition set up anymore. (13.06.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: The statistic <code>freq_g0</code> couldn’t be renamed correctly. It can now be renamed by just doing <code>stat_labels = list("freq" = "Some label")</code>. (15.06.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: If the variable to which a value should be assigned already existed in the data frame, then the existing values were overwritten with NA, if there were NA values in a variable that was used in the condition. Values are now preserved. (16.06.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-2">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-2"></a></h4>

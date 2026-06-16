@@ -184,6 +184,7 @@ if. <- function(data_frame, condition, ...){
         if (length(list_entry_lengths) == 0){
             condition <- translate_condition(condition)
             condition <- eval(condition, envir = data_frame, enclos = parent_env)
+            condition[is.na(condition)] <- FALSE
 
             # Check whether there are additional conditions active via do_if
             full_condition <- data_frame |> combined_condition(condition)
@@ -234,6 +235,7 @@ if. <- function(data_frame, condition, ...){
                 # Check whether there are additional conditions active via do_if and
                 # add to call list
                 condition_list[[element]] <- data_frame |> combined_condition(condition_list[[element]])
+                condition_list[[element]][is.na(condition_list[[element]])] <- FALSE
             }
         }
     }
@@ -333,6 +335,7 @@ if. <- function(data_frame, condition, ...){
 
                 condition <- translate_condition(condition)
                 condition <- eval(condition, envir = data_frame, enclos = parent_env)
+                condition[is.na(condition)] <- FALSE
 
                 # Remember rows to tell the user how many rows have been removed
                 rows_before <- data_frame |> collapse::fnrow()
@@ -458,6 +461,7 @@ else_if. <- function(data_frame, condition, ...){
             if (!any(used_variables %in% names(content_list))){
                 condition <- translate_condition(condition)
                 condition <- eval(condition, envir = data_frame, enclos = parent_env)
+                condition[is.na(condition)] <- FALSE
 
                 # This step is important to make this function work in a nested situation.
                 # Normally variable would be the name of what was last passed as a parameter.
@@ -546,6 +550,7 @@ else_if. <- function(data_frame, condition, ...){
                     # Check whether there are additional conditions active via do_if and
                     # add to call list
                     condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & condition_list[[element]])
+                    condition_list[[element]][is.na(condition_list[[element]])] <- FALSE
                 }
             }
         }
@@ -691,6 +696,7 @@ else. <- function(data_frame, ...){
                     # Check whether there are additional conditions active via do_if and
                     # add to call list
                     condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]))
+                    condition_list[[element]][is.na(condition_list[[element]])] <- FALSE
                 }
             }
         }

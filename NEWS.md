@@ -1,4 +1,4 @@
-# qol 1.3.2 - DEVELOPMENT
+# qol 1.3.2
 
 ### New functions
 
@@ -23,6 +23,8 @@
 ### Changed functionality
 
 * `compute.()`: Now handles calls sequential, so that a new variable generated within `compute.()` can directly be accesses and used within the same `compute.()` call. (13.06.2026)
+* `compute.()`: In a do over loop, if different values are assigned to the same variable, then now the last value is assigned instead of the first. (16.06.2026)
+* `summarise_plus()`: Percentiles are now calculated the SAS way, which is Type 2 described in `quantile()`. (16.06.2026)
 
 ### Fixed
 
@@ -36,6 +38,7 @@
 * `dummy_data()`: Variable `number_of_persons` now has the right values. Before it was generated too early. (11.06.2026)
 * `compute.()`, `if.()`, `else_if.()`, `else.()`: If do-over-loop behavior is combined with normal variable generation, then the do over loop now doesn't run for the normal variable generation and condition set up anymore. (13.06.2026)
 * `any_table()`: The statistic `freq_g0` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("freq" = "Some label")`. (15.06.2026)
+* `if.()`, `else_if.()`, `else.()`: If the variable to which a value should be assigned already existed in the data frame, then the existing values were overwritten with NA, if there were NA values in a variable that was used in the condition. Values are now preserved. (16.06.2026)
 
 ### Optimization
 
