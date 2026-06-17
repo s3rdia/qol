@@ -287,7 +287,7 @@ summarise_plus <- function(data_frame,
     # Get the intersection of the requested statistics to make sure
     # only valid actions are passed down
     requested      <- collapse::funique(unlist(list(statistics)))
-    valid_stats    <- requested[requested %in% names(list_of_statistics) | any(grepl("^p(0|[1-9][0-9]?|100)$", requested))]
+    valid_stats    <- requested[requested %in% names(list_of_statistics)]
 
     # If percentages are selected, make sure sum and sum_wgt are also part of statistics
     flag_remove_sum     <- FALSE
@@ -1070,16 +1070,25 @@ static_statistics <- list(sum      = collapse::fsum,
 get_complete_statistics_list <- function(statistics){
     all_stats <- static_statistics
 
-    # Add one combined percentile function if any percentile was requested
-    percentiles <- statistics[grepl("^p(0|[1-9][0-9]?|100)$", statistics)]
+    for (stat_name in statistics){
+        # Match pattern p<number>
+        if (grepl("^p\\d+$", stat_name)){
+            prob <- as.numeric(sub("^p", "", stat_name)) / 100
 
-    if (length(percentiles) > 0){
-        all_stats[["percentiles"]] <- (function(percentiles){
-            force(percentiles)
-            function(x, w = NULL, g = NULL){
-                percentiles_qol(x, w, g, probs = percentiles)
+            if (prob > 1){
+                print_message("WARNING", "Percentiles are only possible from p0 to p100. [stat_name] will be omitted.",
+                              stat_name = stat_name, always_print = TRUE)
+                next
+            }
+
+            # Define the function
+            all_stats[[stat_name]] <- (function(prob){
+                force(prob)
+                function(x, w = NULL, g = NULL){
+                    percentiles_qol(x, w, g, probs = prob)
                 }
-            })(percentiles)
+            })(prob)
+        }
     }
 
     all_stats
@@ -1151,12 +1160,11 @@ matrix_summarise <- function(data_frame,
     # Compute statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Remove percentages and percentiles from the statistics vector because they
-    # are handled differently than the other single statistics.
-    statistics    <- grep("^pct", statistics, value = TRUE, invert = TRUE)
-    is_percentile <- grepl("^p\\d+$", statistics)
+    # Remove percentages from the statistics vector because they are handled
+    # differently than the other single statistics.
+    statistics <- grep("^pct", statistics, value = TRUE, invert = TRUE)
 
-    for (single_stat in statistics[!is_percentile]){
+    for (single_stat in statistics){
         #-----------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start(single_stat, paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
         #-----------------------------------------------------------------#
@@ -1178,19 +1186,6 @@ matrix_summarise <- function(data_frame,
 
             result_df <- cbind(result_df, stat_result)
         }
-
-        monitor_df <- monitor_df |> monitor_end()
-    }
-
-    # Handle percentiles in one go
-    if (any(is_percentile)){
-        #-----------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_start("percentiles", paste0("Calc(", paste(group_vars, collapse = " + "), ")"))
-        #-----------------------------------------------------------------#
-        stat_function <- list_of_statistics[["percentiles"]]
-
-        stat_result <- stat_function(value_df, w = weight, g = grouping)
-        result_df   <- cbind(result_df, stat_result)
 
         monitor_df <- monitor_df |> monitor_end()
     }

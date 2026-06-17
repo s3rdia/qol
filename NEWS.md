@@ -1,4 +1,12 @@
+# qol 1.3.3 - DEVELOPMENT
+
+### Optimization
+
+* `summarise_plus()`: Brought percentiles up to more speed. (17.06.2026)
+
 # qol 1.3.2
+
+CRAN release on 16.06.2026
 
 ### New functions
 

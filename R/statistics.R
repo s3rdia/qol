@@ -122,59 +122,26 @@ freq_g0_qol <- function(values, group){
 #' @noRd
 percentiles_qol <- function(values, weight, group, probs){
     if (anyNA(values)){
-        print_message("NOTE", c("There are missing values present in the variable[?s] '[vars]'. These will",
-                                "be removed during the percentile calculation."), vars = names(values),
+        print_message("WARNING", "To calculate percentiles there may be no NA in the value variables.",
                       always_print = TRUE)
+        return(NULL)
     }
 
     if (anyNA(weight)){
-        print_message("NOTE", c("There are missing values present in the weight variable. These will",
-                                "be removed during the percentile calculation."),
+        print_message("WARNING", "To calculate percentiles there may be no NA in the weight variable.",
                       always_print = TRUE)
+        return(NULL)
     }
 
     # If weight only consists of one unique value, then the results are unweighted.
-    # In this case set weight to NULL so that a shortcut for the calculation can
-    # be used.
+    # In this case use the collapse method with Type 7.
     if (length(collapse::funique(weight)) == 1){
-        weight <- NULL
+        collapse::BY(values, g = group, collapse::fquantile, w = weight, probs = probs)
     }
-
-    # Capture the percentile names for later and extract the numeric value
-    prob_names <- probs
-    probs      <- as.numeric(sub("p", "", probs)) / 100
-
-    # Split the grouping object
-    split_ids <- collapse::gsplit(seq_len(collapse::fnrow(values)), group)
-
-    # Calculate percentiles individually for each group
-    result_list <- lapply(split_ids, function(id){
-        # Extract the weights which belong to the current group
-        group_weights <- weight[id]
-
-        # Calculate all requested percentiles for every value variable. The result
-        # is converted into a single named vector.
-        result_vector <- unlist(lapply(names(values), function(variable){
-                # Calculate all requested percentiles for the current variable
-                # within the current group.
-                percentiles <- calculate_single_percentiles(values[[variable]][id],
-                                                            group_weights, probs)
-
-                # Rename to final variable names
-                stats::setNames(as.list(percentiles), paste0(variable, "_", prob_names))
-            }),
-
-            # Preserve names while flattening the nested list structure into
-            recursive = FALSE,
-            use.names = TRUE)
-
-        # Convert the named vector into a one-row data.table. Each group contributes
-        # exactly one row to the final result.
-        data.table::as.data.table(result_vector)
-    })
-
-    # Stack all result rows into one final data frame
-    data.table::rbindlist(result_list)
+    # Otherwise the custom function for Type 2, which is not in collapse package.
+    else{
+        collapse::BY(values, g = group, calculate_single_percentiles, w = weight, probs = probs)
+    }
 }
 
 
@@ -182,32 +149,15 @@ percentiles_qol <- function(values, weight, group, probs){
 #' Returns a weighted percentile vector.
 #'
 #' @noRd
-calculate_single_percentiles <- function(variable, weight, probs){
-    # Compute and return unweighted results if now weight ist provided
-    if (is.null(weight)){
-        return(stats::quantile(variable, probs, na.rm = TRUE))
-    }
-
-    # Remove observations where either the value or the weight is missing.
-    # This ensures that both vectors keep the same length and remain aligned.
-    valid_ids <- !is.na(variable) & !is.na(weight)
-
-    variable <- variable[valid_ids]
-    weight   <- weight[valid_ids]
-
-    # If no valid observations remain, return one NA per requested percentile.
-    if (length(variable) == 0){
-        return(rep(NA_real_, length(probs)))
-    }
-
+calculate_single_percentiles <- function(x, probs, w){
     # Sort values in ascending order and apply the same ordering to the weights.
-    sort_order <- order(variable)
+    sort_order <- order(x)
 
-    variable <- variable[sort_order]
-    weight   <- weight[sort_order]
+    x <- x[sort_order]
+    w <- w[sort_order]
 
     # Calculate total weight.
-    sum_of_weights <- collapse::fsum(weight)
+    sum_of_weights <- collapse::fsum(w)
 
     # If all weights sum to zero, weighted percentiles are undefined.
     if (sum_of_weights == 0){
@@ -216,42 +166,36 @@ calculate_single_percentiles <- function(variable, weight, probs){
 
     # Compute the weighted cumulative distribution function (CDF). Values range
     # from 0 to 1.
-    weight_cdf <- collapse::fcumsum(weight) / sum_of_weights
+    weight_cdf <- collapse::fcumsum(w) / sum_of_weights
 
-    # Calculate each requested percentile.
-    vapply(probs, function(prob){
-        # Find the largest index whose cumulative weight is still
-        # less than or equal to the requested percentile.
-        lower <- findInterval(prob, weight_cdf)
+    # Find the largest index whose cumulative weight is still
+    # less than or equal to the requested percentile.
+    lower <- findInterval(probs, weight_cdf)
 
-        # If the percentile lies below the first weighted observation, return the
-        # minimum value.
-        if (lower == 0){
-            return(variable[1])
-        }
+    # If the percentile lies below the first weighted observation, return the
+    # minimum value.
+    if (lower == 0){
+        return(x[1])
+    }
 
-        # If the percentile lies beyond the last weighted observation,
-        # return the maximum value.
-        upper <- lower + 1
+    # If the percentile lies beyond the last weighted observation,
+    # return the maximum value.
+    upper <- lower + 1
 
-        if (upper > length(variable)){
-            return(variable[lower])
-        }
+    if (upper > length(x)){
+        return(x[lower])
+    }
 
-        # If the lower observation is still below the requested percentile,
-        # use the next observation.
-        if (weight_cdf[lower] < prob){
-            variable[upper]
-        }
-        # Otherwise return a weighted average of the two surrounding
-        # observations.
-        else{
-            (weight[lower] * variable[lower] +
-             weight[upper] * variable[upper]) /
-            (weight[lower] + weight[upper])
-        }
-
-    }, numeric(1))
+    # If the lower observation is still below the requested percentile,
+    # use the next observation.
+    if (weight_cdf[lower] < probs){
+        x[upper]
+    }
+    # Otherwise return a weighted average of the two surrounding
+    # observations.
+    else{
+        (w[lower] * x[lower] + w[upper] * x[upper]) / (w[lower] + w[upper])
+    }
 }
 
 
