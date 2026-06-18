@@ -458,17 +458,22 @@ output_interactive_svg <- function(graphic_object,
     if (is.null(by_info)){ print_step("MINOR", "Inject Java Script") }
 
     # Put together the whole java script and inject the custom tooltip design
-    full_java_script <- sprintf(java_script,
-                                visuals[["tooltip_font_color"]],
-                                visuals[["tooltip_background_color"]],
-                                visuals[["tooltip_border_color"]],
-                                visuals[["tooltip_background_opacity"]],
-                                visuals[["tooltip_border_width"]],
-                                visuals[["font"]],
-                                dimensions[["tooltip_font_size"]],
-                                visuals[["tooltip_x_padding"]],
-                                visuals[["tooltip_y_padding"]],
-                                visuals[["tooltip_corner_radius"]])
+    full_java_script <- java_script
+    full_java_script <- gsub("%FONT_COLOR%",    visuals[["tooltip_font_color"]],         full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%FILL_COLOR%",    visuals[["tooltip_background_color"]],   full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%BORDER_COLOR%",  visuals[["tooltip_border_color"]],       full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%FILL_OPACITY%",  visuals[["tooltip_background_opacity"]], full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%BORDER_WIDTH%",  visuals[["tooltip_border_width"]],       full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%FONT_FAMILY%",   visuals[["font"]],                       full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%FONT_SIZE%",     dimensions[["tooltip_font_size"]],       full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%PADDING_X%",     visuals[["tooltip_x_padding"]],          full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%PADDING_Y%",     visuals[["tooltip_y_padding"]],          full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%CORNER_RADIUS%", visuals[["tooltip_corner_radius"]],      full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%GROUP_COLOR%",   visuals[["group_hover_color"]],          full_java_script, fixed = TRUE)
+
+    #-------------------------------------------------------------------------#
+    # Set up segment tooltips
+    #-------------------------------------------------------------------------#
 
     # Set up the tooltip texts and inject them into the SVG string as well as the
     # code to trigger the mouse over tooltips.
@@ -476,13 +481,18 @@ output_interactive_svg <- function(graphic_object,
     category <- c(diagram_info[["individual_groups"]], list(diagram_info[["unique_segments"]]))
     category <- do.call(expand.grid, c(rev(category), stringsAsFactors = FALSE))
     category <- apply(category, 1, function(level){
-            paste(rev(level), collapse = "!!!{b}> ")
-        })
+        level <- rev(level)
+
+        paste0(paste(level[-length(level)], collapse = "!!!{b}: "),
+               "!!!{b}: [ ", toupper(level[length(level)]), " ]")
+    })
+
     value_labels <- rep(diagram_info[["value_labels"]], length(values))
 
+    # Gather the segment tooltips
     for(i in seq_along(values)){
         # Tooltip text to display on mouse over
-        tooltip <- paste0("{b}", category[i], "!!!––––––––––!!!", value_labels[i], ":{b}", " ", values[i], "{/b}")
+        tooltip <- paste0("{b}\u00A0\u00A0", category[i], "!!!––––––––––!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
 
         # Capture only the segments which should receive tooltips.
         # All the ids in the SVG files receive a .1 at the end. Don't know why.
@@ -490,12 +500,57 @@ output_interactive_svg <- function(graphic_object,
 
         # Put together the new part
         new_segment_part <- sprintf(
-            "%s onmousemove=\"showTooltip(evt, '%s'); this.setAttribute('opacity','0.7');\" onmouseout=\"hideTooltip(); this.setAttribute('opacity','1');\"",
-            current_segment_part, tooltip)
+            "%s onmousemove=\"showTooltip(evt, '%s'); this.setAttribute('opacity','%s');\" onmouseout=\"hideTooltip(); this.setAttribute('opacity','1');\"",
+            current_segment_part, tooltip, visuals[["segment_hover_opacity"]])
 
         # Swap out the static for the dynamic part
         svg_string <- sub(current_segment_part, new_segment_part, svg_string, fixed = TRUE)
     }
+
+    #-------------------------------------------------------------------------#
+    # Set up group tooltips
+    #-------------------------------------------------------------------------#
+
+    number_of_groups   <- diagram_info[["number_of_groups"]]
+    number_of_segments <- diagram_info[["number_of_segments"]]
+
+    values   <- matrix(diagram_info[["formatted_values"]], nrow = number_of_groups, byrow = TRUE)
+    category <- do.call(expand.grid, c(rev(diagram_info[["individual_groups"]]), stringsAsFactors = FALSE))
+    category <- apply(category, 1, function(level){
+        level <- rev(level)
+
+        paste0(paste(level[-length(level)], collapse = "!!!{b}: "),
+               "!!!{b}: [ ", toupper(level[length(level)]), " ]")
+    })
+
+    segment_labels <- diagram_info[["unique_segments"]]
+    value_label    <- diagram_info[["value_labels"]]
+
+    # Gather the group tooltips
+    for(i in seq_len(number_of_groups)){
+        segment_lines <- paste0("{legend:", diagram_info[["colors_to_use"]][1:diagram_info[["number_of_segments"]]],"}",
+                                segment_labels, ": {b}", values[i, ], "{/b}")
+
+        # Tooltip text to display on mouse over
+        tooltip <- paste0("{b}\u00A0\u00A0", category[i], "{/b}", "!!!––––––––––", "!!!", value_label, "!!!",
+                          paste(segment_lines, collapse = "!!!"))
+
+        # Capture only the segments which should receive tooltips.
+        # All the ids in the SVG files receive a .1 at the end. Don't know why.
+        current_group_part <- paste0('id="tooltip_group', i, '.1"')
+
+        # Put together the new part
+        new_group_part <- sprintf(
+            "%s opacity=\"0\" onmousemove=\"showTooltip(evt, '%s'); this.setAttribute('opacity','%s');\" onmouseout=\"hideTooltip(); this.setAttribute('opacity','0');\"",
+            current_group_part, tooltip, visuals[["group_hover_opacity"]])
+
+        # Swap out the static for the dynamic part
+        svg_string <- sub(current_group_part, new_group_part, svg_string, fixed = TRUE)
+    }
+
+    #-------------------------------------------------------------------------#
+    # Finalize java script code
+    #-------------------------------------------------------------------------#
 
     # This needs to be added to make the tooltips visible
     tooltip_layer <- '<g id="tooltip" visibility="hidden">
@@ -559,6 +614,7 @@ check_required_package <- function(){
     TRUE
 }
 
+
 #' Check If gridSVG Is Installed
 #'
 #' @description
@@ -574,16 +630,17 @@ java_script <- '<script type="application/ecmascript"><![CDATA[
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 var tooltipOptions = {
-    fontColor:   "%s",
-    fillColor:   "%s",
-    borderColor: "%s",
-    fillOpacity:  %s,
-    borderWidth:  %s,
-    fontFamily:  "%s",
-    fontSize:     %s,
-    paddingX:     %s,
-    paddingY:     %s,
-    cornerRadius: %s
+    fontColor:   "%FONT_COLOR%",
+    fillColor:   "%FILL_COLOR%",
+    borderColor: "%BORDER_COLOR%",
+    fillOpacity:  %FILL_OPACITY%,
+    borderWidth:  %BORDER_WIDTH%,
+    fontFamily:  "%FONT_FAMILY%",
+    fontSize:     %FONT_SIZE%,
+    paddingX:     %PADDING_X%,
+    paddingY:     %PADDING_Y%,
+    cornerRadius: %CORNER_RADIUS%,
+    groupColor:  "%GROUP_COLOR%"
 };
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -622,12 +679,23 @@ function showTooltip(evt, text){
 
     for(var lineIndex = 0; lineIndex < lines.length; lineIndex++){
         var line = lines[lineIndex];
+
+        // Extract legend color if present
+        var legendColor = null;
+        var legendMatch = line.match(/\\{legend:([^}]+)\\}/);
+
+        if(legendMatch){
+            legendColor = legendMatch[1];
+
+            line = line.replace(/\\{legend:[^}]+\\}/, "{sq}");
+        }
+
         var bold = false;
         var xPos = adaptedPaddingX;
 
         // Current line is cut up into pieces which determine whether parts of
         // the text are drawn in bold or in normal font weight.
-        var pieces = line.split(/(\\{b\\}|\\{\\/b\\})/);
+        var pieces = line.split(/(\\{b\\}|\\{\\/b\\}|\\{sq\\})/);
 
         for(var pieceIndex = 0; pieceIndex < pieces.length; pieceIndex++){
             var piece = pieces[pieceIndex];
@@ -640,8 +708,24 @@ function showTooltip(evt, text){
             // Create and append inline sub-text tag (tspan)
             var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
 
-            tspan.textContent = piece;
-            tspan.setAttribute("font-weight", bold ? "bold" : "normal");
+            // Replace the square placeholder and fill it with the corresponding legend color
+            if(piece === "{sq}"){
+                tspan.textContent = "■\u00A0";
+                tspan.setAttribute("fill", legendColor);
+                tspan.style.fill = legendColor; // Doppelte Absicherung für SVG-Rendering
+
+                // Hier machen wir das Quadrat um ca. 30% größer als die normale Schrift
+                tspan.setAttribute("font-size", (adaptedFontSize * 1.3) + "px");
+                tspan.setAttribute("font-weight", "normal");
+            }
+            // Use normal style on standard text
+            else{
+                tspan.textContent = piece;
+                tspan.setAttribute("font-weight", bold ? "bold" : "normal");
+                // Falls das Tooltip standardmäßig eine Textfarbe hat (z. B. weiß oder schwarz), hier erzwingen:
+                tspan.setAttribute("fill", window.getComputedStyle(label).fill || "black");
+            }
+
             tspan.setAttribute("x", xPos);
             tspan.setAttribute("y", adaptedPaddingY + adaptedFontSize + (lineIndex * adaptedFontSize * 1.3));
 
@@ -680,7 +764,14 @@ function showTooltip(evt, text){
 
     // On auto grab the color of the respective segment
     if(tooltipOptions.fillColor === "auto"){
-        tooltipFillColor = window.getComputedStyle(evt.target).fill;
+        // Set fixed color for group tooltips
+        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
+            tooltipFillColor = "#FFFFFF";
+        }
+        // Set the color of the individual segment
+        else{
+            tooltipFillColor = window.getComputedStyle(evt.target).fill;
+        }
     }
     // Otherwise get the user defined color
     else{
@@ -689,7 +780,14 @@ function showTooltip(evt, text){
 
     // On auto dynamically set the color to black or white
     if(tooltipOptions.fontColor === "auto"){
-        tooltipTextColor = getContrastColor(tooltipFillColor);
+        // Set fixed color for group tooltips
+        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
+            tooltipTextColor = "#000000";
+        }
+        // Set the color dynamically depending on the background color
+        else{
+            tooltipTextColor = getContrastColor(tooltipFillColor);
+        }
     }
     // Otherwise get the user defined color
     else{
@@ -698,7 +796,14 @@ function showTooltip(evt, text){
 
     // On auto grab the color of the respective segment
     if(tooltipOptions.borderColor === "auto"){
-        tooltipBorderColor = window.getComputedStyle(evt.target).fill;
+        // Set fixed color for group tooltips
+        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
+            tooltipBorderColor = "#000000";
+        }
+        // Set the color of the individual segment
+        else{
+            tooltipBorderColor = "#000000";
+        }
     }
     // Otherwise get the user defined color
     else{

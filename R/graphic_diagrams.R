@@ -25,9 +25,6 @@ vbars <- function(...){
         return(invisible(grid::nullGrob()))
     }
 
-    # Get the colors to be used
-    theme <- get_theme_colors(arguments[["color_theme"]])
-
     # Set up the whole diagram as well as the inner diagram viewport. Additionally
     # retrieve the calculated measurements.
     diagram_info <- setup_nested_diagram_viewport(arguments)
@@ -38,19 +35,22 @@ vbars <- function(...){
                                                           lwd  = arguments[["dimensions"]][["diagram_outline_thickness"]]),
                                          name = "diagram_background")
 
+    interactive_elements <- setup_interactive_elements(arguments, diagram_info)
+
     # Generate axes
     axes          <- setup_xy_axes(diagram_info, arguments)
     guiding_lines <- setup_guiding_lines(diagram_info, arguments)
     arguments     <- inject_inner_canvas_size(axes, arguments)
 
     # Generate segments
-    segments <- vbar_grob(diagram_info, arguments, theme)
+    segments <- vbar_grob(diagram_info, arguments)
 
 
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object
     list(graphic = grid::gTree(children = grid::gList(diagram_background,
+                                                      interactive_elements,
                                                       guiding_lines,
                                                       segments,
                                                       axes,

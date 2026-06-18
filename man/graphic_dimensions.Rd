@@ -20,7 +20,7 @@ graphic_dimensions(
   other_font_size = 9,
   tooltip_font_size = 12,
   line_height = 1.1,
-  space_between_bars_pct = 0,
+  space_between_bars = 0,
   bar_overlap = 0,
   line_thickness = 1,
   segment_line_thickness = 1,
@@ -65,7 +65,7 @@ graphic_dimensions(
 
 \item{line_height}{The height of a single text line.}
 
-\item{space_between_bars_pct}{The space between adjacent bars.}
+\item{space_between_bars}{The space between adjacent bars.}
 
 \item{bar_overlap}{The factor determines how much bars are overlapping each other.}
 
