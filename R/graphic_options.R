@@ -171,10 +171,13 @@ graphic_visuals <- function(font                        = "Arial",
                             tooltip_background_color    = "auto",
                             tooltip_border_color        = "auto",
                             tooltip_border_width        = 2,
-                            tooltip_background_opacity  = 0.8,
+                            tooltip_background_opacity  = 0.95,
                             tooltip_x_padding           = 8,
                             tooltip_y_padding           = 4,
-                            tooltip_corner_radius       = 2){
+                            tooltip_corner_radius       = 2,
+                            segment_hover_opacity       = 0.85,
+                            group_hover_color           = "#6495ED",
+                            group_hover_opacity         = 0.25){
     as.list(environment())
 }
 

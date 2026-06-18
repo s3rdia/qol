@@ -11,7 +11,7 @@ graphic_fine_tuning(
   values_vjust_90_positive = 1.2,
   values_vjust_90_negative = -0.2,
   value_overlap_factor = 1.35,
-  shrink_segment_width = 0.5,
+  shrink_segment_width = 0.55,
   values_rotation = 90,
   values_hjust = 0.5,
   values_hjust_90 = 0.35,

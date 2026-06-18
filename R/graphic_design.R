@@ -913,6 +913,7 @@ generate_graphic <- function(graphic_tab,
                          axes,
                          dimensions,
                          fine_tuning,
+                         output,
                          title_height,
                          footnote_height,
                          origin_height)
