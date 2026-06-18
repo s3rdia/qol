@@ -19,6 +19,8 @@ vbar_grob <- function(diagram_info,
     dimensions  <- arguments[["dimensions"]]
     fine_tuning <- arguments[["fine_tuning"]]
     value_y_pos <- diagram_info[["values"]]
+    theme       <- diagram_info[["theme"]]
+    color_usage <- diagram_info[["color_usage"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate rectangles

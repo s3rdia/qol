@@ -2020,7 +2020,7 @@ direct_vertical_labels <- function(diagram_info,
             offset_value <- diagram_info[["values_width"]]
 
             # The width measuring needs to be swapped to the height dimension.
-            offset_value <- swap_scaling(offset_value, diagram_info[["inner_canvas_width"]], diagram_info[["inner_canvas_height"]])
+            offset_value <- swap_scaling(offset_value, dimensions[["inner_canvas_width"]], dimensions[["inner_canvas_height"]])
 
             # Select label group and scale offset to y axes distance
             offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
