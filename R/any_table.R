@@ -735,7 +735,7 @@ any_table <- function(data_frame,
         }
     }
 
-    # If pct_group parameter is passed but is not selected as statistic, add it
+    # If pct_value parameter is passed but is not selected as statistic, add it
     if (length(pct_value) > 0 && !"pct_value" %in% tolower(statistics)){
         if (!(length(pct_value) == 1 && pct_value == "")){
             statistics <- c(statistics, "pct_value")

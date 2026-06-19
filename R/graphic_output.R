@@ -477,22 +477,14 @@ output_interactive_svg <- function(graphic_object,
 
     # Set up the tooltip texts and inject them into the SVG string as well as the
     # code to trigger the mouse over tooltips.
-    values   <- diagram_info[["formatted_values"]]
-    category <- c(diagram_info[["individual_groups"]], list(diagram_info[["unique_segments"]]))
-    category <- do.call(expand.grid, c(rev(category), stringsAsFactors = FALSE))
-    category <- apply(category, 1, function(level){
-        level <- rev(level)
-
-        paste0(paste(level[-length(level)], collapse = "!!!{b}: "),
-               "!!!{b}: [ ", toupper(level[length(level)]), " ]")
-    })
-
-    value_labels <- rep(diagram_info[["value_labels"]], length(values))
+    values         <- diagram_info[["formatted_values"]]
+    tooltip_header <- build_tooltip_header(c(diagram_info[["individual_groups"]], list(diagram_info[["unique_segments"]])))
+    value_labels   <- rep(diagram_info[["value_labels"]], length(values))
 
     # Gather the segment tooltips
     for(i in seq_along(values)){
         # Tooltip text to display on mouse over
-        tooltip <- paste0("{b}\u00A0\u00A0", category[i], "!!!––––––––––!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
+        tooltip <- paste0(tooltip_header[i], "!!!––––––––––!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
 
         # Capture only the segments which should receive tooltips.
         # All the ids in the SVG files receive a .1 at the end. Don't know why.
@@ -514,14 +506,8 @@ output_interactive_svg <- function(graphic_object,
     number_of_groups   <- diagram_info[["number_of_groups"]]
     number_of_segments <- diagram_info[["number_of_segments"]]
 
-    values   <- matrix(diagram_info[["formatted_values"]], nrow = number_of_groups, byrow = TRUE)
-    category <- do.call(expand.grid, c(rev(diagram_info[["individual_groups"]]), stringsAsFactors = FALSE))
-    category <- apply(category, 1, function(level){
-        level <- rev(level)
-
-        paste0(paste(level[-length(level)], collapse = "!!!{b}: "),
-               "!!!{b}: [ ", toupper(level[length(level)]), " ]")
-    })
+    values         <- matrix(diagram_info[["formatted_values"]], nrow = number_of_groups, byrow = TRUE)
+    tooltip_header <- build_tooltip_header(c(rev(diagram_info[["individual_groups"]])))
 
     segment_labels <- diagram_info[["unique_segments"]]
     value_label    <- diagram_info[["value_labels"]]
@@ -529,10 +515,10 @@ output_interactive_svg <- function(graphic_object,
     # Gather the group tooltips
     for(i in seq_len(number_of_groups)){
         segment_lines <- paste0("{legend:", diagram_info[["colors_to_use"]][1:diagram_info[["number_of_segments"]]],"}",
-                                segment_labels, ": {b}", values[i, ], "{/b}")
+                                segment_labels, "\u00A0:\u00A0{b}", values[i, ], "{/b}")
 
         # Tooltip text to display on mouse over
-        tooltip <- paste0("{b}\u00A0\u00A0", category[i], "{/b}", "!!!––––––––––", "!!!", value_label, "!!!",
+        tooltip <- paste0(tooltip_header[i], "{/b}", "!!!––––––––––", "!!!", value_label, "!!!",
                           paste(segment_lines, collapse = "!!!"))
 
         # Capture only the segments which should receive tooltips.
@@ -564,6 +550,43 @@ output_interactive_svg <- function(graphic_object,
 
     # Finally save the dynamic SVG file
     writeLines(svg_string, filename)
+}
+
+
+#' Build The Tooltip Header From Axes Group Labels
+#'
+#' @description
+#' Stacks the group labels as a header text for the pop up tooltips, when hovering
+#' over segments and groups with the mouse on interactive graphics.
+#'
+#' @param group_labels All group labels that should be put together as header text.
+#'
+#' @return
+#' Returns a character containing the tooltip header text.
+#'
+#' @noRd
+build_tooltip_header <- function(group_labels){
+    # Combine list entries as cartesian product into data frame
+    group_labels <- do.call(expand.grid, c(rev(group_labels), stringsAsFactors = FALSE))
+
+    # If there is only one column in the data frame then there is only one header
+    # category and therefore no need for the subheader building.
+    if (collapse::fncol(group_labels) == 1){
+        apply(group_labels, 1, function(level){
+            paste0("{b}[ ", toupper(level), " ]")
+        })
+    }
+    # With more than one column put them together as individual nested levels.
+    # The header categories will be stacked.
+    else{
+        apply(group_labels, 1, function(level){
+            level <- rev(level)
+
+            paste0("{b}\u00A0\u00A0",
+                   paste(level[-length(level)], collapse = "!!!{b}: "),
+                   "!!!{b}: [ ", toupper(level[length(level)]), " ]")
+        })
+    }
 }
 
 
@@ -655,10 +678,25 @@ function showTooltip(evt, text){
     var bg      = document.getElementById("tooltip-bg");
 
     // Map coordinates according to the canvas itself
-    var pt     = svg.createSVGPoint();
-    pt.x       = evt.clientX;
-    pt.y       = evt.clientY;
-    var cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+    var cursor;
+    var pt = svg.createSVGPoint();
+
+    // Firefox renders the SVG with tooltips differently. Here the scollbars have
+    // to be countered.
+    if(navigator.userAgent.indexOf("Firefox") !== -1){
+        var rect = svg.getBoundingClientRect();
+
+        pt.x = evt.clientX - rect.left;
+        pt.y = evt.clientY - rect.top;
+
+        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    else{
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+
+        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
 
     // Font must be scaled according to the current displayed size of the graphic.
     // The zoom has to be countered basically.
