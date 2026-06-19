@@ -408,6 +408,19 @@ design_graphic <- function(data_frame,
     # Statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # If pct_value parameter is passed but is not selected as statistic, add it
+    if (length(pct_value) > 0 && !"pct_value" %in% tolower(statistics)){
+        if (!(length(pct_value) == 1 && pct_value == "")){
+            statistics <- c(statistics, "pct_value")
+        }
+    }
+    else if(length(pct_value) == 0 && "pct_value" %in% tolower(statistics)){
+        print_message("NOTE", c("'pct_value' is specified in the statistics but the <pct_value> parameter",
+                                " isn't set. 'pct_value' will be removed from statistics."))
+
+        statistics <- statistics[!statistics %in% "pct_value"]
+    }
+
     if (!pre_summed){
         list_of_statistics <- get_complete_statistics_list(statistics)
 
@@ -418,7 +431,7 @@ design_graphic <- function(data_frame,
                                                        "pct_group", "pct_total", paste0("p", 1:100))]
 
         if (length(invalid_stats) > 0){
-            print_message("WARNING", "<Statistic> '[invalid]' is invalid and will be omitted.", invalid = invalid_stats)
+            print_message("WARNING", "<Statistic> '[invalid]' [?is/are] invalid and will be omitted.", invalid = invalid_stats)
 
             if (length(valid_stats) == 0){
                 print_message("WARNING", "No valid <statistic> selected. 'sum' will be used.")
@@ -426,6 +439,12 @@ design_graphic <- function(data_frame,
                 statistics <- "sum"
             }
         }
+
+        # This basically serves as the default parameter
+        if (length(statistics) == 0){
+            statistics <- "pct_group"
+        }
+
         rm(list_of_statistics, invalid_stats)
     }
 
@@ -436,9 +455,11 @@ design_graphic <- function(data_frame,
     # If pct_value is selected, make sure sum is also part of statistics
     flag_remove_sum <- FALSE
 
-    if ("pct_value" %in% tolower(statistics) && length(statistics) == 1){
-        statistics      <- c(statistics, "sum")
-        flag_remove_sum <- TRUE
+    if (!"sum" %in% statistics){
+        if ("pct_value" %in% tolower(statistics)){
+            statistics      <- c(statistics, "sum")
+            flag_remove_sum <- TRUE
+        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
