@@ -7,6 +7,10 @@ set_no_print(TRUE)
 
 dummy_df <- dummy_data(1000)
 
+ifelse_df <- data.table::data.table(age  = c(10, 20, 30, 70, NA),
+                                    sex  = c(1, 2, 1, 2, NA),
+                                    name = c("Hello World", "Hello Again", "Hello", "World", NA))
+
 
 # if. can convert values conditionally
 test_df <- dummy_df |>
@@ -40,10 +44,11 @@ expect_true(!anyNA(test_df[["var2"]]), info = "if. doesn't overwrite existing va
 
 # else_if. doesn't work without if.
 test_df <- dummy_df |>
-    else_if.(age >= 18 & age < 65, age_group = "18 to under 65") |>
-    else.   (                      age_group = "65 and older")
+    else_if.(age >= 18 & age < 65, age_group = "18 to under 65")
 
 expect_true(!"age_group" %in% names(test_df), info = "else_if. doesn't work without if.")
+expect_warning(print_stack_as_messages("WARNING"), "No valid target variables found in data frame. For else_if. to work the",
+               info = "else_if. doesn't work without if.")
 
 
 # else. doesn't work without if.
@@ -51,6 +56,8 @@ test_df <- dummy_df |>
     else.(age_group = "65 and older")
 
 expect_true(!"age_group" %in% names(test_df), info = "else. doesn't work without if.")
+expect_warning(print_stack_as_messages("WARNING"), "No valid target variables found in data frame. For else_if. to work the",
+               info = "else. doesn't work without if.")
 
 
 # else_if. only alters NA values conditionally
@@ -264,7 +271,39 @@ result_df <- dummy_df |> if.(state < 11, sum       = state + age,
                                          var2      = "Hello",
                                          variables = values)
 
-expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)), info = "if. can do all kinds of calculations")
+expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_VAR2") %in% names(result_df)),
+            info = "if. can do all kinds of calculations")
+
+
+# if. and else_if. work with parsed character conditions
+vars1  <- c("income", "balance")
+vars2  <- c("VAR1", "VAR2")
+values <- c(1, 2)
+
+test_df <- dummy_df |>
+         if.("15 <= age < 65",        age_group = "15 to under 65") |>
+    else_if.("age < 15 or age >= 65", age_group = "other") |>
+         if.("vars1 > 0",             vars2     = values)
+
+expect_true("age_group" %in% names(test_df), info = "if. and else_if. work with parsed character conditions")
+expect_true(all(c("15 to under 65", "other", NA) %in% test_df[["age_group"]]), info = "if. and else_if. work with parsed character conditions")
+
+expect_true(all(c("VAR1", "VAR2") %in% names(test_df)), info = "if. and else_if. work with parsed character conditions")
+expect_true(all(collapse::funique(test_df[["VAR1"]]) %in% c(1, NA)), info = "if. and else_if. work with parsed character conditions")
+expect_true(all(collapse::funique(test_df[["VAR2"]]) %in% c(2, NA)), info = "if. and else_if. work with parsed character conditions")
+
+
+# else_if. throws a warning in do over loop if variables are missing in data frame
+vars1  <- c("income", "balance")
+vars2  <- c("VAR1", "VAR2")
+values <- c(1, 2)
+
+test_df <- dummy_df |>
+    if.("15 <= age < 65", age_group = "15 to under 65") |>
+    else_if.("vars1 > 0", vars2     = values)
+
+expect_warning(print_stack_as_messages("WARNING"), "No valid target variables found in data frame. For else_if. to work the",
+               info = "else_if. throws a warning in do over loop if variables are missing in data frame")
 
 ###############################################################################
 # if. for subsetting
@@ -371,6 +410,114 @@ test_df <- dummy_df |> where.(sex == 0)
 
 expect_warning(print_stack_as_messages("WARNING"), "No observations left in the data frame.",
                info = "where. aborts with a warning, if no observations left")
+
+###############################################################################
+# ifelse_multi
+###############################################################################
+
+# ifelse_multi basic recoding works
+test_df <- ifelse_df |> ifelse_multi("age < 18" = 1,
+                                     "age < 65" = 2,
+                                     else. = 3)
+
+expect_equal(test_df, c(1, 2, 2, 3, 3), info = "ifelse_multi basic recoding works")
+
+
+# ifelse_multi SAS intervals are translated
+test_df <- ifelse_df |> ifelse_multi(" 0 <= age < 30" = 1,
+                                     "30 <= age < 65" = 2,
+                                     else. = 3)
+
+expect_equal(test_df, c(1, 1, 2, 3, 3), info = "ifelse_multi SAS intervals are translated")
+
+
+# ifelse_multi IN works with commas
+test_df <- ifelse_df |> ifelse_multi("age in (10, 20)" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with commas")
+
+
+# ifelse_multi IN works with spaces
+test_df <- ifelse_df |> ifelse_multi("age in (10 20)" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with spaces")
+
+
+# ifelse_multi NOT IN works
+test_df <- ifelse_df |> ifelse_multi("age not in (10 20)" = 1, else. = 0)
+
+expect_equal(test_df, c(0, 0, 1, 1, 1), info = "ifelse_multi NOT IN works")
+
+
+# ifelse_multi character with spaces works with IN
+test_df <- ifelse_df |> ifelse_multi("name in ('Hello World' 'Hello Again')" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi character with spaces works with IN")
+
+
+# ifelse_multi character expressions starting with letter
+test_df <- ifelse_df |> ifelse_multi("name == 'Hell:'" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 1, 1, 0, 0), info = "ifelse_multi character expressions starting with letter")
+
+
+# ifelse_multi character expressions ending with letter
+test_df <- ifelse_df |> ifelse_multi("name == ':orld'" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 0, 0, 1, 0), info = "ifelse_multi character expressions ending with letter")
+
+
+# ifelse_multi character expressions contain letter
+test_df <- ifelse_df |> ifelse_multi("name == ':ga:'" = 1, else. = 0)
+
+expect_equal(test_df, c(0, 1, 0, 0, 0), info = "ifelse_multi character expressions contain letter")
+
+
+# ifelse_multi negated character expressions contain letter
+test_df <- ifelse_df |> ifelse_multi("name != ':ga:'" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 0, 1, 1, 1), info = "ifelse_multi negated character expressions contain letter")
+
+
+# ifelse_multi AND is translated
+test_df <- ifelse_df |> ifelse_multi("age < 18 and sex == 1" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 0, 0, 0, 0), info = "ifelse_multi AND is translated")
+
+
+# ifelse_multi OR is translated
+test_df <- ifelse_df |> ifelse_multi("age < 18 or sex == 2" = 1, else. = 0)
+
+expect_equal(test_df, c(1, 1, 0, 1, 0), info = "ifelse_multi AND is translated")
+
+
+# ifelse_multi na.rm = FALSE preserves NA
+test_df <- ifelse_df |> ifelse_multi("age < 18" = 1, else. = 0, na.rm = FALSE)
+
+expect_equal(test_df, c(1, 0, 0, 0, NA), info = "ifelse_multi na.rm = FALSE preserves NA")
+
+
+# ifelse_multi do_if condition is used on all other conditions
+test_df <- ifelse_df |> ifelse_multi(do_if = "sex == 1",
+                                     "age < 18" = 1,
+                                     "age < 65" = 2,
+                                     else. = 3)
+
+expect_equal(test_df, c(1, 3, 2, 3, 3), info = "ifelse_multi do_if condition is used on all other conditions")
+
+
+# ifelse_multi aborts on missing quotation mark
+test_df <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')" = 1, else. = 0)
+
+expect_error(print_stack_as_messages("ERROR"), "Condition couldn't be parsed.",
+             info = "ifelse_multi aborts on missing quotation mark")
+
+
+# ifelse_multi aborts on non named list condition
+test_df <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')")
+
+expect_error(print_stack_as_messages("ERROR"), "You have to pass conditions and assignments in the form",
+             info = "ifelse_multi aborts on non named list condition")
 
 ###############################################################################
 # Abort checks

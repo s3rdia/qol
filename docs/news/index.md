@@ -2,6 +2,23 @@
 
 ## qol 1.3.3 - DEVELOPMENT
 
+#### New functions
+
+- [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md):
+  A variation of the [`ifelse()`](https://rdrr.io/r/base/ifelse.html)
+  function which can handle multiple conditions in one go. The function
+  takes in the conditions as characters. The conditions are parsed
+  before evaluation to enable SAS like writing styles. (20.06.2026)
+
+#### New functionality
+
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md): Are
+  now also able to use the new writing style with conditions as
+  characters introduced by
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
+  (20.06.2026)
+
 #### Optimization
 
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):

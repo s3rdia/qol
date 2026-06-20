@@ -418,6 +418,42 @@ The loading functions are able to keep only the desired variables, but with a tw
 <span>          <span class="fu"><a href="reference/if_else.html">if.</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">18</span>, age_cat <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>        <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>          age_cat <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/do_if.html">end_do</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The if condition functions also enable a SAS like writing style:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example data frame</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Write in intervals</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_gr"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" age &lt; 18 "</span>       <span class="op">=</span> <span class="st">"under 18"</span>,</span>
+<span>                                               <span class="st">" 18 &lt;= age &lt; 25 "</span> <span class="op">=</span> <span class="st">"18 to under 25"</span>,</span>
+<span>                                               <span class="st">" 25 &lt;= age &lt; 50 "</span> <span class="op">=</span> <span class="st">"25 to under 50"</span>,</span>
+<span>                                               <span class="st">" 50 &lt;= age &lt; 65 "</span> <span class="op">=</span> <span class="st">"50 to under 65"</span>,</span>
+<span>                                               <span class="st">" 65 &lt;= age      "</span> <span class="op">=</span> <span class="st">"65 and more"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># With overarching do_if condition</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_gr_edu"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span>do_if <span class="op">=</span> <span class="st">" education in ('middle' 'high') "</span>,</span>
+<span>                                                       <span class="st">" age &lt; 18 "</span>       <span class="op">=</span> <span class="st">"under 18"</span>,</span>
+<span>                                                       <span class="st">" 18 &lt;= age &lt; 25 "</span> <span class="op">=</span> <span class="st">"18 to under 25"</span>,</span>
+<span>                                                       <span class="st">" 25 &lt;= age &lt; 50 "</span> <span class="op">=</span> <span class="st">"25 to under 50"</span>,</span>
+<span>                                                       <span class="st">" 50 &lt;= age &lt; 65 "</span> <span class="op">=</span> <span class="st">"50 to under 65"</span>,</span>
+<span>                                                       <span class="st">" 65 &lt;= age      "</span> <span class="op">=</span> <span class="st">"65 and more"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># And/or translation</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"and"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" age &gt; 65 and sex = 1 "</span> <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                            <span class="st">" age &gt; 65 and sex = 2 "</span> <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                                            else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"or"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" age &gt; 65 or sex = 1 "</span> <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                           <span class="st">" age &gt; 65 or sex = 2 "</span> <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                                           else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># "in" translation</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"in"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" age in (1 10 25 65 90) "</span> <span class="op">=</span> <span class="fl">1</span>, else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Colon translation: start/ends with and contains</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"start"</span><span class="op">]</span><span class="op">]</span>    <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" education == 'lo:' "</span>  <span class="op">=</span> <span class="fl">1</span>, else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"end"</span><span class="op">]</span><span class="op">]</span>      <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" education == ':le' "</span>  <span class="op">=</span> <span class="fl">1</span>, else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">[[</span><span class="st">"contains"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/ifelse_multi.html">ifelse_multi</a></span><span class="op">(</span><span class="st">" education == ':ig:' "</span> <span class="op">=</span> <span class="fl">1</span>, else. <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="styled-messages">Styled messages<a class="anchor" aria-label="anchor" href="#styled-messages"></a>

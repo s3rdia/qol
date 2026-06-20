@@ -61,6 +61,10 @@ let the function handle the loop inside.
 
 ## See also
 
+[`ifelse()`](https://rdrr.io/r/base/ifelse.html) with multiple
+conditions and 'SAS' writing style:
+[`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md)
+
 The following functions can make use of the
 [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) filter
 variables:

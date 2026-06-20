@@ -23,6 +23,8 @@
 #' @return Returns a data frame with conditionally computed variables.
 #'
 #' @seealso
+#' [ifelse()] with multiple conditions and 'SAS' writing style: [ifelse_multi()]
+#'
 #' The following functions can make use of the [do_if()] filter variables:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
@@ -129,15 +131,36 @@ if. <- function(data_frame, condition, ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 
-    parent_env  <- parent.frame()
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Early evaluations
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    parent_env <- parent.frame()
 
     # This step is important to make this function work in a nested situation.
     # Normally condition would be the name of what was last passed as a parameter.
     # If "if.()" is used nested inside a function this can basically be any placeholder.
     # So here we go up the ladder to get the original condition as a call.
     condition <- substitute(condition)
+
     while (is.name(condition) && exists(as.character(condition), parent_env)){
         condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
+    }
+
+    # When the condition is passed as character, then parse it to enable all the
+    # SAS like writing styles.
+    if (is.character(condition)){
+       condition <- parse_conditions(condition, na.rm = FALSE)
+
+       # If a name is returned then a single variable name was passed. In this case
+       # revert to character to ensure it is processed right down the road.
+       if (is.name(condition)){
+           condition <- as.character(condition)
+       }
+       # Otherwise transform into a call
+       else{
+           condition <- as.call(condition)
+       }
     }
 
     assignments <- as.list(substitute(list(...)))[-1]
@@ -169,6 +192,10 @@ if. <- function(data_frame, condition, ...){
     flag_filter    <- FALSE
     condition_list <- list()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Variable assignment route
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (length(assignments) > 0){
         # If a vector was passed in the condition or the assignments, then evaluate
         # the if statement as a do over loop. Meaning for each vector the same elements
@@ -181,6 +208,10 @@ if. <- function(data_frame, condition, ...){
             return(invisible(data_frame))
         }
 
+        #---------------------------------------------------------------------#
+        # Normal evaluation
+        #---------------------------------------------------------------------#
+
         if (length(list_entry_lengths) == 0){
             condition <- translate_condition(condition)
             condition <- eval(condition, envir = data_frame, enclos = parent_env)
@@ -192,6 +223,9 @@ if. <- function(data_frame, condition, ...){
             # Add to call list
             condition_list <- list(full_condition)
         }
+        #---------------------------------------------------------------------#
+        # Do over evaluation
+        #---------------------------------------------------------------------#
         else{
             # Do over loop per element
             for (element in seq_len(list_entry_lengths[1])){
@@ -239,9 +273,16 @@ if. <- function(data_frame, condition, ...){
             }
         }
     }
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Filtering route
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Filter observations, if there are no assignments given
     else{
         flag_filter <- TRUE
+
+        #---------------------------------------------------------------------#
+        # Normal evaluation
+        #---------------------------------------------------------------------#
 
         # If no vector was passed in the condition, then evaluate as normal
         if (length(content_list) == 0){
@@ -303,6 +344,9 @@ if. <- function(data_frame, condition, ...){
                     still_there = format(rows_after,
                                          format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
         }
+        #---------------------------------------------------------------------#
+        # Do over evaluation
+        #---------------------------------------------------------------------#
         # If a vector was passed in the condition, then evaluate the if statement
         # as a do over loop. Meaning for each vector the same elements are used
         # simultaneously one after another.
@@ -413,6 +457,10 @@ else_if. <- function(data_frame, condition, ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Early evaluations
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     parent_env  <- parent.frame()
 
     # This step is important to make this function work in a nested situation.
@@ -420,8 +468,25 @@ else_if. <- function(data_frame, condition, ...){
     # If "if.()" is used nested inside a function this can basically be any placeholder.
     # So here we go up the ladder to get the original condition as a call.
     condition <- substitute(condition)
+
     while (is.name(condition) && exists(as.character(condition), parent_env)){
         condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
+    }
+
+    # When the condition is passed as character, then parse it to enable all the
+    # SAS like writing styles.
+    if (is.character(condition)){
+        condition <- parse_conditions(condition, na.rm = FALSE)
+
+        # If a name is returned then a single variable name was passed. In this case
+        # revert to character to ensure it is processed right down the road.
+        if (is.name(condition)){
+            condition <- as.character(condition)
+        }
+        # Otherwise transform into a call
+        else{
+            condition <- as.call(condition)
+        }
     }
 
     assignments <- as.list(substitute(list(...)))[-1]
@@ -444,6 +509,10 @@ else_if. <- function(data_frame, condition, ...){
     # as normal if statement.
     condition_list <- list()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Variable assignment
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (length(assignments) > 0){
         for (entry in seq_along(assignments)){
             variable    <- names(assignments)[[entry]]
@@ -455,6 +524,10 @@ else_if. <- function(data_frame, condition, ...){
             used_variables <- unique(c(all.vars(condition), # Get all variables from the condition
                                        variable, # Get all variables to which a value should be assigned
                                        unlist(lapply(calculation, all.names)))) # Get all assigned variables
+
+            #---------------------------------------------------------------------#
+            # Normal evaluation
+            #---------------------------------------------------------------------#
 
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
@@ -469,12 +542,20 @@ else_if. <- function(data_frame, condition, ...){
                 # So here we go up the ladder to get the original name of the variable.
                 original_var <- get_origin_symbol(variable)
 
+                # Variable has to exist in data frame
+                if (!original_var %in% names(data_frame)){
+                    next
+                }
+
                 # Check whether there are additional conditions active via do_if
                 full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]) & condition)
 
                 # Add to call list
                 condition_list <- c(condition_list, list(full_condition))
             }
+            #---------------------------------------------------------------------#
+            # Do over evaluation
+            #---------------------------------------------------------------------#
             # If a vector was passed in the condition or the assignments, then evaluate
             # the if statement as a do over loop. Meaning for each vector the same elements
             # are used simultaneously one after another.
@@ -555,10 +636,19 @@ else_if. <- function(data_frame, condition, ...){
             }
         }
 
-        # Evaluate calculations conditionally. Making use of hidden parameters.
-        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                                  .if_parent_frame = parent_env,
-                                                  .if_suppressed   = TRUE)
+        if (length(condition_list) > 0){
+            # Evaluate calculations conditionally. Making use of hidden parameters.
+            data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
+                                                      .if_parent_frame = parent_env,
+                                                      .if_suppressed   = TRUE)
+        }
+        # condition_list can be empty in case the variables to assign values to
+        # are not already in the data frame.
+        else{
+            print_message("WARNING", c("No valid target variables found in data frame. For else_if. to work the",
+                                       "variables you assign values to must already be present in the data frame.",
+                                       "To computation will be executed."))
+        }
     }
     else{
         print_message("WARNING", "No assignments found. If you want to filter observations use if.() instead.")
@@ -581,6 +671,10 @@ else. <- function(data_frame, ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Early evaluations
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     parent_env  <- parent.frame()
     assignments <- as.list(substitute(list(...)))[-1]
 
@@ -601,6 +695,10 @@ else. <- function(data_frame, ...){
     # as normal if statement.
     condition_list <- list()
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Variable assignment
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     if (length(assignments) > 0){
         for (entry in seq_along(assignments)){
             variable    <- names(assignments)[[entry]]
@@ -612,6 +710,10 @@ else. <- function(data_frame, ...){
             used_variables <- unique(c(variable, # Get all variables to which a value should be assigned
                                        unlist(lapply(calculation, all.names)))) # Get all assigned variables
 
+            #---------------------------------------------------------------------#
+            # Normal evaluation
+            #---------------------------------------------------------------------#
+
             # If no vector was passed in the condition or the assignments, then evaluate
             # as normal.
             if (!any(used_variables %in% names(content_list))){
@@ -621,12 +723,20 @@ else. <- function(data_frame, ...){
                 # So here we go up the ladder to get the original name of the variable.
                 original_var <- get_origin_symbol(variable)
 
+                # Variable has to exist in data frame
+                if (!original_var %in% names(data_frame)){
+                    next
+                }
+
                 # Check whether there are additional conditions active via do_if
                 full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]))
 
                 # Add to call list
                 condition_list <- c(condition_list, list(full_condition))
             }
+            #---------------------------------------------------------------------#
+            # Do over evaluation
+            #---------------------------------------------------------------------#
             # If a vector was passed in the condition or the assignments, then evaluate
             # the if statement as a do over loop. Meaning for each vector the same elements
             # are used simultaneously one after another.
@@ -702,10 +812,19 @@ else. <- function(data_frame, ...){
         }
     }
 
-    # Evaluate calculations conditionally. Making use of hidden parameters.
-    data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                              .if_parent_frame = parent_env,
-                                              .if_suppressed   = TRUE)
+    if (length(condition_list) > 0){
+        # Evaluate calculations conditionally. Making use of hidden parameters.
+        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
+                                                  .if_parent_frame = parent_env,
+                                                  .if_suppressed   = TRUE)
+    }
+    # condition_list can be empty in case the variables to assign values to
+    # are not already in the data frame.
+    else{
+        print_message("WARNING", c("No valid target variables found in data frame. For else_if. to work the",
+                                   "variables you assign values to must already be present in the data frame.",
+                                   "To computation will be executed."))
+    }
 
     print_closing()
 
@@ -859,6 +978,8 @@ combined_condition <- function(data_frame, condition){
 #' @return Returns a filtered data frame.
 #'
 #' @seealso
+#' [ifelse()] with multiple conditions and 'SAS' writing style: [ifelse_multi()]
+#'
 #' The following functions can make use of the [do_if()] filter variables:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
@@ -1069,4 +1190,340 @@ end_all_do <- function(data_frame){
 
     # Drop all filter variables
     data_frame |> dropp(filter_variables)
+}
+
+
+###############################################################################
+# Condition
+###############################################################################
+#' Do Multiple ifelse At Once
+#'
+#' @description
+#' [ifelse_multi()] handles multiple conditions and value assignments at once by
+#' nesting multiple ifelse statements. It is special in the case that it takes the
+#' conditions as unevaluated characters to be able to parse them before evaluation.
+#' This enables a SAS like writing style of the conditions.
+#'
+#' @param data_frame A data frame on which to apply multiple ifelse statements.
+#' @param ... The conditions as character and the assignments in the form:
+#' <condition> = <value>, <condition> = <value>, ...
+#' @param else. The default value which is applied when no condition results in
+#' an assignment.
+#' @param do_if Define an overarching condition that will be used on all other conditions.
+#' @param na.rm TRUE by default. Sets the default value even though a condition results
+#' in NA. If FALSE leaves NA as missing value.
+#'
+#' @details
+#' The function takes in conditions as characters to be able to parse the conditions.
+#' The parsing allows to write conditions in a SAS like way. For example the condition
+#'
+#' "age >= 15 & age < 65" can be written as "15 <= age < 65"
+#'
+#' Additionally and/or (case insensitive) are recognized keywords which will be translated into &/|.
+#'
+#' "age >= 15 and age < 65 or sex == 1" becomes "age >= 15 & age < 65 | sex == 1"
+#'
+#' And [macro()] variables are allowed in any spot, e.g.:
+#'
+#' YEAR <- 2025\
+#' "year == &YEAR" translates to "year == 2025".
+#'
+#' Single = get translated to ==, the SAS not ^= is translated to !=.
+#'
+#' In SAS you can write "age in (1 4 7 15 21)" or "age not in (2, 4, 37, 82)" which
+#' gets translated into "age %in% (1, 4, 7, 15, 21)" and "!(age %in% (2, 4, 37, 82))".
+#'
+#' When using == or != operators you can check if character expressions start with
+#' (text:), end with (:text) or contain a certain text (:text:). These also get
+#' translated.
+#'
+#' @return Returns a vector with a conditionally computed variable.
+#'
+#' @seealso
+#' Conditions: [if.()], [else_if.()], [else.()]
+#'
+#' Filter Data Frame: [where.()]
+#'
+#' Create new Variables: [compute.()]
+#'
+#' Resolve macro variables: [macro()], [apply_macro()]
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
+#' # Simple ifelse statement
+#' my_data[["under18"]]    <- my_data |> ifelse_multi(" age < 18 " = 1,       else. = 0)
+#' my_data[["middle_age"]] <- my_data |> ifelse_multi(" 15 <= age < 65 " = 1, else. = 0)
+#'
+#' my_data[["age_gr"]] <- my_data |> ifelse_multi(" age < 18 "       = "under 18",
+#'                                                " 18 <= age < 25 " = "18 to under 25",
+#'                                                " 25 <= age < 50 " = "25 to under 50",
+#'                                                " 50 <= age < 65 " = "50 to under 65",
+#'                                                " 65 <= age      " = "65 and more")
+#'
+#' # With overarching do_if condition
+#' my_data[["age_gr_edu"]] <- my_data |> ifelse_multi(do_if = " education in ('middle' 'high') ",
+#'                                                        " age < 18 "       = "under 18",
+#'                                                        " 18 <= age < 25 " = "18 to under 25",
+#'                                                        " 25 <= age < 50 " = "25 to under 50",
+#'                                                        " 50 <= age < 65 " = "50 to under 65",
+#'                                                        " 65 <= age      " = "65 and more")
+#'
+#' # And/or translation
+#' my_data[["and"]] <- my_data |> ifelse_multi(" age > 65 and sex = 1 " = 1,
+#'                                             " age > 65 and sex = 2 " = 2,
+#'                                             else. = 0)
+#'
+#' my_data[["or"]] <- my_data |> ifelse_multi(" age > 65 or sex = 1 " = 1,
+#'                                            " age > 65 or sex = 2 " = 2,
+#'                                            else. = 0)
+#'
+#' # "in" translation
+#' my_data[["in"]] <- my_data |> ifelse_multi(" age in (1 10 25 65 90) " = 1, else. = 0)
+#'
+#' # Colon translation: start/ends with and contains
+#' my_data[["start"]]    <- my_data |> ifelse_multi(" education == 'lo:' "  = 1, else. = 0)
+#' my_data[["end"]]      <- my_data |> ifelse_multi(" education == ':le' "  = 1, else. = 0)
+#' my_data[["contains"]] <- my_data |> ifelse_multi(" education == ':ig:' " = 1, else. = 0)
+#'
+#' @export
+ifelse_multi <- function(data_frame,
+                         ...,
+                         else. = NA,
+                         do_if = NULL,
+                         na.rm = TRUE){
+    # Measure the time
+    print_start_message(suppress = TRUE)
+
+    conditions <- tryCatch({
+        # Force evaluation to see if it exists
+        list(...)
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    if (is.null(conditions) || !is_named_list(conditions)){
+        print_message("ERROR", c("You have to pass conditions and assignments in the form",
+                                 "<condition> = <value>, <condition> = <value>, ...",
+                                 "Evaluation will be aborted."))
+        return(invisible(data_frame))
+    }
+
+    # Parse the condition and resolve and/or, SAS like "15 <= age < 65" and macros
+    parsed_conditions <- lapply(names(conditions), parse_conditions, na.rm = na.rm)
+
+    # If there was an overarching condition specified, parse and inject it into
+    # all the other conditions.
+    if(!is.null(do_if)){
+        parsed_do_if <- parse_conditions(do_if, na.rm = na.rm)
+
+        parsed_conditions <- lapply(parsed_conditions, function(condition){
+                call("&", parsed_do_if, condition)
+            })
+    }
+
+    if (any(sapply(parsed_conditions, is.null))){
+        return(invisible(NA))
+    }
+
+    # The single conditions and assignments are now nested into multiple ifelse
+    # functions.
+    result <- else.
+
+    for(i in rev(seq_along(conditions))){
+        result <- as.call(list(data.table::fifelse, parsed_conditions[[i]], conditions[[i]], result))
+    }
+
+    # Evaluate the nested ifelse functions and return result
+    result <- eval(result, envir = data_frame)
+
+    print_closing()
+
+    result
+}
+
+
+#' @description
+#' Parses unevaluated character conditions to translate SAS like syntax into
+#' R syntax.
+#'
+#' @param condition A single unevaluated condition as character.
+#' @param na.rm Sets the default value even though a condition results in NA.
+#' If FALSE leaves NA as missing value.
+#'
+#' @return Returns a translated condition as language object.
+#'
+#' @noRd
+parse_conditions <- function(condition, na.rm = TRUE){
+    # Replace 'and' and 'or' with the actual operators. Also translate the not
+    # operator and turn single = into ==.
+    condition <- gsub("\\bAND\\b", " & ", condition, ignore.case = TRUE)
+    condition <- gsub("\\bOR\\b",  " | ", condition, ignore.case = TRUE)
+    condition <- gsub("\\^=", " != ",     condition)
+    condition <- gsub("(?<!<|>|=|!)={1}(?!=)", " == ", condition, perl = TRUE)
+
+    # Resolve macro variables
+    condition <- macro(condition)
+
+    # Parse the in keyword
+    condition <- parse_in(condition)
+    condition <- parse_colon(condition)
+
+    # Look out for SAS like pattern: 15 <= age < 65, meaning:
+    # [number] [operator] [variable_name] [operator] [number]
+    # and transform to:
+    # [number] [operator] [variable_name] & [variable_name] [operator] [number]
+    pattern <- "([0-9.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(<=|<|>=|>)\\s*([0-9.]+)"
+
+    while(grepl(pattern, condition)){
+        condition <- gsub(pattern, "(\\1 \\2 \\3 & \\3 \\4 \\5)", condition, perl = TRUE)
+    }
+
+    if (!has_balanced_quotes(condition)){
+        print_message("ERROR", "Condition ' [condition] ' has a missing quotation mark. Condition couldn't be parsed.",
+                      condition = condition)
+        return(NULL)
+    }
+
+    # If na.rm is TRUE, then NA values will be translated into the else. value
+    if (na.rm){
+        condition <- str2lang(condition)
+
+        bquote(!is.na(.(condition)) & .(condition))
+    }
+    # Otherwise NA stays NA
+    else{
+        str2lang(condition)
+    }
+}
+
+
+#' @description
+#' Parses unevaluated character conditions to translate SAS like syntax into
+#' R syntax.
+#'
+#' @noRd
+parse_in <- function(condition){
+    # This regex tackles patterns like:
+    # [variable] in ([value], [value], ... / [value] [value] ...)
+    # [variable] not in ([value], [value], ... / [value] [value] ...)
+    in_pattern <- paste0("([a-zA-Z_][a-zA-Z0-9_.]*)\\s+",
+                         "(not\\s+)?in\\s*\\(([^)]*)\\)")
+
+    bracket_pattern <- '"[^"]*"|\'[^\']*\'|[^[:space:],]+'
+
+    # Get the positions of matching patterns and the patterns themselves
+    machting_positions <- gregexpr(in_pattern, condition, perl = TRUE, ignore.case = TRUE)
+    actual_matches     <- regmatches(condition, machting_positions)[[1]]
+
+    if(length(actual_matches) == 0){
+        return(condition)
+    }
+
+    # Translate into R syntax. Loop through the condition as long as "in" statements
+    # are found to be translated.
+    while(grepl(in_pattern, condition, perl = TRUE, ignore.case = TRUE)){
+        # Extract first "in" statement
+        in_match <- regmatches(condition, regexec(in_pattern, condition, perl = TRUE, ignore.case = TRUE))[[1]]
+
+        # Separate the different parts of the statement
+        variable <- in_match[2]
+        not_part <- in_match[3]
+        values   <- trimws(in_match[4])
+
+        # Convert character of values into a vector of values while preserving
+        # blanks in character expressions.
+        values <- regmatches(values, gregexpr(bracket_pattern, values, perl = TRUE))[[1]]
+
+        # Actual translation into the R %in% statement
+        replacement <- sprintf("%s %%in%% c(%s)", variable, paste(values, collapse = ", "))
+
+        # Add negation for "not in"
+        if(nzchar(trimws(not_part))){
+            replacement <- sprintf("!(%s)", replacement)
+        }
+
+        # Replace first occurrence
+        condition <- sub(in_pattern, replacement, condition,
+                         perl = TRUE, ignore.case = TRUE)
+    }
+
+    # Return translated condition
+    condition
+}
+
+
+#' @description
+#' Translates colons used as placeholders in a condition. A colon can stand for
+#' an expression starting/ending with or containing a letter combination.
+#'
+#' @noRd
+parse_colon <- function(condition){
+    # Look for variable == "text:" / variable != ":text:" patterns
+    pattern <- paste0("([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(==|!=)\\s*",
+                      "(['\"])",
+                      "([^'\"]*:[^'\"]*)\\3")
+
+    # Replace all colon expressions one after another
+    while(grepl(pattern, condition, perl = TRUE)){
+        # Extract first colon match
+        colon_match <- regmatches(condition, regexec(pattern, condition, perl = TRUE))[[1]]
+
+        # Separate the different parts of the statement
+        variable   <- colon_match[2]
+        operator   <- colon_match[3]
+        expression <- colon_match[5]
+
+        # Count colons inside expression
+        colon_count <- lengths(regmatches(expression, gregexpr(":", expression, fixed = TRUE)))
+        replacement <- colon_match[1]
+
+        if(colon_count == 1){
+            # When at the end ("text:"), select all variables which start with the characters
+            # coming before the colon. ":" acts as a placeholder for those who come after.
+            if(endsWith(expression, ":")){
+                search_term <- substring(expression, 1, nchar(expression) - 1)
+                replacement <- sprintf('startsWith(%s, "%s")', variable, search_term)
+            }
+            # When at the start (":text"), select all variables which end with the characters
+            # following the colon. ":" acts as a placeholder for everything that comes before.
+            else if(startsWith(expression, ":")){
+                search_term <- substring(expression, 2)
+                replacement <- sprintf('endsWith(%s, "%s")', variable, search_term)
+            }
+        }
+        # In case there are two colons, one at the start and one at the end (":text:"),
+        # look for the text inbetween inside the variable expressions
+        else if(colon_count == 2){
+            if (startsWith(expression, ":") && endsWith(expression, ":")){
+                search_term <- gsub(":", "", expression, fixed = TRUE)
+                replacement <- sprintf('grepl("%s", %s, fixed = TRUE)', search_term, variable)
+            }
+        }
+
+        # Negate translated expression if original operator was !=
+        if(operator == "!=" && replacement != colon_match[1]){
+            replacement <- sprintf("!(%s)", replacement)
+        }
+
+        # Replace first occurrence
+        condition <- sub(pattern, replacement, condition, perl = TRUE)
+    }
+
+    # Return translated condition
+    condition
+}
+
+
+#' @description
+#' Checks for balanced quotation marks inside the condition string.
+#'
+#' @noRd
+has_balanced_quotes <- function(condition){
+    number_of_double <- lengths(regmatches(condition, gregexpr('"', condition, fixed = TRUE)))
+    number_of_single <- lengths(regmatches(condition, gregexpr("'", condition, fixed = TRUE)))
+
+    number_of_double %% 2 == 0 && number_of_single %% 2 == 0
 }

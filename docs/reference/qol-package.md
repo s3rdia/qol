@@ -69,6 +69,7 @@ If-statement:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+[`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
 [`where.()`](https://s3rdia.github.io/qol/reference/where..md),
 [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md),
 [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md),

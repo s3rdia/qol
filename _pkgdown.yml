@@ -58,6 +58,7 @@ reference:
   - if.
   - else_if.
   - else.
+  - ifelse_multi
   - where.
   - do_if
   - else_do

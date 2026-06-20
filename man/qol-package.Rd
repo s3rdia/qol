@@ -50,7 +50,7 @@ Transposing: \code{\link[=transpose_plus]{transpose_plus()}}
 
 Sorting: \code{\link[=sort_plus]{sort_plus()}}
 
-If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}}, \code{\link[=do_if]{do_if()}}, \code{\link[=else_do]{else_do()}}, \code{\link[=end_do]{end_do()}}, \code{\link[=end_all_do]{end_all_do()}}
+If-statement: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=ifelse_multi]{ifelse_multi()}}, \code{\link[=where.]{where.()}}, \code{\link[=do_if]{do_if()}}, \code{\link[=else_do]{else_do()}}, \code{\link[=end_do]{end_do()}}, \code{\link[=end_all_do]{end_all_do()}}
 
 Monitoring: \code{\link[=monitor_start]{monitor_start()}}, \code{\link[=monitor_end]{monitor_end()}}, \code{\link[=monitor_next]{monitor_next()}}, \code{\link[=monitor_plot]{monitor_plot()}}
 

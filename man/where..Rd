@@ -29,6 +29,8 @@ my_data |> where.(sex == 1 & age < 25,
 
 }
 \seealso{
+\code{\link[=ifelse]{ifelse()}} with multiple conditions and 'SAS' writing style: \code{\link[=ifelse_multi]{ifelse_multi()}}
+
 The following functions can make use of the \code{\link[=do_if]{do_if()}} filter variables:
 
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}

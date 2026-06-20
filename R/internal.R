@@ -204,3 +204,19 @@ suppress_specific_message <- function(call_function, pattern){
                             }
                         })
 }
+
+
+#' Check If List Is A Named List
+#'
+#' @description
+#' Checks if an object is a list and all elements carry a name.
+#'
+#' @param list_to_check A list to be checked.
+#'
+#' @return
+#' Returns TRUE or FALSE.
+#'
+#' @noRd
+is_named_list <- function(list_to_check){
+    is.list(list_to_check) && !is.null(names(list_to_check)) && all(names(list_to_check) != "")
+}

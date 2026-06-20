@@ -401,6 +401,45 @@ do_if_df <- my_data |>
     end_do()
 ```
 
+The if condition functions also enable a SAS like writing style:
+
+```{r ifelse, eval = FALSE}
+# Example data frame
+my_data <- dummy_data(100)
+
+# Write in intervals
+my_data[["age_gr"]] <- my_data |> ifelse_multi(" age < 18 "       = "under 18",
+                                               " 18 <= age < 25 " = "18 to under 25",
+                                               " 25 <= age < 50 " = "25 to under 50",
+                                               " 50 <= age < 65 " = "50 to under 65",
+                                               " 65 <= age      " = "65 and more")
+
+# With overarching do_if condition
+my_data[["age_gr_edu"]] <- my_data |> ifelse_multi(do_if = " education in ('middle' 'high') ",
+                                                       " age < 18 "       = "under 18",
+                                                       " 18 <= age < 25 " = "18 to under 25",
+                                                       " 25 <= age < 50 " = "25 to under 50",
+                                                       " 50 <= age < 65 " = "50 to under 65",
+                                                       " 65 <= age      " = "65 and more")
+
+# And/or translation
+my_data[["and"]] <- my_data |> ifelse_multi(" age > 65 and sex = 1 " = 1,
+                                            " age > 65 and sex = 2 " = 2,
+                                            else. = 0)
+
+my_data[["or"]] <- my_data |> ifelse_multi(" age > 65 or sex = 1 " = 1,
+                                           " age > 65 or sex = 2 " = 2,
+                                           else. = 0)
+
+# "in" translation
+my_data[["in"]] <- my_data |> ifelse_multi(" age in (1 10 25 65 90) " = 1, else. = 0)
+
+# Colon translation: start/ends with and contains
+my_data[["start"]]    <- my_data |> ifelse_multi(" education == 'lo:' "  = 1, else. = 0)
+my_data[["end"]]      <- my_data |> ifelse_multi(" education == ':le' "  = 1, else. = 0)
+my_data[["contains"]] <- my_data |> ifelse_multi(" education == ':ig:' " = 1, else. = 0)
+```
+
 ## Styled messages
 
 The functions in this package actually talk to the user and show what they are doing during runtime. The message system relies on pure base R and does not only provide built in message types, but also custom ones.
