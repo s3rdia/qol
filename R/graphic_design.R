@@ -50,11 +50,6 @@
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area.
-#' @param color_theme The color theme to use. Can either be the name of a built-in or
-#' custom theme or a vector of hex codes. Existing color themes can be viewed with
-#' [display_themes()].
-#' @param color_usage A list of numerical vectors that specify which specific colors
-#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -160,8 +155,6 @@ design_graphic <- function(data_frame,
                            var_labels     = .qol_options[["var_labels"]],
                            stat_labels    = .qol_options[["stat_labels"]],
                            diagram        = vbars,
-                           color_theme    = "ocean",
-                           color_usage    = .qol_options[["graphic_color_usage"]],
                            visuals        = .qol_options[["graphic_visuals"]],
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
@@ -758,7 +751,7 @@ design_graphic <- function(data_frame,
     if (length(by) == 0){
         graphic_list <- generate_graphic(graphic_tab, axes_vars, "segments", statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
-                                         diagram, color_theme, color_usage, visuals, axes, dimensions,
+                                         diagram, visuals, axes, dimensions,
                                          fine_tuning, add_texts, output, monitor_df = monitor_df)
 
         plot_element <- graphic_list[[1]]
@@ -768,7 +761,7 @@ design_graphic <- function(data_frame,
     else{
         graphic_list <- generate_graphic_by(graphic_tab, axes_vars, "segments", statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
-                                            diagram, color_theme, color_usage, visuals, axes, dimensions,
+                                            diagram, visuals, axes, dimensions,
                                             fine_tuning, add_texts, output, na.rm, print_miss, monitor_df)
 
         plot_element <- graphic_list[[1]]
@@ -808,11 +801,6 @@ design_graphic <- function(data_frame,
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area.
-#' @param color_theme The color theme to use. Can either be the name of a built-in or
-#' custom theme or a vector of hex codes. Existing color themes can be viewed with
-#' [display_themes()].
-#' @param color_usage A list of numerical vectors that specify which specific colors
-#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -840,8 +828,6 @@ generate_graphic <- function(graphic_tab,
                              var_labels,
                              stat_labels,
                              diagram,
-                             color_theme,
-                             color_usage,
                              visuals,
                              axes,
                              dimensions,
@@ -928,8 +914,6 @@ generate_graphic <- function(graphic_tab,
                          c(statistics),
                          c(var_labels),
                          c(stat_labels),
-                         c(color_theme),
-                         color_usage,
                          visuals,
                          axes,
                          dimensions,
@@ -1019,11 +1003,6 @@ generate_graphic <- function(graphic_tab,
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area.
-#' @param color_theme The color theme to use. Can either be the name of a built-in or
-#' custom theme or a vector of hex codes. Existing color themes can be viewed with
-#' [display_themes()].
-#' @param color_usage A list of numerical vectors that specify which specific colors
-#' from the color scheme are used for which number of segments.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -1051,8 +1030,6 @@ generate_graphic_by <- function(graphic_tab,
                                 var_labels,
                                 stat_labels,
                                 diagram,
-                                color_theme,
-                                color_usage,
                                 visuals,
                                 axes,
                                 dimensions,
@@ -1190,8 +1167,6 @@ generate_graphic_by <- function(graphic_tab,
                                                 var_labels,
                                                 stat_labels,
                                                 diagram,
-                                                color_theme,
-                                                color_usage,
                                                 visuals,
                                                 axes,
                                                 dimensions,

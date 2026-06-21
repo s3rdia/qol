@@ -10,6 +10,7 @@
 \alias{reset_color_themes}
 \alias{display_colors}
 \alias{display_themes}
+\alias{override_theme}
 \title{Managing Global Color Themes}
 \usage{
 add_color_theme(
@@ -34,6 +35,13 @@ reset_color_themes(clear_themes = FALSE)
 display_colors(theme_name)
 
 display_themes()
+
+override_theme(
+  number = NULL,
+  color = NULL,
+  border_color = NULL,
+  font_color = NULL
+)
 }
 \arguments{
 \item{theme_name}{The name of a globally stored theme.}
@@ -47,6 +55,14 @@ on the corresponding base color.}
 on the corresponding base color.}
 
 \item{clear_themes}{FALSE by default. If TRUE clears the global theme list.}
+
+\item{number}{The number of the segment which should be manipulated.}
+
+\item{color}{The new main segment color.}
+
+\item{border_color}{The new border color of the segment.}
+
+\item{font_color}{The new font color of the segment value.}
 }
 \value{
 \code{\link[=add_color_theme]{add_color_theme()}}: Returns modified global theme list.
@@ -65,6 +81,8 @@ on the corresponding base color.}
 
 \code{\link[=display_themes]{display_themes()}}: A list containing all globally stored themes with their color
 codew vectors.
+
+\code{\link[=override_theme]{override_theme()}}: A list containing the override parameters.
 }
 \description{
 \code{\link[=add_color_theme]{add_color_theme()}}: Adds a new color theme containing base and font colors to the
@@ -91,6 +109,9 @@ drawn outside segments, corresponding to the base segment colors.
 
 \code{\link[=display_themes]{display_themes()}}: Display all colors of all themes currently present in the
 global environment.
+
+\code{\link[=override_theme]{override_theme()}}: Is used to override certain elements of an individual segment.
+Can be used to e.g. give certain segments a special coloring.
 }
 \examples{
 # Adding and getting color themes
@@ -120,6 +141,8 @@ reset_color_themes()
 display_colors("ocean")
 
 display_themes()
+
+override_theme(3, "#FF00FF", "#00FF00")
 
 }
 \seealso{

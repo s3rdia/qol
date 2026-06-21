@@ -220,3 +220,19 @@ suppress_specific_message <- function(call_function, pattern){
 is_named_list <- function(list_to_check){
     is.list(list_to_check) && !is.null(names(list_to_check)) && all(names(list_to_check) != "")
 }
+
+
+#' Check If List Is A List Of Lists
+#'
+#' @description
+#' Checks if an object is a list consisting of only lists
+#'
+#' @param list_to_check A list to be checked.
+#'
+#' @return
+#' Returns TRUE or FALSE.
+#'
+#' @noRd
+is_list_of_lists <- function(list_to_check) {
+    is.list(list_to_check) && length(list_to_check) > 0 && all(sapply(list_to_check, is.list))
+}
