@@ -6,6 +6,9 @@
 \usage{
 graphic_visuals(
   font = "Arial",
+  color_theme = "ocean",
+  color_usage = .qol_options[["graphic_color_usage"]],
+  theme_override = list(),
   title_font_color = "#000000",
   footnote_font_color = "#000000",
   primary_axes_font_color = "#000000",
@@ -63,14 +66,27 @@ graphic_visuals(
   tooltip_background_color = "auto",
   tooltip_border_color = "auto",
   tooltip_border_width = 2,
-  tooltip_background_opacity = 0.8,
+  tooltip_background_opacity = 0.95,
   tooltip_x_padding = 8,
   tooltip_y_padding = 4,
-  tooltip_corner_radius = 2
+  tooltip_corner_radius = 2,
+  segment_hover_opacity = 0.85,
+  group_hover_color = "#6495ED",
+  group_hover_opacity = 0.25
 )
 }
 \arguments{
 \item{font}{Set the font to be used for the entire output.}
+
+\item{color_theme}{The color theme to use. Can either be the name of a built-in or
+custom theme or a vector of hex codes. Existing color themes can be viewed with
+\code{\link[=display_themes]{display_themes()}}.}
+
+\item{color_usage}{A list of numerical vectors that specify which specific colors
+from the color scheme are used for which number of segments.}
+
+\item{theme_override}{The override parameter takes in a list consisting of
+\code{\link[=override_theme]{override_theme()}} functions.}
 
 \item{title_font_color}{Font color of the title.}
 
@@ -209,6 +225,15 @@ the borders.}
 
 \item{tooltip_corner_radius}{Radius of the corners of the tooltips in interactive charts.
 0 means sharp corners, tooltip displays as rectangle.}
+
+\item{segment_hover_opacity}{When hovering with the mouse cursor over a segment of an
+interactive chart, this parameter determines at how much opacity the segment is displayed.}
+
+\item{group_hover_color}{The background color of segment groups used in interactive charts.}
+
+\item{group_hover_opacity}{When hovering with the mouse cursor over a segment group of an
+interactive chart, this parameter determines at how much opacity the segment group background
+is displayed.}
 
 \item{separation_line_type}{Sets the type of separation lines drawn between top group
 categories. Can be "dashed", "dotted" or "solid".}

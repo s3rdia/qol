@@ -334,7 +334,7 @@ add_color_theme <- function(theme_name,
     theme_name <- get_origin_as_char(theme_name, substitute(theme_name))
 
     if (length(base_colors) == 0){
-        message(" X ERROR: No base colors provided. Color theme won't be added.")
+        print_message("ERROR", "No base colors provided. Color theme won't be added.")
         return(invisible(.qol_options[["graphic_themes"]]))
     }
 
@@ -351,7 +351,8 @@ add_color_theme <- function(theme_name,
     # Loop through provided base colors and check if they are valid
     for (single_color in base_colors){
         if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
-            message(" X ERROR: Base color '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
+            print_message("ERROR", "Base color '[single_color]' must be a 6 character <hex code>. Color theme won't be added.",
+                          single_color = single_color)
             return(invisible(.qol_options[["graphic_themes"]]))
         }
     }
@@ -359,7 +360,8 @@ add_color_theme <- function(theme_name,
     # Loop through provided font colors and check if they are valid
     for (single_color in font_inside_colors){
         if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
-            message(" X ERROR: Font inside color '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
+            print_message("ERROR", "Font inside color '[single_color]' must be a 6 character <hex code>. Color theme won't be added.",
+                          single_color = single_color)
             return(invisible(.qol_options[["graphic_themes"]]))
         }
     }
@@ -367,7 +369,8 @@ add_color_theme <- function(theme_name,
     # Loop through provided font colors and check if they are valid
     for (single_color in font_outside_colors){
         if (!grepl("^#?[A-Fa-f0-9]{6}$", single_color)){
-            message(" X ERROR: Font outside color '", single_color, "' must be a 6 character <hex code>. Color theme won't be added.")
+            print_message("ERROR", "Font outside color '[single_color]' must be a 6 character <hex code>. Color theme won't be added.",
+                          single_color = single_color)
             return(invisible(.qol_options[["graphic_themes"]]))
         }
     }
@@ -402,13 +405,13 @@ add_color_theme <- function(theme_name,
 #' @export
 get_theme_colors <- function(theme_name){
     if (length(theme_name) > 1){
-        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
 
         theme_name <- theme_name[[1]]
     }
 
     if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
         return(invisible(.qol_options[["graphic_themes"]][[1]]))
     }
 
@@ -433,13 +436,13 @@ get_theme_colors <- function(theme_name){
 #' @export
 get_theme_base_colors <- function(theme_name){
     if (length(theme_name) > 1){
-        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
 
         theme_name <- theme_name[[1]]
     }
 
     if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
         return(invisible(.qol_options[["graphic_themes"]][[1]][["base"]]))
     }
 
@@ -465,13 +468,13 @@ get_theme_base_colors <- function(theme_name){
 #' @export
 get_theme_font_inside_colors <- function(theme_name){
     if (length(theme_name) > 1){
-        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
 
         theme_name <- theme_name[[1]][["font_inside"]]
     }
 
     if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
         return(invisible(.qol_options[["graphic_themes"]][[1]][["font_inside"]]))
     }
 
@@ -497,13 +500,13 @@ get_theme_font_inside_colors <- function(theme_name){
 #' @export
 get_theme_font_outside_colors <- function(theme_name){
     if (length(theme_name) > 1){
-        message(" ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
 
         theme_name <- theme_name[[1]][["font_outside"]]
     }
 
     if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        message(" X ERROR: Theme '", theme_name, "' doesn't exist. Default theme will be used.")
+        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
         return(invisible(.qol_options[["graphic_themes"]][[1]][["font_outside"]]))
     }
 
@@ -558,8 +561,8 @@ reset_color_themes <- function(clear_themes = FALSE){
 #' @export
 display_colors <- function(theme_name){
     if (length(theme_name) > 1 || !is.character(theme_name)){
-        message(" X ERROR: Only a single theme can be displayed. Use 'display_themes()' to display all\n",
-                "          currently stored themes with their respective colors.")
+        print_message("ERROR", c("Only a single theme can be displayed. Use 'display_themes()' to display all",
+                                "currently stored themes with their respective colors."))
         return(invisible(NULL))
     }
 
@@ -617,8 +620,8 @@ display_themes <- function(){
     number_of_themes <- length(global_themes)
 
     if (number_of_themes == 0){
-        message("~ NOTE: No themes stored. Add themes by calling 'set_color_theme()' or use\n",
-                "        'reset_color_theme()' to get back default themes.")
+        print_message("NOTE", c("No themes stored. Add themes by calling 'set_color_theme()' or use",
+                                "'reset_color_theme()' to get back default themes."))
         return(invisible(global_themes))
     }
 
@@ -671,4 +674,60 @@ display_themes <- function(){
     grid::popViewport()
 
     invisible(global_themes)
+}
+
+
+#' @description
+#' [override_theme()]: Is used to override certain elements of an individual segment.
+#' Can be used to e.g. give certain segments a special coloring.
+#'
+#' @param number The number of the segment which should be manipulated.
+#' @param color The new main segment color.
+#' @param border_color The new border color of the segment.
+#' @param font_color The new font color of the segment value.
+#'
+#' @return
+#' [override_theme()]: A list containing the override parameters.
+#'
+#' @examples
+#' override_theme(3, "#FF00FF", "#00FF00")
+#'
+#' @rdname graphic_themes
+#'
+#' @export
+override_theme <- function(number       = NULL,
+                           color        = NULL,
+                           border_color = NULL,
+                           font_color   = NULL){
+    if (!is.null(number) && length(number) > 1){
+        print_message("WARNING", c("Only one segment number in override_theme allowed. Override will be omitted."))
+        return(list())
+    }
+
+    if (is.null(number)){
+        print_message("WARNING", c("No segment number provided. Override will be omitted."))
+        return(list())
+    }
+
+    # Check colors
+    if (!grepl("^#?[A-Fa-f0-9]{6}$", color)){
+        print_message("ERROR", "<Color> '[color]' must be a 6 character hex code. Override parameter will be omitted.",
+                      color = color)
+        color <- NULL
+    }
+
+    if (!grepl("^#?[A-Fa-f0-9]{6}$", border_color)){
+        print_message("ERROR", "<Border color> '[color]' must be a 6 character hex code. Override parameter will be omitted.",
+                      color = border_color)
+        border_color <- NULL
+    }
+
+    if (!grepl("^#?[A-Fa-f0-9]{6}$", font_color)){
+        print_message("ERROR", "<Border color> '[color]' must be a 6 character hex code. Override parameter will be omitted.",
+                      color = font_color)
+        font_color <- NULL
+    }
+
+    # Return as list
+    as.list(environment())
 }

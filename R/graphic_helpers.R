@@ -1058,11 +1058,11 @@ get_diagram_dimensions <- function(arguments){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get the colors to be used
-    theme <- get_theme_colors(arguments[["color_theme"]])
+    theme <- get_theme_colors(visuals[["color_theme"]])
 
     # Prevent color usage overflow, when there are more segments than color usage
     # patterns.
-    color_usage <- arguments[["color_usage"]]
+    color_usage <- visuals[["color_usage"]]
 
     if (number_of_segments > length(color_usage)){
         print_message("WARNING", c("More segments than available colors. Maximum number",
@@ -1104,6 +1104,13 @@ get_diagram_dimensions <- function(arguments){
     if (visuals[["reverse_colors"]]){
         colors_to_use <- rev(colors_to_use)
         border_color  <- rev(border_color)
+    }
+
+    # Get override and make sure it is a list of lists
+    theme_override <- visuals[["theme_override"]]
+
+    if (!is_list_of_lists(theme_override)){
+        theme_override <- list(theme_override)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1158,6 +1165,7 @@ get_diagram_dimensions <- function(arguments){
          color_usage                 = color_usage,
          border_color                = border_color,
          colors_to_use               = colors_to_use,
+         theme_override              = theme_override,
          shrink_width                = shrink_width)
 }
 
@@ -2207,8 +2215,6 @@ expected_parameters <- c("graphic_tab",
                          "statistics",
                          "var_labels",
                          "stat_labels",
-                         "color_theme",
-                         "color_usage",
                          "visuals",
                          "axes",
                          "dimensions",

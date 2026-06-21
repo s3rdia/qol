@@ -15,16 +15,25 @@
 #' @export
 vbar_grob <- function(diagram_info,
                       arguments){
-    visuals     <- arguments[["visuals"]]
-    dimensions  <- arguments[["dimensions"]]
-    fine_tuning <- arguments[["fine_tuning"]]
-    value_y_pos <- diagram_info[["values"]]
-    theme       <- diagram_info[["theme"]]
-    color_usage <- diagram_info[["color_usage"]]
+    visuals        <- arguments[["visuals"]]
+    dimensions     <- arguments[["dimensions"]]
+    fine_tuning    <- arguments[["fine_tuning"]]
+    value_y_pos    <- diagram_info[["values"]]
+    theme          <- diagram_info[["theme"]]
+    color_usage    <- diagram_info[["color_usage"]]
+    theme_override <- diagram_info[["theme_override"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate rectangles
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Inject overrides
+    if (length(theme_override) > 0){
+        for (override in theme_override){
+            diagram_info[["colors_to_use"]][override[["number"]]] <- override[["color"]]
+            diagram_info[["border_color"]][override[["number"]]]  <- override[["border_color"]]
+        }
+    }
 
     # Every segment is drawn as a separate element so that it can be accessed
     # individually even after graphic completion.
@@ -140,6 +149,14 @@ vbar_grob <- function(diagram_info,
         if (visuals[["rotate_values"]]){
             value_y_pos[value_y_pos == 0] <- grid::convertUnit(grid::unit(fine_tuning[["values_zero_line_offset"]], "cm"),
                                                                "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
+        }
+
+        # Inject overrides
+        if (length(theme_override) > 0){
+            for (override in theme_override){
+                font_color[override[["number"]]] <- override[["font_color"]]
+                font_color[override[["number"]]] <- override[["font_color"]]
+            }
         }
 
         # Reverse font colors, if option is set accordingly.

@@ -8,6 +8,13 @@
 #' [design_graphic()].
 #'
 #' @param font Set the font to be used for the entire output.
+#' @param color_theme The color theme to use. Can either be the name of a built-in or
+#' custom theme or a vector of hex codes. Existing color themes can be viewed with
+#' [display_themes()].
+#' @param color_usage A list of numerical vectors that specify which specific colors
+#' from the color scheme are used for which number of segments.
+#' @param theme_override The override parameter takes in a list consisting of
+#' [override_theme()] functions.
 #' @param title_font_color Font color of the title.
 #' @param footnote_font_color Font color of the footnote.
 #' @param primary_axes_font_color Font color of the primary axes.
@@ -93,6 +100,12 @@
 #' the borders.
 #' @param tooltip_corner_radius Radius of the corners of the tooltips in interactive charts.
 #' 0 means sharp corners, tooltip displays as rectangle.
+#' @param segment_hover_opacity When hovering with the mouse cursor over a segment of an
+#' interactive chart, this parameter determines at how much opacity the segment is displayed.
+#' @param group_hover_color The background color of segment groups used in interactive charts.
+#' @param group_hover_opacity When hovering with the mouse cursor over a segment group of an
+#' interactive chart, this parameter determines at how much opacity the segment group background
+#' is displayed.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -114,6 +127,9 @@
 #'
 #' @export
 graphic_visuals <- function(font                        = "Arial",
+                            color_theme                 = "ocean",
+                            color_usage                 = .qol_options[["graphic_color_usage"]],
+                            theme_override              = list(),
                             title_font_color            = "#000000",
                             footnote_font_color         = "#000000",
                             primary_axes_font_color     = "#000000",
