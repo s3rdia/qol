@@ -19,10 +19,25 @@
   [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
   (20.06.2026)
 
+#### Fixed
+
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Before joining it is now checked whether there will be duplicate
+  variable names after the join. If so, these variables will be dropped
+  before joining. Otherwise it was possible that a variable could show
+  up in the final data frame with the exact same name multiple times.
+  (21.06.2026)
+
 #### Optimization
 
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Brought percentiles up to more speed. (17.06.2026)
+
+#### Additionally
+
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Now displays the actual data frame names to be joined instead of just
+  an iterative number in the console. (21.06.2026)
 
 ## qol 1.3.2
 

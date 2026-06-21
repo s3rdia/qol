@@ -19,6 +19,10 @@ df2 <- data.frame(key = c(2, 3),
 df3 <- data.frame(key = c(1, 2),
                   c   = c("c", "c"))
 
+df4 <- data.frame(key  = c(1, 2),
+                  key1 = c(1, 2),
+                  a    = c("d", "d"))
+
 # Multiple same keys
 df1b <- data.frame(key1 = c(1, 1, 1, 2, 2, 2),
                    key2 = c("a", "a", "a", "a", "a", "a"),
@@ -86,7 +90,6 @@ expect_true(all(c("b", "c") %in% names(multiple_joined)), info = "Join multiple 
 left_joined <- multi_join(list(df1, df2), on = "key", how = "test")
 
 expect_warning(print_stack_as_messages("WARNING"), "No valid join method provided, 'left' will be used.", info = "Warning on invalid join method")
-
 expect_true("b" %in% names(left_joined), info = "Warning on invalid join method")
 
 
@@ -95,9 +98,22 @@ left_joined <- multi_join(list(df1, df2),
                                          on  = "key",
                                          how = c("left", "right"))
 
-expect_message(print_stack_as_messages("NOTE"), "Too many join methods given in <how>. Excess methods will remain unused.", info = "Note on too many join methods provided")
-
+expect_message(print_stack_as_messages("NOTE"), "Too many join methods given in <how>. Excess methods will remain unused.",
+               info = "Note on too many join methods provided")
 expect_true("b" %in% names(left_joined), info = "Note on too many join methods provided")
+
+
+# Warning duplicate variables on join
+left_joined <- multi_join(list(df1, df4), on = "key")
+
+expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable names found", info = "Warning duplicate variables on join")
+expect_true(collapse::fncol(left_joined) == 3, info = "Warning duplicate variables on join")
+
+left_joined <- multi_join(list(df1, df4), on = list(df1 = "key",
+                                                    df4 = "key1"))
+
+expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable names found", info = "Warning duplicate variables on join")
+expect_true(collapse::fncol(left_joined) == 3, info = "Warning duplicate variables on join")
 
 ###############################################################################
 # Abort checks
@@ -106,19 +122,22 @@ expect_true("b" %in% names(left_joined), info = "Note on too many join methods p
 # Abort join, if data frames aren't provided as list
 left_joined <- multi_join(c(df1, df2), on = "key")
 
-expect_error(print_stack_as_messages("ERROR"), "Data frames must be provided as a list. Join will be aborted.", info = "Abort join, if data frames aren't provided as list")
+expect_error(print_stack_as_messages("ERROR"), "Data frames must be provided as a list. Join will be aborted.",
+             info = "Abort join, if data frames aren't provided as list")
 
 
 # Abort join, if only one data frames provided
 left_joined <- multi_join(list(df1), on = "key")
 
-expect_error(print_stack_as_messages("ERROR"), "At least two data frames are required. Join will be aborted.", info = "Abort join, if only one data frames provided")
+expect_error(print_stack_as_messages("ERROR"), "At least two data frames are required. Join will be aborted.",
+             info = "Abort join, if only one data frames provided")
 
 
 # Abort join, if <on> variables are provided as unnamed list
 left_joined <- multi_join(list(df1, df2), on = list("key"))
 
-expect_error(print_stack_as_messages("ERROR"), "If all data frames have the same variable names for the <on> variables", info = "Abort join, if <on> variables are provided as unnamed list")
+expect_error(print_stack_as_messages("ERROR"), "If all data frames have the same variable names for the <on> variables",
+             info = "Abort join, if <on> variables are provided as unnamed list")
 
 
 # Abort join, if <on> variables are not provided for every data frame
@@ -126,7 +145,8 @@ multiple_joined <- multi_join(list(df1c, df2c, df3c),
                               on = list(df1c = c("key1", "key2"),
                                         df2c = c("var1", "var2")))
 
-expect_error(print_stack_as_messages("ERROR"), "Length of <on> doesn't match the number of provided data frames. Join will be aborted.", info = "Abort join, if <on> variables are not provided for every data frame")
+expect_error(print_stack_as_messages("ERROR"), "Length of <on> doesn't match the number of provided data frames. Join will be aborted.",
+             info = "Abort join, if <on> variables are not provided for every data frame")
 
 
 # Abort join, if <on> variables are missing in data frame (equal names)
@@ -147,7 +167,8 @@ expect_error(print_stack_as_messages("ERROR"), "Not all <on> variables", info = 
 # Abort join, if second of following data frame doesn't consist of only unique values (equal names)
 left_joined <- multi_join(list(df1, df1), on = "key")
 
-expect_error(print_stack_as_messages("ERROR"), "The second and all following data frames need to have unique combinations", info = "Abort join, if second of following data frame doesn't consist of only unique values (equal names)")
+expect_error(print_stack_as_messages("ERROR"), "The second and all following data frames need to have unique combinations",
+             info = "Abort join, if second of following data frame doesn't consist of only unique values (equal names)")
 
 
 # Abort join, if second of following data frame doesn't consist of only unique values  (unequal names)
@@ -156,7 +177,8 @@ multiple_joined <- multi_join(list(df1c, df1c, df3c),
                                         df1c = c("key1", "key2"),
                                         df3c = c("any", "name")))
 
-expect_error(print_stack_as_messages("ERROR"), "The second and all following data frames need to have unique combinations", info = "Abort join, if second of following data frame doesn't consist of only unique values  (unequal names)")
+expect_error(print_stack_as_messages("ERROR"), "The second and all following data frames need to have unique combinations",
+             info = "Abort join, if second of following data frame doesn't consist of only unique values  (unequal names)")
 
 
 # Abort join, if <on> variables have unequal length

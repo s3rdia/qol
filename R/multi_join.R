@@ -123,6 +123,16 @@ multi_join <- function(data_frames,
         }
     }
 
+    # If the user passed an unnamed list, get the data frame names back and set
+    # them as names.
+    if (!is_named_list(data_frames)){
+        # Grab the raw call made to the function
+        complete_call <- match.call()
+
+        # Extract the passed arguments of the data_frames parameter and set as names
+        names(data_frames) <- sapply(as.list(complete_call[["data_frames"]][-1]), deparse)
+    }
+
     ###########################################################################
     # Error handling
     ###########################################################################
@@ -134,6 +144,8 @@ multi_join <- function(data_frames,
     unequal_names <- FALSE
 
     if (is.list(on)){
+        base_on <- on[[1]]
+
         # If all list entries have a name
         if (!is.null(names(on)) && all(nzchar(names(on)))){
             # Check if number of list entries matches number of data frames
@@ -151,6 +163,9 @@ multi_join <- function(data_frames,
 								     "named list. Join will be aborted."))
             return(invisible(NULL))
         }
+    }
+    else{
+        base_on <- on
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -249,6 +264,9 @@ multi_join <- function(data_frames,
     # final data frame. Afterwards the data frame is conditionally filtered.
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    base_df_name <- names(data_frames)[1]
+
+    # Start the actual joining
     for (i in seq_along(data_frames)){
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next(paste0("Join ", i - 1), "Join")
@@ -262,38 +280,80 @@ multi_join <- function(data_frames,
             next
         }
 
-        print_step("MINOR", "{how} joining data_frame [i] to base data frame.", how = how[[i - 1]], i = i)
+        to_join_df  <- data_frames[[i]]
+        join_method <- how[[i - 1]]
+
+        # Depending on the join the printed data frame names have to be swapped
+        if (!join_method %in% c("right", "inner_right")){
+            print_step("MINOR", "{how} joining [data_frame1] to [data_frame2].",
+                       how = join_method, data_frame1 = names(data_frames)[i], data_frame2 = base_df_name)
+        }
+        else{
+            print_step("MINOR", "{how} joining [data_frame1] to [data_frame2].",
+                       how = join_method, data_frame1 = base_df_name, data_frame2 = names(data_frames)[i])
+        }
 
         # Create filter variable which indicates, which data frame provides observations
-        data_frames[[i]][[join_keys[[i]]]] <- 1
+        to_join_df[[join_keys[[i]]]] <- 1
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Equality crossroads
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+        # Get the variable names of the base data frame and the one to be joined
+        to_join_df_name     <- names(data_frames)[i]
+        joined_df_var_names <- names(joined_df)
+        to_join_var_names   <- names(to_join_df)
+
         # On equal names there is just one combination which can be input directly
         if (!unequal_names){
-            joined_df <- collapse::join(joined_df, data_frames[[i]],
-                                        on      = on,
-                                        how     = "full",
-                                        verbose = FALSE,
-										overid  = 2)
+            join_variables <- base_on
         }
         # On unequal names each individual variable combination has to be checked on the corresponding data frame
         else{
+            to_join_on <- on[[i]]
+
             # Check if the same number of 'on' variables are provided
-            if (length(on[[1]]) != length(on[[i]])){
+            if (length(base_on) != length(to_join_on)){
                 print_message("ERROR", c("Unequal number of <on> variables provided: [on1] vs [on_i].",
-										 "Join will be aborted."), on1 = on[[1]], on_i = on[[i]])
+                                         "Join will be aborted."), on1 = base_on, on_i = to_join_on)
                 return(invisible(NULL))
             }
 
-            joined_df <- collapse::join(joined_df, data_frames[[i]],
-                                        on      = stats::setNames(on[[i]], on[[1]]),
-                                        how     = "full",
-                                        verbose = FALSE,
-										overid  = 2)
+            join_variables  <- stats::setNames(to_join_on, base_on)
         }
+
+        # Check for intersecting variable names and clear them before the join,
+        # because otherwise it can happen that multiple variables with the exact
+        # same name get created through the join below.
+        joined_df_var_names <- joined_df_var_names[!joined_df_var_names %in% on]
+        to_join_var_names   <- to_join_var_names[!to_join_var_names %in% on]
+
+        duplicate_names <- intersect(joined_df_var_names, to_join_var_names)
+
+        if (length(duplicate_names) > 0){
+            # On other than right joins clear from to right data frame
+            if (!join_method %in% c("right", "inner_right")){
+                print_message("WARNING", c("Duplicate variable names found: [duplicates].",
+                                           "These variables will be removed from '[data_frame]' before the join."),
+                              duplicates = duplicate_names, data_frame = to_join_df_name)
+            }
+            # On right join clear from the left (base) data frame
+            else{
+                print_message("WARNING", c("Duplicate variable names found: [duplicates].",
+                                           "These variables will be removed from '[data_frame]' before the join."),
+                              duplicates = duplicate_names, data_frame = base_df_name)
+            }
+
+            to_join_df <- to_join_df |> dropp(duplicate_names)
+        }
+
+        # Perform the actual join
+        joined_df <- collapse::join(joined_df, to_join_df,
+                                    on      = join_variables,
+                                    how     = "full",
+                                    verbose = FALSE,
+									overid  = 2)
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Subset data frame according to provided join methods
@@ -303,22 +363,22 @@ multi_join <- function(data_frames,
         monitor_df <- monitor_df |> monitor_next(paste0("Subset ", i - 1), "Join")
         #---------------------------------------------------------------------#
 
-        if (tolower(how[[i - 1]]) == "left"){
+        if (tolower(join_method) == "left"){
             joined_df <- joined_df |> collapse::fsubset(joined_df[[join_keys[[1]]]] == 1)
         }
-        else if (tolower(how[[i - 1]]) == "right"){
+        else if (tolower(join_method) == "right"){
             joined_df <- joined_df |> collapse::fsubset(joined_df[[join_keys[[i]]]] == 1)
         }
-        else if (tolower(how[[i - 1]]) == "inner"){
+        else if (tolower(join_method) == "inner"){
             joined_df <- joined_df |> collapse::fsubset(joined_df[[join_keys[[1]]]] == 1 & joined_df[[join_keys[[i]]]] == 1)
         }
-        else if (tolower(how[[i - 1]]) == "outer"){
+        else if (tolower(join_method) == "outer"){
             joined_df <- joined_df |> collapse::fsubset(is.na(joined_df[[join_keys[[1]]]]) | is.na(joined_df[[join_keys[[i]]]]))
         }
-        else if (tolower(how[[i - 1]]) == "left_inner"){
+        else if (tolower(join_method) == "left_inner"){
             joined_df <- joined_df |> collapse::fsubset(joined_df[[join_keys[[1]]]] == 1 & is.na(joined_df[[join_keys[[i]]]]))
         }
-        else if (tolower(how[[i - 1]]) == "right_inner"){
+        else if (tolower(join_method) == "right_inner"){
             joined_df <- joined_df |> collapse::fsubset(is.na(joined_df[[join_keys[[1]]]]) & joined_df[[join_keys[[i]]]] == 1)
         }
 
