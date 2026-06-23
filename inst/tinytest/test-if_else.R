@@ -416,105 +416,131 @@ expect_warning(print_stack_as_messages("WARNING"), "No observations left in the 
 ###############################################################################
 
 # ifelse_multi basic recoding works
-test_df <- ifelse_df |> ifelse_multi("age < 18" = 1,
+result <- ifelse_df |> ifelse_multi("age < 18" = 1,
                                      "age < 65" = 2,
                                      else. = 3)
 
-expect_equal(test_df, c(1, 2, 2, 3, 3), info = "ifelse_multi basic recoding works")
+expect_equal(result, c(1, 2, 2, 3, 3), info = "ifelse_multi basic recoding works")
 
 
 # ifelse_multi SAS intervals are translated
-test_df <- ifelse_df |> ifelse_multi(" 0 <= age < 30" = 1,
+result <- ifelse_df |> ifelse_multi(" 0 <= age < 30" = 1,
                                      "30 <= age < 65" = 2,
                                      else. = 3)
 
-expect_equal(test_df, c(1, 1, 2, 3, 3), info = "ifelse_multi SAS intervals are translated")
+expect_equal(result, c(1, 1, 2, 3, 3), info = "ifelse_multi SAS intervals are translated")
 
 
 # ifelse_multi IN works with commas
-test_df <- ifelse_df |> ifelse_multi("age in (10, 20)" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("age in (10, 20)" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with commas")
+expect_equal(result, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with commas")
 
 
 # ifelse_multi IN works with spaces
-test_df <- ifelse_df |> ifelse_multi("age in (10 20)" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("age in (10 20)" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with spaces")
+expect_equal(result, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with spaces")
 
 
 # ifelse_multi NOT IN works
-test_df <- ifelse_df |> ifelse_multi("age not in (10 20)" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("age not in (10 20)" = 1, else. = 0)
 
-expect_equal(test_df, c(0, 0, 1, 1, 1), info = "ifelse_multi NOT IN works")
+expect_equal(result, c(0, 0, 1, 1, 1), info = "ifelse_multi NOT IN works")
 
 
 # ifelse_multi character with spaces works with IN
-test_df <- ifelse_df |> ifelse_multi("name in ('Hello World' 'Hello Again')" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name in ('Hello World' 'Hello Again')" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 1, 0, 0, 0), info = "ifelse_multi character with spaces works with IN")
+expect_equal(result, c(1, 1, 0, 0, 0), info = "ifelse_multi character with spaces works with IN")
 
 
 # ifelse_multi character expressions starting with letter
-test_df <- ifelse_df |> ifelse_multi("name == 'Hell:'" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name == 'Hell:'" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 1, 1, 0, 0), info = "ifelse_multi character expressions starting with letter")
+expect_equal(result, c(1, 1, 1, 0, 0), info = "ifelse_multi character expressions starting with letter")
 
 
 # ifelse_multi character expressions ending with letter
-test_df <- ifelse_df |> ifelse_multi("name == ':orld'" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name == ':orld'" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 0, 0, 1, 0), info = "ifelse_multi character expressions ending with letter")
+expect_equal(result, c(1, 0, 0, 1, 0), info = "ifelse_multi character expressions ending with letter")
 
 
 # ifelse_multi character expressions contain letter
-test_df <- ifelse_df |> ifelse_multi("name == ':ga:'" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name == ':ga:'" = 1, else. = 0)
 
-expect_equal(test_df, c(0, 1, 0, 0, 0), info = "ifelse_multi character expressions contain letter")
+expect_equal(result, c(0, 1, 0, 0, 0), info = "ifelse_multi character expressions contain letter")
 
 
 # ifelse_multi negated character expressions contain letter
-test_df <- ifelse_df |> ifelse_multi("name != ':ga:'" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name != ':ga:'" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 0, 1, 1, 1), info = "ifelse_multi negated character expressions contain letter")
+expect_equal(result, c(1, 0, 1, 1, 1), info = "ifelse_multi negated character expressions contain letter")
 
 
 # ifelse_multi AND is translated
-test_df <- ifelse_df |> ifelse_multi("age < 18 and sex == 1" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("age < 18 and sex == 1" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 0, 0, 0, 0), info = "ifelse_multi AND is translated")
+expect_equal(result, c(1, 0, 0, 0, 0), info = "ifelse_multi AND is translated")
 
 
 # ifelse_multi OR is translated
-test_df <- ifelse_df |> ifelse_multi("age < 18 or sex == 2" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("age < 18 or sex == 2" = 1, else. = 0)
 
-expect_equal(test_df, c(1, 1, 0, 1, 0), info = "ifelse_multi AND is translated")
+expect_equal(result, c(1, 1, 0, 1, 0), info = "ifelse_multi AND is translated")
 
 
 # ifelse_multi na.rm = FALSE preserves NA
-test_df <- ifelse_df |> ifelse_multi("age < 18" = 1, else. = 0, na.rm = FALSE)
+result <- ifelse_df |> ifelse_multi("age < 18" = 1, else. = 0, na.rm = FALSE)
 
-expect_equal(test_df, c(1, 0, 0, 0, NA), info = "ifelse_multi na.rm = FALSE preserves NA")
+expect_equal(result, c(1, 0, 0, 0, NA), info = "ifelse_multi na.rm = FALSE preserves NA")
+
+
+# ifelse_multi can handle macro variables
+variable <- "sex"
+gender   <- 1
+value    <- "male"
+
+result <- ifelse_df |> ifelse_multi("&variable == &gender" = "&value")
+
+expect_equal(result, c("male", NA, "male", NA, NA), info = "ifelse_multi can handle macro variables")
 
 
 # ifelse_multi do_if condition is used on all other conditions
-test_df <- ifelse_df |> ifelse_multi(do_if = "sex == 1",
+result <- ifelse_df |> ifelse_multi(do_if = "sex == 1",
                                      "age < 18" = 1,
                                      "age < 65" = 2,
                                      else. = 3)
 
-expect_equal(test_df, c(1, 3, 2, 3, 3), info = "ifelse_multi do_if condition is used on all other conditions")
+expect_equal(result, c(1, 3, 2, 3, 3), info = "ifelse_multi do_if condition is used on all other conditions")
+
+
+# ifelse_multi throws a note on value conversion
+result <- ifelse_df |> ifelse_multi("age < 18" = 1,
+                                    else.      = "2")
+
+expect_equal(result, c("1", "2", "2", "2", "2"), info = "ifelse_multi throws a note on value conversion")
+expect_message(print_stack_as_messages("NOTE"), "<Else.> parameter is of a different type than the rest of the result values.",
+             info = "ifelse_multi throws a note on value conversion")
+
+result <- ifelse_df |> ifelse_multi("age < 18" = "1",
+                                    else.      = 2)
+
+expect_equal(result, c("1", "2", "2", "2", "2"), info = "ifelse_multi throws a note on value conversion")
+expect_message(print_stack_as_messages("NOTE"), "<Else.> parameter is of a different type than the rest of the result values.",
+               info = "ifelse_multi throws a note on value conversion")
 
 
 # ifelse_multi aborts on missing quotation mark
-test_df <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')" = 1, else. = 0)
+result <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')" = 1, else. = 0)
 
 expect_error(print_stack_as_messages("ERROR"), "Condition couldn't be parsed.",
              info = "ifelse_multi aborts on missing quotation mark")
 
 
 # ifelse_multi aborts on non named list condition
-test_df <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')")
+result <- ifelse_df |> ifelse_multi("name in ('Hello World 'Hello Again')")
 
 expect_error(print_stack_as_messages("ERROR"), "You have to pass conditions and assignments in the form",
              info = "ifelse_multi aborts on non named list condition")

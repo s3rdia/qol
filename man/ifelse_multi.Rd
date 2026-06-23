@@ -92,6 +92,14 @@ my_data[["start"]]    <- my_data |> ifelse_multi(" education == 'lo:' "  = 1, el
 my_data[["end"]]      <- my_data |> ifelse_multi(" education == ':le' "  = 1, else. = 0)
 my_data[["contains"]] <- my_data |> ifelse_multi(" education == ':ig:' " = 1, else. = 0)
 
+# Macro variables can be integrated in any place
+variable     <- "age"
+age_to_check <- 18
+value_to_set <- "under 18"
+
+my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
+                                              else. = "other")
+
 }
 \seealso{
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}

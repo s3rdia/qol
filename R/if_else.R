@@ -1287,6 +1287,14 @@ end_all_do <- function(data_frame){
 #' my_data[["end"]]      <- my_data |> ifelse_multi(" education == ':le' "  = 1, else. = 0)
 #' my_data[["contains"]] <- my_data |> ifelse_multi(" education == ':ig:' " = 1, else. = 0)
 #'
+#' # Macro variables can be integrated in any place
+#' variable     <- "age"
+#' age_to_check <- 18
+#' value_to_set <- "under 18"
+#'
+#' my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
+#'                                               else. = "other")
+#'
 #' @export
 ifelse_multi <- function(data_frame,
                          ...,
@@ -1314,6 +1322,24 @@ ifelse_multi <- function(data_frame,
     # Parse the condition and resolve and/or, SAS like "15 <= age < 65" and macros
     parsed_conditions <- lapply(names(conditions), parse_conditions, na.rm = na.rm)
 
+    # Apply macro variables to result values
+    result_values <- unlist(conditions)
+
+    if (!is.na(else.)){
+        if (typeof(result_values) != typeof(else.)){
+            print_message("NOTE", c("<Else.> parameter is of a different type than the rest of the result values.",
+                                    "Result will be converted to character."))
+
+            result_values <- as.character(result_values)
+            else.         <- as.character(else.)
+            else.         <- macro(else.)
+        }
+    }
+
+    if (is.character(result_values)){
+        result_values <- apply_macro(result_values)
+    }
+
     # If there was an overarching condition specified, parse and inject it into
     # all the other conditions.
     if(!is.null(do_if)){
@@ -1333,7 +1359,7 @@ ifelse_multi <- function(data_frame,
     result <- else.
 
     for(i in rev(seq_along(conditions))){
-        result <- as.call(list(data.table::fifelse, parsed_conditions[[i]], conditions[[i]], result))
+        result <- as.call(list(data.table::fifelse, parsed_conditions[[i]], result_values[[i]], result))
     }
 
     # Evaluate the nested ifelse functions and return result
