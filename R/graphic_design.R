@@ -91,8 +91,7 @@
 #' [setup_nested_diagram_viewport()], [back_to_the_root()], [is_viewport_pushed()]
 #' - Dimensions: [get_available_width()], [get_available_height()]
 #' - Diagram: [get_diagram_dimensions()], [vbar_grob()]
-#' - Axes: [get_value_axes_width()], [get_variable_axes_height()], [get_values_width()],
-#' [get_values_height()],[get_group_tick_positions_x()],
+#' - Axes: [get_value_axes_width()], [get_variable_axes_height()], [get_group_tick_positions_x()],
 #' [get_y_axes_values()], [setup_y_axes()], [setup_x_axes()], [setup_xy_axes()]
 #' - Labels: [direct_vertical_labels()]
 #' - Other: [format_values()]
@@ -936,6 +935,9 @@ generate_graphic <- function(graphic_tab,
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
 
+    # Add a legend for the individual segments if specified
+    segment_labels <- setup_legend(main_grob[["meta"]], visuals, dimensions)
+
     # Make sure custom textboxes have a unique name or otherwise only the first
     # will be drawn multiple times.
     custom_textboxes <- lapply(seq_along(add_texts), function(textbox){
@@ -951,6 +953,7 @@ generate_graphic <- function(graphic_tab,
                             grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                             grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
                             grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
+                       segment_labels,
                        custom_textboxes)),
         childrenvp = viewport_tree,
         name       = "graphic" )
