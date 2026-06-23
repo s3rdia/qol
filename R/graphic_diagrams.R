@@ -45,7 +45,7 @@ vbars <- function(...){
     # Generate segments
     segments <- vbar_grob(diagram_info, arguments)
 
-
+    # Set up segment labels
     segment_labels <- direct_vertical_labels(diagram_info, arguments)
 
     # Combine all elements into one graphical object

@@ -431,6 +431,62 @@ register_windows_font <- function(font){
 }
 
 
+#' @description
+#' [get_text_width()]: Get the width of a text.
+#'
+#' @param type The type of text to be measured. Can be: title, footnote, primary_axes,
+#' secondary_axes, variable_axes, value, label, origin or other.
+#' @param unit The unit to measure widths and heights in. Used are "native" for measuring
+#' inside the inner canvas. Otherwise use "cm".
+#'
+#' @return
+#' [get_text_width()]: Returns a numeric width.
+#'
+#' @rdname textboxes
+#'
+#' @export
+get_text_width <- function(text,
+                           type,
+                           dimensions,
+                           visuals,
+                           unit = "native"){
+    # Create test graphical object to measure the actual height
+    temp_grob <- grid::textGrob(text,
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                fontface   = visuals[[paste0(type, "_font_face")]],
+                                                lineheight = dimensions[["line_height"]]))
+
+    # Measure the height of the temporary graphical object
+    abs(grid::convertWidth(grid::grobWidth(temp_grob), unit, valueOnly = TRUE))
+}
+
+#' @description
+#' [get_text_height()]: Get the height of a text.
+#'
+#' @return
+#' [get_text_height()]: Returns a numeric height.
+#'
+#' @rdname axes
+#'
+#' @export
+get_text_height <- function(text,
+                            type,
+                            dimensions,
+                            visuals,
+                            unit = "native"){
+    # Create test graphical object to measure the actual height
+    temp_grob <- grid::textGrob(text,
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                fontface   = visuals[[paste0(type, "_font_face")]],
+                                                lineheight = dimensions[["line_height"]]))
+
+    # Measure the height of the temporary graphical object
+    abs(grid::convertHeight(grid::grobHeight(temp_grob), unit, valueOnly = TRUE))
+}
+
+
 ###############################################################################
 # Viewport
 ###############################################################################
@@ -613,7 +669,7 @@ setup_nested_diagram_viewport <- function(arguments){
     # Measure whether the value heights fit the segment heights. This is done after
     # setting up the inner viewport to get the dimensions right. A tiny bit is added
     # to the padding, so that the values are shifted outside before they reach the axes.
-    diagram_info[["values_width"]]  <- get_values_width(diagram_info[["formatted_values"]], dimensions, visuals)
+    diagram_info[["values_width"]]  <- get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals)
     diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
                                                            "native", valueOnly =TRUE)
 
@@ -624,7 +680,7 @@ setup_nested_diagram_viewport <- function(arguments){
             # Determine whether a value should be drawn inside or outside the segment.
             # Without rotation just measure the value heights, which is the same for
             # all values, because all are displayed on a single line, and add the padding.
-            diagram_info[["value_heights"]] <- get_values_height(diagram_info, dimensions, visuals, fine_tuning)
+            diagram_info[["value_heights"]] <- get_text_height(diagram_info[["formatted_values"]], "value", dimensions, visuals)
 
             diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
                                                     < abs(diagram_info[["actual_drawing_height"]]))
@@ -1183,25 +1239,26 @@ get_diagram_dimensions <- function(arguments){
 #'
 #' @export
 setup_interactive_elements <- function(arguments, diagram_info){
-    if (arguments[["output"]][["interactive"]]){
-        # In case an interactive graphic is created there are additional segment
-        # group rectangles generated which serve as another tooltip zone and as
-        # a hover over effect for the groups.
-        do.call(grid::gList,
-                lapply(seq_len(diagram_info[["number_of_groups"]]), function(i){
-                    grid::rectGrob(x      = grid::unit(diagram_info[["group_pos"]][i], "native"),
-                                   y      = grid::unit(0, "native"),
-                                   width  = grid::unit(diagram_info[["group_width"]], "native"),
-                                   height = grid::unit(diagram_info[["primary_y_distance"]], "native"),
-                                   just   = c("left", "bottom"),
-                                   name   = paste0("tooltip_group", i),
-                                   gp     = grid::gpar(fill = arguments[["visuals"]][["group_hover_color"]],
-                                                       col  = arguments[["visuals"]][["group_hover_color"]]))
-                }))
+    if (!arguments[["output"]][["interactive"]]){
+        return(grid::nullGrob())
     }
-    else{
-        grid::nullGrob()
-    }
+
+    visuals <- arguments[["visuals"]]
+
+    # In case an interactive graphic is created there are additional segment
+    # group rectangles generated which serve as another tooltip zone and as
+    # a hover over effect for the groups.
+    do.call(grid::gList,
+            lapply(seq_len(diagram_info[["number_of_groups"]]), function(i){
+                grid::rectGrob(x      = grid::unit(diagram_info[["group_pos"]][i], "native"),
+                               y      = grid::unit(0, "native"),
+                               width  = grid::unit(diagram_info[["group_width"]], "native"),
+                               height = grid::unit(diagram_info[["primary_y_distance"]], "native"),
+                               just   = c("left", "bottom"),
+                               name   = paste0("tooltip_group", i),
+                               gp     = grid::gpar(fill = visuals[["group_hover_color"]],
+                                                   col  = visuals[["group_hover_color"]]))
+            }))
 
 }
 
@@ -1290,69 +1347,10 @@ get_variable_axes_height <- function(wrapped_text,
 
 
 #' @description
-#' [get_values_width()]: Get the width of the segment values.
-#'
-#' @param formatted_values The formatted values in their final form.
-#'
-#' @return
-#' [get_values_width()]: Returns a numeric width
-#'
-#' @rdname axes
-#'
-#' @export
-get_values_width <- function(formatted_values,
-                             dimensions,
-                             visuals){
-    # The unit measuring functions are checking the font values from the current
-    # viewport. Since there are multiple different font options used on the same
-    # viewport they can't be set in general. Therefor a temporary viewport with the
-    # specific options has to be set up.
-    grid::pushViewport(grid::viewport(gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                      fontsize   = dimensions[["value_font_size"]],
-                                                      fontface   = visuals[["value_font_face"]])))
-
-    # Measure individual widths
-    widths <- grid::convertWidth(grid::stringWidth(formatted_values),
-                                 "native", valueOnly = TRUE)
-
-    # Release viewport
-    grid::popViewport()
-
-    # Width seems to be measured too small. Adding a bit on top seems to help.
-    widths
-}
-
-
-#' @description
-#' [get_values_height()]: Get the height of the segment values.
-#'
-#' @return
-#' [get_values_height()]: Returns a numeric height.
-#'
-#' @rdname axes
-#'
-#' @export
-get_values_height <- function(diagram_info,
-                              dimensions,
-                              visuals,
-                              fine_tuning){
-    # Create test graphical object to measure the actual height
-    temp_grob <- grid::textGrob(diagram_info[["values"]],
-                                gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                fontsize   = dimensions[["value_font_size"]],
-                                                fontface   = visuals[["value_font_face"]],
-                                                lineheight = dimensions[["line_height"]]))
-
-    # Measure the height of the temporary graphical object
-    abs(grid::convertHeight(grid::grobHeight(temp_grob), "native", valueOnly = TRUE))
-}
-
-
-#' @description
 #' [swap_scaling()]: Width and height are measured according to the individual scaling
 #' for each dimension. This function converts the measured to the respective other dimension.
 #'
-#' @param measuring The values received from [get_values_width()] or [get_values_height()].
+#' @param measuring The values received from [get_text_width()] or [get_text_height()].
 #' @param from Input measuring.
 #' @param to Output measuring.
 #'
@@ -1943,7 +1941,7 @@ direct_vertical_labels <- function(diagram_info,
     dimensions  <- arguments[["dimensions"]]
     fine_tuning <- arguments[["fine_tuning"]]
 
-    if (visuals[["label_type"]] != "lines"){
+    if (tolower(visuals[["label_type"]]) != "lines"){
         return(grid::nullGrob())
     }
 
@@ -2015,10 +2013,7 @@ direct_vertical_labels <- function(diagram_info,
         # Without rotation the offset is basically static because values are always
         # drawn on one line and therefor have the same height.
         if (!visuals[["rotate_values"]]){
-            offset_value <- get_values_height(diagram_info,
-                                              dimensions,
-                                              visuals,
-                                              fine_tuning)
+            offset_value <- get_text_height(values, "value", dimensions, visuals)
 
             offset_value <- rep(offset_value, diagram_info[["number_of_segments"]])
         }
@@ -2122,6 +2117,114 @@ direct_vertical_labels <- function(diagram_info,
 
     # Return whole label object
     grid::gList(lines, segment_labels)
+}
+
+
+#' @description
+#' [setup_legend()]: Set up a legend for the segment labels. The legend consists
+#' of a colored shape followed by th label of the individual segment. The legend
+#' is drawn in single or multi column layout.
+#'
+#' @param visuals Visual parameters set with [graphic_visuals()].
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#'
+#' @return
+#' [setup_legend()]: Returns a grid::gList.
+#'
+#' @rdname segment_labels
+#'
+#' @export
+setup_legend <- function(diagram_info,
+                         visuals,
+                         dimensions){
+    if (tolower(visuals[["label_type"]]) != "legend"){
+        return(grid::nullGrob())
+    }
+
+    segment_labels    <- diagram_info[["unique_segments"]]
+    number_of_labels  <- length(segment_labels)
+    number_of_columns <- visuals[["legend_columns"]]
+
+    # Number of entries per column
+    entries_per_column <- ceiling(number_of_labels / number_of_columns)
+
+    # Assign the column and row id per entry
+    column_id <- rep(seq_len(number_of_columns), each = entries_per_column)[seq_len(number_of_labels)]
+    row_id    <- ave(seq_len(number_of_labels), column_id, FUN = seq_along)
+
+    # Find the entry with the most letters per column to measure the maximum width
+    # per column. Only necessary in multi column layouts.
+    column_widths <- numeric(number_of_columns)
+
+    # Last column needs no measuring because nothing needs to be aligned on
+    # the right side.
+    for(column in seq_len(number_of_columns)){
+        # Find label with the most letters in the current column
+        current_column <- which(column_id == column)
+        longest_label  <- segment_labels[current_column[which.max(nchar(segment_labels[current_column]))]]
+
+        # Measure only this single label
+        column_widths[column] <- get_text_width(longest_label, "label", dimensions, visuals, "cm") +
+            visuals[["legend_symbol_size"]] + dimensions[["margins"]] * 2
+    }
+
+    # Left position of each column
+    column_x_pos <- c(0, head(cumsum(column_widths), -1))
+
+    # Calculate the final legend entry x positions. If the base legend position
+    # is set to auto, the legend will be placed to the far right inside the main canvas.
+    if (visuals[["legend_x_pos"]] == "auto"){
+        # TODO: TEXT MOVES FURTHER AWAY FROM THE RIGHT SIDE THE LONGER THE TEXT IS.
+        visuals[["legend_x_pos"]] <- dimensions[["graphic_width"]] - collapse::fsum(column_widths)
+    }
+
+    legend_x_pos <- visuals[["legend_x_pos"]] + column_x_pos[column_id]
+
+    # Calculate the final legend entry y positions. If the base legend position
+    # is set to auto, the legend will be placed to the top of the diagram.
+    text_height <- get_text_height(segment_labels[1], "label", visuals, dimensions)
+
+    if (visuals[["legend_y_pos"]] == "auto"){
+        visuals[["legend_y_pos"]] <- dimensions[["diagram_start"]] - text_height - dimensions[["margins"]]
+    }
+
+    legend_y_pos <- visuals[["legend_y_pos"]] - (row_id - 1) * (text_height + dimensions[["margins"]] / 2)
+
+    # Draw colored rectangles aligned within each column
+    colors_to_use <- diagram_info[["colors_to_use"]][1:diagram_info[["number_of_segments"]]]
+    border_colors <- diagram_info[["border_color"]][1:diagram_info[["number_of_segments"]]]
+
+    legend_symbol_size <- grid::unit(visuals[["legend_symbol_size"]], "cm")
+
+    rects <- do.call(grid::gList, lapply(seq_len(number_of_labels), function(i){
+        grid::rectGrob(x      = grid::unit(legend_x_pos[i], "cm"),
+                       y      = grid::unit(legend_y_pos[i], "cm"),
+                       width  = legend_symbol_size,
+                       height = legend_symbol_size,
+                       just   = c("left", "top"),
+                       name   = paste0("legend_symbol", i),
+                       vp     = grid::vpPath("main_canvas"),
+                       gp     = grid::gpar(fill = colors_to_use[i],
+                                           col  = border_colors[i]))
+    }))
+
+    # Draw labels right to the symbols
+    texts <- do.call(grid::gList, lapply(seq_len(number_of_labels), function(i){
+        grid::textGrob(label  = segment_labels[i],
+                       x      = grid::unit(legend_x_pos[i], "cm") + legend_symbol_size + grid::unit(dimensions[["margins"]], "cm"),
+                       y      = grid::unit(legend_y_pos[i], "cm"),
+                       just   = c("left", "top"),
+                       name   = paste0("legend_labels", i),
+                       vp     = grid::vpPath("main_canvas"),
+                       gp     = grid::gpar(col        = visuals[["label_font_color"]],
+                                           fontfamily = visuals[["font"]],
+                                           fontsize   = dimensions[["label_font_size"]],
+                                           fontface   = visuals[["label_font_face"]],
+                                           lineheight = dimensions[["line_height"]]))
+        }))
+
+    # Return legend
+    grid::gList(rects, texts)
 }
 
 

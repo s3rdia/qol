@@ -83,6 +83,7 @@
 #' @param legend_columns The number of columns in which the labels should be arranged.
 #' If 0, all labels will be drawn below each other. If max number of segments, then
 #' all labels will be drawn beside each other.
+#' @param legend_symbol_size The size of the symbol that is drawn to the left of the expression text.
 #' @param origin A character value that will be written in the bottom right corner of the
 #' graphic.
 #' @param tooltip_font_color Font color of the tooltips in interactive charts. If set to "auto"
@@ -179,9 +180,10 @@ graphic_visuals <- function(font                        = "Arial",
                             display_plus_symbol         = FALSE,
                             label_type                  = "lines",
                             label_group                 = "auto",
-                            legend_x_pos                = 11,
-                            legend_y_pos                = 5,
+                            legend_x_pos                = "auto",
+                            legend_y_pos                = "auto",
                             legend_columns              = 1,
+                            legend_symbol_size          = 0.3,
                             origin                      = "Graphic: qol",
                             tooltip_font_color          = "auto",
                             tooltip_background_color    = "auto",

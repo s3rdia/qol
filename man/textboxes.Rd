@@ -9,6 +9,7 @@
 \alias{add_footnote}
 \alias{add_graphic_origin}
 \alias{register_windows_font}
+\alias{get_text_width}
 \title{Add Textboxes As Graphical Object}
 \usage{
 add_textbox(
@@ -51,6 +52,8 @@ add_graphic_origin(
 )
 
 register_windows_font(font)
+
+get_text_width(text, type, dimensions, visuals, unit = "native")
 }
 \arguments{
 \item{text}{The text that should be displayed.}
@@ -86,6 +89,12 @@ register_windows_font(font)
 \item{dimensions}{qol package dimensions options.}
 
 \item{visuals}{qol package visuals options.}
+
+\item{type}{The type of text to be measured. Can be: title, footnote, primary_axes,
+secondary_axes, variable_axes, value, label, origin or other.}
+
+\item{unit}{The unit to measure widths and heights in. Used are "native" for measuring
+inside the inner canvas. Otherwise use "cm".}
 }
 \value{
 Returns a grid::textGrob object.
@@ -93,6 +102,8 @@ Returns a grid::textGrob object.
 Returns wrapped character.
 
 Returns wrapped character vector.
+
+\code{\link[=get_text_width]{get_text_width()}}: Returns a numeric width.
 }
 \description{
 \code{\link[=add_textbox]{add_textbox()}}: Create a textbox as graphical object. The dimensions and overall visual appearance
@@ -113,6 +124,8 @@ a textbox at the bottom of the graphic as footnote.
 a textbox at the bottom right of the graphic as information who created the graphic.
 
 \code{\link[=register_windows_font]{register_windows_font()}}: Windows only. Registers the font to be used.
+
+\code{\link[=get_text_width]{get_text_width()}}: Get the width of a text.
 }
 \seealso{
 High level graphic functions: \code{\link[=design_graphic]{design_graphic()}}
