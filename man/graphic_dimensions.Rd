@@ -7,7 +7,7 @@
 graphic_dimensions(
   graphic_width = 16,
   graphic_height = 9,
-  diagram_start = "auto",
+  diagram_start_top = "auto",
   diagram_width = "auto",
   diagram_height = "auto",
   margins = 0.25,
@@ -39,7 +39,7 @@ graphic_dimensions(
 
 \item{graphic_height}{The height of the whole graphic.}
 
-\item{diagram_start}{The starting position of the main diagram within the graphic from the top.}
+\item{diagram_start_top}{The starting position of the main diagram within the graphic from the top.}
 
 \item{diagram_width}{The width of the main diagram within the graphic.}
 

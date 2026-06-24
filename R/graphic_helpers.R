@@ -584,7 +584,7 @@ setup_diagram_viewport <- function(arguments){
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
     setup_nested_viewport(x_pos       = dimensions[["margins"]],
-                          y_pos       = dimensions[["diagram_start"]],
+                          y_pos       = dimensions[["diagram_start_top"]],
                           y_scale     = c(0, 1),
                           width       = dimensions[["diagram_width"]],
                           height      = dimensions[["diagram_height"]],
@@ -617,6 +617,8 @@ setup_nested_diagram_viewport <- function(arguments){
     diagram_info[["outer_viewport"]]        <- outer_viewport
     diagram_info[["outer_viewport_height"]] <- grid::convertHeight(grid::unit(1, "native"), "cm", valueOnly = TRUE)
     diagram_info[["inner_viewport_height"]] <- diagram_info[["outer_viewport_height"]] - diagram_info[["entire_group_label_height"]]
+    diagram_info[["outer_viewport_width"]]  <- grid::convertWidth(grid::unit(1, "native"), "cm", valueOnly = TRUE)
+    diagram_info[["inner_viewport_width"]]  <- diagram_info[["outer_viewport_width"]] - diagram_info[["primary_y_axes_width"]]
 
     # If all values are negative, the group label positions are vertically inverted
     # later. Which means normally they are drawn below the variable axes (vbars),
@@ -655,13 +657,11 @@ setup_nested_diagram_viewport <- function(arguments){
     }
 
     # Setup the main inner diagram viewport
-    width <- dimensions[["graphic_width"]] - (diagram_info[["primary_y_axes_width"]] + (2 * dimensions[["margins"]]))
-
     diagram_info[["inner_viewport"]] <-
         setup_nested_viewport(x_pos       = diagram_info[["primary_y_axes_width"]],
                               y_pos       = y_pos,
                               y_scale     = c(diagram_info[["primary_y_min"]], diagram_info[["primary_y_max"]]),
-                              width       = width,
+                              width       = diagram_info[["inner_viewport_width"]],
                               height      = height,
                               line_height = dimensions[["line_height"]],
                               name        = "main_diagram")
@@ -689,7 +689,8 @@ setup_nested_diagram_viewport <- function(arguments){
             # Wit rotation all heights are individual. The widths are captured before
             # the rotation, then swap the scaling from width to the actual scaled
             # inner viewport height. Again add the padding here.
-            diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["values_width"]], width, diagram_info[["inner_viewport_height"]]) * diagram_info[["primary_y_distance"]]
+            diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["values_width"]], diagram_info[["inner_viewport_width"]],
+                                                                  diagram_info[["inner_viewport_height"]]) * diagram_info[["primary_y_distance"]]
             diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
                                                     < abs(diagram_info[["actual_drawing_height"]]))
         }
@@ -2185,7 +2186,7 @@ setup_legend <- function(diagram_info,
     text_height <- get_text_height(segment_labels[1], "label", visuals, dimensions)
 
     if (visuals[["legend_y_pos"]] == "auto"){
-        visuals[["legend_y_pos"]] <- dimensions[["diagram_start"]] - text_height - dimensions[["margins"]]
+        visuals[["legend_y_pos"]] <- dimensions[["diagram_start_top"]] - text_height - dimensions[["margins"]]
     }
 
     legend_y_pos <- visuals[["legend_y_pos"]] - (row_id - 1) * (text_height + dimensions[["margins"]] / 2)
