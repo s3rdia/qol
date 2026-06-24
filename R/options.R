@@ -1149,7 +1149,7 @@ set_graphic_options <- function(..., save_file = NULL){
               "variable_axes_interval")
 
     dimensions <- c("graphic_width", "graphic_height",
-                    "diagram_start", "diagram_width", "diagram_height",
+                    "diagram_start_top", "diagram_width", "diagram_height",
                     "margins",
                     "title_font_size", "footnote_font_size",
                     "axes_font_size", "value_font_size",
@@ -1264,7 +1264,7 @@ set_graphic_options <- function(..., save_file = NULL){
     flexible <- c("primary_axes_max", "primary_axes_min",
                   "secondary_axes_max", "secondary_axes_min",
                   "label_group", "legend_x_pos", "legend_y_pos",
-                  "diagram_start", "diagram_width", "diagram_height")
+                  "diagram_start_top", "diagram_width", "diagram_height")
 
     # Loop through passed arguments and check if they are of valid type
     for (option in names(style_list)){

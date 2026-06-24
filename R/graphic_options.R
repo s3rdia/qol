@@ -413,7 +413,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #'
 #' @param graphic_width The width of the whole graphic.
 #' @param graphic_height The height of the whole graphic.
-#' @param diagram_start The starting position of the main diagram within the graphic from the top.
+#' @param diagram_start_top The starting position of the main diagram within the graphic from the top.
 #' @param diagram_width The width of the main diagram within the graphic.
 #' @param diagram_height The height of the main diagram within the graphic.
 #' @param margins Inner margins to the graphic borders in cm.
@@ -466,7 +466,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @export
 graphic_dimensions <- function(graphic_width             = 16,
                                graphic_height            = 9,
-                               diagram_start             = "auto",
+                               diagram_start_top         = "auto",
                                diagram_width             = "auto",
                                diagram_height            = "auto",
                                margins                   = 0.25,
@@ -505,11 +505,11 @@ graphic_dimensions <- function(graphic_width             = 16,
         diagram_height <- graphic_height
     }
 
-    if (is.numeric(diagram_start) && (diagram_start < 0 || diagram_start > graphic_height)){
+    if (is.numeric(diagram_start_top) && (diagram_start_top < 0 || diagram_start_top > graphic_height)){
         message(" ! WANRING: Diagram start can't be smaller than 0 or greater than the whole graphic height.\n",
                 "            Diagram will start at the margin position.")
 
-        diagram_start <- margins
+        diagram_start_top <- margins
     }
 
     as.list(environment())

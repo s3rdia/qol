@@ -15,7 +15,7 @@
 #' @noRd
 get_diagram_start_cm <- function(dimensions   = .qol_options[["graphic_dimensions"]],
                                  title_height = 0){
-    start <- dimensions[["diagram_start"]]
+    start <- dimensions[["diagram_start_top"]]
 
     # Measure diagram start automatically and set it right under the title or
     # take the manually set start.

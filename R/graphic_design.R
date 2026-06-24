@@ -896,9 +896,9 @@ generate_graphic <- function(graphic_tab,
     origin_height   <- abs(grid::convertHeight(grid::grobHeight(origin_grob),   "cm", valueOnly = TRUE))
 
     # Get automatically set dimensions
-    dimensions[["diagram_start"]]  <- get_diagram_start_cm(dimensions, title_height)
-    dimensions[["diagram_width"]]  <- get_diagram_width_cm(dimensions)
-    dimensions[["diagram_height"]] <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
+    dimensions[["diagram_start_top"]] <- get_diagram_start_cm(dimensions, title_height)
+    dimensions[["diagram_width"]]     <- get_diagram_width_cm(dimensions)
+    dimensions[["diagram_height"]]    <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Build main diagram
