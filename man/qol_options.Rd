@@ -18,6 +18,7 @@
 \alias{get_footnotes}
 \alias{set_threads}
 \alias{get_threads}
+\alias{reset_qol_options}
 \title{Set Global Print Option}
 \usage{
 set_print(...)
@@ -51,6 +52,8 @@ get_footnotes()
 set_threads(...)
 
 get_threads()
+
+reset_qol_options()
 }
 \arguments{
 \item{...}{\code{\link[=set_threads]{set_threads()}}: Put in the number of threads to use or NULL to reset.}
@@ -87,6 +90,8 @@ get_threads()
 \code{\link[=set_threads]{set_threads()}}: Changed global number of used threads.
 
 \code{\link[=get_threads]{get_threads()}}: Current number of used threads.
+
+\code{\link[=reset_qol_options]{reset_qol_options()}}: Returns default global options.
 }
 \description{
 \code{\link[=set_print]{set_print()}}: Set the print option globally for the tabulation and export to
@@ -128,6 +133,8 @@ above the output table.
 file functions.
 
 \code{\link[=get_threads]{get_threads()}}: Get the globally stored number of used threads.
+
+\code{\link[=reset_qol_options]{reset_qol_options()}} Resets global options to the default parameters.
 }
 \examples{
 # Set and get the global print option
@@ -185,5 +192,8 @@ get_footnotes()
 set_threads(8)
 
 get_threads()
+
+# Reset all globally set options
+reset_qol_options()
 
 }

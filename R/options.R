@@ -977,7 +977,7 @@ get_threads <- function(){
 #' # Reset all globally set options
 #' reset_qol_options()
 #'
-#' @rdname style_options
+#' @rdname qol_options
 #'
 #' @export
 reset_qol_options <- function(){
@@ -992,6 +992,11 @@ reset_qol_options <- function(){
     .qol_options[["titles"]]      <- c()
     .qol_options[["footnotes"]]   <- c()
     .qol_options[["threads"]]     <- suppressMessages(fst::threads_fst(NULL))
+    .qol_options[["graphic_visuals"]]     <- graphic_visuals()
+    .qol_options[["graphic_axes"]]        <- graphic_axes()
+    .qol_options[["graphic_dimensions"]]  <- graphic_dimensions()
+    .qol_options[["graphic_output"]]      <- graphic_output()
+    .qol_options[["graphic_fine_tuning"]] <- graphic_fine_tuning()
 
     print_message("NOTE", c("All qol package options have been reset."))
 
@@ -1024,4 +1029,436 @@ qol_news <- function(){
 #' @export
 qol_chat <- function(){
     utils::browseURL("https://deepwiki.com/s3rdia/qol")
+}
+
+
+###############################################################################
+# Graphics
+###############################################################################
+
+#' Set Global Graphic Options
+#'
+#' @name graphic_options
+#'
+#' @description
+#' Modify styling options used by [design_graphic()]. Available parameters can be seen in
+#' [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()] and [graphic_fine_tuning()].
+#'
+#' [set_graphic_options()] sets the graphic options globally. These
+#' options are used by all functions involved in graphics production.
+#'
+#' @param ... Put in any graphic option from [graphic_visuals()], [graphic_axes()],
+#' [graphic_dimensions()], [graphic_output()] or [graphic_fine_tuning()]
+#' with the new value.
+#' @param save_file A full file path to an RDS file in which global graphic options
+#' should be stored.
+#'
+#' @return
+#' [set_graphic_options()]: Returns modified global graphic options.
+#'
+#' @examples
+#' # This function can process any parameter from graphic_visuals(), graphic_axes(),
+#' # graphic_dimensions(), graphic_output() or graphic_fine_tuning() and sets the
+#' # option globally.
+#' set_graphic_options(title_font_size = 12,
+#'                     label_font_size = 10)
+#'
+#' @rdname graphic_options
+#'
+#' @export
+set_graphic_options <- function(..., save_file = NULL){
+    # Translate ... into a list if possible
+    style_list <- tryCatch({
+        list(...)
+    }, error = function(e){
+        NULL
+    })
+
+    current_options <- list(.qol_options[["graphic_visuals"]],
+                            .qol_options[["graphic_axes"]],
+                            .qol_options[["graphic_dimensions"]],
+                            .qol_options[["graphic_fine_tuning"]],
+                            .qol_options[["graphic_number_formats"]],
+                            .qol_options[["graphic_output"]])
+
+    if (is.null(style_list)){
+        print_message("ERROR", c("Unknown object found. See 'graphic_visuals()', 'graphic_axes()',",
+                                 "'graphic_dimensions()', 'graphic_output()' and 'graphic_fine_tuning()'",
+                                 "for valid function parameters. Global graphic options remain unchanged."))
+        return(invisible(current_options))
+    }
+
+    if (length(style_list) == 0){
+        print_message("ERROR", c("Empty list found. See 'graphic_visuals()', 'graphic_axes()',",
+                                 "'graphic_dimensions()', 'graphic_output()' and 'graphic_fine_tuning()'",
+                                 "for valid function parameters. Global graphic options remain unchanged."))
+        return(invisible(current_options))
+    }
+
+    # Set up a vector for every option type to be able to sort them later back
+    # to where they belong.
+    visuals <- c("font", "color_theme", "color_usage", "theme_override",
+                 "title_font_color", "footnote_font_color",
+                 "primary_axes_font_color", "secondary_axes_font_color",
+                 "variable_axes_font_color", "label_font_color",
+                 "origin_font_color", "other_font_color",
+                 "title_font_face", "footnote_font_face",
+                 "primary_axes_font_face", "secondary_axes_font_face",
+                 "variable_axes_font_face", "value_font_face",
+                 "label_font_face", "origin_font_face", "other_font_face",
+                 "title_alignment", "footnote_alignment", "hbar_alignment",
+                 "other_alignment", "reverse_colors",
+                 "primary_axes_color", "secondary_axes_color",
+                 "variable_axes_color", "graphic_background_color",
+                 "diagram_background_color", "graphic_border_color",
+                 "diagram_border_color", "segment_border_color",
+                 "line_markers", "line_markers_change",
+                 "guiding_lines_y", "guiding_lines_x",
+                 "guiding_line_type", "guiding_line_color",
+                 "major_separation_line_type", "major_separation_line_color",
+                 "minor_separation_line_type", "minor_separation_line_color",
+                 "segment_line_type", "segment_line_color",
+                 "remove_small_values", "display_values",
+                 "bar_values_inside", "rotate_values", "display_plus_symbol",
+                 "label_type", "label_group", "legend_x_pos", "legend_y_pos",
+                 "legend_columns", "legend_symbol_size", "origin",
+                 "tooltip_font_color", "tooltip_background_color",
+                 "tooltip_border_color", "tooltip_border_width",
+                 "tooltip_background_opacity", "tooltip_x_padding",
+                 "tooltip_y_padding", "tooltip_corner_radius",
+                 "segment_hover_opacity", "group_hover_color",
+                 "group_hover_opacity")
+
+    axes <- c("primary_axes_max", "primary_axes_min",
+              "primary_axes_steps", "primary_axes_decimals",
+              "primary_axes_big_mark", "primary_axes_decimal_mark",
+              "primary_axes_prefix", "primary_axes_suffix",
+              "primary_axes_scale",
+              "primary_values_decimals", "primary_values_big_mark",
+              "primary_values_decimal_mark", "primary_values_prefix",
+              "primary_values_suffix",
+              "secondary_axes_max", "secondary_axes_min",
+              "secondary_axes_steps", "secondary_axes_decimals",
+              "secondary_axes_big_mark", "secondary_axes_decimal_mark",
+              "secondary_axes_prefix", "secondary_axes_suffix",
+              "secondary_axes_scale",
+              "secondary_values_decimals", "secondary_values_big_mark",
+              "secondary_values_decimal_mark", "secondary_values_prefix",
+              "secondary_values_suffix",
+              "variable_axes_interval")
+
+    dimensions <- c("graphic_width", "graphic_height",
+                    "diagram_start", "diagram_width", "diagram_height",
+                    "margins",
+                    "title_font_size", "footnote_font_size",
+                    "axes_font_size", "value_font_size",
+                    "label_font_size", "origin_font_size",
+                    "other_font_size", "tooltip_font_size",
+                    "line_height", "space_between_bars", "bar_overlap",
+                    "line_thickness", "segment_line_thickness",
+                    "separation_line_thickness", "axes_line_thickness",
+                    "guiding_line_thickness", "graphic_outline_thickness",
+                    "diagram_outline_thickness", "segment_line_length",
+                    "segment_line_offset", "textbox_width")
+
+    output_params <- c("save_path", "file", "resolution",
+                       "by_as_grid", "interactive")
+
+    fine_tuning <- c("diagram_margin",
+                     "values_vjust_positive", "values_vjust_negative",
+                     "values_vjust_90_positive", "values_vjust_90_negative",
+                     "value_overlap_factor", "shrink_segment_width",
+                     "values_rotation", "values_hjust", "values_hjust_90",
+                     "values_hjust_90_plus", "values_zero_line_offset",
+                     "values_below_axes_just", "values_below_axes_90_just",
+                     "tick_length", "value_axes_margin", "y_axes_scaling",
+                     "swap_direction_threshold",
+                     "segment_line_treshhold", "segment_label_hjust",
+                     "max_segment_label_shift",
+                     "cm_to_inch_factor", "svg_anchor_adjust",
+                     "svg_line_height_adjust")
+
+    # Define expected types for validation
+    logicals <- c("reverse_colors", "line_markers", "line_markers_change",
+                  "guiding_lines_y", "guiding_lines_x",
+                  "remove_small_values", "display_values",
+                  "bar_values_inside", "rotate_values", "display_plus_symbol",
+                  "by_as_grid", "interactive")
+
+    numerics <- c("primary_axes_steps", "primary_axes_decimals",
+                  "primary_axes_scale", "primary_values_decimals",
+                  "secondary_axes_steps", "secondary_axes_decimals",
+                  "secondary_axes_scale", "secondary_values_decimals",
+                  "variable_axes_interval",
+                  "graphic_width", "graphic_height",
+                  "margins",
+                  "title_font_size", "footnote_font_size",
+                  "axes_font_size", "value_font_size",
+                  "label_font_size", "origin_font_size",
+                  "other_font_size", "tooltip_font_size",
+                  "line_height", "space_between_bars", "bar_overlap",
+                  "line_thickness", "segment_line_thickness",
+                  "separation_line_thickness", "axes_line_thickness",
+                  "guiding_line_thickness", "graphic_outline_thickness",
+                  "diagram_outline_thickness", "segment_line_length",
+                  "segment_line_offset", "textbox_width",
+                  "resolution", "legend_columns", "legend_symbol_size",
+                  "tooltip_border_width", "tooltip_background_opacity",
+                  "tooltip_x_padding", "tooltip_y_padding",
+                  "tooltip_corner_radius", "segment_hover_opacity",
+                  "group_hover_opacity",
+                  "diagram_margin",
+                  "values_vjust_positive", "values_vjust_negative",
+                  "values_vjust_90_positive", "values_vjust_90_negative",
+                  "value_overlap_factor", "shrink_segment_width",
+                  "values_rotation", "values_hjust", "values_hjust_90",
+                  "values_hjust_90_plus", "values_zero_line_offset",
+                  "values_below_axes_just", "values_below_axes_90_just",
+                  "tick_length", "value_axes_margin", "y_axes_scaling",
+                  "swap_direction_threshold",
+                  "segment_line_treshhold", "segment_label_hjust",
+                  "max_segment_label_shift",
+                  "cm_to_inch_factor", "svg_anchor_adjust",
+                  "svg_line_height_adjust")
+
+    characters <- c("font", "color_theme",
+                    "title_font_face", "footnote_font_face",
+                    "primary_axes_font_face", "secondary_axes_font_face",
+                    "variable_axes_font_face", "value_font_face",
+                    "label_font_face", "origin_font_face", "other_font_face",
+                    "title_alignment", "footnote_alignment", "hbar_alignment",
+                    "other_alignment",
+                    "guiding_line_type",
+                    "major_separation_line_type",
+                    "minor_separation_line_type", "segment_line_type",
+                    "label_type",
+                    "origin",
+                    "primary_axes_big_mark", "primary_axes_decimal_mark",
+                    "primary_axes_prefix", "primary_axes_suffix",
+                    "primary_values_big_mark", "primary_values_decimal_mark",
+                    "primary_values_prefix", "primary_values_suffix",
+                    "secondary_axes_big_mark", "secondary_axes_decimal_mark",
+                    "secondary_axes_prefix", "secondary_axes_suffix",
+                    "secondary_values_big_mark", "secondary_values_decimal_mark",
+                    "secondary_values_prefix", "secondary_values_suffix",
+                    "save_path", "file")
+
+    colors <- c("title_font_color", "footnote_font_color",
+                "primary_axes_font_color", "secondary_axes_font_color",
+                "variable_axes_font_color", "label_font_color",
+                "origin_font_color", "other_font_color",
+                "primary_axes_color", "secondary_axes_color",
+                "variable_axes_color",
+                "graphic_background_color", "diagram_background_color",
+                "graphic_border_color", "diagram_border_color",
+                "segment_border_color",
+                "guiding_line_color",
+                "major_separation_line_color",
+                "minor_separation_line_color", "segment_line_color",
+                "tooltip_font_color", "tooltip_background_color",
+                "tooltip_border_color", "group_hover_color")
+
+    lists <- c("color_usage", "theme_override")
+
+    flexible <- c("primary_axes_max", "primary_axes_min",
+                  "secondary_axes_max", "secondary_axes_min",
+                  "label_group", "legend_x_pos", "legend_y_pos",
+                  "diagram_start", "diagram_width", "diagram_height")
+
+    # Loop through passed arguments and check if they are of valid type
+    for (option in names(style_list)){
+        value <- style_list[[option]]
+
+        if (option %in% logicals && !all(is.logical(value))){
+            print_message("WARNING", "'[option]' must be <logical>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% numerics && !all(is.numeric(value))){
+            print_message("WARNING", "'[option]' must be <numeric>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% characters && !all(is.character(value))){
+            print_message("WARNING", "'[option]' must be <character>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% colors && !all(grepl("^#[A-Fa-f0-9]{6}$", value)) && value != ""){
+            print_message("WARNING", "'[option]' must be a 6 character <hex code>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% lists && !is.list(value)){
+            print_message("WARNING", "'[option]' must be a <list>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% flexible && !(is.character(value) || is.numeric(value))){
+            print_message("WARNING", "'[option]' must be <character> or <numeric>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (!option %in% c(visuals, axes, dimensions, output_params, fine_tuning)){
+            print_message("WARNING", c("'[option]' is not a valid graphic option.",
+                                       "See 'graphic_visuals()', 'graphic_axes()',",
+                                       "'graphic_dimensions()', 'graphic_output()' and 'graphic_fine_tuning()'",
+                                       "for valid function parameters. Option will be omitted."),
+                          option = option)
+            style_list[[option]] <- NULL
+        }
+    }
+
+    # Route parameters to their respective groups
+    visuals_updated <- style_list[names(style_list) %in% visuals]
+    axes_updated    <- style_list[names(style_list) %in% axes]
+    dims_updated    <- style_list[names(style_list) %in% dimensions]
+    output_updated  <- style_list[names(style_list) %in% output_params]
+    ft_updated      <- style_list[names(style_list) %in% fine_tuning]
+
+    # Update each sub-list in the global options
+    if (length(visuals_updated) > 0){
+        .qol_options[["graphic_visuals"]] <- utils::modifyList(.qol_options[["graphic_visuals"]], visuals_updated)
+    }
+
+    if (length(axes_updated) > 0){
+        .qol_options[["graphic_axes"]] <- utils::modifyList(.qol_options[["graphic_axes"]], axes_updated)
+    }
+
+    if (length(dims_updated) > 0){
+        .qol_options[["graphic_dimensions"]] <- utils::modifyList(.qol_options[["graphic_dimensions"]], dims_updated)
+    }
+
+    if (length(output_updated) > 0){
+        .qol_options[["graphic_output"]] <- utils::modifyList(.qol_options[["graphic_output"]], output_updated)
+    }
+
+    if (length(ft_updated) > 0){
+        .qol_options[["graphic_fine_tuning"]] <- utils::modifyList(.qol_options[["graphic_fine_tuning"]], ft_updated)
+    }
+
+    if (length(style_list) > 0){
+        print_message("NOTE", "Global graphic options successfully changed.")
+    }
+
+    # Save global graphic options as physical file
+    if (!is.null(save_file)){
+        if (!file.exists(dirname(save_file))){
+            print_message("ERROR", "Path does not exist: [path]", path = save_file)
+        }
+        else{
+            extension <- tolower(tools::file_ext(save_file))
+
+            if (extension == ""){
+                save_file <- paste0(save_file, ".rds")
+                extension <- "rds"
+            }
+
+            if (!extension == "rds"){
+                save_file <- gsub(extension, "rds", save_file)
+            }
+
+            saveRDS(list("graphic_visuals"     = .qol_options[["graphic_visuals"]],
+                         "graphic_axes"        = .qol_options[["graphic_axes"]],
+                         "graphic_dimensions"  = .qol_options[["graphic_dimensions"]],
+                         "graphic_output"      = .qol_options[["graphic_output"]],
+                         "graphic_fine_tuning" = .qol_options[["graphic_fine_tuning"]]),
+                    file = save_file)
+
+            print_message("NOTE", "Global graphic options have been saved to: [save_file]",
+                          save_file = save_file)
+        }
+    }
+
+    invisible(list("graphic_visuals"     = .qol_options[["graphic_visuals"]],
+                   "graphic_axes"        = .qol_options[["graphic_axes"]],
+                   "graphic_dimensions"  = .qol_options[["graphic_dimensions"]],
+                   "graphic_output"      = .qol_options[["graphic_output"]],
+                   "graphic_fine_tuning" = .qol_options[["graphic_fine_tuning"]]))
+}
+
+
+#' Get Global Graphic Options
+#'
+#' @description
+#' [get_graphic_options()] Prints out the currently set global graphic options.
+#'
+#' @param from_file A full file path to an RDS file in which global graphic options
+#' are stored.
+#'
+#' @return
+#' [get_graphic_options()]: List of global graphic options.
+#'
+#' @examples
+#' get_graphic_options()
+#'
+#' @rdname graphic_options
+#'
+#' @export
+get_graphic_options <- function(from_file = NULL){
+    # If a saved file is specified, check if it exists and read it in
+    if (!is.null(from_file)){
+        if (!file.exists(from_file)){
+            print_message("ERROR", "File does not exist: [file]", file = from_file)
+        }
+        else{
+            graphic_list <- readRDS(file = from_file)
+            set_graphic_options(graphic_list)
+        }
+    }
+
+    # Collect all graphic option sub-lists
+    current_options <- c(.qol_options[["graphic_visuals"]],
+                         .qol_options[["graphic_axes"]],
+                         .qol_options[["graphic_dimensions"]],
+                         .qol_options[["graphic_output"]],
+                         .qol_options[["graphic_fine_tuning"]])
+
+    option_names <- names(current_options)
+
+    # Add padding to names to make the values display in one column
+    padded_names <- sprintf(paste0("%-", max(nchar(option_names)), "s"), option_names)
+
+    # Join complete lines and print
+    output_vector <- paste0(padded_names, " : ", current_options)
+
+    print_message("NEUTRAL", output_vector)
+
+    invisible(list("graphic_visuals"     = .qol_options[["graphic_visuals"]],
+                   "graphic_axes"        = .qol_options[["graphic_axes"]],
+                   "graphic_dimensions"  = .qol_options[["graphic_dimensions"]],
+                   "graphic_output"      = .qol_options[["graphic_output"]],
+                   "graphic_fine_tuning" = .qol_options[["graphic_fine_tuning"]]))
+}
+
+
+#' Reset Global Graphic Options
+#'
+#' @description
+#' [reset_graphic_options()] Resets global graphic options to the default parameters.
+#' This includes all options set with [set_graphic_options()], [set_labels()],
+#' [set_titles()] and [set_footnotes()].
+#'
+#' @return
+#' [reset_graphic_options()]: Returns default global graphic options.
+#'
+#' @examples
+#' reset_graphic_options()
+#'
+#' @rdname graphic_options
+#'
+#' @export
+reset_graphic_options <- function(){
+    .qol_options[["graphic_visuals"]]     <- graphic_visuals()
+    .qol_options[["graphic_axes"]]        <- graphic_axes()
+    .qol_options[["graphic_dimensions"]]  <- graphic_dimensions()
+    .qol_options[["graphic_output"]]      <- graphic_output()
+    .qol_options[["graphic_fine_tuning"]] <- graphic_fine_tuning()
+    .qol_options[["var_labels"]]          <- list()
+    .qol_options[["stat_labels"]]         <- list()
+    .qol_options[["titles"]]              <- c()
+    .qol_options[["footnotes"]]           <- c()
+
+    print_message("NOTE", c("Global graphic options have been reset."))
+
+    invisible(list("graphic_visuals"     = .qol_options[["graphic_visuals"]],
+                   "graphic_axes"        = .qol_options[["graphic_axes"]],
+                   "graphic_dimensions"  = .qol_options[["graphic_dimensions"]],
+                   "graphic_output"      = .qol_options[["graphic_output"]],
+                   "graphic_fine_tuning" = .qol_options[["graphic_fine_tuning"]]))
 }
