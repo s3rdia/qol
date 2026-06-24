@@ -8,7 +8,6 @@
 \alias{close_file}
 \alias{set_labels}
 \alias{get_labels}
-\alias{reset_qol_options}
 \title{Set Global Styling Options For Excel Workbooks}
 \usage{
 set_style_options(..., save_file = NULL)
@@ -22,8 +21,6 @@ close_file()
 set_labels(...)
 
 get_labels()
-
-reset_qol_options()
 }
 \arguments{
 \item{...}{\code{\link[=set_labels]{set_labels()}}: Put in the variable names and their respective labels.}
@@ -46,8 +43,6 @@ are stored.}
 \code{\link[=set_labels]{set_labels()}}: List of variable and statistic labels.
 
 \code{\link[=get_labels]{get_labels()}}: List of variable and statistic labels.
-
-\code{\link[=reset_qol_options]{reset_qol_options()}}: Returns default global options.
 }
 \description{
 Modify Styling options for Excel workbooks. Available parameters can be seen in
@@ -70,8 +65,6 @@ have to be provided in every output function separately.
 
 \code{\link[=get_labels]{get_labels()}}: Get the globally stored variable and statistic labels as a list
 and print the contents to the console.
-
-\code{\link[=reset_qol_options]{reset_qol_options()}} Resets global options to the default parameters.
 }
 \examples{
 # This function can process any parameter from excel_output_style() or
@@ -97,9 +90,6 @@ set_labels(age_gr = "Group of ages",
 set_labels(NULL)
 
 get_labels()
-
-# Reset all globally set options
-reset_qol_options()
 
 }
 \seealso{
