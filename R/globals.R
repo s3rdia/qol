@@ -29,7 +29,9 @@ utils::globalVariables(c("qol_ID", "qol_from", "qol_to", "from", "to", "delta",
                                "",
                                "> Use [#32CD32 ?qol] to get an overview.",
                                "> To view the changelog type: [#32CD32 qol_news()]",
-                               "> Chat with the repository:   [#32CD32 qol_chat()]"))
+                               "> Chat with the repository:   [#32CD32 qol_chat()]",
+                               "",
+                               ":-)"))
     print_headline("[#63C2C9 [b]Current version:[/b]] [b][version][/b]", version = current_version)
 }
 
