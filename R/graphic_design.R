@@ -946,15 +946,19 @@ generate_graphic <- function(graphic_tab,
                            name = paste0("custom_textbox", textbox))
         })
 
+    if (length(custom_textboxes) == 0){
+        custom_textboxes <- grid::nullGrob()
+    }
+
     # Put together the whole graphic
     whole_graphic <- grid::gTree(children = do.call(
         grid::gList, c(list(grid::editGrob(graphic_background,     vp = grid::vpPath("main_canvas")),
                             grid::editGrob(title_grob,             vp = grid::vpPath("main_canvas")),
                             grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                             grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
-                            grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
-                       segment_labels,
-                       custom_textboxes)),
+                            grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas")),
+                            segment_labels,
+                            custom_textboxes))),
         childrenvp = viewport_tree,
         name       = "graphic" )
 

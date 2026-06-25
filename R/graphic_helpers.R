@@ -669,7 +669,7 @@ setup_nested_diagram_viewport <- function(arguments){
     # Measure whether the value heights fit the segment heights. This is done after
     # setting up the inner viewport to get the dimensions right. A tiny bit is added
     # to the padding, so that the values are shifted outside before they reach the axes.
-    diagram_info[["values_width"]]  <- get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals)
+    diagram_info[["values_width"]]  <- rep(get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals), diagram_info[["number_of_elements"]])
     diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
                                                            "native", valueOnly =TRUE)
 
@@ -2014,7 +2014,7 @@ direct_vertical_labels <- function(diagram_info,
         # Without rotation the offset is basically static because values are always
         # drawn on one line and therefor have the same height.
         if (!visuals[["rotate_values"]]){
-            offset_value <- get_text_height(values, "value", dimensions, visuals)
+            offset_value <- get_text_height(diagram_info[["formatted_values"]], "value", dimensions, visuals)
 
             offset_value <- rep(offset_value, diagram_info[["number_of_segments"]])
         }
