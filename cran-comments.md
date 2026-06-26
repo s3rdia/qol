@@ -8,10 +8,13 @@ Last CRAN release was on 16.06.2026.
 ### New functionality
 
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
+* `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`.
+* `any_table()`: `order_by` parameter now allows to input a vector of variable names.
 
 ### Fixed
 
 * `multi_join()`: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times.
+* `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`.
 
 ### Optimization
 

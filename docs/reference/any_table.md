@@ -17,6 +17,7 @@ any_table(
   pct_group = c(),
   pct_value = list(),
   pct_block = c(),
+  compute = list(),
   formats = list(),
   by = c(),
   weight = NULL,
@@ -120,6 +121,13 @@ any_table(
 
   Can be "rows" or "columns". Calculates percentages for the last group
   of variables inside the individual row or column combinations.
+
+- compute:
+
+  A list in which individual calculations are handled. For the writing
+  style see the
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
+  function.
 
 - formats:
 
@@ -406,6 +414,18 @@ my_data |> any_table(rows       = c("sex + (age education)"),
                      formats    = list(sex = sex., age = age.,
                                        education = education.),
                      output     = "excel_nostyle",
+                     na.rm      = TRUE)
+
+# Individual calculations
+my_data |> any_table(rows       = c("age + year"),
+                     columns    = "sex",
+                     values     = "probability",
+                     statistics = c("sum", "sum_wgt"),
+                     compute    = list(percent    = probability_sum * 100 / sum_wgt,
+                                       pct_square = percent ^ 2),
+                     weight     = weight,
+                     formats    = list(sex = sex., age = age.),
+                     output    = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Customize the visual appearance by adding variable and statistic labels. Both

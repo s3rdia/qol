@@ -94,6 +94,16 @@ expected <- test_df[["var2"]] * 2 + test_df[["var3"]]
 
 expect_equal(result_df[["sum2"]], expected, info = "Compute evaluates calls sequentially")
 
+
+# Compute evaluates list passed as argument
+symbol <- list(sum = "var2 + var3")
+
+result_df <- test_df |> compute.(symbol)
+
+expected <- test_df[["var2"]] + test_df[["var3"]]
+
+expect_equal(result_df[["sum"]], expected, info = "Compute evaluates list passed as argument")
+
 ###############################################################################
 # Warning checks
 ###############################################################################

@@ -768,6 +768,49 @@ expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' do
                info = "any_table throws a warning, if invalid format is used")
 
 
+# any_table can compute values on the fly
+result_list <- dummy_df |>
+    any_table(rows       = "first_person",
+              columns    = "sex",
+              values     = "probability",
+              statistics = c("sum", "sum_wgt"),
+              compute    = list(percent    = probability_sum * 100 / sum_wgt,
+                                pct_square = percent ^ 2),
+              weight     = weight,
+              output     = "excel_nostyle",
+              na.rm      = TRUE,
+              print      = FALSE)
+
+expect_inherits(result_list, "list", info = "any_table can compute values on the fly")
+expect_equal(length(result_list), 3, info = "any_table can compute values on the fly")
+expect_equal(names(result_list[[1]]), c("row.label", "var1", "probability_sum_1",
+                                        "probability_sum_2", "sum_wgt_1", "sum_wgt_2",
+                                        "percent_1", "percent_2", "pct!!!square_1", "pct!!!square_2"),
+             info = "any_table can compute values on the fly")
+
+
+# any_table orders individual variables by name
+result_list <- dummy_df |>
+    any_table(rows       = "first_person",
+              columns    = "sex",
+              values     = "probability",
+              statistics = c("sum", "sum_wgt"),
+              compute    = list(percent    = probability_sum * 100 / sum_wgt,
+                                pct_square = percent ^ 2),
+              weight     = weight,
+              order_by   = c("pct_square", "percent", "sum_wgt"),
+              output     = "excel_nostyle",
+              na.rm      = TRUE,
+              print      = FALSE)
+
+expect_inherits(result_list, "list", info = "any_table orders individual variables by name")
+expect_equal(length(result_list), 3, info = "any_table orders individual variables by name")
+expect_equal(names(result_list[[1]]), c("row.label", "var1", "pct!!!square_1", "pct!!!square_2",
+                                        "percent_1", "percent_2", "sum_wgt_1", "sum_wgt_2",
+                                        "probability_sum_1",  "probability_sum_2"),
+             info = "any_table orders individual variables by name")
+
+
 ###############################################################################
 # Abort checks
 ###############################################################################

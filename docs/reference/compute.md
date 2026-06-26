@@ -87,11 +87,11 @@ do_over_df <- my_data |> compute.(new_vars = money * multi)
 
 # You can also do all at once
 all_df <- my_data |> compute.(new_var1 = 1,
-                             new_var2 = "Hello",
-                             new_sum  = age + sex,
-                             new_mean = mean(age),
-                             row_sum  = row_calculation("sum", state, age, sex),
-                             new_vars = multi * money)
+                              new_var2 = "Hello",
+                              new_sum  = age + sex,
+                              new_mean = mean(age),
+                              row_sum  = row_calculation("sum", state, age, sex),
+                              new_vars = multi * money)
 
 # compute.() can be used in a do_if() situation and is aware of overarching
 # conditions.

@@ -169,7 +169,7 @@ setcolorder_by_pattern <- function(data_frame, pattern){
     ordered_cols <- collapse::funique(ordered_cols)
 
     # Put the ordered columns at the end of the data frame
-    data_frame |> data.table::setcolorder(ordered_cols, after = ncol(data_frame))
+    data_frame |> data.table::setcolorder(ordered_cols, after = collapse::fncol(data_frame))
 }
 
 

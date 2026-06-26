@@ -40,6 +40,8 @@
 #' variable name and between which of the value variables percentages should be computed.
 #' @param pct_block Can be "rows" or "columns". Calculates percentages for the last
 #' group of variables inside the individual row or column combinations.
+#' @param compute A list in which individual calculations are handled. For the writing style
+#' see the [compute.()] function.
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
@@ -243,6 +245,18 @@
 #'                      output     = "excel_nostyle",
 #'                      na.rm      = TRUE)
 #'
+#' # Individual calculations
+#' my_data |> any_table(rows       = c("age + year"),
+#'                      columns    = "sex",
+#'                      values     = "probability",
+#'                      statistics = c("sum", "sum_wgt"),
+#'                      compute    = list(percent    = probability_sum * 100 / sum_wgt,
+#'                                        pct_square = percent ^ 2),
+#'                      weight     = weight,
+#'                      formats    = list(sex = sex., age = age.),
+#'                      output    = "excel_nostyle",
+#'                      na.rm      = TRUE)
+#'
 #' # Customize the visual appearance by adding variable and statistic labels. Both
 #' # can also be set as a global option, if labels should be reused over multiple
 #' # tables.
@@ -384,6 +398,7 @@ any_table <- function(data_frame,
                       pct_group      = c(),
                       pct_value      = list(),
                       pct_block      = c(),
+                      compute        = list(),
                       formats        = list(),
                       by             = c(),
                       weight         = NULL,
@@ -639,17 +654,6 @@ any_table <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Order
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Correct ordering option if not set right
-    if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved", "blocks")){
-        print_message("WARNING", c("<Order by> option '[order_by]' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'",
-								   "and 'interleaved' are available. <Order by> will be set to 'stats'."), order_by = order_by)
-        order_by <- "stats"
-    }
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -661,6 +665,12 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     pre_summed <- data_frame |> is_pre_summed(c(by, variables))
+
+    # Extensiosn to preserve
+    extensions <- c("_sum", "_pct_group_", "_pct_total", "_pct_value", "_pct_block", "_pct",
+                    "_freq_g0", "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
+                    "_last", "_sum_wgt", "_p[0-9]+$", "sum_wgt", "_sd", "_variance", "_missing",
+                    "by_vars", "TYPE_NR")
 
     # In case of using a pre summarised data frame, underscores are only allowed, if they carry
     # the statistics extension afterwards.
@@ -695,10 +705,7 @@ any_table <- function(data_frame,
         }
 
         # Check if value variables have statistics extension
-        extensions <- c("_sum", "_pct_group", "_pct_total", "_pct_value", "_pct_block", "_pct",
-                        "_freq_g0", "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
-                        "_last", "_sum_wgt", "_p[0-9]+$", "_sd", "_variance", "_missing")
-        pattern    <- paste0("(", paste(extensions, collapse = "|"), ")$")
+        pattern <- paste0("(", paste(extensions, collapse = "|"), ")$")
 
         # If one of the value variables hasn't got any of the above extension, add extensions automatically as provided
         if (!all(grepl(pattern, values))){
@@ -719,7 +726,40 @@ any_table <- function(data_frame,
         weight     <- NULL
         formats    <- list()
 
-        rm(extensions, pattern)
+        rm(pattern)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Order
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    order_by <- get_origin_as_char(order_by, substitute(order_by))
+
+    # Correct ordering option if not set right
+    order_by_vars <- NULL
+    df_names      <- names(data_frame)
+
+    # If only one argument is passed, it is assumed that it is one of the presets
+    if (length(order_by) == 1){
+        if (!tolower(order_by) %in% c("values", "stats", "values_stats", "columns", "interleaved", "blocks")){
+            # If no preset is passed, check if a single variable name was passed
+            order_by_vars    <- order_by[order_by %in% df_names]
+            invalid_order_by <- order_by[!order_by %in% df_names]
+
+            # No preset and no variable name was passed
+            if (length(invalid_order_by) > 0){
+                print_message("WARNING", c("<Order by> option '[order_by]' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'",
+                                           "and 'interleaved' are available. <Order by> will be set to 'stats'."), order_by = order_by)
+            }
+
+            order_by <- "stats"
+        }
+    }
+    # In case variable names were passed, format them with the underscore preserving
+    # so that they match the pivoted variable names later on.
+    else{
+        order_by_vars <- replace_except(order_by, "_", "!!!", extensions)
+        order_by      <- "stats"
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -887,6 +927,7 @@ any_table <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Summary", "Summary")
     #-------------------------------------------------------------------------#
     print_step("MAJOR", "Computing stats")
+    print_step("Minor", "Summarise")
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Some preparations beforehand
@@ -1007,6 +1048,7 @@ any_table <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Handle row percentages
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (any(grepl("pct", statistics))){ print_step("Minor", "Percentages") }
 
     # In case keyword row_pct was entered as group percentage, compute percentages
     # based on the row totals.
@@ -1101,7 +1143,7 @@ any_table <- function(data_frame,
     # based on the row totals.
     if (col_pct){
         #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_next("Row percentages", "Summary")
+        monitor_df <- monitor_df |> monitor_next("Column percentages", "Summary")
         #---------------------------------------------------------------------#
 
         current_values <- paste0(values, "_sum")
@@ -1264,6 +1306,10 @@ any_table <- function(data_frame,
     # In case percentages based on value variables should be computed
     if (length(pct_value) > 0){
         if (!(length(pct_value) == 1 && pct_value == "")){
+            #---------------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Value percentages", "Summary")
+            #---------------------------------------------------------------------#
+
             for (i in seq_along(pct_value)){
                 value <- pct_value[[i]]
                 name  <- names(pct_value)[i]
@@ -1343,6 +1389,23 @@ any_table <- function(data_frame,
                 }
             }
         }
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle percentages based on value variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # This capture enables the compute parameter to be written without quotation
+    # marks.
+    compute <- as.list(substitute(compute))[-1]
+
+    if (length(compute) > 0){
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Individual calculations", "Summary")
+        #---------------------------------------------------------------------#
+        print_step("Minor", "Individual calculations")
+
+        any_tab <- suppressMessages(any_tab |> compute.(compute))
     }
 
     # If no sums were selected in the statistics, drop them again now
@@ -1442,11 +1505,6 @@ any_table <- function(data_frame,
     # table header later, the underscore is the symbol by which the variable names are split.
     # Having additional underscores would mess up this part and lead to errors. Therefor the
     # additional underscores will be temporarily replaced.
-    extensions <- c("_sum", "_pct_group_", "_pct_total", "_pct_value", "_pct", "_freq_g0",
-                    "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
-                    "_last", "_p1", "_p2", "_p3", "_p4", "_p5", "_p6", "_p7", "_p8", "_p9",
-                    "sum_wgt", "_sd", "_variance", "_missing", "by_vars", "TYPE_NR")
-
     rows       <- replace_except(rows,       "_", "!!!", extensions)
     columns    <- replace_except(columns,    "_", "!!!", extensions)
     value_vars <- replace_except(value_vars, "_", "!!!", extensions)
@@ -1469,6 +1527,7 @@ any_table <- function(data_frame,
 
     index <- 1
     any_header <- NULL
+    combined_id_vars <- NULL
 
     for (row_combi in rows){
         combined_col_df <- NULL
@@ -1662,7 +1721,7 @@ any_table <- function(data_frame,
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
             if (is.null(combined_col_df)){
-                row_labels <- c()
+                row_labels       <- c()
 
                 # Loop through all provided labels
                 for (variable in row_combi_vars){
@@ -1740,6 +1799,8 @@ any_table <- function(data_frame,
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
             if (index == 1){
+                combined_id_vars <- id_vars
+
                 # Get data frame variable names
                 col_header_df <- combi_df[0, ]
 
@@ -1769,6 +1830,10 @@ any_table <- function(data_frame,
                     # cbind current header data frame to the iterations before
                     any_header <- cbind(any_header, col_header_df)
                 }
+            }
+            else{
+                # Gather row header id variables
+                combined_id_vars <- union(combined_id_vars, id_vars)
             }
         }
 
@@ -1830,6 +1895,26 @@ any_table <- function(data_frame,
         root_names <- collapse::funique(sub("_[^_]*$", "", names(any_header)))
         any_tab    <- any_tab    |> setcolorder_by_pattern(root_names)
         any_header <- any_header |> setcolorder_by_pattern(root_names)
+    }
+
+    if (length(order_by_vars) > 0){
+        any_names <- names(any_tab)
+
+        # Select all variables in blocks of the requested pattern
+        ordered_cols <- unlist(lapply(order_by_vars, function(single_pattern){
+            # Returns all variable names that match the provided pattern
+            grep(single_pattern, any_names, value = TRUE, ignore.case = TRUE)
+        }))
+
+        # Put the ordered columns at the front of the data frame
+        any_tab    <- any_tab    |> data.table::setcolorder(c(combined_id_vars, ordered_cols))
+        any_header <- any_header |> data.table::setcolorder(ordered_cols)
+    }
+    else if (length(compute) > 0){
+        any_names  <- replace_except(names(compute), "_", "!!!", extensions)
+
+        any_tab    <- any_tab    |> setcolorder_by_pattern(any_names)
+        any_header <- any_header |> setcolorder_by_pattern(any_names)
     }
 
     # After binding together the data frames it can happen, that some of the new var
@@ -1917,7 +2002,8 @@ any_table <- function(data_frame,
        row_combi, row_combi_vars, sorted_combi, subset_type, group_vars, flag_remove_sum,
        length_row_header, col_header_df, header_diff, row_header_var_count, var_vector,
        var_name, var_index, value_sort, stat, row_pct, col_pct, pre_summed, ordered_cols,
-       max_plus, id_vars, by_division, data_frame, pivot_values)
+       max_plus, id_vars, by_division, data_frame, pivot_values, extensions, combined_id_vars,
+       order_by_vars)
 
     if (length(pct_block) > 0){
         rm(block_group, block_values, new_pct, max_vars)
@@ -2118,14 +2204,12 @@ format_any_excel <- function(wb,
     if (is.null(by_info)){ print_step("MINOR", "Build header") }
 
     # Cut down percentage names to just "pct"
-    names(any_tab) <- gsub("pct_group_", "pct group ", names(any_tab))
-    names(any_tab) <- gsub("pct_total",  "pct total",  names(any_tab))
-    names(any_tab) <- gsub("pct_value",  "pct value",  names(any_tab))
-    names(any_tab) <- gsub("pct_block_", "pct block ", names(any_tab))
-    names(any_tab) <- gsub("freq_g0",    "freq g0",    names(any_tab))
-
-    # Replace underscore in the following stats to preserve them
-    names(any_tab) <- gsub("sum_wgt", "weight_sum.wgt", names(any_tab))
+    names(any_tab) <- gsub("pct_group_", "pct group ",     names(any_tab))
+    names(any_tab) <- gsub("pct_total",  "pct total",      names(any_tab))
+    names(any_tab) <- gsub("pct_value",  "pct value",      names(any_tab))
+    names(any_tab) <- gsub("pct_block_", "pct block ",     names(any_tab))
+    names(any_tab) <- gsub("freq_g0",    "freq g0",        names(any_tab))
+    names(any_tab) <- gsub("sum_wgt",    "weight_sum wgt", names(any_tab))
 
     # Build header from variable names
     multi_header <- build_multi_header(names(any_tab), any_header, var_labels, style)

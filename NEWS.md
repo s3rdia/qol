@@ -7,10 +7,13 @@
 ### New functionality
 
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (20.06.2026)
+* `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`. (26.06.2026)
+* `any_table()`: `order_by` parameter now allows to input a vector of variable names. (26.06.2026)
 
 ### Fixed
 
 * `multi_join()`: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times. (21.06.2026)
+* `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`. (26.06.2026)
 
 ### Optimization
 

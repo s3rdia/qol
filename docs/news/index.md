@@ -18,6 +18,15 @@
   characters introduced by
   [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
   (20.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  With the new `compute` parameter all possibilities of the
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
+  function can be used within
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md).
+  (26.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `order_by` parameter now allows to input a vector of variable names.
+  (26.06.2026)
 
 #### Fixed
 
@@ -27,6 +36,10 @@
   before joining. Otherwise it was possible that a variable could show
   up in the final data frame with the exact same name multiple times.
   (21.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The statistic `sum_wgt` couldn’t be renamed correctly. It can now be
+  renamed by just doing `stat_labels = list("sum" = "Some label")`.
+  (26.06.2026)
 
 #### Optimization
 
@@ -60,12 +73,9 @@ CRAN release on 16.06.2026
 - [`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md),
   [`get_labels()`](https://s3rdia.github.io/qol/reference/style_options.md):
   The global setters and getters for variable and statistic labels
-  [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
-  [`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html)
-  and
-  [`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
-  [`get_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html)
-  have been put together in one function. (12.06.2026)
+  `set_variable_labels()`, `get_variable_labels()` and
+  `set_stat_labels()`, `get_stat_labels()` have been put together in one
+  function. (12.06.2026)
 
 #### New functionality
 
@@ -593,8 +603,8 @@ CRAN release on 18.04.2026
 - [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md):
   Should now work inside custom functions. (29.03.2026)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
-  On error now return NA instead of the whole data frame. (31.01.2026)
+  `retain_sum()`: On error now return NA instead of the whole data
+  frame. (31.01.2026)
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Wide to long transposition now working again as intended. (09.04.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
@@ -891,10 +901,9 @@ CRAN release on 11.02.2026
 - [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
-  Removed `var_name` parameter. Functions now don’t return the whole
-  data frame anymore, but only the retained variable as a vector or list
-  of vectors. So instead of writing
+  `retain_sum()`: Removed `var_name` parameter. Functions now don’t
+  return the whole data frame anymore, but only the retained variable as
+  a vector or list of vectors. So instead of writing
   e.g. `my_data <- my_data |> running_number("running")`, the syntax is
   now more natural like this
   `my_data[["running"]] <- my_data |> running_number()`. (22.01.2026)
@@ -1088,10 +1097,8 @@ CRAN release on 13.01.2026
   - [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md):
     A simple, more readable wrapper for setting file parameter to NULL.
     (07.01.2026)
-  - [`set_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
-    [`get_variable_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
-    [`set_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
-    [`get_stat_labels()`](https://s3rdia.github.io/qol/reference/style_options.html),
+  - `set_variable_labels()`, `get_variable_labels()`,
+    `set_stat_labels()`, `get_stat_labels()`,
     [`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
     [`get_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
     [`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md),
@@ -1304,13 +1311,11 @@ CRAN release on 13.01.2026
 - In general: Added more messages to display what functions do.
   (03.01.2026)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
-  `value` parameter is now called `values`. (10.01.2026)
+  `retain_sum()`: `value` parameter is now called `values`. (10.01.2026)
 - [`mark_case()`](https://s3rdia.github.io/qol/reference/retain.md),
   [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md),
-  [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
-  Adjusted unit tests to something that actually makes sense.
-  (10.01.2026)
+  `retain_sum()`: Adjusted unit tests to something that actually makes
+  sense. (10.01.2026)
 - In general: Added some unit tests on file saving and retrieving.
   (10.01.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
@@ -1389,9 +1394,8 @@ CRAN release on 20.11.2025
   Marks first or last cases within a provided group. (31.10.2025)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md):
   Retains the first value for all cases of the same group. (31.10.2025)
-- [`retain_sum()`](https://s3rdia.github.io/qol/reference/retain.html):
-  Retains the summarised values for all cases of the same group.
-  (31.10.2025)
+- `retain_sum()`: Retains the summarised values for all cases of the
+  same group. (31.10.2025)
 
 #### New functionality
 

@@ -58,11 +58,11 @@
 #'
 #' # You can also do all at once
 #' all_df <- my_data |> compute.(new_var1 = 1,
-#'                              new_var2 = "Hello",
-#'                              new_sum  = age + sex,
-#'                              new_mean = mean(age),
-#'                              row_sum  = row_calculation("sum", state, age, sex),
-#'                              new_vars = multi * money)
+#'                               new_var2 = "Hello",
+#'                               new_sum  = age + sex,
+#'                               new_mean = mean(age),
+#'                               row_sum  = row_calculation("sum", state, age, sex),
+#'                               new_vars = multi * money)
 #'
 #' # compute.() can be used in a do_if() situation and is aware of overarching
 #' # conditions.
@@ -93,6 +93,31 @@ compute. <- function(data_frame,
     #-------------------------------------------------------------------------#
     parent_env  <- parent.frame()
     assignments <- as.list(substitute(list(...)))[-1]
+
+    # In case compute.() is used inside a function and only the passed object
+    # is returned as unevaluated symbol, try to get the contents.
+    if (length(assignments) == 1 && is.symbol(assignments[[1]])){
+        # Evaluate the symbol in the parent environment to get the actual contents
+        resolved_list <- tryCatch({
+            # Force evaluation to see if it exists
+            as.list(eval(assignments[[1]], envir = parent_env))
+        }, error = function(e){
+            # Evaluation failed
+            NULL
+        })
+
+        if (!is.null(resolved_list) && is_named_list(resolved_list)){
+            # Convert the list elements into standard language expressions
+            assignments <- lapply(resolved_list, function(calculation){
+                if (is.character(calculation)){
+                    str2lang(calculation)
+                }
+                else{
+                    calculation
+                }
+            })
+        }
+    }
 
     if (length(assignments) == 0){
         print_message("ERROR", "No assignments. Evaluation will be aborted.")

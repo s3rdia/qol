@@ -58,6 +58,7 @@ of variables can be nested and crossed. The output is an individually styled
 <span>  pct_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pct_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pct_block <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  compute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -138,6 +139,11 @@ variable name and between which of the value variables percentages should be com
 <dt id="arg-pct-block">pct_block<a class="anchor" aria-label="anchor" href="#arg-pct-block"></a></dt>
 <dd><p>Can be "rows" or "columns". Calculates percentages for the last
 group of variables inside the individual row or column combinations.</p></dd>
+
+
+<dt id="arg-compute">compute<a class="anchor" aria-label="anchor" href="#arg-compute"></a></dt>
+<dd><p>A list in which individual calculations are handled. For the writing style
+see the <code><a href="compute..html">compute.()</a></code> function.</p></dd>
 
 
 <dt id="arg-formats">formats<a class="anchor" aria-label="anchor" href="#arg-formats"></a></dt>
@@ -383,6 +389,18 @@ a designed workbook.</p>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span>,</span>
 <span>                                       education <span class="op">=</span> <span class="va">education.</span><span class="op">)</span>,</span>
 <span>                     output     <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
+<span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Individual calculations</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">any_table</span><span class="op">(</span>rows       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age + year"</span><span class="op">)</span>,</span>
+<span>                     columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                     values     <span class="op">=</span> <span class="st">"probability"</span>,</span>
+<span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"sum_wgt"</span><span class="op">)</span>,</span>
+<span>                     compute    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>percent    <span class="op">=</span> <span class="va">probability_sum</span> <span class="op">*</span> <span class="fl">100</span> <span class="op">/</span> <span class="va">sum_wgt</span>,</span>
+<span>                                       pct_square <span class="op">=</span> <span class="va">percent</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                     output    <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Customize the visual appearance by adding variable and statistic labels. Both</span></span>
