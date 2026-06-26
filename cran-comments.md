@@ -10,6 +10,11 @@ Last CRAN release was on 16.06.2026.
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
 * `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`.
 * `any_table()`: `order_by` parameter now allows to input a vector of variable names.
+* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types can now also take in variable combinations inside the brackets like "state + (age, sex + education, first_person)".
+
+### Changed functionality
+
+* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets. 
 
 ### Fixed
 
@@ -23,6 +28,8 @@ Last CRAN release was on 16.06.2026.
 ### Additionally
 
 * `multi_join()`: Now displays the actual data frame names to be joined instead of just an iterative number in the console.
+* `any_table()`: Received some additional messages for computing stats.
+* `summarise_plus()`: Added example for type combinations.
 
 
 ## R CMD check results

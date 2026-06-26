@@ -1206,7 +1206,7 @@ end_all_do <- function(data_frame){
 #'
 #' @param data_frame A data frame on which to apply multiple ifelse statements.
 #' @param ... The conditions as character and the assignments in the form:
-#' <condition> = <value>, <condition> = <value>, ...
+#' "condition" = value, "condition" = value, ...
 #' @param else. The default value which is applied when no condition results in
 #' an assignment.
 #' @param do_if Define an overarching condition that will be used on all other conditions.

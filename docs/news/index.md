@@ -27,6 +27,19 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   `order_by` parameter now allows to input a vector of variable names.
   (26.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Variable combinations in rows, columns and types can now also take in
+  variable combinations inside the brackets like “state + (age, sex +
+  education, first_person)”. (26.06.2026)
+
+#### Changed functionality
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Variable combinations in rows, columns and types like “state + (age,
+  sex + education, first_person)”, now have to use commas as separators
+  in the brackets. (26.06.2026)
 
 #### Fixed
 
@@ -51,6 +64,12 @@
 - [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
   Now displays the actual data frame names to be joined instead of just
   an iterative number in the console. (21.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Received some additional messages for computing stats. (26.06.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Received some additional messages for computing stats. (26.06.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Added example for type combinations. (26.06.2026)
 
 ## qol 1.3.2
 

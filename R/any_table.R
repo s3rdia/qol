@@ -234,9 +234,10 @@
 #'                      na.rm      = TRUE)
 #'
 #' # Percentages based on variable combination blocks
-#' # NOTE: age + (year education) becomes "age + year" and "age + education"
-#' #       and will be sorted together. Also works in columns.
-#' my_data |> any_table(rows       = c("sex + (age education)"),
+#' # NOTE: age + (year, education) becomes "age + year" and "age + education"
+#' #       and will be sorted together. Also works in columns. You can also
+#' #       do something like this: age + (year, sex + education, education).
+#' my_data |> any_table(rows       = c("sex + (age, education)"),
 #'                      columns    = "year",
 #'                      values     = weight,
 #'                      pct_block  = c("rows", "columns"),
@@ -3286,13 +3287,14 @@ expand_combination <- function(combination){
 
     # Extract single variables
     variable_list <- lapply(groups, function(group){
-        # Rmove brackets and commas
+        # Remove brackets
         content <- gsub("[()]", "", group)
-        content <- gsub(",", " ", content)
 
-        # Put plus symbols in between variables
-        variables <- strsplit(trimws(content), "\\s+")[[1]]
-        variables[nzchar(variables)]
+        # Split only on commas
+        terms <- strsplit(content, ",", fixed = TRUE)[[1]]
+
+        # Trim whitespace around each alternative
+        trimws(terms)
     })
 
     # Cartesian combinations

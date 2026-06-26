@@ -20,8 +20,8 @@ ifelse_multi(data_frame, ..., else. = NA, do_if = NULL, na.rm = TRUE)
 
 - ...:
 
-  The conditions as character and the assignments in the form: = , = ,
-  ...
+  The conditions as character and the assignments in the form:
+  "condition" = value, "condition" = value, ...
 
 - else.:
 

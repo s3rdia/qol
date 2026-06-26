@@ -10,7 +10,7 @@ ifelse_multi(data_frame, ..., else. = NA, do_if = NULL, na.rm = TRUE)
 \item{data_frame}{A data frame on which to apply multiple ifelse statements.}
 
 \item{...}{The conditions as character and the assignments in the form:
-\if{html}{\out{<condition>}} = \if{html}{\out{<value>}}, \if{html}{\out{<condition>}} = \if{html}{\out{<value>}}, ...}
+"condition" = value, "condition" = value, ...}
 
 \item{else.}{The default value which is applied when no condition results in
 an assignment.}

@@ -9,6 +9,11 @@
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (20.06.2026)
 * `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`. (26.06.2026)
 * `any_table()`: `order_by` parameter now allows to input a vector of variable names. (26.06.2026)
+* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types can now also take in variable combinations inside the brackets like "state + (age, sex + education, first_person)". (26.06.2026)
+
+### Changed functionality
+
+* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets. (26.06.2026)
 
 ### Fixed
 
@@ -22,6 +27,10 @@
 ### Additionally
 
 * `multi_join()`: Now displays the actual data frame names to be joined instead of just an iterative number in the console. (21.06.2026)
+* `any_table()`: Received some additional messages for computing stats. (26.06.2026)
+* `any_table()`: Received some additional messages for computing stats. (26.06.2026)
+* `summarise_plus()`: Added example for type combinations. (26.06.2026)
+
 
 # qol 1.3.2
 

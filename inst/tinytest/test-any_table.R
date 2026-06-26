@@ -203,7 +203,7 @@ expect_true(all(c("weight_pct_group_row_1", "probability_pct_group_row_2",
 
 # any_table with block row percentages
 result_list <- dummy_df |>
-    any_table(rows      = "age + (sex education)",
+    any_table(rows      = "age + (sex, education)",
               columns   = "state",
               values    = weight,
               pct_block = "rows",
@@ -223,7 +223,7 @@ expect_equal(collapse::funique(result_df[["weight_pct_block_rows_East"]]), 100, 
 # any_table with block column percentages
 result_list <- dummy_df |>
     any_table(rows      = "state",
-              columns   = "age + (sex education)",
+              columns   = "age + (sex, education)",
               values    = weight,
               pct_block = "columns",
               output    = "excel_nostyle",
@@ -242,6 +242,19 @@ expect_equal(names(result_df),
                "weight_pct_block_columns_under 50_middle", "weight_pct_block_columns_under 50_high", "weight_pct_block_columns_50 and more_Total",
                "weight_pct_block_columns_50 and more_Male", "weight_pct_block_columns_50 and more_Female", "weight_pct_block_columns_50 and more_low",
                "weight_pct_block_columns_50 and more_middle", "weight_pct_block_columns_50 and more_high"), info = "any_table with block order")
+
+
+# any_table can expand combinations
+result_list <- dummy_df |>
+    any_table(rows       = "age + (state, first_person + education)",
+              columns    = "sex",
+              values     = weight,
+              output     = "excel_nostyle",
+              formats    = list(state = state., age = age., sex = sex., education = education.),
+              print      = FALSE)
+
+expect_true(all(c("West", "East", "0", "1") %in% result_list[["table"]][["var2"]]), info = "any_table can expand combinations")
+expect_true(all(c("low", "middle", "high", "") %in% result_list[["table"]][["var3"]]), info = "any_table can expand combinations")
 
 
 # any_table with a lot of statistics doesn't break
