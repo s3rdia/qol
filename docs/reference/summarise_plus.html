@@ -224,7 +224,7 @@ specified.</p>
 <span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Call function</span></span>
+<span><span class="co"># Summarise the data  with all class variables nested</span></span>
 <span><span class="va">all_nested</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">summarise_plus</span><span class="op">(</span>class      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">sex</span>, <span class="va">age</span><span class="op">)</span>,</span>
 <span>                   values     <span class="op">=</span> <span class="va">income</span>,</span>
@@ -234,6 +234,8 @@ specified.</p>
 <span>                   nesting    <span class="op">=</span> <span class="st">"deepest"</span>,</span>
 <span>                   na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Output all possible combinations of the provided class variables. Meaning:</span></span>
+<span><span class="co"># Total, combinations of 2, combinations of 3, ...</span></span>
 <span><span class="va">all_possible</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">summarise_plus</span><span class="op">(</span>class      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">income</span><span class="op">)</span>,</span>
 <span>                   values     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">probability</span><span class="op">)</span>,</span>
@@ -253,6 +255,7 @@ specified.</p>
 <span>                   formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="st">"sex."</span>, age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span>,</span>
 <span>                   nesting    <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Summarise and merge results back to the original data frame</span></span>
 <span><span class="va">merge_back</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">summarise_plus</span><span class="op">(</span>class      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span>, <span class="va">sex</span><span class="op">)</span>,</span>
 <span>                   values     <span class="op">=</span> <span class="va">weight</span>,</span>
@@ -260,6 +263,7 @@ specified.</p>
 <span>                   nesting    <span class="op">=</span> <span class="st">"deepest"</span>,</span>
 <span>                   merge_back <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Select only certain variable combinations of all the possible combinations</span></span>
 <span><span class="va">certain_types</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">summarise_plus</span><span class="op">(</span>class      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">sex</span>, <span class="va">age</span><span class="op">)</span>,</span>
 <span>                   values     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">probability</span><span class="op">)</span>,</span>
@@ -268,6 +272,17 @@ specified.</p>
 <span>                                     age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
 <span>                   types      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"year + age"</span>, <span class="st">"age + sex"</span><span class="op">)</span>,</span>
 <span>                   weight     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                   nesting    <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>                   na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># You can also select repeating combinations faster like this</span></span>
+<span><span class="va">combi_types</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">summarise_plus</span><span class="op">(</span>class      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">education</span><span class="op">)</span>,</span>
+<span>                   values     <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                   statistics <span class="op">=</span> <span class="st">"sum"</span>,</span>
+<span>                   formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
+<span>                                     age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                   types      <span class="op">=</span> <span class="st">"year + sex + (age, age + education, education)"</span>,</span>
 <span>                   nesting    <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>                   na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>

@@ -224,7 +224,7 @@ income. <- interval_format(
 # Example data frame
 my_data <- dummy_data(1000)
 
-# Call function
+# Summarise the data  with all class variables nested
 all_nested <- my_data |>
     summarise_plus(class      = c(year, sex, age),
                    values     = income,
@@ -234,6 +234,8 @@ all_nested <- my_data |>
                    nesting    = "deepest",
                    na.rm      = TRUE)
 
+# Output all possible combinations of the provided class variables. Meaning:
+# Total, combinations of 2, combinations of 3, ...
 all_possible <- my_data |>
     summarise_plus(class      = c(year, sex, age, income),
                    values     = c(probability),
@@ -253,6 +255,7 @@ single <- my_data |>
                    formats    = list(sex = "sex.", age = "age."),
                    nesting    = "single")
 
+# Summarise and merge results back to the original data frame
 merge_back <- my_data |>
     summarise_plus(class      = c(year, age, sex),
                    values     = weight,
@@ -260,6 +263,7 @@ merge_back <- my_data |>
                    nesting    = "deepest",
                    merge_back = TRUE)
 
+# Select only certain variable combinations of all the possible combinations
 certain_types <- my_data |>
     summarise_plus(class      = c(year, sex, age),
                    values     = c(probability),
@@ -268,6 +272,17 @@ certain_types <- my_data |>
                                      age = age.),
                    types      = c("year", "year + age", "age + sex"),
                    weight     = weight,
+                   nesting    = "all",
+                   na.rm      = TRUE)
+
+# You can also select repeating combinations faster like this
+combi_types <- my_data |>
+    summarise_plus(class      = c(year, sex, age, education),
+                   values     = weight,
+                   statistics = "sum",
+                   formats    = list(sex = sex.,
+                                     age = age.),
+                   types      = "year + sex + (age, age + education, education)",
                    nesting    = "all",
                    na.rm      = TRUE)
 
