@@ -4,9 +4,9 @@
 #' Draw or output a graphic to a desired destination.
 #'
 #' @param graphic_object The complete graphic to be drawn or exported.
-#' @param dimensions qol package dimensions options.
-#' @param fine_tuning The list of fine tuning parameters.
-#' @param output qol package output options.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
+#' @param output Output parameters set with [graphic_output()].
 #'
 #' @return
 #' Returns the input graphic object.
@@ -54,7 +54,7 @@ output_graphic <- function(graphic_object,
     else{
         # If save path doesn't exist, just draw graphic in plot window.
         if (!file.exists(output[["save_path"]])){
-            print_message("WARNING", "Path does not exist: ", output[["save_path"]])
+            print_message("WARNING", "Path does not exist: [path]", path = output[["save_path"]])
 
             if (interactive()){
                 grid::grid.draw(graphic_object)
@@ -141,6 +141,13 @@ output_graphic <- function(graphic_object,
     invisible(graphic_object)
 }
 
+
+#' @description
+#' Output a grid of graphics.
+#'
+#' @return
+#' Returns NULL or the grid graphic object.
+#'
 #' @noRd
 output_grid <- function(dimensions,
                         fine_tuning,
@@ -258,7 +265,7 @@ output_grid <- function(dimensions,
 #' expression is computed at the moment. Used for computation with by variables.
 #'
 #' @return
-#' Returns the input graphic object.
+#' Returns NULL or the input graphic object.
 #'
 #' @noRd
 output_interactive_svg <- function(graphic_object,
@@ -458,7 +465,7 @@ output_interactive_svg <- function(graphic_object,
     if (is.null(by_info)){ print_step("MINOR", "Inject Java Script") }
 
     # Put together the whole java script and inject the custom tooltip design
-    full_java_script <- java_script
+    full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
     full_java_script <- gsub("%FONT_COLOR%",    visuals[["tooltip_font_color"]],         full_java_script, fixed = TRUE)
     full_java_script <- gsub("%FILL_COLOR%",    visuals[["tooltip_background_color"]],   full_java_script, fixed = TRUE)
     full_java_script <- gsub("%BORDER_COLOR%",  visuals[["tooltip_border_color"]],       full_java_script, fixed = TRUE)
@@ -484,7 +491,7 @@ output_interactive_svg <- function(graphic_object,
     # Gather the segment tooltips
     for(i in seq_along(values)){
         # Tooltip text to display on mouse over
-        tooltip <- paste0(tooltip_header[i], "!!!––––––––––!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
+        tooltip <- paste0(tooltip_header[i], "!!!\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
 
         # Capture only the segments which should receive tooltips.
         # All the ids in the SVG files receive a .1 at the end. Don't know why.
@@ -518,7 +525,7 @@ output_interactive_svg <- function(graphic_object,
                                 segment_labels, "\u00A0:\u00A0{b}", values[i, ], "{/b}")
 
         # Tooltip text to display on mouse over
-        tooltip <- paste0(tooltip_header[i], "{/b}", "!!!––––––––––", "!!!", value_label, "!!!",
+        tooltip <- paste0(tooltip_header[i], "{/b}", "!!!\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013", "!!!", value_label, "!!!",
                           paste(segment_lines, collapse = "!!!"))
 
         # Capture only the segments which should receive tooltips.
@@ -636,264 +643,3 @@ check_required_package <- function(){
 
     TRUE
 }
-
-
-#' Check If gridSVG Is Installed
-#'
-#' @description
-#' This is the main java script code to make tooltips pop up and hide again. This
-#' code also makes all the dynamic styling work. The whole coloring and formatting
-#' takes place here.
-#'
-#' @noRd
-java_script <- '<script type="application/ecmascript"><![CDATA[
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Grab the styling values from the R code and inject them into global variables
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-var tooltipOptions = {
-    fontColor:   "%FONT_COLOR%",
-    fillColor:   "%FILL_COLOR%",
-    borderColor: "%BORDER_COLOR%",
-    fillOpacity:  %FILL_OPACITY%,
-    borderWidth:  %BORDER_WIDTH%,
-    fontFamily:  "%FONT_FAMILY%",
-    fontSize:     %FONT_SIZE%,
-    paddingX:     %PADDING_X%,
-    paddingY:     %PADDING_Y%,
-    cornerRadius: %CORNER_RADIUS%,
-    groupColor:  "%GROUP_COLOR%"
-};
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Set up the function that makes the toolstip pop up
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-function showTooltip(evt, text){
-    // Dom element selection
-    var svg     = evt.target.ownerSVGElement;
-    var tooltip = document.getElementById("tooltip");
-    var label   = document.getElementById("tooltip-text");
-    var bg      = document.getElementById("tooltip-bg");
-
-    // Map coordinates according to the canvas itself
-    var cursor;
-    var pt = svg.createSVGPoint();
-
-    // Firefox renders the SVG with tooltips differently. Here the scollbars have
-    // to be countered.
-    if(navigator.userAgent.indexOf("Firefox") !== -1){
-        var rect = svg.getBoundingClientRect();
-
-        pt.x = evt.clientX - rect.left;
-        pt.y = evt.clientY - rect.top;
-
-        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
-    }
-    else{
-        pt.x = evt.clientX;
-        pt.y = evt.clientY;
-
-        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
-    }
-
-    // Font must be scaled according to the current displayed size of the graphic.
-    // The zoom has to be countered basically.
-    var scaleFactor     = svg.viewBox.baseVal.width / svg.getBoundingClientRect().width;
-    var adaptedFontSize = parseFloat(tooltipOptions.fontSize) * scaleFactor;
-    var adaptedPaddingX = parseFloat(tooltipOptions.paddingX) * scaleFactor;
-    var adaptedPaddingY = parseFloat(tooltipOptions.paddingY) * scaleFactor;
-
-    // Set up font
-    label.setAttribute("font-family", tooltipOptions.fontFamily);
-    label.setAttribute("font-size", adaptedFontSize + "px");
-
-    // Clear previous multi line text element
-    while(label.firstChild) { label.removeChild(label.firstChild); }
-
-    // Put together and format multi line tooltips
-    var lines = text.split("!!!");
-
-    for(var lineIndex = 0; lineIndex < lines.length; lineIndex++){
-        var line = lines[lineIndex];
-
-        // Extract legend color if present
-        var legendColor = null;
-        var legendMatch = line.match(/\\{legend:([^}]+)\\}/);
-
-        if(legendMatch){
-            legendColor = legendMatch[1];
-
-            line = line.replace(/\\{legend:[^}]+\\}/, "{sq}");
-        }
-
-        var bold = false;
-        var xPos = adaptedPaddingX;
-
-        // Current line is cut up into pieces which determine whether parts of
-        // the text are drawn in bold or in normal font weight.
-        var pieces = line.split(/(\\{b\\}|\\{\\/b\\}|\\{sq\\})/);
-
-        for(var pieceIndex = 0; pieceIndex < pieces.length; pieceIndex++){
-            var piece = pieces[pieceIndex];
-
-            // Set bold entry and exit points
-            if(piece === "{b}")  { bold = true;  continue; }
-            if(piece === "{/b}") { bold = false; continue; }
-            if(piece === "")     {               continue; }
-
-            // Create and append inline sub-text tag (tspan)
-            var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-
-            // Replace the square placeholder and fill it with the corresponding legend color
-            if(piece === "{sq}"){
-                tspan.textContent = "■\u00A0";
-                tspan.setAttribute("fill", legendColor);
-                tspan.style.fill = legendColor; // Doppelte Absicherung für SVG-Rendering
-
-                // Hier machen wir das Quadrat um ca. 30% größer als die normale Schrift
-                tspan.setAttribute("font-size", (adaptedFontSize * 1.3) + "px");
-                tspan.setAttribute("font-weight", "normal");
-            }
-            // Use normal style on standard text
-            else{
-                tspan.textContent = piece;
-                tspan.setAttribute("font-weight", bold ? "bold" : "normal");
-                // Falls das Tooltip standardmäßig eine Textfarbe hat (z. B. weiß oder schwarz), hier erzwingen:
-                tspan.setAttribute("fill", window.getComputedStyle(label).fill || "black");
-            }
-
-            tspan.setAttribute("x", xPos);
-            tspan.setAttribute("y", adaptedPaddingY + adaptedFontSize + (lineIndex * adaptedFontSize * 1.3));
-
-            label.appendChild(tspan);
-
-            // Advance cursor by the pixel width of rendered piece
-            xPos += tspan.getComputedTextLength();
-        }
-    }
-
-    // Calculate the tooltip box dimensions
-    var bbox = label.getBBox();
-
-    var tooltipWidth  = bbox.width + (2 * adaptedPaddingX);
-    var tooltipHeight = bbox.height + (2 * adaptedPaddingY);
-
-    //-------------------------------------------------------------------------
-    // Function which sets the text color dynamically to black or white depending
-    // on the tooltip background color
-    //-------------------------------------------------------------------------
-
-    function getContrastColor(color){
-        var rgb = color.match(/\\d+/g);
-        if(!rgb || rgb.length < 3) { return "black"; }
-
-        // Calculate YIQ relative luminance formula to dynamically check light vs. dark
-        var brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
-        return brightness > 128 ? "black" : "white";
-    }
-
-    //-------------------------------------------------------------------------
-    // Formatting tooltips
-    //-------------------------------------------------------------------------
-
-    var tooltipTextColor, tooltipFillColor, tooltipBorderColor;
-
-    // On auto grab the color of the respective segment
-    if(tooltipOptions.fillColor === "auto"){
-        // Set fixed color for group tooltips
-        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
-            tooltipFillColor = "#FFFFFF";
-        }
-        // Set the color of the individual segment
-        else{
-            tooltipFillColor = window.getComputedStyle(evt.target).fill;
-        }
-    }
-    // Otherwise get the user defined color
-    else{
-        tooltipFillColor = tooltipOptions.fillColor;
-    }
-
-    // On auto dynamically set the color to black or white
-    if(tooltipOptions.fontColor === "auto"){
-        // Set fixed color for group tooltips
-        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
-            tooltipTextColor = "#000000";
-        }
-        // Set the color dynamically depending on the background color
-        else{
-            tooltipTextColor = getContrastColor(tooltipFillColor);
-        }
-    }
-    // Otherwise get the user defined color
-    else{
-        tooltipTextColor = tooltipOptions.fontColor;
-    }
-
-    // On auto grab the color of the respective segment
-    if(tooltipOptions.borderColor === "auto"){
-        // Set fixed color for group tooltips
-        if (evt.target.id && evt.target.id.startsWith("tooltip_group")){
-            tooltipBorderColor = "#000000";
-        }
-        // Set the color of the individual segment
-        else{
-            tooltipBorderColor = "#000000";
-        }
-    }
-    // Otherwise get the user defined color
-    else{
-        tooltipBorderColor = tooltipOptions.borderColor;
-    }
-
-    // Apply user defined style options
-    bg.setAttribute("fill", tooltipFillColor);
-    bg.setAttribute("fill-opacity", tooltipOptions.fillOpacity);
-    bg.setAttribute("stroke", tooltipBorderColor);
-    bg.setAttribute("stroke-width", parseFloat(tooltipOptions.borderWidth) * scaleFactor);
-    bg.setAttribute("rx", parseFloat(tooltipOptions.cornerRadius) * scaleFactor);
-    bg.setAttribute("ry", parseFloat(tooltipOptions.cornerRadius) * scaleFactor);
-    label.setAttribute("fill", tooltipTextColor);
-
-    // Align background
-    bg.setAttribute("x", bbox.x - adaptedPaddingX);
-    bg.setAttribute("y", bbox.y - adaptedPaddingY);
-    bg.setAttribute("width", tooltipWidth);
-    bg.setAttribute("height", tooltipHeight);
-
-    //-------------------------------------------------------------------------
-    // Tooltips are to be drawn inside the graphic. Which means, they are right
-    // or left adjusted depending on which side of the graphic the tooltip pops
-    // up. Same with top or bottom part, while this isnt as relevant.
-    //-------------------------------------------------------------------------
-
-    var svgWidth  = svg.viewBox.baseVal.width;
-    var svgHeight = svg.viewBox.baseVal.height;
-
-    // Evaluate layout space position quadrant rules
-    var leftHalf   = cursor.x < svgWidth  / 2;
-    var bottomPart = cursor.y < svgHeight / 4;
-    var offset     = 10 * scaleFactor;
-
-    // Compute Flip Horizontal Axis Boundary Collision
-    var tooltipX = leftHalf ? (cursor.x + offset) : (cursor.x - tooltipWidth - offset);
-
-    // Compute Flip Vertical Axis Boundary Collision
-    var tooltipY = bottomPart ? (cursor.y + offset) : (cursor.y - tooltipHeight - offset);
-
-    // Transform coordinate group placement matrix and release display
-    tooltip.setAttribute("transform", "translate(" + tooltipX + "," + tooltipY + ")");
-    tooltip.setAttribute("visibility", "visible");
-}
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Hide tooltip
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-function hideTooltip(){
-    document.getElementById("tooltip").setAttribute("visibility", "hidden");
-}
-
-]]></script>'

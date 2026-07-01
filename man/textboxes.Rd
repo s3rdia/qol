@@ -3,13 +3,8 @@
 \name{textboxes}
 \alias{textboxes}
 \alias{add_textbox}
-\alias{wrap_single_text}
-\alias{wrap_text_vector}
-\alias{add_title}
-\alias{add_footnote}
-\alias{add_graphic_origin}
-\alias{register_windows_font}
 \alias{get_text_width}
+\alias{get_text_height}
 \title{Add Textboxes As Graphical Object}
 \usage{
 add_textbox(
@@ -27,33 +22,9 @@ add_textbox(
   draw = FALSE
 )
 
-wrap_single_text(text_line, textbox_width, font, font_size, font_face)
-
-wrap_text_vector(text_lines, textbox_width, font, font_size, font_face)
-
-add_title(
-  text,
-  dimensions = .qol_options[["graphic_dimensions"]],
-  visuals = .qol_options[["graphic_visuals"]],
-  draw = FALSE
-)
-
-add_footnote(
-  text,
-  dimensions = .qol_options[["graphic_dimensions"]],
-  visuals = .qol_options[["graphic_visuals"]],
-  draw = FALSE
-)
-
-add_graphic_origin(
-  dimensions = .qol_options[["graphic_dimensions"]],
-  visuals = .qol_options[["graphic_visuals"]],
-  draw = FALSE
-)
-
-register_windows_font(font)
-
 get_text_width(text, type, dimensions, visuals, unit = "native")
+
+get_text_height(text, type, dimensions, visuals, unit = "native")
 }
 \arguments{
 \item{text}{The text that should be displayed.}
@@ -80,18 +51,12 @@ get_text_width(text, type, dimensions, visuals, unit = "native")
 
 \item{draw}{FALSE by default. If TRUE, directly draws the textbox onto the canvas.}
 
-\item{text_line}{A single line of text to wrap.}
-
-\item{textbox_width}{Width of the textbox in cm.}
-
-\item{text_lines}{A vector of texts to wrap.}
-
-\item{dimensions}{qol package dimensions options.}
-
-\item{visuals}{qol package visuals options.}
-
 \item{type}{The type of text to be measured. Can be: title, footnote, primary_axes,
 secondary_axes, variable_axes, value, label, origin or other.}
+
+\item{dimensions}{Dimension parameters set with \code{\link[=graphic_dimensions]{graphic_dimensions()}}.}
+
+\item{visuals}{Visual parameters set with \code{\link[=graphic_visuals]{graphic_visuals()}}.}
 
 \item{unit}{The unit to measure widths and heights in. Used are "native" for measuring
 inside the inner canvas. Otherwise use "cm".}
@@ -99,42 +64,43 @@ inside the inner canvas. Otherwise use "cm".}
 \value{
 Returns a grid::textGrob object.
 
-Returns wrapped character.
-
-Returns wrapped character vector.
-
 \code{\link[=get_text_width]{get_text_width()}}: Returns a numeric width.
+
+\code{\link[=get_text_height]{get_text_height()}}: Returns a numeric height.
 }
 \description{
-\code{\link[=add_textbox]{add_textbox()}}: Create a textbox as graphical object. The dimensions and overall visual appearance
-is flexible. Text wraps automatically, if the provided text is wider than the
-textbox itself.
+\code{\link[=add_textbox]{add_textbox()}}: Create a textbox as graphical object. The dimensions and overall visual
+appearance is flexible. Text wraps automatically, if the provided text is wider than the
+textbox itself. Textboxes can be plugged into the "add_texts" parameter of \code{\link[=design_graphic]{design_graphic()}}.
 
-\code{\link[=wrap_single_text]{wrap_single_text()}}: Wrap text based on a provided width.
+\code{\link[=get_text_width]{get_text_width()}}: Get the width of a text while applying individual styling.
 
-\code{\link[=wrap_text_vector]{wrap_text_vector()}}: Wrap every single element of a character vector individually.
-
-\code{\link[=add_title]{add_title()}}: Create a textbox as graphical object. A wrapper to easily create
-a textbox at the top of the graphic as title.
-
-\code{\link[=add_footnote]{add_footnote()}}: Create a textbox as graphical object. A wrapper to easily create
-a textbox at the bottom of the graphic as footnote.
-
-\code{\link[=add_graphic_origin]{add_graphic_origin()}}: Create a textbox as graphical object. A wrapper to easily create
-a textbox at the bottom right of the graphic as information who created the graphic.
-
-\code{\link[=register_windows_font]{register_windows_font()}}: Windows only. Registers the font to be used.
-
-\code{\link[=get_text_width]{get_text_width()}}: Get the width of a text.
+\code{\link[=get_text_height]{get_text_height()}}: Get the height of a text while applying individual styling.
 }
-\seealso{
-High level graphic functions: \code{\link[=design_graphic]{design_graphic()}}
+\examples{
+# Example data frame
+my_data <- dummy_data(100)
 
-Mid level graphic functions:
+# Formats
+age. <- discrete_format(
+    "Total"          = 0:100,
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:100)
 
-Add textboxes: \code{\link[=add_textbox]{add_textbox()}}, \code{\link[=add_title]{add_title()}}, \code{\link[=add_footnote]{add_footnote()}}, \code{\link[=add_graphic_origin]{add_graphic_origin()}}
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
 
-Viewport: \code{\link[=setup_main_canvas]{setup_main_canvas()}}, \code{\link[=is_viewport_pushed]{is_viewport_pushed()}}
+# Add individual texts to a graphic
+my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = dg_vbars,
+                    add_texts = list(add_textbox("Hello",  3.5, 3),
+                                     add_textbox("World!", 6,   5)))
 
-Dimensions: \code{\link[=get_available_width]{get_available_width()}}, \code{\link[=get_available_height]{get_available_height()}}
 }

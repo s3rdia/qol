@@ -259,36 +259,9 @@ create_global_themes <- function(){
 }
 
 
-# These are the two main sequences in which colors are used. The first one is just
-# sequential from 1 to 10, the second one skips colors to use the whole color range
-# as much as possible and to put colors with more contrasts together (if the colors
-# themselves are ordered sequentially).
-sequential_usage <- list(c(1),
-                         c(1, 2),
-                         c(1, 2, 3),
-                         c(1, 2, 3, 4),
-                         c(1, 2, 3, 4, 5),
-                         c(1, 2, 3, 4, 5, 6),
-                         c(1, 2, 3, 4, 5, 6, 7),
-                         c(1, 2, 3, 4, 5, 6, 7, 8),
-                         c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                         c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-
-contrast_usage <- list(c(1),
-                       c(1, 3),
-                       c(1, 3, 5),
-                       c(1, 3, 5, 7),
-                       c(1, 3, 5, 7, 9),
-                       c(1, 2, 3, 5, 7, 9),
-                       c(1, 2, 3, 4, 5, 7, 9),
-                       c(1, 2, 3, 4, 5, 6, 7, 9),
-                       c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                       c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-
-
 #' Managing Global Color Themes
 #'
-#' @name graphic_themes
+#' @name color_themes
 #'
 #' @description
 #' [add_color_theme()]: Adds a new color theme containing base and font colors to the
@@ -305,12 +278,13 @@ contrast_usage <- list(c(1),
 #' [add_color_theme()]: Returns modified global theme list.
 #'
 #' @seealso
-#' Graphic functions: [design_graphic()]
+#' Main graphic function: [design_graphic()]
 #'
-#' Global graphic options: [add_color_theme()], [get_theme_base_colors()], [get_theme_font_inside_colors()],
-#' [get_theme_font_outside_colors()], [reset_color_themes()]
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' View colors and themes: [display_colors()], [display_themes()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
 #' @examples
 #' # Adding and getting color themes
@@ -322,7 +296,7 @@ contrast_usage <- list(c(1),
 #'                 font_outside_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
 #'                                         "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"))
 #'
-#' @rdname graphic_themes
+#' @rdname color_themes
 #'
 #' @export
 add_color_theme <- function(theme_name,
@@ -388,19 +362,23 @@ add_color_theme <- function(theme_name,
 
 
 #' @description
-#' [get_theme_colors()]: Retrieve a list with two vectors of hex colors from the
+#' [get_theme_colors()]: Retrieve a list with three vectors of hex colors from the
 #' globally set up themes containing the base colors for the segments and the
 #' corresponding font colors.
 #'
 #' @param theme_name The theme name to look up.
 #'
 #' @return
-#' [get_theme_colors()]: A list with two vectors of hex color codes.
+#' [get_theme_colors()]: A list with three vectors of hex color codes.
 #'
 #' @examples
 #' get_theme_colors("ocean")
 #'
-#' @rdname graphic_themes
+#' base_colors  <- get_theme_colors("ocean")[[1]]
+#' font_inside  <- get_theme_colors("ocean")[[2]]
+#' font_outside <- get_theme_colors("ocean")[[3]]
+#'
+#' @rdname color_themes
 #'
 #' @export
 get_theme_colors <- function(theme_name){
@@ -415,102 +393,7 @@ get_theme_colors <- function(theme_name){
         return(invisible(.qol_options[["graphic_themes"]][[1]]))
     }
 
-    invisible(.qol_options[["graphic_themes"]][[theme_name]])
-}
-
-
-#' @description
-#' [get_theme_base_colors()]: Retrieve a vector of hex colors from the globally set up themes
-#' containing the base colors for the segments.
-#'
-#' @param theme_name The theme name to look up.
-#'
-#' @return
-#' [get_theme_base_colors()]: A vector of hex color codes.
-#'
-#' @examples
-#' get_theme_base_colors("ocean")
-#'
-#' @rdname graphic_themes
-#'
-#' @export
-get_theme_base_colors <- function(theme_name){
-    if (length(theme_name) > 1){
-        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
-
-        theme_name <- theme_name[[1]]
-    }
-
-    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
-        return(invisible(.qol_options[["graphic_themes"]][[1]][["base"]]))
-    }
-
-    invisible(.qol_options[["graphic_themes"]][[theme_name]][["base"]])
-}
-
-
-#' @description
-#' [get_theme_font_inside_colors()]: Retrieve a vector of hex colors from the globally
-#' set up themes containing the individual font colors, which are used when values are
-#' drawn inside segments, corresponding to the base segment colors.
-#'
-#' @param theme_name The theme name to look up.
-#'
-#' @return
-#' [get_theme_font_inside_colors()]: A vector of hex color codes.
-#'
-#' @examples
-#' get_theme_font_inside_colors("ocean")
-#'
-#' @rdname graphic_themes
-#'
-#' @export
-get_theme_font_inside_colors <- function(theme_name){
-    if (length(theme_name) > 1){
-        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
-
-        theme_name <- theme_name[[1]][["font_inside"]]
-    }
-
-    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
-        return(invisible(.qol_options[["graphic_themes"]][[1]][["font_inside"]]))
-    }
-
-    invisible(.qol_options[["graphic_themes"]][[theme_name]][["font_inside"]])
-}
-
-
-#' @description
-#' [get_theme_font_outside_colors()]: Retrieve a vector of hex colors from the globally
-#' set up themes containing the individual font colors, which are used when values are
-#' drawn outside segments, corresponding to the base segment colors.
-#'
-#' @param theme_name The theme name to look up.
-#'
-#' @return
-#' [get_theme_font_outside_colors()]: A vector of hex color codes.
-#'
-#' @examples
-#' get_theme_font_outside_colors("ocean")
-#'
-#' @rdname graphic_themes
-#'
-#' @export
-get_theme_font_outside_colors <- function(theme_name){
-    if (length(theme_name) > 1){
-        print_message("WARNING", "Only a single theme can be retrieved. First vector element will be used.")
-
-        theme_name <- theme_name[[1]][["font_outside"]]
-    }
-
-    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
-        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
-        return(invisible(.qol_options[["graphic_themes"]][[1]][["font_outside"]]))
-    }
-
-    invisible(.qol_options[["graphic_themes"]][[theme_name]][["font_outside"]])
+    .qol_options[["graphic_themes"]][[theme_name]]
 }
 
 
@@ -529,7 +412,7 @@ get_theme_font_outside_colors <- function(theme_name){
 #' # Reset global themes to default
 #' reset_color_themes()
 #'
-#' @rdname graphic_themes
+#' @rdname color_themes
 #'
 #' @export
 reset_color_themes <- function(clear_themes = FALSE){
@@ -556,7 +439,7 @@ reset_color_themes <- function(clear_themes = FALSE){
 #' # Displaying colors and themes
 #' display_colors("ocean")
 #'
-#' @rdname graphic_themes
+#' @rdname color_themes
 #'
 #' @export
 display_colors <- function(theme_name){
@@ -566,9 +449,9 @@ display_colors <- function(theme_name){
         return(invisible(NULL))
     }
 
-    base_colors  <- get_theme_base_colors(theme_name)
-    font_inside  <- get_theme_font_inside_colors(theme_name)
-    font_outside <- get_theme_font_outside_colors(theme_name)
+    base_colors  <- get_theme_colors(theme_name)[[1]]
+    font_inside  <- get_theme_colors(theme_name)[[2]]
+    font_outside <- get_theme_colors(theme_name)[[3]]
 
     # Set up a new graphic
     grid::grid.newpage()
@@ -612,7 +495,7 @@ display_colors <- function(theme_name){
 #' @examples
 #' display_themes()
 #'
-#' @rdname graphic_themes
+#' @rdname color_themes
 #'
 #' @export
 display_themes <- function(){
@@ -690,9 +573,36 @@ display_themes <- function(){
 #' [override_theme()]: A list containing the override parameters.
 #'
 #' @examples
-#' override_theme(3, "#FF00FF", "#00FF00")
+#' # Example data frame
+#' my_data <- dummy_data(100)
 #'
-#' @rdname graphic_themes
+#' # Formats
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
+#' sex. <- discrete_format(
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' # Override specific segment visuals to make them stand out
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "age",
+#'                     values         = weight,
+#'                     diagram        = dg_vbars,
+#'                     formats        = list(sex = sex.,
+#'                                           age = age.),
+#'                     visuals        = graphic_visuals(
+#'                         color_theme    = "violet_fire",
+#'                         theme_override = list(override_theme(4, "#FF0000", "#00FF00", "#000000"),
+#'                                               override_theme(7, "#00FFFF", "#FFFF00", "#0000FF"))))
+#'
+#' @rdname color_themes
 #'
 #' @export
 override_theme <- function(number       = NULL,
@@ -731,3 +641,58 @@ override_theme <- function(number       = NULL,
     # Return as list
     as.list(environment())
 }
+
+
+# These are the two main sequences in which colors are used. The first one is just
+# sequential from 1 to 10, the second one skips colors to use the whole color range
+# as much as possible and to put colors with more contrasts together (if the colors
+# themselves are ordered sequentially).
+#'
+#' @examples
+#' # The two main color usages are set up like this
+#' contrast_usage <- list(c(1),
+#'                        c(1, 3),
+#'                        c(1, 3, 5),
+#'                        c(1, 3, 5, 7),
+#'                        c(1, 3, 5, 7, 9),
+#'                        c(1, 2, 3, 5, 7, 9),
+#'                        c(1, 2, 3, 4, 5, 7, 9),
+#'                        c(1, 2, 3, 4, 5, 6, 7, 9),
+#'                        c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+#'                        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#'
+#' sequential_usage <- list(c(1),
+#'                          c(1, 2),
+#'                          c(1, 2, 3),
+#'                          c(1, 2, 3, 4),
+#'                          c(1, 2, 3, 4, 5),
+#'                          c(1, 2, 3, 4, 5, 6),
+#'                          c(1, 2, 3, 4, 5, 6, 7),
+#'                          c(1, 2, 3, 4, 5, 6, 7, 8),
+#'                          c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+#'                          c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#'
+#' @rdname color_themes
+#'
+.contrast_usage <- list(c(1),
+                        c(1, 3),
+                        c(1, 3, 5),
+                        c(1, 3, 5, 7),
+                        c(1, 3, 5, 7, 9),
+                        c(1, 2, 3, 5, 7, 9),
+                        c(1, 2, 3, 4, 5, 7, 9),
+                        c(1, 2, 3, 4, 5, 6, 7, 9),
+                        c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+.sequential_usage <- list(c(1),
+                          c(1, 2),
+                          c(1, 2, 3),
+                          c(1, 2, 3, 4),
+                          c(1, 2, 3, 4, 5),
+                          c(1, 2, 3, 4, 5, 6),
+                          c(1, 2, 3, 4, 5, 6, 7),
+                          c(1, 2, 3, 4, 5, 6, 7, 8),
+                          c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                          c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+

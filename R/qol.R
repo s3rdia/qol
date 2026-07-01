@@ -32,6 +32,20 @@
 #' Creating a custom table style: [excel_output_style()], [modify_output_style()],
 #' [number_format_style()], [modify_number_formats()]
 #'
+#' Main graphic function: [design_graphic()]
+#'
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
+#'
+#' Additional graphic functions: [add_textbox()], [get_text_width()], [get_text_height()],
+#' [setup_nested_diagram_viewport()], [back_to_the_root()], [get_diagram_dimensions()],
+#' [setup_interactive_elements()], [setup_y_axes()], [setup_x_axes()], [setup_xy_axes()],
+#' [direct_vertical_labels()], [setup_legend()]
+#'
 #' Recoding: [recode.()], [recode_multi()]
 #'
 #' Selecting: [keep()], [dropp()], [inverse()], [vars_between()]
@@ -79,7 +93,7 @@
 #' [set_labels()], [get_labels()], [set_print()], [get_print()], [set_monitor()],
 #' [get_monitor()], [set_na.rm()], [get_na.rm()], [set_output()], [get_output()], [set_titles()],
 #' [get_titles()], [set_footnotes()], [get_footnotes()], [set_print_miss()], [get_print_miss()],
-#' [set_threads()], [get_threads()]
+#' [set_threads()], [get_threads()], [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
 #' Other: [build_master()], [build_rstheme()], [free_memory()], [qol_news()], [qol_chat()]
 #'

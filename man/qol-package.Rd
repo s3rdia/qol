@@ -40,6 +40,20 @@ Summarisation and tabulation: \code{\link[=summarise_plus]{summarise_plus()}}, \
 Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
 \code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}
 
+Main graphic function: \code{\link[=design_graphic]{design_graphic()}}
+
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
+\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+
+Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
+
+Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}, \code{\link[=get_text_width]{get_text_width()}}, \code{\link[=get_text_height]{get_text_height()}},
+\code{\link[=setup_nested_diagram_viewport]{setup_nested_diagram_viewport()}}, \code{\link[=back_to_the_root]{back_to_the_root()}}, \code{\link[=get_diagram_dimensions]{get_diagram_dimensions()}},
+\code{\link[=setup_interactive_elements]{setup_interactive_elements()}}, \code{\link[=setup_y_axes]{setup_y_axes()}}, \code{\link[=setup_x_axes]{setup_x_axes()}}, \code{\link[=setup_xy_axes]{setup_xy_axes()}},
+\code{\link[=direct_vertical_labels]{direct_vertical_labels()}}, \code{\link[=setup_legend]{setup_legend()}}
+
 Recoding: \code{\link[=recode.]{recode.()}}, \code{\link[=recode_multi]{recode_multi()}}
 
 Selecting: \code{\link[=keep]{keep()}}, \code{\link[=dropp]{dropp()}}, \code{\link[=inverse]{inverse()}}, \code{\link[=vars_between]{vars_between()}}
@@ -87,7 +101,7 @@ Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\li
 \code{\link[=set_labels]{set_labels()}}, \code{\link[=get_labels]{get_labels()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=get_print]{get_print()}}, \code{\link[=set_monitor]{set_monitor()}},
 \code{\link[=get_monitor]{get_monitor()}}, \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=get_na.rm]{get_na.rm()}}, \code{\link[=set_output]{set_output()}}, \code{\link[=get_output]{get_output()}}, \code{\link[=set_titles]{set_titles()}},
 \code{\link[=get_titles]{get_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=get_footnotes]{get_footnotes()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=get_print_miss]{get_print_miss()}},
-\code{\link[=set_threads]{set_threads()}}, \code{\link[=get_threads]{get_threads()}}
+\code{\link[=set_threads]{set_threads()}}, \code{\link[=get_threads]{get_threads()}}, \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=free_memory]{free_memory()}}, \code{\link[=qol_news]{qol_news()}}, \code{\link[=qol_chat]{qol_chat()}}
 }

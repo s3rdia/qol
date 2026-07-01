@@ -2,76 +2,27 @@
 % Please edit documentation in R/graphic_helpers.R
 \name{viewport}
 \alias{viewport}
-\alias{setup_main_canvas}
-\alias{setup_nested_viewport}
-\alias{setup_diagram_viewport}
 \alias{setup_nested_diagram_viewport}
 \alias{back_to_the_root}
-\alias{is_viewport_pushed}
 \title{Set Up Viewports To Draw On}
 \usage{
-setup_main_canvas(
-  dimensions = .qol_options[["graphic_dimensions"]],
-  layout_row = NULL,
-  layout_column = NULL,
-  name = "main_canvas"
-)
-
-setup_nested_viewport(
-  x_pos = 0,
-  y_pos = 0,
-  y_scale = c(0, 1),
-  width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-  height = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
-  name = "nested_viewport"
-)
-
-setup_diagram_viewport(arguments)
-
 setup_nested_diagram_viewport(arguments)
 
 back_to_the_root(to_main = TRUE)
-
-is_viewport_pushed()
 }
 \arguments{
-\item{dimensions}{qol package dimensions options.}
-
-\item{name}{The internal name of the canvas with which it can be identified.}
-
-\item{x_pos}{Viewport starting x position.}
-
-\item{y_pos}{Viewport starting y position.}
-
-\item{y_scale}{The viewports vertical scaling.}
-
 \item{arguments}{Argument list passed passed on by \code{\link[=design_graphic]{design_graphic()}}.}
 
 \item{to_main}{TRUE by default. Pops out of all viewports but the main canvas.}
 }
 \value{
-Returns a grid::viewport object.
-
 Returns the grid::current.vpPath.
-
-\code{\link[=is_viewport_pushed]{is_viewport_pushed()}}: Returns TRUE/FALSE.
 }
 \description{
-\code{\link[=setup_main_canvas]{setup_main_canvas()}}: Setup the main graphic viewport and push it to the graphics
-tree. Additionally creates a new page before.
-
-\code{\link[=setup_nested_viewport]{setup_nested_viewport()}}: Setup a graphic viewport and push it to the graphics
-tree. The function assumes that it is called after setting up a main canvas.
-
-\code{\link[=setup_diagram_viewport]{setup_diagram_viewport()}}: Setup the main diagram viewport based on the list
-of arguments passed on by \code{\link[=design_graphic]{design_graphic()}}.
-
-\code{\link[=setup_diagram_viewport]{setup_diagram_viewport()}}: Setup the main diagram viewport based on the list
-of arguments passed on by \code{\link[=design_graphic]{design_graphic()}}.
+\code{\link[=setup_nested_diagram_viewport]{setup_nested_diagram_viewport()}}: Setup the main diagram viewport based on
+the list of arguments passed on by \code{\link[=design_graphic]{design_graphic()}}. This viewport contains
+the main diagram area as well as the axes. Additionally sets up the main diagram
+area viewport which only contains the main drawing area.
 
 \code{\link[=back_to_the_root]{back_to_the_root()}}: Pops out of all viewports.
-
-\code{\link[=is_viewport_pushed]{is_viewport_pushed()}}: Check whether a viewport was pushed after setting up
-a new canvas.
 }

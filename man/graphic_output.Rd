@@ -2,6 +2,7 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_output}
 \alias{graphic_output}
+\alias{modify_graphic_output}
 \title{Graphic Output}
 \usage{
 graphic_output(
@@ -11,6 +12,8 @@ graphic_output(
   by_as_grid = FALSE,
   interactive = FALSE
 )
+
+modify_graphic_output(output_to_modify, ...)
 }
 \arguments{
 \item{save_path}{If NULL, only draws the graphic in the plot window. Otherwise
@@ -26,26 +29,72 @@ whole grid when using by variables.}
 
 \item{interactive}{FALSE by default. If TRUE exports an interactive SVG files containing
 mouse over tooltips and hover effects.}
+
+\item{output_to_modify}{A pre created graphic output object where only
+certain elements should be modified while the rest is kept as is.}
+
+\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
+
+Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the dimensions of a graphic produced by \code{\link[=design_graphic]{design_graphic()}}.
+All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
+
+If options are stored in an object, it can be modified afterwards. In this case
+only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
+# Example data frame
+my_data <- dummy_data(100)
+
 # For default values
-gout <- graphic_output()
+default_output <- graphic_output()
 
 # Set specific options, the rest will be set to default values
-gout <- graphic_output(save_path = "C:/MyFolder/",
-                       file      = "MyGraphic.png")
+custom_output <- graphic_output(save_path = "C:/MyFolder/",
+                                file      = "MyGraphic.png")
+
+# Apply options locally
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    output         = custom_output)
+
+# Or direct
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    output         = graphic_output(save_path = "C:/MyFolder/",
+                                                    file      = "MyGraphic.png"))
+
+# Set options globally
+set_graphic_options(save_path = "C:/MyFolder/",
+                    file      = "MyGraphic.png")
+
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars)
+
+# Modify the previously created graphic options
+custom_output <- custom_output |> modify_graphic_output(file = "MyGraphic.pdf")
 
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Other graphic options:
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
+\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
-Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}
+Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
+
+Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
 }
