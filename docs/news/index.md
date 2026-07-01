@@ -40,6 +40,8 @@
   Variable combinations in rows, columns and types like “state + (age,
   sex + education, first_person)”, now have to use commas as separators
   in the brackets. (26.06.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Now uses Latin-1 encoding. (01.07.2026)
 
 #### Fixed
 

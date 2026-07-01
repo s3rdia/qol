@@ -77,7 +77,7 @@ Multi functions: Returns a list of data frames.
 }
 \description{
 \code{\link[=import_data]{import_data()}}: A wrapper for \code{\link[data.table:fread]{data.table::fread()}} and \code{\link[openxlsx2:wb_to_df]{openxlsx2::wb_to_df()}},
-providing basic import functionality with minimal code.
+providing basic import functionality with minimal code. Uses "Latin-1" encoding.
 
 \code{\link[=import_multi]{import_multi()}}: Runs multiple imports on all provided files. Is able to import
 all sheets from xlsx files.

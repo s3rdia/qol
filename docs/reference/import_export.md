@@ -4,7 +4,8 @@
 [`data.table::fread()`](https://rdrr.io/pkg/data.table/man/fread.html)
 and
 [`openxlsx2::wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html),
-providing basic import functionality with minimal code.
+providing basic import functionality with minimal code. Uses "Latin-1"
+encoding.
 
 `import_multi()`: Runs multiple imports on all provided files. Is able
 to import all sheets from xlsx files.

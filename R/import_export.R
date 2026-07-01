@@ -4,7 +4,7 @@
 #'
 #' @description
 #' [import_data()]: A wrapper for [data.table::fread()] and [openxlsx2::wb_to_df()],
-#' providing basic import functionality with minimal code.
+#' providing basic import functionality with minimal code. Uses "Latin-1" encoding.
 #'
 #' @param infile Full file path with extension to a csv or xlsx file to be imported.
 #' @param sheet Only used in xlsx import. Which sheet of the workbook to import.
@@ -164,10 +164,11 @@ import_data <- function(infile,
         # Actual import
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        data_frame <- data.table::fread(file   = infile,
-                                        sep    = separator,
-                                        dec    = decimal,
-                                        header = var_names)
+        data_frame <- data.table::fread(file     = infile,
+                                        sep      = separator,
+                                        dec      = decimal,
+                                        header   = var_names,
+                                        encoding = "Latin-1")
     }
     # xlsx
     else if (extension == "xlsx"){

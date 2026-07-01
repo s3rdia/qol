@@ -14,7 +14,8 @@ Last CRAN release was on 16.06.2026.
 
 ### Changed functionality
 
-* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets. 
+* `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets.
+* `import_data()`: Now uses Latin-1 encoding.
 
 ### Fixed
 
