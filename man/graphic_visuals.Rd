@@ -2,12 +2,13 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_visuals}
 \alias{graphic_visuals}
+\alias{modify_graphic_visuals}
 \title{Graphic Visuals}
 \usage{
 graphic_visuals(
   font = "Arial",
   color_theme = "ocean",
-  color_usage = contrast_usage,
+  color_usage = .contrast_usage,
   theme_override = list(),
   title_font_color = "#000000",
   footnote_font_color = "#000000",
@@ -75,6 +76,8 @@ graphic_visuals(
   group_hover_color = "#6495ED",
   group_hover_opacity = 0.25
 )
+
+modify_graphic_visuals(visuals_to_modify, ...)
 }
 \arguments{
 \item{font}{Set the font to be used for the entire output.}
@@ -84,7 +87,9 @@ custom theme or a vector of hex codes. Existing color themes can be viewed with
 \code{\link[=display_themes]{display_themes()}}.}
 
 \item{color_usage}{A list of numerical vectors that specify which specific colors
-from the color scheme are used for which number of segments.}
+from the color scheme are used for which number of segments. The two built in ways
+are ".contrast_usage" or ".sequential_usage". To see how they are set up look up the
+topic \link{color_themes} and the examples.}
 
 \item{theme_override}{The override parameter takes in a list consisting of
 \code{\link[=override_theme]{override_theme()}} functions.}
@@ -166,6 +171,18 @@ Can be "dashed", "dotted" or "solid".}
 
 \item{guiding_line_color}{The color of the guiding lines drawn at the y axes tick positions.}
 
+\item{major_separation_line_type}{Sets the type of separation lines drawn between top group
+categories. Can be "dashed", "dotted" or "solid".}
+
+\item{major_separation_line_color}{The color of the separation lines drawn between top group
+categories.}
+
+\item{minor_separation_line_type}{Sets the type of separation lines drawn between minor group
+categories. Can be "dashed", "dotted" or "solid".}
+
+\item{minor_separation_line_color}{The color of the separation lines drawn between minor group
+categories.}
+
 \item{segment_line_type}{Sets the type of leading lines from segments to labels. Can be
 "dashed", "dotted" or "solid".}
 
@@ -238,32 +255,71 @@ interactive chart, this parameter determines at how much opacity the segment is 
 interactive chart, this parameter determines at how much opacity the segment group background
 is displayed.}
 
-\item{separation_line_type}{Sets the type of separation lines drawn between top group
-categories. Can be "dashed", "dotted" or "solid".}
+\item{visuals_to_modify}{A pre created graphic visuals object where only
+certain elements should be modified while the rest is kept as is.}
 
-\item{separation_line_color}{The color of the separation lines drawn between top group
-categories.}
+\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
+
+Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the visual appearance of a graphic produced by
-\code{\link[=design_graphic]{design_graphic()}}.
+\code{\link[=design_graphic]{design_graphic()}}. All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
+
+If options are stored in an object, it can be modified afterwards. In this case
+only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
+# Example data frame
+my_data <- dummy_data(100)
+
 # For default values
-gv <- graphic_visuals()
+default_visuals <- graphic_visuals()
 
 # Set specific options, the rest will be set to default values
-gv <- graphic_visuals(title_font_color = "#00FF00",
-                      line_markers     = FALSE)
+custom_visuals <- graphic_visuals(title_font_color = "#00FF00",
+                                  line_markers     = FALSE)
+
+# Apply options locally
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    visuals        = custom_visuals)
+
+# Or direct
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    visuals        = graphic_visuals(title_font_color = "#00FF00",
+                                                     line_markers     = FALSE))
+
+# Set options globally
+set_graphic_options(title_font_color = "#00FF00",
+                    line_markers     = FALSE)
+
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars)
+
+# Modify the previously created graphic options
+custom_visuals <- custom_visuals |> modify_graphic_visuals(label_group = 2)
 
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Other graphic options:
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
+\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
-Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}
+Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
+
+Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
 }

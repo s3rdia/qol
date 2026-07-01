@@ -3,16 +3,20 @@
 ###############################################################################
 #' Graphic Visuals
 #'
+#' @name graphic_visuals
+#'
 #' @description
 #' Set different options regarding the visual appearance of a graphic produced by
-#' [design_graphic()].
+#' [design_graphic()]. All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param font Set the font to be used for the entire output.
 #' @param color_theme The color theme to use. Can either be the name of a built-in or
 #' custom theme or a vector of hex codes. Existing color themes can be viewed with
 #' [display_themes()].
 #' @param color_usage A list of numerical vectors that specify which specific colors
-#' from the color scheme are used for which number of segments.
+#' from the color scheme are used for which number of segments. The two built in ways
+#' are ".contrast_usage" or ".sequential_usage". To see how they are set up look up the
+#' topic [color_themes] and the examples.
 #' @param theme_override The override parameter takes in a list consisting of
 #' [override_theme()] functions.
 #' @param title_font_color Font color of the title.
@@ -56,9 +60,13 @@
 #' @param guiding_line_type Sets the type of guiding lines drawn at the y axes tick positions.
 #' Can be "dashed", "dotted" or "solid".
 #' @param guiding_line_color The color of the guiding lines drawn at the y axes tick positions.
-#' @param separation_line_type Sets the type of separation lines drawn between top group
+#' @param major_separation_line_type Sets the type of separation lines drawn between top group
 #' categories. Can be "dashed", "dotted" or "solid".
-#' @param separation_line_color The color of the separation lines drawn between top group
+#' @param major_separation_line_color The color of the separation lines drawn between top group
+#' categories.
+#' @param minor_separation_line_type Sets the type of separation lines drawn between minor group
+#' categories. Can be "dashed", "dotted" or "solid".
+#' @param minor_separation_line_color The color of the separation lines drawn between minor group
 #' categories.
 #' @param segment_line_type Sets the type of leading lines from segments to labels. Can be
 #' "dashed", "dotted" or "solid".
@@ -114,22 +122,56 @@
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Other graphic options:
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' Additional graphic functions: [add_textbox()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
 #'
 #' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
 #' # For default values
-#' gv <- graphic_visuals()
+#' default_visuals <- graphic_visuals()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gv <- graphic_visuals(title_font_color = "#00FF00",
-#'                       line_markers     = FALSE)
+#' custom_visuals <- graphic_visuals(title_font_color = "#00FF00",
+#'                                   line_markers     = FALSE)
+#'
+#' # Apply options locally
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     visuals        = custom_visuals)
+#'
+#' # Or direct
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     visuals        = graphic_visuals(title_font_color = "#00FF00",
+#'                                                      line_markers     = FALSE))
+#'
+#' # Set options globally
+#' set_graphic_options(title_font_color = "#00FF00",
+#'                     line_markers     = FALSE)
+#'
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars)
+#'
+#' @rdname graphic_visuals
 #'
 #' @export
 graphic_visuals <- function(font                        = "Arial",
                             color_theme                 = "ocean",
-                            color_usage                 = contrast_usage,
+                            color_usage                 = .contrast_usage,
                             theme_override              = list(),
                             title_font_color            = "#000000",
                             footnote_font_color         = "#000000",
@@ -200,36 +242,22 @@ graphic_visuals <- function(font                        = "Arial",
 }
 
 
-#' Modify Graphic Visuals
-#'
 #' @description
-#' Modify previously set up graphic visual appearance with [graphic_dimensions()].
+#' If options are stored in an object, it can be modified afterwards. In this case
+#' only the options to modify will be adjusted while the rest stays as is.
 #'
 #' @param visuals_to_modify A pre created graphic visuals object where only
 #' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic
-#' dimension elements.
+#' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
 #' @return
 #' Returns a modified list of named graphic options.
 #'
-#' @seealso
-#' The main graphic function: [design_graphic()]
-#'
-#' Other graphic options:
-#'
-#' Additional graphic functions: [add_textbox()]
-#'
 #' @examples
-#' # For default values
-#' gv <- graphic_visuals()
+#' # Modify the previously created graphic options
+#' custom_visuals <- custom_visuals |> modify_graphic_visuals(label_group = 2)
 #'
-#' # Set specific options, the rest will be set to default values
-#' gv <- graphic_visuals(title_font_color = "#00FF00",
-#'                       line_markers     = FALSE)
-#'
-#' # Modify the previously created graphics object
-#' gv <- gv |> modify_graphic_visuals(label_group = 2)
+#' @rdname graphic_visuals
 #'
 #' @export
 modify_graphic_visuals <- function(visuals_to_modify, ...){
@@ -255,9 +283,11 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 ###############################################################################
 #' Graphic Axes
 #'
+#' @name graphic_axes
+#'
 #' @description
 #' Set different options regarding the axes of a graphic produced by
-#' [design_graphic()].
+#' [design_graphic()]. All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param primary_axes_max Maximum value for the primary axes. If "auto", the maximum
 #' value is determined by the maximum value present in the graphic.
@@ -307,17 +337,51 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Other graphic options:
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' Additional graphic functions: [add_textbox()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
 #'
 #' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
 #' # For default values
-#' ga <- graphic_axes()
+#' default_axes <- graphic_axes()
 #'
 #' # Set specific options, the rest will be set to default values
-#' ga <- graphic_axes(primary_axes_max      = 100,
-#'                    primary_axes_decimals = 1)
+#' custom_axes <- graphic_axes(primary_axes_max      = 100,
+#'                             primary_axes_decimals = 1)
+#'
+#' # Apply options locally
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     axes           = custom_axes)
+#'
+#' # Or direct
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     axes           = graphic_axes(primary_axes_max      = 100,
+#'                                                   primary_axes_decimals = 1))
+#'
+#' # Set options globally
+#' set_graphic_options(primary_axes_max      = 100,
+#'                     primary_axes_decimals = 1)
+#'
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars)
+#'
+#' @rdname graphic_axes
 #'
 #' @export
 graphic_axes <- function(primary_axes_max              = "auto",
@@ -353,36 +417,22 @@ graphic_axes <- function(primary_axes_max              = "auto",
 }
 
 
-#' Modify Graphic Axes
-#'
 #' @description
-#' Modify previously set up graphic visual appearance with [graphic_dimensions()].
+#' If options are stored in an object, it can be modified afterwards. In this case
+#' only the options to modify will be adjusted while the rest stays as is.
 #'
-#' @param axes_to_modify A pre created graphic visuals object where only
+#' @param axes_to_modify A pre created graphic axes object where only
 #' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic
-#' dimension elements.
+#' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
 #' @return
 #' Returns a modified list of named graphic options.
 #'
-#' @seealso
-#' The main graphic function: [design_graphic()]
-#'
-#' Other graphic options:
-#'
-#' Additional graphic functions: [add_textbox()]
-#'
 #' @examples
-#' # For default values
-#' ga <- graphic_axes()
+#' # Modify the previously created graphic options
+#' custom_axes <- custom_axes |> modify_graphic_axes(primary_axes_min = 50)
 #'
-#' # Set specific options, the rest will be set to default values
-#' ga <- graphic_axes(primary_axes_max      = 100,
-#'                    primary_axes_decimals = 1)
-#'
-#' # Modify the previously created graphics object
-#' ga <- ga |> modify_graphic_axes(primary_axes_min = 50)
+#' @rdname graphic_axes
 #'
 #' @export
 modify_graphic_axes <- function(axes_to_modify, ...){
@@ -408,8 +458,11 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 ###############################################################################
 #' Graphic Dimensions
 #'
+#' @name graphic_dimensions
+#'
 #' @description
 #' Set different options regarding the dimensions of a graphic produced by [design_graphic()].
+#' All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param graphic_width The width of the whole graphic.
 #' @param graphic_height The height of the whole graphic.
@@ -433,8 +486,10 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param segment_line_thickness The thickness of the lines connecting segments with
 #' labels.
 #' @param separation_line_thickness The thickness of the lines which separate label groups.
-#' @param axes_lines_thickness The thickness of the axes lines and ticks.
-#' @param guiding_lines_thickness The thickness of the axes guiding lines.
+#' @param axes_line_thickness The thickness of the axes lines.
+#' @param guiding_line_thickness The thickness of the guiding lines drawn from the axes ticks.
+#' @param axes_line_thickness The thickness of the axes lines and ticks.
+#' @param guiding_line_thickness The thickness of the axes guiding lines.
 #' @param graphic_outline_thickness The thickness of the graphic outline.
 #' @param diagram_outline_thickness The thickness of the diagram outline.
 #' @param segment_line_length The length of the lines leading from segments to labels in cm.
@@ -451,17 +506,51 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Other graphic options:
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' Additional graphic functions: [add_textbox()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
 #'
 #' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
 #' # For default values
-#' gd <- graphic_dimensions()
+#' default_dimensions <- graphic_dimensions()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gd <- graphic_dimensions(graphic_width  = 10,
-#'                          graphic_height = 10)
+#' custom_dimensions <- graphic_dimensions(graphic_width  = 10,
+#'                                         graphic_height = 10)
+#'
+#' # Apply options locally
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     dimensions     = custom_dimensions)
+#'
+#' # Or direct
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     dimensions     = graphic_dimensions(graphic_width  = 10,
+#'                                                         graphic_height = 10))
+#'
+#' # Set options globally
+#' set_graphic_options(graphic_width  = 10,
+#'                     graphic_height = 10)
+#'
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars)
+#'
+#' @rdname graphic_dimensions
 #'
 #' @export
 graphic_dimensions <- function(graphic_width             = 16,
@@ -516,36 +605,22 @@ graphic_dimensions <- function(graphic_width             = 16,
 }
 
 
-#' Modify Graphic Dimensions
-#'
 #' @description
-#' Modify previously set up graphic dimensions with [graphic_dimensions()].
+#' If options are stored in an object, it can be modified afterwards. In this case
+#' only the options to modify will be adjusted while the rest stays as is.
 #'
 #' @param dimension_to_modify A pre created graphic dimension object where only
 #' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic
-#' dimension elements.
+#' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
 #' @return
 #' Returns a modified list of named graphic options.
 #'
-#' @seealso
-#' The main graphic function: [design_graphic()]
-#'
-#' Other graphic options:
-#'
-#' Additional graphic functions: [add_textbox()]
-#'
 #' @examples
-#' # For default values
-#' gd <- graphic_dimensions()
+#' # Modify the previously created graphic options
+#' custom_dimensions <- custom_dimensions |> modify_graphic_dimensions(title_font_size = 12)
 #'
-#' # Set specific options, the rest will be set to default values
-#' gd <- graphic_dimensions(graphic_width  = 10,
-#'                          graphic_height = 10)
-#'
-#' # Modify the previously created graphics object
-#' gd <- gd |> modify_graphic_dimensions(title_font_size = 12)
+#' @rdname graphic_dimensions
 #'
 #' @export
 modify_graphic_dimensions <- function(dimension_to_modify, ...){
@@ -571,8 +646,11 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 ###############################################################################
 #' Graphic Output
 #'
+#' @name graphic_output
+#'
 #' @description
 #' Set different options regarding the dimensions of a graphic produced by [design_graphic()].
+#' All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param save_path If NULL, only draws the graphic in the plot window. Otherwise
 #' specify an output path.
@@ -590,17 +668,51 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Other graphic options:
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' Additional graphic functions: [add_textbox()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
 #'
 #' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
 #' # For default values
-#' gout <- graphic_output()
+#' default_output <- graphic_output()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gout <- graphic_output(save_path = "C:/MyFolder/",
-#'                        file      = "MyGraphic.png")
+#' custom_output <- graphic_output(save_path = "C:/MyFolder/",
+#'                                 file      = "MyGraphic.png")
+#'
+#' # Apply options locally
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     output         = custom_output)
+#'
+#' # Or direct
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     output         = graphic_output(save_path = "C:/MyFolder/",
+#'                                                     file      = "MyGraphic.png"))
+#'
+#' # Set options globally
+#' set_graphic_options(save_path = "C:/MyFolder/",
+#'                     file      = "MyGraphic.png")
+#'
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars)
+#'
+#' @rdname graphic_output
 #'
 #' @export
 graphic_output <- function(save_path   = NULL,
@@ -615,33 +727,21 @@ graphic_output <- function(save_path   = NULL,
 #' Modify Graphic Output
 #'
 #' @description
-#' Modify previously set up graphic output with [graphic_output()].
+#' If options are stored in an object, it can be modified afterwards. In this case
+#' only the options to modify will be adjusted while the rest stays as is.
 #'
 #' @param output_to_modify A pre created graphic output object where only
 #' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic
-#' output elements.
+#' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
 #' @return
 #' Returns a modified list of named graphic options.
 #'
-#' @seealso
-#' The main graphic function: [design_graphic()]
-#'
-#' Other graphic options:
-#'
-#' Additional graphic functions: [add_textbox()]
-#'
 #' @examples
-#' # For default values
-#' gout <- graphic_output()
+#' # Modify the previously created graphic options
+#' custom_output <- custom_output |> modify_graphic_output(file = "MyGraphic.pdf")
 #'
-#' # Set specific options, the rest will be set to default values
-#' gout <- graphic_output(save_path = "C:/MyFolder/",
-#'                        file      = "MyGraphic.png")
-#'
-#' # Modify the previously created graphics object
-#' gout <- gout |> modify_graphic_output(file = "MyGraphic.pdf")
+#' @rdname graphic_output
 #'
 #' @export
 modify_graphic_output <- function(output_to_modify, ...){
@@ -667,10 +767,12 @@ modify_graphic_output <- function(output_to_modify, ...){
 ###############################################################################
 #' Graphic Fine Tuning
 #'
+#' @name graphic_fine_tuning
+#'
 #' @description
 #' Throughout the graphic generation some fixed values are used. These can be adjusted
 #' to make detailed graphical changes in certain areas. These values normally should
-#' only be altered in edge cases.
+#' only be altered in edge cases. All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param diagram_margin Margin used within the diagram area.
 #' @param values_vjust_positive Positive vertical adjustment for values in vbars.
@@ -703,7 +805,11 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' in stairs.
 #' @param max_segment_label_shift The maximum percentage of the textbox width the segment
 #' labels can be shifted to achieve a decollision.
-#' @param cm_to_inch_factor cm to inc conversion factor.
+#' @param cm_to_inch_factor cm to inc conversion factor.,
+#' @param svg_anchor_adjust Text anchoring adjustment for interactive SVG graphics, so that the
+#' positions look like in the static version.
+#' @param svg_line_height_adjust Text line height in interactive SVG graphics is bigger and needs
+#' to be turned down.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -711,17 +817,51 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Other graphic options:
+#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
+#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
+#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
-#' Additional graphic functions: [add_textbox()]
+#' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
+#'
+#' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
+#' [reset_color_themes()], [override_theme()]
 #'
 #' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
 #' # For default values
-#' gft <- graphic_fine_tuning()
+#' default_fine_tuning <- graphic_fine_tuning()
 #'
 #' # Set specific options, the rest will be set to default values
-#' gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
-#'                            tick_length           = 0.05)
+#' custom_fine_tuning <- graphic_fine_tuning(values_vjust_positive = 2.5,
+#'                                           tick_length           = 0.05)
+#'
+#' # Apply options locally
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     fine_tuning    = custom_fine_tuning)
+#'
+#' # Or direct
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars,
+#'                     fine_tuning    = graphic_fine_tuning(values_vjust_positive = 2.5,
+#'                                                          tick_length           = 0.05))
+#'
+#' # Set options globally
+#' set_graphic_options(values_vjust_positive = 2.5,
+#'                     tick_length           = 0.05)
+#'
+#' my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "education",
+#'                     diagram        = dg_vbars)
+#'
+#' @rdname graphic_fine_tuning
 #'
 #' @export
 graphic_fine_tuning <- function(diagram_margin             = 0.01,
@@ -753,36 +893,22 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
 }
 
 
-#' Modify Graphic Dimensions
-#'
 #' @description
-#' Modify previously set up graphic dimensions with [graphic_dimensions()].
+#' If options are stored in an object, it can be modified afterwards. In this case
+#' only the options to modify will be adjusted while the rest stays as is.
 #'
 #' @param fine_tune_to_modify A pre created graphic fine tuning object where only
 #' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic
-#' fine tuning elements.
+#' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
 #' @return
 #' Returns a modified list of named graphic options.
 #'
-#' @seealso
-#' The main graphic function: [design_graphic()]
-#'
-#' Other graphic options:
-#'
-#' Additional graphic functions: [add_textbox()]
-#'
 #' @examples
-#' # For default values
-#' gft <- graphic_fine_tuning()
-#'
-#' # Set specific options, the rest will be set to default values
-#' gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
-#'                            tick_length           = 0.05)
-#'
 #' # Modify the previously created graphics object
-#' gft <- gft |> modify_graphic_fine_tuning(diagram_margin = 0.02)
+#' custom_fine_tuning <- custom_fine_tuning |> modify_graphic_fine_tuning(diagram_margin = 0.02)
+#'
+#' @rdname graphic_fine_tuning
 #'
 #' @export
 modify_graphic_fine_tuning <- function(fine_tune_to_modify, ...){

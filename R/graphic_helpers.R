@@ -6,9 +6,9 @@
 #' @name textboxes
 #'
 #' @description
-#' [add_textbox()]: Create a textbox as graphical object. The dimensions and overall visual appearance
-#' is flexible. Text wraps automatically, if the provided text is wider than the
-#' textbox itself.
+#' [add_textbox()]: Create a textbox as graphical object. The dimensions and overall visual
+#' appearance is flexible. Text wraps automatically, if the provided text is wider than the
+#' textbox itself. Textboxes can be plugged into the "add_texts" parameter of [design_graphic()].
 #'
 #' @param text The text that should be displayed.
 #' @param x_pos X starting position of the textbox in cm.
@@ -23,19 +23,34 @@
 #' @param name The internal name of the textbox with which it can be identified.
 #' @param draw FALSE by default. If TRUE, directly draws the textbox onto the canvas.
 #'
-#' @seealso
-#' High level graphic functions: [design_graphic()]
-#'
-#' Mid level graphic functions:
-#'
-#' Add textboxes: [add_textbox()], [add_title()], [add_footnote()], [add_graphic_origin()]
-#'
-#' Viewport: [setup_main_canvas()], [is_viewport_pushed()]
-#'
-#' Dimensions: [get_available_width()], [get_available_height()]
-#'
 #' @return
 #' Returns a grid::textGrob object.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
+#' # Formats
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
+#' sex. <- discrete_format(
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' # Add individual texts to a graphic
+#' my_data |>
+#'      design_graphic(axes_variables = "age",
+#'                     segments       = "sex",
+#'                     values         = weight,
+#'                     diagram        = dg_vbars,
+#'                     add_texts = list(add_textbox("Hello",  3.5, 3),
+#'                                      add_textbox("World!", 6,   5)))
 #'
 #' @rdname textboxes
 #'
@@ -200,7 +215,7 @@ get_fitting_words <- function(words,
 
 
 #' @description
-#' [wrap_single_text()]: Wrap text based on a provided width.
+#' wrap_single_text(): Wrap text based on a provided width.
 #'
 #' @param text_line A single line of text to wrap.
 #' @param textbox_width Width of the textbox in cm.
@@ -210,7 +225,7 @@ get_fitting_words <- function(words,
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 wrap_single_text <- function(text_line,
                              textbox_width,
                              font,
@@ -242,7 +257,7 @@ wrap_single_text <- function(text_line,
 
 
 #' @description
-#' [wrap_text_vector()]: Wrap every single element of a character vector individually.
+#' wrap_text_vector(): Wrap every single element of a character vector individually.
 #'
 #' @param text_lines A vector of texts to wrap.
 #'
@@ -251,7 +266,7 @@ wrap_single_text <- function(text_line,
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 wrap_text_vector <- function(text_lines,
                              textbox_width,
                              font,
@@ -271,8 +286,8 @@ wrap_text_vector <- function(text_lines,
 #' @description
 #' Set the textbox anchor point according to selected alignment.
 #'
-#' @param dimensions qol package dimensions options.
-#' @param visuals qol package visuals options.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param which Can be "title" or "footnote".
 #'
 #' @noRd
@@ -297,15 +312,15 @@ fix_alignment <- function(dimensions = .qol_options[["graphic_dimensions"]],
 
 
 #' @description
-#' [add_title()]: Create a textbox as graphical object. A wrapper to easily create
+#' add_title(): Create a textbox as graphical object. A wrapper to easily create
 #' a textbox at the top of the graphic as title.
 #'
-#' @param dimensions qol package dimensions options.
-#' @param visuals qol package visuals options.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 add_title <- function(text,
                       dimensions  = .qol_options[["graphic_dimensions"]],
                       visuals     = .qol_options[["graphic_visuals"]],
@@ -333,17 +348,17 @@ add_title <- function(text,
 
 
 #' @description
-#' [add_footnote()]: Create a textbox as graphical object. A wrapper to easily create
+#' add_footnote(): Create a textbox as graphical object. A wrapper to easily create
 #' a textbox at the bottom of the graphic as footnote.
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 add_footnote <- function(text,
                          dimensions  = .qol_options[["graphic_dimensions"]],
                          visuals     = .qol_options[["graphic_visuals"]],
                          draw        = FALSE){
-    if (length(text) == 0){
+    if (length(text) == 0 || text == ""){
         return(invisible(grid::nullGrob()))
     }
 
@@ -376,12 +391,12 @@ add_footnote <- function(text,
 
 
 #' @description
-#' [add_graphic_origin()]: Create a textbox as graphical object. A wrapper to easily create
+#' add_graphic_origin(): Create a textbox as graphical object. A wrapper to easily create
 #' a textbox at the bottom right of the graphic as information who created the graphic.
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 add_graphic_origin <- function(dimensions = .qol_options[["graphic_dimensions"]],
                                visuals    = .qol_options[["graphic_visuals"]],
                                draw       = FALSE){
@@ -411,11 +426,11 @@ add_graphic_origin <- function(dimensions = .qol_options[["graphic_dimensions"]]
 
 
 #' @description
-#' [register_windows_font()]: Windows only. Registers the font to be used.
+#' register_windows_font(): Windows only. Registers the font to be used.
 #'
 #' @rdname textboxes
 #'
-#' @export
+#' @noRd
 register_windows_font <- function(font){
     if (.Platform$OS.type == "windows"){
         registered_fonts <- names(grDevices::windowsFonts())
@@ -432,10 +447,12 @@ register_windows_font <- function(font){
 
 
 #' @description
-#' [get_text_width()]: Get the width of a text.
+#' [get_text_width()]: Get the width of a text while applying individual styling.
 #'
 #' @param type The type of text to be measured. Can be: title, footnote, primary_axes,
 #' secondary_axes, variable_axes, value, label, origin or other.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param unit The unit to measure widths and heights in. Used are "native" for measuring
 #' inside the inner canvas. Otherwise use "cm".
 #'
@@ -462,12 +479,12 @@ get_text_width <- function(text,
 }
 
 #' @description
-#' [get_text_height()]: Get the height of a text.
+#' [get_text_height()]: Get the height of a text while applying individual styling.
 #'
 #' @return
 #' [get_text_height()]: Returns a numeric height.
 #'
-#' @rdname axes
+#' @rdname textboxes
 #'
 #' @export
 get_text_height <- function(text,
@@ -495,107 +512,10 @@ get_text_height <- function(text,
 #' @name viewport
 #'
 #' @description
-#' [setup_main_canvas()]: Setup the main graphic viewport and push it to the graphics
-#' tree. Additionally creates a new page before.
-#'
-#' @param dimensions qol package dimensions options.
-#' @param name The internal name of the canvas with which it can be identified.
-#'
-#' @return
-#' Returns a grid::viewport object.
-#'
-#' @rdname viewport
-#'
-#' @export
-setup_main_canvas <- function(dimensions    = .qol_options[["graphic_dimensions"]],
-                              layout_row    = NULL,
-                              layout_column = NULL,
-                              name          = "main_canvas"){
-    width       <- dimensions[["graphic_width"]]
-    height      <- dimensions[["graphic_height"]]
-    line_height <- dimensions[["line_height"]]
-
-    if (is.null(layout_row)){
-        grid::grid.newpage()
-    }
-
-    # Set up the main viewport for the entire graphic
-    vp <- grid::viewport(width  = grid::unit(width, "cm"),
-                         height = grid::unit(height, "cm"),
-                         xscale = c(0, width),
-                         yscale = c(0, height),
-                         gp     = grid::gpar(lineheight = line_height + 0.1),
-                         layout.pos.row = layout_row,
-                         layout.pos.col = layout_column,
-                         name   = name)
-
-    grid::pushViewport(vp)
-
-    invisible(vp)
-}
-
-
-#' @description
-#' [setup_nested_viewport()]: Setup a graphic viewport and push it to the graphics
-#' tree. The function assumes that it is called after setting up a main canvas.
-#'
-#' @param x_pos Viewport starting x position.
-#' @param y_pos Viewport starting y position.
-#' @param y_scale The viewports vertical scaling.
-#'
-#' @rdname viewport
-#'
-#' @export
-setup_nested_viewport <- function(x_pos       = 0,
-                                  y_pos       = 0,
-                                  y_scale     = c(0, 1),
-                                  width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
-                                  height      = .qol_options[["graphic_dimensions"]][["graphic_height"]],
-                                  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
-                                  name        = "nested_viewport"){
-    # Set up a new nested viewport.
-    vp <- grid::viewport(x      = grid::unit(x_pos, "cm"),
-                         y      = grid::unit(y_pos, "cm"),
-                         width  = grid::unit(width, "cm"),
-                         height = grid::unit(height, "cm"),
-                         yscale = y_scale,
-                         just   = c("left", "top"),
-                         gp     = grid::gpar(lineheight = line_height + 0.1),
-                         name   = name)
-
-    grid::pushViewport(vp)
-
-    invisible(vp)
-}
-
-
-#' @description
-#' [setup_diagram_viewport()]: Setup the main diagram viewport based on the list
-#' of arguments passed on by [design_graphic()].
-#'
-#' @param arguments Argument list passed passed on by [design_graphic()].
-#'
-#' @rdname viewport
-#'
-#' @export
-setup_diagram_viewport <- function(arguments){
-    dimensions <- arguments[["dimensions"]]
-
-    # Set up a new viewport for the whole diagram area to be able to safely work
-    # in this area.
-    setup_nested_viewport(x_pos       = dimensions[["margins"]],
-                          y_pos       = dimensions[["diagram_start_top"]],
-                          y_scale     = c(0, 1),
-                          width       = dimensions[["diagram_width"]],
-                          height      = dimensions[["diagram_height"]],
-                          line_height = dimensions[["line_height"]],
-                          name        = "diagram_area")
-}
-
-
-#' @description
-#' [setup_diagram_viewport()]: Setup the main diagram viewport based on the list
-#' of arguments passed on by [design_graphic()].
+#' [setup_nested_diagram_viewport()]: Setup the main diagram viewport based on
+#' the list of arguments passed on by [design_graphic()]. This viewport contains
+#' the main diagram area as well as the axes. Additionally sets up the main diagram
+#' area viewport which only contains the main drawing area.
 #'
 #' @param arguments Argument list passed passed on by [design_graphic()].
 #'
@@ -683,7 +603,7 @@ setup_nested_diagram_viewport <- function(arguments){
             diagram_info[["value_heights"]] <- get_text_height(diagram_info[["formatted_values"]], "value", dimensions, visuals)
 
             diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
-                                                    < abs(diagram_info[["actual_drawing_height"]]))
+                                                      < abs(diagram_info[["actual_drawing_height"]]))
         }
         else{
             # Wit rotation all heights are individual. The widths are captured before
@@ -692,7 +612,7 @@ setup_nested_diagram_viewport <- function(arguments){
             diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["values_width"]], diagram_info[["inner_viewport_width"]],
                                                                   diagram_info[["inner_viewport_height"]]) * diagram_info[["primary_y_distance"]]
             diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
-                                                    < abs(diagram_info[["actual_drawing_height"]]))
+                                                      < abs(diagram_info[["actual_drawing_height"]]))
         }
     }
 
@@ -733,20 +653,103 @@ back_to_the_root <- function(to_main = TRUE){
 }
 
 
+
 #' @description
-#' [is_viewport_pushed()]: Check whether a viewport was pushed after setting up
-#' a new canvas.
+#' setup_main_canvas(): Setup the main graphic viewport and push it to the graphics
+#' tree. Additionally creates a new page before.
+#'
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param name The internal name of the canvas with which it can be identified.
 #'
 #' @return
-#' [is_viewport_pushed()]: Returns TRUE/FALSE.
+#' Returns a grid::viewport object.
 #'
 #' @rdname viewport
 #'
-#' @export
-is_viewport_pushed <- function(){
-    current_vp <- grid::current.vpPath()
+#' @noRd
+setup_main_canvas <- function(dimensions    = .qol_options[["graphic_dimensions"]],
+                              layout_row    = NULL,
+                              layout_column = NULL,
+                              name          = "main_canvas"){
+    width       <- dimensions[["graphic_width"]]
+    height      <- dimensions[["graphic_height"]]
+    line_height <- dimensions[["line_height"]]
 
-    !is.null(current_vp)
+    if (is.null(layout_row)){
+        grid::grid.newpage()
+    }
+
+    # Set up the main viewport for the entire graphic
+    vp <- grid::viewport(width  = grid::unit(width, "cm"),
+                         height = grid::unit(height, "cm"),
+                         xscale = c(0, width),
+                         yscale = c(0, height),
+                         gp     = grid::gpar(lineheight = line_height + 0.1),
+                         layout.pos.row = layout_row,
+                         layout.pos.col = layout_column,
+                         name   = name)
+
+    grid::pushViewport(vp)
+
+    invisible(vp)
+}
+
+
+#' @description
+#' setup_nested_viewport(): Setup a graphic viewport and push it to the graphics
+#' tree. The function assumes that it is called after setting up a main canvas.
+#'
+#' @param x_pos Viewport starting x position.
+#' @param y_pos Viewport starting y position.
+#' @param y_scale The viewports vertical scaling.
+#'
+#' @rdname viewport
+#'
+#' @noRd
+setup_nested_viewport <- function(x_pos       = 0,
+                                  y_pos       = 0,
+                                  y_scale     = c(0, 1),
+                                  width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+                                  height      = .qol_options[["graphic_dimensions"]][["graphic_height"]],
+                                  line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
+                                  name        = "nested_viewport"){
+    # Set up a new nested viewport.
+    vp <- grid::viewport(x      = grid::unit(x_pos, "cm"),
+                         y      = grid::unit(y_pos, "cm"),
+                         width  = grid::unit(width, "cm"),
+                         height = grid::unit(height, "cm"),
+                         yscale = y_scale,
+                         just   = c("left", "top"),
+                         gp     = grid::gpar(lineheight = line_height + 0.1),
+                         name   = name)
+
+    grid::pushViewport(vp)
+
+    invisible(vp)
+}
+
+
+#' @description
+#' setup_diagram_viewport(): Setup the main diagram viewport based on the list
+#' of arguments passed on by [design_graphic()].
+#'
+#' @param arguments Argument list passed passed on by [design_graphic()].
+#'
+#' @rdname viewport
+#'
+#' @noRd
+setup_diagram_viewport <- function(arguments){
+    dimensions <- arguments[["dimensions"]]
+
+    # Set up a new viewport for the whole diagram area to be able to safely work
+    # in this area.
+    setup_nested_viewport(x_pos       = dimensions[["margins"]],
+                          y_pos       = dimensions[["diagram_start_top"]],
+                          y_scale     = c(0, 1),
+                          width       = dimensions[["diagram_width"]],
+                          height      = dimensions[["diagram_height"]],
+                          line_height = dimensions[["line_height"]],
+                          name        = "diagram_area")
 }
 
 
@@ -758,21 +761,21 @@ is_viewport_pushed <- function(){
 #' @name dimensions
 #'
 #' @description
-#' [get_available_width()]: Calculate the available width from the total graphic
+#' get_available_width(): Calculate the available width from the total graphic
 #' width minus the margins on both sides. The function can either be used with the
 #' dimensions options from this package or with manually set width and margins.
 #' This is an either/or option.
 #'
-#' @param dimensions qol package dimensions options.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
 #' @param total_width The width of the entire graphic.
 #' @param margins The margins used on both ends of the graphic.
 #'
 #' @return
-#' [get_available_width()]: Returns a numeric value for the available width.
+#' get_available_width(): Returns a numeric value for the available width.
 #'
 #' @rdname dimensions
 #'
-#' @export
+#' @noRd
 get_available_width <- function(dimensions  = .qol_options[["graphic_dimensions"]],
                                 total_width = NULL,
                                 margins     = 0){
@@ -788,7 +791,7 @@ get_available_width <- function(dimensions  = .qol_options[["graphic_dimensions"
 
 
 #' @description
-#' [get_available_height()]: Calculate the available height from the total graphic
+#' get_available_height(): Calculate the available height from the total graphic
 #' height minus the margins on both sides. The function can either be used with the
 #' dimensions options from this package or with manually set height and margins.
 #' This is an either/or option.
@@ -796,11 +799,11 @@ get_available_width <- function(dimensions  = .qol_options[["graphic_dimensions"
 #' @param total_height The height of the entire graphic.
 #'
 #' @return
-#' [get_available_height()]: Returns a numeric value for the available height.
+#' get_available_height(): Returns a numeric value for the available height.
 #'
 #' @rdname dimensions
 #'
-#' @export
+#' @noRd
 get_available_height <- function(dimensions   = .qol_options[["graphic_dimensions"]],
                                  total_height = NULL,
                                  margins      = 0){
@@ -1139,7 +1142,7 @@ get_diagram_dimensions <- function(arguments){
     border_color <- visuals[["segment_border_color"]]
 
     if (!grepl("^#([A-Fa-f0-9]{6})$", border_color)){
-        border_color <- get_theme_base_colors(border_color)
+        border_color <- get_theme_colors(border_color)[[1]]
 
         # Get color usage to determine which colors to pick for the specific number
         # of segments
@@ -1228,13 +1231,14 @@ get_diagram_dimensions <- function(arguments){
 
 
 #' @description
-#' [vbar_grob()]: Set up the main segments for vertical bars.
+#' [setup_interactive_elements()]: Set up additional tooltip zones for interactive
+#' graphics. These additional zones enable a mouse over tooltip for entire segment
+#' groups.
 #'
-#' @param arguments Argument list passed passed on by [design_graphic()].
 #' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
 #'
 #' @return
-#' Returns a grid::rectGrob object.
+#' Returns a grid::gList containing tooltip grid::rectGrobs.
 #'
 #' @rdname diagram
 #'
@@ -1270,277 +1274,6 @@ setup_interactive_elements <- function(arguments, diagram_info){
 #'
 #' @name axes
 #'
-#' @description
-#' [get_value_axes_width()]: Get the width of the primary or secondary value
-#' axes. The highest value will be put into its final format first, after that
-#' the width is measured.
-#'
-#' @param graphic_tab The base data frame for the graphic.
-#' @param max_value The maximum value which takes the most space.
-#' @param axes The list of axes parameters.
-#' @param dimensions The list of dimensions parameters.
-#' @param visuals The list of visual parameters.
-#' @param which Primary or secondary axes.
-#'
-#' @return
-#' [get_value_axes_width()]: Returns a numeric width.
-#'
-#' @rdname axes
-#'
-#' @export
-get_value_axes_width <- function(graphic_tab,
-                                 max_value,
-                                 axes,
-                                 dimensions,
-                                 visuals,
-                                 which = "primary"){
-    which <- tolower(which)
-
-    # Format the number to see, whether additional symbols are added according to
-    # settings.
-    axes_max <- format_values(max_value,
-                              axes[[paste0(which, "_axes_decimals")]],
-                              axes[[paste0(which, "_axes_big_mark")]],
-                              axes[[paste0(which, "_axes_decimal_mark")]],
-                              axes[[paste0(which, "_axes_prefix")]],
-                              axes[[paste0(which, "_axes_suffix")]],
-                              axes[[paste0(which, "_axes_scale")]])
-
-    # Create test graphical object to measure the actual width
-    temp_grob <- grid::textGrob(axes_max,
-                                gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                fontsize   = dimensions[["axes_font_size"]],
-                                                fontface   = visuals[[paste0(which, "_axes_font_face")]]))
-
-    # Return width
-    grid::convertWidth(grid::grobWidth(temp_grob), "cm", valueOnly = TRUE) + dimensions[["margins"]]
-}
-
-
-#' @description
-#' [get_variable_axes_height()]: Get the height of the variable axes.
-#'
-#' @param wrapped_text The wrapped text for the variable axes to measure.
-#'
-#' @return
-#' [get_variable_axes_height()]: Returns a numeric height.
-#'
-#' @rdname axes
-#'
-#' @export
-get_variable_axes_height <- function(wrapped_text,
-                                     dimensions,
-                                     visuals){
-    # Only keep the text with the most lines. Otherwise the textGrob measuring
-    # only considers the first text in the vector.
-    wrapped_text <- wrapped_text[which.max(lengths(gregexpr("\n", wrapped_text, fixed = TRUE)))]
-
-    # Create test graphical object to measure the actual height
-    temp_grob <- grid::textGrob(wrapped_text,
-                                gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                fontsize   = dimensions[["axes_font_size"]],
-                                                fontface   = visuals[["variable_axes_font_face"]],
-                                                lineheight = dimensions[["line_height"]]))
-
-    # Measure the height of the temporary group layer object
-    abs(grid::convertHeight(grid::grobHeight(temp_grob), "cm", valueOnly = TRUE))
-}
-
-
-#' @description
-#' [swap_scaling()]: Width and height are measured according to the individual scaling
-#' for each dimension. This function converts the measured to the respective other dimension.
-#'
-#' @param measuring The values received from [get_text_width()] or [get_text_height()].
-#' @param from Input measuring.
-#' @param to Output measuring.
-#'
-#' @return
-#' [swap_scaling()]: Returns a vector of width or heights.
-#'
-#' @rdname axes
-#'
-#' @export
-swap_scaling <- function(measuring,
-                         from = "width",
-                         to   = "height"){
-    measuring * from / to
-}
-
-
-#' @description
-#' [get_group_tick_positions_x()]: Calculates the x axes tick positions. In this
-#' calculation ticks are meant to enclose the group labels. Meaning ticks are drawn
-#' between groups.
-#'
-#' @param number_of_groups The number of groups.
-#' @param number_of_segments The number of segments per group.
-#' @param segment_width The width of a single segment
-#' @param segment_pos A vector containing all segment positions.
-#'
-#' @return
-#' [get_group_tick_positions_x()]: Returns a vector of numeric tick positions.
-#'
-#' @rdname axes
-#'
-#' @export
-get_group_tick_positions_x <- function(number_of_groups,
-                                       number_of_segments,
-                                       segment_width,
-                                       segment_pos){
-    # Get the ending positions of each segment
-    segment_end_pos <- segment_pos + segment_width
-
-    group_ticks <- sapply(1:(number_of_groups - 1), function(group){
-        # Get the ending position of the last segment inside a group
-        last_bar_end_pos <- segment_end_pos[group * number_of_segments]
-
-        # Get the starting position of the first segment of the upcoming group
-        next_bar_start_pos <- segment_pos[(group * number_of_segments) + 1]
-
-        # Calculate the midpoint between these two segments
-        (last_bar_end_pos + next_bar_start_pos) / 2
-    })
-
-    # Insert starting and ending tick
-    c(0, group_ticks, 1)
-}
-
-
-#' @description
-#' [get_y_axes_values()]: Generates a vector containing the values drawn on the
-#' y axes. Values are equally spaced between the minimum and maximum value.
-#'
-#' @param values Value vector from the data frame.
-#'
-#' @return
-#' [get_y_axes_values()]: Returns a numeric vector of equally spaced round values.
-#'
-#' @rdname axes
-#'
-#' @export
-get_y_axes_values <- function(values,
-                              axes,
-                              fine_tuning,
-                              which = "primary"){
-    which <- tolower(which)
-
-    # Get global values first
-    global_min <- axes[[paste0(which, "_axes_min")]]
-    global_max <- axes[[paste0(which, "_axes_max")]]
-
-    # Replace auto generated value by statically set global values
-    if (global_min != "auto" && global_min != global_max){
-        min_value <- global_min
-    }
-    # Get values from the actual data frame and add to the value, so that the highest
-    # value doesn't go up to the end of the axes. Leave a little room to breathe.
-    else{
-        min_value <- collapse::fmin(c(0, values))
-        min_value <- min_value * fine_tuning[["y_axes_scaling"]]
-    }
-
-    # Replace auto generated value by statically set global values
-    if (global_max != "auto" && global_min != global_max){
-        max_value <- global_max
-    }
-    # Get values from the actual data frame and add to the value, so that the highest
-    # value doesn't go up to the end of the axes. Leave a little room to breathe.
-    else{
-        max_value <- collapse::fmax(c(0, values))
-        max_value <- max_value * fine_tuning[["y_axes_scaling"]]
-    }
-
-    # In case minimum value is greater than the maximum value, just swap them
-    if (min_value > max_value){
-        temp_value <- max_value
-        min_value  <- max_value
-        max_value  <- temp_value
-    }
-
-    # Return equally spaced round values in given range
-    even_prettier(min_value, max_value, axes[[paste0(which, "_axes_steps")]])
-}
-
-
-#' @description
-#' [even_prettier()]: Generates a sequence of pretty steps for equal length ticks.
-#' The function calculates more granular results than the base [pretty()] function.
-#'
-#' @param min_value Minimum starting value.
-#' @param max_value Maximum end value.
-#' @param number_of_steps The number of equal length steps to be used to head from
-#' the minimum to the maximum value.
-#'
-#' @return
-#' [even_prettier()]: Returns a pretty sequence of equal length numeric values.
-#'
-#' @rdname axes
-#'
-#' @export
-even_prettier <- function(min_value,
-                          max_value,
-                          number_of_steps){
-    # Define possible intervals
-    standard_intervals <- c(0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9,
-                              1,  1.25,  1.5,   2,  2.5,   3,   4,   5,   6,   7,  7.5,   8,   9,
-                             10,  12.5,   15,  20,   25,  30,  40,  50,  60,  70,   75,  80,  90,
-                            100)
-
-    # In case the minimum value is negative and the maximum value is positive,
-    # it has to be made sure, that 0 is always part of the distribution.
-    if (min_value < 0 && max_value > 0){
-        total_span <- max_value - min_value
-
-        # Calculate step distribution and make sure it stays between the given bounds
-        negative_steps <- round((abs(min_value) / total_span) * number_of_steps)
-        negative_steps <- pmax(1, pmin(negative_steps, number_of_steps - 1))
-        positive_steps <- number_of_steps - negative_steps
-
-        # Calculate possible candidate steps
-        needed_step_size <- max(abs(min_value) / negative_steps, max_value / positive_steps)
-        candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
-
-        # Calculate score to determine which of the candidates fits best. The smaller
-        # the score, the nearer the equal length step hits the boundaries.
-        scores <- abs((-negative_steps * candidates) - min_value) +
-                  abs((positive_steps  * candidates) - max_value)
-
-        # Penalize candidates that undershoot the provided boundaries to make sure
-        # that the provided boundaries are basically the minimum edge case values.
-        undershoots         <- (-negative_steps * candidates > min_value) | (positive_steps * candidates < max_value)
-        scores[undershoots] <- scores[undershoots] + (total_span * 10)
-
-        # Select the step with the smallest score which is used as the equal length step
-        pretty_step <- candidates[which.min(scores)]
-
-        # Return the pretty sequence
-        return(seq(-negative_steps * pretty_step, positive_steps * pretty_step, by = pretty_step))
-    }
-
-    # In case there are only positive or negative values
-    # Calculate possible candidate steps
-    needed_step_size <- (max_value - min_value) / number_of_steps
-    candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
-
-    # Calculate possible candidate boundaries
-    lowers <- floor(min_value   / candidates) * candidates
-    uppers <- ceiling(max_value / candidates) * candidates
-
-    # Calculate step sizes and the corresponding score to determine which step size
-    # is nearest to the provided number of steps.
-    step_sizes <- (uppers - lowers) / candidates
-    scores     <- abs(step_sizes - number_of_steps)
-
-    # Select the step with the smallest score which is used as the equal length step
-    score_id    <- which.min(scores)
-    pretty_step <- candidates[which.min(scores)]
-
-    # Return the pretty sequence
-    seq(lowers[score_id], uppers[score_id], by = pretty_step)
-}
-
-
 #' @description
 #' [setup_y_axes()]: Uses the currently active viewport to set up the y axes. The
 #' primary axes is drawn on the left, the secondary axes on the right side of the
@@ -1606,7 +1339,7 @@ setup_y_axes <- function(diagram_info,
     # When values are placed at the tick positions, they are drawn slightly of to
     # the bottom. So the positions need to be manually adjusted.
     value_positions <- grid::convertUnit(grid::unit(tick_positions, "native")
-                                       + grid::unit(0.1, "char"),   "native", valueOnly = TRUE)
+                                         + grid::unit(0.1, "char"),   "native", valueOnly = TRUE)
 
     # Insert the formatted values for the value axes
     axes_margin  <- arguments[["fine_tuning"]][["value_axes_margin"]]
@@ -1794,7 +1527,7 @@ setup_x_axes <- function(diagram_info,
                                gp = grid::gpar(col = visuals[[paste0(type_prefix,"separation_line_color")]],
                                                lty = visuals[[paste0(type_prefix,"separation_line_type")]],
                                                lwd = dimensions[["separation_line_thickness"]]))
-            }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
+        }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
 
         # Return the whole axes as one graphical object
         grid::gTree(children = grid::gList(line, ticks, group_labels, separation_lines),
@@ -1869,18 +1602,290 @@ setup_guiding_lines <- function(diagram_info,
 
 
 #' @description
-#' [inject_inner_canvas_size()]: Injects the inner canvas size, meaning diagram size
+#' get_value_axes_width(): Get the width of the primary or secondary value
+#' axes. The highest value will be put into its final format first, after that
+#' the width is measured.
+#'
+#' @param graphic_tab The base data frame for the graphic.
+#' @param max_value The maximum value which takes the most space.
+#' @param axes Axes parameters set with [graphic_axes()].
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
+#' @param which Primary or secondary axes.
+#'
+#' @return
+#' get_value_axes_width(): Returns a numeric width.
+#'
+#' @rdname axes
+#'
+#' @noRd
+get_value_axes_width <- function(graphic_tab,
+                                 max_value,
+                                 axes,
+                                 dimensions,
+                                 visuals,
+                                 which = "primary"){
+    which <- tolower(which)
+
+    # Format the number to see, whether additional symbols are added according to
+    # settings.
+    axes_max <- format_values(max_value,
+                              axes[[paste0(which, "_axes_decimals")]],
+                              axes[[paste0(which, "_axes_big_mark")]],
+                              axes[[paste0(which, "_axes_decimal_mark")]],
+                              axes[[paste0(which, "_axes_prefix")]],
+                              axes[[paste0(which, "_axes_suffix")]],
+                              axes[[paste0(which, "_axes_scale")]])
+
+    # Create test graphical object to measure the actual width
+    temp_grob <- grid::textGrob(axes_max,
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[["axes_font_size"]],
+                                                fontface   = visuals[[paste0(which, "_axes_font_face")]]))
+
+    # Return width
+    grid::convertWidth(grid::grobWidth(temp_grob), "cm", valueOnly = TRUE) + dimensions[["margins"]]
+}
+
+
+#' @description
+#' get_variable_axes_height(): Get the height of the variable axes.
+#'
+#' @param wrapped_text The wrapped text for the variable axes to measure.
+#'
+#' @return
+#' get_variable_axes_height(): Returns a numeric height.
+#'
+#' @rdname axes
+#'
+#' @noRd
+get_variable_axes_height <- function(wrapped_text,
+                                     dimensions,
+                                     visuals){
+    # Only keep the text with the most lines. Otherwise the textGrob measuring
+    # only considers the first text in the vector.
+    wrapped_text <- wrapped_text[which.max(lengths(gregexpr("\n", wrapped_text, fixed = TRUE)))]
+
+    # Create test graphical object to measure the actual height
+    temp_grob <- grid::textGrob(wrapped_text,
+                                gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                fontsize   = dimensions[["axes_font_size"]],
+                                                fontface   = visuals[["variable_axes_font_face"]],
+                                                lineheight = dimensions[["line_height"]]))
+
+    # Measure the height of the temporary group layer object
+    abs(grid::convertHeight(grid::grobHeight(temp_grob), "cm", valueOnly = TRUE))
+}
+
+
+#' @description
+#' [swap_scaling()]: Width and height are measured according to the individual scaling
+#' for each dimension. This function converts the measured to the respective other dimension.
+#'
+#' @param measuring The values received from [get_text_width()] or [get_text_height()].
+#' @param from Input measuring.
+#' @param to Output measuring.
+#'
+#' @return
+#' [swap_scaling()]: Returns a vector of width or heights.
+#'
+#' @rdname axes
+#'
+#' @export
+swap_scaling <- function(measuring,
+                         from = "width",
+                         to   = "height"){
+    measuring * from / to
+}
+
+
+#' @description
+#' get_group_tick_positions_x(): Calculates the x axes tick positions. In this
+#' calculation ticks are meant to enclose the group labels. Meaning ticks are drawn
+#' between groups.
+#'
+#' @param number_of_groups The number of groups.
+#' @param number_of_segments The number of segments per group.
+#' @param segment_width The width of a single segment
+#' @param segment_pos A vector containing all segment positions.
+#'
+#' @return
+#' get_group_tick_positions_x(): Returns a vector of numeric tick positions.
+#'
+#' @rdname axes
+#'
+#' @noRd
+get_group_tick_positions_x <- function(number_of_groups,
+                                       number_of_segments,
+                                       segment_width,
+                                       segment_pos){
+    # Get the ending positions of each segment
+    segment_end_pos <- segment_pos + segment_width
+
+    group_ticks <- sapply(1:(number_of_groups - 1), function(group){
+        # Get the ending position of the last segment inside a group
+        last_bar_end_pos <- segment_end_pos[group * number_of_segments]
+
+        # Get the starting position of the first segment of the upcoming group
+        next_bar_start_pos <- segment_pos[(group * number_of_segments) + 1]
+
+        # Calculate the midpoint between these two segments
+        (last_bar_end_pos + next_bar_start_pos) / 2
+    })
+
+    # Insert starting and ending tick
+    c(0, group_ticks, 1)
+}
+
+
+#' @description
+#' get_y_axes_values(): Generates a vector containing the values drawn on the
+#' y axes. Values are equally spaced between the minimum and maximum value.
+#'
+#' @param values Value vector from the data frame.
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
+#'
+#' @return
+#' get_y_axes_values(): Returns a numeric vector of equally spaced round values.
+#'
+#' @rdname axes
+#'
+#' @noRd
+get_y_axes_values <- function(values,
+                              axes,
+                              fine_tuning,
+                              which = "primary"){
+    which <- tolower(which)
+
+    # Get global values first
+    global_min <- axes[[paste0(which, "_axes_min")]]
+    global_max <- axes[[paste0(which, "_axes_max")]]
+
+    # Replace auto generated value by statically set global values
+    if (global_min != "auto" && global_min != global_max){
+        min_value <- global_min
+    }
+    # Get values from the actual data frame and add to the value, so that the highest
+    # value doesn't go up to the end of the axes. Leave a little room to breathe.
+    else{
+        min_value <- collapse::fmin(c(0, values))
+        min_value <- min_value * fine_tuning[["y_axes_scaling"]]
+    }
+
+    # Replace auto generated value by statically set global values
+    if (global_max != "auto" && global_min != global_max){
+        max_value <- global_max
+    }
+    # Get values from the actual data frame and add to the value, so that the highest
+    # value doesn't go up to the end of the axes. Leave a little room to breathe.
+    else{
+        max_value <- collapse::fmax(c(0, values))
+        max_value <- max_value * fine_tuning[["y_axes_scaling"]]
+    }
+
+    # In case minimum value is greater than the maximum value, just swap them
+    if (min_value > max_value){
+        temp_value <- max_value
+        min_value  <- max_value
+        max_value  <- temp_value
+    }
+
+    # Return equally spaced round values in given range
+    even_prettier(min_value, max_value, axes[[paste0(which, "_axes_steps")]])
+}
+
+
+#' @description
+#' [even_prettier()]: Generates a sequence of pretty steps for equal length ticks.
+#' The function calculates more granular results than the base [pretty()] function.
+#'
+#' @param min_value Minimum starting value.
+#' @param max_value Maximum end value.
+#' @param number_of_steps The number of equal length steps to be used to head from
+#' the minimum to the maximum value.
+#'
+#' @return
+#' [even_prettier()]: Returns a pretty sequence of equal length numeric values.
+#'
+#' @rdname axes
+#'
+#' @export
+even_prettier <- function(min_value,
+                          max_value,
+                          number_of_steps){
+    # Define possible intervals
+    standard_intervals <- c(0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9,
+                              1,  1.25,  1.5,   2,  2.5,   3,   4,   5,   6,   7,  7.5,   8,   9,
+                             10,  12.5,   15,  20,   25,  30,  40,  50,  60,  70,   75,  80,  90,
+                            100)
+
+    # In case the minimum value is negative and the maximum value is positive,
+    # it has to be made sure, that 0 is always part of the distribution.
+    if (min_value < 0 && max_value > 0){
+        total_span <- max_value - min_value
+
+        # Calculate step distribution and make sure it stays between the given bounds
+        negative_steps <- round((abs(min_value) / total_span) * number_of_steps)
+        negative_steps <- pmax(1, pmin(negative_steps, number_of_steps - 1))
+        positive_steps <- number_of_steps - negative_steps
+
+        # Calculate possible candidate steps
+        needed_step_size <- max(abs(min_value) / negative_steps, max_value / positive_steps)
+        candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
+
+        # Calculate score to determine which of the candidates fits best. The smaller
+        # the score, the nearer the equal length step hits the boundaries.
+        scores <- abs((-negative_steps * candidates) - min_value) +
+                  abs((positive_steps  * candidates) - max_value)
+
+        # Penalize candidates that undershoot the provided boundaries to make sure
+        # that the provided boundaries are basically the minimum edge case values.
+        undershoots         <- (-negative_steps * candidates > min_value) | (positive_steps * candidates < max_value)
+        scores[undershoots] <- scores[undershoots] + (total_span * 10)
+
+        # Select the step with the smallest score which is used as the equal length step
+        pretty_step <- candidates[which.min(scores)]
+
+        # Return the pretty sequence
+        return(seq(-negative_steps * pretty_step, positive_steps * pretty_step, by = pretty_step))
+    }
+
+    # In case there are only positive or negative values
+    # Calculate possible candidate steps
+    needed_step_size <- (max_value - min_value) / number_of_steps
+    candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
+
+    # Calculate possible candidate boundaries
+    lowers <- floor(min_value   / candidates) * candidates
+    uppers <- ceiling(max_value / candidates) * candidates
+
+    # Calculate step sizes and the corresponding score to determine which step size
+    # is nearest to the provided number of steps.
+    step_sizes <- (uppers - lowers) / candidates
+    scores     <- abs(step_sizes - number_of_steps)
+
+    # Select the step with the smallest score which is used as the equal length step
+    score_id    <- which.min(scores)
+    pretty_step <- candidates[which.min(scores)]
+
+    # Return the pretty sequence
+    seq(lowers[score_id], uppers[score_id], by = pretty_step)
+}
+
+
+#' @description
+#' inject_inner_canvas_size(): Injects the inner canvas size, meaning diagram size
 #' minus axes size, into the dimensions parameter.
 #'
 #' @param axes The axes gTree generated by the setup axes functions.
 #'
 #' @return
-#' [inject_inner_canvas_size()]: Returns the argument list with injected inner canvas
+#' inject_inner_canvas_size(): Returns the argument list with injected inner canvas
 #' sizes.
 #'
 #' @rdname axes
 #'
-#' @export
+#' @noRd
 inject_inner_canvas_size <- function(axes, arguments){
     dimensions <- arguments[["dimensions"]]
 
@@ -2151,7 +2156,7 @@ setup_legend <- function(diagram_info,
 
     # Assign the column and row id per entry
     column_id <- rep(seq_len(number_of_columns), each = entries_per_column)[seq_len(number_of_labels)]
-    row_id    <- ave(seq_len(number_of_labels), column_id, FUN = seq_along)
+    row_id    <- stats::ave(seq_len(number_of_labels), column_id, FUN = seq_along)
 
     # Find the entry with the most letters per column to measure the maximum width
     # per column. Only necessary in multi column layouts.
@@ -2170,7 +2175,7 @@ setup_legend <- function(diagram_info,
     }
 
     # Left position of each column
-    column_x_pos <- c(0, head(cumsum(column_widths), -1))
+    column_x_pos <- c(0, utils::head(cumsum(column_widths), -1))
 
     # Calculate the final legend entry x positions. If the base legend position
     # is set to auto, the legend will be placed to the far right inside the main canvas.
@@ -2228,7 +2233,6 @@ setup_legend <- function(diagram_info,
     grid::gList(rects, texts)
 }
 
-
 ###############################################################################
 # Conversion
 ###############################################################################
@@ -2240,7 +2244,7 @@ setup_legend <- function(diagram_info,
 #' Native units are scaled from 0 to 1 and take to individual viewport and axes
 #' scaling into account.
 #'
-#' [convert_to_native_width()]: Convert a value into a native width unit.
+#' convert_to_native_width(): Convert a value into a native width unit.
 #'
 #' @param value The value to convert into native units.
 #' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
@@ -2253,7 +2257,7 @@ setup_legend <- function(diagram_info,
 #'
 #' @rdname unit_conversion
 #'
-#' @export
+#' @noRd
 convert_to_native_width <- function(value,
                                     diagram_info,
                                     dimensions,
@@ -2278,11 +2282,11 @@ convert_to_native_width <- function(value,
 
 
 #' @description
-#' [convert_to_native_height()]: Convert a value into a native height unit.
+#' convert_to_native_height(): Convert a value into a native height unit.
 #'
 #' @rdname unit_conversion
 #'
-#' @export
+#' @noRd
 convert_to_native_height <- function(value,
                                      diagram_info,
                                      dimensions,
@@ -2304,7 +2308,6 @@ convert_to_native_height <- function(value,
     # Convert value into native units
     value * distance / dimensions[[paste0(base, "_height")]]
 }
-
 
 ###############################################################################
 # Other
@@ -2332,7 +2335,7 @@ expected_parameters <- c("graphic_tab",
 #' @name format_values
 #'
 #' @description
-#' [format_values()]: Format values to output numbers in a certain way.
+#' format_values(): Format values to output numbers in a certain way.
 #'
 #' @param values Single value or vector of values.
 #' @param decimals Number of decimals to be displayed.
@@ -2347,7 +2350,7 @@ expected_parameters <- c("graphic_tab",
 #'
 #' @rdname format_values
 #'
-#' @export
+#' @noRd
 format_values <- function(values,
                           decimals     = .qol_options[["graphic_axes"]][["primary_axes_decimals"]],
                           big_mark     = .qol_options[["graphic_axes"]][["primary_axes_big_mark"]],
@@ -2366,7 +2369,7 @@ format_values <- function(values,
 
 
 #' @description
-#' [format_diagram_values()]: A wrapper to make the code for formatting segment
+#' format_diagram_values(): A wrapper to make the code for formatting segment
 #' values shorter.
 #'
 #' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
@@ -2378,7 +2381,7 @@ format_values <- function(values,
 #'
 #' @rdname format_values
 #'
-#' @export
+#' @noRd
 format_diagram_values <- function(diagram_info,
                                   arguments,
                                   which = "primary"){
@@ -2408,7 +2411,7 @@ format_diagram_values <- function(diagram_info,
                             scale        = axes[[paste0(which, "_axes_scale")]])
 
     # Convert short minus symbol with long one for better readability
-    values <- sub("-", "–", values)
+    values <- sub("-", "\u2013", values)
 
     # Display the + symbol in front of positive values, if specified
     if (arguments[["visuals"]][["display_plus_symbol"]]){

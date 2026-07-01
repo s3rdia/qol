@@ -1,18 +1,53 @@
 ###############################################################################
 # Vertical bars
 ###############################################################################
-#' Generate The Main Graphic Area For VBars
+#' Generate The Main Diagram Area
+#'
+#' @name main_diagram
 #'
 #' @description
-#' Generate the main graphic area for vbars
+#' The listed functions are the built in diagram types which ship with this package.
+#' These functions don't work on their own and have to be plugged into the "diagram"
+#' parameter of [design_graphic()].
+#'
+#' [dg_vbars()]: Grouped vertical bars.
 #'
 #' @param ... Arguments passed on by [design_graphic()].
 #'
 #' @return
 #' Returns a grid::gTree object.
 #'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
+#' # Formats
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
+#' sex. <- discrete_format(
+#'     "Total"  = 1:2,
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' # Design grouped vertical bar chart
+#' qol_graphic <- my_data |>
+#'      design_graphic(axes_variables = "sex",
+#'                     segments       = "age",
+#'                     values         = weight,
+#'                     diagram        = dg_vbars,
+#'                     formats        = list(sex = sex.,
+#'                                           age = age.))
+#'
+#' @rdname main_diagram
+#'
 #' @export
-vbars <- function(...){
+dg_vbars <- function(...){
     # Evaluate the passed arguments first. If this function is not called from inside
     # design_graphic() it will error.
     arguments        <- list(...)

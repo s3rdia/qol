@@ -2,6 +2,7 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_fine_tuning}
 \alias{graphic_fine_tuning}
+\alias{modify_graphic_fine_tuning}
 \title{Graphic Fine Tuning}
 \usage{
 graphic_fine_tuning(
@@ -31,6 +32,8 @@ graphic_fine_tuning(
   svg_anchor_adjust = 0.6,
   svg_line_height_adjust = 0.65
 )
+
+modify_graphic_fine_tuning(fine_tune_to_modify, ...)
 }
 \arguments{
 \item{diagram_margin}{Margin used within the diagram area.}
@@ -86,29 +89,80 @@ in stairs.}
 \item{max_segment_label_shift}{The maximum percentage of the textbox width the segment
 labels can be shifted to achieve a decollision.}
 
-\item{cm_to_inch_factor}{cm to inc conversion factor.}
+\item{cm_to_inch_factor}{cm to inc conversion factor.,}
+
+\item{svg_anchor_adjust}{Text anchoring adjustment for interactive SVG graphics, so that the
+positions look like in the static version.}
+
+\item{svg_line_height_adjust}{Text line height in interactive SVG graphics is bigger and needs
+to be turned down.}
+
+\item{fine_tune_to_modify}{A pre created graphic fine tuning object where only
+certain elements should be modified while the rest is kept as is.}
+
+\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
+
+Returns a modified list of named graphic options.
 }
 \description{
 Throughout the graphic generation some fixed values are used. These can be adjusted
 to make detailed graphical changes in certain areas. These values normally should
-only be altered in edge cases.
+only be altered in edge cases. All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
+
+If options are stored in an object, it can be modified afterwards. In this case
+only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
+# Example data frame
+my_data <- dummy_data(100)
+
 # For default values
-gft <- graphic_fine_tuning()
+default_fine_tuning <- graphic_fine_tuning()
 
 # Set specific options, the rest will be set to default values
-gft <- graphic_fine_tuning(values_vjust_positive = 2.5,
-                           tick_length           = 0.05)
+custom_fine_tuning <- graphic_fine_tuning(values_vjust_positive = 2.5,
+                                          tick_length           = 0.05)
+
+# Apply options locally
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    fine_tuning    = custom_fine_tuning)
+
+# Or direct
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    fine_tuning    = graphic_fine_tuning(values_vjust_positive = 2.5,
+                                                         tick_length           = 0.05))
+
+# Set options globally
+set_graphic_options(values_vjust_positive = 2.5,
+                    tick_length           = 0.05)
+
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars)
+
+# Modify the previously created graphics object
+custom_fine_tuning <- custom_fine_tuning |> modify_graphic_fine_tuning(diagram_margin = 0.02)
 
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Other graphic options:
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
+\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
-Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}
+Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
+
+Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
 }

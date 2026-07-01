@@ -4,10 +4,11 @@
 #' Get The Diagram Start In Cm
 #'
 #' @description
-#' Get the actual diagram start in cm.
+#' Get the actual diagram start from the top in cm. If a title is set then the
+#' titles height is subtracted with additional margins from the top.
 #'
-#' @param dimensions The list of dimensions parameters.
-#' @param title_height Heights of the graphic titles.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param title_height Height of the graphic titles.
 #'
 #' @return
 #' Returns a numeric width in cm.
@@ -37,9 +38,9 @@ get_diagram_start_cm <- function(dimensions   = .qol_options[["graphic_dimension
 #' Get The Diagram Width In Cm
 #'
 #' @description
-#' Get the actual diagram width in cm.
+#' Get the actual diagram width in cm. Margins on both sides are subtracted.
 #'
-#' @param dimensions The list of dimensions parameters.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
 #'
 #' @return
 #' Returns a numeric width in cm.
@@ -61,12 +62,16 @@ get_diagram_width_cm <- function(dimensions = .qol_options[["graphic_dimensions"
 #' Get The Diagram Height In Cm
 #'
 #' @description
-#' Get the actual diagram height in cm.
+#' Get the actual diagram height in cm. If a titles and footnotes are set then
+#' their height is subtracted with additional margins from.
 #'
-#' @param dimensions The list of dimensions parameters.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param title_height Height of the graphic titles.
+#' @param footnote_height Height of the graphic footnotes
+#' @param origin_height Height of the graphic origin text.
 #'
 #' @return
-#' Returns a numeric width in cm.
+#' Returns a numeric height in cm.
 #'
 #' @noRd
 get_diagram_height_cm <- function(dimensions      = .qol_options[["graphic_dimensions"]],
@@ -99,12 +104,17 @@ get_diagram_height_cm <- function(dimensions      = .qol_options[["graphic_dimen
 #'
 #' @description
 #' Tries to decollide segment labels, which are drawn with segment lines on the
-#' same height.
+#' same height. The function basically shifts the labels a bit outward which is
+#' not a guarantee that they are actually not colliding. But this is enough for
+#' smaller labels.
 #'
-#' @param dimensions The list of dimensions parameters.
+#' @param segment_labels The actual segment label texts.
+#' @param x_label_positions The current label x positions.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #'
 #' @return
-#' Returns a numeric width in cm.
+#' Returns adjusted segment label x positions.
 #'
 #' @noRd
 decollide_labels <- function(segment_labels,

@@ -2,6 +2,7 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_axes}
 \alias{graphic_axes}
+\alias{modify_graphic_axes}
 \title{Graphic Axes}
 \usage{
 graphic_axes(
@@ -35,6 +36,8 @@ graphic_axes(
   secondary_values_suffix = "",
   variable_axes_interval = 1
 )
+
+modify_graphic_axes(axes_to_modify, ...)
 }
 \arguments{
 \item{primary_axes_max}{Maximum value for the primary axes. If "auto", the maximum
@@ -106,27 +109,72 @@ on the secondary axes.}
 \item{secondary_values_suffix}{What to put after the values plotted on the secondary axes.}
 
 \item{variable_axes_interval}{The number of steps in which to display labels on the variable axes.}
+
+\item{axes_to_modify}{A pre created graphic axes object where only
+certain elements should be modified while the rest is kept as is.}
+
+\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
+
+Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the axes of a graphic produced by
-\code{\link[=design_graphic]{design_graphic()}}.
+\code{\link[=design_graphic]{design_graphic()}}. All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
+
+If options are stored in an object, it can be modified afterwards. In this case
+only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
+# Example data frame
+my_data <- dummy_data(100)
+
 # For default values
-ga <- graphic_axes()
+default_axes <- graphic_axes()
 
 # Set specific options, the rest will be set to default values
-ga <- graphic_axes(primary_axes_max      = 100,
-                   primary_axes_decimals = 1)
+custom_axes <- graphic_axes(primary_axes_max      = 100,
+                            primary_axes_decimals = 1)
+
+# Apply options locally
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    axes           = custom_axes)
+
+# Or direct
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars,
+                    axes           = graphic_axes(primary_axes_max      = 100,
+                                                  primary_axes_decimals = 1))
+
+# Set options globally
+set_graphic_options(primary_axes_max      = 100,
+                    primary_axes_decimals = 1)
+
+my_data |>
+     design_graphic(axes_variables = "sex",
+                    segments       = "education",
+                    diagram        = dg_vbars)
+
+# Modify the previously created graphic options
+custom_axes <- custom_axes |> modify_graphic_axes(primary_axes_min = 50)
 
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Other graphic options:
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
+\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
-Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}
+Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
+
+Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
 }
