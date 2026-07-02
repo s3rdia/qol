@@ -9,7 +9,7 @@
 #' @param output Output parameters set with [graphic_output()].
 #'
 #' @return
-#' Returns the input graphic object.
+#' Returns NULL or a full SVG string for interactive graphics.
 #'
 #' @noRd
 output_graphic <- function(graphic_object,
@@ -19,6 +19,8 @@ output_graphic <- function(graphic_object,
                            output,
                            diagram_info,
                            by_info = NULL){
+    svg_string <- NULL
+
     # Early exit if all graphics should be exported as one file containing the
     # whole grid.
     if (output[["by_as_grid"]]){
@@ -26,7 +28,19 @@ output_graphic <- function(graphic_object,
             grid::grid.draw(graphic_object)
         }
 
-        return(invisible(graphic_object))
+        if (output[["interactive"]]){
+            svg_string <- output_interactive_html(graphic_object,
+                                                  visuals,
+                                                  dimensions,
+                                                  fine_tuning,
+                                                  output,
+                                                  diagram_info,
+                                                  filename,
+                                                  output[["by_as_grid"]],
+                                                  by_info)
+        }
+
+        return(invisible(svg_string))
     }
 
     # Check if only save path or file name is specified. If only one is specified
@@ -66,16 +80,21 @@ output_graphic <- function(graphic_object,
             extension <- tolower(tools::file_ext(output[["file"]]))
             filename  <- tools::file_path_sans_ext(output[["file"]])
 
-            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff")){
+            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "html")){
                 print_message("WARNING", c("Filetype '[extension]' not supported, 'png' will be used. Valid filetypes are:",
                                            "png, svg, jpeg, jpg, bmp, tiff"), extension = extension)
 
                 extension <- "png"
             }
 
-            # Set extensions to svg on interactive outputs
-            if (output[["interactive"]] && extension != "svg"){
-                extension <- "svg"
+            # Set extensions to html on interactive outputs
+            if (output[["interactive"]] && extension != "html"){
+                extension <- "html"
+            }
+            else if (!output[["interactive"]] && extension == "html"){
+                print_message("WARNING", "Filetype 'html' is only supported for interactive graphics, 'png' will be used.")
+
+                extension <- "png"
             }
 
             # If there is no by info, the file name is already provided through the option
@@ -92,14 +111,15 @@ output_graphic <- function(graphic_object,
 
             # On interactive output call the respective function
             if (output[["interactive"]]){
-                output_interactive_svg(graphic_object,
-                                       visuals,
-                                       dimensions,
-                                       fine_tuning,
-                                       output,
-                                       diagram_info,
-                                       filename,
-                                       by_info)
+                svg_string <- output_interactive_html(graphic_object,
+                                                      visuals,
+                                                      dimensions,
+                                                      fine_tuning,
+                                                      output,
+                                                      diagram_info,
+                                                      filename,
+                                                      output[["by_as_grid"]],
+                                                      by_info)
             }
             # Static output
             else{
@@ -138,7 +158,7 @@ output_graphic <- function(graphic_object,
         }
     }
 
-    invisible(graphic_object)
+    invisible(svg_string)
 }
 
 
@@ -151,11 +171,15 @@ output_graphic <- function(graphic_object,
 #' @noRd
 output_grid <- function(dimensions,
                         fine_tuning,
-                        output){
+                        output,
+                        svg_list,
+                        graphic_tab){
     # Early exit if all graphics should be exported as single files
     if (!output[["by_as_grid"]]){
         return(invisible(NULL))
     }
+
+    grid_object <- NULL
 
     # Check if only save path or file name is specified. If only one is specified
     # print a note. Otherwise the file would not be saved and opened without a
@@ -199,44 +223,84 @@ output_grid <- function(dimensions,
                 extension <- "png"
             }
 
+            # Set extensions to svg on interactive outputs
+            if (output[["interactive"]] && extension != "html"){
+                extension <- "html"
+            }
+
             # Reconstruct file name
             filename <- paste0(filename, ".", extension)
             filename <- paste0(output[["save_path"]], "/", filename)
 
-            # Put all output functions into a list to call them dynamically
-            devices <- list(png  = grDevices::png,
-                            svg  = grDevices::svg,
-                            jpeg = grDevices::jpeg,
-                            jpg  = grDevices::jpeg,
-                            bmp  = grDevices::bmp,
-                            tiff = grDevices::tiff)
+            # On interactive output wrap the SVG graphic in an html file with dropdown list
+            if (output[["interactive"]]){
+                # Elements for the dropdown list are the expressions of the by variable
+                dropdown_elements <- as.character(collapse::funique(graphic_tab[["by_vars"]]))
 
-            device_function <- devices[[extension]]
+                # Prepare dropdown options
+                dropdown_options <- paste(sprintf('<option value="%s">%s</option>',
+                                                  dropdown_elements,
+                                                  dropdown_elements), collapse = "\n")
 
-            # Store the base arguments for the output functions
-            arguments <- list(filename = filename,
-                              width    = dimensions[["graphic_width"]]  / fine_tuning[["cm_to_inch_factor"]],
-                              height   = dimensions[["graphic_height"]] / fine_tuning[["cm_to_inch_factor"]])
+                # Prepare SVG containers. Basically all SVG files end up in a single
+                # html file one below the other just separated by div blocks.
+                svg_container <- paste(vapply(seq_along(dropdown_elements), function(i){
+                    # Show first dropdown list entry by default and hide the others
+                    display <- ifelse(i == 1, "block", "none")
 
-            # Add format specific arguments based on file extension
-            if (extension %in% c("png", "jpeg", "jpg", "bmp", "tiff")){
-                arguments[["units"]] <- "in"
-                arguments[["res"]]   <- output[["resolution"]]
+                    # Create a clean html id without spaces or umlauts
+                    clean_id <- paste0("container_", gsub("[^A-Za-z0-9]", "", dropdown_elements[i]))
+
+                    # Wrap SVG inside div container block
+                    sprintf('<div id="%s" class="svg-container" style="display:%s;"> %s </div>',
+                            clean_id, display, svg_list[[i]])
+                }, character(1)), collapse = "\n")
+
+                # Load html template and replace placeholders
+                html_template <- paste(readLines(system.file("extdata", "qol_html_dropdown.txt", package = "qol"), warn = FALSE), collapse = "\n")
+                html_template <- gsub("%OPTIONS%", dropdown_options, html_template, fixed = TRUE)
+                html_template <- gsub("%SVG%",     svg_container,    html_template, fixed = TRUE)
+
+                # Save to file
+                writeLines(html_template, filename, useBytes = TRUE)
             }
+            # Static output
+            else{
+                # Put all output functions into a list to call them dynamically
+                devices <- list(png  = grDevices::png,
+                                svg  = grDevices::svg,
+                                jpeg = grDevices::jpeg,
+                                jpg  = grDevices::jpeg,
+                                bmp  = grDevices::bmp,
+                                tiff = grDevices::tiff)
 
-            # Grab the entire grid which is drawn in the plot view as gTree
-            grid_object <- grid::grid.grab(wrap.grobs = TRUE)
+                device_function <- devices[[extension]]
 
-            # Export image and draw to plot view
-            do.call(device_function, arguments)
+                # Store the base arguments for the output functions
+                arguments <- list(filename = filename,
+                                  width    = dimensions[["graphic_width"]]  / fine_tuning[["cm_to_inch_factor"]],
+                                  height   = dimensions[["graphic_height"]] / fine_tuning[["cm_to_inch_factor"]])
 
-            # Draw for physical output
-            grid::grid.draw(grid_object)
+                # Add format specific arguments based on file extension
+                if (extension %in% c("png", "jpeg", "jpg", "bmp", "tiff")){
+                    arguments[["units"]] <- "in"
+                    arguments[["res"]]   <- output[["resolution"]]
+                }
 
-            grDevices::dev.off()
+                # Grab the entire grid which is drawn in the plot view as gTree
+                grid_object <- grid::grid.grab(wrap.grobs = TRUE)
 
-            # Draw visible in plot view
-            grid::grid.draw(grid_object)
+                # Export image and draw to plot view
+                do.call(device_function, arguments)
+
+                # Draw for physical output
+                grid::grid.draw(grid_object)
+
+                grDevices::dev.off()
+
+                # Draw visible in plot view
+                grid::grid.draw(grid_object)
+            }
         }
     }
 
@@ -265,17 +329,18 @@ output_grid <- function(dimensions,
 #' expression is computed at the moment. Used for computation with by variables.
 #'
 #' @return
-#' Returns NULL or the input graphic object.
+#' Returns the full SVG string.
 #'
 #' @noRd
-output_interactive_svg <- function(graphic_object,
-                                   visuals,
-                                   dimensions,
-                                   fine_tuning,
-                                   output,
-                                   diagram_info,
-                                   filename,
-                                   by_info = NULL){
+output_interactive_html <- function(graphic_object,
+                                    visuals,
+                                    dimensions,
+                                    fine_tuning,
+                                    output,
+                                    diagram_info,
+                                    filename,
+                                    by_as_grid,
+                                    by_info = NULL){
     # Execution of this code is only possible if gridSVG package is installed
     if (!check_required_package()){
         return(invisible(NULL))
@@ -465,7 +530,13 @@ output_interactive_svg <- function(graphic_object,
     if (is.null(by_info)){ print_step("MINOR", "Inject Java Script") }
 
     # Put together the whole java script and inject the custom tooltip design
-    full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    if (!by_as_grid){
+        full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    }
+    else{
+        full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip_dropdown.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    }
+
     full_java_script <- gsub("%FONT_COLOR%",    visuals[["tooltip_font_color"]],         full_java_script, fixed = TRUE)
     full_java_script <- gsub("%FILL_COLOR%",    visuals[["tooltip_background_color"]],   full_java_script, fixed = TRUE)
     full_java_script <- gsub("%BORDER_COLOR%",  visuals[["tooltip_border_color"]],       full_java_script, fixed = TRUE)
@@ -556,7 +627,17 @@ output_interactive_svg <- function(graphic_object,
                       svg_string, fixed = TRUE)
 
     # Finally save the dynamic SVG file
-    writeLines(svg_string, filename)
+    if (!by_as_grid){
+        # Load html template and replace placeholders
+        html_template <- paste(readLines(system.file("extdata", "qol_html.txt", package = "qol"), warn = FALSE), collapse = "\n")
+        html_template <- gsub("%SVG%", svg_string, html_template, fixed = TRUE)
+
+        # Save to file
+        writeLines(html_template, filename, useBytes = TRUE)
+    }
+
+    # Return full SVG string
+    svg_string
 }
 
 

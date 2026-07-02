@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+		<style>
+			.svg-container{
+				width:100%;
+				max-width:100%;
+				display:none;
+			}
+
+			.svg-container svg{
+				width:100%;
+				height:auto;
+				display:block;
+			}
+		</style>
+	</head>
+<html>
+	<body>
+		<div class="card">
+			%SVG%
+		</div>
+	</body>
+</html>
+</html>

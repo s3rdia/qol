@@ -658,8 +658,10 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' a filename with extension.
 #' @param resolution DPI resolution.
 #' @param by_as_grid FALSE by default. If TRUE exports one single graphic containing the
-#' whole grid when using by variables.
-#' @param interactive FALSE by default. If TRUE exports an interactive SVG files containing
+#' whole grid when using by variables. If used with interactive parameter all graphics
+#' in the grid will be put into one file, where the graphics can be switched with a
+#' drop down list.
+#' @param interactive FALSE by default. If TRUE exports an interactive html file containing
 #' mouse over tooltips and hover effects.
 #'
 #' @return

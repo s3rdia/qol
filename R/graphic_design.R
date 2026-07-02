@@ -895,7 +895,6 @@ generate_graphic <- function(graphic_tab,
     # be exported.
     if (output[["interactive"]]){
         visuals[["display_values"]] <- FALSE
-        output[["by_as_grid"]]      <- FALSE
     }
 
     # Setup main canvas
@@ -990,7 +989,7 @@ generate_graphic <- function(graphic_tab,
         })
 
     if (length(custom_textboxes) == 0){
-        custom_textboxes <- list(grid::nullGrob())
+        custom_textboxes <- grid::nullGrob()
     }
 
     # Put together the whole graphic
@@ -1000,8 +999,8 @@ generate_graphic <- function(graphic_tab,
                             grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                             grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
                             grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas")),
-                            segment_labels),
-                       custom_textboxes)),
+                            segment_labels,
+                            custom_textboxes))),
         childrenvp = viewport_tree,
         name       = "graphic" )
 
@@ -1017,7 +1016,7 @@ generate_graphic <- function(graphic_tab,
     #       below. But at the moment I can't get the graphics to draw in a grid with
     #       a single draw call. I think the master_layout somehow interferes with
     #       the viewport construction in this function. Revisit some time.
-    output_graphic(whole_graphic, visuals, dimensions, fine_tuning, output, main_grob[["meta"]], by_info)
+    svg_string <- output_graphic(whole_graphic, visuals, dimensions, fine_tuning, output, main_grob[["meta"]], by_info)
 
     grid::popViewport()
 
@@ -1028,7 +1027,7 @@ generate_graphic <- function(graphic_tab,
     monitor_df <- monitor_df |> monitor_end()
 
     # Return workbook
-    list(whole_graphic, monitor_df)
+    list(whole_graphic, monitor_df, svg_string)
 }
 
 
@@ -1153,6 +1152,7 @@ generate_graphic_by <- function(graphic_tab,
 
         # Initialize a list which captures all single graphic objects
         graphic_list <- list()
+        svg_list     <- list()
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Loop through all unique values to generate tables per expression
@@ -1227,6 +1227,7 @@ generate_graphic_by <- function(graphic_tab,
 
             # Save the graphic object into a list
             graphic_list[[cell_counter]] <- current_graphic[[1]]
+            svg_list[[cell_counter]]     <- current_graphic[[3]]
 
             index        <- index + 1
             cell_counter <- cell_counter + 1
@@ -1238,7 +1239,8 @@ generate_graphic_by <- function(graphic_tab,
     grid::popViewport()
 
     # Export the whole grid as one graphic
-    output_grid(list(graphic_width = grid_width, graphic_height = grid_height), fine_tuning, output)
+    output_grid(list(graphic_width = grid_width, graphic_height = grid_height),
+                fine_tuning, output, svg_list, graphic_tab)
 
     # Return workbook
     list(graphic_list, monitor_df)
