@@ -116,15 +116,13 @@
 #'
 #' @examples
 #' # Example data frame
-#' my_data <- dummy_data(100)
+#' my_data <- dummy_data(100, insert_na = FALSE)
 #'
 #' # Formats
 #' age. <- discrete_format(
 #'     "Total"          = 0:100,
 #'     "under 18"       = 0:17,
-#'     "18 to under 25" = 18:24,
-#'     "25 to under 55" = 25:54,
-#'     "55 to under 65" = 55:64,
+#'     "18 to under 65" = 18:64,
 #'     "65 and older"   = 65:100)
 #'
 #' sex. <- discrete_format(
@@ -149,6 +147,15 @@
 #' my_data |>
 #'      design_graphic(axes_variables = "age + education",
 #'                     segments       = "sex",
+#'                     values         = weight,
+#'                     diagram        = dg_vbars,
+#'                     formats        = list(sex = sex.,
+#'                                           age = age.))
+#'
+#' # Use multiple different segment variables within the same grouping
+#' my_data |>
+#'      design_graphic(axes_variables = "age",
+#'                     segments       = "sex + education",
 #'                     values         = weight,
 #'                     diagram        = dg_vbars,
 #'                     formats        = list(sex = sex.,
@@ -378,6 +385,13 @@ design_graphic <- function(data_frame,
     }
 
     values <- remove_doubled_values(values)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+    statistics <- tolower(statistics)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Pre summarised data

@@ -664,6 +664,17 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @param interactive FALSE by default. If TRUE exports an interactive html file containing
 #' mouse over tooltips and hover effects.
 #'
+#' @details
+#' ```html
+#' Interactive graphics can be embedded in an <iframe> like this:
+#'
+#' <iframe src="my_graphic.html" style="width: 100%; aspect-ratio: 16 / 10; border: none;"
+#' scrolling="no"></iframe>
+#'```
+#'
+#' Set the aspect ratio according to your graphic dimensions. It actually helps to set the
+#' height ratio a bit higher than the actual graphic is.
+#'
 #' @return
 #' Returns a list of named graphic options.
 #'

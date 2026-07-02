@@ -25,9 +25,7 @@
 #' age. <- discrete_format(
 #'     "Total"          = 0:100,
 #'     "under 18"       = 0:17,
-#'     "18 to under 25" = 18:24,
-#'     "25 to under 55" = 25:54,
-#'     "55 to under 65" = 55:64,
+#'     "18 to under 65" = 18:64,
 #'     "65 and older"   = 65:100)
 #'
 #' sex. <- discrete_format(
