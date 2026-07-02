@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+		<style>
+			.svg-container{
+				width:100%;
+				max-width:100%;
+				display:none;
+			}
+
+			.svg-container svg{
+				width:100%;
+				height:auto;
+				display:block;
+			}
+		</style>
+	</head>
+<html>
+	<body>
+		<div class="card">
+		<select id="dropdown" onchange="switchCountry()">
+			%OPTIONS%
+		</select>
+		<br/>
+			%SVG%
+		</div>
+
+		<script>
+			function switchCountry() {
+				// Get selected value and create a clean html id without spaces or umlauts
+				var selected_element = document.getElementById('dropdown').value;
+				var clean_id = selected_element.replace(/[^A-Za-z0-9]/g, '');
+
+				// Find all svg containers
+				var all_elements = document.getElementsByClassName('svg-container');
+
+				// Hide all containers
+				for (var i = 0; i < all_elements.length; i++) {
+				  all_elements[i].style.display = 'none';
+				}
+
+				// Show current target container
+				var target_id = 'container_' + clean_id;
+				document.getElementById(target_id).style.display = 'block';
+			}
+		</script>
+
+	</body>
+</html>
+</html>

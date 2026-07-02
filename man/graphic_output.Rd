@@ -25,9 +25,11 @@ a filename with extension.}
 \item{resolution}{DPI resolution.}
 
 \item{by_as_grid}{FALSE by default. If TRUE exports one single graphic containing the
-whole grid when using by variables.}
+whole grid when using by variables. If used with interactive parameter all graphics
+in the grid will be put into one file, where the graphics can be switched with a
+drop down list.}
 
-\item{interactive}{FALSE by default. If TRUE exports an interactive SVG files containing
+\item{interactive}{FALSE by default. If TRUE exports an interactive html file containing
 mouse over tooltips and hover effects.}
 
 \item{output_to_modify}{A pre created graphic output object where only

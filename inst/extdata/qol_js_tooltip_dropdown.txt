@@ -25,9 +25,9 @@ var tooltipOptions = {
 function showTooltip(evt, text){
     // Dom element selection
     var svg     = evt.target.ownerSVGElement;
-    var tooltip = document.getElementById("tooltip");
-    var label   = document.getElementById("tooltip-text");
-    var bg      = document.getElementById("tooltip-bg");
+    var tooltip = svg.querySelector("#tooltip");
+    var label   = svg.querySelector("#tooltip-text");
+    var bg      = svg.querySelector("#tooltip-bg");
 
     // Map coordinates according to the canvas itself
     var cursor;
@@ -245,7 +245,21 @@ function showTooltip(evt, text){
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 function hideTooltip(){
-    document.getElementById("tooltip").setAttribute("visibility", "hidden");
+	// Get selected value and create a clean html id without spaces or umlauts
+    var selected_element = document.getElementById("dropdown").value;
+    var clean_id = selected_element.replace(/[^A-Za-z0-9]/g, "");
+
+	// Find target svg container
+    var target_container = document.getElementById("container_" + clean_id);
+
+	// Look for tooltip inside visible svg container and hide it
+    if (target_container){
+        var tooltip = target_container.querySelector("#tooltip");
+		
+        if (tooltip){
+            tooltip.setAttribute("visibility", "hidden");
+        }
+    }
 }
 
 ]]></script>
