@@ -4,6 +4,10 @@
 
 * `ifelse_multi()`: A variation of the `ifelse()` function which can handle multiple conditions in one go. The function takes in the conditions as characters. The conditions are parsed before evaluation to enable SAS like writing styles. (20.06.2026)
 
+### Renamed functions
+
+* `stack_data()`: `set` was renamed to prevent masking errors in combination with `data.table`. (03.07.2026)
+
 ### New functionality
 
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (20.06.2026)
@@ -20,6 +24,7 @@
 
 * `multi_join()`: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times. (21.06.2026)
 * `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`. (26.06.2026)
+* `stack_data()`: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour. (03.07.2026)
 
 ### Optimization
 

@@ -59,7 +59,7 @@
 #'
 #' Macros: [macro()], [apply_macro()]
 #'
-#' Saving And Loading: [libname()], [set()], [save_file()], [save_file_multi()], [load_file()], [load_file_multi()]
+#' Saving And Loading: [libname()], [stack_data()], [save_file()], [save_file_multi()], [load_file()], [load_file_multi()]
 #'
 #' Reporting: [content_report()], [code_statistics()], [report_test_results()], [test_package()], [test_single_file()]
 #'

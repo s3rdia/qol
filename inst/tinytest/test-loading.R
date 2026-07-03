@@ -8,24 +8,35 @@ set_no_print(TRUE)
 dummy_df1 <- dummy_data(100)
 dummy_df2 <- dummy_data(100)
 dummy_df3 <- dummy_data(100)
+df_list   <- list("file1" = dummy_data(10),
+                  "file2" = dummy_data(10),
+                  "file3" = dummy_data(10))
 
 external_path <- system.file("extdata",  package = "qol")
 
 
 # Stack data frames
-new_df1 <- set(dummy_df1, dummy_df2, dummy_df3)
-new_df2 <- set(dummy_df1, dummy_df2, dummy_df3, compress = "factor")
+new_df1 <- stack_data(dummy_df1, dummy_df2, dummy_df3)
+new_df2 <- stack_data(dummy_df1, dummy_df2, dummy_df3, compress = "factor")
 
-expect_equal(nrow(new_df1), 300, info = "Stack data fames")
-expect_equal(nrow(new_df2), 300, info = "Stack data fames")
+expect_equal(collapse::fnrow(new_df1), 300, info = "Stack data fames")
+expect_equal(collapse::fnrow(new_df2), 300, info = "Stack data fames")
 expect_equal(class(new_df1[["education"]]), "character", info = "Stack data fames")
 expect_equal(class(new_df2[["education"]]), "factor", info = "Stack data fames")
 
 
 # Stack data frames with id column
-new_df <- set(dummy_df1, dummy_df2, dummy_df3, id = TRUE)
+new_df <- stack_data(dummy_df1, dummy_df2, dummy_df3, id = TRUE)
 
 expect_equal(max(new_df[["ID"]]), 3, info = "Stack data fames with id column")
+
+
+# Stack mix of data frames and list of data frames
+new_df <- stack_data(dummy_df1, df_list, dummy_df2, id = TRUE)
+
+expect_equal(collapse::fnrow(new_df), 230, info = "Stack mix of data frames and list of data frames")
+expect_true(all(c("dummy_df1", "dummy_df2", "file1", "file2", "file3") %in% collapse::funique(new_df[["ID"]])),
+                info = "Stack mix of data frames and list of data frames")
 
 
 # Retrieve path with libname

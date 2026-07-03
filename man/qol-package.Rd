@@ -67,7 +67,7 @@ Conversion: \code{\link[=args_to_char]{args_to_char()}}, \code{\link[=dots_to_ch
 
 Macros: \code{\link[=macro]{macro()}}, \code{\link[=apply_macro]{apply_macro()}}
 
-Saving And Loading: \code{\link[=libname]{libname()}}, \code{\link[=set]{set()}}, \code{\link[=save_file]{save_file()}}, \code{\link[=save_file_multi]{save_file_multi()}}, \code{\link[=load_file]{load_file()}}, \code{\link[=load_file_multi]{load_file_multi()}}
+Saving And Loading: \code{\link[=libname]{libname()}}, \code{\link[=stack_data]{stack_data()}}, \code{\link[=save_file]{save_file()}}, \code{\link[=save_file_multi]{save_file_multi()}}, \code{\link[=load_file]{load_file()}}, \code{\link[=load_file_multi]{load_file_multi()}}
 
 Reporting: \code{\link[=content_report]{content_report()}}, \code{\link[=code_statistics]{code_statistics()}}, \code{\link[=report_test_results]{report_test_results()}}, \code{\link[=test_package]{test_package()}}, \code{\link[=test_single_file]{test_single_file()}}
 

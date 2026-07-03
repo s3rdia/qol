@@ -102,10 +102,10 @@ libname <- function(path,
 #'
 #' @param ... Put in multiple data frames to stack them in the provided order.
 #' @param id Adds an ID column to indicate the different data frames.
-#' @param compress No compression by default. If compression receives any value, [set()]
+#' @param compress No compression by default. If compression receives any value, [stack_data()]
 #' will convert character variables to numeric or integer where possible. If set to "factor"
 #' all non numeric character variables will be converted to factors.
-#' @param guessing_rows 100 by default. [set()] takes a sample of rows to determine of
+#' @param guessing_rows 100 by default. [stack_data()] takes a sample of rows to determine of
 #' which type variables are.
 #'
 #' @return
@@ -120,17 +120,17 @@ libname <- function(path,
 #' my_data5 <- dummy_data(100)
 #'
 #' # Stack data frames
-#' stacked_df <- set(my_data1,
-#'                   my_data2,
-#'                   my_data3,
-#'                   my_data4,
-#'                   my_data5)
+#' stacked_df <- stack_data(my_data1,
+#'                          my_data2,
+#'                          my_data3,
+#'                          my_data4,
+#'                          my_data5)
 #'
 #' @export
-set <- function(...,
-                id            = FALSE,
-                compress      = NULL,
-                guessing_rows = 100){
+stack_data <- function(...,
+                       id            = FALSE,
+                       compress      = NULL,
+                       guessing_rows = 100){
     # Measure the time
     print_start_message(suppress = TRUE)
 
@@ -152,10 +152,30 @@ set <- function(...,
     # Row binding
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Make sure df_list is a flat list of data frames. Otherwise rbindlist tries
+    # to stuff the list within the list into a single data frame column (with
+    # success and no error by the way).
+    if (any(sapply(df_list, function(element){ !is.data.frame(element) }))){
+        element_names <- sapply(substitute(list(...))[-1], deparse)
+
+        df_list <- do.call(c, lapply(seq_along(df_list), function(i){
+            element <- df_list[[i]]
+
+            # Set the objects name as list entry name
+            if (is.data.frame(element)){
+                stats::setNames(list(element), element_names[i])
+            }
+            # The lists already have their names
+            else{
+                element
+            }
+        }))
+    }
+
     # Generate an ID variable and order it to the last position which indicates the single data frame
     if (id){
         data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE, idcol = "ID")
-        data_frame <- data_frame |> data.table::setcolorder("ID", after = ncol(data_frame))
+        data_frame <- data_frame |> data.table::setcolorder("ID", after = collapse::fncol(data_frame))
     }
     # Stack without ID variable
     else{
@@ -821,7 +841,7 @@ load_file_multi <- function(file_list,
 
     # Stack data frames
     if (stack_files){
-        result_list <- suppressMessages(do.call(set, result_list))
+        result_list <- suppressMessages(do.call(stack_data, result_list))
     }
 
     # Revert used threads

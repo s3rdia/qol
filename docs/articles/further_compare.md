@@ -41,9 +41,9 @@ qol does it just as readable:
 
 ``` r
 
-NewDataSet <- set(MyData1,
-                  MyData2,
-                  MyData3)
+NewDataSet <- stack_data(MyData1,
+                         MyData2,
+                         MyData3)
 ```
 
 ## More Than Just ‘if’

@@ -117,7 +117,7 @@ Macros: [`macro()`](https://s3rdia.github.io/qol/reference/macro.md),
 
 Saving And Loading:
 [`libname()`](https://s3rdia.github.io/qol/reference/libname.md),
-[`set()`](https://s3rdia.github.io/qol/reference/set.md),
+[`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md),
 [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
 [`save_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md),
 [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),

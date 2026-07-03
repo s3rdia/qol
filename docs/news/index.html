@@ -44,6 +44,11 @@
 <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>: A variation of the <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> function which can handle multiple conditions in one go. The function takes in the conditions as characters. The conditions are parsed before evaluation to enable SAS like writing styles. (20.06.2026)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="renamed-functions-1-3-3">Renamed functions<a class="anchor" aria-label="anchor" href="#renamed-functions-1-3-3"></a></h4>
+<ul><li>
+<code><a href="../reference/stack_data.html">stack_data()</a></code>: <code>set</code> was renamed to prevent masking errors in combination with <code>data.table</code>. (03.07.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="new-functionality-1-3-3">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-3"></a></h4>
 <ul><li>
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>: Are now also able to use the new writing style with conditions as characters introduced by <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>. (20.06.2026)</li>
@@ -67,6 +72,8 @@
 <code><a href="../reference/multi_join.html">multi_join()</a></code>: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times. (21.06.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: The statistic <code>sum_wgt</code> couldn’t be renamed correctly. It can now be renamed by just doing <code>stat_labels = list("sum" = "Some label")</code>. (26.06.2026)</li>
+<li>
+<code><a href="../reference/stack_data.html">stack_data()</a></code>: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour. (03.07.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-3">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-3"></a></h4>
@@ -633,7 +640,7 @@
 <li>
 <code><a href="../reference/split_by.html">split_by()</a></code>: Since <code>split_by_var()</code> didn’t have any benefit, <code>split_by_var()</code> and <code>split_by_condition()</code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 <li>
-<code><a href="../reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
+<code><a href="https://s3rdia.github.io/qol/reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
 <li>Error handling functions:
 <ul><li>
 <code><a href="../reference/error_handling.html">resolve_intersection()</a></code>: Compares if two vectors have intersecting values. (02.01.2026)</li>

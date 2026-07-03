@@ -10,6 +10,12 @@
   takes in the conditions as characters. The conditions are parsed
   before evaluation to enable SAS like writing styles. (20.06.2026)
 
+#### Renamed functions
+
+- [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
+  `set` was renamed to prevent masking errors in combination with
+  `data.table`. (03.07.2026)
+
 #### New functionality
 
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
@@ -55,6 +61,10 @@
   The statistic `sum_wgt` couldn’t be renamed correctly. It can now be
   renamed by just doing `stat_labels = list("sum" = "Some label")`.
   (26.06.2026)
+- [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
+  When a data frame and a list was input, the function tried to hack the
+  list into one of the data frame columns. Now all lists are flattened
+  and data frames extracted to prevent this behaviour. (03.07.2026)
 
 #### Optimization
 
@@ -1078,7 +1088,7 @@ CRAN release on 13.01.2026
   into the desired ones passed with a format. Using multilabels it is
   also possible to generate completely new values and therefore data
   frames on the fly. (30.12.2025)
-- [`set()`](https://s3rdia.github.io/qol/reference/set.md): Stack data
+- [`set()`](https://s3rdia.github.io/qol/reference/set.html): Stack data
   frames by column names with optional character compression.
   (30.12.2025)
 - Error handling functions:

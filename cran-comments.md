@@ -5,6 +5,10 @@ Last CRAN release was on 16.06.2026.
 
 * `ifelse_multi()`: A variation of the `ifelse()` function which can handle multiple conditions in one go. The function takes in the conditions as characters. The conditions are parsed before evaluation to enable SAS like writing styles.
 
+### Renamed functions
+
+* `stack_data()`: `set` was renamed to prevent masking errors in combination with `data.table`.
+
 ### New functionality
 
 * `if.()`, `else_if.()`: Are now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
@@ -21,6 +25,7 @@ Last CRAN release was on 16.06.2026.
 
 * `multi_join()`: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times.
 * `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`.
+* `stack_data()`: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour.
 
 ### Optimization
 
