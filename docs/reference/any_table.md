@@ -297,6 +297,7 @@ Additional functions that can handle formats:
 #       the same reason. When running the examples manually, don't run this
 #       option here.
 set_print(FALSE)
+set_style_options(background_color = "")
 
 # Example data frame
 my_data <- dummy_data(1000)
@@ -562,4 +563,7 @@ unlink(table_file)
 reset_style_options()
 reset_qol_options()
 close_file()
+
+set_print(TRUE)
+set_style_options(background_color = "FFFFFF")
 ```

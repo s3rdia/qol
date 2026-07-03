@@ -23,7 +23,7 @@ excel_output_style(
   filters = TRUE,
   grid_lines = TRUE,
   by_as_subheaders = FALSE,
-  background_color = "",
+  background_color = "FFFFFF",
   header_back_color = "FFFFFF",
   header_font_color = "000000",
   header_font_size = 10,

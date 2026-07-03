@@ -48,6 +48,14 @@
   in the brackets. (26.06.2026)
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Now uses Latin-1 encoding. (01.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Now the whole background is filled white as default. The new default
+  is set in
+  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md).
+  (03.07.2026)
 
 #### Fixed
 
@@ -82,6 +90,8 @@
   Received some additional messages for computing stats. (26.06.2026)
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Added example for type combinations. (26.06.2026)
+- Minimum `openxlsx2` version is now 1.28, which allows a faster
+  background fill. (03.07.2026)
 
 ## qol 1.3.2
 

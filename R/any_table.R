@@ -125,6 +125,7 @@
 #' #       the same reason. When running the examples manually, don't run this
 #' #       option here.
 #' set_print(FALSE)
+#' set_style_options(background_color = "")
 #'
 #' # Example data frame
 #' my_data <- dummy_data(1000)
@@ -390,6 +391,9 @@
 #' reset_style_options()
 #' reset_qol_options()
 #' close_file()
+#'
+#' set_print(TRUE)
+#' set_style_options(background_color = "FFFFFF")
 #'
 #' @export
 any_table <- function(data_frame,
@@ -1108,8 +1112,7 @@ any_table <- function(data_frame,
                              FALSE)
 
         group_df <- result_list[[1]] |>
-            rename_pattern("_sum", "_row_sum") |>
-            dropp("sum_wgt")
+            rename_pattern("_sum", "_row_sum")
 
         # Join total sums to the main data frame
         any_tab <- any_tab |>
@@ -1197,8 +1200,7 @@ any_table <- function(data_frame,
                              FALSE)
 
         group_df <- result_list[[1]] |>
-            rename_pattern("_sum", "_col_sum") |>
-            dropp("sum_wgt")
+            rename_pattern("_sum", "_col_sum")
 
         # Join total sums to the main data frame
         any_tab <- any_tab |>

@@ -19,6 +19,7 @@
 
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets. (26.06.2026)
 * `import_data()`: Now uses Latin-1 encoding. (01.07.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Now the whole background is filled white as default. The new default is set in `excel_output_style()`. (03.07.2026)
 
 ### Fixed
 
@@ -36,6 +37,7 @@
 * `any_table()`: Received some additional messages for computing stats. (26.06.2026)
 * `any_table()`: Received some additional messages for computing stats. (26.06.2026)
 * `summarise_plus()`: Added example for type combinations. (26.06.2026)
+* Minimum `openxlsx2` version is now 1.28, which allows a faster background fill. (03.07.2026)
 
 
 # qol 1.3.2

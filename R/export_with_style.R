@@ -43,6 +43,7 @@
 #' @examples
 #' # Example data frame
 #' my_data <- dummy_data(100)
+#' set_style_options(background_color = "")
 #'
 #' # Define style
 #' set_style_options(column_widths = c(2, 15, 15, 15, 9))
@@ -110,6 +111,9 @@
 #' reset_style_options()
 #' reset_qol_options()
 #' close_file()
+#'
+#' set_print(TRUE)
+#' set_style_options(background_color = "FFFFFF")
 #'
 #' @export
 export_with_style <- function(data_frame,

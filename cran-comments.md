@@ -20,6 +20,7 @@ Last CRAN release was on 16.06.2026.
 
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets.
 * `import_data()`: Now uses Latin-1 encoding.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Now the whole background is filled white as default. The new default is set in `excel_output_style()`.
 
 ### Fixed
 
@@ -36,6 +37,7 @@ Last CRAN release was on 16.06.2026.
 * `multi_join()`: Now displays the actual data frame names to be joined instead of just an iterative number in the console.
 * `any_table()`: Received some additional messages for computing stats.
 * `summarise_plus()`: Added example for type combinations.
+* Minimum `openxlsx2` version is now 1.28, which allows a faster background fill.
 
 
 ## R CMD check results
