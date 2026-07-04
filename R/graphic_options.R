@@ -86,8 +86,10 @@
 #' or "legend", which allows to position a legend separately.
 #' @param label_group If label_Type is "lines", then this parameter determines above which
 #' group of segments the labels will be drawn.
-#' @param legend_x_pos Horizontal position of the legend.
-#' @param legend_y_pos Vertical position of the legend.
+#' @param legend_x_pos Horizontal position of the legend. Also two presets "left" and "right"
+#' can be used which place the legend beside the diagram.
+#' @param legend_y_pos Vertical position of the legend. Also two presets "top" and "bottom"
+#' can be used which place the legend above or below the diagram.
 #' @param legend_columns The number of columns in which the labels should be arranged.
 #' If 0, all labels will be drawn below each other. If max number of segments, then
 #' all labels will be drawn beside each other.
@@ -467,6 +469,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param graphic_width The width of the whole graphic.
 #' @param graphic_height The height of the whole graphic.
 #' @param diagram_start_top The starting position of the main diagram within the graphic from the top.
+#' @param diagram_start_left The starting position of the main diagram within the graphic from the left.
 #' @param diagram_width The width of the main diagram within the graphic.
 #' @param diagram_height The height of the main diagram within the graphic.
 #' @param margins Inner margins to the graphic borders in cm.
@@ -556,6 +559,7 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 graphic_dimensions <- function(graphic_width             = 16,
                                graphic_height            = 9,
                                diagram_start_top         = "auto",
+                               diagram_start_left        = "auto",
                                diagram_width             = "auto",
                                diagram_height            = "auto",
                                margins                   = 0.25,

@@ -952,9 +952,45 @@ generate_graphic <- function(graphic_tab,
     origin_height   <- abs(grid::convertHeight(grid::grobHeight(origin_grob),   "cm", valueOnly = TRUE))
 
     # Get automatically set dimensions
-    dimensions[["diagram_start_top"]] <- get_diagram_start_cm(dimensions, title_height)
-    dimensions[["diagram_width"]]     <- get_diagram_width_cm(dimensions)
-    dimensions[["diagram_height"]]    <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
+    flag_auto_width  <- dimensions[["diagram_width"]]
+    flag_auto_height <- dimensions[["diagram_height"]]
+
+    dimensions[["diagram_start_left"]] <- ifelse(dimensions[["diagram_start_left"]] == "auto", dimensions[["margins"]], dimensions[["diagram_start_left"]])
+    dimensions[["diagram_start_top"]]  <- get_diagram_start_cm(dimensions, title_height)
+    dimensions[["diagram_width"]]      <- get_diagram_width_cm(dimensions)
+    dimensions[["diagram_height"]]     <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
+
+    # Put the passed arguments into a list to pass them on to a function which
+    # measures the majority of the dimensions and positions.
+    arguments <- list(graphic_tab     = graphic_tab,
+                      axes_vars       = c(axes_vars),
+                      segment_vars    = c(segment_vars),
+                      values          = c(values),
+                      statistics      = c(statistics),
+                      var_labels      = c(var_labels),
+                      stat_labels     = c(stat_labels),
+                      visuals         = visuals,
+                      axes            = axes,
+                      dimensions      = dimensions,
+                      fine_tuning     = fine_tuning,
+                      output          = output,
+                      title_height    = title_height,
+                      footnote_height = footnote_height,
+                      origin_height   = origin_height)
+
+    diagram_info <- get_diagram_dimensions(arguments)
+
+    # Add a legend for the individual segments if specified
+    segment_labels <- setup_legend(diagram_info, visuals, dimensions)
+
+    # Adjust diagram dimensions according to legend presets, if legend is present
+    if (length(segment_labels) > 1){
+        arguments[["dimensions"]][["diagram_start_left"]] <- segment_labels[[2]]
+        arguments[["dimensions"]][["diagram_start_top"]]  <- segment_labels[[3]]
+        arguments[["dimensions"]][["diagram_width"]]      <- segment_labels[[4]]
+        arguments[["dimensions"]][["diagram_height"]]     <- segment_labels[[5]]
+        segment_labels <- grid::gList(segment_labels[[1]])
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Build main diagram
@@ -962,21 +998,7 @@ generate_graphic <- function(graphic_tab,
     if (is.null(by_info)){ print_step("MINOR", "Build main diagram") }
 
     # Draw main diagram
-    main_grob <- diagram(graphic_tab,
-                         c(axes_vars),
-                         c(segment_vars),
-                         c(values),
-                         c(statistics),
-                         c(var_labels),
-                         c(stat_labels),
-                         visuals,
-                         axes,
-                         dimensions,
-                         fine_tuning,
-                         output,
-                         title_height,
-                         footnote_height,
-                         origin_height)
+    main_grob <- diagram(arguments, diagram_info)
 
     # Go back to the main canvas to be able to draw additional textboxes freely
     back_to_the_root()
@@ -991,9 +1013,6 @@ generate_graphic <- function(graphic_tab,
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
 
-    # Add a legend for the individual segments if specified
-    segment_labels <- setup_legend(main_grob[["meta"]], visuals, dimensions)
-
     # Make sure custom textboxes have a unique name or otherwise only the first
     # will be drawn multiple times.
     custom_textboxes <- lapply(seq_along(add_texts), function(textbox){
@@ -1003,7 +1022,7 @@ generate_graphic <- function(graphic_tab,
         })
 
     if (length(custom_textboxes) == 0){
-        custom_textboxes <- grid::nullGrob()
+        custom_textboxes <- list(grid::nullGrob())
     }
 
     # Put together the whole graphic
@@ -1012,9 +1031,9 @@ generate_graphic <- function(graphic_tab,
                             grid::editGrob(title_grob,             vp = grid::vpPath("main_canvas")),
                             grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                             grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
-                            grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas")),
+                            grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
                             segment_labels,
-                            custom_textboxes))),
+                            custom_textboxes)),
         childrenvp = viewport_tree,
         name       = "graphic" )
 
