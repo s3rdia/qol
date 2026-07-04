@@ -210,9 +210,11 @@ or "legend", which allows to position a legend separately.}
 \item{label_group}{If label_Type is "lines", then this parameter determines above which
 group of segments the labels will be drawn.}
 
-\item{legend_x_pos}{Horizontal position of the legend.}
+\item{legend_x_pos}{Horizontal position of the legend. Also two presets "left" and "right"
+can be used which place the legend beside the diagram.}
 
-\item{legend_y_pos}{Vertical position of the legend.}
+\item{legend_y_pos}{Vertical position of the legend. Also two presets "top" and "bottom"
+can be used which place the legend above or below the diagram.}
 
 \item{legend_columns}{The number of columns in which the labels should be arranged.
 If 0, all labels will be drawn below each other. If max number of segments, then
