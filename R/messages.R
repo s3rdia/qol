@@ -81,14 +81,15 @@ print_message <- function(type,
         }
     }
 
-    depth <- sys.nframe()
+    depth     <- sys.nframe()
+    sys_calls <- get_condensed_sys_calls()
 
     # Whenever a code block is executed, a unique token is generated. Based on this
     # token it can be decided, whether we are starting a new message stack (in case we
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token(depth)
+    current_execution_token <- get_execution_token(depth, sys_calls)
 
     # In case it is the first starting message in the current run or if the stack
     # has a not suppressed end not. Meaning a function or pipe operation has finished.
@@ -116,7 +117,7 @@ print_message <- function(type,
     }
 
     # Don't print message, if messages are suppressed
-    if (!always_print && is_message_suppressed()){
+    if (!always_print && is_message_suppressed(sys_calls)){
         text       <- paste(text, collapse = " ")
         suppressed <- TRUE
     }
@@ -147,7 +148,7 @@ print_message <- function(type,
                                                  in_place   = FALSE,
                                                  depth      = depth,
                                                  caller     = caller,
-                                                 call_stack = sys.calls(),
+                                                 call_stack = sys_calls,
                                                  time       = Sys.time())
 
     invisible(text)
@@ -357,9 +358,10 @@ print_headline <- function(text,
     }
 
     # Don't print message, if messages are suppressed
-    depth <- sys.nframe()
+    depth     <- sys.nframe()
+    sys_calls <- get_condensed_sys_calls()
 
-    if (!always_print && is_message_suppressed()){
+    if (!always_print && is_message_suppressed(sys_calls)){
         suppressed <- TRUE
         text_orig  <- text
     }
@@ -413,7 +415,7 @@ print_headline <- function(text,
                                                  in_place   = FALSE,
                                                  depth      = depth,
                                                  caller     = caller,
-                                                 call_stack = sys.calls(),
+                                                 call_stack = sys_calls,
                                                  time       = Sys.time())
 
     invisible(text_orig)
@@ -472,6 +474,7 @@ print_start_message <- function(current_time = Sys.time(),
                                 utf8         = .qol_messages[["format"]][["utf8"]],
                                 no_color     = .qol_messages[["no_color"]]){
     depth      <- sys.nframe()
+    sys_calls  <- get_condensed_sys_calls()
     suppressed <- FALSE
     no_print   <- FALSE
 
@@ -491,10 +494,10 @@ print_start_message <- function(current_time = Sys.time(),
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token(depth)
+    current_execution_token <- get_execution_token(depth, sys_calls)
 
     # Don't print starting message, if messages are suppressed
-    if (!always_print && is_message_suppressed()){
+    if (!always_print && is_message_suppressed(sys_calls)){
         # In case it is the first starting message in the current run or if the stack
         # has a not suppressed end not. Meaning a function or pipe operation has finished.
         if (!identical(current_session_token, .qol_messages[["last_session"]]) ||
@@ -511,7 +514,7 @@ print_start_message <- function(current_time = Sys.time(),
     else{
         # In case it is the first starting message in the current run or if the stack
         # has a not suppressed end not. Meaning a function or pipe operation has finished.
-        if (!identical(current_session_token, .qol_messages[["last_session"]]) ||
+        if (!identical(current_session_token,   .qol_messages[["last_session"]]) ||
             !identical(current_execution_token, .qol_messages[["last_execution"]]) ||
             message_stack_needs_reset()){
 
@@ -520,6 +523,28 @@ print_start_message <- function(current_time = Sys.time(),
             .qol_messages[["last_execution"]] <- current_execution_token
 
             entry_nr <- 1
+
+            .qol_messages[["start_time"]] <- current_time
+            start_timer()
+
+            # Get current time in hh:mm:ss format
+            current_time <- format(current_time, "%H:%M:%S")
+
+            if (!is_no_print_active()){
+                if (!no_print && !suppress){
+                    # Print actual headline
+                    text      <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
+                    text_orig <- print_headline(text = text, no_color = no_color, always_print = TRUE)
+                    cat("\n")
+                    utils::flush.console()
+                }
+                else{
+                    text_orig <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
+                }
+            }
+            else{
+                text_orig <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
+            }
         }
         # In case it is another starting message within the same session
         else{
@@ -527,27 +552,10 @@ print_start_message <- function(current_time = Sys.time(),
 
             suppressed <- TRUE
             no_print   <- TRUE
-        }
 
-        .qol_messages[["start_time"]] <- current_time
-        start_timer()
+            # Get current time in hh:mm:ss format
+            current_time <- format(current_time, "%H:%M:%S")
 
-        # Get current time in hh:mm:ss format
-        current_time <- format(current_time, "%H:%M:%S")
-
-        if (!is_no_print_active()){
-            if (!no_print && !suppress){
-                # Print actual headline
-                text      <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
-                text_orig <- print_headline(text = text, no_color = no_color, always_print = TRUE)
-                cat("\n")
-                utils::flush.console()
-            }
-            else{
-                text_orig <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
-            }
-        }
-        else{
             text_orig <- paste0("[b][", caller_color, " ", caller, "][/b] started at ", current_time)
         }
     }
@@ -562,7 +570,7 @@ print_start_message <- function(current_time = Sys.time(),
                                                  in_place   = FALSE,
                                                  depth      = depth,
                                                  caller     = caller,
-                                                 call_stack = sys.calls(),
+                                                 call_stack = sys_calls,
                                                  time       = Sys.time())
 
     invisible(text_orig)
@@ -585,6 +593,7 @@ print_closing <- function(time_threshold = 2,
                           utf8           = .qol_messages[["format"]][["utf8"]],
                           no_color       = .qol_messages[["no_color"]]){
     depth      <- sys.nframe()
+    sys_calls  <- get_condensed_sys_calls()
     suppressed <- FALSE
 
     # Identify which function called the message
@@ -599,7 +608,7 @@ print_closing <- function(time_threshold = 2,
     }
 
     # Don't print starting message, if messages are suppressed
-    if (!always_print && is_message_suppressed()){
+    if (!always_print && is_message_suppressed(sys_calls)){
         suppressed <- TRUE
         entry_nr   <- length(.qol_messages[["stack"]]) + 1
         text_orig  <- paste0(caller, " ended")
@@ -610,9 +619,9 @@ print_closing <- function(time_threshold = 2,
         # have a new token) or we keep the current stack (in case of multiple functions
         # running as a block)
         current_session_token   <- format(sys.frame(1))
-        current_execution_token <- get_execution_token(depth)
+        current_execution_token <- get_execution_token(depth, sys_calls)
 
-        if (is_stack() && (!identical(current_session_token, .qol_messages[["last_session"]]) ||
+        if (is_stack() && (!identical(current_session_token,   .qol_messages[["last_session"]]) ||
                            !identical(current_execution_token, .qol_messages[["last_execution"]]))){
             if (!is_start_fake()){
                 suppressed <- TRUE
@@ -686,7 +695,7 @@ print_closing <- function(time_threshold = 2,
                                                  in_place   = FALSE,
                                                  depth      = depth,
                                                  caller     = caller,
-                                                 call_stack = sys.calls(),
+                                                 call_stack = sys_calls,
                                                  time       = Sys.time())
 
     # Give list entries a name if the stack is closed
@@ -764,21 +773,22 @@ print_step <- function(type,
     }
 
     # Check how deep nested this function is called.
-    depth <- sys.nframe()
+    depth     <- sys.nframe()
+    sys_calls <- get_condensed_sys_calls()
 
     # Whenever a code block is executed, a unique token is generated. Based on this
     # token it can be decided, whether we are starting a new message stack (in case we
     # have a new token) or we keep the current stack (in case of multiple functions
     # running as a block)
     current_session_token   <- format(sys.frame(1))
-    current_execution_token <- get_execution_token(depth)
+    current_execution_token <- get_execution_token(depth, sys_calls)
 
     # In case it is the first starting message in the current run or if the stack
     # has a not suppressed end not. Meaning a function or pipe operation has finished.
-    if (!identical(current_session_token, .qol_messages[["last_session"]]) ||
+    if (!identical(current_session_token,   .qol_messages[["last_session"]]) ||
         !identical(current_execution_token, .qol_messages[["last_execution"]])){
 
-        if (awaits_time_print() && !is_no_print_active() && !is_message_suppressed()){
+        if (awaits_time_print() && !is_no_print_active() && !is_message_suppressed(sys_calls)){
             cat("\n")
         }
 
@@ -805,7 +815,7 @@ print_step <- function(type,
         entry_nr <- 1
     }
 
-    if (!always_print && is_message_suppressed()){
+    if (!always_print && is_message_suppressed(sys_calls)){
         suppressed <- TRUE
     }
     else{
@@ -836,7 +846,7 @@ print_step <- function(type,
                                                  in_place   = in_place,
                                                  depth      = depth,
                                                  caller     = caller,
-                                                 call_stack = sys.calls(),
+                                                 call_stack = sys_calls,
                                                  time       = Sys.time())
 
     invisible(text)
@@ -1337,14 +1347,19 @@ message_stack_needs_reset <- function(){
 #' @description
 #' Checks whether the parent function is surrounded by suppressMessages.
 #'
+#' @param sys_calls The condensed sys.calls.
+#'
 #' @returns
 #' Returns TRUE or FALSE.
 #'
 #' @noRd
-is_message_suppressed <- function(){
-    any(sapply(sys.calls(), function(calls){
-        any(as.character(calls) %in% c("suppressMessages", "suppressPackageStartupMessages", "suppressWarnings"))
-    }))
+is_message_suppressed <- function(sys_calls){
+    targets <- c("suppressMessages", "suppressPackageStartupMessages", "suppressWarnings")
+
+    # Vectorized substring check across all calls and all targets
+    any(outer(sys_calls, targets, Vectorize(function(call, pattern){
+        grepl(pattern, call, fixed = TRUE)
+        })))
 }
 
 
@@ -1437,38 +1452,26 @@ awaits_time_print <- function(){
 #' Get a unique token for the current code block execution.
 #'
 #' @param depth The current sysframe depth this function is called from.
+#' @param sys_calls The condensed sys.calls.
 #'
 #' @returns
 #' Returns upper function call as string.
 #'
 #' @noRd
-get_execution_token <- function(depth){
+get_execution_token <- function(depth, sys_calls){
     # Only get the execution token, if the nesting is not too deep. Otherwise this
     # will become very resource heavy.
     if (depth < 20){
-        # Get the whole call stack
-        calls <- sys.calls()
-
-        # Convert call stack to character vector
-        call_strings <- vapply(calls, function(call){
-            paste(deparse(call), collapse = "")
-        },
-        character(1))
-
-        # Remove internal wrappers that could potentially surround the current function call
-        ignore <- c("withCallingHandlers", "tryCatch", "doTryCatch", "eval", "source",
-                    "local", "test_package", "test_single_file", "tinytest", "testthat",
-                    "expect_", "rlang", "run_test_dir", "run_test_dir", "run_test_file",
-                    "lapply", "FUN")
-
-        call_strings <- call_strings[!Reduce(`|`, lapply(ignore, grepl, x = call_strings))]
+        # Get the condensed call stack
+        sys_calls <- get_condensed_sys_calls()
 
         # If there is nothing left, the function was called from the global environment
-        if (length(call_strings) == 0)
+        if (length(sys_calls) == 0){
             return("global")
+        }
 
         # Return upper function call
-        call_strings[1]
+        sys_calls[1]
     }
     else{
         NULL
@@ -1608,13 +1611,12 @@ convert_hourglass <- function(type = NULL,
 
 
 #' @description
-#' Converts the hourglass symbol.
+#' Put time stamp at the end of the last message if present.
 #'
 #' @returns
 #' Returns a converted text.
 #'
 #' @noRd
-# Put time stamp at the end of the last message if present
 print_time_stamp <- function(in_place,
                              utf8     = .qol_messages[["format"]][["utf8"]],
                              no_color = .qol_messages[["no_color"]]){
@@ -1653,9 +1655,9 @@ print_time_stamp <- function(in_place,
                 if (no_color){
                     ansi_regex <- "(?>\\x1B\\[|\\033\\[)[0-9;:]*[a-zA-Z]"
                     .qol_messages[["last_message"]] <- gsub(ansi_regex,
-                                                                 "",
-                                                                 .qol_messages[["last_message"]],
-                                                                 perl = TRUE)
+                                                            "",
+                                                            .qol_messages[["last_message"]],
+                                                            perl = TRUE)
                 }
 
                 # If an in place step is triggered then don't print a time stamp here,
@@ -1688,4 +1690,73 @@ print_time_stamp <- function(in_place,
     }
 
     invisible(NULL)
+}
+
+
+#' @description
+#' Strips down the sys calls to reduce memory load.
+#'
+#' @returns
+#' Returns a condensed and deparsed sys.call list.
+#'
+#' @noRd
+# Put time stamp at the end of the last message if present
+get_condensed_sys_calls <- function(){
+    sys_calls <- sys.calls()
+
+    call_select <- vapply(sys_calls, function(call){
+        if (!is.call(call)){
+            return(TRUE)
+        }
+
+        # Get the front main element of the call
+        main_element <- call[[1]]
+
+        # Filter out anonymous functions: "(function...)"
+        if (typeof(main_element) %in% c("closure", "builtin", "special")){
+            return(FALSE)
+        }
+
+        # Extract function name from the call
+        if (is.call(main_element)){
+            if (identical(main_element[[1]], quote(`(`))){
+                return(FALSE)
+            }
+
+            function_name <- as.character(main_element[[1]])
+        }
+        else{
+           function_name <- as.character(main_element)
+        }
+
+        if (length(function_name) == 0 || is.na(function_name)){
+            return(TRUE)
+        }
+
+        # Remove functions that potentially cause heavy memory load or are redundant
+        if (function_name %in% c("withCallingHandlers", "get_execution_token", "(",
+                                 "tryCatch", "doTryCatch", "eval", "source", "local",
+                                 "test_package", "test_single_file", "tinytest", "testthat",
+                                 "rlang", "run_test_dir", "run_test_dir",
+                                 "run_test_file", "lapply", "FUN", "is_message_suppressed",
+                                 "get_condensed_sys_calls")){
+            return(FALSE)
+        }
+
+        prefixes <- c("print_", "::", "run_pkg_hook", "[[", "expect_")
+
+        if (any(outer(function_name, prefixes, startsWith))){
+            return(FALSE)
+        }
+
+        TRUE
+    }, logical(1))
+
+    # Only keep selected calls
+    sys_calls <- sys_calls[call_select]
+
+    # Deparse calls
+    vapply(sys_calls, function(call) {
+        paste(deparse(call, nlines = 1), collapse = "")
+    }, character(1))
 }

@@ -73,11 +73,18 @@
   When a data frame and a list was input, the function tried to hack the
   list into one of the data frame columns. Now all lists are flattened
   and data frames extracted to prevent this behaviour. (03.07.2026)
+- [`print_start_message()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Now doesn’t reset start timer anymore when message is suppressed.
+  (04.07.2026)
 
 #### Optimization
 
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   Brought percentiles up to more speed. (17.06.2026)
+- I underestimated how big in size the call stack can get depending on
+  what functions are called. Therefore the message stack now doesn’t
+  receive the full call stack per message anymore but a condensed
+  version and just as a list of character strings. (04.07.2026)
 
 #### Additionally
 
@@ -92,6 +99,8 @@
   Added example for type combinations. (26.06.2026)
 - Minimum `openxlsx2` version is now 1.28, which allows a faster
   background fill. (03.07.2026)
+- [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Added a message when files are stacked. (04.07.2026)
 
 ## qol 1.3.2
 

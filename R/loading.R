@@ -841,7 +841,9 @@ load_file_multi <- function(file_list,
 
     # Stack data frames
     if (stack_files){
-        result_list <- suppressMessages(do.call(stack_data, result_list))
+        print_step("MAJOR", "Stacking files")
+
+        result_list <- suppressMessages(stack_data(result_list))
     }
 
     # Revert used threads

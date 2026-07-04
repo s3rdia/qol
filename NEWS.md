@@ -26,10 +26,12 @@
 * `multi_join()`: Before joining it is now checked whether there will be duplicate variable names after the join. If so, these variables will be dropped before joining. Otherwise it was possible that a variable could show up in the final data frame with the exact same name multiple times. (21.06.2026)
 * `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`. (26.06.2026)
 * `stack_data()`: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour. (03.07.2026)
+* `print_start_message()`: Now doesn't reset start timer anymore when message is suppressed. (04.07.2026)
 
 ### Optimization
 
 * `summarise_plus()`: Brought percentiles up to more speed. (17.06.2026)
+* I underestimated how big in size the call stack can get depending on what functions are called. Therefore the message stack now doesn't receive the full call stack per message anymore but a condensed version and just as a list of character strings. (04.07.2026)
 
 ### Additionally
 
@@ -38,6 +40,7 @@
 * `any_table()`: Received some additional messages for computing stats. (26.06.2026)
 * `summarise_plus()`: Added example for type combinations. (26.06.2026)
 * Minimum `openxlsx2` version is now 1.28, which allows a faster background fill. (03.07.2026)
+* `load_file_multi()`: Added a message when files are stacked. (04.07.2026)
 
 
 # qol 1.3.2
