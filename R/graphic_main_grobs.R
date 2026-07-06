@@ -197,9 +197,9 @@ vbar_grob <- function(diagram_info,
 
     # Return final segments
     if (inherits(texts, "gList")){
-        grid::gList(rects, texts)
+        list(grid::gList(rects, texts), grid::convertUnit(grid::unit(value_y_pos, "native") + y_offset, "native", valueOnly = TRUE))
     }
     else{
-        grid::gList(rects)
+        list(grid::gList(rects), value_y_pos)
     }
 }

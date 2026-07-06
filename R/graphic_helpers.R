@@ -976,16 +976,26 @@ get_diagram_dimensions <- function(arguments){
         actual_drawing_height <- values - primary_y_min
     }
 
+    # Format values according to options
+    primary_y_tick_values <- format_values(primary_y_values,
+                                           axes[["primary_axes_decimals"]],
+                                           axes[["primary_axes_big_mark"]],
+                                           axes[["primary_axes_decimal_mark"]],
+                                           axes[["primary_axes_prefix"]],
+                                           axes[["primary_axes_suffix"]],
+                                           axes[["primary_axes_scale"]],
+                                           visuals[["display_plus_symbol"]])
+
     # Get width of the highest value for the axes to measure the actual space the
     # whole axes needs in the diagram.
     if (abs(primary_y_max) > abs(primary_y_min)){
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_max, axes, dimensions, visuals)
+            get_value_axes_width(primary_y_tick_values[length(primary_y_tick_values)], axes, dimensions, visuals)
     }
     # In case of negative value having more digits
     else{
         primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_min, axes, dimensions, visuals)
+            get_value_axes_width(primary_y_tick_values[1], axes, dimensions, visuals)
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
@@ -1039,10 +1049,10 @@ get_diagram_dimensions <- function(arguments){
 
         # Format group labels on variable x axes
         wrapped_group_labels[[i]] <- wrap_text_vector(individual_groups[[i]],
-                                                      individual_group_widths[i] - (margin * 2),
+                                                      (individual_group_widths[i] - (margin * 2)) * dimensions[["diagram_width"]],
                                                       visuals[["font"]],
                                                       dimensions[["axes_font_size"]],
-                                                      visuals[["axes_font_face"]])
+                                                      visuals[["variable_axes_font_face"]])
 
         # Get dimensions of group labels
         group_label_heights[i] <- get_variable_axes_height(wrapped_group_labels[[i]], dimensions, visuals)
@@ -1080,7 +1090,7 @@ get_diagram_dimensions <- function(arguments){
     # Format segment labels
     segment_label_textbox_width <- dimensions[["textbox_width"]] / dimensions[["diagram_width"]]
     wrapped_segment_labels <- wrap_text_vector(unique_segments,
-                                               segment_label_textbox_width,
+                                               segment_label_textbox_width * dimensions[["diagram_width"]],
                                                visuals[["font"]],
                                                dimensions[["axes_font_size"]],
                                                visuals[["axes_font_face"]])
@@ -1202,6 +1212,7 @@ get_diagram_dimensions <- function(arguments){
          primary_y_distance          = primary_y_distance,
          zero_pos                    = zero_pos,
          actual_drawing_height       = actual_drawing_height,
+         primary_y_tick_values       = primary_y_tick_values,
          primary_y_axes_width        = primary_y_axes_width,
          values_inner_vjust          = values_inner_vjust,
          values_outer_vjust          = values_outer_vjust,
@@ -1291,10 +1302,11 @@ setup_interactive_elements <- function(arguments, diagram_info){
 setup_y_axes <- function(diagram_info,
                          arguments,
                          secondary = FALSE){
+    axes           <- arguments[["axes"]]
     visuals        <- arguments[["visuals"]]
     dimensions     <- arguments[["dimensions"]]
     tick_positions <- diagram_info[["primary_y_tick_pos"]]
-    tick_values    <- diagram_info[["primary_y_values"]]
+    primary_y_tick_values <- diagram_info[["primary_y_tick_values"]]
 
     which <- "primary"
 
@@ -1322,17 +1334,6 @@ setup_y_axes <- function(diagram_info,
                                 gp   = grid::gpar(col = visuals[[paste0(which, "_axes_color")]],
                                                   lwd = dimensions[["axes_line_thickness"]]))
 
-    # Format values according to options
-    axes <- arguments[["axes"]]
-
-    formatted_tick_values <- format_values(tick_values,
-                                           axes[[paste0(which, "_axes_decimals")]],
-                                           axes[[paste0(which, "_axes_big_mark")]],
-                                           axes[[paste0(which, "_axes_decimal_mark")]],
-                                           axes[[paste0(which, "_axes_prefix")]],
-                                           axes[[paste0(which, "_axes_suffix")]],
-                                           axes[[paste0(which, "_axes_scale")]])
-
     # When values are placed at the tick positions, they are drawn slightly of to
     # the bottom. So the positions need to be manually adjusted.
     value_positions <- grid::convertUnit(grid::unit(tick_positions, "native")
@@ -1342,7 +1343,7 @@ setup_y_axes <- function(diagram_info,
     axes_margin  <- arguments[["fine_tuning"]][["value_axes_margin"]]
     label_offset <- -axes_margin + ((2 * axes_margin) * zero_pos)
 
-    axes_values <- grid::textGrob(label = formatted_tick_values,
+    axes_values <- grid::textGrob(label = primary_y_tick_values,
                                   x     = label_offset,
                                   y     = value_positions,
                                   just  = c("right", "center"),
@@ -1624,18 +1625,8 @@ get_value_axes_width <- function(graphic_tab,
                                  which = "primary"){
     which <- tolower(which)
 
-    # Format the number to see, whether additional symbols are added according to
-    # settings.
-    axes_max <- format_values(max_value,
-                              axes[[paste0(which, "_axes_decimals")]],
-                              axes[[paste0(which, "_axes_big_mark")]],
-                              axes[[paste0(which, "_axes_decimal_mark")]],
-                              axes[[paste0(which, "_axes_prefix")]],
-                              axes[[paste0(which, "_axes_suffix")]],
-                              axes[[paste0(which, "_axes_scale")]])
-
     # Create test graphical object to measure the actual width
-    temp_grob <- grid::textGrob(axes_max,
+    temp_grob <- grid::textGrob(max_value,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
                                                 fontface   = visuals[[paste0(which, "_axes_font_face")]]))
@@ -2184,7 +2175,7 @@ setup_legend <- function(diagram_info,
         preset <- legend_y_pos
 
         if (!preset %in% c("top", "bottom")){
-            print_message("WARNING", "Horizontally only 'top' and 'bottom' preset available. 'top' will be used.")
+            print_message("WARNING", "Vertically only 'top' and 'bottom' preset available. 'top' will be used.")
             preset <- "top"
         }
 
@@ -2471,14 +2462,25 @@ format_values <- function(values,
                           decimal_mark = .qol_options[["graphic_axes"]][["primary_axes_decimal_mark"]],
                           prefix       = .qol_options[["graphic_axes"]][["primary_axes_prefix"]],
                           suffix       = .qol_options[["graphic_axes"]][["primary_axes_suffix"]],
-                          scale        = .qol_options[["graphic_axes"]][["primary_axes_scale"]]){
-    paste0(prefix,
+                          scale        = .qol_options[["graphic_axes"]][["primary_axes_scale"]],
+                          plus_symbol  = .qol_options[["graphic_visuals"]][["display_plus_symbol"]]){
+    values <- paste0(prefix,
            formatC(values * scale,
                    format       = "f",
                    digits       = decimals,
                    big.mark     = big_mark,
                    decimal.mark = decimal_mark),
            suffix)
+
+    # Convert short minus symbol with long one for better readability
+    values <- sub("-", "\u2013", values)
+
+    # Display the + symbol in front of positive values, if specified
+    if (plus_symbol){
+        values[values > 0] <- paste0("+", values[values > 0])
+    }
+
+    values
 }
 
 
@@ -2516,21 +2518,12 @@ format_diagram_values <- function(diagram_info,
     }
 
     # Format numeric values first
-    values <- format_values(values       = diagram_info[["values"]],
-                            decimals     = axes[[paste0(which, "_values_decimals")]],
-                            big_mark     = axes[[paste0(which, "_values_big_mark")]],
-                            decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
-                            prefix       = axes[[paste0(which, "_values_prefix")]],
-                            suffix       = suffix,
-                            scale        = axes[[paste0(which, "_axes_scale")]])
-
-    # Convert short minus symbol with long one for better readability
-    values <- sub("-", "\u2013", values)
-
-    # Display the + symbol in front of positive values, if specified
-    if (arguments[["visuals"]][["display_plus_symbol"]]){
-        values[values > 0] <- paste0("+", values[values > 0])
-    }
-
-    values
+    format_values(values       = diagram_info[["values"]],
+                  decimals     = axes[[paste0(which, "_values_decimals")]],
+                  big_mark     = axes[[paste0(which, "_values_big_mark")]],
+                  decimal_mark = axes[[paste0(which, "_values_decimal_mark")]],
+                  prefix       = axes[[paste0(which, "_values_prefix")]],
+                  suffix       = suffix,
+                  scale        = axes[[paste0(which, "_axes_scale")]],
+                  plus_symbol  = arguments[["visuals"]][["display_plus_symbol"]])
 }

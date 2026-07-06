@@ -73,6 +73,8 @@ dg_vbars <- function(arguments, diagram_info){
 
     # Generate segments
     segments <- vbar_grob(diagram_info, arguments)
+    diagram_info[["value_y_pos"]] <- segments[[2]]
+    segments                      <- grid::gList(segments[[1]])
 
     # Set up segment labels
     segment_labels <- direct_vertical_labels(diagram_info, arguments)

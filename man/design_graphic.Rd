@@ -34,7 +34,7 @@ design_graphic(
 \arguments{
 \item{data_frame}{A data frame in which are the variables to tabulate.}
 
-\item{axes_variables}{A vector that provides single variables or variable combinations
+\item{axes_variables}{A single variable combination or a vector with single variable
 that should appear on the variable axes. To nest variables use the form:
 "var1 + var2 + var3 + ...".}
 
