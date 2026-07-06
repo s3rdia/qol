@@ -133,6 +133,15 @@ export_with_style <- function(data_frame,
     monitor_df <- NULL |> monitor_start("Error handling", "Error handling")
     #-------------------------------------------------------------------------#
 
+    # Apply macros to save path and file
+    if (!is.null(style[["save_path"]])){
+        style[["save_path"]] <- macro(style[["save_path"]])
+    }
+
+    if (!is.null(style[["file"]])){
+        style[["file"]] <- macro(style[["file"]])
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Workbook
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -447,7 +456,7 @@ format_df_excel <- function(wb,
             handle_any_auto_dimensions(df_ranges, style) |>
             handle_header_table_dim(df_ranges, style)
 
-        wb$add_ignore_error(dims = df_ranges[["header_range"]], number_stored_as_text = TRUE)
+        wb$add_ignore_error(dims = df_ranges[["whole_tab_range"]], number_stored_as_text = TRUE)
 
         wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
         wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)

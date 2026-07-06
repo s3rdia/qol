@@ -23,6 +23,8 @@ libname <- function(path,
                     get_files  = FALSE,
                     extensions = NULL,
                     recursive  = FALSE){
+    path <- macro(path)
+
     if (!file.exists(path) || dirname(path) == "."){
         print_message("ERROR", "Path does not exist: [path]", path = path)
         return(invisible(NULL))
@@ -335,6 +337,9 @@ save_file <- function(data_frame,
     # File path
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    path <- macro(path)
+    file <- macro(file)
+
     full_path <- file.path(path, file)
 
     if (file.exists(full_path) && protect){
@@ -602,6 +607,9 @@ load_file <- function(path,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # File path
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    path <- macro(path)
+    file <- macro(file)
 
     full_path <- file.path(path, file)
 

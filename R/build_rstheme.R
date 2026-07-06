@@ -103,6 +103,9 @@ build_rstheme <- function(file_path,
     # Measure the time
     print_start_message()
 
+    # Apply macros to file path
+    file_path <- macro(file_path)
+
     # Check if folder exists; ... is for testing
     if (!dir.exists(file_path) || dirname(file_path) == "."){
         print_message("ERROR", "Directory '[file_path]' does not exist.", file_path = file_path)

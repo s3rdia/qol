@@ -926,9 +926,9 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
             footnote_heights <- style[["footnote_heights"]]
 
             if (!is.null(footnote_heights)){
-                number_to_rows   <- length(footnotes)
+                number_of_rows   <- length(footnotes)
                 start_row        <- ranges[["footnote.row"]]
-                end_row          <- start_row + number_to_rows - 1
+                end_row          <- start_row + number_of_rows - 1
 
                 footnote_heights <- fill_or_trim(footnote_heights,
                                                  number_of_rows)

@@ -85,6 +85,9 @@ import_data <- function(infile,
             return(invisible(NULL))
         }
 
+        # Apply macros to infile
+        infile <- macro(infile)
+
         # Abort on invalid path
         if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
             print_message("ERROR", c("Path does not exist: [infile]",
@@ -385,6 +388,9 @@ export_data <- function(data_frame,
 
         return(invisible(data_frame))
     }
+
+    # Apply macros to outfile
+    outfile <- macro(outfile)
 
     # Abort on invalid path
     if (!dir.exists(dirname(outfile)) || dirname(outfile) == "."){

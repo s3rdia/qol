@@ -217,6 +217,15 @@ crosstabs <- function(data_frame,
         }
     }
 
+    # Apply macros to save path and file
+    if (!is.null(style[["save_path"]])){
+        style[["save_path"]] <- macro(style[["save_path"]])
+    }
+
+    if (!is.null(style[["file"]])){
+        style[["file"]] <- macro(style[["file"]])
+    }
+
     ###########################################################################
     # Error handling
     ###########################################################################

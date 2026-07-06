@@ -15,6 +15,7 @@ Last CRAN release was on 16.06.2026.
 * `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`.
 * `any_table()`: `order_by` parameter now allows to input a vector of variable names.
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types can now also take in variable combinations inside the brackets like "state + (age, sex + education, first_person)".
+* `All functions with filepaths`: Wherever a file path or name can be passed, macro variables can be used inside the path or name.
 
 ### Changed functionality
 
@@ -28,6 +29,9 @@ Last CRAN release was on 16.06.2026.
 * `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`.
 * `stack_data()`: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour.
 * `print_start_message()`: Now doesn't reset start timer anymore when message is suppressed.
+* `print_start_message()`: Doesn't reset message stack  anymore when called in a deeply nested situation, which was caused by the optimization introduced in the last update.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Footnote heights are applied again.
+* `export_with_style()`: Excel number stored as text error is now ignored for the whole table.
 
 ### Optimization
 

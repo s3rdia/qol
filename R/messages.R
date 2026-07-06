@@ -1474,7 +1474,7 @@ get_execution_token <- function(depth, sys_calls){
         sys_calls[1]
     }
     else{
-        NULL
+        .qol_messages[["last_execution"]]
     }
 }
 

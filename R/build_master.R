@@ -69,6 +69,9 @@ build_master <- function(dir,
     # Measure the time
     print_start_message()
 
+    # Apply macros to dir
+    dir <- macro(dir)
+
     # Check if folder exists
     if (!dir.exists(dir) || dirname(dir) == "."){
         print_message("ERROR", "Directory '[dir]' does not exist.", dir = dir)

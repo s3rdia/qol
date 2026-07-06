@@ -14,6 +14,7 @@
 * `any_table()`: With the new `compute` parameter all possibilities of the `compute.()` function can be used within `any_table()`. (26.06.2026)
 * `any_table()`: `order_by` parameter now allows to input a vector of variable names. (26.06.2026)
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types can now also take in variable combinations inside the brackets like "state + (age, sex + education, first_person)". (26.06.2026)
+* `All functions with filepaths`: Wherever a file path or name can be passed, macro variables can be used inside the path or name. (06.07.2026)
 
 ### Changed functionality
 
@@ -27,6 +28,9 @@
 * `any_table()`: The statistic `sum_wgt` couldn't be renamed correctly. It can now be renamed by just doing `stat_labels = list("sum" = "Some label")`. (26.06.2026)
 * `stack_data()`: When a data frame and a list was input, the function tried to hack the list into one of the data frame columns. Now all lists are flattened and data frames extracted to prevent this behaviour. (03.07.2026)
 * `print_start_message()`: Now doesn't reset start timer anymore when message is suppressed. (04.07.2026)
+* `print_start_message()`: Doesn't reset message stack  anymore when called in a deeply nested situation, which was caused by the optimization introduced in the last update. (06.07.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Footnote heights are applied again. (06.07.2026)
+* `export_with_style()`: Excel number stored as text error is now ignored for the whole table. (06.07.2026)
 
 ### Optimization
 
