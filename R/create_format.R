@@ -263,7 +263,7 @@ interval_format <- function(...,
 
     # Add the smallest piece to "from" in case lower bound should not be included
     if (!include_lower){
-        from[!single_value] <- from[!single_value] - .Machine[["double.eps"]] * 1000
+        from[!single_value] <- from[!single_value] + .Machine[["double.eps"]] * 1000
     }
 
     # Subtract the smallest piece from "to" in case upper bound should not be included

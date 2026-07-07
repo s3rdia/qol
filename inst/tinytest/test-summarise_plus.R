@@ -598,6 +598,19 @@ result_df <- dummy_df |> summarise_plus()
 expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000", "1000"),
              info = "Summarise uses temporary variable, if no analysis variable is provided")
 
+
+# Summarise is able to output specific statistics per variable
+result_df <- dummy_df |>
+    summarise_plus(class      = sex,
+                   statistics = list("sum"       = c(income, expenses),
+                                     "pct_group" = weight))
+
+expect_equal(collapse::fncol(result_df), 7, info = "Summarise is able to output specific statistics per variable")
+expect_true(all(c("income_sum", "expenses_sum", "weight_pct_group") %in% names(result_df)),
+            info = "Summarise is able to output specific statistics per variable")
+expect_true(!all(c("income_pct_group", "expenses_pct_group", "weight_sum") %in% names(result_df)),
+            info = "Summarise is able to output specific statistics per variable")
+
 ###############################################################################
 # Format checks
 ###############################################################################

@@ -178,6 +178,15 @@
 #'                    nesting    = "all",
 #'                    na.rm      = TRUE)
 #'
+#' # Select specific statistics for specific variables
+#' specific_stats <- my_data |>
+#'     summarise_plus(class      = c(year, sex),
+#'                    statistics = list("sum"       = c(weight, income),
+#'                                      "mean"      = expenses,
+#'                                      "pct_group" = balance),
+#'                    formats    = list(sex = sex.),
+#'                    na.rm      = TRUE)
+#'
 #' # Works without grouping
 #' no_group <- my_data |> summarise_plus(values = income)
 #'
@@ -265,6 +274,13 @@ summarise_plus <- function(data_frame,
         nesting <- "deepest"
     }
 
+    # Setup of the monitoring results should be displayed depending on the nesting
+    monitor_grouping<- "group"
+
+    if (nesting == "deepest"){
+        monitor_grouping <- "section"
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -293,15 +309,55 @@ summarise_plus <- function(data_frame,
     # Statistics
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    statistics <- get_origin_as_char(statistics, substitute(statistics))
-    statistics <- tolower(statistics)
+    # Translate statistics if possible
+    temp_statistics <- tryCatch({
+        # Force evaluation to see if it exists
+        get_origin_as_char(statistics, substitute(statistics))
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    # In case statistics couldn't be evaluated, this means a list was passed,
+    # which provides specific variables for specific statistics. This list needs
+    # to be evaluated differently.
+    vars_per_stat_list <- NULL
+
+    if (is.null(temp_statistics)){
+        vars_per_stat_list <- lapply(as.list(substitute(statistics)), function(element){
+            element <- tolower(as.character(element))
+
+            element[!element %in% "c"]
+        })[-1]
+
+        statistics <- names(vars_per_stat_list)
+    }
+    # Prepare statistics vector as normal
+    else{
+        # Capture the original statistics in case it is a list of characters
+        # passed down by another function for reevaluation below.
+        original_statistics <- statistics
+        statistics          <- tolower(temp_statistics)
+    }
 
     list_of_statistics <- get_complete_statistics_list(statistics)
 
     # Get the intersection of the requested statistics to make sure
     # only valid actions are passed down
-    requested      <- collapse::funique(unlist(list(statistics)))
-    valid_stats    <- requested[requested %in% names(list_of_statistics)]
+    requested   <- collapse::funique(unlist(list(statistics)))
+    valid_stats <- requested[requested %in% names(list_of_statistics)]
+
+    # In case of another function passing a list of characters, this list is evaluated
+    # to the passed symbol instead of the actual list. The statistic validation will
+    # therefore result in an empty vector. This case is captured here to reevaluate
+    # the statistics based on the original passed list of characters.
+    if (length(valid_stats) == 0 && is.list(original_statistics)){
+        vars_per_stat_list <- original_statistics
+        statistics         <- names(vars_per_stat_list)
+
+        requested   <- collapse::funique(unlist(list(statistics)))
+        valid_stats <- requested[requested %in% names(list_of_statistics)]
+    }
 
     # If percentages are selected, make sure sum and sum_wgt are also part of statistics
     flag_remove_sum     <- FALSE
@@ -365,12 +421,20 @@ summarise_plus <- function(data_frame,
 
     values <- get_origin_as_char(values, substitute(values))
 
-    # If no value variables are provided abort
+    # If no value variables are provided generate them automatically
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            values               <- ".temp_values"
-            data_frame[[values]] <- 1
-            statistics           <- statistics[statistics != "sum"]
+            # If a statistics list with variable names is given, extract them an set
+            # them as value variables.
+            if (!is.null(vars_per_stat_list)){
+                values       <- collapse::funique(unlist(vars_per_stat_list))
+                names(values) <- NULL
+            }
+            # Otherwise create a pseudo grouping variable
+            else{
+                values               <- ".temp_values"
+                data_frame[[values]] <- 1
+            }
         }
     }
 
@@ -428,6 +492,13 @@ summarise_plus <- function(data_frame,
     }
     else{
         types <- NULL
+    }
+
+    # Get the maximum combination depth to be able to break a loop later on earlier
+    max_combination_depth <- 9999
+
+    if (!is.null(types)){
+        max_combination_depth <- max(nchar(gsub("[^+]", "", types))) + 1
     }
 
     rm(type_vars)
@@ -644,11 +715,6 @@ summarise_plus <- function(data_frame,
             result_df <- result_df |> print_missing(formats, group_vars)
         }
 
-        #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_end()
-        monitor_plot(monitor_df, by = "section", draw_plot = monitor)
-        #---------------------------------------------------------------------#
-
     }
     # If every possible combination of the given grouping variables should be evaluated
     else if (tolower(nesting) %in% c("all", "single")){
@@ -768,6 +834,12 @@ summarise_plus <- function(data_frame,
             print_step("MAJOR", "Executing combination merge:")
 
             for (i in seq_along(group_vars)){
+                # Break loop early if the maximum depth of combinations is surpassed.
+                # This only takes effect if types are selected.
+                if (i > max_combination_depth){
+                    break
+                }
+
                 # Generate every possible combination
                 combinations <- utils::combn(group_vars, i, simplify = FALSE)
 
@@ -1029,17 +1101,41 @@ summarise_plus <- function(data_frame,
         if (length(types) > 0 && !"total" %in% types){
             result_df <- result_df |> collapse::fsubset(TYPE != "total")
         }
+    }
 
-        #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_end()
-        monitor_df |> monitor_plot(by = "group", draw_plot = monitor)
-        #---------------------------------------------------------------------#
+    #---------------------------------------------------------------------#
+    monitor_df <- monitor_df |> monitor_start("Clean up", "Clean up")
+    #---------------------------------------------------------------------#
+
+    # If only specific variables should be kept per statistic, clean up the additional
+    # not needed variables.
+    if (!is.null(vars_per_stat_list)){
+        vars_to_keep <- c()
+
+        # Transform statistics list into a vector of variable names
+        for (name in names(vars_per_stat_list)){
+            vars_to_keep <- c(vars_to_keep, paste0(vars_per_stat_list[[name]], "_", name))
+        }
+
+        # Get all produced statistic extensions
+        stat_extensions <- paste0("_", names(vars_per_stat_list), "$", collapse = "|")
+
+        # Get all statistics variables and exclude the ones to keep to get a
+        # vector of variable names to drop.
+        statistic_variables <- grep(stat_extensions, names(result_df), value = TRUE)
+        vars_to_drop        <- statistic_variables[!statistic_variables %in% vars_to_keep]
+
+        result_df <- suppressMessages(result_df |> dropp(vars_to_drop))
     }
 
     # Drop pseudo group variable if there is one
     if (any(class == "pseudo_class")){
         result_df <- result_df |> dropp(class)
     }
+
+    #---------------------------------------------------------------------#
+    monitor_df |> monitor_plot(by = monitor_grouping, draw_plot = monitor)
+    #---------------------------------------------------------------------#
 
     if (flag_shortcut){
         print_closing(3)

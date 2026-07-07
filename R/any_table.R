@@ -290,14 +290,23 @@
 #' my_style <- excel_output_style(header_back_color = "0077B6",
 #'                                font              = "Times New Roman")
 #'
-#' my_data |> any_table(rows       = c("age + year"),
-#'                      columns    = "sex",
-#'                      values     = c(probability, person),
-#'                      statistics = c("pct_value", "sum", "freq"),
-#'                      pct_value  = list(rate = "probability / person"),
-#'                      weight     = weight,
-#'                      formats    = list(sex = sex., age = age.),
-#'                      style      = my_style,
+#' # my_data |> any_table(rows       = c("age + year"),
+#' #                      columns    = "sex",
+#' #                      values     = c(probability, person),
+#' #                      statistics = c("pct_value", "sum", "freq"),
+#' #                      pct_value  = list(rate = "probability / person"),
+#' #                      weight     = weight,
+#' #                      formats    = list(sex = sex., age = age.),
+#' #                      style      = my_style,
+#' #                      na.rm      = TRUE)
+#'
+#' # Select specific statistics for specific variables
+#' my_data |> any_table(rows       = "sex",
+#'                      columns    = "year",
+#'                      statistics = list("sum"       = c(weight, income),
+#'                                        "pct_group" = balance),
+#'                      formats    = list(sex = sex.),
+#'                      output     = "excel_nostyle",
 #'                      na.rm      = TRUE)
 #'
 #' # Pass on workbook to create more sheets in the same file
@@ -593,15 +602,15 @@ any_table <- function(data_frame,
     by <- resolve_intersection(by, variables, check_only = TRUE)
 
     if (is.list(by)){
-        print_message("ERROR", c("The provided <by> variable[?s] '[vars]' [?is/are] also part of",
-								 "the <rows> or <columns> variables, which is not allowed. Tabulation will be aborted."), vars = by[[1]])
-        return(invisible(NULL))
+        print_message("WARNING", c("The provided <by> variable[?s] '[vars]' [?is/are] also part of",
+								   "the <rows> or <columns> variables, which is not allowed. <by> will be removed."), vars = by[[1]])
+        by <- c()
     }
 
     if (length(by) == 1){
         if (by == ""){
-            print_message("ERROR", "No valid <by> variables provided. Tabulation will be aborted.")
-            return(invisible(NULL))
+            print_message("WARNING", "No valid <by> variables provided. <by> will be removed.")
+            by <- c()
         }
     }
 
@@ -614,19 +623,68 @@ any_table <- function(data_frame,
     weight_var <- ".temp_weight"
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Statistics
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Translate statistics if possible
+    temp_statistics <- tryCatch({
+        # Force evaluation to see if it exists
+        get_origin_as_char(statistics, substitute(statistics))
+    }, error = function(e){
+        # Evaluation failed
+        NULL
+    })
+
+    # In case statistics couldn't be evaluated, this means a list was passed,
+    # which provides specific variables for specific statistics. This list needs
+    # to be evaluated differently.
+    vars_per_stat_list <- NULL
+
+    if (is.null(temp_statistics)){
+        vars_per_stat_list <- lapply(as.list(substitute(statistics)), function(element){
+            element <- tolower(as.character(element))
+
+            element[!element %in% "c"]
+        })[-1]
+
+        # Set to NULL again on empty list
+        if (length(vars_per_stat_list) == 0){
+            vars_per_stat_list <- NULL
+            statistics         <- NULL
+        }
+        # If a real list was passed
+        else{
+            statistics <- names(vars_per_stat_list)
+        }
+    }
+    # Prepare statistics vector as normal
+    else{
+        statistics <- tolower(temp_statistics)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
     values <- get_origin_as_char(values, substitute(values))
 
-    # If no value variables are provided generate a temporary variable which
-    # outputs unweighted results.
+    # If no value variables are provided generate them automatically
     if (length(values) <= 1){
         if (length(values) == 0 || values == ""){
-            values     <- ".temp_values"
-            var_labels <- c(var_labels, .temp_values = "")
-            data_frame[[values]] <- 1
+            # If a statistics list with variable names is given, extract them an set
+            # them as value variables.
+            if (!is.null(vars_per_stat_list)){
+                values        <- collapse::funique(unlist(vars_per_stat_list))
+                names(values) <- NULL
+            }
+            # If no value variables are provided generate a temporary variable which
+            # outputs unweighted results.
+            else{
+                values               <- ".temp_values"
+                var_labels           <- c(var_labels, .temp_values = "")
+                data_frame[[values]] <- 1
+            }
         }
     }
 
@@ -667,13 +725,6 @@ any_table <- function(data_frame,
     else{
         output <- tolower(output)
     }
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Statistics
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    statistics <- get_origin_as_char(statistics, substitute(statistics))
-    statistics <- tolower(statistics)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Pre summarised data
@@ -1889,6 +1940,27 @@ any_table <- function(data_frame,
             }), fill = TRUE, use.names = TRUE)
 
         any_tab[["TYPE_ORIG"]] <- as.character(row_expand[any_tab[["TYPE"]]])
+    }
+
+    # If only specific variables should be kept per statistic, clean up the additional
+    # not needed variables.
+    if (!is.null(vars_per_stat_list)){
+        variable_names <- names(any_header)
+
+        # Generate search patterns like: variable name starts with list element
+        # and somewhere in the variable name should appear the list element name.
+        patterns <- sapply(names(vars_per_stat_list), function(name){
+            elements <- vars_per_stat_list[[name]]
+            paste0("^", elements, ".*", name, collapse = "|")
+        })
+        combined_pattern <- paste(patterns, collapse = "|")
+
+        # Retrieve all variables to drop, which is the inverse vector of the patterns
+        # that match. Drop these variables from the actual table and the header.
+        vars_to_drop <- grep(combined_pattern, variable_names, value = TRUE, invert = TRUE)
+
+        any_tab    <- suppressMessages(any_tab    |> dropp(vars_to_drop))
+        any_header <- suppressMessages(any_header |> dropp(vars_to_drop))
     }
 
     # Reorder variables according to statistics

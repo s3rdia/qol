@@ -1295,6 +1295,10 @@ end_all_do <- function(data_frame){
 #' my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
 #'                                               else. = "other")
 #'
+#' # NA translation
+#' my_data[["NA"]]    <- my_data |> ifelse_multi(" age == .       " = 1, else. = 0)
+#' my_data[["NotNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+#'
 #' @export
 ifelse_multi <- function(data_frame,
                          ...,
@@ -1389,6 +1393,10 @@ parse_conditions <- function(condition, na.rm = TRUE){
     condition <- gsub("\\bOR\\b",  " | ", condition, ignore.case = TRUE)
     condition <- gsub("\\^=", " != ",     condition)
     condition <- gsub("(?<!<|>|=|!)={1}(?!=)", " == ", condition, perl = TRUE)
+
+    # Replace == . and != . with is.na() and !is.na()
+    condition <- gsub("([a-zA-Z0-9_]+)[[:space:]]*==[[:space:]]*\\.", "is.na(\\1)",  condition)
+    condition <- gsub("([a-zA-Z0-9_]+)[[:space:]]*!=[[:space:]]*\\.", "!is.na(\\1)", condition)
 
     # Resolve macro variables
     condition <- macro(condition)

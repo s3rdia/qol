@@ -488,7 +488,7 @@ expect_equal(result, c(1, 0, 0, 0, 0), info = "ifelse_multi AND is translated")
 # ifelse_multi OR is translated
 result <- ifelse_df |> ifelse_multi("age < 18 or sex == 2" = 1, else. = 0)
 
-expect_equal(result, c(1, 1, 0, 1, 0), info = "ifelse_multi AND is translated")
+expect_equal(result, c(1, 1, 0, 1, 0), info = "ifelse_multi OR is translated")
 
 
 # ifelse_multi na.rm = FALSE preserves NA
@@ -505,6 +505,14 @@ value    <- "male"
 result <- ifelse_df |> ifelse_multi("&variable == &gender" = "&value")
 
 expect_equal(result, c("male", NA, "male", NA, NA), info = "ifelse_multi can handle macro variables")
+
+
+# ifelse_multi NA is translated
+result1 <- ifelse_df |> ifelse_multi("age == ." = 1, else. = 0)
+result2 <- ifelse_df |> ifelse_multi("age != ." = 1, else. = 0)
+
+expect_equal(result1, c(0, 0, 0, 0, 1), info = "ifelse_multi NA is translated")
+expect_equal(result2, c(1, 1, 1, 1, 0), info = "ifelse_multi NA is translated")
 
 
 # ifelse_multi do_if condition is used on all other conditions

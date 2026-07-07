@@ -329,14 +329,23 @@ my_data |> any_table(rows        = c("age + year"),
 my_style <- excel_output_style(header_back_color = "0077B6",
                                font              = "Times New Roman")
 
-my_data |> any_table(rows       = c("age + year"),
-                     columns    = "sex",
-                     values     = c(probability, person),
-                     statistics = c("pct_value", "sum", "freq"),
-                     pct_value  = list(rate = "probability / person"),
-                     weight     = weight,
-                     formats    = list(sex = sex., age = age.),
-                     style      = my_style,
+# my_data |> any_table(rows       = c("age + year"),
+#                      columns    = "sex",
+#                      values     = c(probability, person),
+#                      statistics = c("pct_value", "sum", "freq"),
+#                      pct_value  = list(rate = "probability / person"),
+#                      weight     = weight,
+#                      formats    = list(sex = sex., age = age.),
+#                      style      = my_style,
+#                      na.rm      = TRUE)
+
+# Select specific statistics for specific variables
+my_data |> any_table(rows       = "sex",
+                     columns    = "year",
+                     statistics = list("sum"       = c(weight, income),
+                                       "pct_group" = balance),
+                     formats    = list(sex = sex.),
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Pass on workbook to create more sheets in the same file

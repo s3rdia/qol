@@ -382,7 +382,7 @@ expect_true("BY" %in% names(result_list[[1]]), info = "any_table with by variabl
 expect_equal(length(unique(result_list[[1]][["BY"]])), 1, info = "any_table with by variables as subheaders")
 
 
-# any_table with by variables aborts if by is also part of rows or columns
+# any_table with by variables throws a warning if by is also part of rows or columns
 result_list <- dummy_df |>
         any_table(rows    = "age",
                   columns = "sex",
@@ -390,8 +390,8 @@ result_list <- dummy_df |>
                   by      = sex,
                   print   = FALSE)
 
-expect_error(print_stack_as_messages("ERROR"), "The provided <by> variable 'sex' is also part of",
-             info = "any_table with by variables aborts if by is also part of rows or columns")
+expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable 'sex' is also part of",
+             info = "any_table with by variables throws a warning if by is also part of rows or columns")
 
 
 # any_table with NAs removed
@@ -822,6 +822,24 @@ expect_equal(names(result_list[[1]]), c("row.label", "var1", "pct!!!square_1", "
                                         "percent_1", "percent_2", "sum_wgt_1", "sum_wgt_2",
                                         "probability_sum_1",  "probability_sum_2"),
              info = "any_table orders individual variables by name")
+
+
+# any_table is able to output specific statistics per variable
+result_list <- dummy_df |>
+    any_table(rows       = "age",
+              columns    = "sex",
+              statistics = list("sum"       = c(income, expenses),
+                                "pct_group" = weight),
+              na.rm      = TRUE,
+              print      = FALSE)
+
+expect_equal(collapse::fncol(result_list[[1]]), 8, info = "any_table is able to output specific statistics per variable")
+expect_true(all(c("income_sum_1", "income_sum_2", "expenses_sum_1", "expenses_sum_2",
+                  "weight_pct_group_sex_1", "weight_pct_group_sex_2") %in% names(result_list[[1]])),
+            info = "any_table is able to output specific statistics per variable")
+expect_true(!all(c("income_pct_group_1", "income_pct_group_2", "expenses_pct_group_1",
+                   "expenses_pct_group_2", "weight_sum_1", "weight_sum_2") %in% names(result_list[[1]])),
+            info = "any_table is able to output specific statistics per variable")
 
 
 ###############################################################################

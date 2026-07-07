@@ -209,6 +209,15 @@ combi_types <- my_data |>
                    nesting    = "all",
                    na.rm      = TRUE)
 
+# Select specific statistics for specific variables
+specific_stats <- my_data |>
+    summarise_plus(class      = c(year, sex),
+                   statistics = list("sum"       = c(weight, income),
+                                     "mean"      = expenses,
+                                     "pct_group" = balance),
+                   formats    = list(sex = sex.),
+                   na.rm      = TRUE)
+
 # Works without grouping
 no_group <- my_data |> summarise_plus(values = income)
 

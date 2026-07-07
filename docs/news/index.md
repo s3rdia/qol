@@ -41,6 +41,13 @@
 - `All functions with filepaths`: Wherever a file path or name can be
   passed, macro variables can be used inside the path or name.
   (06.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  It is now possible to specify per variable which statistics should be
+  output. Instead of passing a vector of statistics into the
+  `statistics` parameter, it can now also be a named list of variable
+  names, where the list entry names are the statistics and the list
+  elements the variable names or vectors of variable names. (07.07.2026)
 
 #### Changed functionality
 
@@ -59,6 +66,10 @@
   is set in
   [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md).
   (03.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When `by` variables are provided that are also part of the `row` or
+  `column` variables, the function now throws a warning instead of an
+  error and keeps running without by variables. (07.07.2026)
 
 #### Fixed
 
@@ -91,6 +102,9 @@
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Excel number stored as text error is now ignored for the whole table.
   (06.07.2026)
+- [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  `include_lower` now works as intended and doesn’t include the lower
+  bound anymore. (07.07.2026)
 
 #### Optimization
 
@@ -100,6 +114,10 @@
   what functions are called. Therefore the message stack now doesn’t
   receive the full call stack per message anymore but a condensed
   version and just as a list of character strings. (04.07.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  If types are selected, the loop to calculate all the combinations is
+  now aborted early, if the maximum specified combination depth is
+  surpassed. (07.07.2026)
 
 #### Additionally
 

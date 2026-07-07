@@ -16,12 +16,14 @@ Last CRAN release was on 16.06.2026.
 * `any_table()`: `order_by` parameter now allows to input a vector of variable names.
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types can now also take in variable combinations inside the brackets like "state + (age, sex + education, first_person)".
 * `All functions with filepaths`: Wherever a file path or name can be passed, macro variables can be used inside the path or name.
+* `any_table()`, `summarise_plus()`: It is now possible to specify per variable which statistics should be output. Instead of passing a vector of statistics into the `statistics` parameter, it can now also be a named list of variable names, where the list entry names are the statistics and the list elements the variable names or vectors of variable names.
 
 ### Changed functionality
 
 * `any_table()`, `summarise_plus()`: Variable combinations in rows, columns and types like "state + (age, sex + education, first_person)", now have to use commas as separators in the brackets.
 * `import_data()`: Now uses Latin-1 encoding.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Now the whole background is filled white as default. The new default is set in `excel_output_style()`.
+* `any_table()`: When `by` variables are provided that are also part of the `row` or `column` variables, the function now throws a warning instead of an error and keeps running without by variables.
 
 ### Fixed
 
@@ -32,11 +34,13 @@ Last CRAN release was on 16.06.2026.
 * `print_start_message()`: Doesn't reset message stack  anymore when called in a deeply nested situation, which was caused by the optimization introduced in the last update.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Footnote heights are applied again.
 * `export_with_style()`: Excel number stored as text error is now ignored for the whole table.
+* `interval_format()`: `include_lower` now works as intended and doesn't include the lower bound anymore.
 
 ### Optimization
 
 * `summarise_plus()`: Brought percentiles up to more speed.
 * I underestimated how big in size the call stack can get depending on what functions are called. Therefore the message stack now doesn't receive the full call stack per message anymore but a condensed version and just as a list of character strings.
+* `summarise_plus()`: If types are selected, the loop to calculate all the combinations is now aborted early, if the maximum specified combination depth is surpassed. 
 
 ### Additionally
 

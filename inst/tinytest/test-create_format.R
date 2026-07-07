@@ -113,6 +113,26 @@ expand_df <- expand_formats(sex.)
 
 expect_equal(expand_df[[1]], c("Total", "Male", "Female"), info = "Expand formats returns unique label values if only one format is provided")
 
+
+# Interval formats including lower bounds and excluding upper bounds
+age. <- interval_format(
+    "under 65"    = c(0,  65),
+    "65 und mehr" = c(65, 100))
+
+expect_true(age.[1, "from"] ==  0 && age.[1, "to"] <  65, info = "Interval formats including lower bounds and excluding upper bounds")
+expect_true(age.[2, "from"] == 65 && age.[2, "to"] < 100, info = "Interval formats including lower bounds and excluding upper bounds")
+
+
+# Interval formats including upper bounds and excluding lower bounds
+age. <- interval_format(
+    "under 65"    = c(0,  65),
+    "65 und mehr" = c(65, 100),
+    include_lower = FALSE,
+    include_upper = TRUE)
+
+expect_true(age.[1, "from"] >  0 && age.[1, "to"] ==  65, info = "Interval formats including upper bounds and excluding lower bounds")
+expect_true(age.[2, "from"] > 65 && age.[2, "to"] == 100, info = "Interval formats including upper bounds and excluding lower bounds")
+
 ###############################################################################
 # Abort checks
 ###############################################################################

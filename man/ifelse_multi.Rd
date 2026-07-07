@@ -100,6 +100,10 @@ value_to_set <- "under 18"
 my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
                                               else. = "other")
 
+# NA translation
+my_data[["NA"]]    <- my_data |> ifelse_multi(" age == .       " = 1, else. = 0)
+my_data[["NotNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+
 }
 \seealso{
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
