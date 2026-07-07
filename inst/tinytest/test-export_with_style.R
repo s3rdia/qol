@@ -16,7 +16,7 @@ dummy_df[["weight_sum"]] <- dummy_df[["weight"]]
 # Simplest form of export_with_style
 result_df <- dummy_df |> export_with_style(print = FALSE)
 
-expect_inherits(result_df, "list", info = "Simplest form of export_with_style")
+expect_inherits(result_df, "qol_styled_data", info = "Simplest form of export_with_style")
 expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
@@ -30,14 +30,14 @@ result_df <- dummy_df |>
                                                         background_color  = "FF00FF"),
                         print = FALSE)
 
-expect_inherits(result_df, "list", info = "export_with_style with full styling")
+expect_inherits(result_df, "qol_styled_data", info = "export_with_style with full styling")
 expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
 # export_with_style with individual column alignment
 result_df <- dummy_df |> export_with_style(column_align = c("right", "left"), print = FALSE)
 
-expect_inherits(result_df, "list", info = "export_with_style with individual column alignment")
+expect_inherits(result_df, "qol_styled_data", info = "export_with_style with individual column alignment")
 expect_equal(length(result_df), 3, info = "export_with_style with individual column alignment")
 
 
@@ -47,7 +47,7 @@ result_df <- dummy_df |>
       export_with_style(style = excel_output_style(freeze_row_header = TRUE),
                         print = FALSE)
 
-expect_inherits(result_df, "list", info = "export_with_style with fixed row headers")
+expect_inherits(result_df, "qol_styled_data", info = "export_with_style with fixed row headers")
 expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
@@ -57,7 +57,7 @@ result_df <- dummy_df |>
       export_with_style(style = excel_output_style(freeze_col_header = TRUE),
                         print = FALSE)
 
-expect_inherits(result_df, "list", info = "export_with_style with fixed column headers")
+expect_inherits(result_df, "qol_styled_data", info = "export_with_style with fixed column headers")
 expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
@@ -86,7 +86,7 @@ result_list <- dummy_df |>
                       workbook = df1,
                       print    = FALSE)
 
-expect_inherits(result_list, "list", info = "export_with_style can pass on workbooks")
+expect_inherits(result_list, "qol_styled_data", info = "export_with_style can pass on workbooks")
 expect_equal(length(result_list), 3, info = "export_with_style can pass on workbooks")
 
 

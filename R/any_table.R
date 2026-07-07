@@ -2149,9 +2149,9 @@ any_table <- function(data_frame,
     monitor_df |> monitor_plot(draw_plot = monitor)
     #-------------------------------------------------------------------------#
 
-    invisible(list("table"    = any_tab,
-                   "workbook" = wb,
-                   "meta"     = meta))
+    invisible(structure(list("table"    = any_tab,
+                             "workbook" = wb,
+                             "meta"     = meta), class = "qol_table"))
 }
 
 

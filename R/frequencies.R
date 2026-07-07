@@ -547,8 +547,8 @@ frequencies <- function(data_frame,
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
 
-    invisible(list("mean" = mean_tab,
-                   "freq" = freq_tab))
+    invisible(structure(list("mean" = mean_tab,
+                             "freq" = freq_tab), class = "qol_freq"))
 }
 
 ###############################################################################

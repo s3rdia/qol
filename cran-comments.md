@@ -45,6 +45,7 @@ Last CRAN release was on 16.06.2026.
 * `summarise_plus()`: Added example for type combinations.
 * Minimum `openxlsx2` version is now 1.28, which allows a faster background fill.
 * `load_file_multi()`: Added a message when files are stacked.
+* `any_table()`, `frequencies()`, `export_with_style()`: Output from these functions received a class name.
 
 
 ## R CMD check results

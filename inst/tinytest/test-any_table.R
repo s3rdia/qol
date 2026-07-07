@@ -47,7 +47,7 @@ result_list <- dummy_big |>
                 values  = weight,
                 print   = FALSE)
 
-expect_inherits(result_list, "list", info = "Simplest form of any_table")
+expect_inherits(result_list, "qol_table", info = "Simplest form of any_table")
 expect_equal(length(result_list), 3, info = "Simplest form of any_table")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "weight_sum_1",
                                         "weight_sum_2", "weight_sum_NA"), info = "Simplest form of any_table")
@@ -64,7 +64,7 @@ result_list <- dummy_df |>
                 output  = "excel_nostyle",
                 print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with combinations")
+expect_inherits(result_list, "qol_table", info = "any_table with combinations")
 expect_equal(length(result_list), 3, info = "any_table with combinations")
 
 
@@ -76,7 +76,7 @@ result_list <- dummy_df |>
                 output  = "excel_nostyle",
                 print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with multiple combinations")
+expect_inherits(result_list, "qol_table", info = "any_table with multiple combinations")
 expect_equal(length(result_list), 3, info = "any_table with multiple combinations")
 
 
@@ -89,7 +89,7 @@ result_list <- dummy_df |>
                   output  = "excel_nostyle",
                   print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table many combinations don't break")
+expect_inherits(result_list, "qol_table", info = "any_table many combinations don't break")
 expect_equal(length(result_list), 3, info = "any_table many combinations don't break")
 
 
@@ -116,7 +116,7 @@ result_list <- dummy_df |>
                 footnotes = "This is a footnote link: https://cran.r-project.org/",
                 print     = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with linked titles and footnotes")
+expect_inherits(result_list, "qol_table", info = "any_table with linked titles and footnotes")
 expect_equal(length(result_list), 3, info = "any_table with linked titles and footnotes")
 
 
@@ -140,7 +140,7 @@ result_list <- dummy_df |>
 
 reset_style_options()
 
-expect_inherits(result_list, "list", info = "any_table with multiple titles and footnotes")
+expect_inherits(result_list, "qol_table", info = "any_table with multiple titles and footnotes")
 expect_equal(length(result_list), 3, info = "any_table with multiple titles and footnotes")
 
 
@@ -268,7 +268,7 @@ result_list <- dummy_df |>
                   output     = "excel_nostyle",
                   print      = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with a lot of statistics doesn't break")
+expect_inherits(result_list, "qol_table", info = "any_table with a lot of statistics doesn't break")
 expect_equal(length(result_list), 3, info = "any_table with a lot of statistics doesn't break")
 
 
@@ -617,7 +617,7 @@ result_list <- sum_df |>
              output     = "excel_nostyle",
              print      = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with pre summarised data")
+expect_inherits(result_list, "qol_table", info = "any_table with pre summarised data")
 expect_equal(length(result_list), 3, info = "any_table with pre summarised data")
 
 
@@ -631,7 +631,7 @@ result_list <- sum_df2 |>
                           print_miss = TRUE,
                           print      = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with pre summarised data and by variables")
+expect_inherits(result_list, "qol_table", info = "any_table with pre summarised data and by variables")
 expect_equal(length(result_list), 3, info = "any_table with pre summarised data and by variables")
 
 
@@ -642,7 +642,7 @@ result_list <- dummy_df |>
                  output  = "excel_nostyle",
                  print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table with no column variables")
+expect_inherits(result_list, "qol_table", info = "any_table with no column variables")
 expect_equal(length(result_list), 3, info = "any_table with no column variables")
 
 
@@ -726,7 +726,7 @@ result_list <- dummy_df |>
               style    = my_style,
               print    = FALSE)
 
-expect_inherits(result_list, "list", info = "Combine tables into a single workbook")
+expect_inherits(result_list, "qol_table", info = "Combine tables into a single workbook")
 expect_equal(length(result_list), 3, info = "Combine tables into a single workbook")
 
 
@@ -741,7 +741,7 @@ result_list <- sum_df |>
 expect_warning(print_stack_as_messages("WARNING"), "All <values> variables need to have the <statistic> extension in their variable name.",
                info = "any_table throws a warning with missing statistic extension in pre summarised data")
 
-expect_inherits(result_list, "list", info = "any_table throws a warning with missing statistic extension in pre summarised data")
+expect_inherits(result_list, "qol_table", info = "any_table throws a warning with missing statistic extension in pre summarised data")
 expect_equal(length(result_list), 3, info = "any_table throws a warning with missing statistic extension in pre summarised data")
 
 
@@ -753,7 +753,7 @@ result_list <- sum_df |>
                  output  = "excel_nostyle",
                  print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table auto generates missing TYPE variable in pre summarised data")
+expect_inherits(result_list, "qol_table", info = "any_table auto generates missing TYPE variable in pre summarised data")
 expect_equal(length(result_list), 3, info = "any_table auto generates missing TYPE variable in pre summarised data")
 
 
@@ -764,7 +764,7 @@ result_list <- dummy_df |>
               output  = "excel_nostyle",
               print   = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table outputs unweighted results without values variable")
+expect_inherits(result_list, "qol_table", info = "any_table outputs unweighted results without values variable")
 expect_equal(length(result_list), 3, info = "any_table outputs unweighted results without values variable")
 
 
@@ -794,7 +794,7 @@ result_list <- dummy_df |>
               na.rm      = TRUE,
               print      = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table can compute values on the fly")
+expect_inherits(result_list, "qol_table", info = "any_table can compute values on the fly")
 expect_equal(length(result_list), 3, info = "any_table can compute values on the fly")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "probability_sum_1",
                                         "probability_sum_2", "sum_wgt_1", "sum_wgt_2",
@@ -816,7 +816,7 @@ result_list <- dummy_df |>
               na.rm      = TRUE,
               print      = FALSE)
 
-expect_inherits(result_list, "list", info = "any_table orders individual variables by name")
+expect_inherits(result_list, "qol_table", info = "any_table orders individual variables by name")
 expect_equal(length(result_list), 3, info = "any_table orders individual variables by name")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "pct!!!square_1", "pct!!!square_2",
                                         "percent_1", "percent_2", "sum_wgt_1", "sum_wgt_2",

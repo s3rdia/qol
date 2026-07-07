@@ -116,6 +116,10 @@
   background fill. (03.07.2026)
 - [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
   Added a message when files are stacked. (04.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Output from these functions received a class name. (07.07.2026)
 
 ## qol 1.3.2
 

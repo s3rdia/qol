@@ -277,9 +277,9 @@ export_with_style <- function(data_frame,
     monitor_df |> monitor_plot(draw_plot = monitor)
     #-------------------------------------------------------------------------#
 
-    invisible(list("table"    = data_frame,
-                   "workbook" = wb,
-                   "meta"     = meta))
+    invisible(structure(list("table"    = data_frame,
+                             "workbook" = wb,
+                             "meta"     = meta), class = "qol_styled_data"))
 }
 
 

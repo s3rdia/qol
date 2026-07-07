@@ -45,6 +45,7 @@
 * `summarise_plus()`: Added example for type combinations. (26.06.2026)
 * Minimum `openxlsx2` version is now 1.28, which allows a faster background fill. (03.07.2026)
 * `load_file_multi()`: Added a message when files are stacked. (04.07.2026)
+* `any_table()`, `frequencies()`, `export_with_style()`: Output from these functions received a class name. (07.07.2026)
 
 
 # qol 1.3.2
