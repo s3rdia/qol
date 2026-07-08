@@ -67,7 +67,7 @@ add_textbox <- function(text,
                         draw        = FALSE){
     # Return if there is no text
     if (is.null(text) || length(text) == 0 || text == ""){
-        return(invisible(grid::nullGrob()))
+        return(invisible(grid::nullGrob(name = "empty_textbox")))
     }
 
     # In case text is provided as vector with multiple elements, meaning the line
@@ -101,7 +101,7 @@ add_textbox <- function(text,
     words <- unlist(strsplit(text, " "))
 
     if (length(words) == 0){
-        return(grid::nullGrob())
+        return(grid::nullGrob(name = "empty_textbox"))
     }
     # If there is only one word, just return as graphical object
     else if (length(words) == 1){
@@ -324,7 +324,7 @@ add_title <- function(text,
                       visuals     = .qol_options[["graphic_visuals"]],
                       draw        = FALSE){
     if (length(text) == 0){
-        return(invisible(grid::nullGrob()))
+        return(invisible(grid::nullGrob(name = "title")))
     }
 
     x_pos <- fix_alignment(dimensions, visuals)
@@ -357,7 +357,7 @@ add_footnote <- function(text,
                          visuals     = .qol_options[["graphic_visuals"]],
                          draw        = FALSE){
     if (length(text) == 0 || text == ""){
-        return(invisible(grid::nullGrob()))
+        return(invisible(grid::nullGrob(name = "footnote")))
     }
 
     x_pos <- fix_alignment(dimensions, visuals, "footnote")
@@ -1253,7 +1253,7 @@ get_diagram_dimensions <- function(arguments){
 #' @export
 setup_interactive_elements <- function(arguments, diagram_info){
     if (!arguments[["output"]][["interactive"]]){
-        return(grid::nullGrob())
+        return(grid::nullGrob(name = "no_tooltip"))
     }
 
     visuals <- arguments[["visuals"]]
@@ -1383,6 +1383,7 @@ setup_x_axes <- function(diagram_info,
     is_multi_group_label <- diagram_info[["is_multi_group_label"]]
     group_label_heights  <- diagram_info[["group_label_heights"]]
     group_separation_lines_x <- diagram_info[["group_separation_lines_x"]]
+    top_label_height     <- get_variable_axes_height(diagram_info[["individual_groups"]][[1]], dimensions, visuals)
 
     # If all values are negative, the group label positions are vertically inverted.
     # Which means normally they are drawn below the variable axes (vbars),
@@ -1396,7 +1397,8 @@ setup_x_axes <- function(diagram_info,
         # The first layer of multi layered group labels is drawn at the top of the
         # diagram, not below the axes. Add a marging to create some space to the diagram.
         if (is_multi_group_label){
-            label_y[1] <- diagram_info[["inner_viewport_height"]] + dimensions[["margins"]]
+
+            label_y[1] <- diagram_info[["inner_viewport_height"]] + top_label_height
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1412,7 +1414,8 @@ setup_x_axes <- function(diagram_info,
                 else{
                     inverse_element <- length(label_y) - (i - 2)
 
-                    separation_lines_y[[i]] <- c(1, label_y[inverse_element] - group_label_heights[inverse_element])
+                    separation_lines_y[[i]] <- c(label_y[1] - top_label_height - dimensions[["margins"]],
+                                                 label_y[inverse_element] - group_label_heights[inverse_element] + dimensions[["margins"]])
                 }
             }
         }
@@ -1424,18 +1427,14 @@ setup_x_axes <- function(diagram_info,
         # Set base label position adjustment so that the labels are a bit above the
         # variable axes. Subtract half a margin to the label group which is drawn above
         # the diagram, to get it a bit closer to the axes.
-        label_just  <- c("center", "top")
+        label_just  <- c("center", "bottom")
         label_y     <- diagram_info[["inner_viewport_height"]] - label_y_positions - (dimensions[["margins"]] / 2)
 
         # The first layer of multi layered group labels is drawn at the bottom of the
         # diagram, not on top of the axes.
         if (is_multi_group_label){
             # First label is drawn below the diagram
-            label_y[1]  <- label_y_positions[1] - (dimensions[["margins"]] / 2)
-
-            # All other labels are drawn above the diagram and need to be shifted up
-            # by their own height.
-            label_y[-1] <- label_y[-1] + group_label_heights[-1]
+            label_y[1] <- label_y_positions[1] - top_label_height
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1444,15 +1443,15 @@ setup_x_axes <- function(diagram_info,
                 # The first separation lines are special in the way that they start higher,
                 # at the top of the upper grouping labels.
                 if (i == 1){
-                    separation_lines_y[[i]] <- c(label_y[1] - group_label_heights[1],
-                                                 label_y[length(label_y)])
+                    separation_lines_y[[i]] <- c(label_y[1],
+                                                 label_y[length(label_y)] + group_label_heights[length(label_y)])
                 }
                 # All other lines start at the top of the diagram and are drawn to the
                 # bottom of nested super group.
                 else{
                     inverse_element <- length(label_y) - (i - 2)
 
-                    separation_lines_y[[i]] <- c(0, label_y[inverse_element])
+                    separation_lines_y[[i]] <- c(0, label_y[inverse_element] + group_label_heights[length(label_y)] - dimensions[["margins"]])
                 }
             }
         }
@@ -1516,15 +1515,20 @@ setup_x_axes <- function(diagram_info,
                 type_prefix <- "major_"
             }
 
-            # Construct the actual separation lines
-            grid::segmentsGrob(x0 = x_positions,
-                               x1 = x_positions,
-                               y0 = grid::unit(y_positions[1], "cm"),
-                               y1 = grid::unit(y_positions[2], "cm"),
-                               name  = paste0("separation_line_", i),
-                               gp = grid::gpar(col = visuals[[paste0(type_prefix,"separation_line_color")]],
-                                               lty = visuals[[paste0(type_prefix,"separation_line_type")]],
-                                               lwd = dimensions[["separation_line_thickness"]]))
+            if (dimensions[[paste0(type_prefix,"separation_line_thickness")]] > 0){
+                # Construct the actual separation lines
+                grid::segmentsGrob(x0    = x_positions,
+                                   x1    = x_positions,
+                                   y0    = grid::unit(y_positions[1], "cm"),
+                                   y1    = grid::unit(y_positions[2], "cm"),
+                                   name  = paste0("separation_line_", i),
+                                   gp    = grid::gpar(col = visuals[[paste0(type_prefix,"separation_line_color")]],
+                                                      lty = visuals[[paste0(type_prefix,"separation_line_type")]],
+                                                      lwd = dimensions[[paste0(type_prefix,"separation_line_thickness")]]))
+            }
+            else{
+                grid::nullGrob(name = paste0("separation_line_", i))
+            }
         }, group_separation_lines_x, separation_lines_y, seq_along(group_separation_lines_x), SIMPLIFY = FALSE))
 
         # Return the whole axes as one graphical object
@@ -1577,7 +1581,7 @@ setup_guiding_lines <- function(diagram_info,
                                                                 lwd = dimensions[["guiding_line_thickness"]]))
     }
     else{
-        guiding_lines_x <- grid::nullGrob()
+        guiding_lines_x <- grid::nullGrob(name = paste0("x_guiding_lines"))
     }
 
     # Draw guiding lines
@@ -1592,7 +1596,7 @@ setup_guiding_lines <- function(diagram_info,
                                                                 lwd = dimensions[["guiding_line_thickness"]]))
     }
     else{
-        guiding_lines_y <- grid::nullGrob()
+        guiding_lines_y <- grid::nullGrob(name = paste0("y_guiding_lines"))
     }
 
     grid::gTree(children = grid::gList(guiding_lines_x, guiding_lines_y), name = "xy_guiding_lines")
@@ -1652,10 +1656,11 @@ get_variable_axes_height <- function(wrapped_text,
                                      visuals){
     # Only keep the text with the most lines. Otherwise the textGrob measuring
     # only considers the first text in the vector.
-    wrapped_text <- wrapped_text[which.max(lengths(gregexpr("\n", wrapped_text, fixed = TRUE)))]
+    line_break_counts <- nchar(wrapped_text) - nchar(gsub("\n", "", wrapped_text, fixed = TRUE))
+    longest_text      <- wrapped_text[which.max(line_break_counts)]
 
     # Create test graphical object to measure the actual height
-    temp_grob <- grid::textGrob(wrapped_text,
+    temp_grob <- grid::textGrob(longest_text,
                                 gp = grid::gpar(fontfamily = visuals[["font"]],
                                                 fontsize   = dimensions[["axes_font_size"]],
                                                 fontface   = visuals[["variable_axes_font_face"]],
@@ -1936,7 +1941,7 @@ direct_vertical_labels <- function(diagram_info,
     fine_tuning <- arguments[["fine_tuning"]]
 
     if (tolower(visuals[["label_type"]]) != "lines"){
-        return(grid::nullGrob())
+        return(grid::nullGrob(name  = "segment_labels"))
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2052,6 +2057,7 @@ direct_vertical_labels <- function(diagram_info,
 
     # Draw lines in stairs
     line_stairs   <- seq(0, by = dimensions[["segment_line_offset"]], length.out = length(segment_start_y))
+    line_stairs   <- grid::convertUnit(grid::unit(line_stairs, "cm"), "native", valueOnly = TRUE) * diagram_info[["primary_y_distance"]]
     segment_end_y <- rep(segment_end_y, length(segment_start_y)) - line_stairs
 
     # Put together the vector containing start and end points for the lines.
@@ -2132,7 +2138,7 @@ setup_legend <- function(diagram_info,
                          visuals,
                          dimensions){
     if (tolower(visuals[["label_type"]]) != "legend"){
-        return(list(grid::nullGrob()))
+        return(list(grid::nullGrob(name = "legend")))
     }
 
     segment_labels    <- diagram_info[["unique_segments"]]

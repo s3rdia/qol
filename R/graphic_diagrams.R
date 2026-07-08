@@ -51,7 +51,7 @@ dg_vbars <- function(arguments, diagram_info){
         print_message("ERROR", c("Diagram function doesn't work on it's own. It can only be used",
                                  "as the <diagram> parameter in <design_graphic>."))
 
-        return(invisible(grid::nullGrob()))
+        return(invisible(grid::nullGrob(name = "dg_vbars")))
     }
 
     # Set up the whole diagram as well as the inner diagram viewport. Additionally

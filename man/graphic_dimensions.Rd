@@ -26,14 +26,15 @@ graphic_dimensions(
   bar_overlap = 0,
   line_thickness = 1,
   segment_line_thickness = 1,
-  separation_line_thickness = 1,
+  major_separation_line_thickness = 1,
+  minor_separation_line_thickness = 1,
   axes_line_thickness = 1,
   guiding_line_thickness = 1,
   graphic_outline_thickness = 1,
   diagram_outline_thickness = 1,
   segment_line_length = 1,
   segment_line_offset = 0,
-  textbox_width = 2
+  textbox_width = 3.2
 )
 
 modify_graphic_dimensions(dimension_to_modify, ...)
@@ -80,7 +81,11 @@ modify_graphic_dimensions(dimension_to_modify, ...)
 \item{segment_line_thickness}{The thickness of the lines connecting segments with
 labels.}
 
-\item{separation_line_thickness}{The thickness of the lines which separate label groups.}
+\item{major_separation_line_thickness}{The thickness of the lines drawn between top group
+categories.}
+
+\item{minor_separation_line_thickness}{The thickness of the lines drawn between minor group
+categories.}
 
 \item{axes_line_thickness}{The thickness of the axes lines and ticks.}
 

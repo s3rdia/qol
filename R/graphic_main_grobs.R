@@ -192,7 +192,7 @@ vbar_grob <- function(diagram_info,
         }))
     }
     else{
-        texts <- grid::nullGrob()
+        texts <- grid::nullGrob(name = "no_vbars")
     }
 
     # Return final segments

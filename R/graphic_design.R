@@ -238,6 +238,24 @@ design_graphic <- function(data_frame,
         formats      <- evaluate_formats(formats_list)
     }
 
+    # Remove empty formats and throw a warning. This can happen if there is e.g.
+    # a typo in the format.
+    for (variable in names(formats)){
+        if (is.null(formats[[variable]])){
+            formats[[variable]] <- NULL
+            print_message("WARNING", "Format for variable '[variable]' does not exist and can't be applied.", variable = variable)
+        }
+    }
+
+    # Apply macros to save path and file
+    if (!is.null(output[["save_path"]])){
+        output[["save_path"]] <- macro(output[["save_path"]])
+    }
+
+    if (!is.null(output[["file"]])){
+        output[["file"]] <- macro(output[["file"]])
+    }
+
     ###########################################################################
     # Error handling
     ###########################################################################
@@ -543,6 +561,18 @@ design_graphic <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Additional textboxes
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Check if the add_textbox function was directly passed to the parameter.
+    # In this case enclose it in a list.
+    add_texts_call <- as.character(substitute(add_texts))
+
+    if (add_texts_call[1] == "add_textbox"){
+        add_texts <- list(add_texts)
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Resolve macros
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -575,7 +605,7 @@ design_graphic <- function(data_frame,
     }
     else{
         # On nested axes variables combine them together with the segments
-        combinations <- c(axes_variables, sprintf("(%s)", paste(segment_vars, collapse = " ")))
+        combinations <- c(axes_variables, sprintf("(%s)", paste(segment_vars, collapse = ", ")))
         combinations <- paste(combinations, collapse = " + ")
     }
 
@@ -1070,7 +1100,7 @@ generate_graphic <- function(graphic_tab,
         })
 
     if (length(custom_textboxes) == 0){
-        custom_textboxes <- list(grid::nullGrob())
+        custom_textboxes <- list(grid::nullGrob(name = "no_textboxes"))
     }
 
     # Put together the whole graphic

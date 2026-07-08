@@ -488,7 +488,10 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @param line_thickness The thickness of lines in a line chart or outlines of segments.
 #' @param segment_line_thickness The thickness of the lines connecting segments with
 #' labels.
-#' @param separation_line_thickness The thickness of the lines which separate label groups.
+#' @param major_separation_line_thickness The thickness of the lines drawn between top group
+#' categories.
+#' @param minor_separation_line_thickness The thickness of the lines drawn between minor group
+#' categories.
 #' @param axes_line_thickness The thickness of the axes lines.
 #' @param guiding_line_thickness The thickness of the guiding lines drawn from the axes ticks.
 #' @param axes_line_thickness The thickness of the axes lines and ticks.
@@ -556,34 +559,35 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @rdname graphic_dimensions
 #'
 #' @export
-graphic_dimensions <- function(graphic_width             = 16,
-                               graphic_height            = 9,
-                               diagram_start_top         = "auto",
-                               diagram_start_left        = "auto",
-                               diagram_width             = "auto",
-                               diagram_height            = "auto",
-                               margins                   = 0.25,
-                               title_font_size           = 9,
-                               footnote_font_size        = 8,
-                               axes_font_size            = 9,
-                               value_font_size           = 9,
-                               label_font_size           = 9,
-                               origin_font_size          = 8,
-                               other_font_size           = 9,
-                               tooltip_font_size         = 12,
-                               line_height               = 1.1,
-                               space_between_bars        = 0,
-                               bar_overlap               = 0,
-                               line_thickness            = 1,
-                               segment_line_thickness    = 1,
-                               separation_line_thickness = 1,
-                               axes_line_thickness       = 1,
-                               guiding_line_thickness    = 1,
-                               graphic_outline_thickness = 1,
-                               diagram_outline_thickness = 1,
-                               segment_line_length       = 1,
-                               segment_line_offset       = 0,
-                               textbox_width             = 2){
+graphic_dimensions <- function(graphic_width                   = 16,
+                               graphic_height                  = 9,
+                               diagram_start_top               = "auto",
+                               diagram_start_left              = "auto",
+                               diagram_width                   = "auto",
+                               diagram_height                  = "auto",
+                               margins                         = 0.25,
+                               title_font_size                 = 9,
+                               footnote_font_size              = 8,
+                               axes_font_size                  = 9,
+                               value_font_size                 = 9,
+                               label_font_size                 = 9,
+                               origin_font_size                = 8,
+                               other_font_size                 = 9,
+                               tooltip_font_size               = 12,
+                               line_height                     = 1.1,
+                               space_between_bars              = 0,
+                               bar_overlap                     = 0,
+                               line_thickness                  = 1,
+                               segment_line_thickness          = 1,
+                               major_separation_line_thickness = 1,
+                               minor_separation_line_thickness = 1,
+                               axes_line_thickness             = 1,
+                               guiding_line_thickness          = 1,
+                               graphic_outline_thickness       = 1,
+                               diagram_outline_thickness       = 1,
+                               segment_line_length             = 1,
+                               segment_line_offset             = 0,
+                               textbox_width                   = 3.2){
     if (is.numeric(diagram_width) && diagram_width > graphic_width){
         message(" ! WANRING: Diagram width can't be greater than the whole graphic width.\n",
                 "            Diagram width will be reduced to graphic width.")
