@@ -71,6 +71,9 @@
 #' @param segment_line_type Sets the type of leading lines from segments to labels. Can be
 #' "dashed", "dotted" or "solid".
 #' @param segment_line_color Sets the color of the leading lines from segments to labels.
+#' @param rotate_segment_labels FALSE by default. If TRUE rotates the direct vertical segment labels
+#' by a number of degrees.
+#' @param segment_label_rotation Degrees of segment label rotation.
 #' @param remove_small_values TRUE by default. Doesn't display values in stacked diagrams,
 #' if the corresponding segment is to small and value would go out of bounds. If FALSE,
 #' always displays values.
@@ -79,7 +82,8 @@
 #' @param bar_values_inside TRUE by default. In grouped bar charts the segment values
 #' will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.
 #' @param rotate_values FALSE by default. If TRUE rotates values inside the segments by
-#' 90 degrees.
+#' a number of degrees.
+#' @param value_rotation Degrees of segment value rotation.
 #' @param display_plus_symbol FALSE by default. If TRUE displays a + symbol in front of
 #' positive values.
 #' @param label_type Can be "lines", which connects labels and segments with leading lines,
@@ -217,10 +221,13 @@ graphic_visuals <- function(font                        = "Arial",
                             minor_separation_line_color = "#9A9A9A",
                             segment_line_type           = "solid",
                             segment_line_color          = "#000000",
+                            rotate_segment_labels       = FALSE,
+                            segment_label_rotation      = 90,
                             remove_small_values         = TRUE,
                             display_values              = TRUE,
                             bar_values_inside           = TRUE,
                             rotate_values               = FALSE,
+                            value_rotation              = 90,
                             display_plus_symbol         = FALSE,
                             label_type                  = "lines",
                             label_group                 = "auto",
@@ -587,7 +594,7 @@ graphic_dimensions <- function(graphic_width                   = 16,
                                diagram_outline_thickness       = 1,
                                segment_line_length             = 1,
                                segment_line_offset             = 0,
-                               textbox_width                   = 3.2){
+                               textbox_width                   = 4){
     if (is.numeric(diagram_width) && diagram_width > graphic_width){
         message(" ! WANRING: Diagram width can't be greater than the whole graphic width.\n",
                 "            Diagram width will be reduced to graphic width.")
@@ -805,7 +812,6 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' drawn outside the segment.
 #' @param shrink_segment_width Shrinks the segment width by this factor, if the segment borders
 #' are colored, to prevent the bars from overlapping
-#' @param values_rotation Degrees of segment value rotation.
 #' @param values_hjust Horizontal adjustment of segment values.
 #' @param values_hjust_90 Horizontal adjustment of rotated segment values.
 #' @param values_hjust_90_plus Additional horizontal adjustment of rotated segment values, if
@@ -892,7 +898,6 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
                                 values_vjust_90_negative   = -0.2,
                                 value_overlap_factor       = 1.35,
                                 shrink_segment_width       = 0.55,
-                                values_rotation            = 90,
                                 values_hjust               = 0.5,
                                 values_hjust_90            = 0.35,
                                 values_hjust_90_plus       = 0.05,
@@ -901,7 +906,7 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
                                 values_below_axes_90_just  = 1.4,
                                 tick_length                = 0.02,
                                 value_axes_margin          = 0.02,
-                                y_axes_scaling             = 1.3,
+                                y_axes_scaling             = 1.1,
                                 swap_direction_threshold   = 0.75,
                                 segment_line_offset        = 0.3,
                                 segment_line_treshhold     = 0.95,

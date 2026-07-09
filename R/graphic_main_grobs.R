@@ -109,7 +109,7 @@ vbar_grob <- function(diagram_info,
         # Set up with rotated values
         else{
             vjust_base <- fine_tuning[["values_hjust_90"]]
-            rotate     <- rep(fine_tuning[["values_rotation"]], number_of_values)
+            rotate     <- rep(visuals[["value_rotation"]], number_of_values)
 
             if (visuals[["bar_values_inside"]]){
                 # Set up values drawn inside segments

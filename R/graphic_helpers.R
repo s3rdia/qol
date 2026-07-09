@@ -20,6 +20,7 @@
 #' @param font_size Font size.
 #' @param font_face Valid values are "plain", "bold", "italic", "oblique", and "bold.italic".
 #' @param line_height The height of a single text line.
+#' @param rotation Rotates the text by a number of degrees.
 #' @param name The internal name of the textbox with which it can be identified.
 #' @param draw FALSE by default. If TRUE, directly draws the textbox onto the canvas.
 #'
@@ -56,13 +57,14 @@
 add_textbox <- function(text,
                         x_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
                         y_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
-                        width       = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+                        width       = .qol_options[["graphic_dimensions"]][["textbox_width"]],
                         alignment   = .qol_options[["graphic_visuals"]][["other_alignment"]],
                         font        = .qol_options[["graphic_visuals"]][["font"]],
                         font_color  = .qol_options[["graphic_visuals"]][["other_font_color"]],
                         font_size   = .qol_options[["graphic_dimensions"]][["other_font_size"]],
                         font_face   = .qol_options[["graphic_visuals"]][["other_font_face"]],
                         line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
+                        rotation    = 0,
                         name        = "textbox",
                         draw        = FALSE){
     # Return if there is no text
@@ -84,6 +86,7 @@ add_textbox <- function(text,
                                   x     = grid::unit(x_pos, "native"),
                                   y     = grid::unit(y_pos, "native"),
                                   just  = c(alignment, "top"),
+                                  rot   = rotation,
                                   name  = name,
                                   gp    = grid::gpar(col = font_color,
                                                      fontfamily = font,
@@ -109,6 +112,7 @@ add_textbox <- function(text,
                                   x     = grid::unit(x_pos, "native"),
                                   y     = grid::unit(y_pos, "native"),
                                   just  = c(alignment, "top"),
+                                  rot   = rotation,
                                   name  = name,
                                   gp    = grid::gpar(col = font_color,
                                                      fontfamily = font,
@@ -143,6 +147,7 @@ add_textbox <- function(text,
                               x     = grid::unit(x_pos, "native"),
                               y     = grid::unit(y_pos, "native"),
                               just  = c(alignment, "top"),
+                              rot   = rotation,
                               name  = name,
                               gp    = grid::gpar(col = font_color,
                                                  fontfamily = font,
@@ -465,15 +470,30 @@ get_text_width <- function(text,
                            dimensions,
                            visuals,
                            unit = "native"){
-    # Create test graphical object to measure the actual height
-    temp_grob <- grid::textGrob(text,
-                                gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                fontsize   = dimensions[[paste0(type, "_font_size")]],
-                                                fontface   = visuals[[paste0(type, "_font_face")]],
-                                                lineheight = dimensions[["line_height"]]))
+    # Retrieve the width of a single text
+    if (length(text) == 1){
+        # Create test graphical object to measure the actual height
+        temp_grob <- grid::textGrob(text,
+                                    gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                    fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                    fontface   = visuals[[paste0(type, "_font_face")]],
+                                                    lineheight = dimensions[["line_height"]]))
 
-    # Measure the height of the temporary graphical object
-    abs(grid::convertWidth(grid::grobWidth(temp_grob), unit, valueOnly = TRUE))
+        # Measure the height of the temporary graphical object
+        abs(grid::convertWidth(grid::grobWidth(temp_grob), unit, valueOnly = TRUE))
+    }
+    # Retrieve a vector of individual widths
+    else{
+        sapply(text, function(element){
+            temp_grob <- grid::textGrob(element,
+                                        gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                        fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                        fontface   = visuals[[paste0(type, "_font_face")]],
+                                                        lineheight = dimensions[["line_height"]]))
+
+            abs(grid::convertWidth(grid::grobWidth(temp_grob), unit, valueOnly = TRUE))
+        }, USE.NAMES = FALSE)
+    }
 }
 
 #' @description
@@ -490,15 +510,30 @@ get_text_height <- function(text,
                             dimensions,
                             visuals,
                             unit = "native"){
-    # Create test graphical object to measure the actual height
-    temp_grob <- grid::textGrob(text,
-                                gp = grid::gpar(fontfamily = visuals[["font"]],
-                                                fontsize   = dimensions[[paste0(type, "_font_size")]],
-                                                fontface   = visuals[[paste0(type, "_font_face")]],
-                                                lineheight = dimensions[["line_height"]]))
+    # Retrieve the height of a single text
+    if (length(text) == 1){
+        # Create test graphical object to measure the actual height
+        temp_grob <- grid::textGrob(text,
+                                    gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                    fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                    fontface   = visuals[[paste0(type, "_font_face")]],
+                                                    lineheight = dimensions[["line_height"]]))
 
-    # Measure the height of the temporary graphical object
-    abs(grid::convertHeight(grid::grobHeight(temp_grob), unit, valueOnly = TRUE))
+        # Measure the height of the temporary graphical object
+        abs(grid::convertHeight(grid::grobHeight(temp_grob), unit, valueOnly = TRUE))
+    }
+    # Retrieve a vector of individual heights
+    else{
+        sapply(text, function(element){
+            temp_grob <- grid::textGrob(element,
+                                        gp = grid::gpar(fontfamily = visuals[["font"]],
+                                                        fontsize   = dimensions[[paste0(type, "_font_size")]],
+                                                        fontface   = visuals[[paste0(type, "_font_face")]],
+                                                        lineheight = dimensions[["line_height"]]))
+
+            abs(grid::convertHeight(grid::grobHeight(temp_grob), unit, valueOnly = TRUE))
+        }, USE.NAMES = FALSE)
+    }
 }
 
 
@@ -586,7 +621,7 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
     # Measure whether the value heights fit the segment heights. This is done after
     # setting up the inner viewport to get the dimensions right. A tiny bit is added
     # to the padding, so that the values are shifted outside before they reach the axes.
-    diagram_info[["values_width"]]  <- rep(get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals), diagram_info[["number_of_elements"]])
+    diagram_info[["value_widths"]]  <- get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals)
     diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
                                                            "native", valueOnly =TRUE)
 
@@ -606,7 +641,7 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
             # Wit rotation all heights are individual. The widths are captured before
             # the rotation, then swap the scaling from width to the actual scaled
             # inner viewport height. Again add the padding here.
-            diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["values_width"]], diagram_info[["inner_viewport_width"]],
+            diagram_info[["value_heights"]]       <- swap_scaling(diagram_info[["value_widths"]], diagram_info[["inner_viewport_width"]],
                                                                   diagram_info[["inner_viewport_height"]]) * diagram_info[["primary_y_distance"]]
             diagram_info[["values_fit_vertical"]] <- (diagram_info[["value_heights"]] + diagram_info[["value_padding"]]
                                                       < abs(diagram_info[["actual_drawing_height"]]))
@@ -1322,7 +1357,6 @@ setup_y_axes <- function(diagram_info,
                                             lwd = dimensions[["axes_line_thickness"]]))
 
     # Setup the ticks left/right
-    #tick_length <- 0.1 + (-0.2 * zero_pos)
     tick_length_cm <- arguments[["fine_tuning"]][["tick_length"]] * 5
     tick_length    <- tick_length_cm + ((-2 * tick_length_cm) * zero_pos)
 
@@ -1969,6 +2003,7 @@ direct_vertical_labels <- function(diagram_info,
 
     # Get all the group elements on which to draw the lines with labels
     label_group_selection <- data.table::fifelse(group_ids_up == label_group, TRUE, FALSE)
+    number_of_labels      <- collapse::fsum(label_group_selection)
 
     # Get the middle points of the vertical bars
     segment_centers_x <- (diagram_info[["segment_pos"]][label_group_selection]
@@ -2012,20 +2047,18 @@ direct_vertical_labels <- function(diagram_info,
         # Without rotation the offset is basically static because values are always
         # drawn on one line and therefor have the same height.
         if (!visuals[["rotate_values"]]){
-            offset_value <- get_text_height(diagram_info[["formatted_values"]], "value", dimensions, visuals)
-
-            offset_value <- rep(offset_value, diagram_info[["number_of_segments"]])
+            offset_value <- diagram_info[["value_heights"]][group_ids_up == label_group]
         }
         # With rotation the values can be unequaly high. The offset therefor must
         # be calculated individually.
         else{
-            offset_value <- diagram_info[["values_width"]]
+            offset_value <- diagram_info[["value_widths"]][group_ids_up == label_group]
 
             # The width measuring needs to be swapped to the height dimension.
             offset_value <- swap_scaling(offset_value, dimensions[["inner_canvas_width"]], dimensions[["inner_canvas_height"]])
 
             # Select label group and scale offset to y axes distance
-            offset_value <- offset_value[group_ids_up == label_group] * diagram_info[["primary_y_distance"]]
+            offset_value <- offset_value * diagram_info[["primary_y_distance"]]
 
             # Add additional offset for the space between segment and value
             #offset_value <- offset_value + (fine_tuning[["values_zero_line_offset"]] * offset_value)
@@ -2078,6 +2111,8 @@ direct_vertical_labels <- function(diagram_info,
     # drawn on equal heights or in stairs.
     horizontal_alignment <- 0.5 # center
 
+    rotate <- rep(0, number_of_labels)
+
     if (dimensions[["segment_line_offset"]] > 0){
         horizontal_alignment <- 0 # left
         segment_centers_x    <- segment_centers_x * (1 - fine_tuning[["segment_label_hjust"]])
@@ -2087,10 +2122,19 @@ direct_vertical_labels <- function(diagram_info,
         segment_centers_x    <- segment_centers_x * (1 + fine_tuning[["segment_label_hjust"]])
     }
     else{
-        segment_centers_x <- decollide_labels(diagram_info[["wrapped_segment_labels"]],
-                                              segment_centers_x,
-                                              dimensions,
-                                              fine_tuning)
+        # In case no rotation is active try to decollide the labels
+        if (!visuals[["rotate_segment_labels"]]){
+            segment_centers_x <- decollide_labels(diagram_info[["wrapped_segment_labels"]],
+                                                  segment_centers_x,
+                                                  dimensions,
+                                                  fine_tuning)
+        }
+        # With rotation, apply it and set the text alignment to left center
+        else{
+            horizontal_alignment <- 0
+            vertical_alignment   <- 0.5
+            rotate               <- rep(visuals[["segment_label_rotation"]], number_of_labels)
+        }
     }
 
     # Generate the lines
@@ -2108,6 +2152,7 @@ direct_vertical_labels <- function(diagram_info,
                                      y     = grid::unit(segment_end_y + offset_y, "native"),
                                      hjust = horizontal_alignment,
                                      vjust = vertical_alignment,
+                                     rot = rotate,
                                      name  = "segment_labels",
                                      gp    = grid::gpar(col        = visuals[["label_font_color"]],
                                                         fontfamily = visuals[["font"]],
@@ -2143,7 +2188,7 @@ setup_legend <- function(diagram_info,
 
     segment_labels    <- diagram_info[["unique_segments"]]
     number_of_labels  <- length(segment_labels)
-    number_of_columns <- visuals[["legend_columns"]]
+    number_of_columns <- min(visuals[["legend_columns"]], number_of_labels)
     margins           <- dimensions[["margins"]]
 
     # Check if legend preset was set

@@ -57,7 +57,6 @@
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
 #' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
-#' @param number_formats Number formats set with [number_format_style()].
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
 #' @param output Output parameters set with [graphic_output()].
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
@@ -208,7 +207,6 @@ design_graphic <- function(data_frame,
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
                            fine_tuning    = .qol_options[["graphic_fine_tuning"]],
-                           number_formats = .qol_options[["graphic_number_formats"]],
                            add_texts      = .qol_options[["graphic_texts"]],
                            output         = .qol_options[["graphic_output"]],
                            na.rm          = .qol_options[["na.rm"]],
@@ -561,18 +559,6 @@ design_graphic <- function(data_frame,
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Additional textboxes
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # Check if the add_textbox function was directly passed to the parameter.
-    # In this case enclose it in a list.
-    add_texts_call <- as.character(substitute(add_texts))
-
-    if (add_texts_call[1] == "add_textbox"){
-        add_texts <- list(add_texts)
-    }
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Resolve macros
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -600,7 +586,7 @@ design_graphic <- function(data_frame,
     # Put combinations in a single vector
     if (flag_merge_axes_vars){
         # On single axes variables combine them separately with the segments
-        segment_part <- sprintf("(%s)", paste(segment_vars, collapse = " "))
+        segment_part <- sprintf("(%s)", paste(segment_vars, collapse = ", "))
         combinations <- paste(axes_variables, segment_part, sep = " + ")
     }
     else{
@@ -786,36 +772,6 @@ design_graphic <- function(data_frame,
     else{
         var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH", "by_vars", "BY", "segments")
         value_vars <- graphic_tab |> inverse(var_vector)
-    }
-
-    # Round values according to number formats
-    for (var_name in value_vars){
-        # Get stat from variable name
-        stat <- strsplit(var_name, split = "_")[[1]]
-        stat <- stat[length(stat)]
-
-        # Round values to the decimals places specified in the style
-        if (tolower(stat) %in% c("sum", "freq", "freq", "mean", "median", "mode",
-                                 "min", "max")){
-            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
-                                                    number_formats[[paste0(stat, "_decimals")]])
-        }
-        else if(stat == "g0"){
-            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
-                                                    number_formats[["freq_decimals"]])
-        }
-        else if(stat == "wgt"){
-            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
-                                                    number_formats[["sum_decimals"]])
-        }
-        else if(grepl("^[0-9]$", substr(stat, 2, 2))){
-            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
-                                                    number_formats[["p_decimals"]])
-        }
-        else{
-            graphic_tab[[var_name]] <- round_values(graphic_tab[[var_name]],
-                                                    number_formats[["pct_decimals"]])
-        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1090,6 +1046,12 @@ generate_graphic <- function(graphic_tab,
         grid::vpStack(
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
+
+    # Check if the add_textbox function was directly passed to the parameter.
+    # In this case enclose it in a list.
+    if (inherits(add_texts, "text") && inherits(add_texts, "grob")){
+        add_texts <- list(add_texts)
+    }
 
     # Make sure custom textboxes have a unique name or otherwise only the first
     # will be drawn multiple times.

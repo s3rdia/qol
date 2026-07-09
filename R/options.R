@@ -1118,9 +1118,9 @@ set_graphic_options <- function(..., save_file = NULL){
                  "guiding_line_type", "guiding_line_color",
                  "major_separation_line_type", "major_separation_line_color",
                  "minor_separation_line_type", "minor_separation_line_color",
-                 "segment_line_type", "segment_line_color",
-                 "remove_small_values", "display_values",
-                 "bar_values_inside", "rotate_values", "display_plus_symbol",
+                 "segment_line_type", "segment_line_color", "rotate_segment_labels",
+                 "segment_label_rotation", "remove_small_values", "display_values",
+                 "bar_values_inside", "rotate_values", "value_rotation", "display_plus_symbol",
                  "label_type", "label_group", "legend_x_pos", "legend_y_pos",
                  "legend_columns", "legend_symbol_size", "origin",
                  "tooltip_font_color", "tooltip_background_color",
@@ -1157,10 +1157,10 @@ set_graphic_options <- function(..., save_file = NULL){
                     "other_font_size", "tooltip_font_size",
                     "line_height", "space_between_bars", "bar_overlap",
                     "line_thickness", "segment_line_thickness",
-                    "separation_line_thickness", "axes_line_thickness",
-                    "guiding_line_thickness", "graphic_outline_thickness",
-                    "diagram_outline_thickness", "segment_line_length",
-                    "segment_line_offset", "textbox_width")
+                    "major_separation_line_thickness", "minor_separation_line_thickness",
+                    "axes_line_thickness", "guiding_line_thickness",
+                    "graphic_outline_thickness", "diagram_outline_thickness",
+                    "segment_line_length", "segment_line_offset", "textbox_width")
 
     output_params <- c("save_path", "file", "resolution",
                        "by_as_grid", "interactive")
@@ -1169,7 +1169,7 @@ set_graphic_options <- function(..., save_file = NULL){
                      "values_vjust_positive", "values_vjust_negative",
                      "values_vjust_90_positive", "values_vjust_90_negative",
                      "value_overlap_factor", "shrink_segment_width",
-                     "values_rotation", "values_hjust", "values_hjust_90",
+                     "values_hjust", "values_hjust_90",
                      "values_hjust_90_plus", "values_zero_line_offset",
                      "values_below_axes_just", "values_below_axes_90_just",
                      "tick_length", "value_axes_margin", "y_axes_scaling",
@@ -1184,7 +1184,7 @@ set_graphic_options <- function(..., save_file = NULL){
                   "guiding_lines_y", "guiding_lines_x",
                   "remove_small_values", "display_values",
                   "bar_values_inside", "rotate_values", "display_plus_symbol",
-                  "by_as_grid", "interactive")
+                  "by_as_grid", "interactive", "rotate_segment_labels")
 
     numerics <- c("primary_axes_steps", "primary_axes_decimals",
                   "primary_axes_scale", "primary_values_decimals",
@@ -1198,8 +1198,8 @@ set_graphic_options <- function(..., save_file = NULL){
                   "label_font_size", "origin_font_size",
                   "other_font_size", "tooltip_font_size",
                   "line_height", "space_between_bars", "bar_overlap",
-                  "line_thickness", "segment_line_thickness",
-                  "separation_line_thickness", "axes_line_thickness",
+                  "line_thickness", "segment_line_thickness", "major_separation_line_thickness",
+                  "minor_separation_line_thickness", "axes_line_thickness",
                   "guiding_line_thickness", "graphic_outline_thickness",
                   "diagram_outline_thickness", "segment_line_length",
                   "segment_line_offset", "textbox_width",
@@ -1212,7 +1212,7 @@ set_graphic_options <- function(..., save_file = NULL){
                   "values_vjust_positive", "values_vjust_negative",
                   "values_vjust_90_positive", "values_vjust_90_negative",
                   "value_overlap_factor", "shrink_segment_width",
-                  "values_rotation", "values_hjust", "values_hjust_90",
+                  "value_rotation", "values_hjust", "values_hjust_90",
                   "values_hjust_90_plus", "values_zero_line_offset",
                   "values_below_axes_just", "values_below_axes_90_just",
                   "tick_length", "value_axes_margin", "y_axes_scaling",
@@ -1220,7 +1220,7 @@ set_graphic_options <- function(..., save_file = NULL){
                   "segment_line_treshhold", "segment_label_hjust",
                   "max_segment_label_shift",
                   "cm_to_inch_factor", "svg_anchor_adjust",
-                  "svg_line_height_adjust")
+                  "svg_line_height_adjust", "segment_label_rotation")
 
     characters <- c("font", "color_theme",
                     "title_font_face", "footnote_font_face",
@@ -1314,6 +1314,11 @@ set_graphic_options <- function(..., save_file = NULL){
     # Update each sub-list in the global options
     if (length(visuals_updated) > 0){
         .qol_options[["graphic_visuals"]] <- utils::modifyList(.qol_options[["graphic_visuals"]], visuals_updated)
+
+        # An unnamed list can't be updaten via modifyList, therefore do it directly afterwards
+        if (!is.null(visuals_updated[["color_usage"]])){
+            .qol_options[["graphic_visuals"]][["color_usage"]] <- visuals_updated[["color_usage"]]
+        }
     }
 
     if (length(axes_updated) > 0){
