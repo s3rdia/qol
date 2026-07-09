@@ -8,7 +8,7 @@
 graphic_visuals(
   font = "Arial",
   color_theme = "ocean",
-  color_usage = .contrast_usage,
+  color_usage = contrast_usage,
   theme_override = list(),
   title_font_color = "#000000",
   footnote_font_color = "#000000",
@@ -52,10 +52,13 @@ graphic_visuals(
   minor_separation_line_color = "#9A9A9A",
   segment_line_type = "solid",
   segment_line_color = "#000000",
+  rotate_segment_labels = FALSE,
+  segment_label_rotation = 90,
   remove_small_values = TRUE,
   display_values = TRUE,
   bar_values_inside = TRUE,
   rotate_values = FALSE,
+  value_rotation = 90,
   display_plus_symbol = FALSE,
   label_type = "lines",
   label_group = "auto",
@@ -188,6 +191,11 @@ categories.}
 
 \item{segment_line_color}{Sets the color of the leading lines from segments to labels.}
 
+\item{rotate_segment_labels}{FALSE by default. If TRUE rotates the direct vertical segment labels
+by a number of degrees.}
+
+\item{segment_label_rotation}{Degrees of segment label rotation.}
+
 \item{remove_small_values}{TRUE by default. Doesn't display values in stacked diagrams,
 if the corresponding segment is to small and value would go out of bounds. If FALSE,
 always displays values.}
@@ -199,7 +207,9 @@ removes all values and just draws the segments.}
 will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.}
 
 \item{rotate_values}{FALSE by default. If TRUE rotates values inside the segments by
-90 degrees.}
+a number of degrees.}
+
+\item{value_rotation}{Degrees of segment value rotation.}
 
 \item{display_plus_symbol}{FALSE by default. If TRUE displays a + symbol in front of
 positive values.}

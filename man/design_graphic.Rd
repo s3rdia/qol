@@ -23,7 +23,6 @@ design_graphic(
   axes = .qol_options[["graphic_axes"]],
   dimensions = .qol_options[["graphic_dimensions"]],
   fine_tuning = .qol_options[["graphic_fine_tuning"]],
-  number_formats = .qol_options[["graphic_number_formats"]],
   add_texts = .qol_options[["graphic_texts"]],
   output = .qol_options[["graphic_output"]],
   na.rm = .qol_options[["na.rm"]],
@@ -96,8 +95,6 @@ dg_vbars.}
 \item{dimensions}{Dimension parameters set with \code{\link[=graphic_dimensions]{graphic_dimensions()}}.}
 
 \item{fine_tuning}{Fine tuning parameters set with \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}.}
-
-\item{number_formats}{Number formats set with \code{\link[=number_format_style]{number_format_style()}}.}
 
 \item{add_texts}{Use the \code{\link[=add_textbox]{add_textbox()}} function to freely place one or multiple textboxes.}
 

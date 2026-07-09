@@ -47,7 +47,8 @@ Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[
 \code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
 
 Color themes: \code{\link[=display_colors]{display_colors()}}, \code{\link[=display_themes]{display_themes()}}, \code{\link[=add_color_theme]{add_color_theme()}}, \code{\link[=get_theme_colors]{get_theme_colors()}},
-\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}
+\code{\link[=reset_color_themes]{reset_color_themes()}}, \code{\link[=override_theme]{override_theme()}}, \code{\link[=sequential_usage]{sequential_usage()}}, \code{\link[=contrast_usage]{contrast_usage()}},
+\code{\link[=high_contrast_usage]{high_contrast_usage()}}
 
 Additional graphic functions: \code{\link[=add_textbox]{add_textbox()}}, \code{\link[=get_text_width]{get_text_width()}}, \code{\link[=get_text_height]{get_text_height()}},
 \code{\link[=setup_nested_diagram_viewport]{setup_nested_diagram_viewport()}}, \code{\link[=back_to_the_root]{back_to_the_root()}}, \code{\link[=get_diagram_dimensions]{get_diagram_dimensions()}},

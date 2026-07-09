@@ -34,7 +34,7 @@ graphic_dimensions(
   diagram_outline_thickness = 1,
   segment_line_length = 1,
   segment_line_offset = 0,
-  textbox_width = 3.2
+  textbox_width = 4
 )
 
 modify_graphic_dimensions(dimension_to_modify, ...)

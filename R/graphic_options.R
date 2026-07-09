@@ -177,7 +177,7 @@
 #' @export
 graphic_visuals <- function(font                        = "Arial",
                             color_theme                 = "ocean",
-                            color_usage                 = .contrast_usage,
+                            color_usage                 = contrast_usage,
                             theme_override              = list(),
                             title_font_color            = "#000000",
                             footnote_font_color         = "#000000",

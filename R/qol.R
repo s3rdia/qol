@@ -39,7 +39,8 @@
 #' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
 #'
 #' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
-#' [reset_color_themes()], [override_theme()]
+#' [reset_color_themes()], [override_theme()], [sequential_usage()], [contrast_usage()],
+#' [high_contrast_usage()]
 #'
 #' Additional graphic functions: [add_textbox()], [get_text_width()], [get_text_height()],
 #' [setup_nested_diagram_viewport()], [back_to_the_root()], [get_diagram_dimensions()],

@@ -641,56 +641,134 @@ override_theme <- function(number       = NULL,
 }
 
 
-# These are the two main sequences in which colors are used. The first one is just
-# sequential from 1 to 10, the second one skips colors to use the whole color range
-# as much as possible and to put colors with more contrasts together (if the colors
-# themselves are ordered sequentially).
+#' @description
+#' [sequential_usage()]: Creates a basic numeric sequence based on the number of
+#' colors and segments.
 #'
 #' @examples
-#' # The two main color usages are set up like this
-#' contrast_usage <- list(c(1),
-#'                        c(1, 3),
-#'                        c(1, 3, 5),
-#'                        c(1, 3, 5, 7),
-#'                        c(1, 3, 5, 7, 9),
-#'                        c(1, 2, 3, 5, 7, 9),
-#'                        c(1, 2, 3, 4, 5, 7, 9),
-#'                        c(1, 2, 3, 4, 5, 6, 7, 9),
-#'                        c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-#'                        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-#'
-#' sequential_usage <- list(c(1),
-#'                          c(1, 2),
-#'                          c(1, 2, 3),
-#'                          c(1, 2, 3, 4),
-#'                          c(1, 2, 3, 4, 5),
-#'                          c(1, 2, 3, 4, 5, 6),
-#'                          c(1, 2, 3, 4, 5, 6, 7),
-#'                          c(1, 2, 3, 4, 5, 6, 7, 8),
-#'                          c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-#'                          c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#' # sequential_usage sequences
+#' c(1),
+#' c(1, 2),
+#' c(1, 2, 3),
+#' c(1, 2, 3, 4),
+#' c(1, 2, 3, 4, 5),
+#' c(1, 2, 3, 4, 5, 6),
+#' c(1, 2, 3, 4, 5, 6, 7),
+#' c(1, 2, 3, 4, 5, 6, 7, 8),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 #'
 #' @rdname color_themes
 #'
-.contrast_usage <- list(c(1),
-                        c(1, 3),
-                        c(1, 3, 5),
-                        c(1, 3, 5, 7),
-                        c(1, 3, 5, 7, 9),
-                        c(1, 2, 3, 5, 7, 9),
-                        c(1, 2, 3, 4, 5, 7, 9),
-                        c(1, 2, 3, 4, 5, 6, 7, 9),
-                        c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#' @export
+sequential_usage <- function(number_of_colors, number_of_segments){
+    seq_len(min(number_of_colors, number_of_segments))
+}
 
-.sequential_usage <- list(c(1),
-                          c(1, 2),
-                          c(1, 2, 3),
-                          c(1, 2, 3, 4),
-                          c(1, 2, 3, 4, 5),
-                          c(1, 2, 3, 4, 5, 6),
-                          c(1, 2, 3, 4, 5, 6, 7),
-                          c(1, 2, 3, 4, 5, 6, 7, 8),
-                          c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                          c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
+#' @description
+#' [contrast_usage()]: Creates a numeric sequence, using odd numbers first, then
+#' adding even numbers, so that adjacent segments have more contrast.
+#'
+#' @examples
+#' # contrast_usage sequences
+#' c(1),
+#' c(1, 3),
+#' c(1, 3, 5),
+#' c(1, 3, 5, 7),
+#' c(1, 3, 5, 7, 9),
+#' c(1, 2, 3, 5, 7, 9),
+#' c(1, 2, 3, 4, 5, 7, 9),
+#' c(1, 2, 3, 4, 5, 6, 7, 9),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#'
+#' @rdname color_themes
+#'
+#' @export
+contrast_usage <- function(number_of_colors, number_of_segments){
+    # Contrast usage always skips one color. First take the colors at odd
+    # number positions, than add the even positions in between.
+    color_usage_pool <- c(seq(1, number_of_colors, by = 2),
+                          seq(2, number_of_colors, by = 2))
+
+    # Build the color usage list
+    sort(color_usage_pool[seq_len(min(number_of_colors, number_of_segments))])
+}
+
+
+#' @description
+#' [high_contrast_usage()]: Creates a numeric sequence, using extreme points first
+#' and then filling up with the mid points. Adjacent segments will always have the
+#' highest possible contrast.
+#'
+#' @examples
+#' # high_contrast_usage sequences
+#' c(1),
+#' c(1, 10),
+#' c(1, 5, 10),
+#' c(1, 3, 5, 10),
+#' c(1, 3, 5, 7, 10),
+#' c(1, 2, 3, 5, 7, 10),
+#' c(1, 2, 3, 4, 5, 7, 10),
+#' c(1, 2, 3, 4, 5, 6, 7, 10),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 10),
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#'
+#' @rdname color_themes
+#'
+#' @export
+high_contrast_usage <- function(number_of_colors, number_of_segments){
+    if (number_of_segments >= number_of_colors){
+        return(seq_len(min(number_of_colors, number_of_segments)))
+    }
+
+    # Get the extreme points
+    color_usage_pool      <- integer(number_of_colors)
+    color_usage_pool[1:2] <- c(1, number_of_colors)
+
+    # Set up loop to determine the high contrast sequence. Starts from the extreme
+    # points and then always looks for the respective midpoints.
+    left_side     <- 1
+    right_side    <- number_of_colors
+    last_element  <- 1
+    first_element <- 1
+    colors_used   <- 2
+
+    while (last_element <= first_element && colors_used < number_of_segments){
+        # Determine current lower and upper boundaries
+        lower_bound  <- left_side[last_element]
+        upper_bound  <- right_side[last_element]
+        last_element <- last_element + 1
+
+        if (upper_bound - lower_bound <= 1){
+            next
+        }
+
+        # Get the midpoint between the boundaries
+        midpoint <- (lower_bound + upper_bound) %/% 2
+
+        # Add midpoint to used colors
+        colors_used                   <- colors_used + 1
+        color_usage_pool[colors_used] <- midpoint
+
+        # If the midpoint is to the right of the lower boundary and not directly adjacent
+        if (midpoint - lower_bound > 1){
+            # Set up the next interval to: lower_bound - midpoint
+            first_element             <- first_element + 1
+            left_side[first_element]  <- lower_bound
+            right_side[first_element] <- midpoint
+        }
+
+        # If the midpoint is to the left of the upper boundary and not directly adjacent
+        if (upper_bound - midpoint > 1){
+            # Set up the next interval to: midpoint - upper_bound
+            first_element             <- first_element + 1
+            left_side[first_element]  <- midpoint
+            right_side[first_element] <- upper_bound
+        }
+    }
+
+    # Return sequence
+    sort(color_usage_pool[seq_len(min(number_of_colors, number_of_segments))])
+}

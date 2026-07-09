@@ -13,7 +13,6 @@ graphic_fine_tuning(
   values_vjust_90_negative = -0.2,
   value_overlap_factor = 1.35,
   shrink_segment_width = 0.55,
-  values_rotation = 90,
   values_hjust = 0.5,
   values_hjust_90 = 0.35,
   values_hjust_90_plus = 0.05,
@@ -22,7 +21,7 @@ graphic_fine_tuning(
   values_below_axes_90_just = 1.4,
   tick_length = 0.02,
   value_axes_margin = 0.02,
-  y_axes_scaling = 1.3,
+  y_axes_scaling = 1.1,
   swap_direction_threshold = 0.75,
   segment_line_offset = 0.3,
   segment_line_treshhold = 0.95,
@@ -52,8 +51,6 @@ drawn outside the segment.}
 
 \item{shrink_segment_width}{Shrinks the segment width by this factor, if the segment borders
 are colored, to prevent the bars from overlapping}
-
-\item{values_rotation}{Degrees of segment value rotation.}
 
 \item{values_hjust}{Horizontal adjustment of segment values.}
 

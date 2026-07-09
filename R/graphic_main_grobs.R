@@ -24,13 +24,16 @@
 #' @export
 vbar_grob <- function(diagram_info,
                       arguments){
-    visuals        <- arguments[["visuals"]]
-    dimensions     <- arguments[["dimensions"]]
-    fine_tuning    <- arguments[["fine_tuning"]]
-    value_y_pos    <- diagram_info[["values"]]
-    theme          <- diagram_info[["theme"]]
-    color_usage    <- diagram_info[["color_usage"]]
-    theme_override <- diagram_info[["theme_override"]]
+    visuals           <- arguments[["visuals"]]
+    dimensions        <- arguments[["dimensions"]]
+    fine_tuning       <- arguments[["fine_tuning"]]
+    value_y_pos       <- diagram_info[["values"]]
+    theme             <- diagram_info[["theme"]]
+    color_usage       <- diagram_info[["color_usage"]]
+    theme_override    <- diagram_info[["theme_override"]]
+    font_color        <- diagram_info[["font_color"]]
+    colors_outside    <- diagram_info[["colors_outside"]]
+    values_fit_inside <- diagram_info[["values_fit_vertical"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate rectangles
@@ -71,23 +74,11 @@ vbar_grob <- function(diagram_info,
         hjust      <- numeric(number_of_values)
         vjust      <- numeric(number_of_values)
         rotate     <- numeric(number_of_values)
-        font_color <- character(number_of_values)
 
         # If a small scale is used it can happen that a negative symbol appears in front
         # of 0 values. This gets removed here.
         formatted_values                   <- diagram_info[["formatted_values"]]
         formatted_values[value_y_pos == 0] <- sub("\u2013", "", formatted_values[value_y_pos == 0])
-
-        # Get the specific font colors for the respective set up of segments
-        colors_inside  <- rep(theme[["font_inside"]][color_usage], diagram_info[["number_of_groups"]])
-        colors_outside <- rep(theme[["font_outside"]][color_usage], diagram_info[["number_of_groups"]])
-
-        # Determine whether a value should be drawn inside or outside the segment
-        values_fit_inside <- diagram_info[["values_fit_vertical"]]
-
-        # Set font color according to whether values are drawn inside or outside the segments
-        font_color[values_fit_inside]  <- colors_inside[values_fit_inside]
-        font_color[!values_fit_inside] <- colors_outside[!values_fit_inside]
 
         y_offset <- rep(grid::unit(0, "mm"), number_of_values)
 
@@ -166,11 +157,6 @@ vbar_grob <- function(diagram_info,
                 font_color[override[["number"]]] <- override[["font_color"]]
                 font_color[override[["number"]]] <- override[["font_color"]]
             }
-        }
-
-        # Reverse font colors, if option is set accordingly.
-        if (visuals[["reverse_colors"]]){
-            font_color <- rev(font_color)
         }
 
         # Generate formatted values. Every value is drawn as a separate element

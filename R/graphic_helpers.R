@@ -648,7 +648,22 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
         }
     }
 
-    invisible(diagram_info)
+    # Determine whether a value should be drawn inside or outside the segment
+    values_fit_inside <- diagram_info[["values_fit_vertical"]]
+
+    # Set font color according to whether values are drawn inside or outside the segments
+    font_color                     <- character(diagram_info[["number_of_elements"]])
+    font_color[values_fit_inside]  <- diagram_info[["colors_inside"]][values_fit_inside]
+    font_color[!values_fit_inside] <- diagram_info[["colors_outside"]][!values_fit_inside]
+
+    # Reverse font colors, if option is set accordingly.
+    if (visuals[["reverse_colors"]]){
+        font_color <- rev(font_color)
+    }
+
+    diagram_info[["font_color"]] <- font_color
+
+    invisible(diagram_info[order(names(diagram_info))])
 }
 
 
@@ -1162,18 +1177,41 @@ get_diagram_dimensions <- function(arguments){
     # Get the colors to be used
     theme <- get_theme_colors(visuals[["color_theme"]])
 
-    # Prevent color usage overflow, when there are more segments than color usage
-    # patterns.
-    color_usage <- visuals[["color_usage"]]
+    # Generate the color usage sequence
+    color_usage      <- visuals[["color_usage"]]
+    number_of_colors <- length(theme[["base"]])
 
-    if (number_of_segments > length(color_usage)){
-        print_message("WARNING", c("More segments than available colors. Maximum number",
-                                   "of colors will be used."))
-
-        color_usage <- color_usage[[length(color_usage)]]
+    if (number_of_segments > number_of_colors){
+        print_message("WARNING", "There are more segments than available colors. Maximum number of colors will be used and repeated.")
     }
+
+    # If a function is plugged in get the result
+    if (is.function(color_usage)){
+        color_usage <- color_usage(number_of_colors, number_of_segments)
+    }
+    # If a list is provided containing numeric sequence vectors, select the fitting element
+    else if (is.list(color_usage)){
+        color_usage <- color_usage[[min(number_of_colors, number_of_segments)]]
+    }
+    # If something else is passed that doesn't fit, use sequential usage
     else{
-        color_usage <- color_usage[[number_of_segments]]
+        print_message("WARNING", "Unsupported color usage. Sequential usage will be applied.")
+
+        color_usage <- sequential_usage(number_of_colors, number_of_segments)
+    }
+
+    # Get the colors from the theme which should be used.
+    colors_to_use <- rep(theme[["base"]][color_usage], length.out = number_of_elements)
+
+    # Get the specific font colors for the respective set up of segments
+    colors_inside  <- rep(theme[["font_inside"]][color_usage],  length.out = number_of_elements)
+    colors_outside <- rep(theme[["font_outside"]][color_usage], length.out = number_of_elements)
+
+    # Get override and make sure it is a list of lists
+    theme_override <- visuals[["theme_override"]]
+
+    if (!is_list_of_lists(theme_override)){
+        theme_override <- list(theme_override)
     }
 
     # Check whether the provided border color is a single hex code. If it is not
@@ -1199,20 +1237,10 @@ get_diagram_dimensions <- function(arguments){
 
     border_color <- rep(border_color, length.out = number_of_elements)
 
-    # Get the colors from the theme which should be used. Reverse them if option
-    # is set accordingly.
-    colors_to_use <- rep(theme[["base"]][color_usage], length.out = number_of_elements)
-
+    # Reverse colors if option is set accordingly.
     if (visuals[["reverse_colors"]]){
         colors_to_use <- rev(colors_to_use)
         border_color  <- rev(border_color)
-    }
-
-    # Get override and make sure it is a list of lists
-    theme_override <- visuals[["theme_override"]]
-
-    if (!is_list_of_lists(theme_override)){
-        theme_override <- list(theme_override)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1266,8 +1294,10 @@ get_diagram_dimensions <- function(arguments){
          group_separation_lines_x    = group_separation_lines_x,
          theme                       = theme,
          color_usage                 = color_usage,
-         border_color                = border_color,
          colors_to_use               = colors_to_use,
+         colors_inside               = colors_inside,
+         colors_outside              = colors_outside,
+         border_color                = border_color,
          theme_override              = theme_override,
          shrink_width                = shrink_width)
 }

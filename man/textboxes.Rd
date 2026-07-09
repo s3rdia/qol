@@ -11,13 +11,14 @@ add_textbox(
   text,
   x_pos = .qol_options[["graphic_dimensions"]][["margins"]],
   y_pos = .qol_options[["graphic_dimensions"]][["margins"]],
-  width = .qol_options[["graphic_dimensions"]][["graphic_width"]],
+  width = .qol_options[["graphic_dimensions"]][["textbox_width"]],
   alignment = .qol_options[["graphic_visuals"]][["other_alignment"]],
   font = .qol_options[["graphic_visuals"]][["font"]],
   font_color = .qol_options[["graphic_visuals"]][["other_font_color"]],
   font_size = .qol_options[["graphic_dimensions"]][["other_font_size"]],
   font_face = .qol_options[["graphic_visuals"]][["other_font_face"]],
   line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
+  rotation = 0,
   name = "textbox",
   draw = FALSE
 )
@@ -46,6 +47,8 @@ get_text_height(text, type, dimensions, visuals, unit = "native")
 \item{font_face}{Valid values are "plain", "bold", "italic", "oblique", and "bold.italic".}
 
 \item{line_height}{The height of a single text line.}
+
+\item{rotation}{Rotates the text by a number of degrees.}
 
 \item{name}{The internal name of the textbox with which it can be identified.}
 
