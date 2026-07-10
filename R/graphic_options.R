@@ -10,13 +10,13 @@
 #' [design_graphic()]. All parameters can also be set globally via [set_graphic_options()].
 #'
 #' @param font Set the font to be used for the entire output.
-#' @param color_theme The color theme to use. Can either be the name of a built-in or
-#' custom theme or a vector of hex codes. Existing color themes can be viewed with
-#' [display_themes()].
+#' @param color_theme The color theme to use. Can be the name of a globally stored color
+#' theme or the theme itself created with [add_color_theme()]. Existing color themes
+#' can be viewed with [display_themes()].
 #' @param color_usage A list of numerical vectors that specify which specific colors
-#' from the color scheme are used for which number of segments. The two built in ways
-#' are ".contrast_usage" or ".sequential_usage". To see how they are set up look up the
-#' topic [color_themes] and the examples.
+#' from the color scheme are used for which number of segments. The three built in ways
+#' are "sequential_usage", "contrast_usage" (default) or "high_contrast_usage". To see
+#' how they are set up look up the topic [color_themes] and the examples.
 #' @param theme_override The override parameter takes in a list consisting of
 #' [override_theme()] functions.
 #' @param title_font_color Font color of the title.
@@ -86,9 +86,9 @@
 #' @param value_rotation Degrees of segment value rotation.
 #' @param display_plus_symbol FALSE by default. If TRUE displays a + symbol in front of
 #' positive values.
-#' @param label_type Can be "lines", which connects labels and segments with leading lines,
+#' @param segment_label_type Can be "lines", which connects labels and segments with leading lines,
 #' or "legend", which allows to position a legend separately.
-#' @param label_group If label_Type is "lines", then this parameter determines above which
+#' @param segment_label_group If label_Type is "lines", then this parameter determines above which
 #' group of segments the labels will be drawn.
 #' @param legend_x_pos Horizontal position of the legend. Also two presets "left" and "right"
 #' can be used which place the legend beside the diagram.
@@ -229,8 +229,8 @@ graphic_visuals <- function(font                        = "Arial",
                             rotate_values               = FALSE,
                             value_rotation              = 90,
                             display_plus_symbol         = FALSE,
-                            label_type                  = "lines",
-                            label_group                 = "auto",
+                            segment_label_type          = "lines",
+                            segment_label_group         = "auto",
                             legend_x_pos                = "auto",
                             legend_y_pos                = "auto",
                             legend_columns              = 1,
@@ -676,6 +676,8 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' whole grid when using by variables. If used with interactive parameter all graphics
 #' in the grid will be put into one file, where the graphics can be switched with a
 #' drop down list.
+#' @param grid_columns By default tries to create a square shape. If a numeric value is
+#' passed the number of grid columns is fixed and the number of rows adjusts accordingly.
 #' @param interactive FALSE by default. If TRUE exports an interactive html file containing
 #' mouse over tooltips and hover effects.
 #'
@@ -683,12 +685,11 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' ```html
 #' Interactive graphics can be embedded in an <iframe> like this:
 #'
-#' <iframe src="my_graphic.html" style="width: 100%; aspect-ratio: 16 / 10; border: none;"
+#' <iframe src="my_graphic.html" style="width: 100%; aspect-ratio: 16 / 9; border: none;"
 #' scrolling="no"></iframe>
 #'```
 #'
-#' Set the aspect ratio according to your graphic dimensions. It actually helps to set the
-#' height ratio a bit higher than the actual graphic is.
+#' Set the aspect ratio according to your graphic dimensions.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -743,11 +744,12 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @rdname graphic_output
 #'
 #' @export
-graphic_output <- function(save_path   = NULL,
-                           file        = NULL,
-                           resolution  = 300,
-                           by_as_grid  = FALSE,
-                           interactive = FALSE){
+graphic_output <- function(save_path    = NULL,
+                           file         = NULL,
+                           resolution   = 300,
+                           by_as_grid   = FALSE,
+                           grid_columns = "auto",
+                           interactive  = FALSE){
     as.list(environment())
 }
 

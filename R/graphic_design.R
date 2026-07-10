@@ -1180,9 +1180,15 @@ generate_graphic_by <- function(graphic_tab,
         number_of_values <- number_of_values + length(current_values)
     }
 
-    # Calculate the grid dimensions to be equaly distributed among rows and columns
-    number_of_columns <- ceiling(sqrt(number_of_values))
-    number_of_rows    <- ceiling(number_of_values / number_of_columns)
+    # On automatic calculation: calculate the grid dimensions to be equaly
+    # distributed among rows and columns.
+    number_of_columns <- output[["grid_columns"]]
+
+    if (is.character(number_of_columns)){
+        number_of_columns <- ceiling(sqrt(number_of_values))
+    }
+
+    number_of_rows <- ceiling(number_of_values / number_of_columns)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables
@@ -1268,9 +1274,18 @@ generate_graphic_by <- function(graphic_tab,
             if (length(titles) > 0){
                 titles_temp <- gsub("\\[by_var\\]", value, titles)
             }
-            # Or on top if there are no titles
+            # Or use by info as title, if there are no titles
             else{
                 titles_temp <- by_info
+            }
+
+            # Replace by info in the footnotes
+            if (length(footnotes) > 0){
+                footnotes_temp <- gsub("\\[by_var\\]", value, footnotes)
+            }
+            # Otherwise just leave footnotes empty
+            else{
+                footnotes_temp <- footnotes
             }
 
             # Calculate the actual position in the grid
@@ -1286,7 +1301,7 @@ generate_graphic_by <- function(graphic_tab,
                                                 statistics,
                                                 by,
                                                 titles_temp,
-                                                footnotes,
+                                                footnotes_temp,
                                                 var_labels,
                                                 stat_labels,
                                                 diagram,

@@ -16,10 +16,9 @@
 add_color_theme(
   theme_name,
   base_colors,
-  font_inside_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-    "#000000", "#000000", "#000000", "#000000", "#000000"),
-  font_outside_colors = c("#000000", "#000000", "#000000", "#000000", "#000000",
-    "#000000", "#000000", "#000000", "#000000", "#000000")
+  font_inside_colors = NULL,
+  font_outside_colors = rep("#000000", 10),
+  print = TRUE
 )
 
 get_theme_colors(theme_name)
@@ -49,10 +48,13 @@ high_contrast_usage(number_of_colors, number_of_segments)
 \item{base_colors}{The base colors for the segments.}
 
 \item{font_inside_colors}{The individual font colors used when drawing values inside segments
+on the corresponding base color. By default the colors black and white will be automatically
+generated based on the relative luminance of the base colors.}
+
+\item{font_outside_colors}{The individual font colors used when drawing values outside segments
 on the corresponding base color.}
 
-\item{font_outside_colors}{The individual font colors used when drawing values outsidr segments
-on the corresponding base color.}
+\item{print}{TRUE by default. Whether to display the theme afterwards or not.}
 
 \item{clear_themes}{FALSE by default. If TRUE clears the global theme list.}
 
@@ -65,7 +67,7 @@ on the corresponding base color.}
 \item{font_color}{The new font color of the segment value.}
 }
 \value{
-\code{\link[=add_color_theme]{add_color_theme()}}: Returns modified global theme list.
+\code{\link[=add_color_theme]{add_color_theme()}}: Returns newly created color theme.
 
 \code{\link[=get_theme_colors]{get_theme_colors()}}: A list with three vectors of hex color codes.
 
@@ -107,20 +109,24 @@ and then filling up with the mid points. Adjacent segments will always have the
 highest possible contrast.
 }
 \examples{
-# Adding and getting color themes
+# Add a color theme where font colors are set automatically
+add_color_theme("rainbow", rainbow(10))
+
+# Add a color theme with individual font colors. Use "base" keyword to copy
+# base colors.
 add_color_theme(theme_name  = "tropic",
                 base_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
                                 "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
-                font_inside_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-                                        "#000000", "#000000", "#000000", "#000000", "#000000"),
-                font_outside_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
-                                        "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"))
+                font_inside_colors = c("#F7FCF7", "#ECF8EB", "#D7F0D5", "#B2E4B8", "#85D49A",
+                                       "#56C07E", "#2FA36A", "#257F54", "#1F5A3F", "#1B3A2E"),
+                font_outside_colors = "base")
 
-get_theme_colors("ocean")
+# Get a color theme from the global theme list
+full_theme <- get_theme_colors("ocean")
 
-base_colors  <- get_theme_colors("ocean")[[1]]
-font_inside  <- get_theme_colors("ocean")[[2]]
-font_outside <- get_theme_colors("ocean")[[3]]
+base_colors  <- full_theme[[1]]
+font_inside  <- full_theme[[2]]
+font_outside <- full_theme[[3]]
 
 # Clear all globally stored themes in case only self created themes should be stored
 reset_color_themes(clear_themes = TRUE)

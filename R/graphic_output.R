@@ -27,16 +27,37 @@ output_graphic <- function(graphic_object,
                            print,
                            by_info = NULL){
     svg_string <- NULL
+    by_as_grid <- output[["by_as_grid"]]
+
+    if (by_as_grid && is.null(by_info)){
+        print_message("WARNING", c("<by_as_grid> export is activated but no <by> variable specified. <by_as_grid> will be",
+                                   "ignored and single graphic export triggered."))
+        by_as_grid <- FALSE
+    }
 
     # Early exit if all graphics should be exported as one file containing the
     # whole grid.
-    if (output[["by_as_grid"]]){
+    if (by_as_grid){
         if (print){
             if (interactive()){
                 grid::grid.draw(graphic_object)
             }
 
             if (output[["interactive"]]){
+                # Get file extension to determine output format
+                extension <- tolower(tools::file_ext(output[["file"]]))
+                filename  <- tools::file_path_sans_ext(output[["file"]])
+
+                if (extension != "html"){
+                    extension <- "html"
+                }
+
+                # This filename is set up for backup reasons in case "by_as_grid"
+                # was specified without providing a by variable. This case triggers
+                # a warning in the following function but still saves a file to
+                # this destination.
+                filename <- paste0(output[["save_path"]], "/", filename, ".", extension)
+
                 svg_string <- output_interactive_html(graphic_object,
                                                       visuals,
                                                       dimensions,
@@ -44,7 +65,7 @@ output_graphic <- function(graphic_object,
                                                       output,
                                                       diagram_info,
                                                       filename,
-                                                      output[["by_as_grid"]],
+                                                      by_as_grid,
                                                       by_info)
             }
 
@@ -131,7 +152,7 @@ output_graphic <- function(graphic_object,
                                                           output,
                                                           diagram_info,
                                                           filename,
-                                                          output[["by_as_grid"]],
+                                                          by_as_grid,
                                                           by_info)
                 }
                 # Static output
@@ -237,7 +258,7 @@ output_grid <- function(dimensions,
             extension <- tolower(tools::file_ext(output[["file"]]))
             filename  <- tools::file_path_sans_ext(output[["file"]])
 
-            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff")){
+            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "html")){
                 print_message("WARNING", c("Filetype '[extension]' not supported, 'png' will be used. Valid filetypes are:",
                                            "png, svg, jpeg, jpg, bmp, tiff"), extension = extension)
 
@@ -553,7 +574,7 @@ output_interactive_html <- function(graphic_object,
     if (is.null(by_info)){ print_step("MINOR", "Inject Java Script") }
 
     # Put together the whole java script and inject the custom tooltip design
-    if (!by_as_grid){
+    if (!by_as_grid || is.null(by_info)){
         full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
     }
     else{
@@ -649,8 +670,17 @@ output_interactive_html <- function(graphic_object,
                                        tooltip_layer, "\n</svg>"),
                       svg_string, fixed = TRUE)
 
+    if (by_as_grid && is.null(by_info)){
+        print_message("WARNING", c("<by_as_grid> export is activated but no <by> variable specified. <by_as_grid> will be",
+                                   "ignored and single graphic export triggered."))
+        by_as_grid <- FALSE
+    }
+
     # Finally save the dynamic SVG file
     if (!by_as_grid){
+        # Wrap SVG inside div container block
+        svg_string <- sprintf('<div id="qol_svg" class="svg-container" style="display:block;"> %s </div>', svg_string)
+
         # Load html template and replace placeholders
         html_template <- paste(readLines(system.file("extdata", "qol_html.txt", package = "qol"), warn = FALSE), collapse = "\n")
         html_template <- gsub("%SVG%", svg_string, html_template, fixed = TRUE)

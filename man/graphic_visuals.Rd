@@ -60,8 +60,8 @@ graphic_visuals(
   rotate_values = FALSE,
   value_rotation = 90,
   display_plus_symbol = FALSE,
-  label_type = "lines",
-  label_group = "auto",
+  segment_label_type = "lines",
+  segment_label_group = "auto",
   legend_x_pos = "auto",
   legend_y_pos = "auto",
   legend_columns = 1,
@@ -85,14 +85,14 @@ modify_graphic_visuals(visuals_to_modify, ...)
 \arguments{
 \item{font}{Set the font to be used for the entire output.}
 
-\item{color_theme}{The color theme to use. Can either be the name of a built-in or
-custom theme or a vector of hex codes. Existing color themes can be viewed with
-\code{\link[=display_themes]{display_themes()}}.}
+\item{color_theme}{The color theme to use. Can be the name of a globally stored color
+theme or the theme itself created with \code{\link[=add_color_theme]{add_color_theme()}}. Existing color themes
+can be viewed with \code{\link[=display_themes]{display_themes()}}.}
 
 \item{color_usage}{A list of numerical vectors that specify which specific colors
-from the color scheme are used for which number of segments. The two built in ways
-are ".contrast_usage" or ".sequential_usage". To see how they are set up look up the
-topic \link{color_themes} and the examples.}
+from the color scheme are used for which number of segments. The three built in ways
+are "sequential_usage", "contrast_usage" (default) or "high_contrast_usage". To see
+how they are set up look up the topic \link{color_themes} and the examples.}
 
 \item{theme_override}{The override parameter takes in a list consisting of
 \code{\link[=override_theme]{override_theme()}} functions.}
@@ -214,10 +214,10 @@ a number of degrees.}
 \item{display_plus_symbol}{FALSE by default. If TRUE displays a + symbol in front of
 positive values.}
 
-\item{label_type}{Can be "lines", which connects labels and segments with leading lines,
+\item{segment_label_type}{Can be "lines", which connects labels and segments with leading lines,
 or "legend", which allows to position a legend separately.}
 
-\item{label_group}{If label_Type is "lines", then this parameter determines above which
+\item{segment_label_group}{If label_Type is "lines", then this parameter determines above which
 group of segments the labels will be drawn.}
 
 \item{legend_x_pos}{Horizontal position of the legend. Also two presets "left" and "right"

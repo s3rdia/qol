@@ -10,6 +10,7 @@ graphic_output(
   file = NULL,
   resolution = 300,
   by_as_grid = FALSE,
+  grid_columns = "auto",
   interactive = FALSE
 )
 
@@ -28,6 +29,9 @@ a filename with extension.}
 whole grid when using by variables. If used with interactive parameter all graphics
 in the grid will be put into one file, where the graphics can be switched with a
 drop down list.}
+
+\item{grid_columns}{By default tries to create a square shape. If a numeric value is
+passed the number of grid columns is fixed and the number of rows adjusts accordingly.}
 
 \item{interactive}{FALSE by default. If TRUE exports an interactive html file containing
 mouse over tooltips and hover effects.}
@@ -52,12 +56,11 @@ only the options to modify will be adjusted while the rest stays as is.
 \details{
 \if{html}{\out{<div class="sourceCode html">}}\preformatted{Interactive graphics can be embedded in an <iframe> like this:
 
-<iframe src="my_graphic.html" style="width: 100\%; aspect-ratio: 16 / 10; border: none;"
+<iframe src="my_graphic.html" style="width: 100\%; aspect-ratio: 16 / 9; border: none;"
 scrolling="no"></iframe>
 }\if{html}{\out{</div>}}
 
-Set the aspect ratio according to your graphic dimensions. It actually helps to set the
-height ratio a bit higher than the actual graphic is.
+Set the aspect ratio according to your graphic dimensions.
 }
 \examples{
 # Example data frame

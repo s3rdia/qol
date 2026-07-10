@@ -1175,7 +1175,12 @@ get_diagram_dimensions <- function(arguments){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get the colors to be used
-    theme <- get_theme_colors(visuals[["color_theme"]])
+    if (class(visuals[["color_theme"]]) == "qol_color_theme"){
+        theme <- visuals[["color_theme"]]
+    }
+    else{
+        theme <- get_theme_colors(visuals[["color_theme"]])
+    }
 
     # Generate the color usage sequence
     color_usage      <- visuals[["color_usage"]]
@@ -2004,7 +2009,7 @@ direct_vertical_labels <- function(diagram_info,
     dimensions  <- arguments[["dimensions"]]
     fine_tuning <- arguments[["fine_tuning"]]
 
-    if (tolower(visuals[["label_type"]]) != "lines"){
+    if (tolower(visuals[["segment_label_type"]]) != "lines"){
         return(grid::nullGrob(name  = "segment_labels"))
     }
 
@@ -2014,7 +2019,7 @@ direct_vertical_labels <- function(diagram_info,
 
     # Look up which group of segments gets the labels. If desired group is out of
     # bounds, set the group to one of the extreme points.
-    label_group  <- visuals[["label_group"]]
+    label_group  <- visuals[["segment_label_group"]]
     group_ids_up <- diagram_info[["group_ids"]] + 1
 
     if (label_group == "auto"){
@@ -2212,7 +2217,7 @@ direct_vertical_labels <- function(diagram_info,
 setup_legend <- function(diagram_info,
                          visuals,
                          dimensions){
-    if (tolower(visuals[["label_type"]]) != "legend"){
+    if (tolower(visuals[["segment_label_type"]]) != "legend"){
         return(list(grid::nullGrob(name = "legend")))
     }
 

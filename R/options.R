@@ -1121,7 +1121,7 @@ set_graphic_options <- function(..., save_file = NULL){
                  "segment_line_type", "segment_line_color", "rotate_segment_labels",
                  "segment_label_rotation", "remove_small_values", "display_values",
                  "bar_values_inside", "rotate_values", "value_rotation", "display_plus_symbol",
-                 "label_type", "label_group", "legend_x_pos", "legend_y_pos",
+                 "segment_label_type", "segment_label_group", "legend_x_pos", "legend_y_pos",
                  "legend_columns", "legend_symbol_size", "origin",
                  "tooltip_font_color", "tooltip_background_color",
                  "tooltip_border_color", "tooltip_border_width",
@@ -1150,8 +1150,7 @@ set_graphic_options <- function(..., save_file = NULL){
 
     dimensions <- c("graphic_width", "graphic_height",
                     "diagram_start_top", "diagram_width", "diagram_height",
-                    "margins",
-                    "title_font_size", "footnote_font_size",
+                    "margins", "title_font_size", "footnote_font_size",
                     "axes_font_size", "value_font_size",
                     "label_font_size", "origin_font_size",
                     "other_font_size", "tooltip_font_size",
@@ -1163,10 +1162,9 @@ set_graphic_options <- function(..., save_file = NULL){
                     "segment_line_length", "segment_line_offset", "textbox_width")
 
     output_params <- c("save_path", "file", "resolution",
-                       "by_as_grid", "interactive")
+                       "by_as_grid", "grid_columns", "interactive")
 
-    fine_tuning <- c("diagram_margin",
-                     "values_vjust_positive", "values_vjust_negative",
+    fine_tuning <- c("diagram_margin", "values_vjust_positive", "values_vjust_negative",
                      "values_vjust_90_positive", "values_vjust_90_negative",
                      "value_overlap_factor", "shrink_segment_width",
                      "values_hjust", "values_hjust_90",
@@ -1190,10 +1188,8 @@ set_graphic_options <- function(..., save_file = NULL){
                   "primary_axes_scale", "primary_values_decimals",
                   "secondary_axes_steps", "secondary_axes_decimals",
                   "secondary_axes_scale", "secondary_values_decimals",
-                  "variable_axes_interval",
-                  "graphic_width", "graphic_height",
-                  "margins",
-                  "title_font_size", "footnote_font_size",
+                  "variable_axes_interval", "graphic_width", "graphic_height",
+                  "margins", "title_font_size", "footnote_font_size",
                   "axes_font_size", "value_font_size",
                   "label_font_size", "origin_font_size",
                   "other_font_size", "tooltip_font_size",
@@ -1206,34 +1202,26 @@ set_graphic_options <- function(..., save_file = NULL){
                   "resolution", "legend_columns", "legend_symbol_size",
                   "tooltip_border_width", "tooltip_background_opacity",
                   "tooltip_x_padding", "tooltip_y_padding",
-                  "tooltip_corner_radius", "segment_hover_opacity",
-                  "group_hover_opacity",
-                  "diagram_margin",
-                  "values_vjust_positive", "values_vjust_negative",
+                  "tooltip_corner_radius", "segment_hover_opacity", "group_hover_opacity",
+                  "diagram_margin", "values_vjust_positive", "values_vjust_negative",
                   "values_vjust_90_positive", "values_vjust_90_negative",
                   "value_overlap_factor", "shrink_segment_width",
                   "value_rotation", "values_hjust", "values_hjust_90",
                   "values_hjust_90_plus", "values_zero_line_offset",
                   "values_below_axes_just", "values_below_axes_90_just",
                   "tick_length", "value_axes_margin", "y_axes_scaling",
-                  "swap_direction_threshold",
-                  "segment_line_treshhold", "segment_label_hjust",
-                  "max_segment_label_shift",
-                  "cm_to_inch_factor", "svg_anchor_adjust",
+                  "swap_direction_threshold", "segment_line_treshhold", "segment_label_hjust",
+                  "max_segment_label_shift", "cm_to_inch_factor", "svg_anchor_adjust",
                   "svg_line_height_adjust", "segment_label_rotation")
 
-    characters <- c("font", "color_theme",
-                    "title_font_face", "footnote_font_face",
+    characters <- c("font", "color_theme", "title_font_face", "footnote_font_face",
                     "primary_axes_font_face", "secondary_axes_font_face",
                     "variable_axes_font_face", "value_font_face",
                     "label_font_face", "origin_font_face", "other_font_face",
                     "title_alignment", "footnote_alignment", "hbar_alignment",
-                    "other_alignment",
-                    "guiding_line_type",
-                    "major_separation_line_type",
-                    "minor_separation_line_type", "segment_line_type",
-                    "label_type",
-                    "origin",
+                    "other_alignment", "guiding_line_type",
+                    "major_separation_line_type", "minor_separation_line_type",
+                    "segment_line_type", "segment_label_type", "origin",
                     "primary_axes_big_mark", "primary_axes_decimal_mark",
                     "primary_axes_prefix", "primary_axes_suffix",
                     "primary_values_big_mark", "primary_values_decimal_mark",
@@ -1252,19 +1240,21 @@ set_graphic_options <- function(..., save_file = NULL){
                 "variable_axes_color",
                 "graphic_background_color", "diagram_background_color",
                 "graphic_border_color", "diagram_border_color",
-                "segment_border_color",
-                "guiding_line_color",
+                "segment_border_color", "guiding_line_color",
                 "major_separation_line_color",
                 "minor_separation_line_color", "segment_line_color",
                 "tooltip_font_color", "tooltip_background_color",
                 "tooltip_border_color", "group_hover_color")
 
-    lists <- c("color_usage", "theme_override")
+    lists <- c("theme_override")
 
     flexible <- c("primary_axes_max", "primary_axes_min",
                   "secondary_axes_max", "secondary_axes_min",
-                  "label_group", "legend_x_pos", "legend_y_pos",
-                  "diagram_start_top", "diagram_width", "diagram_height")
+                  "segment_label_group", "legend_x_pos", "legend_y_pos",
+                  "diagram_start_top", "diagram_width", "diagram_height",
+                  "grid_columns")
+
+    special <- c("color_usage")
 
     # Loop through passed arguments and check if they are of valid type
     for (option in names(style_list)){
@@ -1292,6 +1282,10 @@ set_graphic_options <- function(..., save_file = NULL){
         }
         else if (option %in% flexible && !(is.character(value) || is.numeric(value))){
             print_message("WARNING", "'[option]' must be <character> or <numeric>. Option will be omitted.", option = option)
+            style_list[[option]] <- NULL
+        }
+        else if (option %in% special && !(is.function(value) || is.list(value))){
+            print_message("WARNING", "'[option]' must be a <function> or <list>. Option will be omitted.", option = option)
             style_list[[option]] <- NULL
         }
         else if (!option %in% c(visuals, axes, dimensions, output_params, fine_tuning)){

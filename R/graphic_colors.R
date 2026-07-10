@@ -70,155 +70,7 @@ base_color_themes <- function(){
 
          violet_fire = c(
              "#280959", "#4b1d91", "#731498", "#a1119d", "#d23194",
-             "#ef6375", "#f28066", "#f2a65f", "#eebd6e", "#eebd6e"))
-}
-
-
-#' Set Up Basic Font Color Themes Inside Segments
-#'
-#' @description
-#' Set up fitting font colors for base theme colors in global options, in case values
-#' are displayed inside segments.
-#'
-#' @return
-#' Returns a named list.
-#'
-#' @noRd
-font_inside_color_themes <- function(){
-    greys <- c("#FFFFFF", "#FFFFFF", "#000000", "#000000")
-
-    list(ocean = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        sunset = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        ember = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        forest = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        lagoon = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        dusk = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        clay = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        olive_gold = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        steel = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", greys),
-
-        graphite = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
-            "#FFFFFF", "#000000", "#000000", "#000000", "#000000"),
-
-        aurora = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        forest_sun = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        clay_mint = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        violet_gold = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        night_lime = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        plum_citrus = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        violet_fire = c(
-            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF",
-            "#000000", "#000000", "#000000", "#000000", "#000000"))
-}
-
-
-#' Set Up Basic Font Color Themes Outside Segments
-#'
-#' @description
-#' Set up fitting font colors for base theme colors in global options, in case values
-#' are displayed outside segments.
-#'
-#' @return
-#' Returns a named list.
-#'
-#' @noRd
-font_outside_color_themes <- function(){
-    greys <- c("#000000", "#000000", "#000000", "#000000")
-
-    list(ocean = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        sunset = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        ember = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        forest = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        lagoon = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        dusk = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        clay = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        olive_gold = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        steel = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", greys),
-
-        graphite = c(
-            "#000000", "#000000", "#000000", "#000000", "#000000",
-            "#000000", "#000000", "#000000", "#000000", "#000000"),
-
-        aurora = c(
-            "#1A2438", "#1F3A52", "#275C6E", "#2E7F86", "#4EA18F",
-            "#7BBE87", "#A8D68A", "#D1E39C", "#D1E39C", "#D1E39C"),
-
-        forest_sun = c(
-            "#1F2B1C", "#2E4225", "#456633", "#6E8C3F", "#9FB552",
-            "#C7D56A", "#E2EA8E", "#E2EA8E", "#E2EA8E", "#E2EA8E"),
-
-        clay_mint = c(
-            "#3A2A1F", "#5A3E2A", "#7A5734", "#9A7A42", "#8FA15B",
-            "#6EB07A", "#7FC9A1", "#A8DEC2", "#A8DEC2", "#A8DEC2"),
-
-        violet_gold = c(
-            "#2A1F3D", "#3E2A5C", "#56387A", "#70509A", "#8E75B5",
-            "#AFA0C8", "#CFC3C5", "#CFC3C5", "#CFC3C5", "#CFC3C5"),
-
-        night_lime = c(
-            "#182624", "#1F3F3A", "#2C6257", "#3E8771", "#5AAD7E",
-            "#7FCC7A", "#A6E37B", "#A6E37B", "#A6E37B", "#A6E37B"),
-
-        plum_citrus = c(
-            "#321826", "#4A2135", "#663047", "#83485D", "#9E6E75",
-            "#B89A8A", "#B89A8A", "#B89A8A", "#B89A8A", "#B89A8A"),
-
-        violet_fire = c(
-            "#280959", "#4b1d91", "#731498", "#a1119d", "#d23194",
-            "#ef6375", "#f28066", "#f2a65f", "#eebd6e", "#eebd6e"))
+             "#ef6375", "#f28066", "#f2a65f", "#f3cb86", "#f6e7b6"))
 }
 
 
@@ -235,24 +87,23 @@ font_outside_color_themes <- function(){
 create_global_themes <- function(){
     global_list <- list()
     base_colors <- base_color_themes()
-    font_inside_colors  <- font_inside_color_themes()
-    font_outside_colors <- font_outside_color_themes()
 
-    # Loop through provided colors and check if they are valid
+    # Loop through base color themes and create full color themes with font colors
     for (i in seq_along(base_colors)){
         name <- names(base_colors)[i]
-        base <- base_colors[[i]]
-        font_inside  <- font_inside_colors[[i]]
-        font_outside <- font_outside_colors[[i]]
 
-        # Build theme list
-        theme <- stats::setNames(list(list(base = base,
-                                           font_inside  = font_inside,
-                                           font_outside = font_outside)),
-                                 name)
+        # For these themes the base colors are also the font outside colors
+        if (name %in% c("aurora", "forest_sun", "clay_mint", "violet_gold",
+                        "night_lime", "plum_citrus", "violet_fire")){
+            theme <- add_color_theme(name, base_colors[[i]], NULL, "base", FALSE)
+        }
+        # For all the other themes the outside color is just black
+        else{
+            theme <- add_color_theme(name, base_colors[[i]], print = FALSE)
+        }
 
         # Add to global list
-        global_list <- c(global_list, theme)
+        global_list <- c(global_list, stats::setNames(list(theme), name))
     }
 
     global_list
@@ -270,12 +121,14 @@ create_global_themes <- function(){
 #' @param theme_name The name of the theme.
 #' @param base_colors The base colors for the segments.
 #' @param font_inside_colors The individual font colors used when drawing values inside segments
+#' on the corresponding base color. By default the colors black and white will be automatically
+#' generated based on the relative luminance of the base colors.
+#' @param font_outside_colors The individual font colors used when drawing values outside segments
 #' on the corresponding base color.
-#' @param font_outside_colors The individual font colors used when drawing values outsidr segments
-#' on the corresponding base color.
+#' @param print TRUE by default. Whether to display the theme afterwards or not.
 #'
 #' @return
-#' [add_color_theme()]: Returns modified global theme list.
+#' [add_color_theme()]: Returns newly created color theme.
 #'
 #' @seealso
 #' Main graphic function: [design_graphic()]
@@ -287,39 +140,56 @@ create_global_themes <- function(){
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
 #' @examples
-#' # Adding and getting color themes
+#' # Add a color theme where font colors are set automatically
+#' add_color_theme("rainbow", rainbow(10))
+#'
+#' # Add a color theme with individual font colors. Use "base" keyword to copy
+#' # base colors.
 #' add_color_theme(theme_name  = "tropic",
 #'                 base_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
 #'                                 "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
-#'                 font_inside_colors = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-#'                                         "#000000", "#000000", "#000000", "#000000", "#000000"),
-#'                 font_outside_colors = c("#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
-#'                                         "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"))
+#'                 font_inside_colors = c("#F7FCF7", "#ECF8EB", "#D7F0D5", "#B2E4B8", "#85D49A",
+#'                                        "#56C07E", "#2FA36A", "#257F54", "#1F5A3F", "#1B3A2E"),
+#'                 font_outside_colors = "base")
 #'
 #' @rdname color_themes
 #'
 #' @export
 add_color_theme <- function(theme_name,
                             base_colors,
-                            font_inside_colors  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-                                                    "#000000", "#000000", "#000000", "#000000", "#000000"),
-                            font_outside_colors = c("#000000", "#000000", "#000000", "#000000", "#000000",
-                                                    "#000000", "#000000", "#000000", "#000000", "#000000")){
+                            font_inside_colors  = NULL,
+                            font_outside_colors = rep("#000000", 10),
+                            print               = TRUE){
     theme_name <- get_origin_as_char(theme_name, substitute(theme_name))
+    number_of_base_colors <- length(base_colors)
 
-    if (length(base_colors) == 0){
+    if (number_of_base_colors == 0){
         print_message("ERROR", "No base colors provided. Color theme won't be added.")
         return(invisible(.qol_options[["graphic_themes"]]))
     }
 
-    if (length(font_inside_colors) == 0){
-        font_inside_colors  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#000000",
-                                "#000000", "#000000", "#000000", "#000000", "#000000")
+    # By default determine the font inside color by the relative luminance of
+    # the provided base colors.
+    if (is.null(font_inside_colors)){
+        # Convert hex colors in RGB matrix
+        rgb_matrix <- col2rgb(base_colors)
+
+        # Calculate relative luminance
+        luminance <- (0.2126 * rgb_matrix["red",   ] +
+                      0.7152 * rgb_matrix["green", ] +
+                      0.0722 * rgb_matrix["blue",  ]) / 255
+
+        # pick text color based on relative luminance threshold
+        font_inside_colors <- ifelse(luminance > 0.5, "#000000", "#FFFFFF")
+    }
+    # If keyword "base" was passed, then set base colors as font colors
+    else if (length(font_inside_colors) == 1 && font_inside_colors == "base"){
+        font_inside_colors <- base_colors
     }
 
-    if (length(font_outside_colors) == 0){
-        font_outside_colors = c("#000000", "#000000", "#000000", "#000000", "#000000",
-                                "#000000", "#000000", "#000000", "#000000", "#000000")
+    # If keyword "base" was passed, then set base colors as font colors
+    if (length(font_outside_colors) == 1 && font_outside_colors == "base"){
+        font_outside_colors <- base_colors
     }
 
     # Loop through provided base colors and check if they are valid
@@ -349,15 +219,19 @@ add_color_theme <- function(theme_name,
         }
     }
 
-    # Build theme list
-    theme <- stats::setNames(list(list(base = base_colors,
-                                       font_inside  = font_inside_colors,
-                                       font_outside = font_outside_colors)),
-                             theme_name)
-
     # Update the internal global theme list
-    .qol_options[["graphic_themes"]] <- utils::modifyList(.qol_options[["graphic_themes"]], theme)
-    invisible(.qol_options[["graphic_themes"]])
+    .qol_options[["graphic_themes"]][[theme_name]] <- structure(list(base         = base_colors,
+                                                                     font_inside  = font_inside_colors,
+                                                                     font_outside = font_outside_colors),
+                                                                class = "qol_color_theme")
+
+    # Display added theme
+    if (print){
+        display_colors(theme_name)
+        print_message("NOTE", "Theme '[theme]' was succesfully added to global theme list.", theme = theme_name)
+    }
+
+    invisible(.qol_options[["graphic_themes"]][[theme_name]])
 }
 
 
@@ -372,11 +246,12 @@ add_color_theme <- function(theme_name,
 #' [get_theme_colors()]: A list with three vectors of hex color codes.
 #'
 #' @examples
-#' get_theme_colors("ocean")
+#' # Get a color theme from the global theme list
+#' full_theme <- get_theme_colors("ocean")
 #'
-#' base_colors  <- get_theme_colors("ocean")[[1]]
-#' font_inside  <- get_theme_colors("ocean")[[2]]
-#' font_outside <- get_theme_colors("ocean")[[3]]
+#' base_colors  <- full_theme[[1]]
+#' font_inside  <- full_theme[[2]]
+#' font_outside <- full_theme[[3]]
 #'
 #' @rdname color_themes
 #'
@@ -449,6 +324,12 @@ display_colors <- function(theme_name){
         return(invisible(NULL))
     }
 
+    if (!theme_name %in% names(.qol_options[["graphic_themes"]])){
+        print_message("ERROR", "Theme '[theme_name]' doesn't exist. Default theme will be used.", theme_name = theme_name)
+
+        theme_name <- "ocean"
+    }
+
     base_colors  <- get_theme_colors(theme_name)[[1]]
     font_inside  <- get_theme_colors(theme_name)[[2]]
     font_outside <- get_theme_colors(theme_name)[[3]]
@@ -466,17 +347,24 @@ display_colors <- function(theme_name){
 
     # Draw rectangles side by side
     grid::grid.rect(x      = rect_centers,
-                    y      = 0.5,
+                    y      = 0.4,
                     width  = 1 / number_of_colors,
-                    height = 0.6,
+                    height = 0.4,
                     gp     = grid::gpar(fill = base_colors, col = NA))
 
-    # Draw hex codes in rectangles
+    # Draw hex codes in rectangles for font inside colors
     grid::grid.text(base_colors,
                     x   = rect_centers,
-                    y   = 0.5,
+                    y   = 0.4,
                     rot = 90,
                     gp  = grid::gpar(col = font_inside))
+
+    # Draw hex codes above rectangles for font outside colors
+    grid::grid.text(font_outside,
+                    x   = rect_centers,
+                    y   = 0.75,
+                    rot = 90,
+                    gp  = grid::gpar(col = font_outside))
 
     invisible(list(base = base_colors,
                    font_inside  = font_inside,
@@ -534,7 +422,7 @@ display_themes <- function(){
     # on the individual number of colors in a theme.
     for (i in seq_len(number_of_themes)){
         base_colors      <- global_themes[[i]][["base"]]
-        font_colors      <- global_themes[[i]][["font"]]
+        font_colors      <- global_themes[[i]][["font_inside"]]
         number_of_colors <- length(base_colors)
         rect_centers     <- (seq_len(number_of_colors) - 0.5) / number_of_colors
 
@@ -546,7 +434,7 @@ display_themes <- function(){
                         vp     = grid::viewport(layout.pos.row = i, layout.pos.col = 2))
 
         # Draw numbers in rectangles
-        grid::grid.text(1:number_of_colors,
+        grid::grid.text(seq_len(number_of_colors),
                         x   = rect_centers,
                         y   = 0.5,
                         gp  = grid::gpar(col = font_colors),
