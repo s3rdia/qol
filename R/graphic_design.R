@@ -275,6 +275,9 @@ design_graphic <- function(data_frame,
     flag_merge_axes_vars <- FALSE
 
     if (length(axes_variables) > 1 || !grepl("\\+", axes_variables)){
+        print_message("WARNING", c("Multiple nested structures or mixed types of nested and unnested <axes variables> aren't allowed.",
+                                   "All passed variables will be treated as unnested variables."))
+
         axes_variables       <- axes_vars
         flag_merge_axes_vars <- TRUE
     }
@@ -811,6 +814,13 @@ design_graphic <- function(data_frame,
     # Actual sorting
     data.table::setorderv(graphic_tab, sort_vars)
     graphic_tab <- graphic_tab |> data.table::setcolorder(axes_vars, before = 1)
+
+    # Save the TYPE variable to later determine which axes expressions belong to
+    # which groups. But only do this if there really are multiple variables involved.
+    if (length(axes_variables) > 1){
+        graphic_tab[["axes_type"]] <- graphic_tab[["TYPE"]]
+        graphic_tab <- graphic_tab |> data.table::setcolorder("axes_type", before = 1)
+    }
 
     if (length(by) > 0){
         graphic_tab <- graphic_tab |> data.table::setcolorder("by_vars", before = 1)

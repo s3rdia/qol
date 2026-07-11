@@ -183,9 +183,12 @@ get_fitting_words <- function(words,
                               font,
                               font_size,
                               font_face){
-    low_end  <- 1
-    high_end <- length(words)
+    low_end       <- 1
+    high_end      <- length(words)
     fitting_words <- 1
+
+    # Take a bit off of the textbox width to have a bit of error margin
+    textbox_width <- textbox_width * 0.9
 
     # Using a quick sort approach here. Basically jumping from mid point to mid point
     # to determine the number of words which fit in one line.
@@ -1129,6 +1132,9 @@ get_diagram_dimensions <- function(arguments){
     # Marker whether we deal with multi layered grouping labels
     is_multi_group_label <- length(group_label_x_pos) > 1
 
+    # Marker whether we deal with multi non layered grouping labels
+    is_multi_axes_vars <- "axes_type" %in% names(graphic_tab)
+
     # Determine the height of the entire grouping labels including margins between
     # label groups.
     entire_group_label_height <- collapse::fsum(group_label_heights) + (dimensions[["margins"]] * (length(group_label_heights) - 2))
@@ -1149,17 +1155,31 @@ get_diagram_dimensions <- function(arguments){
     # Separation lines
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # Get the separation line positions by selecting the tick positions which are
-    # centered between two groups
     number_of_ticks <- length(group_ticks_pos_x) - 1
 
-    group_separation_lines_x <- lapply(individual_number_of_groups[-length(individual_number_of_groups)], function(number){
-        # Build a stepped sequence which captures the number of ticks a group spans over
-        tick_positions <- seq(from = 1, to = number_of_ticks, by = number_of_ticks / number)
-        tick_positions <- tick_positions[-1]
+    # With multiple variables beside each other on the variable axes, add up the
+    # number of expressions per variable combination, and get the corresponding
+    # tick positions.
+    if (is_multi_axes_vars){
+        groups_to_separate <- collapse::fndistinct(graphic_tab[["axes"]],
+                                                   g = collapse::GRP(graphic_tab[["axes_type"]], sort = FALSE))
+        groups_to_separate <- collapse::fcumsum(groups_to_separate[-length(groups_to_separate)]) + 1
 
-        group_ticks_pos_x[tick_positions]
-    })
+        group_separation_lines_x <- list("axes" = group_ticks_pos_x[groups_to_separate])
+    }
+    # With a multi layered variable axes get the separation line positions by
+    # selecting the tick positions which are centered between two groups.
+    else{
+        groups_to_separate <- individual_number_of_groups[-length(individual_number_of_groups)]
+
+        group_separation_lines_x <- lapply(groups_to_separate, function(number){
+            # Build a stepped sequence which captures the number of ticks a group spans over
+            tick_positions <- seq(from = 1, to = number_of_ticks, by = number_of_ticks / number)
+            tick_positions <- tick_positions[-1]
+
+            group_ticks_pos_x[tick_positions]
+        })
+    }
 
     # Some entries are now the same throughout the list vectors. These identical entries
     # are now cleared from the vectors, so that each layer of separation lines doesn't
@@ -1295,6 +1315,7 @@ get_diagram_dimensions <- function(arguments){
          segment_label_textbox_width = segment_label_textbox_width,
          wrapped_segment_labels      = wrapped_segment_labels,
          is_multi_group_label        = is_multi_group_label,
+         is_multi_axes_vars          = is_multi_axes_vars,
          number_of_ticks             = number_of_ticks,
          group_separation_lines_x    = group_separation_lines_x,
          theme                       = theme,
@@ -1450,9 +1471,10 @@ setup_x_axes <- function(diagram_info,
     labels               <- diagram_info[["wrapped_group_labels"]]
     zero_pos             <- diagram_info[["zero_pos"]]
     is_multi_group_label <- diagram_info[["is_multi_group_label"]]
+    is_multi_axes_vars   <- diagram_info[["is_multi_axes_vars"]]
     group_label_heights  <- diagram_info[["group_label_heights"]]
     group_separation_lines_x <- diagram_info[["group_separation_lines_x"]]
-    top_label_height     <- get_variable_axes_height(diagram_info[["individual_groups"]][[1]], dimensions, visuals)
+    top_label_height     <- get_variable_axes_height(diagram_info[["wrapped_group_labels"]][[1]], dimensions, visuals)
 
     # If all values are negative, the group label positions are vertically inverted.
     # Which means normally they are drawn below the variable axes (vbars),
@@ -1464,13 +1486,14 @@ setup_x_axes <- function(diagram_info,
         label_y    <- label_y_positions
 
         # The first layer of multi layered group labels is drawn at the top of the
-        # diagram, not below the axes. Add a marging to create some space to the diagram.
+        # diagram, not below the axes. Add a margin to create some space to the diagram.
         if (is_multi_group_label){
-
             label_y[1] <- diagram_info[["inner_viewport_height"]] + top_label_height
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
+
+            top_y <- label_y[1] - top_label_height - dimensions[["margins"]]
 
             for (i in seq_len(length(group_separation_lines_x))){
                 # The first separation lines are special in the way that they start higher,
@@ -1483,9 +1506,19 @@ setup_x_axes <- function(diagram_info,
                 else{
                     inverse_element <- length(label_y) - (i - 2)
 
-                    separation_lines_y[[i]] <- c(label_y[1] - top_label_height - dimensions[["margins"]],
-                                                 label_y[inverse_element] - group_label_heights[inverse_element] + dimensions[["margins"]])
+                    separation_lines_y[[i]] <- c(top_y, label_y[inverse_element] - group_label_heights[inverse_element] + dimensions[["margins"]])
                 }
+            }
+        }
+        # With a flat variable axes just set up the separation lines
+        else if (is_multi_axes_vars){
+            # Get the separation lines y coordinates
+            separation_lines_y <- list()
+
+            top_y <- diagram_info[["inner_viewport_height"]] - top_label_height - dimensions[["margins"]]
+
+            for (i in seq_len(length(group_separation_lines_x))){
+                separation_lines_y[[i]] <- c(top_y, label_y[i] - group_label_heights[i] - dimensions[["margins"]] / 2)
             }
         }
     }
@@ -1543,7 +1576,7 @@ setup_x_axes <- function(diagram_info,
                                                   lwd = dimensions[["axes_line_thickness"]]))
 
     # Insert the group labels for the variable axes
-    if (!is_multi_group_label){
+    if (!is_multi_group_label && !is_multi_axes_vars){
         group_labels <- grid::textGrob(label = labels[[1]],
                                        x     = label_x_positions[[1]],
                                        y     = grid::unit(label_y, "cm"),
