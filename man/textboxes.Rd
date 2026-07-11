@@ -19,8 +19,12 @@ add_textbox(
   font_face = .qol_options[["graphic_visuals"]][["other_font_face"]],
   line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
   rotation = 0,
-  name = "textbox",
-  draw = FALSE
+  add_box = FALSE,
+  box_back_color = NULL,
+  box_line_color = "#000000",
+  box_line_type = "solid",
+  box_thickness = 1,
+  name = "textbox"
 )
 
 get_text_width(text, type, dimensions, visuals, unit = "native")
@@ -50,9 +54,17 @@ get_text_height(text, type, dimensions, visuals, unit = "native")
 
 \item{rotation}{Rotates the text by a number of degrees.}
 
-\item{name}{The internal name of the textbox with which it can be identified.}
+\item{add_box}{FALSE by default. If TRUE draws a rectangle below the text.}
 
-\item{draw}{FALSE by default. If TRUE, directly draws the textbox onto the canvas.}
+\item{box_back_color}{Background color of the textbox.}
+
+\item{box_line_color}{Outline color of the textbox.}
+
+\item{box_line_type}{Outline type of the textbox.}
+
+\item{box_thickness}{Outline thickness of the textbox.}
+
+\item{name}{The internal name of the textbox with which it can be identified.}
 
 \item{type}{The type of text to be measured. Can be: title, footnote, primary_axes,
 secondary_axes, variable_axes, value, label, origin or other.}
@@ -96,12 +108,23 @@ sex. <- discrete_format(
     "Female" = 2)
 
 # Add individual texts to a graphic
+some_textbox <- add_textbox("This is a textbox with an actual colored box.",
+                            x_pos   = 12,
+                            y_pos   = 7,
+                            add_box = TRUE,
+                            box_back_color = "#B9B9B9")
 my_data |>
      design_graphic(axes_variables = "age",
                     segments       = "sex",
                     values         = weight,
                     diagram        = dg_vbars,
-                    add_texts = list(add_textbox("Hello",  3.5, 3),
-                                     add_textbox("World!", 6,   5)))
+                    formats        = list(sex = sex., age = age.),
+                    add_texts      = list(add_textbox("Hello",  3.5, 3),
+                                          add_textbox("World!", 6,   5),
+                add_textbox("This is a textbox with an actual colored box.",
+                            x_pos   = 11.5,
+                            y_pos   = 8,
+                            add_box = TRUE,
+                            box_back_color = "#B9B9B9")))
 
 }

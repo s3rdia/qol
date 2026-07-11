@@ -58,6 +58,7 @@
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
 #' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #' @param add_texts Use the [add_textbox()] function to freely place one or multiple textboxes.
+#' @param add_forms Draws forms freely onto the canvas. Add forms with: [add_line()].
 #' @param output Output parameters set with [graphic_output()].
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything.
@@ -207,7 +208,8 @@ design_graphic <- function(data_frame,
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
                            fine_tuning    = .qol_options[["graphic_fine_tuning"]],
-                           add_texts      = .qol_options[["graphic_texts"]],
+                           add_texts      = NULL,
+                           add_forms      = NULL,
                            output         = .qol_options[["graphic_output"]],
                            na.rm          = .qol_options[["na.rm"]],
                            print          = .qol_options[["print"]],
@@ -274,9 +276,11 @@ design_graphic <- function(data_frame,
     # variables and merge them later into one variable.
     flag_merge_axes_vars <- FALSE
 
-    if (length(axes_variables) > 1 || !grepl("\\+", axes_variables)){
-        print_message("WARNING", c("Multiple nested structures or mixed types of nested and unnested <axes variables> aren't allowed.",
-                                   "All passed variables will be treated as unnested variables."))
+    if (length(axes_variables) > 1){
+        if (any(grepl("\\+", axes_variables))){
+            print_message("WARNING", c("Multiple nested structures or mixed types of nested and unnested <axes variables> aren't allowed.",
+                                       "All passed variables will be treated as unnested variables."))
+        }
 
         axes_variables       <- axes_vars
         flag_merge_axes_vars <- TRUE
@@ -848,7 +852,8 @@ design_graphic <- function(data_frame,
         graphic_list <- generate_graphic(graphic_tab, axes_vars, "segments", statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
                                          diagram, visuals, axes, dimensions,
-                                         fine_tuning, add_texts, output, print, monitor_df = monitor_df)
+                                         fine_tuning, add_texts, add_forms, output, print,
+                                         monitor_df = monitor_df)
 
         plot_element <- graphic_list[[1]]
         monitor_df   <- graphic_list[[2]]
@@ -858,7 +863,8 @@ design_graphic <- function(data_frame,
         graphic_list <- generate_graphic_by(graphic_tab, axes_vars, "segments", statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
                                             diagram, visuals, axes, dimensions,
-                                            fine_tuning, add_texts, output, na.rm, print, monitor_df)
+                                            fine_tuning, add_texts, add_forms, output, na.rm,
+                                            print, monitor_df)
 
         plot_element <- graphic_list[[1]]
         monitor_df   <- graphic_list[[2]]
@@ -932,6 +938,7 @@ generate_graphic <- function(graphic_tab,
                              dimensions,
                              fine_tuning,
                              add_texts,
+                             add_forms,
                              output,
                              print,
                              by_info        = NULL,
@@ -1057,6 +1064,10 @@ generate_graphic <- function(graphic_tab,
             main_grob[["meta"]][["outer_viewport"]],
             main_grob[["meta"]][["inner_viewport"]])
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Custom texts
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Check if the add_textbox function was directly passed to the parameter.
     # In this case enclose it in a list.
     if (inherits(add_texts, "text") && inherits(add_texts, "grob")){
@@ -1075,6 +1086,32 @@ generate_graphic <- function(graphic_tab,
         custom_textboxes <- list(grid::nullGrob(name = "no_textboxes"))
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Custom forms
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # Check if the add_forms function was directly passed to the parameter.
+    # In this case enclose it in a list.
+    if (inherits(add_forms, "line") && inherits(add_forms, "grob")){
+        add_forms <- list(add_forms)
+    }
+
+    # Make sure custom forms have a unique name or otherwise only the first
+    # will be drawn multiple times.
+    custom_forms <- lapply(seq_along(add_forms), function(form){
+        grid::editGrob(add_forms[[form]],
+                       vp   = grid::vpPath("main_canvas"),
+                       name = paste0("custom_form", form))
+    })
+
+    if (length(custom_forms) == 0){
+        custom_forms <- list(grid::nullGrob(name = "no_forms"))
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Build whole diagram
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Put together the whole graphic
     whole_graphic <- grid::gTree(children = do.call(
         grid::gList, c(list(grid::editGrob(graphic_background,     vp = grid::vpPath("main_canvas")),
@@ -1082,8 +1119,9 @@ generate_graphic <- function(graphic_tab,
                             grid::editGrob(main_grob[["graphic"]], vp = grid::vpPath(viewport_path)),
                             grid::editGrob(footnote_grob,          vp = grid::vpPath("main_canvas")),
                             grid::editGrob(origin_grob,            vp = grid::vpPath("main_canvas"))),
-                            segment_labels,
-                            custom_textboxes)),
+                       segment_labels,
+                       custom_textboxes,
+                       custom_forms)),
         childrenvp = viewport_tree,
         name       = "graphic" )
 
@@ -1166,6 +1204,7 @@ generate_graphic_by <- function(graphic_tab,
                                 dimensions,
                                 fine_tuning,
                                 add_texts,
+                                add_forms,
                                 output,
                                 na.rm,
                                 print,
@@ -1320,6 +1359,7 @@ generate_graphic_by <- function(graphic_tab,
                                                 dimensions,
                                                 fine_tuning,
                                                 add_texts,
+                                                add_forms,
                                                 output,
                                                 print,
                                                 value, # by_info passed as value, so that value can be added to the file name on saving

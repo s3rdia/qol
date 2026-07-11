@@ -21,8 +21,12 @@
 #' @param font_face Valid values are "plain", "bold", "italic", "oblique", and "bold.italic".
 #' @param line_height The height of a single text line.
 #' @param rotation Rotates the text by a number of degrees.
+#' @param add_box FALSE by default. If TRUE draws a rectangle below the text.
+#' @param box_back_color Background color of the textbox.
+#' @param box_line_color Outline color of the textbox.
+#' @param box_line_type Outline type of the textbox.
+#' @param box_thickness Outline thickness of the textbox.
 #' @param name The internal name of the textbox with which it can be identified.
-#' @param draw FALSE by default. If TRUE, directly draws the textbox onto the canvas.
 #'
 #' @return
 #' Returns a grid::textGrob object.
@@ -43,33 +47,55 @@
 #'     "Female" = 2)
 #'
 #' # Add individual texts to a graphic
+#' some_textbox <- add_textbox("This is a textbox with an actual colored box.",
+#'                             x_pos   = 12,
+#'                             y_pos   = 7,
+#'                             add_box = TRUE,
+#'                             box_back_color = "#B9B9B9")
 #' my_data |>
 #'      design_graphic(axes_variables = "age",
 #'                     segments       = "sex",
 #'                     values         = weight,
 #'                     diagram        = dg_vbars,
-#'                     add_texts = list(add_textbox("Hello",  3.5, 3),
-#'                                      add_textbox("World!", 6,   5)))
+#'                     formats        = list(sex = sex., age = age.),
+#'                     add_texts      = list(add_textbox("Hello",  3.5, 3),
+#'                                           add_textbox("World!", 6,   5),
+#'                 add_textbox("This is a textbox with an actual colored box.",
+#'                             x_pos   = 11.5,
+#'                             y_pos   = 8,
+#'                             add_box = TRUE,
+#'                             box_back_color = "#B9B9B9")))
 #'
 #' @rdname textboxes
 #'
 #' @export
 add_textbox <- function(text,
-                        x_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
-                        y_pos       = .qol_options[["graphic_dimensions"]][["margins"]],
-                        width       = .qol_options[["graphic_dimensions"]][["textbox_width"]],
-                        alignment   = .qol_options[["graphic_visuals"]][["other_alignment"]],
-                        font        = .qol_options[["graphic_visuals"]][["font"]],
-                        font_color  = .qol_options[["graphic_visuals"]][["other_font_color"]],
-                        font_size   = .qol_options[["graphic_dimensions"]][["other_font_size"]],
-                        font_face   = .qol_options[["graphic_visuals"]][["other_font_face"]],
-                        line_height = .qol_options[["graphic_dimensions"]][["line_height"]],
-                        rotation    = 0,
-                        name        = "textbox",
-                        draw        = FALSE){
+                        x_pos          = .qol_options[["graphic_dimensions"]][["margins"]],
+                        y_pos          = .qol_options[["graphic_dimensions"]][["margins"]],
+                        width          = .qol_options[["graphic_dimensions"]][["textbox_width"]],
+                        alignment      = .qol_options[["graphic_visuals"]][["other_alignment"]],
+                        font           = .qol_options[["graphic_visuals"]][["font"]],
+                        font_color     = .qol_options[["graphic_visuals"]][["other_font_color"]],
+                        font_size      = .qol_options[["graphic_dimensions"]][["other_font_size"]],
+                        font_face      = .qol_options[["graphic_visuals"]][["other_font_face"]],
+                        line_height    = .qol_options[["graphic_dimensions"]][["line_height"]],
+                        rotation       = 0,
+                        add_box        = FALSE,
+                        box_back_color = NULL,
+                        box_line_color = "#000000",
+                        box_line_type  = "solid",
+                        box_thickness  = 1,
+                        name           = "textbox"){
     # Return if there is no text
     if (is.null(text) || length(text) == 0 || text == ""){
+        print_message("ERROR", "<text> needs to be specified in order to draw a textbox.")
         return(invisible(grid::nullGrob(name = "empty_textbox")))
+    }
+
+    if (add_box && rotation != 0){
+        print_message("NOTE", "<rotation> only works without <add_box> and will be ignored.")
+
+        rotation <- 0
     }
 
     # In case text is provided as vector with multiple elements, meaning the line
@@ -78,69 +104,32 @@ add_textbox <- function(text,
     # In case text already contains manual line breaks assume that the user knows
     # what he is doing and keep text as is.
     if (length(text) > 1 || grepl("\n", text)){
-        if (length(text) > 1){
-            text <- paste(text, collapse = "\n")
-        }
-
-        textbox <- grid::textGrob(label = text,
-                                  x     = grid::unit(x_pos, "native"),
-                                  y     = grid::unit(y_pos, "native"),
-                                  just  = c(alignment, "top"),
-                                  rot   = rotation,
-                                  name  = name,
-                                  gp    = grid::gpar(col = font_color,
-                                                     fontfamily = font,
-                                                     fontsize   = font_size,
-                                                     fontface   = font_face,
-                                                     lineheight = line_height))
-        if (draw){
-            grid::grid.draw(textbox)
-        }
-
-        return(invisible(textbox))
+        wrapped_text <- paste(text, collapse = "\n")
     }
-
     # Get words and check if there are any
-    words <- unlist(strsplit(text, " "))
+    else{
+        words <- unlist(strsplit(text, " "))
 
-    if (length(words) == 0){
-        return(grid::nullGrob(name = "empty_textbox"))
-    }
-    # If there is only one word, just return as graphical object
-    else if (length(words) == 1){
-        textbox <- grid::textGrob(label = words,
-                                  x     = grid::unit(x_pos, "native"),
-                                  y     = grid::unit(y_pos, "native"),
-                                  just  = c(alignment, "top"),
-                                  rot   = rotation,
-                                  name  = name,
-                                  gp    = grid::gpar(col = font_color,
-                                                     fontfamily = font,
-                                                     fontsize   = font_size,
-                                                     fontface   = font_face,
-                                                     lineheight = line_height))
-        if (draw){
-            grid::grid.draw(textbox)
+        if (length(words) == 0){
+            return(grid::nullGrob(name = "empty_textbox"))
         }
 
-        return(invisible(textbox))
+        # Now put the words back into lines
+        text_lines <- list()
+
+        while (length(words) > 0){
+            # Get the number of words fitting in one line of text
+            number_of_words <- get_fitting_words(words, width, font, font_size, font_face)
+
+            # Add the words as a separate text line and remove them afterwards from the
+            # vector carrying all words.
+            text_lines <- c(text_lines, paste(words[1:number_of_words], collapse = " "))
+            words      <- words[-(1:number_of_words)]
+        }
+
+        # Combine line vector with line breaks
+        wrapped_text <- paste(text_lines, collapse = "\n")
     }
-
-    # Now put the words back into lines
-    text_lines <- list()
-
-    while (length(words) > 0){
-        # Get the number of words fitting in one line of text
-        number_of_words <- get_fitting_words(words, width, font, font_size, font_face)
-
-        # Add the words as a separate text line and remove them afterwards from the
-        # vector carrying all words.
-        text_lines <- c(text_lines, paste(words[1:number_of_words], collapse = " "))
-        words      <- words[-(1:number_of_words)]
-    }
-
-    # Combine line vector with line breaks
-    wrapped_text <- paste(text_lines, collapse = "\n")
 
     # Return graphics element
     textbox <- grid::textGrob(label = wrapped_text,
@@ -149,16 +138,39 @@ add_textbox <- function(text,
                               just  = c(alignment, "top"),
                               rot   = rotation,
                               name  = name,
-                              gp    = grid::gpar(col = font_color,
+                              gp    = grid::gpar(col        = font_color,
                                                  fontfamily = font,
                                                  fontsize   = font_size,
                                                  fontface   = font_face,
                                                  lineheight = line_height))
-    if (draw){
-        grid::grid.draw(textbox)
-    }
 
-    invisible(textbox)
+    # Add a background to the text if specified
+    if (add_box){
+        text_height <- get_text_height(wrapped_text, "other",
+                                       list("other_font_size" = font_size, "line_height" = line_height),
+                                       list("other_font_face" = font_size))
+
+        text_width <- get_text_width(wrapped_text, "other",
+                                     list("other_font_size" = font_size, "line_height" = line_height),
+                                     list("other_font_face" = font_size))
+
+        box <- grid::rectGrob(x      = grid::unit(x_pos - 0.15, "native"),
+                              y      = grid::unit(y_pos + 0.15, "native"),
+                              width  = grid::unit(text_width  + 0.3, "native"),
+                              height = grid::unit(text_height + 0.35, "native"),
+                              just   = c(alignment, "top"),
+                              name   = paste0(name, "_box"),
+                              gp     = grid::gpar(fill = box_back_color,
+                                                  col  = box_line_color,
+                                                  lty  = box_line_type,
+                                                  lwd  = box_thickness))
+
+        invisible(grid::gTree(children = grid::gList(box, textbox), name = "full_textbox"))
+    }
+    # Otherwise only return the text without background
+    else{
+        invisible(textbox)
+    }
 }
 
 
@@ -329,9 +341,8 @@ fix_alignment <- function(dimensions = .qol_options[["graphic_dimensions"]],
 #' @noRd
 add_title <- function(text,
                       dimensions  = .qol_options[["graphic_dimensions"]],
-                      visuals     = .qol_options[["graphic_visuals"]],
-                      draw        = FALSE){
-    if (length(text) == 0){
+                      visuals     = .qol_options[["graphic_visuals"]]){
+    if (is.null(text) || length(text) == 0 || text == ""){
         return(invisible(grid::nullGrob(name = "title")))
     }
 
@@ -348,8 +359,7 @@ add_title <- function(text,
                     font_size   = dimensions[["title_font_size"]],
                     font_face   = visuals[["title_font_face"]],
                     line_height = dimensions[["line_height"]],
-                    name        = "title",
-                    draw        = draw))
+                    name        = "title"))
 }
 
 
@@ -362,9 +372,8 @@ add_title <- function(text,
 #' @noRd
 add_footnote <- function(text,
                          dimensions  = .qol_options[["graphic_dimensions"]],
-                         visuals     = .qol_options[["graphic_visuals"]],
-                         draw        = FALSE){
-    if (length(text) == 0 || text == ""){
+                         visuals     = .qol_options[["graphic_visuals"]]){
+    if (is.null(text) || length(text) == 0 || text == ""){
         return(invisible(grid::nullGrob(name = "footnote")))
     }
 
@@ -388,10 +397,6 @@ add_footnote <- function(text,
                                y    = grid::unit(dimensions[["margins"]], "native"),
                                just = c(visuals[["footnote_alignment"]], "bottom"))
 
-    if (draw){
-        grid::grid.draw(footnote)
-    }
-
     invisible(footnote)
 }
 
@@ -404,10 +409,15 @@ add_footnote <- function(text,
 #'
 #' @noRd
 add_graphic_origin <- function(dimensions = .qol_options[["graphic_dimensions"]],
-                               visuals    = .qol_options[["graphic_visuals"]],
-                               draw       = FALSE){
+                               visuals    = .qol_options[["graphic_visuals"]]){
+    text <- visuals[["origin"]]
+
+    if (is.null(text) || length(text) == 0 || text == ""){
+        return(invisible(grid::nullGrob(name = "origin")))
+    }
+
    # Add textbox as normal first
-    origin <- add_textbox(text       = visuals[["origin"]],
+    origin <- add_textbox(text       = text,
                           x_pos      = dimensions[["graphic_width"]] - dimensions[["margins"]],
                           y_pos      = dimensions[["margins"]],
                           width      = get_available_width(dimensions),
@@ -422,10 +432,6 @@ add_graphic_origin <- function(dimensions = .qol_options[["graphic_dimensions"]]
     origin <- grid::editGrob(origin,
                              y    = grid::unit(dimensions[["margins"]], "native"),
                              just = c("right", "bottom"))
-
-    if (draw){
-        grid::grid.draw(origin)
-    }
 
     invisible(origin)
 }
@@ -539,6 +545,82 @@ get_text_height <- function(text,
     }
 }
 
+
+###############################################################################
+# Lines
+###############################################################################
+#' Add Lines As Graphical Object
+#'
+#' @name forms
+#'
+#' @description
+#' [add_line()]: Creates a line as graphical object. Lines can be plugged into
+#' the "add_forms" parameter of [design_graphic()].
+#'
+#' @param text The text that should be displayed.
+#' @param x_vector A vector of two x coordinates for the start and finish.
+#' @param y_vector A vector of two y coordinates for the start and finish.
+#' @param color Color to draw the line in as hex code.
+#' @param type Sets the type of the line. Can be "dashed", "dotted" or "solid".
+#' @param thickness The thickness of the line.
+#' @param name The internal name of the line with which it can be identified.
+#'
+#' @return
+#' [add_line()]: Returns a grid::linesGrob object.
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(100)
+#'
+#' # Formats
+#' age. <- discrete_format(
+#'     "Total"          = 0:100,
+#'     "under 18"       = 0:17,
+#'     "18 to under 65" = 18:64,
+#'     "65 and older"   = 65:100)
+#'
+#' sex. <- discrete_format(
+#'     "Male"   = 1,
+#'     "Female" = 2)
+#'
+#' # Add individual texts to a graphic
+#' my_data |>
+#'      design_graphic(axes_variables = "age",
+#'                     segments       = "sex",
+#'                     values         = weight,
+#'                     diagram        = dg_vbars,
+#'                     formats        = list(sex = sex., age = age.),
+#'                     add_forms      = list(add_line(c(2, 15), c(5, 5)),
+#'                                           add_line(c(5, 10), c(1, 8), "#FF00FF", "dashed", 3)))
+#'
+#' @rdname forms
+#'
+#' @export
+add_line <- function(x_vector,
+                     y_vector,
+                     color     = "#000000",
+                     type      = "solid",
+                     thickness = 1,
+                     name      = "line"){
+    # Error handling
+    if (is.null(x_vector) || is.null(y_vector)){
+        print_message("ERROR", "<x_vector> and <y_vector> need to be specified in order to draw a line.")
+        return(invisible(grid::nullGrob(name = "empty_line")))
+    }
+
+    if (length(x_vector) != 2 || length(y_vector) != 2){
+        print_message("ERROR", "<x_vector> and <y_vector> need to have a length of two each in order to draw a line.")
+        return(invisible(grid::nullGrob(name = "empty_line")))
+    }
+
+    # Return a line graphical object
+    invisible(grid::linesGrob(x    = grid::unit(x_vector, "native"),
+                              y    = grid::unit(y_vector, "native"),
+                              name = name,
+                              gp   = grid::gpar(col = color,
+                                                lty = type,
+                                                lwd = thickness)))
+}
 
 ###############################################################################
 # Viewport
@@ -1474,7 +1556,8 @@ setup_x_axes <- function(diagram_info,
     is_multi_axes_vars   <- diagram_info[["is_multi_axes_vars"]]
     group_label_heights  <- diagram_info[["group_label_heights"]]
     group_separation_lines_x <- diagram_info[["group_separation_lines_x"]]
-    top_label_height     <- get_variable_axes_height(diagram_info[["wrapped_group_labels"]][[1]], dimensions, visuals)
+    top_label_height      <- get_variable_axes_height(diagram_info[["wrapped_group_labels"]][[1]], dimensions, visuals)
+    inner_viewport_height <- grid::convertUnit(diagram_info[["inner_viewport"]][["height"]], "cm", valueOnly = TRUE)
 
     # If all values are negative, the group label positions are vertically inverted.
     # Which means normally they are drawn below the variable axes (vbars),
@@ -1488,7 +1571,7 @@ setup_x_axes <- function(diagram_info,
         # The first layer of multi layered group labels is drawn at the top of the
         # diagram, not below the axes. Add a margin to create some space to the diagram.
         if (is_multi_group_label){
-            label_y[1] <- diagram_info[["inner_viewport_height"]] + top_label_height
+            label_y[1] <- inner_viewport_height + top_label_height + dimensions[["margins"]]
 
             # Get the separation lines y coordinates
             separation_lines_y <- list()
@@ -1515,7 +1598,7 @@ setup_x_axes <- function(diagram_info,
             # Get the separation lines y coordinates
             separation_lines_y <- list()
 
-            top_y <- diagram_info[["inner_viewport_height"]] - top_label_height - dimensions[["margins"]]
+            top_y <- grid::convertUnit(diagram_info[["inner_viewport"]][["height"]], "cm", valueOnly = TRUE)
 
             for (i in seq_len(length(group_separation_lines_x))){
                 separation_lines_y[[i]] <- c(top_y, label_y[i] - group_label_heights[i] - dimensions[["margins"]] / 2)
@@ -1530,7 +1613,7 @@ setup_x_axes <- function(diagram_info,
         # variable axes. Subtract half a margin to the label group which is drawn above
         # the diagram, to get it a bit closer to the axes.
         label_just  <- c("center", "bottom")
-        label_y     <- diagram_info[["inner_viewport_height"]] - label_y_positions - (dimensions[["margins"]] / 2)
+        label_y     <- inner_viewport_height - label_y_positions + (dimensions[["margins"]] / 2)
 
         # The first layer of multi layered group labels is drawn at the bottom of the
         # diagram, not on top of the axes.
@@ -1555,6 +1638,15 @@ setup_x_axes <- function(diagram_info,
 
                     separation_lines_y[[i]] <- c(0, label_y[inverse_element] + group_label_heights[length(label_y)] - dimensions[["margins"]])
                 }
+            }
+        }
+        # With a flat variable axes just set up the separation lines
+        else if (is_multi_axes_vars){
+            # Get the separation lines y coordinates
+            separation_lines_y <- list()
+
+            for (i in seq_len(length(group_separation_lines_x))){
+                separation_lines_y[[i]] <- c(0, label_y[i] + group_label_heights[i] - dimensions[["margins"]])
             }
         }
     }

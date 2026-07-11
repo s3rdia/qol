@@ -23,7 +23,8 @@ design_graphic(
   axes = .qol_options[["graphic_axes"]],
   dimensions = .qol_options[["graphic_dimensions"]],
   fine_tuning = .qol_options[["graphic_fine_tuning"]],
-  add_texts = .qol_options[["graphic_texts"]],
+  add_texts = NULL,
+  add_forms = NULL,
   output = .qol_options[["graphic_output"]],
   na.rm = .qol_options[["na.rm"]],
   print = .qol_options[["print"]],
@@ -97,6 +98,8 @@ dg_vbars.}
 \item{fine_tuning}{Fine tuning parameters set with \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}.}
 
 \item{add_texts}{Use the \code{\link[=add_textbox]{add_textbox()}} function to freely place one or multiple textboxes.}
+
+\item{add_forms}{Draws forms freely onto the canvas. Add forms with: \code{\link[=add_line]{add_line()}}.}
 
 \item{output}{Output parameters set with \code{\link[=graphic_output]{graphic_output()}}.}
 

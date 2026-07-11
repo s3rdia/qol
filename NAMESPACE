@@ -2,6 +2,7 @@
 
 export(add_color_theme)
 export(add_extension)
+export(add_line)
 export(add_textbox)
 export(add_variable_range)
 export(any_table)
