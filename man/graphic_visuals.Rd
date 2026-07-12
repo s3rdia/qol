@@ -2,7 +2,6 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_visuals}
 \alias{graphic_visuals}
-\alias{modify_graphic_visuals}
 \title{Graphic Visuals}
 \usage{
 graphic_visuals(
@@ -79,8 +78,6 @@ graphic_visuals(
   group_hover_color = "#6495ED",
   group_hover_opacity = 0.25
 )
-
-modify_graphic_visuals(visuals_to_modify, ...)
 }
 \arguments{
 \item{font}{Set the font to be used for the entire output.}
@@ -266,23 +263,13 @@ interactive chart, this parameter determines at how much opacity the segment is 
 \item{group_hover_opacity}{When hovering with the mouse cursor over a segment group of an
 interactive chart, this parameter determines at how much opacity the segment group background
 is displayed.}
-
-\item{visuals_to_modify}{A pre created graphic visuals object where only
-certain elements should be modified while the rest is kept as is.}
-
-\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
-
-Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the visual appearance of a graphic produced by
 \code{\link[=design_graphic]{design_graphic()}}. All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
-
-If options are stored in an object, it can be modified afterwards. In this case
-only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
 # Example data frame
@@ -319,16 +306,12 @@ my_data |>
                     segments       = "education",
                     diagram        = dg_vbars)
 
-# Modify the previously created graphic options
-custom_visuals <- custom_visuals |> modify_graphic_visuals(label_group = 2)
-
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 

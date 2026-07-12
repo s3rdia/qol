@@ -2,7 +2,6 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_fine_tuning}
 \alias{graphic_fine_tuning}
-\alias{modify_graphic_fine_tuning}
 \title{Graphic Fine Tuning}
 \usage{
 graphic_fine_tuning(
@@ -31,8 +30,6 @@ graphic_fine_tuning(
   svg_anchor_adjust = 0.6,
   svg_line_height_adjust = 0.65
 )
-
-modify_graphic_fine_tuning(fine_tune_to_modify, ...)
 }
 \arguments{
 \item{diagram_margin}{Margin used within the diagram area.}
@@ -93,24 +90,14 @@ positions look like in the static version.}
 
 \item{svg_line_height_adjust}{Text line height in interactive SVG graphics is bigger and needs
 to be turned down.}
-
-\item{fine_tune_to_modify}{A pre created graphic fine tuning object where only
-certain elements should be modified while the rest is kept as is.}
-
-\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
-
-Returns a modified list of named graphic options.
 }
 \description{
 Throughout the graphic generation some fixed values are used. These can be adjusted
 to make detailed graphical changes in certain areas. These values normally should
 only be altered in edge cases. All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
-
-If options are stored in an object, it can be modified afterwards. In this case
-only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
 # Example data frame
@@ -147,16 +134,12 @@ my_data |>
                     segments       = "education",
                     diagram        = dg_vbars)
 
-# Modify the previously created graphics object
-custom_fine_tuning <- custom_fine_tuning |> modify_graphic_fine_tuning(diagram_margin = 0.02)
-
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 

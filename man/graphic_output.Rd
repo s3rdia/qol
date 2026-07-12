@@ -2,7 +2,6 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_output}
 \alias{graphic_output}
-\alias{modify_graphic_output}
 \title{Graphic Output}
 \usage{
 graphic_output(
@@ -13,8 +12,6 @@ graphic_output(
   grid_columns = "auto",
   interactive = FALSE
 )
-
-modify_graphic_output(output_to_modify, ...)
 }
 \arguments{
 \item{save_path}{If NULL, only draws the graphic in the plot window. Otherwise
@@ -35,23 +32,13 @@ passed the number of grid columns is fixed and the number of rows adjusts accord
 
 \item{interactive}{FALSE by default. If TRUE exports an interactive html file containing
 mouse over tooltips and hover effects.}
-
-\item{output_to_modify}{A pre created graphic output object where only
-certain elements should be modified while the rest is kept as is.}
-
-\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
-
-Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the dimensions of a graphic produced by \code{\link[=design_graphic]{design_graphic()}}.
 All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
-
-If options are stored in an object, it can be modified afterwards. In this case
-only the options to modify will be adjusted while the rest stays as is.
 }
 \details{
 \if{html}{\out{<div class="sourceCode html">}}\preformatted{Interactive graphics can be embedded in an <iframe> like this:
@@ -97,16 +84,12 @@ my_data |>
                     segments       = "education",
                     diagram        = dg_vbars)
 
-# Modify the previously created graphic options
-custom_output <- custom_output |> modify_graphic_output(file = "MyGraphic.pdf")
-
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 

@@ -281,7 +281,27 @@ my_fst_where <- load_file(path  = tempdir(),
                           where = age > 65)
 ```
 
-## One function to join them all
+## Design Graphics
+
+Design graphics in a way, where the computer does the tedious and you
+the fun work. Make graphics look beautiful without complex programming.
+The main graphics function is modular, meaning with the help of the many
+mid level functions you can integrate your own custom graphic and make
+use of the many parameters.
+
+``` r
+
+qol_graphic <- my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = vbars,
+                    formats        = list(sex = sex., age = age.),
+                    titles         = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less  code.",
+                    footnotes      = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code.")
+```
+
+## One Function to Join Them All
 
 Join two or more data frames together in one operation with multiple
 different join methods and join on differently named variables.

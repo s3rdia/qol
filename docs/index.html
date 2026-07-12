@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,7 +197,7 @@
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/style_options.html">reset_style_options</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/style_options.html">reset_qol_options</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/qol_options.html">reset_qol_options</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/tabulation.png" alt="Example output table"></p>
 <p>You can also combine multiple tables in one workbook, each on a different sheet, and save the file, instead of just viewing it.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -289,10 +289,28 @@ The loading functions are able to keep only the desired variables, but with a tw
 <span>                          where <span class="op">=</span> <span class="va">age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="one-function-to-join-them-all">One function to join them all<a class="anchor" aria-label="anchor" href="#one-function-to-join-them-all"></a>
+<h2 id="design-graphics">Design Graphics<a class="anchor" aria-label="anchor" href="#design-graphics"></a>
+</h2>
+<p>Design graphics in a way, where the computer does the tedious and you the fun work. Make graphics look beautiful without complex programming. The main graphics function is modular, meaning with the help of the many mid level functions you can integrate your own custom graphic and make use of the many parameters.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">qol_graphic</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu"><a href="reference/design_graphic.html">design_graphic</a></span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age"</span>,</span>
+<span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">vbars</span>,</span>
+<span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
+<span>                    titles         <span class="op">=</span> <span class="st">"The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less  code."</span>,</span>
+<span>                    footnotes      <span class="op">=</span> <span class="st">"The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code."</span><span class="op">)</span></span></code></pre></div>
+<div class="pkgdown-only">
+<object type="image/svg+xml" data="https://raw.githubusercontent.com/s3rdia/qol/refs/heads/graphics/man/figures/interactive_chart.svg" style="width:100%;">
+</object>
+</div>
+</div>
+<div class="section level2">
+<h2 id="one-function-to-join-them-all">One Function to Join Them All<a class="anchor" aria-label="anchor" href="#one-function-to-join-them-all"></a>
 </h2>
 <p>Join two or more data frames together in one operation with multiple different join methods and join on differently named variables. Available methods are: left, right, inner, full, outer, left_inner, right_inner.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simple join</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                  a   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
@@ -325,7 +343,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <h2 id="transpose-like-never-before">Transpose like never before<a class="anchor" aria-label="anchor" href="#transpose-like-never-before"></a>
 </h2>
 <p>Transpose, weight results and generate additional categories all in one operation. Put variables side by side or nest them or both, just as you need it. And of course you can transpose multiple variables from wide into long format in one go.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transpose from long to wide and use a multilabel to generate additional categories</span></span>
 <span><span class="va">long_to_wide</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/transpose_plus.html">transpose_plus</a></span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
@@ -345,7 +363,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <h2 id="sorting-with-additions">Sorting with additions<a class="anchor" aria-label="anchor" href="#sorting-with-additions"></a>
 </h2>
 <p>Sort cases while preserving the order of certain variables or make use of formats to sort in format order, which can be used to e.g. sort a character variable in another than alphabetical order without creating a temporary variable just for sorting.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">education.</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"1"</span> <span class="op">=</span> <span class="st">"low"</span>,</span>
 <span>    <span class="st">"2"</span> <span class="op">=</span> <span class="st">"middle"</span>,</span>
@@ -370,7 +388,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <h2 id="readability">Readability<a class="anchor" aria-label="anchor" href="#readability"></a>
 </h2>
 <p>There are also some functions which enhance the readability of the code. For example if - else if - else statements like in other languages:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
@@ -419,7 +437,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <span>        <span class="fu"><a href="reference/if_else.html">else.</a></span><span class="op">(</span>          age_cat <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/do_if.html">end_do</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The if condition functions also enable a SAS like writing style:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
@@ -512,7 +530,7 @@ The loading functions are able to keep only the desired variables, but with a tw
 <li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/SAS-R-orange.svg" alt="SAS"></a></li>
 <li><a href="https://cran.r-project.org/package=qol" class="external-link"><img src="https://www.r-pkg.org/badges/version/qol?color=green" alt="CRAN Version"></a></li>
 <li><a href="https://s3rdia.r-universe.dev/qol" class="external-link"><img src="https://s3rdia.r-universe.dev/badges/qol" alt="r-universe"></a></li>
-<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/GitHub-1.3.3-blue.svg" alt="DEVELOPMENT Version"></a></li>
+<li><a href="https://github.com/s3rdia/qol" class="external-link"><img src="https://img.shields.io/badge/GitHub-1.4.0-blue.svg" alt="DEVELOPMENT Version"></a></li>
 <li><a href="https://cran.r-project.org/web/checks/check_results_qol.html" class="external-link"><img src="https://badges.cranchecks.info/summary/qol.svg" alt="CRAN checks"></a></li>
 <li><a href="https://deepwiki.com/s3rdia/qol" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a></li>
 <li><a href="https://s3rdia.github.io/qol_blog/"><img src="https://img.shields.io/badge/qol-Blog-036f30" alt="qol_blog"></a></li>

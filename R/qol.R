@@ -34,15 +34,16 @@
 #'
 #' Main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Main diagram types: [dg_vbars()]
+#'
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Color themes: [display_colors()], [display_themes()], [add_color_theme()], [get_theme_colors()],
 #' [reset_color_themes()], [override_theme()], [sequential_usage()], [contrast_usage()],
 #' [high_contrast_usage()]
 #'
-#' Additional graphic functions: [add_textbox()], [get_text_width()], [get_text_height()],
+#' Additional graphic functions: [add_textbox()], [add_line()], [get_text_width()], [get_text_height()],
 #' [setup_nested_diagram_viewport()], [back_to_the_root()], [get_diagram_dimensions()],
 #' [setup_interactive_elements()], [setup_y_axes()], [setup_x_axes()], [setup_xy_axes()],
 #' [direct_vertical_labels()], [setup_legend()]

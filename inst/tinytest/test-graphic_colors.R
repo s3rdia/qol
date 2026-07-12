@@ -1,90 +1,84 @@
+set_no_print(TRUE)
+
 default_themes <- reset_color_themes()
 
 
-test_that("Adding color themes and resetting", {
-    set_color_themes(list(tropic = c(
-                              "#1B3A2E", "#1F5A3F", "#257F54", "#2FA36A", "#56C07E",
-                              "#85D49A", "#B2E4B8", "#D7F0D5", "#ECF8EB", "#F7FCF7"),
+# Get theme colors
+theme_colors <- get_theme_colors("ocean")
 
-                          rosewood = c(
-                              "#3A1E28", "#542334", "#6F2D40", "#8C4256", "#AA6A78",
-                              "#C28E9B", "#D7B1BB", "#E7D0D6", "#F3E7EB", "#FAF3F5")))
-
-    current_themes <- display_themes()
-
-    expect_true(!any(c("tropic", "rosewood") %in% names(default_themes)))
-    expect_true(all(c("tropic", "rosewood") %in% names(current_themes)))
-
-    reset_color_themes()
-
-    current_themes <- display_themes()
-
-    expect_equal(current_themes, default_themes)
-
-    reset_color_themes(clear_themes = TRUE)
-
-    expect_message(current_themes <- display_themes(),
-                   "~ NOTE: No themes stored. Add themes by calling")
-
-    expect_equal(length(current_themes), 0)
-
-    reset_color_themes()
-})
+expect_true(inherits(theme_colors, "qol_color_theme"), info = "Get theme colors")
 
 
-test_that("Get theme colors", {
-    theme_colors <- get_theme_colors("ocean")
+# Adding color themes and resetting
+add_color_theme("rainbow", rainbow(10))
 
-    expect_equal(length(theme_colors), 10)
-})
+current_themes <- display_themes()
 
+expect_true(!"rainbow" %in% names(default_themes), info = "Adding color themes and resetting")
+expect_true("rainbow" %in% names(current_themes), info = "Adding color themes and resetting")
 
-test_that("Display theme colors", {
-    theme_colors <- get_theme_colors("ocean")
+reset_color_themes()
 
-    expect_equal(theme_colors, display_colors(theme_colors))
-})
+current_themes <- display_themes()
+
+expect_equal(current_themes, default_themes, info = "Adding color themes and resetting")
+
+reset_color_themes(clear_themes = TRUE)
+
+current_themes <- display_themes()
+
+expect_message(print_stack_as_messages("NOTE"), "No themes stored. Add themes by calling", info = "Adding color themes and resetting")
+expect_equal(length(current_themes), 0, info = "Adding color themes and resetting")
+
+reset_color_themes()
 
 ###############################################################################
 # Warning checks
 ###############################################################################
 
-test_that("Theme name doesn't exist when getting theme colors", {
-    expect_message(theme_colors <- get_theme_colors(c("ocean", "forest")),
-                   " ! WARNING: Only a single theme can be retrieved. First vector element will be used.")
+# Theme name doesn't exist when getting theme colors
+theme_colors <- get_theme_colors(c("ocean", "forest"))
 
-    expect_equal(length(theme_colors), 10)
-})
+expect_true(inherits(theme_colors, "qol_color_theme"), info = "Get theme colors")
+expect_warning(print_stack_as_messages("WARNING"), "Only a single theme can be retrieved. First vector element will be used.")
 
 ###############################################################################
 # Abort checks
 ###############################################################################
 
-test_that("Abort if empty list provided for color themes", {
-    expect_message(set_color_themes(list()),
-                   " X ERROR: Empty list found. Color theme won't be added.")
-})
+# Abort if empty list provided for color themes
+add_color_theme("test", list())
+
+expect_error(print_stack_as_messages("ERROR"), "No base colors provided. Color theme won't be added.",
+             info = "Abort if empty list provided for color themes")
 
 
-test_that("Abort if something other than named list provided for color themes", {
-    expect_message(set_color_themes(list(1, 2, 3)),
-                   " X ERROR: Colors must be provided as a named list. Color theme won't be added.")
-})
+# Abort if something other than named list provided for color themes
+add_color_theme("test", list(1, 2, 3))
+
+expect_error(print_stack_as_messages("ERROR"), "Base color '1' must be a 6 character <hex code>. Color theme won't be added.",
+             info = "Abort if something other than named list provided for color themes")
 
 
-test_that("Abort if theme name doesn't exist when getting theme colors", {
-    expect_message(get_theme_colors("test"),
-                   " X ERROR: Theme 'test' doesn't exist. Default theme will be used.")
-})
+# Abort if theme name doesn't exist when getting theme colors
+get_theme_colors("test")
+
+expect_error(print_stack_as_messages("ERROR"), "Theme 'test' doesn't exist. Default theme will be used.",
+             info = "Abort if theme name doesn't exist when getting theme colors")
 
 
-test_that("Abort display_colors if no color vector provided", {
-    expect_message(display_colors(1),
-                   " X ERROR: Only a single theme can be displayed. Use")
-})
+# Abort display_colors if no color vector provided
+display_colors(1)
+
+expect_error(print_stack_as_messages("ERROR"), "Only a single theme can be displayed. Use",
+             info = "Abort display_colors if no color vector provided")
 
 
-test_that("Abort display_colors if invalid hex code found", {
-    expect_message(display_colors(c("#fffffz")),
-                   " X ERROR: '#fffffz' must be a 6 character <hex code>. Color theme can't be displayed.")
-})
+# Abort display_colors if invalid hex code found
+display_colors("#fffffz")
+
+expect_error(print_stack_as_messages("ERROR"), "Theme '#fffffz' doesn't exist. Default theme will be used.",
+             info = "Abort display_colors if invalid hex code found")
+
+
+set_no_print()

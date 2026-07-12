@@ -65,6 +65,10 @@ on the corresponding base color.}
 \item{border_color}{The new border color of the segment.}
 
 \item{font_color}{The new font color of the segment value.}
+
+\item{number_of_colors}{The number of colors stored in a theme.}
+
+\item{number_of_segments}{The number of segments inside the graphic.}
 }
 \value{
 \code{\link[=add_color_theme]{add_color_theme()}}: Returns newly created color theme.
@@ -167,48 +171,47 @@ my_data |>
                                               override_theme(7, "#00FFFF", "#FFFF00", "#0000FF"))))
 
 # sequential_usage sequences
-c(1),
-c(1, 2),
-c(1, 2, 3),
-c(1, 2, 3, 4),
-c(1, 2, 3, 4, 5),
-c(1, 2, 3, 4, 5, 6),
-c(1, 2, 3, 4, 5, 6, 7),
-c(1, 2, 3, 4, 5, 6, 7, 8),
-c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+c(1)
+c(1, 2)
+c(1, 2, 3)
+c(1, 2, 3, 4)
+c(1, 2, 3, 4, 5)
+c(1, 2, 3, 4, 5, 6)
+c(1, 2, 3, 4, 5, 6, 7)
+c(1, 2, 3, 4, 5, 6, 7, 8)
+c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 # contrast_usage sequences
-c(1),
-c(1, 3),
-c(1, 3, 5),
-c(1, 3, 5, 7),
-c(1, 3, 5, 7, 9),
-c(1, 2, 3, 5, 7, 9),
-c(1, 2, 3, 4, 5, 7, 9),
-c(1, 2, 3, 4, 5, 6, 7, 9),
-c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+c(1)
+c(1, 3)
+c(1, 3, 5)
+c(1, 3, 5, 7)
+c(1, 3, 5, 7, 9)
+c(1, 2, 3, 5, 7, 9)
+c(1, 2, 3, 4, 5, 7, 9)
+c(1, 2, 3, 4, 5, 6, 7, 9)
+c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 # high_contrast_usage sequences
-c(1),
-c(1, 10),
-c(1, 5, 10),
-c(1, 3, 5, 10),
-c(1, 3, 5, 7, 10),
-c(1, 2, 3, 5, 7, 10),
-c(1, 2, 3, 4, 5, 7, 10),
-c(1, 2, 3, 4, 5, 6, 7, 10),
-c(1, 2, 3, 4, 5, 6, 7, 8, 10),
-c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+c(1)
+c(1, 10)
+c(1, 5, 10)
+c(1, 3, 5, 10)
+c(1, 3, 5, 7, 10)
+c(1, 2, 3, 5, 7, 10)
+c(1, 2, 3, 4, 5, 7, 10)
+c(1, 2, 3, 4, 5, 6, 7, 10)
+c(1, 2, 3, 4, 5, 6, 7, 8, 10)
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 }
 \seealso{
 Main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 }

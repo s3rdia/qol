@@ -11,6 +11,7 @@ design_graphic(
   values,
   statistics = "pct_group",
   pct_value = list(),
+  compute = list(),
   formats = list(),
   by = c(),
   weight = NULL,
@@ -69,6 +70,9 @@ Uses the SAS default way of calculating percentiles, which is Type 2 described i
 \item{pct_value}{If pct_value is specified in the statistics, you can pass a list here
 which contains the information for a new variable name and between which of the value
 variables percentages should be computed.}
+
+\item{compute}{A list in which individual calculations are handled. For the writing style
+see the \code{\link[=compute.]{compute.()}} function.}
 
 \item{formats}{A list in which is specified which formats should be applied to which variables.}
 
@@ -220,9 +224,8 @@ my_data |>
 
 }
 \seealso{
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 

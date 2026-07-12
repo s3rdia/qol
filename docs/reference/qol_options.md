@@ -40,6 +40,8 @@ and load file functions.
 
 `get_threads()`: Get the globally stored number of used threads.
 
+`reset_qol_options()` Resets global options to the default parameters.
+
 ## Usage
 
 ``` r
@@ -74,6 +76,8 @@ get_footnotes()
 set_threads(...)
 
 get_threads()
+
+reset_qol_options()
 ```
 
 ## Arguments
@@ -115,6 +119,8 @@ get_threads()
 `set_threads()`: Changed global number of used threads.
 
 `get_threads()`: Current number of used threads.
+
+`reset_qol_options()`: Returns default global options.
 
 ## Examples
 
@@ -174,4 +180,7 @@ get_footnotes()
 set_threads(8)
 
 get_threads()
+
+# Reset all globally set options
+reset_qol_options()
 ```

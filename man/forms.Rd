@@ -26,8 +26,6 @@ add_line(
 \item{thickness}{The thickness of the line.}
 
 \item{name}{The internal name of the line with which it can be identified.}
-
-\item{text}{The text that should be displayed.}
 }
 \value{
 \code{\link[=add_line]{add_line()}}: Returns a grid::linesGrob object.

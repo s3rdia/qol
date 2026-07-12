@@ -11,9 +11,11 @@
 <url><loc>https://s3rdia.github.io/qol/reference/add_extension.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/add_variable_range.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/any_table.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/axes.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/build_master.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/build_rstheme.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/code_statistics.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/color_themes.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/combine_into_workbook.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/compute..html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/concat.html</loc></url>
@@ -21,6 +23,8 @@
 <url><loc>https://s3rdia.github.io/qol/reference/convert_arguments.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/convert_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/crosstabs.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/design_graphic.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/diagram.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/do_if.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/drop_type_vars.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/dummy_data.html</loc></url>
@@ -31,11 +35,18 @@
 <url><loc>https://s3rdia.github.io/qol/reference/export_with_style.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/first_row_as_names.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/formats.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/forms.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/free_memory.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/frequencies.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/fuse_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/get_excel_range.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/get_integer_length.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_axes.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_dimensions.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_fine_tuning.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_options.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_output.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/graphic_visuals.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/hex_ansi.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/ifelse_multi.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/if_else.html</loc></url>
@@ -46,8 +57,11 @@
 <url><loc>https://s3rdia.github.io/qol/reference/keep_dropp.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/libname.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/macro.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/main_diagram.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/main_grobs.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/messages.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/message_helpers.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/modify_graphic_options.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/modify_number_formats.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/modify_output_style.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/monitor.html</loc></url>
@@ -69,6 +83,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/round_values.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/row_calculation.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/save_load.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/segment_labels.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/set.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/setcolorder_by_pattern.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/sort_plus.html</loc></url>
@@ -77,8 +92,10 @@
 <url><loc>https://s3rdia.github.io/qol/reference/style_options.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/sub_string.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/summarise_plus.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/textboxes.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/transpose_plus.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/vars_between.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/viewport.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/where..html</loc></url>
 </urlset>
 

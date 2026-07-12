@@ -10,7 +10,7 @@
 add_textbox(
   text,
   x_pos = .qol_options[["graphic_dimensions"]][["margins"]],
-  y_pos = .qol_options[["graphic_dimensions"]][["margins"]],
+  y_pos = .qol_options[["graphic_dimensions"]][["graphic_height"]] * 0.97,
   width = .qol_options[["graphic_dimensions"]][["textbox_width"]],
   alignment = .qol_options[["graphic_visuals"]][["other_alignment"]],
   font = .qol_options[["graphic_visuals"]][["font"]],

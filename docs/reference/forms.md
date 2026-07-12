@@ -1,0 +1,76 @@
+# Add Lines As Graphical Object
+
+`add_line()`: Creates a line as graphical object. Lines can be plugged
+into the "add_forms" parameter of
+[`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md).
+
+## Usage
+
+``` r
+add_line(
+  x_vector,
+  y_vector,
+  color = "#000000",
+  type = "solid",
+  thickness = 1,
+  name = "line"
+)
+```
+
+## Arguments
+
+- x_vector:
+
+  A vector of two x coordinates for the start and finish.
+
+- y_vector:
+
+  A vector of two y coordinates for the start and finish.
+
+- color:
+
+  Color to draw the line in as hex code.
+
+- type:
+
+  Sets the type of the line. Can be "dashed", "dotted" or "solid".
+
+- thickness:
+
+  The thickness of the line.
+
+- name:
+
+  The internal name of the line with which it can be identified.
+
+## Value
+
+`add_line()`: Returns a grid::linesGrob object.
+
+## Examples
+
+``` r
+# Example data frame
+my_data <- dummy_data(100)
+
+# Formats
+age. <- discrete_format(
+    "Total"          = 0:100,
+    "under 18"       = 0:17,
+    "18 to under 65" = 18:64,
+    "65 and older"   = 65:100)
+
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
+
+# Add individual texts to a graphic
+my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = dg_vbars,
+                    formats        = list(sex = sex., age = age.),
+                    add_forms      = list(add_line(c(2, 15), c(5, 5)),
+                                          add_line(c(5, 10), c(1, 8), "#FF00FF", "dashed", 3)))
+```

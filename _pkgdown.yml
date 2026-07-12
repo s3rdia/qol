@@ -29,6 +29,49 @@ reference:
   - modify_output_style
   - number_format_style
   - modify_number_formats
+- title: Graphics
+  contents:
+  - design_graphic
+  - add_textbox
+  - add_line
+- title: Main Diagram Types
+  contents:
+  - dg_vbars
+- title: Main Grob Generation
+  contents:
+  - vbar_grob
+- title: Graphic Options
+  contents:
+  - graphic_visuals
+  - graphic_axes
+  - graphic_dimensions
+  - graphic_output
+  - graphic_fine_tuning
+  - modify_graphic_options
+- title: Additional Graphic Functions
+  contents:
+  - get_text_width
+  - get_text_height
+  - setup_nested_diagram_viewport
+  - back_to_the_root
+  - get_diagram_dimensions
+  - setup_interactive_elements
+  - setup_y_axes
+  - setup_x_axes
+  - setup_xy_axes
+  - direct_vertical_labels
+  - setup_legend
+- title: Color themes
+  contents:
+  - display_colors
+  - display_themes
+  - add_color_theme
+  - get_theme_colors
+  - reset_color_themes
+  - override_theme
+  - sequential_usage
+  - contrast_usage
+  - high_contrast_usage
 - title: Import And Export CSV and XLSX
   contents:
   - import_data
@@ -163,6 +206,9 @@ reference:
   - set_style_options
   - reset_style_options
   - get_style_options
+  - set_graphic_options
+  - get_graphic_options
+  - reset_graphic_options
   - close_file
   - set_labels
   - get_labels

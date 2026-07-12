@@ -1,5 +1,76 @@
 # Changelog
 
+## qol 1.4.0 - DEVELOPMENT
+
+#### New functions
+
+- [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md):
+  High level graphics function with many parameters. The focus is around
+  concentrating on designing a graphic rather than engineering. Tedious
+  operations are taken care of by the function. It is also modular and
+  can take in custom diagram functions. (21.02.2026)
+- Graphic options:
+  - [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),
+    [`modify_graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.html),
+    [`graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.md),
+    [`modify_graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.html),
+    [`graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.md),
+    [`modify_graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.html),
+    [`graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.md),
+    [`modify_graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.html).
+    (21.02.2026)
+  - [`graphic_fine_tuning ()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.md),
+    [`modify_graphic_fine_tuning()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.html):
+    Made all fixed values available as new fine tuning parameters.
+    (16.03.2026)
+- Global graphic options:
+  [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),
+  `set_color_theme()`,
+  [`get_theme_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+  [`reset_color_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md).
+  (21.02.2026)
+- Main diagrams: `vbars()`. (21.02.2026)
+- View colors and themes:
+  [`display_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+  [`display_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md).
+  (21.02.2026)
+- Mid level functions:
+  - Textboxes:
+    [`add_textbox()`](https://s3rdia.github.io/qol/reference/textboxes.md),
+    `add_title()`, `add_footnote()`, `add_graphic_origin()`,
+    `wrap_single_text()`, `wrap_text_vector()`,
+    `register_windows_font()`. (21.02.2026)
+  - Viewport: `setup_main_canvas()`, `setup_nested_viewport()`,
+    `setup_diagram_viewport()`,
+    [`setup_nested_diagram_viewport()`](https://s3rdia.github.io/qol/reference/viewport.md),
+    [`back_to_the_root()`](https://s3rdia.github.io/qol/reference/viewport.md),
+    `is_viewport_pushed()`. (21.02.2026)
+  - Dimensions: `get_available_width()`, `get_available_height()`.
+    (21.02.2026)
+  - Diagram:
+    [`get_diagram_dimensions()`](https://s3rdia.github.io/qol/reference/diagram.md),
+    [`vbar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md).
+    (21.02.2026)
+  - Axes: `get_value_axes_width()`, `get_variable_axes_dimension()`,
+    `get_group_tick_positions_x()`, `get_y_axes_values()`,
+    [`setup_y_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
+    [`setup_x_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
+    [`setup_xy_axes()`](https://s3rdia.github.io/qol/reference/axes.md).
+    (21.02.2026), `inject_inner_canvas_size()`. (27.04.2026)
+  - Labels:
+    [`direct_vertical_labels()`](https://s3rdia.github.io/qol/reference/segment_labels.md).
+    (21.02.2026)
+  - Output: `output_graphic()`. (21.02.2026)
+  - Conversion: `convert_to_native_width()`,
+    `convert_to_native_height()`. (26.04.2026)
+  - Other: `format_values()`. (21.02.2026)
+
+#### Additionally
+
+- Added
+  [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md)
+  example to the README. (21.02.2026)
+
 ## qol 1.3.3 - DEVELOPMENT
 
 #### New functions
@@ -391,66 +462,6 @@ CRAN release on 16.05.2026
   values. NA values are taken care of automatically instead of the
   function aborting with an error. Additionally multilabels are reduced
   so that no additional observations are created. (08.05.2026)
-
-#### Fixed
-
-- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
-  Titles and footnotes are now styled again. (18.04.2026)
-- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): If
-  a variable was all NA, a type miss match happend, leading to the
-  function beeing aborted. This is fixed now. (24.04.2026)
-- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
-  Waiting character “?” is now drawn as intended in non-utf8 mode.
-  (25.04.2026)
-- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
-  [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
-  detect vectors for do-over-loops in every place. Previously do over
-  loop was only detected, if the variable for assignment was a vector.
-  (30.04.2026)
-- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
-  Doesn’t crash anymore, if multiple values are assigned to the same
-  variable in a do over loop. (30.04.2026)
-- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
-  Variable `income_class` was miss matched in some places due to it
-  being generated to early. This is fixed now. (30.04.2026)
-- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
-  If the `block` keyword was used in `var_labels` parameter and all
-  `block` keywords weren’t written in lower case, the column header
-  generation crashed. This is fixed now. (04.05.2026)
-- [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
-  Now preserves single values. (08.05.2026)
-- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
-  `person_id` is now adjusted after taking sample to have continuous
-  numbers. (08.05.2026)
-
-#### Additionally
-
-- Message time stamps are now drawn in a lighter grey to enhance
-  visibility on darker themes. (20.04.2026)
-- [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
-  [`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
-  [`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md):
-  Functions now throw errors instead of warnings, if
-  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) is
-  missing. (23.04.2026)
-- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
-  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
-  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
-  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
-  If only the `save_path` or the `file name` is specified in the global
-  options or the style parameter there will now be a note stating that
-  something is missing. (13.05.2026)
-- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
-  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md):
-  `&&` and `||` will now be converted into `&` and `|`. Additionally a
-  warning is displayed. (15.05.2026)
-- Set the used threads from data.table to 2 for the
-  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
-  examples, because the CRAN server throws a NOTE for the
-  r-devel-linux-x86_64-debian-gcc: “Examples with CPU time \> 2.5 times
-  elapsed time”. (16.05.2026)
 
 ## qol 1.3.0
 
@@ -1144,9 +1155,8 @@ CRAN release on 13.01.2026
   into the desired ones passed with a format. Using multilabels it is
   also possible to generate completely new values and therefore data
   frames on the fly. (30.12.2025)
-- [`set()`](https://s3rdia.github.io/qol/reference/set.html): Stack data
-  frames by column names with optional character compression.
-  (30.12.2025)
+- `set()`: Stack data frames by column names with optional character
+  compression. (30.12.2025)
 - Error handling functions:
   - [`resolve_intersection()`](https://s3rdia.github.io/qol/reference/error_handling.md):
     Compares if two vectors have intersecting values. (02.01.2026)

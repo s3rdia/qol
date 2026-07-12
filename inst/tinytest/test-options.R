@@ -11,6 +11,7 @@ default_output        <- get_output()
 default_titles        <- get_titles()
 default_footnotes     <- get_footnotes()
 default_threads       <- get_threads()
+default_graphics      <- get_graphic_options()
 
 
 # Get global style options
@@ -163,9 +164,52 @@ new_options <- get_threads()
 expect_equal(new_options, suppressMessages(fst::threads_fst()), info = "Set global threads")
 
 
+# Get global graphics options
+expect_equal(default_graphics, get_graphic_options(), info = "Get global graphic options")
+
+
+# Set global graphics options
+set_graphic_options(title_font_color       = "#00FF00",
+                    reverse_colors         = TRUE,
+                    segment_label_rotation = 12,
+                    segment_label_group    = 1)
+
+new_options <- get_graphic_options()
+
+expect_equal(new_options[["graphic_visuals"]][["title_font_color"]],      "#00FF00", info = "Set global graphic options")
+expect_equal(new_options[["graphic_visuals"]][["reverse_colors"]],         TRUE,     info = "Set global graphic options")
+expect_equal(new_options[["graphic_visuals"]][["segment_label_rotation"]], 12,       info = "Set global graphic options")
+expect_equal(new_options[["graphic_visuals"]][["segment_label_group"]],    1,        info = "Set global graphic options")
+
+
+# Reset global graphic options
+new_options <- set_graphic_options(title_font_color = "#00FFFF")
+
+expect_equal(new_options[["graphic_visuals"]][["title_font_color"]], "#00FFFF", info = "Reset global graphic options")
+
+reset_options <- reset_graphic_options()
+
+expect_equal(reset_options[["graphic_visuals"]][["title_font_color"]], "#000000", info = "Reset global graphic options")
+
+
+# Save global graphic options to file
+temp_file <- tempfile(fileext = ".rds")
+on.exit(unlink(temp_file), add = TRUE)
+
+set_graphic_options(title_font_color = "#00FF00", save_file = temp_file)
+
+expect_true(file.exists(temp_file), info = "Save global graphic options to file")
+
+new_options <- get_graphic_options(from_file = temp_file)
+
+expect_equal(new_options[["graphic_visuals"]][["title_font_color"]], "#00FF00", info = "Save global graphic options to file")
+
+
 # Reset global options
 reset_qol_options()
+reset_graphic_options()
 
+new_style      <- get_style_options()
 new_print      <- get_print()
 new_monitor    <- get_monitor()
 new_na         <- get_na.rm()
@@ -174,13 +218,14 @@ new_output     <- get_output()
 new_titles     <- get_titles()
 new_footnotes  <- get_footnotes()
 new_threads    <- get_threads()
+new_graphics   <- get_graphic_options()
 
-expect_true(default_print      == new_print, info = "Reset global options")
-expect_true(default_monitor    == new_monitor, info = "Reset global options")
-expect_true(default_na         == new_na, info = "Reset global options")
-expect_true(default_print_miss == new_print_miss, info = "Reset global options")
-expect_true(default_output     == new_output, info = "Reset global options")
-expect_equal(new_titles, NULL, info = "Reset global options")
+expect_true(default_print         == new_print,      info = "Reset global options")
+expect_true(default_monitor       == new_monitor,    info = "Reset global options")
+expect_true(default_na            == new_na,         info = "Reset global options")
+expect_true(default_print_miss    == new_print_miss, info = "Reset global options")
+expect_true(default_output        == new_output,     info = "Reset global options")
+expect_equal(new_titles,    NULL, info = "Reset global options")
 expect_equal(new_footnotes, NULL, info = "Reset global options")
 expect_equal(new_threads, suppressMessages(fst::threads_fst()), info = "Reset global options")
 
@@ -217,6 +262,42 @@ expect_warning(print_stack_as_messages("WARNING"), "'header_back_color' must be 
 set_style_options(test = 1)
 
 expect_warning(print_stack_as_messages("WARNING"), "'test' is not a valid style option. See", info = "Warning on setting non existent style in global options")
+
+
+# Warning on setting wrong logical in global graphic options
+set_graphic_options(reverse_colors = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'reverse_colors' must be <logical>. Option will be omitted.", info = "Warning on setting wrong logical in global graphic options")
+
+
+# Warning on setting wrong numeric in global graphic options
+set_graphic_options(segment_label_rotation = "1")
+
+expect_warning(print_stack_as_messages("WARNING"), "'segment_label_rotation' must be <numeric>. Option will be omitted.", info = "Warning on setting wrong numeric in global graphic options")
+
+
+# Warning on setting wrong character in global graphic options
+set_graphic_options(font = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'font' must be <character>. Option will be omitted.", info = "Warning on setting wrong character in global graphic options")
+
+
+# Warning on setting wrong color in global graphic options
+set_graphic_options(title_font_color = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'title_font_color' must be a 6 character <hex code>. Option will be omitted", info = "Warning on setting wrong color in global graphic options")
+
+
+# Warning on setting wrong flexible in global graphic options
+set_graphic_options(segment_label_group = TRUE)
+
+expect_warning(print_stack_as_messages("WARNING"), "'segment_label_group' must be <character> or <numeric>. Option will be omitted.", info = "Warning on setting non existent in global graphic options")
+
+
+# Warning on setting non existent in global graphic options
+set_graphic_options(test = 1)
+
+expect_warning(print_stack_as_messages("WARNING"), "'test' is not a valid graphic option. See", info = "Warning on setting non existent in global graphic options")
 
 ###############################################################################
 # Abort checks

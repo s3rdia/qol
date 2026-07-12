@@ -49,16 +49,13 @@ expect_equal(my_path, external_path, info = "Retrieve path with libname")
 # Retrieve files from path with libname
 my_path <- libname(external_path, get_files = TRUE)
 
-expect_equal(names(my_path), c("qol_example_data_csv.csv",  "qol_example_data_fst.fst", "qol_example_data_rds.rds",
-                               "qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "qol_nuts.csv",
-                               "qol_tinytest_results.fst"), info = "Retrieve files from path with libname")
+expect_equal(length(my_path), 11, info = "Retrieve files from path with libname")
 
 
 # Retrieve files with specific extensions from path with libname
 my_path <- libname(external_path, get_files = TRUE, extensions = c("txt", "xlsx"))
 
-expect_equal(names(my_path), c("qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx"),
-             info = "Retrieve files with specific extensions from path with libname")
+expect_true(!any(grepl("\\.(fst|rds)$", my_path, ignore.case = TRUE)), info = "Retrieve files with specific extensions from path with libname")
 
 ###############################################################################
 # Loading

@@ -29,8 +29,6 @@ they don't have to be provided in every output function separately.
 `get_labels()`: Get the globally stored variable and statistic labels as
 a list and print the contents to the console.
 
-`reset_qol_options()` Resets global options to the default parameters.
-
 ## Usage
 
 ``` r
@@ -45,8 +43,6 @@ close_file()
 set_labels(...)
 
 get_labels()
-
-reset_qol_options()
 ```
 
 ## Arguments
@@ -78,8 +74,6 @@ reset_qol_options()
 `set_labels()`: List of variable and statistic labels.
 
 `get_labels()`: List of variable and statistic labels.
-
-`reset_qol_options()`: Returns default global options.
 
 ## See also
 
@@ -123,7 +117,4 @@ set_labels(age_gr = "Group of ages",
 set_labels(NULL)
 
 get_labels()
-
-# Reset all globally set options
-reset_qol_options()
 ```

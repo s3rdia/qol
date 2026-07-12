@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,38 @@
       <small>Source: <a href="https://github.com/s3rdia/qol/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.4.0" id="qol-140---development">qol 1.4.0 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-140---development"></a></h2>
+<div class="section level4">
+<h4 id="new-functions-1-4-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-4-0"></a></h4>
+<ul><li>
+<code><a href="../reference/design_graphic.html">design_graphic()</a></code>: High level graphics function with many parameters. The focus is around concentrating on designing a graphic rather than engineering. Tedious operations are taken care of by the function. It is also modular and can take in custom diagram functions. (21.02.2026)</li>
+<li>Graphic options:
+<ul><li>
+<code><a href="../reference/graphic_visuals.html">graphic_visuals()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/graphic_visuals.html">modify_graphic_visuals()</a></code>, <code><a href="../reference/graphic_axes.html">graphic_axes()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/graphic_axes.html">modify_graphic_axes()</a></code>, <code><a href="../reference/graphic_dimensions.html">graphic_dimensions()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/graphic_dimensions.html">modify_graphic_dimensions()</a></code>, <code><a href="../reference/graphic_output.html">graphic_output()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/graphic_output.html">modify_graphic_output()</a></code>. (21.02.2026)</li>
+<li>
+<code><a href="../reference/graphic_fine_tuning.html">graphic_fine_tuning ()</a></code>, <code><a href="https://s3rdia.github.io/qol/reference/graphic_fine_tuning.html">modify_graphic_fine_tuning()</a></code>: Made all fixed values available as new fine tuning parameters. (16.03.2026)</li>
+</ul></li>
+<li>Global graphic options: <code><a href="../reference/graphic_visuals.html">graphic_visuals()</a></code>, <code>set_color_theme()</code>, <code><a href="../reference/color_themes.html">get_theme_colors()</a></code>, <code><a href="../reference/color_themes.html">reset_color_themes()</a></code>. (21.02.2026)</li>
+<li>Main diagrams: <code>vbars()</code>. (21.02.2026)</li>
+<li>View colors and themes: <code><a href="../reference/color_themes.html">display_colors()</a></code>, <code><a href="../reference/color_themes.html">display_themes()</a></code>. (21.02.2026)</li>
+<li>Mid level functions:
+<ul><li>Textboxes: <code><a href="../reference/textboxes.html">add_textbox()</a></code>, <code>add_title()</code>, <code>add_footnote()</code>, <code>add_graphic_origin()</code>, <code>wrap_single_text()</code>, <code>wrap_text_vector()</code>, <code>register_windows_font()</code>. (21.02.2026)</li>
+<li>Viewport: <code>setup_main_canvas()</code>, <code>setup_nested_viewport()</code>, <code>setup_diagram_viewport()</code>, <code><a href="../reference/viewport.html">setup_nested_diagram_viewport()</a></code>, <code><a href="../reference/viewport.html">back_to_the_root()</a></code>, <code>is_viewport_pushed()</code>. (21.02.2026)</li>
+<li>Dimensions: <code>get_available_width()</code>, <code>get_available_height()</code>. (21.02.2026)</li>
+<li>Diagram: <code><a href="../reference/diagram.html">get_diagram_dimensions()</a></code>, <code><a href="../reference/main_grobs.html">vbar_grob()</a></code>. (21.02.2026)</li>
+<li>Axes: <code>get_value_axes_width()</code>, <code>get_variable_axes_dimension()</code>, <code>get_group_tick_positions_x()</code>, <code>get_y_axes_values()</code>, <code><a href="../reference/axes.html">setup_y_axes()</a></code>, <code><a href="../reference/axes.html">setup_x_axes()</a></code>, <code><a href="../reference/axes.html">setup_xy_axes()</a></code>. (21.02.2026), <code>inject_inner_canvas_size()</code>. (27.04.2026)</li>
+<li>Labels: <code><a href="../reference/segment_labels.html">direct_vertical_labels()</a></code>. (21.02.2026)</li>
+<li>Output: <code>output_graphic()</code>. (21.02.2026)</li>
+<li>Conversion: <code>convert_to_native_width()</code>, <code>convert_to_native_height()</code>. (26.04.2026)</li>
+<li>Other: <code>format_values()</code>. (21.02.2026)</li>
+</ul></li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-4-0">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-4-0"></a></h4>
+<ul><li>Added <code><a href="../reference/design_graphic.html">design_graphic()</a></code> example to the README. (21.02.2026)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.3" id="qol-133---development">qol 1.3.3 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-133---development"></a></h2>
 <div class="section level4">
@@ -247,38 +279,6 @@
 <code><a href="../reference/formats.html">interval_format()</a></code>: The function had a flaw in that it always included the lower and upper bound values. The “workaround” in the examples to pass bounds like e.g. 0:499, 500:999, would miss values between 499 and 500 or 999 and 1000. The function now got two new parameters <code>inlcude_lower</code> (TRUE) and <code>include_upper</code> (FALSE), which by default read as “from … to under …”. Which means bounds can be passed like 0:500, 500:1000 without overlapping. (07.05.2026)</li>
 <li>
 <code><a href="../reference/recode.html">recode.()</a></code>: Interval formats can now be applied even though a variable has NA values. NA values are taken care of automatically instead of the function aborting with an error. Additionally multilabels are reduced so that no additional observations are created. (08.05.2026)</li>
-</ul></div>
-<div class="section level4">
-<h4 id="fixed-1-3-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-1"></a></h4>
-<ul><li>
-<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Titles and footnotes are now styled again. (18.04.2026)</li>
-<li>
-<code><a href="../reference/compute..html">compute.()</a></code>: If a variable was all NA, a type miss match happend, leading to the function beeing aborted. This is fixed now. (24.04.2026)</li>
-<li>
-<code><a href="../reference/messages.html">print_step()</a></code>: Waiting character “?” is now drawn as intended in non-utf8 mode. (25.04.2026)</li>
-<li>
-<code><a href="../reference/compute..html">compute.()</a></code>, <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Now detect vectors for do-over-loops in every place. Previously do over loop was only detected, if the variable for assignment was a vector. (30.04.2026)</li>
-<li>
-<code><a href="../reference/compute..html">compute.()</a></code>: Doesn’t crash anymore, if multiple values are assigned to the same variable in a do over loop. (30.04.2026)</li>
-<li>
-<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Variable <code>income_class</code> was miss matched in some places due to it being generated to early. This is fixed now. (30.04.2026)</li>
-<li>
-<code><a href="../reference/any_table.html">any_table()</a></code>: If the <code>block</code> keyword was used in <code>var_labels</code> parameter and all <code>block</code> keywords weren’t written in lower case, the column header generation crashed. This is fixed now. (04.05.2026)</li>
-<li>
-<code><a href="../reference/formats.html">interval_format()</a></code>: Now preserves single values. (08.05.2026)</li>
-<li>
-<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: <code>person_id</code> is now adjusted after taking sample to have continuous numbers. (08.05.2026)</li>
-</ul></div>
-<div class="section level4">
-<h4 id="additionally-1-3-1">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-1"></a></h4>
-<ul><li>Message time stamps are now drawn in a lighter grey to enhance visibility on darker themes. (20.04.2026)</li>
-<li>
-<code><a href="../reference/do_if.html">else_do()</a></code>, <code><a href="../reference/do_if.html">end_do()</a></code>, <code><a href="../reference/do_if.html">end_all_do()</a></code>: Functions now throw errors instead of warnings, if <code><a href="../reference/do_if.html">do_if()</a></code> is missing. (23.04.2026)</li>
-<li>
-<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: If only the <code>save_path</code> or the <code>file name</code> is specified in the global options or the style parameter there will now be a note stating that something is missing. (13.05.2026)</li>
-<li>
-<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>: <code>&amp;&amp;</code> and <code>||</code> will now be converted into <code>&amp;</code> and <code>|</code>. Additionally a warning is displayed. (15.05.2026)</li>
-<li>Set the used threads from data.table to 2 for the <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code> examples, because the CRAN server throws a NOTE for the r-devel-linux-x86_64-debian-gcc: “Examples with CPU time &gt; 2.5 times elapsed time”. (16.05.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -666,7 +666,7 @@
 <li>
 <code><a href="../reference/split_by.html">split_by()</a></code>: Since <code>split_by_var()</code> didn’t have any benefit, <code>split_by_var()</code> and <code>split_by_condition()</code> are now fused into one function. Additionally to give the new function more power, formats can be used to not only split up a data frame by the actual values in the data frame, but also into the desired ones passed with a format. Using multilabels it is also possible to generate completely new values and therefore data frames on the fly. (30.12.2025)</li>
 <li>
-<code><a href="https://s3rdia.github.io/qol/reference/set.html">set()</a></code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
+<code>set()</code>: Stack data frames by column names with optional character compression. (30.12.2025)</li>
 <li>Error handling functions:
 <ul><li>
 <code><a href="../reference/error_handling.html">resolve_intersection()</a></code>: Compares if two vectors have intersecting values. (02.01.2026)</li>

@@ -2,7 +2,6 @@
 % Please edit documentation in R/graphic_options.R
 \name{graphic_dimensions}
 \alias{graphic_dimensions}
-\alias{modify_graphic_dimensions}
 \title{Graphic Dimensions}
 \usage{
 graphic_dimensions(
@@ -36,8 +35,6 @@ graphic_dimensions(
   segment_line_offset = 0,
   textbox_width = 4
 )
-
-modify_graphic_dimensions(dimension_to_modify, ...)
 }
 \arguments{
 \item{graphic_width}{The width of the whole graphic.}
@@ -104,23 +101,13 @@ of the line. Enables the labels to be drawn in steps, if e.g. the labels have a 
 text which would overlap, if they where on the same height.}
 
 \item{textbox_width}{Determines the width of any freely placed textbox.}
-
-\item{dimension_to_modify}{A pre created graphic dimension object where only
-certain elements should be modified while the rest is kept as is.}
-
-\item{...}{Pass in names and corresponding new values for existing graphic elements.}
 }
 \value{
 Returns a list of named graphic options.
-
-Returns a modified list of named graphic options.
 }
 \description{
 Set different options regarding the dimensions of a graphic produced by \code{\link[=design_graphic]{design_graphic()}}.
 All parameters can also be set globally via \code{\link[=set_graphic_options]{set_graphic_options()}}.
-
-If options are stored in an object, it can be modified afterwards. In this case
-only the options to modify will be adjusted while the rest stays as is.
 }
 \examples{
 # Example data frame
@@ -157,16 +144,12 @@ my_data |>
                     segments       = "education",
                     diagram        = dg_vbars)
 
-# Modify the previously created graphic options
-custom_dimensions <- custom_dimensions |> modify_graphic_dimensions(title_font_size = 12)
-
 }
 \seealso{
 The main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=modify_graphic_visuals]{modify_graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}},
-\code{\link[=modify_graphic_axes]{modify_graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}}, \code{\link[=modify_graphic_dimensions]{modify_graphic_dimensions()}},
-\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=modify_graphic_output]{modify_graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_fine_tuning]{modify_graphic_fine_tuning()}}
+Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
+\code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}
 
 Global graphic options: \code{\link[=set_graphic_options]{set_graphic_options()}}, \code{\link[=get_graphic_options]{get_graphic_options()}}, \code{\link[=reset_graphic_options]{reset_graphic_options()}}
 

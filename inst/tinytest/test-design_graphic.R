@@ -1,7 +1,11 @@
 set_no_print(TRUE)
 set_graphic_options(font = "sans")
 
+set_titles("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
+set_footnotes("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
+
 dummy_df <- dummy_data(100)
+dummy_df[1, "balance"] <- -10000
 
 age. <- discrete_format(
     "under 18"       = 0:17,
@@ -79,6 +83,18 @@ expect_true("axes" %in% names(result_list[["table"]]), info = "design_graphic wi
 expect_true(all(c("under 18", "18 to under 65", "65 and older", "low", "middle", "high") %in% collapse::funique(result_list[["table"]][["axes"]])),
             info = "design_graphic with multiple axes variables")
 
+result_list <- dummy_df |>
+    design_graphic(axes_variables = c("age", "education"),
+                   segments       = "sex",
+                   values         = "expenses",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true("axes" %in% names(result_list[["table"]]), info = "design_graphic with multiple axes variables")
+expect_true(all(c("under 18", "18 to under 65", "65 and older", "low", "middle", "high") %in% collapse::funique(result_list[["table"]][["axes"]])),
+            info = "design_graphic with multiple axes variables")
+
 
 # design_graphic with multiple nested axes variables
 result_list <- dummy_df |>
@@ -90,6 +106,26 @@ result_list <- dummy_df |>
                    print          = FALSE)
 
 expect_true(all(c("age", "education") %in% names(result_list[["table"]])), info = "design_graphic with multiple nested axes variables")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age + education + first_person",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true(all(c("age", "education", "first_person") %in% names(result_list[["table"]])), info = "design_graphic with multiple nested axes variables")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age + education + first_person",
+                   segments       = "sex",
+                   values         = "expenses",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true(all(c("age", "education", "first_person") %in% names(result_list[["table"]])), info = "design_graphic with multiple nested axes variables")
 
 
 # design_graphic mixed axes variables (nested and unnested) results in unnested behaviour
@@ -104,6 +140,8 @@ result_list <- dummy_df |>
 expect_true("axes" %in% names(result_list[["table"]]), info = "design_graphic mixed axes variables (nested and unnested) results in unnested behaviour")
 expect_true(all(c("under 18", "18 to under 65", "65 and older", "low", "middle", "high", "1", "0") %in% collapse::funique(result_list[["table"]][["axes"]])),
             info = "design_graphic mixed axes variables (nested and unnested) results in unnested behaviour")
+expect_warning(print_stack_as_messages("WARNING"), "Multiple nested structures or mixed types of nested and unnested <axes variables> aren't allowed.",
+               info = "design_graphic mixed axes variables (nested and unnested) results in unnested behaviour")
 
 
 # design_graphic with multiple nested axes variables and multiple segments
@@ -135,6 +173,49 @@ expect_true(all(c("low", "middle", "high") %in% collapse::funique(result_list[["
             info = "design_graphic with by variables")
 
 
+# design_graphic with multiple by variables
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   by             = c("education", "first_person"),
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true("by_vars" %in% names(result_list[["table"]]), info = "design_graphic with by variables")
+expect_true(all(c("low", "middle", "high", "1", "0") %in% collapse::funique(result_list[["table"]][["by_vars"]])),
+            info = "design_graphic with multiple by variables")
+
+
+# design_graphic with pct_value
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = c("weight", "probability"),
+                   statistics     = "sum",
+                   pct_value      = list("test" = "probability / weight"),
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true("test_pct_value" %in% names(result_list[["table"]]), info = "design_graphic with pct_value")
+
+
+# design_graphic with custom computation
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = c("weight", "probability"),
+                   statistics     = "sum",
+                   compute        = list("test" = probability_sum * 100 / weight_sum),
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_true("test" %in% names(result_list[["table"]]), info = "design_graphic with pct_value")
+
+
 # design_graphic with legend
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",
@@ -142,8 +223,8 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font       = "sans",
-                                                    label_type = "legend"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend"),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend")
@@ -156,9 +237,9 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_x_pos = "left"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_x_pos       = "left"),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
@@ -169,9 +250,9 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_x_pos = "right"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_x_pos       = "right"),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
@@ -182,9 +263,9 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_y_pos = "top"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_y_pos       = "top"),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
@@ -195,9 +276,9 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_y_pos = "bottom"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_y_pos       = "bottom"),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
@@ -298,7 +379,8 @@ result_list <- dummy_df |>
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
                    visuals        = graphic_visuals(font                = "sans",
-                                                    display_plus_symbol = TRUE))
+                                                    display_plus_symbol = TRUE),
+                   print          = FALSE)
 
 expect_true(result_list[["meta"]][["zero_pos"]] > 0 && result_list[["meta"]][["zero_pos"]] < 1,
             info = "design_graphic with positive and negative values and display plus symbol")
@@ -317,8 +399,9 @@ result_list <- dummy_df |>
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]]), "x_")),
             info = "design_graphic with guiding lines")
-expect_true(!any(startsWith(names(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]]), "y_")),
+expect_true(inherits(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]][["y_guiding_lines"]], "null"),
             info = "design_graphic with guiding lines")
+
 
 # design_graphic with y guiding lines
 result_list <- dummy_df |>
@@ -331,10 +414,119 @@ result_list <- dummy_df |>
                                                     guiding_lines_y = TRUE),
                    print          = FALSE)
 
-expect_true(!any(startsWith(names(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]]), "x_")),
+expect_true(inherits(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]][["x_guiding_lines"]], "null"),
             info = "design_graphic with guiding lines")
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_guiding_lines"]][["children"]]), "y_")),
             info = "design_graphic with guiding lines")
+
+
+# design_graphic with different color usage
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(color_usage = sequential_usage),
+                   print          = FALSE)
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(color_usage = high_contrast_usage),
+                   print          = FALSE)
+
+expect_inherits(result_list, "qol_graphic", info = "design_graphic with different color usage")
+
+
+# design_graphic with theme override
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(theme_override = override_theme(1, "#FF0000", "#00FF00", "#0000FF")),
+                   print          = FALSE)
+
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]    == "#0000FF", info = "design_graphic with theme override")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(theme_override = list(override_theme(1, "#FF0000", "#00FF00", "#0000FF"),
+                                                                          override_theme(2, "#0000FF", "#FF0000", "#00FF00"))),
+                   print          = FALSE)
+
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]    == "#0000FF", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment2"]][["gp"]][["fill"]] == "#0000FF", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment2"]][["gp"]][["col"]]  == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value2"]][["gp"]][["col"]]    == "#00FF00", info = "design_graphic with theme override")
+
+
+
+# design_graphic with custom textboxes
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   add_texts      = add_textbox("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+                                                add_box        = TRUE,
+                                                box_back_color = "#000000"),
+                   print          = FALSE)
+
+expect_true("custom_textbox1" %in% names(result_list[["graphic"]][["children"]]), info = "design_graphic with custom textboxes")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   add_texts      = list(add_textbox("Lorem ipsum dolor sit amet"),
+                                         add_textbox("Lorem ipsum dolor sit amet")),
+                   print          = FALSE)
+
+expect_true(all(c("custom_textbox1", "custom_textbox2") %in% names(result_list[["graphic"]][["children"]])),
+            info = "design_graphic with custom textboxes")
+
+
+# design_graphic with custom forms
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   add_forms      = add_line(c(1,1), c(1,1)),
+                   print          = FALSE)
+
+expect_true("custom_form1" %in% names(result_list[["graphic"]][["children"]]), info = "design_graphic with custom forms")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   add_forms      = list(add_line(c(1,1), c(1,1)),
+                                         add_line(c(1,1), c(1,1))),
+                   print          = FALSE)
+
+expect_true(all(c("custom_form1", "custom_form2") %in% names(result_list[["graphic"]][["children"]])),
+            info = "design_graphic with custom forms")
 
 
 # design_graphic outputs static graphic
@@ -399,7 +591,7 @@ temp_file <- tempfile(fileext = ".html")
 on.exit(unlink(temp_file), add = TRUE)
 
 result_list <- dummy_df |>
-    design_graphic(axes_variables = "age",
+    design_graphic(axes_variables = "education + age",
                    segments       = "sex",
                    values         = "weight",
                    diagram        = dg_vbars,
@@ -453,6 +645,35 @@ result_list <- dummy_df |>
 
 expect_true(file.exists(temp_file), info = "design_graphic outputs interactive html graphic with dropdown menu")
 
+
+# design_graphic works with pre summarised data
+all_nested <- dummy_df |>
+    summarise_plus(class      = c("year", "sex", "age"),
+                   values     = "income",
+                   statistics = "sum",
+                   formats    = list(sex = sex., age = age.),
+                   weight     = weight,
+                   nesting    = "deepest",
+                   na.rm      = TRUE)
+
+result_list <- all_nested |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   by             = "year",
+                   values         = "income_sum",
+                   diagram        = dg_vbars,
+                   print          = FALSE)
+
+expect_inherits(result_list, "qol_graphic", info = "design_graphic with different color usage")
+
+
+# Modfiy graphic options
+default_options <- graphic_visuals()
+my_graphics     <- default_options |> modify_graphic_options(font = "Calibri")
+
+expect_equal(my_graphics[["font"]], "Calibri", info = "Modfiy graphic options")
+
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -505,6 +726,21 @@ expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable '
                info = "design_graphic throws a warning with invalid by variable")
 
 
+# design_graphic throws a warning with invalid by variable
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   by             = "age",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   print          = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable 'age' is also part of the <axes variables>",
+               info = "design_graphic throws a warning with invalid by variable")
+expect_true(!"by_vars" %in% names(result_list[["table"]]), info = "design_graphic throws a warning with invalid by variable")
+
+
 # design_graphic throws a warning on wrong legend presets
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",
@@ -512,9 +748,9 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_x_pos = "center"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_x_pos       = "center"),
                    print          = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "Horizontally only 'left' and 'right' preset available. 'left' will be used.",
@@ -526,13 +762,40 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(font         = "sans",
-                                                    label_type   = "legend",
-                                                    legend_y_pos = "center"),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_y_pos       = "center"),
                    print          = FALSE)
 
 expect_warning(print_stack_as_messages("WARNING"), "Vertically only 'top' and 'bottom' preset available. 'top' will be used.",
             info = "design_graphic throws a warning on wrong legend presets")
+
+
+# design_graphic doesn't output with only save_path or file set
+temp_file <- tempfile(fileext = ".png")
+on.exit(unlink(temp_file), add = TRUE)
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   output         = graphic_output(file = basename(temp_file)))
+
+expect_message(print_stack_as_messages("NOTE"), "No save path specified. Both save path and file name with extension",
+               info = "design_graphic doesn't output with only save_path or file set")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   output         = graphic_output(save_path = dirname(temp_file)))
+
+expect_message(print_stack_as_messages("NOTE"), "No file name specified. Both save path and file name with extension",
+               info = "design_graphic doesn't output with only save_path or file set")
 
 ###############################################################################
 # Abort checks
@@ -588,33 +851,12 @@ expect_error(print_stack_as_messages("ERROR"), "The provided <axes>/<segments> v
              info = "any_table aborts with row/column variable part of values")
 
 
+# dg_ functions abort with errors when used on their own
+dg_vbars(1, 2)
+
+expect_error(print_stack_as_messages("ERROR"), "Diagram function doesn't work on it's own. It can only be used",
+             info = "dg_ functions abort with errors when used on their own")
 
 
-
-
-
-
-
-
-# any_table aborts with missing variable combination in pre summarised data
-# result_list <- sum_df2 |>
-#     any_table(rows    = c("year", "age"),
-#               columns = "sex",
-#               values  = weight_sum,
-#               print   = FALSE)
-#
-# expect_error(print_stack_as_messages("ERROR"), "The variable combination of '",
-#              info = "any_table aborts with missing variable combination in pre summarised data")
-
-
-
-
-
-
-
-
-
-
-
-set_no_print()
 set_graphic_options(font = "Arial")
+set_no_print()

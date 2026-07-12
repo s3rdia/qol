@@ -133,9 +133,8 @@ create_global_themes <- function(){
 #' @seealso
 #' Main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -172,7 +171,7 @@ add_color_theme <- function(theme_name,
     # the provided base colors.
     if (is.null(font_inside_colors)){
         # Convert hex colors in RGB matrix
-        rgb_matrix <- col2rgb(base_colors)
+        rgb_matrix <- grDevices::col2rgb(base_colors)
 
         # Calculate relative luminance
         luminance <- (0.2126 * rgb_matrix["red",   ] +
@@ -533,18 +532,21 @@ override_theme <- function(number       = NULL,
 #' [sequential_usage()]: Creates a basic numeric sequence based on the number of
 #' colors and segments.
 #'
+#' @param number_of_colors The number of colors stored in a theme.
+#' @param number_of_segments The number of segments inside the graphic.
+#'
 #' @examples
 #' # sequential_usage sequences
-#' c(1),
-#' c(1, 2),
-#' c(1, 2, 3),
-#' c(1, 2, 3, 4),
-#' c(1, 2, 3, 4, 5),
-#' c(1, 2, 3, 4, 5, 6),
-#' c(1, 2, 3, 4, 5, 6, 7),
-#' c(1, 2, 3, 4, 5, 6, 7, 8),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#' c(1)
+#' c(1, 2)
+#' c(1, 2, 3)
+#' c(1, 2, 3, 4)
+#' c(1, 2, 3, 4, 5)
+#' c(1, 2, 3, 4, 5, 6)
+#' c(1, 2, 3, 4, 5, 6, 7)
+#' c(1, 2, 3, 4, 5, 6, 7, 8)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 #'
 #' @rdname color_themes
 #'
@@ -560,16 +562,16 @@ sequential_usage <- function(number_of_colors, number_of_segments){
 #'
 #' @examples
 #' # contrast_usage sequences
-#' c(1),
-#' c(1, 3),
-#' c(1, 3, 5),
-#' c(1, 3, 5, 7),
-#' c(1, 3, 5, 7, 9),
-#' c(1, 2, 3, 5, 7, 9),
-#' c(1, 2, 3, 4, 5, 7, 9),
-#' c(1, 2, 3, 4, 5, 6, 7, 9),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#' c(1)
+#' c(1, 3)
+#' c(1, 3, 5)
+#' c(1, 3, 5, 7)
+#' c(1, 3, 5, 7, 9)
+#' c(1, 2, 3, 5, 7, 9)
+#' c(1, 2, 3, 4, 5, 7, 9)
+#' c(1, 2, 3, 4, 5, 6, 7, 9)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 #'
 #' @rdname color_themes
 #'
@@ -592,16 +594,16 @@ contrast_usage <- function(number_of_colors, number_of_segments){
 #'
 #' @examples
 #' # high_contrast_usage sequences
-#' c(1),
-#' c(1, 10),
-#' c(1, 5, 10),
-#' c(1, 3, 5, 10),
-#' c(1, 3, 5, 7, 10),
-#' c(1, 2, 3, 5, 7, 10),
-#' c(1, 2, 3, 4, 5, 7, 10),
-#' c(1, 2, 3, 4, 5, 6, 7, 10),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 10),
-#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+#' c(1)
+#' c(1, 10)
+#' c(1, 5, 10)
+#' c(1, 3, 5, 10)
+#' c(1, 3, 5, 7, 10)
+#' c(1, 2, 3, 5, 7, 10)
+#' c(1, 2, 3, 4, 5, 7, 10)
+#' c(1, 2, 3, 4, 5, 6, 7, 10)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 10)
+#' c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 #'
 #' @rdname color_themes
 #'

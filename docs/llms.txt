@@ -281,7 +281,27 @@ my_fst_where <- load_file(path  = tempdir(),
                           where = age > 65)
 ```
 
-## One function to join them all
+## Design Graphics
+
+Design graphics in a way, where the computer does the tedious and you
+the fun work. Make graphics look beautiful without complex programming.
+The main graphics function is modular, meaning with the help of the many
+mid level functions you can integrate your own custom graphic and make
+use of the many parameters.
+
+``` r
+
+qol_graphic <- my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = vbars,
+                    formats        = list(sex = sex., age = age.),
+                    titles         = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less  code.",
+                    footnotes      = "The qol-package brings powerful concepts from 'SAS' to 'R' to make life easier and produce bigger and more complex outputs in less time with less code.")
+```
+
+## One Function to Join Them All
 
 Join two or more data frames together in one operation with multiple
 different join methods and join on differently named variables.
@@ -546,6 +566,78 @@ can be found on GitHub.
   Modify Number Formats Used by
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
 
+## Graphics
+
+- [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md)
+  : Generate Graphics While Fully Concentrating On Design
+- [`add_textbox()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  [`get_text_width()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  [`get_text_height()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  : Add Textboxes As Graphical Object
+- [`add_line()`](https://s3rdia.github.io/qol/reference/forms.md) : Add
+  Lines As Graphical Object
+
+## Main Diagram Types
+
+- [`dg_vbars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
+  : Generate The Main Diagram Area
+
+## Main Grob Generation
+
+- [`vbar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md)
+  : Generate The Main Graphical Objects
+
+## Graphic Options
+
+- [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md)
+  : Graphic Visuals
+- [`graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.md)
+  : Graphic Axes
+- [`graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.md)
+  : Graphic Dimensions
+- [`graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.md)
+  : Graphic Output
+- [`graphic_fine_tuning()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.md)
+  : Graphic Fine Tuning
+- [`modify_graphic_options()`](https://s3rdia.github.io/qol/reference/modify_graphic_options.md)
+  : Modify Graphic Options
+
+## Additional Graphic Functions
+
+- [`add_textbox()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  [`get_text_width()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  [`get_text_height()`](https://s3rdia.github.io/qol/reference/textboxes.md)
+  : Add Textboxes As Graphical Object
+- [`setup_nested_diagram_viewport()`](https://s3rdia.github.io/qol/reference/viewport.md)
+  [`back_to_the_root()`](https://s3rdia.github.io/qol/reference/viewport.md)
+  : Set Up Viewports To Draw On
+- [`get_diagram_dimensions()`](https://s3rdia.github.io/qol/reference/diagram.md)
+  [`setup_interactive_elements()`](https://s3rdia.github.io/qol/reference/diagram.md)
+  : Get The Dimensions And Positions Of Groups And Segments
+- [`setup_y_axes()`](https://s3rdia.github.io/qol/reference/axes.md)
+  [`setup_x_axes()`](https://s3rdia.github.io/qol/reference/axes.md)
+  [`setup_xy_axes()`](https://s3rdia.github.io/qol/reference/axes.md)
+  [`setup_guiding_lines()`](https://s3rdia.github.io/qol/reference/axes.md)
+  [`swap_scaling()`](https://s3rdia.github.io/qol/reference/axes.md)
+  [`even_prettier()`](https://s3rdia.github.io/qol/reference/axes.md) :
+  Measure And Generate Custom Axes
+- [`direct_vertical_labels()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
+  [`setup_legend()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
+  : Generate Segment Labels And Legends
+
+## Color themes
+
+- [`add_color_theme()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`get_theme_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`reset_color_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`display_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`display_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`override_theme()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`sequential_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`contrast_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  [`high_contrast_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+  : Managing Global Color Themes
+
 ## Import And Export CSV and XLSX
 
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md)
@@ -754,8 +846,11 @@ can be found on GitHub.
   [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md)
   [`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md)
   [`get_labels()`](https://s3rdia.github.io/qol/reference/style_options.md)
-  [`reset_qol_options()`](https://s3rdia.github.io/qol/reference/style_options.md)
   : Set Global Styling Options For Excel Workbooks
+- [`set_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md)
+  [`get_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md)
+  [`reset_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md)
+  : Set Global Graphic Options
 - [`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`get_print()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md)
@@ -772,6 +867,7 @@ can be found on GitHub.
   [`get_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+  [`reset_qol_options()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   : Set Global Print Option
 
 ## Other

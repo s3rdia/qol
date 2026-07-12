@@ -128,9 +128,8 @@
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -250,43 +249,6 @@ graphic_visuals <- function(font                        = "Arial",
     as.list(environment())
 }
 
-
-#' @description
-#' If options are stored in an object, it can be modified afterwards. In this case
-#' only the options to modify will be adjusted while the rest stays as is.
-#'
-#' @param visuals_to_modify A pre created graphic visuals object where only
-#' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic elements.
-#'
-#' @return
-#' Returns a modified list of named graphic options.
-#'
-#' @examples
-#' # Modify the previously created graphic options
-#' custom_visuals <- custom_visuals |> modify_graphic_visuals(label_group = 2)
-#'
-#' @rdname graphic_visuals
-#'
-#' @export
-modify_graphic_visuals <- function(visuals_to_modify, ...){
-    visuals_elements <- list(...)
-
-    # Loop through all elements to modify and if exists then set new value
-    for (element in seq_along(visuals_elements)){
-        name <- names(visuals_elements)[element]
-
-        if (!name %in% names(visuals_to_modify)){
-            message(" ! WARNING: Visual element '", name, "' is invalid and will be omitted.")
-        }
-
-        visuals_to_modify[[name]] <- visuals_elements[[element]]
-    }
-
-    visuals_to_modify
-}
-
-
 ###############################################################################
 # Axes
 ###############################################################################
@@ -346,9 +308,8 @@ modify_graphic_visuals <- function(visuals_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -425,43 +386,6 @@ graphic_axes <- function(primary_axes_max              = "auto",
     as.list(environment())
 }
 
-
-#' @description
-#' If options are stored in an object, it can be modified afterwards. In this case
-#' only the options to modify will be adjusted while the rest stays as is.
-#'
-#' @param axes_to_modify A pre created graphic axes object where only
-#' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic elements.
-#'
-#' @return
-#' Returns a modified list of named graphic options.
-#'
-#' @examples
-#' # Modify the previously created graphic options
-#' custom_axes <- custom_axes |> modify_graphic_axes(primary_axes_min = 50)
-#'
-#' @rdname graphic_axes
-#'
-#' @export
-modify_graphic_axes <- function(axes_to_modify, ...){
-    axes_elements <- list(...)
-
-    # Loop through all elements to modify and if exists then set new value
-    for (element in seq_along(axes_elements)){
-        name <- names(axes_elements)[element]
-
-        if (!name %in% names(axes_to_modify)){
-            message(" ! WARNING: Visual element '", name, "' is invalid and will be omitted.")
-        }
-
-        axes_to_modify[[name]] <- axes_elements[[element]]
-    }
-
-    axes_to_modify
-}
-
-
 ###############################################################################
 # Dimensions
 ###############################################################################
@@ -519,9 +443,8 @@ modify_graphic_axes <- function(axes_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -619,43 +542,6 @@ graphic_dimensions <- function(graphic_width                   = 16,
     as.list(environment())
 }
 
-
-#' @description
-#' If options are stored in an object, it can be modified afterwards. In this case
-#' only the options to modify will be adjusted while the rest stays as is.
-#'
-#' @param dimension_to_modify A pre created graphic dimension object where only
-#' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic elements.
-#'
-#' @return
-#' Returns a modified list of named graphic options.
-#'
-#' @examples
-#' # Modify the previously created graphic options
-#' custom_dimensions <- custom_dimensions |> modify_graphic_dimensions(title_font_size = 12)
-#'
-#' @rdname graphic_dimensions
-#'
-#' @export
-modify_graphic_dimensions <- function(dimension_to_modify, ...){
-    dimension_elements <- list(...)
-
-    # Loop through all elements to modify and if exists then set new value
-    for (element in seq_along(dimension_elements)){
-        name <- names(dimension_elements)[element]
-
-        if (!name %in% names(dimension_to_modify)){
-            message(" ! WARNING: Dimension element '", name, "' is invalid and will be omitted.")
-        }
-
-        dimension_to_modify[[name]] <- dimension_elements[[element]]
-    }
-
-    dimension_to_modify
-}
-
-
 ###############################################################################
 # Output
 ###############################################################################
@@ -697,9 +583,8 @@ modify_graphic_dimensions <- function(dimension_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -752,45 +637,6 @@ graphic_output <- function(save_path    = NULL,
                            interactive  = FALSE){
     as.list(environment())
 }
-
-
-#' Modify Graphic Output
-#'
-#' @description
-#' If options are stored in an object, it can be modified afterwards. In this case
-#' only the options to modify will be adjusted while the rest stays as is.
-#'
-#' @param output_to_modify A pre created graphic output object where only
-#' certain elements should be modified while the rest is kept as is.
-#' @param ... Pass in names and corresponding new values for existing graphic elements.
-#'
-#' @return
-#' Returns a modified list of named graphic options.
-#'
-#' @examples
-#' # Modify the previously created graphic options
-#' custom_output <- custom_output |> modify_graphic_output(file = "MyGraphic.pdf")
-#'
-#' @rdname graphic_output
-#'
-#' @export
-modify_graphic_output <- function(output_to_modify, ...){
-    output_elements <- list(...)
-
-    # Loop through all elements to modify and if exists then set new value
-    for (element in seq_along(output_elements)){
-        name <- names(output_elements)[element]
-
-        if (!name %in% names(output_to_modify)){
-            message(" ! WARNING: Output element '", name, "' is invalid and will be omitted.")
-        }
-
-        output_to_modify[[name]] <- output_elements[[element]]
-    }
-
-    output_to_modify
-}
-
 
 ###############################################################################
 # Fine tuning
@@ -846,9 +692,8 @@ modify_graphic_output <- function(output_to_modify, ...){
 #' @seealso
 #' The main graphic function: [design_graphic()]
 #'
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -920,12 +765,17 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
     as.list(environment())
 }
 
+###############################################################################
+# Modify options
+###############################################################################
 
+#' Modify Graphic Options
+#'
 #' @description
 #' If options are stored in an object, it can be modified afterwards. In this case
 #' only the options to modify will be adjusted while the rest stays as is.
 #'
-#' @param fine_tune_to_modify A pre created graphic fine tuning object where only
+#' @param graphic_option_to_modify A pre created graphic option object where only
 #' certain elements should be modified while the rest is kept as is.
 #' @param ... Pass in names and corresponding new values for existing graphic elements.
 #'
@@ -933,25 +783,27 @@ graphic_fine_tuning <- function(diagram_margin             = 0.01,
 #' Returns a modified list of named graphic options.
 #'
 #' @examples
-#' # Modify the previously created graphics object
-#' custom_fine_tuning <- custom_fine_tuning |> modify_graphic_fine_tuning(diagram_margin = 0.02)
+#' # Set specific options, the rest will be set to default values
+#' custom_dimensions <- graphic_dimensions(graphic_width  = 10,
+#'                                         graphic_height = 10)
 #'
-#' @rdname graphic_fine_tuning
+#' # Modify the previously created graphic options
+#' custom_dimensions <- custom_dimensions |> modify_graphic_options(title_font_size = 12)
 #'
 #' @export
-modify_graphic_fine_tuning <- function(fine_tune_to_modify, ...){
-    fine_tune_elements <- list(...)
+modify_graphic_options <- function(graphic_option_to_modify, ...){
+    graphic_option_elements <- list(...)
 
     # Loop through all elements to modify and if exists then set new value
-    for (element in seq_along(fine_tune_elements)){
-        name <- names(fine_tune_elements)[element]
+    for (element in seq_along(graphic_option_elements)){
+        name <- names(graphic_option_elements)[element]
 
-        if (!name %in% names(fine_tune_to_modify)){
-            message(" ! WARNING: Fine tune element '", name, "' is invalid and will be omitted.")
+        if (!name %in% names(graphic_option_to_modify)){
+            print_message("WARNING", "Element '", name, "' is invalid and will be omitted.")
         }
 
-        fine_tune_to_modify[[name]] <- fine_tune_elements[[element]]
+        graphic_option_to_modify[[name]] <- graphic_option_elements[[element]]
     }
 
-    fine_tune_to_modify
+    graphic_option_to_modify
 }

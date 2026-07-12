@@ -71,7 +71,7 @@
 #' @export
 add_textbox <- function(text,
                         x_pos          = .qol_options[["graphic_dimensions"]][["margins"]],
-                        y_pos          = .qol_options[["graphic_dimensions"]][["margins"]],
+                        y_pos          = .qol_options[["graphic_dimensions"]][["graphic_height"]] * 0.97,
                         width          = .qol_options[["graphic_dimensions"]][["textbox_width"]],
                         alignment      = .qol_options[["graphic_visuals"]][["other_alignment"]],
                         font           = .qol_options[["graphic_visuals"]][["font"]],
@@ -557,7 +557,6 @@ get_text_height <- function(text,
 #' [add_line()]: Creates a line as graphical object. Lines can be plugged into
 #' the "add_forms" parameter of [design_graphic()].
 #'
-#' @param text The text that should be displayed.
 #' @param x_vector A vector of two x coordinates for the start and finish.
 #' @param y_vector A vector of two y coordinates for the start and finish.
 #' @param color Color to draw the line in as hex code.
@@ -1277,7 +1276,7 @@ get_diagram_dimensions <- function(arguments){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Get the colors to be used
-    if (class(visuals[["color_theme"]]) == "qol_color_theme"){
+    if (inherits(visuals[["color_theme"]], "qol_color_theme")){
         theme <- visuals[["color_theme"]]
     }
     else{

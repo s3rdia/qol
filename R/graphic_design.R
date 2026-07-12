@@ -42,6 +42,8 @@
 #' @param pct_value If pct_value is specified in the statistics, you can pass a list here
 #' which contains the information for a new variable name and between which of the value
 #' variables percentages should be computed.
+#' @param compute A list in which individual calculations are handled. For the writing style
+#' see the [compute.()] function.
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
@@ -86,9 +88,8 @@
 #' final grid::gTree graphics object.
 #'
 #' @seealso
-#' Graphic options: [graphic_visuals()], [modify_graphic_visuals()], [graphic_axes()],
-#' [modify_graphic_axes()], [graphic_dimensions()], [modify_graphic_dimensions()],
-#' [graphic_output()], [modify_graphic_output()], [graphic_fine_tuning()], [modify_graphic_fine_tuning()]
+#' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
+#' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]
 #'
 #' Global graphic options: [set_graphic_options()], [get_graphic_options()], [reset_graphic_options()]
 #'
@@ -196,6 +197,7 @@ design_graphic <- function(data_frame,
                            values,
                            statistics     = "pct_group",
                            pct_value      = list(),
+                           compute        = list(),
                            formats        = list(),
                            by             = c(),
                            weight         = NULL,
@@ -285,10 +287,8 @@ design_graphic <- function(data_frame,
         axes_variables       <- axes_vars
         flag_merge_axes_vars <- TRUE
     }
-
-    if (is.null(axes_vars)){
-        print_message("ERROR", "<Axes variables> must be provided in quotation marks. Generating graphic will be aborted.")
-        return(invisible(NULL))
+    else if (length(axes_variables) == 1 && !grepl("\\+", axes_variables)){
+        flag_merge_axes_vars <- TRUE
     }
 
     if (flag_merge_axes_vars){
@@ -435,48 +435,10 @@ design_graphic <- function(data_frame,
 
     pre_summed <- data_frame |> is_pre_summed(c(by, variables))
 
-    # In case of using a pre summarised data frame, underscores are only allowed, if they carry
-    # the statistics extension afterwards.
+    # In case of using a pre summarised data frame, not much has to be changed.
     if (pre_summed){
-        # Only keep provided variables, otherwise it can happen later on that e.g. too many
-        # variables are pivoted
+        # Only keep provided variables to prevent unexpected behaviour
         data_frame <- data_frame |> keep(by, variables, values, ".temp_weight")
-
-        # If the TYPE variable isn't present in the data frame it will be generated here from
-        # the provided variables.
-        if (!"TYPE" %in% names(data_frame)){
-            # For each observation check the non NA variables and combine their names in the TYPE
-            # variable.
-            data_frame[["TYPE"]] <- apply(data_frame[c(by, variables)], 1,
-                function(variable){
-                    var_name <- names(variable)[!is.na(variable)]
-
-                    if (length(var_name) == 0){
-                        NA_character_
-                    }
-                    else{
-                        paste(var_name, collapse = "+")
-                    }
-                })
-
-            data_frame |> data.table::setcolorder(c(by, variables, "TYPE"))
-        }
-
-        # Check if value variables have statistics extension
-        extensions <- c("_sum", "_pct_group", "_pct_total", "_pct_value", "_pct", "_freq_g0",
-                        "_freq", "_mean", "_median", "_mode", "_min", "_max", "_first",
-                        "_last", "_sum_wgt", "_p[0-9]+$", "_sd", "_variance", "_missing")
-        pattern    <- paste0("(", paste(extensions, collapse = "|"), ")$")
-
-        # If one of the value variables hasn't got any of the above extension, add extensions automatically as provided
-        if (!all(grepl(pattern, values))){
-            print_message("WARNING", c("All <values> variables need to have the <statistic> extension in their variable name.",
-                                       "You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.",
-                                       "This can lead to a wrong table structure, better add extensions by yourself."))
-
-            data_frame <- data_frame |> add_extension(length(c(by, variables, "TYPE")) + 1,
-                                                      rep(statistics, length(values))[1:length(values)])
-        }
 
         # Set up options to make sure nothing errors below. Statistics is set to "mean"
         # because then summarise_plus takes a route where factor variables are kept in order.
@@ -485,8 +447,6 @@ design_graphic <- function(data_frame,
         pct_value  <- ""
         weight     <- NULL
         formats    <- list()
-
-        rm(extensions, pattern)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -613,49 +573,48 @@ design_graphic <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Compute statistics
-    if (!pre_summed){
-        # NOTE: By setting print_miss to always be TRUE there shouldn't be any arbitrary
-        #       number of segments per group.
-        graphic_tab <- suppressMessages(data_frame |>
-              summarise_plus(class      = group_vars,
-                             values     = values,
-                             statistics = statistics,
-                             formats    = formats,
-                             weight     = weight_var,
-                             nesting    = "all",
-                             types      = combinations,
-                             notes      = FALSE,
-                             na.rm      = na.rm,
-                             print_miss = TRUE)) |>
-            collapse::fsubset(TYPE != "total") |>
-            fuse_variables("segments", segment_vars)
+    # NOTE: By setting print_miss to always be TRUE there shouldn't be any arbitrary
+    #       number of segments per group.
+    # NOTE: Pre summarised data takes the same route as normal data. Since summarise_plus
+    #       basically has nothing to do here in this situation, there shouldn't be
+    #       any performance issues. The advantage is that the data runs through the
+    #       exact same code. On later code changes this data will therefore be handled
+    #       in the same way without a special code adjusting.
+    graphic_tab <- suppressMessages(data_frame |>
+          summarise_plus(class      = group_vars,
+                         values     = values,
+                         statistics = statistics,
+                         formats    = formats,
+                         weight     = weight_var,
+                         nesting    = "all",
+                         types      = combinations,
+                         notes      = FALSE,
+                         na.rm      = na.rm,
+                         print_miss = TRUE)) |>
+        collapse::fsubset(TYPE != "total") |>
+        fuse_variables("segments", segment_vars)
 
-        # On single axes variables fuse them into one variable
-        if (flag_merge_axes_vars){
-            graphic_tab <- suppressMessages(graphic_tab |>
-                fuse_variables("axes", axes_vars) |>
-                retain_variables("segments"))
+    # On single axes variables fuse them into one variable
+    if (flag_merge_axes_vars){
+        graphic_tab <- suppressMessages(graphic_tab |>
+            fuse_variables("axes", axes_vars) |>
+            retain_variables("segments"))
 
-            # Adjust variable vectors
-            variables  <- variables[!variables   %in% axes_vars]
-            group_vars <- group_vars[!group_vars %in% axes_vars]
-            axes_vars  <- "axes"
-            variables  <- c(variables, "axes")
-            group_vars <- c(group_vars, "axes")
-        }
-
-        # Convert missing values to 0
-        value_vars <- graphic_tab |> inverse(c(group_vars, "TYPE", "TYPE_NR", "DEPTH", "segments"))
-
-        graphic_tab[value_vars] <- lapply(graphic_tab[value_vars], function(variable){
-            variable[is.na(variable)] <- 0
-            variable
-        })
+        # Adjust variable vectors
+        variables  <- variables[!variables   %in% axes_vars]
+        group_vars <- group_vars[!group_vars %in% axes_vars]
+        axes_vars  <- "axes"
+        variables  <- c(variables, "axes")
+        group_vars <- c(group_vars, "axes")
     }
-    else{
-        # With pre summarised data just take the input data frame
-        graphic_tab <- data_frame
-    }
+
+    # Convert missing values to 0
+    value_vars <- graphic_tab |> inverse(c(group_vars, "TYPE", "TYPE_NR", "DEPTH", "segments"))
+
+    graphic_tab[value_vars] <- lapply(graphic_tab[value_vars], function(variable){
+        variable[is.na(variable)] <- 0
+        variable
+    })
 
     if (is.null(graphic_tab)){
         print_message("ERROR", "Table could not be computed. Execution will be aborted.")
@@ -664,11 +623,6 @@ design_graphic <- function(data_frame,
 
     # Convert grouping variables to factor to retain value order after sorting later on
     graphic_tab <- graphic_tab |> convert_factor(group_vars)
-
-    # In case of pre summarised data frame remove the temporary weight variable
-    if (pre_summed){
-        graphic_tab <- graphic_tab |> collapse::fselect(-.temp_weight)
-    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Handle by variables
@@ -748,28 +702,36 @@ design_graphic <- function(data_frame,
             }
         }
 
-        if (flag_remove_sum){
-            graphic_tab <- graphic_tab |> dropp(":_sum")
-        }
-
-        rm(eval_vars, i, value, flag_remove_sum)
+        rm(eval_vars, i, value)
     }
 
-    rm(data_frame)
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Handle percentages based on value variables
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # This capture enables the compute parameter to be written without quotation
+    # marks.
+    compute <- as.list(substitute(compute))[-1]
+
+    if (length(compute) > 0){
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Individual calculations", "Summary")
+        #---------------------------------------------------------------------#
+        print_step("Minor", "Individual calculations")
+
+        graphic_tab <- suppressMessages(graphic_tab |> compute.(compute))
+    }
+
+    # If no sums were selected in the statistics, drop them again now
+    if (flag_remove_sum){
+        graphic_tab <- graphic_tab |> dropp(":_sum")
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Round values
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # TODO: Revisit the ordering some time.
-
-    # Reorder variables according to statistics. This is necessary because some
-    # percentages can only be computed after summarise_plus and therefor aren't ordered.
-    #if ("pct_group" %in% statistics){
-    #    graphic_tab <- graphic_tab |> setcolorder_by_pattern(order_pct)
-    #}
-
-    graphic_tab <- graphic_tab |> setcolorder_by_pattern(statistics)
+    # TODO: Revisit the ordering some time. Is it necessary at all?
 
     # Get value variable names
     if (length(by) == 0){
@@ -827,7 +789,7 @@ design_graphic <- function(data_frame,
     }
 
     if (length(by) > 0){
-        graphic_tab <- graphic_tab |> data.table::setcolorder("by_vars", before = 1)
+        graphic_tab <- graphic_tab |> data.table::setcolorder(c("BY", "by_vars"), before = 1)
     }
 
     # Convert back to character and drop TYPE variables
@@ -1070,7 +1032,7 @@ generate_graphic <- function(graphic_tab,
 
     # Check if the add_textbox function was directly passed to the parameter.
     # In this case enclose it in a list.
-    if (inherits(add_texts, "text") && inherits(add_texts, "grob")){
+    if (inherits(add_texts, "grob") && (inherits(add_texts, "text") || inherits(add_texts, "gTree"))){
         add_texts <- list(add_texts)
     }
 
@@ -1092,7 +1054,7 @@ generate_graphic <- function(graphic_tab,
 
     # Check if the add_forms function was directly passed to the parameter.
     # In this case enclose it in a list.
-    if (inherits(add_forms, "line") && inherits(add_forms, "grob")){
+    if (inherits(add_forms, "grob") && inherits(add_forms, "lines")){
         add_forms <- list(add_forms)
     }
 

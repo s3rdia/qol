@@ -46,6 +46,46 @@ Creating a custom table style:
 [`number_format_style()`](https://s3rdia.github.io/qol/reference/number_format_style.md),
 [`modify_number_formats()`](https://s3rdia.github.io/qol/reference/modify_number_formats.md)
 
+Main graphic function:
+[`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md)
+
+Main diagram types:
+[`dg_vbars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
+
+Graphic options:
+[`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),
+[`graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.md),
+[`graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.md),
+[`graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.md),
+[`graphic_fine_tuning()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.md),
+[`modify_graphic_options()`](https://s3rdia.github.io/qol/reference/modify_graphic_options.md)
+
+Color themes:
+[`display_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`display_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`add_color_theme()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`get_theme_colors()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`reset_color_themes()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`override_theme()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`sequential_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`contrast_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md),
+[`high_contrast_usage()`](https://s3rdia.github.io/qol/reference/color_themes.md)
+
+Additional graphic functions:
+[`add_textbox()`](https://s3rdia.github.io/qol/reference/textboxes.md),
+[`add_line()`](https://s3rdia.github.io/qol/reference/forms.md),
+[`get_text_width()`](https://s3rdia.github.io/qol/reference/textboxes.md),
+[`get_text_height()`](https://s3rdia.github.io/qol/reference/textboxes.md),
+[`setup_nested_diagram_viewport()`](https://s3rdia.github.io/qol/reference/viewport.md),
+[`back_to_the_root()`](https://s3rdia.github.io/qol/reference/viewport.md),
+[`get_diagram_dimensions()`](https://s3rdia.github.io/qol/reference/diagram.md),
+[`setup_interactive_elements()`](https://s3rdia.github.io/qol/reference/diagram.md),
+[`setup_y_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
+[`setup_x_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
+[`setup_xy_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
+[`direct_vertical_labels()`](https://s3rdia.github.io/qol/reference/segment_labels.md),
+[`setup_legend()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
+
 Recoding:
 [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
 [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md)
@@ -185,7 +225,10 @@ Global options:
 [`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`get_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md),
-[`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
+[`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md),
+[`get_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md),
+[`reset_graphic_options()`](https://s3rdia.github.io/qol/reference/graphic_options.md)
 
 Other:
 [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md),
