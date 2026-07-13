@@ -33,22 +33,10 @@ function showTooltip(evt, text){
     var cursor;
     var pt = svg.createSVGPoint();
 
-    // Firefox renders the SVG with tooltips differently. Here the scollbars have
-    // to be countered.
-    if(navigator.userAgent.indexOf("Firefox") !== -1){
-        var rect = svg.getBoundingClientRect();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
 
-        pt.x = evt.clientX - rect.left;
-        pt.y = evt.clientY - rect.top;
-
-        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
-    }
-    else{
-        pt.x = evt.clientX;
-        pt.y = evt.clientY;
-
-        cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
-    }
+    cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
 
     // Font must be scaled according to the current displayed size of the graphic.
     // The zoom has to be countered basically.

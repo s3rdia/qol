@@ -1,11 +1,13 @@
 set_no_print(TRUE)
 set_graphic_options(font = "sans")
+pdf(NULL)
+on.exit(dev.off())
 
 set_titles("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
 set_footnotes("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
 
 dummy_df <- dummy_data(100)
-dummy_df[1, "balance"] <- -10000
+dummy_df[["balance"]] <- data.table::fifelse(dummy_df[["sex"]] == "1", 1000, -1000)
 
 age. <- discrete_format(
     "under 18"       = 0:17,
@@ -380,7 +382,7 @@ result_list <- dummy_df |>
                    formats        = list(sex = sex., age = age.),
                    visuals        = graphic_visuals(font                = "sans",
                                                     display_plus_symbol = TRUE),
-                   print          = FALSE)
+                   print          = TRUE)
 
 expect_true(result_list[["meta"]][["zero_pos"]] > 0 && result_list[["meta"]][["zero_pos"]] < 1,
             info = "design_graphic with positive and negative values and display plus symbol")
@@ -427,7 +429,8 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(color_usage = sequential_usage),
+                   visuals        = graphic_visuals(font        = "sans",
+                                                    color_usage = sequential_usage),
                    print          = FALSE)
 
 result_list <- dummy_df |>
@@ -436,7 +439,8 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(color_usage = high_contrast_usage),
+                   visuals        = graphic_visuals(font        = "sans",
+                                                    color_usage = high_contrast_usage),
                    print          = FALSE)
 
 expect_inherits(result_list, "qol_graphic", info = "design_graphic with different color usage")
@@ -449,7 +453,8 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(theme_override = override_theme(1, "#FF0000", "#00FF00", "#0000FF")),
+                   visuals        = graphic_visuals(font           = "sans",
+                                                    theme_override = override_theme(1, "#FF0000", "#00FF00", "#0000FF")),
                    print          = FALSE)
 
 expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
@@ -462,7 +467,8 @@ result_list <- dummy_df |>
                    values         = "weight",
                    diagram        = dg_vbars,
                    formats        = list(sex = sex., age = age.),
-                   visuals        = graphic_visuals(theme_override = list(override_theme(1, "#FF0000", "#00FF00", "#0000FF"),
+                   visuals        = graphic_visuals(font           = "sans",
+                                                    theme_override = list(override_theme(1, "#FF0000", "#00FF00", "#0000FF"),
                                                                           override_theme(2, "#0000FF", "#FF0000", "#00FF00"))),
                    print          = FALSE)
 
@@ -858,5 +864,5 @@ expect_error(print_stack_as_messages("ERROR"), "Diagram function doesn't work on
              info = "dg_ functions abort with errors when used on their own")
 
 
-set_graphic_options(font = "Arial")
+reset_graphic_options()
 set_no_print()
