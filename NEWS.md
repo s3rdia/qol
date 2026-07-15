@@ -1,4 +1,4 @@
-# qol 1.3.3 - DEVELOPMENT
+# qol 1.3.3
 
 ### New functions
 

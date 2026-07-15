@@ -9,6 +9,7 @@ dummy_df <- dummy_data(1000)
 
 ifelse_df <- data.table::data.table(age  = c(10, 20, 30, 70, NA),
                                     sex  = c(1, 2, 1, 2, NA),
+                                    var1 = c(10, 20, 10, 20, 10),
                                     name = c("Hello World", "Hello Again", "Hello", "World", NA))
 
 
@@ -417,16 +418,16 @@ expect_warning(print_stack_as_messages("WARNING"), "No observations left in the 
 
 # ifelse_multi basic recoding works
 result <- ifelse_df |> ifelse_multi("age < 18" = 1,
-                                     "age < 65" = 2,
-                                     else. = 3)
+                                    "age < 65" = 2,
+                                    else.      = 3)
 
 expect_equal(result, c(1, 2, 2, 3, 3), info = "ifelse_multi basic recoding works")
 
 
 # ifelse_multi SAS intervals are translated
 result <- ifelse_df |> ifelse_multi(" 0 <= age < 30" = 1,
-                                     "30 <= age < 65" = 2,
-                                     else. = 3)
+                                    "30 <= age < 65" = 2,
+                                    else.            = 3)
 
 expect_equal(result, c(1, 1, 2, 3, 3), info = "ifelse_multi SAS intervals are translated")
 
@@ -515,11 +516,17 @@ expect_equal(result1, c(0, 0, 0, 0, 1), info = "ifelse_multi NA is translated")
 expect_equal(result2, c(1, 1, 1, 1, 0), info = "ifelse_multi NA is translated")
 
 
+# ifelse_multi can assign the values of variables
+result <- ifelse_df |> ifelse_multi("age < 30" = sex, else. = var1)
+
+expect_equal(result, c(1, 2, 10, 20, 10), info = "ifelse_multi can assign the values of variables")
+
+
 # ifelse_multi do_if condition is used on all other conditions
 result <- ifelse_df |> ifelse_multi(do_if = "sex == 1",
-                                     "age < 18" = 1,
-                                     "age < 65" = 2,
-                                     else. = 3)
+                                    "age < 18" = 1,
+                                    "age < 65" = 2,
+                                    else.      = 3)
 
 expect_equal(result, c(1, 3, 2, 3, 3), info = "ifelse_multi do_if condition is used on all other conditions")
 
@@ -529,14 +536,14 @@ result <- ifelse_df |> ifelse_multi("age < 18" = 1,
                                     else.      = "2")
 
 expect_equal(result, c("1", "2", "2", "2", "2"), info = "ifelse_multi throws a note on value conversion")
-expect_message(print_stack_as_messages("NOTE"), "<Else.> parameter is of a different type than the rest of the result values.",
+expect_message(print_stack_as_messages("NOTE"), "Mixed value types found. Result will be converted to character.",
              info = "ifelse_multi throws a note on value conversion")
 
 result <- ifelse_df |> ifelse_multi("age < 18" = "1",
                                     else.      = 2)
 
 expect_equal(result, c("1", "2", "2", "2", "2"), info = "ifelse_multi throws a note on value conversion")
-expect_message(print_stack_as_messages("NOTE"), "<Else.> parameter is of a different type than the rest of the result values.",
+expect_message(print_stack_as_messages("NOTE"), "Mixed value types found. Result will be converted to character.",
                info = "ifelse_multi throws a note on value conversion")
 
 

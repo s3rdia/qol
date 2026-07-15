@@ -1256,19 +1256,21 @@ end_all_do <- function(data_frame){
 #' my_data[["under18"]]    <- my_data |> ifelse_multi(" age < 18 " = 1,       else. = 0)
 #' my_data[["middle_age"]] <- my_data |> ifelse_multi(" 15 <= age < 65 " = 1, else. = 0)
 #'
-#' my_data[["age_gr"]] <- my_data |> ifelse_multi(" age < 18 "       = "under 18",
-#'                                                " 18 <= age < 25 " = "18 to under 25",
-#'                                                " 25 <= age < 50 " = "25 to under 50",
-#'                                                " 50 <= age < 65 " = "50 to under 65",
-#'                                                " 65 <= age      " = "65 and more")
+#' my_data[["age_gr"]] <- my_data |>
+#'     ifelse_multi(" age < 18 "       = "under 18",
+#'                  " 18 <= age < 25 " = "18 to under 25",
+#'                  " 25 <= age < 50 " = "25 to under 50",
+#'                  " 50 <= age < 65 " = "50 to under 65",
+#'                  " 65 <= age      " = "65 and more")
 #'
 #' # With overarching do_if condition
-#' my_data[["age_gr_edu"]] <- my_data |> ifelse_multi(do_if = " education in ('middle' 'high') ",
-#'                                                        " age < 18 "       = "under 18",
-#'                                                        " 18 <= age < 25 " = "18 to under 25",
-#'                                                        " 25 <= age < 50 " = "25 to under 50",
-#'                                                        " 50 <= age < 65 " = "50 to under 65",
-#'                                                        " 65 <= age      " = "65 and more")
+#' my_data[["age_gr_edu"]] <- my_data |>
+#'     ifelse_multi(do_if = " education in ('middle' 'high') ",
+#'                      " age < 18 "       = "under 18",
+#'                      " 18 <= age < 25 " = "18 to under 25",
+#'                      " 25 <= age < 50 " = "25 to under 50",
+#'                      " 50 <= age < 65 " = "50 to under 65",
+#'                      " 65 <= age      " = "65 and more")
 #'
 #' # And/or translation
 #' my_data[["and"]] <- my_data |> ifelse_multi(" age > 65 and sex = 1 " = 1,
@@ -1292,12 +1294,17 @@ end_all_do <- function(data_frame){
 #' age_to_check <- 18
 #' value_to_set <- "under 18"
 #'
-#' my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
-#'                                               else. = "other")
+#' my_data[["macro"]] <- my_data |>
+#'     ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
+#'                  else.                         = "other")
 #'
 #' # NA translation
 #' my_data[["NA"]]    <- my_data |> ifelse_multi(" age == .       " = 1, else. = 0)
-#' my_data[["NotNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+#' my_data[["notNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+#'
+#' # Pass in existing variable values
+#' my_data[["income_mix"]] <- my_data |>
+#'     ifelse_multi(" age < 50 " = income, else. = expenses)
 #'
 #' @export
 ifelse_multi <- function(data_frame,
@@ -1308,6 +1315,10 @@ ifelse_multi <- function(data_frame,
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Convert conditions
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     conditions <- tryCatch({
         # Force evaluation to see if it exists
         list(...)
@@ -1315,6 +1326,14 @@ ifelse_multi <- function(data_frame,
         # Evaluation failed
         NULL
     })
+
+    # In case a variable name was passed as result value, meaning a name without
+    # quotation marks, the condition is NULL here and has to be evaluated differently.
+    if (is.null(conditions)){
+        # Get unevaluated arguments and convert into a list of symbols
+        conditions <- substitute(list(...))
+        conditions <- sapply(conditions[-1], as.name)
+    }
 
     if (is.null(conditions) || !is_named_list(conditions)){
         print_message("ERROR", c("You have to pass conditions and assignments in the form",
@@ -1329,20 +1348,79 @@ ifelse_multi <- function(data_frame,
     # Apply macro variables to result values
     result_values <- unlist(conditions)
 
-    if (!is.na(else.)){
-        if (typeof(result_values) != typeof(else.)){
-            print_message("NOTE", c("<Else.> parameter is of a different type than the rest of the result values.",
-                                    "Result will be converted to character."))
-
-            result_values <- as.character(result_values)
-            else.         <- as.character(else.)
-            else.         <- macro(else.)
-        }
-    }
-
     if (is.character(result_values)){
         result_values <- apply_macro(result_values)
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Convert else.
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    else_temp <- tryCatch({
+        # Force evaluation to see if it exists
+        !is.na(else.)
+    }, error = function(e){
+        NULL
+    })
+
+    # In case a variable name was passed as result value, meaning a name without
+    # quotation marks, the parameter is NULL here and has to be evaluated differently.
+    if (is.null(else_temp)){
+        else. <- as.name(substitute(else.))
+    }
+
+    # Look up of which type all the variables are
+    variable_names <- names(data_frame)
+
+    types <- vapply(c(result_values, list(else.)), function(element){
+        if (!is.name(element) && !is.symbol(element) && is.na(element)){
+            return(TRUE)
+        }
+
+        # Variable names need to be looked up in the data frame
+        if (is.name(element)){
+            var_name <- as.character(element)
+
+            if (!var_name %in% variable_names){
+                print_message("ERROR", c("Variable [var] is not part of the data frame. Evaluation will be aborted."), var = var_name)
+                return(NA)
+            }
+
+            # Check if variable is numeric
+            is.numeric(data_frame[[var_name]])
+        }
+        # Check if value is numeric
+        else{
+            is.numeric(element)
+        }
+
+    }, logical(1))
+
+    # Set a flag whether the passed values are of the same type
+    is_mixed_type <- any(types) && any(!types)
+
+    # Check if a type conversion is needed
+    if (is_mixed_type){
+        print_message("NOTE", "Mixed value types found. Result will be converted to character.")
+
+        # Apply macro on character expressions
+        if (is.character(else.)){
+            else. <- macro(else.)
+        }
+        # In case of variable names alter the type in the provided data frame
+        else if (is.name(else.)){
+            value_char               <- as.character(else.)
+            data_frame[[value_char]] <- as.character(data_frame[[value_char]])
+        }
+        # Otherwise convert the value directly
+        else{
+            else. <- as.character(else.)
+        }
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Convert do_if
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # If there was an overarching condition specified, parse and inject it into
     # all the other conditions.
@@ -1355,15 +1433,36 @@ ifelse_multi <- function(data_frame,
     }
 
     if (any(sapply(parsed_conditions, is.null))){
+        print_message("ERROR", c("The <do_if> condition couldn't be parsed and is NULL."))
         return(invisible(NA))
     }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Put together the nested ifelse statement
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # The single conditions and assignments are now nested into multiple ifelse
     # functions.
     result <- else.
 
     for(i in rev(seq_along(conditions))){
-        result <- as.call(list(data.table::fifelse, parsed_conditions[[i]], result_values[[i]], result))
+        value <- result_values[[i]]
+
+        # If there are mixed types
+        if (is_mixed_type){
+            # In case of variable names alter the type in the provided data frame
+            if (is.name(value)){
+                value_char               <- as.character(value)
+                data_frame[[value_char]] <- as.character(data_frame[[value_char]])
+            }
+            # Otherwise convert the value directly
+            else{
+                value <- as.character(value)
+            }
+        }
+
+        # Nest the ifelse statement together
+        result <- as.call(list(data.table::fifelse, parsed_conditions[[i]], value, result))
     }
 
     # Evaluate the nested ifelse functions and return result

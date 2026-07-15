@@ -98,19 +98,21 @@ my_data <- dummy_data(100)
 my_data[["under18"]]    <- my_data |> ifelse_multi(" age < 18 " = 1,       else. = 0)
 my_data[["middle_age"]] <- my_data |> ifelse_multi(" 15 <= age < 65 " = 1, else. = 0)
 
-my_data[["age_gr"]] <- my_data |> ifelse_multi(" age < 18 "       = "under 18",
-                                               " 18 <= age < 25 " = "18 to under 25",
-                                               " 25 <= age < 50 " = "25 to under 50",
-                                               " 50 <= age < 65 " = "50 to under 65",
-                                               " 65 <= age      " = "65 and more")
+my_data[["age_gr"]] <- my_data |>
+    ifelse_multi(" age < 18 "       = "under 18",
+                 " 18 <= age < 25 " = "18 to under 25",
+                 " 25 <= age < 50 " = "25 to under 50",
+                 " 50 <= age < 65 " = "50 to under 65",
+                 " 65 <= age      " = "65 and more")
 
 # With overarching do_if condition
-my_data[["age_gr_edu"]] <- my_data |> ifelse_multi(do_if = " education in ('middle' 'high') ",
-                                                       " age < 18 "       = "under 18",
-                                                       " 18 <= age < 25 " = "18 to under 25",
-                                                       " 25 <= age < 50 " = "25 to under 50",
-                                                       " 50 <= age < 65 " = "50 to under 65",
-                                                       " 65 <= age      " = "65 and more")
+my_data[["age_gr_edu"]] <- my_data |>
+    ifelse_multi(do_if = " education in ('middle' 'high') ",
+                     " age < 18 "       = "under 18",
+                     " 18 <= age < 25 " = "18 to under 25",
+                     " 25 <= age < 50 " = "25 to under 50",
+                     " 50 <= age < 65 " = "50 to under 65",
+                     " 65 <= age      " = "65 and more")
 
 # And/or translation
 my_data[["and"]] <- my_data |> ifelse_multi(" age > 65 and sex = 1 " = 1,
@@ -134,10 +136,15 @@ variable     <- "age"
 age_to_check <- 18
 value_to_set <- "under 18"
 
-my_data[["macro"]] <- my_data |> ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
-                                              else. = "other")
+my_data[["macro"]] <- my_data |>
+    ifelse_multi(" &variable < &age_to_check " = "&value_to_set",
+                 else.                         = "other")
 
 # NA translation
 my_data[["NA"]]    <- my_data |> ifelse_multi(" age == .       " = 1, else. = 0)
-my_data[["NotNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+my_data[["notNA"]] <- my_data |> ifelse_multi(" education != . " = 1, else. = 0)
+
+# Pass in existing variable values
+my_data[["income_mix"]] <- my_data |>
+    ifelse_multi(" age < 50 " = income, else. = expenses)
 ```

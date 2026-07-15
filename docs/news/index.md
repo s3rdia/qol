@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.3 - DEVELOPMENT
+## qol 1.3.3
 
 #### New functions
 
@@ -1144,9 +1144,8 @@ CRAN release on 13.01.2026
   into the desired ones passed with a format. Using multilabels it is
   also possible to generate completely new values and therefore data
   frames on the fly. (30.12.2025)
-- [`set()`](https://s3rdia.github.io/qol/reference/set.html): Stack data
-  frames by column names with optional character compression.
-  (30.12.2025)
+- `set()`: Stack data frames by column names with optional character
+  compression. (30.12.2025)
 - Error handling functions:
   - [`resolve_intersection()`](https://s3rdia.github.io/qol/reference/error_handling.md):
     Compares if two vectors have intersecting values. (02.01.2026)
