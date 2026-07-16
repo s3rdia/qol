@@ -11,7 +11,7 @@ of variables can be nested and crossed. The output is an individually styled
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -399,8 +399,8 @@ a designed workbook.</p>
 <span>                     columns    <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                     values     <span class="op">=</span> <span class="st">"probability"</span>,</span>
 <span>                     statistics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="st">"sum_wgt"</span><span class="op">)</span>,</span>
-<span>                     compute    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>percent    <span class="op">=</span> <span class="va">probability_sum</span> <span class="op">*</span> <span class="fl">100</span> <span class="op">/</span> <span class="va">sum_wgt</span>,</span>
-<span>                                       pct_square <span class="op">=</span> <span class="va">percent</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>                     compute    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>percent_pct <span class="op">=</span> <span class="va">probability_sum</span> <span class="op">*</span> <span class="fl">100</span> <span class="op">/</span> <span class="va">sum_wgt</span>,</span>
+<span>                                       square_pct  <span class="op">=</span> <span class="va">percent_pct</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
 <span>                     output    <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>

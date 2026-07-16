@@ -1,6 +1,20 @@
 # Changelog
 
+## qol 1.3.4 - DEVELOPMENT
+
+#### Fixed
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Variables generated with the `compute` parameter now receive a default
+  `statistics` extension, if they are missing one, so that the column
+  header is generated correctly and a number format is applied.
+  (17.07.2026)
+
 ## qol 1.3.3
+
+CRAN release: 2026-07-16
+
+CRAN release on 16.07.2026
 
 #### New functions
 
