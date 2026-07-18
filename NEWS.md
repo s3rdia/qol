@@ -3,6 +3,7 @@
 ### New functionality
 
 * `load_file()`, `load_file_multi()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed. (18.07.2026)
+* `any_table()`: Can now handle duplicate column names by making them unique (except NA columns). (18.07.2026)
 
 ### Removed
 

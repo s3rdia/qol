@@ -1619,8 +1619,41 @@ any_table <- function(data_frame,
             length(var_to_test) + 1
         }}))
 
-    index <- 1
-    any_header <- NULL
+    # Check for upcoming duplicate variable names. This happens if column variables
+    # somewhere have an expression in common. After pivoting later on this will
+    # produce identical variable names. These equal expressions will be altered
+    # before.
+    # Identify expressions that appear in more than one variable
+    unique_col_value_list <- lapply(col_vars, function(col_var){
+        collapse::funique(any_tab[[col_var]])
+    })
+
+    value_counts       <- table(unlist(unique_col_value_list))
+    overlapping_values <- names(value_counts[value_counts > 1])
+
+    # Loop through the column variables and add a suffix to the duplicate expressions
+    if (length(overlapping_values) > 0){
+        overlapping_values <- paste0("^(", paste(overlapping_values, collapse = "|"), ")$")
+
+        # Loop over column variables and add a suffix to the duplicate expressions
+        for (i in seq_along(col_vars)){
+            variable    <- col_vars[i]
+            replacement <- paste0("\\1.dup", i)
+
+            # For factor variables rename the factor levels
+            if (is.factor(any_tab[[variable]])){
+                levels(any_tab[[variable]]) <- sub(overlapping_values, replacement, levels(any_tab[[variable]]))
+            }
+            # Otherwise rename the variable expressions directly
+            else{
+                any_tab[[variable]] <- sub(overlapping_values, replacement, any_tab[[variable]])
+            }
+        }
+    }
+
+    # Puzzle the final export table together
+    index            <- 1
+    any_header       <- NULL
     combined_id_vars <- NULL
 
     for (row_combi in rows){
@@ -1868,7 +1901,7 @@ any_table <- function(data_frame,
 
                 if (length(duplicates) > 0){
                     print_message("ERROR", c("Duplicate <columns> names found: [dup].",
-											 "If you are working with original values, consider making them unique by using formats."),
+											 "You have to handle NA values in the <columns> manually."),
 								  dup = paste(duplicates, collapse = ", "))
                     return(invisible(NULL))
                 }
@@ -2707,6 +2740,10 @@ build_multi_header <- function(var_names,
 
     # Revert back underscores
     header_matrix <- gsub("!!!", "_", header_matrix)
+
+    # Remove the duplicate tags from the variable expressions so that they can
+    # be output to Excel with their unaltered name.
+    header_matrix <- sub("\\.dup[0-9]+$", "", header_matrix)
 
     # Replace variable texts with custom labels
     header_matrix <- header_matrix |> set_col_variable_labels(var_labels)

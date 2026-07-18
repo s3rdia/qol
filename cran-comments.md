@@ -4,6 +4,7 @@ Last CRAN release was on 16.07.2026.
 ### New functionality
 
 * `load_file()`, `load_file_multi()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed.
+* `any_table()`: Can now handle duplicate column names by making them unique (except NA columns).
 
 ### Removed
 

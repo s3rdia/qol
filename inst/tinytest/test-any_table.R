@@ -25,6 +25,11 @@ age. <- discrete_format(
     "under 50"    = 0:49,
     "50 and more" = 50:100)
 
+age2. <- discrete_format(
+    "Total"       = 0:100,
+    "under 50"    = 0:49,
+    "50 and more" = 50:100)
+
 state. <- discrete_format(
     "West" = 1:10,
     "East" = 11:16)
@@ -844,6 +849,19 @@ expect_true(!all(c("income_pct_group_1", "income_pct_group_2", "expenses_pct_gro
             info = "any_table is able to output specific statistics per variable")
 
 
+# any_table can handle duplicate column names without NA values
+result_list <- dummy_df |>
+    any_table(rows    = "education",
+              columns = c("sex", "age"),
+              values  = weight,
+              na.rm   = TRUE,
+              print   = FALSE)
+
+expect_true(all(c("weight_sum_1.dup1", "weight_sum_2.dup1",
+                  "weight_sum_1.dup2", "weight_sum_1.dup2") %in% names(result_list[[1]])),
+            info = "any_table can handle duplicate column names without NA values")
+
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -859,15 +877,15 @@ expect_error(print_stack_as_messages("ERROR"), "The provided <columns> variable 
              info = "any_table aborts, if column contains a row variable")
 
 
-# any_table aborts with duplicate column names after pivot
+# any_table aborts with duplicate column names because of NA values
 result_list <- dummy_df |>
     any_table(rows    = "education",
-              columns = c("sex + age", "age + sex"),
+              columns = c("sex", "age"),
               values  = weight,
               print   = FALSE)
 
 expect_error(print_stack_as_messages("ERROR"), "Duplicate <columns> names found",
-             info = "any_table aborts with duplicate column names after pivot")
+             info = "any_table aborts with duplicate column names because of NA values")
 
 
 # any_table aborts with none existent row variable
