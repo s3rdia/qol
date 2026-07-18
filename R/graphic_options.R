@@ -260,6 +260,8 @@ graphic_visuals <- function(font                        = "Arial",
 #' Set different options regarding the axes of a graphic produced by
 #' [design_graphic()]. All parameters can also be set globally via [set_graphic_options()].
 #'
+#' @param primary_axes_visible TRUE by default. Whether to display the primary
+#' axes or not.
 #' @param primary_axes_max Maximum value for the primary axes. If "auto", the maximum
 #' value is determined by the maximum value present in the graphic.
 #' @param primary_axes_min Minimum value for the primary axes. If "auto", the minimum
@@ -282,6 +284,8 @@ graphic_visuals <- function(font                        = "Arial",
 #' @param primary_values_suffix What to put after the values plotted on the primary axes have.
 #' @param secondary_axes_max Maximum value for the secondary axes. If "auto", the maximum
 #' value is determined by the maximum value present in the graphic.
+#' @param secondary_axes_visible TRUE by default. Whether to display the primary
+#' axes or not.
 #' @param secondary_axes_min Minimum value for the secondary axes. If "auto", the minimum
 #' value is determined by the minimum value present in the graphic. If there is no
 #' negative value it will always be set to 0.
@@ -354,7 +358,8 @@ graphic_visuals <- function(font                        = "Arial",
 #' @rdname graphic_axes
 #'
 #' @export
-graphic_axes <- function(primary_axes_max              = "auto",
+graphic_axes <- function(primary_axes_visible          = TRUE,
+                         primary_axes_max              = "auto",
                          primary_axes_min              = "auto",
                          primary_axes_steps            = 5,
                          primary_axes_decimals         = 0,
@@ -368,6 +373,7 @@ graphic_axes <- function(primary_axes_max              = "auto",
                          primary_values_decimal_mark   = ",",
                          primary_values_prefix         = "",
                          primary_values_suffix         = "",
+                         secondary_axes_visible        = TRUE,
                          secondary_axes_max            = "auto",
                          secondary_axes_min            = "auto",
                          secondary_axes_steps          = 5,

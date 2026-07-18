@@ -1122,14 +1122,21 @@ get_diagram_dimensions <- function(arguments){
 
     # Get width of the highest value for the axes to measure the actual space the
     # whole axes needs in the diagram.
-    if (abs(primary_y_max) > abs(primary_y_min)){
-        primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_tick_values[length(primary_y_tick_values)], axes, dimensions, visuals)
+    if (axes[["primary_axes_visible"]]){
+        if (abs(primary_y_max) > abs(primary_y_min)){
+            primary_y_axes_width <- graphic_tab |>
+                get_value_axes_width(primary_y_tick_values[length(primary_y_tick_values)], axes, dimensions, visuals)
+        }
+        # In case of negative value having more digits
+        else{
+            primary_y_axes_width <- graphic_tab |>
+                get_value_axes_width(primary_y_tick_values[1], axes, dimensions, visuals)
+        }
     }
-    # In case of negative value having more digits
+    # When the axes is not visible set width to 0, so that the diagram can use
+    # the additional space.
     else{
-        primary_y_axes_width <- graphic_tab |>
-            get_value_axes_width(primary_y_tick_values[1], axes, dimensions, visuals)
+        primary_y_axes_width <- 0
     }
     # TODO: CONDITIONALLY DECIDE WHEN TO DO THE SECONDARY AXES.
 
@@ -1484,6 +1491,16 @@ setup_y_axes <- function(diagram_info,
 
     if (secondary){
         which <- "secondary"
+
+        # Return null grob when axes shouldn't be visible
+        if (!axes[["secondary_axes_visible"]]){
+            return(grid::nullGrob(name = "y_axes")) # TODO: PRIMARY VS. SECONDARY HAS TO DIFFER
+        }
+    }
+
+    # Return null grob when axes shouldn't be visible
+    if (which == "primary" && !axes[["primary_axes_visible"]]){
+        return(grid::nullGrob(name = "y_axes")) # TODO: PRIMARY VS. SECONDARY HAS TO DIFFER
     }
 
     # Vertical axes line over the whole viewport
@@ -1526,7 +1543,7 @@ setup_y_axes <- function(diagram_info,
 
     # Return the whole axes as one graphical object
     grid::gTree(children = grid::gList(line, ticks, axes_values),
-                name     = "y_axes")
+                name     = "y_axes") # TODO: PRIMARY VS. SECONDARY HAS TO DIFFER
 }
 
 

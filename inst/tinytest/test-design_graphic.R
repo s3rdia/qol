@@ -422,6 +422,20 @@ expect_true(any(startsWith(names(result_list[["graphic"]][["children"]][["diagra
             info = "design_graphic with guiding lines")
 
 
+# design_graphic without primary axes
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "age",
+                   segments       = "sex",
+                   values         = "weight",
+                   diagram        = dg_vbars,
+                   formats        = list(sex = sex., age = age.),
+                   axes           = graphic_axes(primary_axes_visible = FALSE),
+                   print          = FALSE)
+
+expect_true(inherits(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["xy_axes"]][["children"]][["y_axes"]], "null"),
+            info = "design_graphic with guiding lines")
+
+
 # design_graphic with different color usage
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",

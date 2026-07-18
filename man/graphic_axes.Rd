@@ -5,6 +5,7 @@
 \title{Graphic Axes}
 \usage{
 graphic_axes(
+  primary_axes_visible = TRUE,
   primary_axes_max = "auto",
   primary_axes_min = "auto",
   primary_axes_steps = 5,
@@ -19,6 +20,7 @@ graphic_axes(
   primary_values_decimal_mark = ",",
   primary_values_prefix = "",
   primary_values_suffix = "",
+  secondary_axes_visible = TRUE,
   secondary_axes_max = "auto",
   secondary_axes_min = "auto",
   secondary_axes_steps = 5,
@@ -37,6 +39,9 @@ graphic_axes(
 )
 }
 \arguments{
+\item{primary_axes_visible}{TRUE by default. Whether to display the primary
+axes or not.}
+
 \item{primary_axes_max}{Maximum value for the primary axes. If "auto", the maximum
 value is determined by the maximum value present in the graphic.}
 
@@ -70,6 +75,9 @@ on the primary axes have.}
 \item{primary_values_prefix}{What to put in front of the values plotted on the primary axes have.}
 
 \item{primary_values_suffix}{What to put after the values plotted on the primary axes have.}
+
+\item{secondary_axes_visible}{TRUE by default. Whether to display the primary
+axes or not.}
 
 \item{secondary_axes_max}{Maximum value for the secondary axes. If "auto", the maximum
 value is determined by the maximum value present in the graphic.}
