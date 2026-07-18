@@ -77,7 +77,7 @@ Messages: \code{\link[=print_message]{print_message()}}, \code{\link[=print_head
 Calculation: \code{\link[=compute.]{compute.()}}, \code{\link[=row_calculation]{row_calculation()}}
 
 Small helpers: \code{\link[=setcolorder_by_pattern]{setcolorder_by_pattern()}}, \code{\link[=drop_type_vars]{drop_type_vars()}}, \code{\link[=fuse_variables]{fuse_variables()}},
-\code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=get_integer_length]{get_integer_length()}}, \code{\link[=round_values]{round_values()}}
+\code{\link[=get_excel_range]{get_excel_range()}}, \code{\link[=round_values]{round_values()}}
 
 Split data frame: \link{split_by}
 

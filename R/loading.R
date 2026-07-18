@@ -644,10 +644,35 @@ load_file <- function(path,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
-    keep_eval <- substitute(keep)
+    keep_eval   <- substitute(keep)
+    rename_keep <- NULL
 
     if (is.call(keep_eval)){
-        keep <- get_origin_as_char(keep, keep_eval)
+        # Get the names from the passed list, if there are any
+        rename_keep <- names(as.list(keep_eval)[-1])
+
+        # In case an unnamed list was passed, just get the variable names as normal
+        if (is.null(rename_keep)){
+            keep        <- get_origin_as_char(keep, keep_eval)
+            rename_keep <- NULL
+        }
+        # In case a named list was passed, separate the names and elements into
+        # a vector of original variable names and one to rename the variables to.
+        else{
+            keep        <- rename_keep
+            rename_keep <- as.character(unlist(as.list(keep_eval)[-1]))
+        }
+    }
+    # In case of load_file_multi keep ends up hear as a vector
+    else if(!is.null(keep)){
+        rename_keep <- keep
+        keep        <- names(keep)
+
+        # If keep is NULL here a unnamed list was passed
+        if (is.null(keep)){
+            keep        <- rename_keep
+            rename_keep <- NULL
+        }
     }
 
     ###########################################################################
@@ -730,6 +755,11 @@ load_file <- function(path,
 
     data_frame <- suppressMessages(data_frame |> if.(where))
 
+    # If there is a rename vector, rename the original variables into the desired ones
+    if (!is.null(rename_keep)){
+        names(data_frame) <- rename_keep
+    }
+
     # Revert used threads
     suppressMessages(fst::threads_fst(NULL))
 
@@ -795,16 +825,27 @@ load_file_multi <- function(file_list,
     else if (is.call(keep_eval)){
         # Loop through each list entry and convert vectors to characters
         keep_list <- lapply(as.list(keep_eval)[-1], function(element){
-            variables <- as.list(element)[-1]
+            # Extract the list elements, which are the variable names to rename to
+            variable_list <- as.list(element)[-1]
 
-            # In case of a list of symbols. Variable names are passed without quotation marks.
-            if (all(sapply(variables, is.symbol))){
-                all.vars(element)
+            # Get the original variable names, which are the list element names
+            original_vars <- names(variable_list)
+
+            # Convert variables to characters
+            rename_vars <- sapply(variable_list, function(variable){
+                if (is.symbol(variable)){
+                    variable <- as.character(variable)
+                }
+
+                variable
+            })
+
+            # Reapply the original names to the rename names
+            if (!is.null(original_vars) && any(original_vars != "")){
+                names(rename_vars) <- original_vars
             }
-            # In case of a list of character vectors. Variable names are passed with quotation marks.
-            else{
-                unlist(variables)
-            }
+
+            rename_vars
         })
     }
 

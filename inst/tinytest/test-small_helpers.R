@@ -23,12 +23,6 @@ added_df <- dummy_df |>
 expect_equal(utils::tail(names(added_df), 3), c("status1", "status2", "status3"), info = "Add new NA column range with helper function")
 
 
-# Get length of integer variable
-expect_equal(get_integer_length(1L), 1,   info = "Get length of integer variable")
-expect_equal(get_integer_length(10L), 2,  info = "Get length of integer variable")
-expect_equal(get_integer_length(100L), 3, info = "Get length of integer variable")
-
-
 # Get duplicate variable names
 expect_equal(get_duplicate_var_names(dup_df),
              c("age", "AGE", "Age", "sex", "SeX"), info = "Get duplicate variable names")
@@ -76,19 +70,6 @@ expect_true(collapse::fsum(new_df[["var2"]] == new_df[["round2"]]) == 0,
             info = "Round multiple variables in a data frame and add them as new variables")
 
 ###############################################################################
-# Warning checks
-###############################################################################
-
-
-# Warning in length of integer if numeric value provided
-value <- 100.123
-get_integer_length(value)
-
-expect_warning(print_stack_as_messages("WARNING"), "Variable is not an integer and will be floored. Decimal places won't count.", info = "Warning in length of integer if numeric value provided")
-
-expect_equal(get_integer_length(value), 3, info = "Warning in length of integer if numeric value provided")
-
-###############################################################################
 # Abort checks
 ###############################################################################
 
@@ -107,12 +88,6 @@ added_df2 <- added_df |>
      add_variable_range(status1:status3)
 
 expect_error(print_stack_as_messages("ERROR"), "Some variables are already part of the data frame: ", info = "Adding NA variables aborts, if variables are already part of data frame")
-
-
-# Abort length of integer if character variable provided
-get_integer_length("Test")
-
-expect_error(print_stack_as_messages("ERROR"), "Only numeric values allowed.", info = "Abort length of integer if character variable provided")
 
 
 # Abort round values if values are not numeric

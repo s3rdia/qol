@@ -184,12 +184,12 @@ mark_case <- function(data_frame,
         # Mark first cases by placing the missing TRUE value at the front, meaning: Shift down the whole
         # vector by one.
         if (first){
-            variable <- c(TRUE, data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)])
+            variable <- !duplicated(data_frame[[by]])
         }
         # Mark last cases by placing the missing TRUE value at the back, meaning: Shift up the whole
         # vector by one.
         else{
-            variable <- c(data_frame[[by]][-1] != data_frame[[by]][-collapse::fnrow(data_frame)], TRUE)
+            variable <- !duplicated(data_frame[[by]], fromLast = TRUE)
         }
     }
     # In case no by variable is specified, mark first/last case of whole data frame

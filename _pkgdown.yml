@@ -145,7 +145,6 @@ reference:
   - replace_except
   - replace_except
   - add_variable_range
-  - get_integer_length
   - get_duplicate_var_names
   - get_duplicate_var_count
   - round_values

@@ -69,7 +69,7 @@
 #' Calculation: [compute.()], [row_calculation()]
 #'
 #' Small helpers: [setcolorder_by_pattern()], [drop_type_vars()], [fuse_variables()],
-#' [get_excel_range()], [get_integer_length()], [round_values()]
+#' [get_excel_range()], [round_values()]
 #'
 #' Split data frame: [split_by]
 #'

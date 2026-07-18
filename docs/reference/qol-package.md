@@ -151,7 +151,6 @@ Small helpers:
 [`drop_type_vars()`](https://s3rdia.github.io/qol/reference/drop_type_vars.md),
 [`fuse_variables()`](https://s3rdia.github.io/qol/reference/fuse_variables.md),
 [`get_excel_range()`](https://s3rdia.github.io/qol/reference/get_excel_range.md),
-[`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.md),
 [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md)
 
 Split data frame:

@@ -83,6 +83,14 @@ expect_equal(names(fst_keep), c("Sex", "aGe", "STATE"), info = "Loading files wi
 expect_equal(names(rds_keep), c("Sex", "aGe", "STATE"), info = "Loading files with keep renames variables and reorders them")
 
 
+# Loading files with named list renames variables
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+
+fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex = var1, aGe = var2, STATE = var3))
+
+expect_equal(names(fst_keep), c("var1", "var2", "var3"), info = "Loading files with keep renames variables and reorders them")
+
+
 # Loading files with subset
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
@@ -146,6 +154,19 @@ all_df <- load_file_multi(c(fst_file, rds_file),
 expect_equal(names(fst_df), names(all_df[[1]]), info = "Loading multiple files with keep and return as list")
 expect_equal(fst_df, all_df[[1]], info = "Loading multiple files with keep and return as list")
 expect_equal(rds_df, all_df[[2]], info = "Loading multiple files with keep and return as list")
+
+
+# Loading multiple files and rename variables
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
+
+all_df <- load_file_multi(c(fst_file, rds_file),
+                          keep        = list(c("sex"    = var1, "age"   = var2),
+                                             c("income" = var3, "state" = var4)),
+                          stack_files = FALSE)
+
+expect_equal(names(all_df[[1]]), c("var1", "var2"), info = "Loading multiple files and rename variables")
+expect_equal(names(all_df[[2]]), c("var3", "var4"), info = "Loading multiple files and rename variables")
 
 ###############################################################################
 # Saving

@@ -234,40 +234,6 @@ add_variable_range <- function(data_frame, var_range){
 }
 
 
-#' Get Integer Length
-#'
-#' @description
-#' Get the number of digits of an integer variable.
-#'
-#' @param variable The integer variable from which to get the length.
-#'
-#' @return
-#' Returns a vector with the number of digits places.
-#'
-#' @examples
-#' # Example data frame
-#' my_data <- dummy_data(100)
-#'
-#' my_data[["age_length"]] <- get_integer_length(my_data[["age"]])
-#'
-#' @export
-get_integer_length <- function(variable){
-    if (!is.numeric(variable)){
-        print_message("ERROR", "Only numeric values allowed.")
-
-        return(invisible(NA_integer_))
-    }
-
-    if (!is.integer(variable)){
-        print_message("WARNING", "Variable is not an integer and will be floored. Decimal places won't count.")
-
-        variable <- floor(variable)
-    }
-
-    nchar(abs(variable))
-}
-
-
 #' Check For Duplicate Variable Names
 #'
 #' @name duplicates
