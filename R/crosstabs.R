@@ -392,7 +392,7 @@ crosstabs <- function(data_frame,
 
         # Pivot to wider format, which basically is the final format to print the data
         cross_tab <- cross_tab |>
-            collapse::pivot(id     = rows,
+            collapse::pivot(ids    = rows,
                             names  = "run_nr",
                             values = c("var_sum", "var_pct_row", "var_pct_total", "var_freq"),
                             how    = "wider")
@@ -435,7 +435,7 @@ crosstabs <- function(data_frame,
 
         # Pivot to wider format, which basically is the final format to print the data
         cross_tab <- cross_tab |>
-            collapse::pivot(id     = c("BY", "by_vars", rows),
+            collapse::pivot(ids    = c("BY", "by_vars", rows),
                             names  = "run_nr",
                             values = c("var_sum", "var_pct_row", "var_pct_total", "var_freq"),
                             how    = "wider")

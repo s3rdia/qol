@@ -1821,7 +1821,7 @@ any_table <- function(data_frame,
 
             # Pivot to wider format, which basically is the final format to print the data
             combi_df <- combi_df |>
-                collapse::pivot(id     = id_vars,
+                collapse::pivot(ids    = id_vars,
                                 names  = col_combi_vars,
                                 values = pivot_values,
                                 how    = "wider")
