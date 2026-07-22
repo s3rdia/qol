@@ -11,6 +11,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Can now handle duplicate column names by making them unique (except NA
   columns). (18.07.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  Now also receive a colored background. (22.07.2026)
 
 #### Removed
 
@@ -28,6 +31,37 @@
   When marking `last` cases and the last expression within the `by`
   variable was NA, then the last case in the second to last expression
   became NA instead of TRUE. This is fixed now. (18.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  When different title or footnote styles where used, they were only
+  applied, if multiple colors where used. Otherwise the formatting
+  broke. This is fixed now. Additionally the code is now simplified and
+  streamlined. (22.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  The additional `by` title is now also taken into account with
+  individual styling, when multiple titles are present. (22.07.2026)
+
+#### Additionally
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Extended `titles` and `footnotes` description according to the new
+  functionality. (22.07.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  Added some new messages on the styling progress. (22.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Added named regions for titles, main title, footnotes, table header
+  and row headers. (22.07.2026)
 
 ## qol 1.3.3
 

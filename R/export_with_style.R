@@ -5,8 +5,18 @@
 #' footnotes and labels for variable names can optionally be added.
 #'
 #' @param data_frame A data frame to print.
-#' @param titles Specify one or more table titles.
-#' @param footnotes Specify one or more table footnotes.
+#' @param titles Specify one or more table titles. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
+#' @param footnotes Specify one or more table footnotes. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
 #' @param var_labels A list in which is specified which label should be printed for
 #' which variable instead of the variable name.
 #' @param workbook Insert a previously created workbook to expand the sheets instead of
@@ -50,8 +60,10 @@
 #'
 #' # Define titles and footnotes. If you want to add hyperlinks you can do so by
 #' # adding "link:" followed by the hyperlink to the main text. Linking to another
-#' # cell works with "cell:". To link to a file use "file:" an pass the full file
-#' # path afterwards.
+#' # cell works with "cell:". To link to a file use "file:" and pass the full file
+#' # path afterwards. When linking to a cell you can use to following keywords to
+#' # automatically link to specific parts of the output: first_title, last_title,
+#' # first_footnote, last_footnote, table_start, table_end, table_header.
 #' set_titles("This is title number 1",
 #'            "This is title number 2 link: https://cran.r-project.org/",
 #'            "This is title number 3 cell: W22",
@@ -108,12 +120,7 @@
 #'
 #' # Global options are permanently active until the current R session is closed.
 #' # There are also functions to reset the values manually.
-#' reset_style_options()
 #' reset_qol_options()
-#' close_file()
-#'
-#' set_print(TRUE)
-#' set_style_options(background_color = "FFFFFF")
 #'
 #' @export
 export_with_style <- function(data_frame,
@@ -201,13 +208,19 @@ export_with_style <- function(data_frame,
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
-        workbook <- openxlsx2::wb_workbook() |>
+        style_list <- openxlsx2::wb_workbook() |>
             prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+
+        workbook <- style_list[[1]]
+        style    <- style_list[[2]]
     }
     # Update style options in provided workbook
     else{
-        workbook <- workbook |>
+        style_list <- workbook |>
             prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+
+        workbook <- style_list[[1]]
+        style    <- style_list[[2]]
     }
 
     monitor_df <- monitor_df |> monitor_end()
@@ -456,10 +469,17 @@ format_df_excel <- function(wb,
             handle_any_auto_dimensions(df_ranges, style) |>
             handle_header_table_dim(df_ranges, style)
 
+        # Ignore the "number stored as text" error within Excel
         wb$add_ignore_error(dims = df_ranges[["whole_tab_range"]], number_stored_as_text = TRUE)
 
-        wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
+        # Add named regions to be able to target certain areas of the workbook more easily
+        wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+        wb$add_named_region(dims = df_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+        wb$add_named_region(dims = unlist(strsplit(df_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()

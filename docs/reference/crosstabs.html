@@ -108,11 +108,21 @@ weighted sums, unweighted frequencies or different percentages.</p>
 
 
 <dt id="arg-titles">titles<a class="anchor" aria-label="anchor" href="#arg-titles"></a></dt>
-<dd><p>Specify one or more table titles.</p></dd>
+<dd><p>Specify one or more table titles. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.</p></dd>
 
 
 <dt id="arg-footnotes">footnotes<a class="anchor" aria-label="anchor" href="#arg-footnotes"></a></dt>
-<dd><p>Specify one or more table footnotes.</p></dd>
+<dd><p>Specify one or more table footnotes. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.</p></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
@@ -178,7 +188,14 @@ fully designed tables, you can also just output the tables in ASCII style format
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Example data frame</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># NOTE: The global option for printing the output is set to FALSE to save time</span></span>
+<span><span class="co">#       on running the examples. When running the examples manually, don't run</span></span>
+<span><span class="co">#       this option here.</span></span>
+<span><span class="co">#       Background color is also removed to make the code run faster.</span></span>
+<span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>background_color <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example data frame</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="dummy_data.html">dummy_data</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define titles and footnotes.</span></span>
@@ -236,8 +253,10 @@ fully designed tables, you can also just output the tables in ASCII style format
 <span></span>
 <span><span class="co"># If you want to add hyperlinksto titles and footnotes you can do so by</span></span>
 <span><span class="co"># adding "link:" followed by the hyperlink to the main text. Linking to another</span></span>
-<span><span class="co"># cell works with "cell:". To link to a file use "file:" an pass the full file</span></span>
-<span><span class="co"># path afterwards.</span></span>
+<span><span class="co"># cell works with "cell:". To link to a file use "file:" and pass the full file</span></span>
+<span><span class="co"># path afterwards. When linking to a cell you can use to following keywords to</span></span>
+<span><span class="co"># automatically link to specific parts of the output: first_title, last_title,</span></span>
+<span><span class="co"># first_footnote, last_footnote, table_start, table_end, table_header.</span></span>
 <span><span class="fu"><a href="qol_options.html">set_titles</a></span><span class="op">(</span><span class="st">"This is title number 1"</span>,</span>
 <span>           <span class="st">"This is title number 2 link: https://cran.r-project.org/"</span>,</span>
 <span>           <span class="st">"This is title number 3 cell: W22"</span>,</span>
@@ -273,9 +292,7 @@ fully designed tables, you can also just output the tables in ASCII style format
 <span></span>
 <span><span class="co"># Global options are permanently active until the current R session is closed.</span></span>
 <span><span class="co"># There are also functions to reset the values manually.</span></span>
-<span><span class="fu"><a href="style_options.html">reset_style_options</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="style_options.html">reset_qol_options</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="style_options.html">close_file</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

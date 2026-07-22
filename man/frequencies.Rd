@@ -35,9 +35,19 @@ frequencies(
 \item{means}{FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
 min, max, total freq and missing values.}
 
-\item{titles}{Specify one or more table titles.}
+\item{titles}{Specify one or more table titles. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.}
 
-\item{footnotes}{Specify one or more table footnotes.}
+\item{footnotes}{Specify one or more table footnotes. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.}
 
 \item{style}{A list of options can be passed to control the appearance of 'Excel' outputs.
 Styles can be created with \code{\link[=excel_output_style]{excel_output_style()}}.}
@@ -81,6 +91,13 @@ tables, all at once. For just a quick overview, rather than fully designed
 tables, you can also just output the tables in ASCII style format.
 }
 \examples{
+# NOTE: The global option for printing the output is set to FALSE to save time
+#       on running the examples. When running the examples manually, don't run
+#       this option here.
+#       Background color is also removed to make the code run faster.
+set_print(FALSE)
+set_style_options(background_color = "")
+
 # Example data frame
 my_data <- dummy_data(1000)
 
@@ -125,8 +142,10 @@ my_data |> frequencies(sex, output = "excel")
 
 # If you want to add hyperlinksto titles and footnotes you can do so by
 # adding "link:" followed by the hyperlink to the main text. Linking to another
-# cell works with "cell:". To link to a file use "file:" an pass the full file
-# path afterwards.
+# cell works with "cell:". To link to a file use "file:" and pass the full file
+# path afterwards. When linking to a cell you can use to following keywords to
+# automatically link to specific parts of the output: first_title, last_title,
+# first_footnote, last_footnote, table_start, table_end, table_header.
 set_titles("This is title number 1",
            "This is title number 2 link: https://cran.r-project.org/",
            "This is title number 3 cell: W22",
@@ -161,9 +180,7 @@ unlink(table_file)
 
 # Global options are permanently active until the current R session is closed.
 # There are also functions to reset the values manually.
-reset_style_options()
 reset_qol_options()
-close_file()
 
 }
 \seealso{

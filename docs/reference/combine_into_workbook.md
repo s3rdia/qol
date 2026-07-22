@@ -103,7 +103,8 @@ tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                              pct_group  = c("sex", "age", "education", "year"),
                              formats    = list(sex = sex., age = age.,
                                                education = education.),
-                             na.rm      = TRUE)
+                             na.rm      = TRUE,
+                             print      = FALSE)
 
 set_style_options(sheet_name = "age_sex")
 
@@ -112,16 +113,12 @@ tab2 <- my_data |> any_table(rows       = "age",
                              values     = weight,
                              statistics = "sum",
                              formats    = list(sex = sex., age = age.),
-                             na.rm      = TRUE)
+                             na.rm      = TRUE,
+                             print      = FALSE)
 
-set_style_options(sheet_name = "edu_year")
+set_style_options(sheet_name = "data")
 
-tab3 <- my_data |> any_table(rows       = "education",
-                             columns    = "year",
-                             values     = weight,
-                             statistics = "pct_group",
-                             formats    = list(education = education.),
-                             na.rm      = TRUE)
+tab3 <- my_data |> export_with_style(print = FALSE)
 
 # Every of the above tabs is a list, which contains the data table, an unstyled
 # workbook and the meta information needed for the individual styling. These

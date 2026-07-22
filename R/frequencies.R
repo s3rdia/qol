@@ -13,8 +13,18 @@
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param means FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
 #' min, max, total freq and missing values.
-#' @param titles Specify one or more table titles.
-#' @param footnotes Specify one or more table footnotes.
+#' @param titles Specify one or more table titles. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
+#' @param footnotes Specify one or more table footnotes. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: console (default), text,
@@ -64,6 +74,13 @@
 #' [recode_multi()], [transpose_plus()], [sort_plus()]
 #'
 #' @examples
+#' # NOTE: The global option for printing the output is set to FALSE to save time
+#' #       on running the examples. When running the examples manually, don't run
+#' #       this option here.
+#' #       Background color is also removed to make the code run faster.
+#' set_print(FALSE)
+#' set_style_options(background_color = "")
+#'
 #' # Example data frame
 #' my_data <- dummy_data(1000)
 #'
@@ -108,8 +125,10 @@
 #'
 #' # If you want to add hyperlinksto titles and footnotes you can do so by
 #' # adding "link:" followed by the hyperlink to the main text. Linking to another
-#' # cell works with "cell:". To link to a file use "file:" an pass the full file
-#' # path afterwards.
+#' # cell works with "cell:". To link to a file use "file:" and pass the full file
+#' # path afterwards. When linking to a cell you can use to following keywords to
+#' # automatically link to specific parts of the output: first_title, last_title,
+#' # first_footnote, last_footnote, table_start, table_end, table_header.
 #' set_titles("This is title number 1",
 #'            "This is title number 2 link: https://cran.r-project.org/",
 #'            "This is title number 3 cell: W22",
@@ -144,9 +163,7 @@
 #'
 #' # Global options are permanently active until the current R session is closed.
 #' # There are also functions to reset the values manually.
-#' reset_style_options()
 #' reset_qol_options()
-#' close_file()
 #'
 #' @export
 frequencies <- function(data_frame,
@@ -434,8 +451,11 @@ frequencies <- function(data_frame,
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
-        wb <- openxlsx2::wb_workbook() |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+        style_list <- openxlsx2::wb_workbook() |>
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style, by)
+
+        wb    <- style_list[[1]]
+        style <- style_list[[2]]
 
         monitor_df <- monitor_df |> monitor_end()
 
@@ -797,6 +817,8 @@ format_mean_excel <- function(mean_tab,
         return(list(wb, monitor_df))
     }
 
+    if (is.null(index)){ print_step("MINOR", "Mean table") }
+
     # Drop TYPE if present
     if ("TYPE" %in% names(mean_tab)){
         mean_tab <- mean_tab |> dropp("TYPE", "by_vars")
@@ -840,6 +862,16 @@ format_mean_excel <- function(mean_tab,
     # option this whole part gets omitted to get a very quick unformatted
     # excel output.
     if (output == "excel"){
+        # Fill all cells with background color
+        if (style[["background_color"]] != ""){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+            #-----------------------------------------------------------------#
+
+            wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+        }
+
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles (mean)", "Format mean")
         #---------------------------------------------------------------------#
@@ -892,6 +924,7 @@ format_mean_excel <- function(mean_tab,
             }
         }
 
+        # Add named regions to be able to target certain areas of the workbook more easily
         wb$add_named_region(dims = mean_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
         wb$add_named_region(dims = mean_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
     }
@@ -1194,6 +1227,7 @@ format_freq_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_start("Excel prepare (freq)", "Format freq")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "[variable]: Build header", variable = variable) }
 
         # Compute additional stats
         var_tab <- compute_cumulative(freq_tab, variable, formats)
@@ -1271,11 +1305,15 @@ format_freq_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes (freq)", "Format freq")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "[variable]: Format titles and footnotes", variable = variable) }
+
         # Format titles and footnotes if there are any
         wb <- wb |>
             format_titles_foot_excel(titles, footnotes, freq_ranges, style, output)
 
         # Add table data and format according to style options
+        if (is.null(by_info)){ print_step("MINOR", "[variable]: Insert data", variable = variable) }
+
         monitor_df <- monitor_df |> monitor_next("Excel data (freq)", "Format freq")
 
         wb$add_data(x          = var_tab,
@@ -1287,9 +1325,26 @@ format_freq_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            # Fill all cells with background color
+            if (style[["background_color"]] != ""){
+                #-----------------------------------------------------------------#
+                monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+                #-----------------------------------------------------------------#
+                if (is.null(by_info)){ print_step("MINOR", "[variable]: Fill background", variable = variable) }
+
+                wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+                wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+
+                # Titles and footnotes need to get an extra fill
+                wb$add_fill(dims = freq_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+                wb$add_fill(dims = freq_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            }
+
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel cell styles (freq)", "Format freq")
             #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[variable]: Add cell styles", variable = variable) }
+
             wb <- wb |> handle_cell_styles(freq_ranges, style)
 
             # Set up inner table number formats
@@ -1313,6 +1368,7 @@ format_freq_excel <- function(wb,
                 #-----------------------------------------------------------------#
                 monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
                 #-----------------------------------------------------------------#
+                if (is.null(by_info)){ print_step("MINOR", "[variable]: Add heatmap", variable = variable) }
 
                 # First exclude the total value, if present, otherwise heat map won't
                 # work, because total will always be the highest value.
@@ -1335,21 +1391,26 @@ format_freq_excel <- function(wb,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights (freq)", "Format freq")
             #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[variable]: Adjust row heights and column widths", variable = variable) }
+
             wb <- wb |> handle_col_row_dimensions(freq_ranges,
                                                   collapse::fncol(var_tab) + (style[["start_column"]] - 1),
                                                   collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
-                                                  style)
+                                                  style) |>
+                handle_auto_dimensions(freq_ranges, style) |>
+                handle_header_table_dim(freq_ranges, style)
 
-            wb <- wb |> handle_auto_dimensions(freq_ranges,
-                                               style)
-
-            wb <- wb |> handle_header_table_dim(freq_ranges,
-                                                style)
-
+            # Ignore the "number stored as text" error within Excel
             wb$add_ignore_error(dims = freq_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
 
-            wb$add_named_region(dims = freq_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
+            # Add named regions to be able to target certain areas of the workbook more easily
+            wb$add_named_region(dims = freq_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+            wb$add_named_region(dims = freq_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+            wb$add_named_region(dims = unlist(strsplit(freq_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
         }
 
         monitor_df <- monitor_df |> monitor_end()

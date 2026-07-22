@@ -50,8 +50,18 @@
 #' order you provide the variables in values. "stats" orders them by the order under statistics.
 #' "values_stats" is a combination of both. "columns" keeps the order as given in columns
 #' and "interleaved" alternates the stats.
-#' @param titles Specify one or more table titles.
-#' @param footnotes Specify one or more table footnotes.
+#' @param titles Specify one or more table titles. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
+#' @param footnotes Specify one or more table footnotes. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
 #' @param var_labels A list in which is specified which label should be printed for
 #' which variable instead of the variable name.
 #' @param stat_labels A list in which is specified which label should be printed for
@@ -124,6 +134,7 @@
 #' #       The global option for printing the output is also set to FALSE for
 #' #       the same reason. When running the examples manually, don't run this
 #' #       option here.
+#' #       Background color is also removed to make the code run faster.
 #' set_print(FALSE)
 #' set_style_options(background_color = "")
 #'
@@ -179,8 +190,10 @@
 #'
 #' # Define titles and footnotes. If you want to add hyperlinks you can do so by
 #' # adding "link:" followed by the hyperlink to the main text. Linking to another
-#' # cell works with "cell:". To link to a file use "file:" an pass the full file
-#' # path afterwards.
+#' # cell works with "cell:". To link to a file use "file:" and pass the full file
+#' # path afterwards. When linking to a cell you can use to following keywords to
+#' # automatically link to specific parts of the output: first_title, last_title,
+#' # first_footnote, last_footnote, table_start, table_end, table_header.
 #' set_titles("This is title number 1",
 #'            "This is title number 2 link: https://cran.r-project.org/",
 #'            "This is title number 3 cell: W22",
@@ -397,12 +410,7 @@
 #'
 #' # Global options are permanently active until the current R session is closed.
 #' # There are also functions to reset the values manually.
-#' reset_style_options()
 #' reset_qol_options()
-#' close_file()
-#'
-#' set_print(TRUE)
-#' set_style_options(background_color = "FFFFFF")
 #'
 #' @export
 any_table <- function(data_frame,
@@ -2175,14 +2183,22 @@ any_table <- function(data_frame,
 
     # Setup styling in new workbook if no other is provided
     if (is.null(workbook)){
-        workbook <- openxlsx2::wb_workbook() |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+        style_list <- openxlsx2::wb_workbook() |>
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style, by)
+
+        workbook <- style_list[[1]]
+        style    <- style_list[[2]]
     }
     # Update style options in provided workbook
     else{
-        workbook <- workbook |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+        style_list <- workbook |>
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style, by)
+
+        workbook        <- style_list[[1]]
+        style           <- style_list[[2]]
     }
+
+    meta[["style"]] <- style
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -2412,11 +2428,11 @@ format_any_excel <- function(wb,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Add table data and format according to style options
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if (is.null(by_info)){ print_step("MINOR", "Insert data") }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
     #-------------------------------------------------------------------------#
+    if (is.null(by_info)){ print_step("MINOR", "Insert data") }
 
     wb$add_data(x          = any_tab,
                 start_col  = style[["start_column"]],
@@ -2434,11 +2450,12 @@ format_any_excel <- function(wb,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Table styling
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if (is.null(by_info)){ print_step("MINOR", "Format titles and footnotes") }
 
     #-------------------------------------------------------------------------#
     monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
     #-------------------------------------------------------------------------#
+    if (is.null(by_info)){ print_step("MINOR", "Format titles and footnotes") }
+
     # Format titles and footnotes if there are any
     wb <- wb |>
         format_titles_foot_excel(titles, footnotes, any_ranges, style, output)
@@ -2567,12 +2584,19 @@ format_any_excel <- function(wb,
             handle_header_table_dim(any_ranges, style)
     }
 
+    # Ignore the "number stored as text" error within Excel
     wb$add_ignore_error(dims = any_ranges[["header_range"]],  number_stored_as_text = TRUE)
     wb$add_ignore_error(dims = any_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
     wb$add_ignore_error(dims = any_ranges[["table_range"]],   number_stored_as_text = TRUE)
 
-    wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
-    wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
+    # Add named regions to be able to target certain areas of the workbook more easily
+    wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+    wb$add_named_region(dims = any_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+    wb$add_named_region(dims = unlist(strsplit(any_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -3229,7 +3253,8 @@ format_by_single_table <- function(wb,
 #'                              pct_group  = c("sex", "age", "education", "year"),
 #'                              formats    = list(sex = sex., age = age.,
 #'                                                education = education.),
-#'                              na.rm      = TRUE)
+#'                              na.rm      = TRUE,
+#'                              print      = FALSE)
 #'
 #' set_style_options(sheet_name = "age_sex")
 #'
@@ -3238,16 +3263,12 @@ format_by_single_table <- function(wb,
 #'                              values     = weight,
 #'                              statistics = "sum",
 #'                              formats    = list(sex = sex., age = age.),
-#'                              na.rm      = TRUE)
+#'                              na.rm      = TRUE,
+#'                              print      = FALSE)
 #'
-#' set_style_options(sheet_name = "edu_year")
+#' set_style_options(sheet_name = "data")
 #'
-#' tab3 <- my_data |> any_table(rows       = "education",
-#'                              columns    = "year",
-#'                              values     = weight,
-#'                              statistics = "pct_group",
-#'                              formats    = list(education = education.),
-#'                              na.rm      = TRUE)
+#' tab3 <- my_data |> export_with_style(print = FALSE)
 #'
 #' # Every of the above tabs is a list, which contains the data table, an unstyled
 #' # workbook and the meta information needed for the individual styling. These
@@ -3310,10 +3331,12 @@ combine_into_workbook <- function(...,
 
         meta <- table[["meta"]]
 
-        wb <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]])
-
         # Style data frame for export
         if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
+            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]])
+            wb              <- style_list[[1]]
+            meta[["style"]] <- style_list[[2]]
+
             wb_list <- suppressMessages(
                 format_df_excel(wb, table[["table"]], meta[["titles"]], meta[["footnotes"]],
                                 meta[["var_labels"]], meta[["style"]], meta[["column_align"]],
@@ -3323,6 +3346,10 @@ combine_into_workbook <- function(...,
         }
         # Style any_table output for export
         else{
+            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]], meta[["by"]])
+            wb              <- style_list[[1]]
+            meta[["style"]] <- style_list[[2]]
+
             # In case no by variables are provided
             if (length(meta[["by"]]) == 0){
                 wb_list <- suppressMessages(

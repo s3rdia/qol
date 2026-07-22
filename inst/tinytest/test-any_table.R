@@ -149,6 +149,30 @@ expect_inherits(result_list, "qol_table", info = "any_table with multiple titles
 expect_equal(length(result_list), 3, info = "any_table with multiple titles and footnotes")
 
 
+# any_table with multiple titles and footnotes makes style options scale accordingly
+set_titles("Hello world1", "Hello world2", "Hello world3")
+set_footnotes("This is a footnote1", "This is a footnote2", "This is a footnote3")
+
+result_list <- dummy_df |>
+    any_table(rows      = "age",
+              columns   = "sex",
+              values    = weight,
+              print     = FALSE)
+
+style <- result_list[["meta"]][["style"]]
+
+reset_style_options()
+
+expect_equal(length(style[["title_font_color"]]),    3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["title_font_size"]]),     3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["title_font_bold"]]),     3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["title_alignment"]]),     3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["footnote_font_color"]]), 3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["footnote_font_size"]]),  3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["footnote_font_bold"]]),  3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+expect_equal(length(style[["footnote_alignment"]]),  3, info = "any_table with multiple titles and footnotes makes style options scale accordingly")
+
+
 # any_table with variable and stat labels
 result_list <- dummy_df |>
       any_table(rows        = "age",

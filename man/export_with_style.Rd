@@ -20,9 +20,19 @@ export_with_style(
 \arguments{
 \item{data_frame}{A data frame to print.}
 
-\item{titles}{Specify one or more table titles.}
+\item{titles}{Specify one or more table titles. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.}
 
-\item{footnotes}{Specify one or more table footnotes.}
+\item{footnotes}{Specify one or more table footnotes. If you want to add hyperlinks you
+can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+When linking to a cell you can use to following keywords to automatically link to specific
+parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+table_end, table_header.}
 
 \item{var_labels}{A list in which is specified which label should be printed for
 which variable instead of the variable name.}
@@ -64,8 +74,10 @@ set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text. Linking to another
-# cell works with "cell:". To link to a file use "file:" an pass the full file
-# path afterwards.
+# cell works with "cell:". To link to a file use "file:" and pass the full file
+# path afterwards. When linking to a cell you can use to following keywords to
+# automatically link to specific parts of the output: first_title, last_title,
+# first_footnote, last_footnote, table_start, table_end, table_header.
 set_titles("This is title number 1",
            "This is title number 2 link: https://cran.r-project.org/",
            "This is title number 3 cell: W22",
@@ -122,12 +134,7 @@ unlink(table_file)
 
 # Global options are permanently active until the current R session is closed.
 # There are also functions to reset the values manually.
-reset_style_options()
 reset_qol_options()
-close_file()
-
-set_print(TRUE)
-set_style_options(background_color = "FFFFFF")
 
 }
 \seealso{

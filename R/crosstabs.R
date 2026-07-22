@@ -17,8 +17,18 @@
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
-#' @param titles Specify one or more table titles.
-#' @param footnotes Specify one or more table footnotes.
+#' @param titles Specify one or more table titles. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
+#' @param footnotes Specify one or more table footnotes. If you want to add hyperlinks you
+#' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
+#' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
+#' When linking to a cell you can use to following keywords to automatically link to specific
+#' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
+#' table_end, table_header.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: console (default), text,
@@ -68,6 +78,13 @@
 #' [recode_multi()], [transpose_plus()], [sort_plus()]
 #'
 #' @examples
+#' # NOTE: The global option for printing the output is set to FALSE to save time
+#' #       on running the examples. When running the examples manually, don't run
+#' #       this option here.
+#' #       Background color is also removed to make the code run faster.
+#' set_print(FALSE)
+#' set_style_options(background_color = "")
+#'
 #' # Example data frame
 #' my_data <- dummy_data(1000)
 #'
@@ -126,8 +143,10 @@
 #'
 #' # If you want to add hyperlinksto titles and footnotes you can do so by
 #' # adding "link:" followed by the hyperlink to the main text. Linking to another
-#' # cell works with "cell:". To link to a file use "file:" an pass the full file
-#' # path afterwards.
+#' # cell works with "cell:". To link to a file use "file:" and pass the full file
+#' # path afterwards. When linking to a cell you can use to following keywords to
+#' # automatically link to specific parts of the output: first_title, last_title,
+#' # first_footnote, last_footnote, table_start, table_end, table_header.
 #' set_titles("This is title number 1",
 #'            "This is title number 2 link: https://cran.r-project.org/",
 #'            "This is title number 3 cell: W22",
@@ -163,9 +182,7 @@
 #'
 #' # Global options are permanently active until the current R session is closed.
 #' # There are also functions to reset the values manually.
-#' reset_style_options()
 #' reset_qol_options()
-#' close_file()
 #'
 #' @export
 crosstabs <- function(data_frame,
@@ -469,8 +486,11 @@ crosstabs <- function(data_frame,
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
-        wb <- openxlsx2::wb_workbook() |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+        style_list <- openxlsx2::wb_workbook() |>
+            prepare_styles(list("title" = titles, "footnote" = footnotes), style, by)
+
+        wb    <- style_list[[1]]
+        style <- style_list[[2]]
 
         monitor_df <- monitor_df |> monitor_end()
 
@@ -949,6 +969,7 @@ format_cross_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "[stat]: Build header", stat = stat) }
 
         # Setup cross table for formatting
         var_tab <- setup_print_table(cross_tab, rows, stat)
@@ -1017,6 +1038,8 @@ format_cross_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel titles/footnotes", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "[stat]: Format titles and footnotes", stat = stat) }
+
         # Format titles and footnotes if there are any
         wb <- wb |>
             format_titles_foot_excel(titles, footnotes, cross_ranges, style, output)
@@ -1024,6 +1047,7 @@ format_cross_excel <- function(wb,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel data", "Format")
         #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "[stat]: Insert data", stat = stat) }
 
         # Add table data and format according to style options
         wb$add_data(x          = var_tab,
@@ -1035,9 +1059,26 @@ format_cross_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            # Fill all cells with background color
+            if (style[["background_color"]] != ""){
+                #-----------------------------------------------------------------#
+                monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+                #-----------------------------------------------------------------#
+                if (is.null(by_info)){ print_step("MINOR", "[stat]: Fill background", stat = stat) }
+
+                wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+                wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+
+                # Titles and footnotes need to get an extra fill
+                wb$add_fill(dims = cross_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+                wb$add_fill(dims = cross_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            }
+
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
             #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[stat]: Add cell styles", stat = stat) }
+
             wb <- wb |> handle_cell_styles(cross_ranges, style)
 
             if (stat == "sum" || stat== "freq"){
@@ -1056,6 +1097,7 @@ format_cross_excel <- function(wb,
                 #-----------------------------------------------------------------#
                 monitor_df <- monitor_df |> monitor_next("Excel format heatmap", "Format")
                 #-----------------------------------------------------------------#
+                if (is.null(by_info)){ print_step("MINOR", "[stat]: Add heatmap", stat = stat) }
 
                 wb$add_conditional_formatting(dims  = cross_ranges[["table_range"]],
                                               style = c(style[["heatmap_low_color"]],
@@ -1068,22 +1110,27 @@ format_cross_excel <- function(wb,
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
             #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[stat]: Adjust row heights and column widths", stat = stat) }
+
             wb <- wb |> handle_col_row_dimensions(cross_ranges,
                                                   collapse::fncol(var_tab) + (style[["start_column"]] - 1),
                                                   collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
-                                                  style)
+                                                  style) |>
+                handle_auto_dimensions(cross_ranges, style) |>
+                handle_header_table_dim(cross_ranges, style)
 
-            wb <- wb |> handle_auto_dimensions(cross_ranges,
-                                               style)
-
-            wb <- wb |> handle_header_table_dim(cross_ranges,
-                                                style)
-
+            # Ignore the "number stored as text" error within Excel
             wb$add_ignore_error(dims = cross_ranges[["header_range"]],  number_stored_as_text = TRUE)
             wb$add_ignore_error(dims = cross_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
 
-            wb$add_named_region(dims = cross_ranges[["whole_tab_range"]], name = "table", local_sheet = TRUE)
-            wb$add_named_region(dims = cross_ranges[["table_range"]],     name = "data",  local_sheet = TRUE)
+            # Add named regions to be able to target certain areas of the workbook more easily
+            wb$add_named_region(dims = cross_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+            wb$add_named_region(dims = cross_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+            wb$add_named_region(dims = unlist(strsplit(cross_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
         }
     }
 

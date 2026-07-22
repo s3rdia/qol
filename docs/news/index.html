@@ -44,6 +44,8 @@
 <code><a href="../reference/save_load.html">load_file()</a></code>, <code><a href="../reference/save_load.html">load_file_multi()</a></code>: When passing a named vector or list into the <code>keep</code> parameter, the original variables will directly be renamed. (18.07.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Can now handle duplicate column names by making them unique (except NA columns). (18.07.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: Now also receive a colored background. (22.07.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-3-4">Removed<a class="anchor" aria-label="anchor" href="#removed-1-3-4"></a></h4>
@@ -56,6 +58,19 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Variables generated with the <code>compute</code> parameter now receive a default <code>statistics</code> extension, if they are missing one, so that the column header is generated correctly and a number format is applied. (17.07.2026)</li>
 <li>
 <code><a href="../reference/retain.html">mark_case()</a></code>: When marking <code>last</code> cases and the last expression within the <code>by</code> variable was NA, then the last case in the second to last expression became NA instead of TRUE. This is fixed now. (18.07.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: When different title or footnote styles where used, they were only applied, if multiple colors where used. Otherwise the formatting broke. This is fixed now. Additionally the code is now simplified and streamlined. (22.07.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The additional <code>by</code> title is now also taken into account with individual styling, when multiple titles are present. (22.07.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-3-4">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-4"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Extended <code>titles</code> and <code>footnotes</code> description according to the new functionality. (22.07.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: Added some new messages on the styling progress. (22.07.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Added named regions for titles, main title, footnotes, table header and row headers. (22.07.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
