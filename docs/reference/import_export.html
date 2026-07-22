@@ -79,7 +79,8 @@ to a single xlsx file with multiple sheets.</p>
 <span>  region <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  separator <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  decimal <span class="op">=</span> <span class="st">"auto"</span>,</span>
-<span>  var_names <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  var_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  stack_files <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">export_data</span><span class="op">(</span></span>
@@ -131,7 +132,12 @@ or the name of a named region.</p></dd>
 
 <dt id="arg-file-list">file_list<a class="anchor" aria-label="anchor" href="#arg-file-list"></a></dt>
 <dd><p><code>import_multi()</code>: A character vector containing full file paths.</p>
-<p><code>export_multi()</code>: A list of data frames.</p></dd>
+<p><code>export_multi()</code>: A list of data frames.#'</p></dd>
+
+
+<dt id="arg-stack-files">stack_files<a class="anchor" aria-label="anchor" href="#arg-stack-files"></a></dt>
+<dd><p>FALSE by default. If TRUE, stacks data frames after importing
+them. If FALSE, returns all data frames in a list.</p></dd>
 
 
 <dt id="arg-data-frame">data_frame<a class="anchor" aria-label="anchor" href="#arg-data-frame"></a></dt>
@@ -154,7 +160,7 @@ sheets of a single xlsx file or into separate xlsx files.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a data frame.</p>
-<p>Multi functions: Returns a list of data frames.</p>
+<p>Multi functions: Returns a list of data frames or a stacked data frame.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

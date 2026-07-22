@@ -381,4 +381,26 @@ expect_inherits(infile, "list", info = "Multi file import works correctly (all s
 expect_equal(length(infile), 2, info = "Multi file import works correctly (all sheets)")
 
 
+# Multi file import works correctly (selected sheets)
+xlsx_file <- system.file("extdata", "qol_example_data_xlsx.xlsx", package = "qol")
+
+infile <- import_multi(xlsx_file, sheet = c(1, 2))
+
+expect_inherits(infile, "list", info = "Multi file import works correctly (selected sheets)")
+expect_equal(length(infile), 2, info = "Multi file import works correctly (selected sheets)")
+
+
+# Multi file import can stack data
+csv_file  <- system.file("extdata", "qol_example_data_csv.csv",   package = "qol")
+txt_file  <- system.file("extdata", "qol_example_data_txt.txt",   package = "qol")
+files     <- c(csv_file, txt_file)
+
+csv_import <- import_data(csv_file)
+txt_import <- import_data(txt_file)
+all_import <- import_multi(files, stack_files = TRUE)
+
+expect_equal(collapse::fnrow(csv_import) + collapse::fnrow(txt_import),
+             collapse::fnrow(all_import), info = "Multi file import can stack data")
+
+
 set_no_print()

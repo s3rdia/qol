@@ -153,7 +153,7 @@ expect_message(print_stack_as_messages("NOTE"), "<Weight> parameter has no effec
 wide_df <- dummy_df |>
    transpose_plus(preserve = "test",
                   pivot    = "sex",
-                  value    = income)
+                  values   = income)
 
 expect_warning(print_stack_as_messages("WARNING"), "The provided <preserve> variable",
                info = "Preserve variable in transposition is not part of the data frame")
@@ -163,7 +163,7 @@ expect_warning(print_stack_as_messages("WARNING"), "The provided <preserve> vari
 wide_df <- dummy_df |>
    transpose_plus(preserve = sex,
                   pivot    = "age",
-                  value    = sex)
+                  values   = sex)
 
 expect_warning(print_stack_as_messages("WARNING"), "The provided <values> variable",
                info = "Value variable in transposition is also part of preserve")
@@ -185,7 +185,7 @@ expect_error(print_stack_as_messages("ERROR"), "Nesting <pivot> variables in a w
 wide_df <- dummy_wide_df |>
 			transpose_plus(preserve = year,
 						   pivot    = "year",
-						   value    = income)
+						   values   = income)
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable",
              info = "Abort transposition if pivot variable is part of preserve")
@@ -202,8 +202,8 @@ expect_error(print_stack_as_messages("ERROR"), "No <values> provided. Transposit
 
 # Abort transposition if value variable is not part of the data frame
 wide_df <- dummy_df |>
-			transpose_plus(pivot = "sex",
-						   value = test)
+			transpose_plus(pivot  = "sex",
+						   values = test)
 
 expect_error(print_stack_as_messages("ERROR"), "No valid <values> to transpose provided. Transposition will be aborted.",
              info = "Abort transposition if value variable is not part of the data frame")
@@ -211,8 +211,8 @@ expect_error(print_stack_as_messages("ERROR"), "No valid <values> to transpose p
 
 # Abort if value variable in transposition is also part of pivot
 wide_df <- dummy_df |>
-			transpose_plus(pivot = "sex",
-						   value = sex)
+			transpose_plus(pivot  = "sex",
+						   values = sex)
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <values> variable",
              info = "Abort if value variable in transposition is also part of pivot")
@@ -230,8 +230,8 @@ expect_error(print_stack_as_messages("ERROR"), "Duplicate column names found:",
 
 # Abort if no valid pivot variable is provided in transposition
 wide_df <- dummy_df |>
-			transpose_plus(pivot = "test",
-						   value = income)
+			transpose_plus(pivot  = "test",
+						   values = income)
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable",
              info = "Abort if no valid pivot variable is provided in transposition")

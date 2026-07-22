@@ -560,7 +560,7 @@ result_df <- dummy_df |>
                    values     = c(income),
                    statistics = c("sum", "mean", "pct_group", "pct_total"),
                    weight     = weight,
-                   type       = c("total", "year + sex", "sex + age", "age"),
+                   types      = c("total", "year + sex", "sex + age", "age"),
                    nesting    = "all")
 
 expect_equal(min(result_df[["DEPTH"]]), 0, info = "Generate only chosen combinations of class variables")

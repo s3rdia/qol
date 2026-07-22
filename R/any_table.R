@@ -3386,6 +3386,8 @@ combine_into_workbook <- function(...,
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#
 
+        file <- macro(file)
+
         if (is.null(file)){
             if (interactive()){
                 wb$open()

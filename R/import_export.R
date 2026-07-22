@@ -248,6 +248,13 @@ import_data <- function(infile,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
+    # Fix encoding for ä, ö, ü and ß
+    character_columns <- sapply(data_frame, is.character)
+
+    data_frame[character_columns] <- lapply(data_frame[character_columns], function(column){
+        iconv(column, from = "latin1", to = "UTF-8")
+    })
+
     if (extension == "xlsx"){
         print_closing(5)
     }
@@ -265,10 +272,12 @@ import_data <- function(infile,
 #'
 #' @param file_list [import_multi()]: A character vector containing full file paths.
 #'
-#' [export_multi()]: A list of data frames.
+#' [export_multi()]: A list of data frames.#'
+#' @param stack_files FALSE by default. If TRUE, stacks data frames after importing
+#' them. If FALSE, returns all data frames in a list.
 #'
 #' @return
-#' Multi functions: Returns a list of data frames.
+#' Multi functions: Returns a list of data frames or a stacked data frame.
 #'
 #' @examples
 #' # Import multiple files at once
@@ -278,11 +287,12 @@ import_data <- function(infile,
 #'
 #' @export
 import_multi <- function(file_list,
-                         sheet     = "all",
-                         region    = NULL,
-                         separator = "auto",
-                         decimal   = "auto",
-                         var_names = TRUE){
+                         sheet       = "all",
+                         region      = NULL,
+                         separator   = "auto",
+                         decimal     = "auto",
+                         var_names   = TRUE,
+                         stack_files = FALSE){
     print_start_message()
 
     # Loop through all files and import them one after another
@@ -307,17 +317,38 @@ import_multi <- function(file_list,
         # For XLSX files there are two possible path to go
         else if (extension == "xlsx"){
             # If all sheets should be imported from a single file
-            if (sheet == "all"){
+            if (length(sheet) == 1 && sheet == "all"){
                 print_step("MAJOR", "Loading file: [infile]", infile = infile)
 
                 # Load file as a workbook first to be able to extract the sheet names
-                wb <- openxlsx2::wb_load(infile)
+                wb          <- openxlsx2::wb_load(infile)
                 sheet_names <- openxlsx2::wb_get_sheet_names(wb)
 
                 print_step("MAJOR", "Importing:")
 
                 # Import all sheets one after another by name
                 for (sheet_name in sheet_names){
+                    print_step("MINOR", "Sheet: [sheet]", sheet = sheet_name)
+
+                    result_list[[paste0(filename, "_", sheet_name)]] <-
+                        suppressMessages(
+                            import_data(infile    = wb,
+                                        sheet     = sheet_name,
+                                        region    = region,
+                                        var_names = var_names))
+                }
+            }
+            # If multiple specific sheets should be imported
+            else if (length(sheet) > 0){
+                print_step("MAJOR", "Loading file: [infile]", infile = infile)
+
+                # Load file as a workbook first to be able to extract the sheet names
+                wb <- openxlsx2::wb_load(infile)
+
+                print_step("MAJOR", "Importing:")
+
+                # Import specific sheets one after another
+                for (sheet_name in sheet){
                     print_step("MINOR", "Sheet: [sheet]", sheet = sheet_name)
 
                     result_list[[paste0(filename, "_", sheet_name)]] <-
@@ -338,6 +369,13 @@ import_multi <- function(file_list,
                                 var_names = var_names))
             }
         }
+    }
+
+    # Stack data frames
+    if (stack_files){
+        print_step("MAJOR", "Stacking files")
+
+        result_list <- suppressMessages(stack_data(result_list))
     }
 
     print_closing(10)

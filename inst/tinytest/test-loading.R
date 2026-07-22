@@ -134,7 +134,7 @@ rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
 fst_df <- load_file(dirname(fst_file), basename(fst_file), keep = c("sex", "age"))
 rds_df <- load_file(dirname(rds_file), basename(rds_file), keep = c("income", "state"))
-all_df <- load_file_multi(c(fst_file, rds_file), keep = list(c("sex", "age"), c("income", "state")))
+all_df <- load_file_multi(c(fst_file, rds_file), keep_list = list(c("sex", "age"), c("income", "state")))
 
 expect_equal(names(all_df), c("sex", "age", "income", "state"), info = "Loading multiple files with keep and stack them")
 expect_equal(collapse::fnrow(fst_df) + collapse::fnrow(rds_df),
@@ -148,7 +148,7 @@ rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 fst_df <- load_file(dirname(fst_file), basename(fst_file), keep = c("sex", "age"))
 rds_df <- load_file(dirname(rds_file), basename(rds_file), keep = c("income", "state"))
 all_df <- load_file_multi(c(fst_file, rds_file),
-                          keep        = list(c("sex", "age"), c("income", "state")),
+                          keep_list   = list(c("sex", "age"), c("income", "state")),
                           stack_files = FALSE)
 
 expect_equal(names(fst_df), names(all_df[[1]]), info = "Loading multiple files with keep and return as list")
@@ -161,7 +161,7 @@ fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
 all_df <- load_file_multi(c(fst_file, rds_file),
-                          keep        = list(c("sex"    = var1, "age"   = var2),
+                          keep_list   = list(c("sex"    = var1, "age"   = var2),
                                              c("income" = var3, "state" = var4)),
                           stack_files = FALSE)
 
@@ -245,7 +245,7 @@ on.exit(unlink(c(fst_file, rds_file)), add = TRUE)
 
 save_file_multi(data_frame_list = list(dummy_df1, dummy_df2),
                 file_list       = c(fst_file, rds_file),
-                keep            = list(c("sex", "age"), c("income", "state")))
+                keep_list       = list(c("sex", "age"), c("income", "state")))
 
 expect_true(file.exists(fst_file), info = "Saving multiple files with keep")
 expect_true(file.exists(rds_file), info = "Saving multiple files with keep")

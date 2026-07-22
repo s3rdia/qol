@@ -14,6 +14,12 @@
 - [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
   [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
   Now also receive a colored background. (22.07.2026)
+- [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Received a new paramter `stack_data` which can stack read in files and
+  return them as a single data frame. (22.07.2026)
+- [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Can now handle a vector of sheet names and import only the specified
+  ones. (22.07.2026)
 
 #### Removed
 
@@ -44,6 +50,8 @@
   [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
   The additional `by` title is now also taken into account with
   individual styling, when multiple titles are present. (22.07.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Fixed a Problem with encoding. (22.07.2026)
 
 #### Additionally
 
@@ -62,6 +70,11 @@
   [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   Added named regions for titles, main title, footnotes, table header
   and row headers. (22.07.2026)
+- Cleanup of a partial matches. (22.07.2026, thanks to
+  [@JanMarvin](https://github.com/JanMarvin) and
+  [@olivroy](https://github.com/olivroy))
+- [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
+  Swapped out a copypasta error message with the right one. (22.07.2026)
 
 ## qol 1.3.3
 

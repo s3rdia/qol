@@ -23,7 +23,8 @@ import_multi(
   region = NULL,
   separator = "auto",
   decimal = "auto",
-  var_names = TRUE
+  var_names = TRUE,
+  stack_files = FALSE
 )
 
 export_data(
@@ -59,7 +60,10 @@ or the name of a named region.}
 
 \item{file_list}{\code{\link[=import_multi]{import_multi()}}: A character vector containing full file paths.
 
-\code{\link[=export_multi]{export_multi()}}: A list of data frames.}
+\code{\link[=export_multi]{export_multi()}}: A list of data frames.#'}
+
+\item{stack_files}{FALSE by default. If TRUE, stacks data frames after importing
+them. If FALSE, returns all data frames in a list.}
 
 \item{data_frame}{A data frame to export.}
 
@@ -73,7 +77,7 @@ sheets of a single xlsx file or into separate xlsx files.}
 \value{
 Returns a data frame.
 
-Multi functions: Returns a list of data frames.
+Multi functions: Returns a list of data frames or a stacked data frame.
 }
 \description{
 \code{\link[=import_data]{import_data()}}: A wrapper for \code{\link[data.table:fread]{data.table::fread()}} and \code{\link[openxlsx2:wb_to_df]{openxlsx2::wb_to_df()}},

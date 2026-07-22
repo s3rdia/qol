@@ -37,7 +37,8 @@ import_multi(
   region = NULL,
   separator = "auto",
   decimal = "auto",
-  var_names = TRUE
+  var_names = TRUE,
+  stack_files = FALSE
 )
 
 export_data(
@@ -91,7 +92,12 @@ export_multi(
 
   `import_multi()`: A character vector containing full file paths.
 
-  `export_multi()`: A list of data frames.
+  `export_multi()`: A list of data frames.#'
+
+- stack_files:
+
+  FALSE by default. If TRUE, stacks data frames after importing them. If
+  FALSE, returns all data frames in a list.
 
 - data_frame:
 
@@ -115,7 +121,7 @@ export_multi(
 
 Returns a data frame.
 
-Multi functions: Returns a list of data frames.
+Multi functions: Returns a list of data frames or a stacked data frame.
 
 ## Details
 

@@ -146,7 +146,7 @@ stack_data <- function(...,
     })
 
     if (is.null(df_list)){
-        print_message("ERROR", "Unknown object found. Retaining will be aborted.")
+        print_message("ERROR", "No data frames provided. Stacking data will be aborted.")
         return(invisible(NULL))
     }
 
