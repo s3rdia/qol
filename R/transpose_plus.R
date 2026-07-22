@@ -435,7 +435,7 @@ transpose_plus <- function(data_frame,
             print_step("MINOR", paste(method, collapse = " + "))
 
             transpose_df <- data_frame |>
-                collapse::pivot(id     = preserve,
+                collapse::pivot(ids    = preserve,
                                 names  = method,
                                 values = values,
                                 how    = "wider")
@@ -504,7 +504,7 @@ transpose_plus <- function(data_frame,
             # if multiple transpositions are put back together afterwards.
             transpose_df <- data_frame |>
                 keep(vars_to_keep) |>
-                collapse::pivot(id    = preserve,
+                collapse::pivot(ids   = preserve,
                                 names = list(variable = var_name,
                                               value   = "VALUE"),
                                 how   = "longer",
