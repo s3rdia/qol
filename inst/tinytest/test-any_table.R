@@ -501,7 +501,7 @@ expect_true(all(c("Total", "below 500", "2000 and more")
 
 
 # any_table can silence format expressions
-sex. <- discrete_format(
+sex2. <- discrete_format(
     "!Total" = 1:2,
     "Male"   = 1,
     "Female" = 2)
@@ -512,7 +512,7 @@ result_list <- dummy_df |>
               values     = weight,
               statistics = "sum",
               output     = "excel_nostyle",
-              formats    = list(sex = sex.),
+              formats    = list(sex = sex2.),
               print      = FALSE)
 
 expect_false(any(grepl("!", names(result_list[["table"]]))), info = "any_table can silence format expressions")
@@ -883,6 +883,18 @@ result_list <- dummy_df |>
 
 expect_true(all(c("weight_sum_1.dup1", "weight_sum_2.dup1",
                   "weight_sum_1.dup2", "weight_sum_1.dup2") %in% names(result_list[[1]])),
+            info = "any_table can handle duplicate column names without NA values")
+
+
+result_list <- dummy_df |>
+    any_table(rows    = "education",
+              columns = c("sex", "age"),
+              values  = weight,
+              formats = list(sex = sex., age = age2.),
+              na.rm   = TRUE,
+              print   = FALSE)
+
+expect_true(all(c("weight_sum_Total.dup1", "weight_sum_Total.dup2") %in% names(result_list[[1]])),
             info = "any_table can handle duplicate column names without NA values")
 
 

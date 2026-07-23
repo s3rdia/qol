@@ -1633,7 +1633,14 @@ any_table <- function(data_frame,
     # before.
     # Identify expressions that appear in more than one variable
     unique_col_value_list <- lapply(col_vars, function(col_var){
-        collapse::funique(any_tab[[col_var]])
+        values <- any_tab[[col_var]]
+
+        if (is.factor(values)){
+            levels(values)
+        }
+        else{
+            collapse::funique(values)
+        }
     })
 
     value_counts       <- table(unlist(unique_col_value_list))
@@ -1641,6 +1648,7 @@ any_table <- function(data_frame,
 
     # Loop through the column variables and add a suffix to the duplicate expressions
     if (length(overlapping_values) > 0){
+        variable           <- gsub("_", "!!!", variable)
         overlapping_values <- paste0("^(", paste(overlapping_values, collapse = "|"), ")$")
 
         # Loop over column variables and add a suffix to the duplicate expressions

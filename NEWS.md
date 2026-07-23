@@ -7,6 +7,7 @@
 * `frequencies()`, `crosstabs()`: Now also receive a colored background. (22.07.2026)
 * `import_multi()`: Received a new paramter `stack_data` which can stack read in files and return them as a single data frame. (22.07.2026)
 * `import_multi()`: Can now handle a vector of sheet names and import only the specified ones. (22.07.2026)
+* `multi_join()`: Variable names in the `on` parameter can now be passed without quotation marks. (23.07.2026)
 
 ### Removed
 

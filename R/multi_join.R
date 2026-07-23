@@ -143,6 +143,32 @@ multi_join <- function(data_frames,
 
     unequal_names <- FALSE
 
+    # Try evaluating "on" directly. This works, if variable names were passed as
+    # characters.
+    on <- tryCatch({
+        on
+    }, error = function(e){
+        NULL
+    })
+
+    # If variable names were passed without quotation marks "on" will be NULL here
+    # and evaluation will be different.
+    if (is.null(on)){
+        # Capture the complete "on" argument
+        on_call <- match.call()
+        on_call <- as.list(on_call[["on"]])[-1]
+
+        # Convert list elements to characters
+        on <- lapply(on_call, function(element){
+            if (is.symbol(element)){
+                as.character(element)
+            }
+            else{
+                sapply(as.list(element)[-1], as.character)
+            }
+        })
+    }
+
     if (is.list(on)){
         base_on <- on[[1]]
 
@@ -156,16 +182,24 @@ multi_join <- function(data_frames,
 
             unequal_names <- TRUE
         }
-        # If a list entry is missing a name abort
+        # If a list entry is missing a name
         else{
-            print_message("ERROR", c("If all data frames have the same variable names for the <on> variables,",
-								     "provide them as a vector instead of a list. For unequal names provide a",
-								     "named list. Join will be aborted."))
-            return(invisible(NULL))
+            # If there is no name at all, treat it as a vector and go on
+            if (is.null(names(on))){
+                on      <- unlist(on)
+                base_on <- on
+            }
+            # If there are some names, but not all entries are named, abort
+            else{
+                print_message("ERROR", c("If all data frames have the same variable names for the <on> variables,",
+                                         "provide them as a vector instead of a list. For unequal names provide a",
+                                         "named list. Join will be aborted."))
+                return(invisible(NULL))
+            }
         }
     }
     else{
-        base_on <- on
+        base_on <- get_origin_as_char(on, substitute(on))
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

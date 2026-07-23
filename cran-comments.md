@@ -8,6 +8,7 @@ Last CRAN release was on 16.07.2026.
 * `frequencies()`, `crosstabs()`: Now also receive a colored background.
 * `import_multi()`: Received a new paramter `stack_data` which can stack read in files and return them as a single data frame.
 * `import_multi()`: Can now handle a vector of sheet names and import only the specified ones.
+* `multi_join()`: Variable names in the `on` parameter can now be passed without quotation marks.
 
 ### Removed
 
@@ -25,6 +26,7 @@ Last CRAN release was on 16.07.2026.
 
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Extended `titles` and `footnotes` description according to the new functionality.
 * `frequencies()`, `crosstabs()`: Added some new messages on the styling progress.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added named regions for titles, main title, footnotes, table header and row headers.
 * Cleanup of a partial matches.
 * `stack_data()`: Swapped out a copypasta error message with the right one.
 

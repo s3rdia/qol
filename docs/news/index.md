@@ -20,6 +20,9 @@
 - [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Can now handle a vector of sheet names and import only the specified
   ones. (22.07.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Variable names in the `on` parameter can now be passed without
+  quotation marks. (23.07.2026)
 
 #### Removed
 

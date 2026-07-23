@@ -69,6 +69,10 @@ left_joined <- multi_join(list(df1b, df2b), on = c("key1", "key2"))
 
 expect_true("b" %in% names(left_joined), info = "Join on multiple keys")
 
+left_joined <- multi_join(list(df1b, df2b), on = list(key1, key2))
+
+expect_true("b" %in% names(left_joined), info = "Join on multiple keys")
+
 
 # Join more than two data frames
 multiple_joined <- multi_join(list(df1, df2, df3), on = "key")
@@ -84,6 +88,14 @@ multiple_joined <-
                          df3c = c("any", "name")))
 
 expect_true(all(c("b", "c") %in% names(multiple_joined)), info = "Join multiple data frames on different variable names")
+
+multiple_joined2 <-
+    multi_join(list(df1c, df2c, df3c),
+               on = list(df1c = c(key1, key2),
+                         df2c = c(var1, var2),
+                         df3c = c(any, name)))
+
+expect_equal(multiple_joined, multiple_joined2, info = "Join multiple data frames on different variable names")
 
 
 # Warning on invalid join method
@@ -133,11 +145,11 @@ expect_error(print_stack_as_messages("ERROR"), "At least two data frames are req
              info = "Abort join, if only one data frames provided")
 
 
-# Abort join, if <on> variables are provided as unnamed list
-left_joined <- multi_join(list(df1, df2), on = list("key"))
+# Abort join, if <on> variables are provided as incomplete unnamed list
+left_joined <- multi_join(list(df1b, df2b), on = list(a = "key1", "key2"))
 
 expect_error(print_stack_as_messages("ERROR"), "If all data frames have the same variable names for the <on> variables",
-             info = "Abort join, if <on> variables are provided as unnamed list")
+             info = "Abort join, if <on> variables are provided as incomplete unnamed list")
 
 
 # Abort join, if <on> variables are not provided for every data frame
