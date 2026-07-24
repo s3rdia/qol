@@ -52,6 +52,10 @@
 <code><a href="../reference/import_export.html">import_multi()</a></code>: Can now handle a vector of sheet names and import only the specified ones. (22.07.2026)</li>
 <li>
 <code><a href="../reference/multi_join.html">multi_join()</a></code>: Variable names in the <code>on</code> parameter can now be passed without quotation marks. (23.07.2026)</li>
+<li>
+<code><a href="../reference/remove_stat_extension.html">remove_stat_extension()</a></code>: Statistic extensions can now be passed without quotation marks. (24.07.2026)</li>
+<li>
+<code><a href="../reference/style_options.html">set_style_options()</a></code>: Parameters, which are originally NULL, can now be reset by assigning a value of NULL. (24.07.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="removed-1-3-4">Removed<a class="anchor" aria-label="anchor" href="#removed-1-3-4"></a></h4>
@@ -70,6 +74,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: The additional <code>by</code> title is now also taken into account with individual styling, when multiple titles are present. (22.07.2026)</li>
 <li>
 <code><a href="../reference/import_export.html">import_data()</a></code>: Fixed a Problem with encoding. (22.07.2026)</li>
+<li>
+<code><a href="../reference/style_options.html">close_file()</a></code>: Now sets the <code>file</code> entry in the global list of style elements actually to NULL instead of removing it. (24.07.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-4">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-4"></a></h4>

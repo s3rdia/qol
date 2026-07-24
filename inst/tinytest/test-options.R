@@ -25,6 +25,12 @@ new_options <- get_style_options()
 expect_equal(default_style_options[["save_path"]], NULL, info = "Set global style options")
 expect_equal(new_options[["save_path"]], "C:/MyPath/", info = "Set global style options")
 
+set_style_options(save_path = NULL)
+
+new_options <- get_style_options()
+
+expect_equal(new_options[["save_path"]], NULL, info = "Set global style options")
+
 
 # Reset global style options
 set_style_options(save_path = "C:/MyPath/")
@@ -63,7 +69,6 @@ expect_true(file.exists(temp_file), info = "Save global style options to file")
 new_options <- get_style_options(from_file = temp_file)
 
 expect_equal(new_options[["title_heights"]], 1, info = "Save global style options to file")
-
 
 
 # Get global labels

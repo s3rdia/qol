@@ -76,6 +76,8 @@ rename_pattern <- function(data_frame, old_pattern, new_pattern){
 #'
 #' @export
 remove_stat_extension <- function(data_frame, statistics){
+    statistics <- get_origin_as_char(statistics, substitute(statistics))
+
     var_names <- names(data_frame)
 
     # Remove statistic extensions

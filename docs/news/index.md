@@ -23,6 +23,12 @@
 - [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
   Variable names in the `on` parameter can now be passed without
   quotation marks. (23.07.2026)
+- [`remove_stat_extension()`](https://s3rdia.github.io/qol/reference/remove_stat_extension.md):
+  Statistic extensions can now be passed without quotation marks.
+  (24.07.2026)
+- [`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  Parameters, which are originally NULL, can now be reset by assigning a
+  value of NULL. (24.07.2026)
 
 #### Removed
 
@@ -55,6 +61,9 @@
   individual styling, when multiple titles are present. (22.07.2026)
 - [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Fixed a Problem with encoding. (22.07.2026)
+- [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  Now sets the `file` entry in the global list of style elements
+  actually to NULL instead of removing it. (24.07.2026)
 
 #### Additionally
 

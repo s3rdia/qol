@@ -82,11 +82,21 @@ set_style_options <- function(..., save_file = NULL){
                 "table_font_color", "table_border_color", "box_back_color", "box_font_color", "box_border_color", "title_font_color",
                 "footnote_font_color", "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color", "background_color")
 
+    can_be_null <- c("save_path", "file", "title_heights", "header_heights", "subheader_heights", "table_heights", "footnote_heights")
+
+    flag_display_message <- FALSE
+
     # Loop through passed arguments and check if they are of valid type
     for (style_option in names(style_list)){
         value <- style_list[[style_option]]
 
-        if (style_option %in% logicals && !all(is.logical(value))){
+        if (style_option %in% can_be_null && is.null(style_list[[style_option]])){
+            .qol_options[["excel_style"]][style_option] <- list(NULL)
+            style_list[[style_option]] <- NULL
+
+            flag_display_message <- TRUE
+        }
+        else if (style_option %in% logicals && !all(is.logical(value))){
             print_message("WARNING", "'[style_option]' must be <logical>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
@@ -123,6 +133,9 @@ set_style_options <- function(..., save_file = NULL){
     if (length(style_list) > 0){
         .qol_options[["excel_style"]] <- utils::modifyList(.qol_options[["excel_style"]], style_list)
 
+        print_message("NOTE", "Global style options successfully changed.")
+    }
+    else if (flag_display_message){
         print_message("NOTE", "Global style options successfully changed.")
     }
 
@@ -254,7 +267,7 @@ reset_style_options <- function(){
 close_file <- function(){
     print_message("NOTE", "File '[file]' has been closed.", file = .qol_options[["excel_style"]][["file"]])
 
-    .qol_options[["excel_style"]][["file"]] <- NULL
+    .qol_options[["excel_style"]]["file"] <- list(NULL)
 
     invisible(.qol_options[["excel_style"]][["file"]])
 }

@@ -8,6 +8,8 @@
 * `import_multi()`: Received a new paramter `stack_data` which can stack read in files and return them as a single data frame. (22.07.2026)
 * `import_multi()`: Can now handle a vector of sheet names and import only the specified ones. (22.07.2026)
 * `multi_join()`: Variable names in the `on` parameter can now be passed without quotation marks. (23.07.2026)
+* `remove_stat_extension()`: Statistic extensions can now be passed without quotation marks. (24.07.2026)
+* `set_style_options()`: Parameters, which are originally NULL, can now be reset by assigning a value of NULL. (24.07.2026)
 
 ### Removed
 
@@ -20,6 +22,7 @@
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: When different title or footnote styles where used, they were only applied, if multiple colors where used. Otherwise the formatting broke. This is fixed now. Additionally the code is now simplified and streamlined. (22.07.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`: The additional `by` title is now also taken into account with individual styling, when multiple titles are present. (22.07.2026)
 * `import_data()`: Fixed a Problem with encoding. (22.07.2026)
+* `close_file()`: Now sets the `file` entry in the global list of style elements actually to NULL instead of removing it. (24.07.2026)
 
 ### Additionally
 
