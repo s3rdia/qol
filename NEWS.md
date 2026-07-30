@@ -23,6 +23,8 @@
 * `any_table()`, `frequencies()`, `crosstabs()`: The additional `by` title is now also taken into account with individual styling, when multiple titles are present. (22.07.2026)
 * `import_data()`: Fixed a Problem with encoding. (22.07.2026)
 * `close_file()`: Now sets the `file` entry in the global list of style elements actually to NULL instead of removing it. (24.07.2026)
+* `any_table()`, `summarise_plus()`: Now keep on running and throw a warning, if a character variable is passed as `values`, instead of throwing a cryptic error. (30.07.2026)
+* `import_multi()`: Ran into an error when trying to import a not existing Excel workbook. Now the file path is checked before. (30.07.2026)
 
 ### Additionally
 

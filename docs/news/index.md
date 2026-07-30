@@ -64,6 +64,13 @@
 - [`close_file()`](https://s3rdia.github.io/qol/reference/style_options.md):
   Now sets the `file` entry in the global list of style elements
   actually to NULL instead of removing it. (24.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Now keep on running and throw a warning, if a character variable is
+  passed as `values`, instead of throwing a cryptic error. (30.07.2026)
+- [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Ran into an error when trying to import a not existing Excel workbook.
+  Now the file path is checked before. (30.07.2026)
 
 #### Additionally
 

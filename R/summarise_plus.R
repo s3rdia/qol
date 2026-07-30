@@ -325,12 +325,27 @@ summarise_plus <- function(data_frame,
 
     if (is.null(temp_statistics)){
         vars_per_stat_list <- lapply(as.list(substitute(statistics)), function(element){
-            element <- tolower(as.character(element))
+            element <- as.character(element)
 
             element[!element %in% "c"]
         })[-1]
 
-        statistics <- names(vars_per_stat_list)
+        # Set to NULL again on empty list
+        if (length(vars_per_stat_list) == 0){
+            vars_per_stat_list <- NULL
+            statistics         <- NULL
+        }
+        # If a real list was passed
+        else{
+            statistics <- tolower(names(vars_per_stat_list))
+        }
+    }
+    # Check if statistics is an ll named vector. If so a list was passed, which
+    # had one variable per statistic and no vectors.
+    else if (!is.null(names(temp_statistics)) && all(nzchar(names(temp_statistics)))){
+        statistics <- tolower(names(temp_statistics))
+        values     <- temp_statistics
+        vars_per_stat_list <- as.list(temp_statistics)
     }
     # Prepare statistics vector as normal
     else{
@@ -443,6 +458,26 @@ summarise_plus <- function(data_frame,
 
     # Make sure that the variables provided are part of the data frame.
     values <- data_frame |> part_of_df(values)
+
+    # Check if there are any values stored as character and remove them
+    chararacter_values <- values[sapply(data_frame[values], is.character)]
+
+    if (length(chararacter_values) > 0) {
+        print_message("WARNING", c("The following <values> are stored as character variables in the data frame",
+                                   "and will be removed: [char_vars]"), char_vars = chararacter_values)
+
+        values <- setdiff(values, chararacter_values)
+    }
+
+    # If no value variables are provided generate them automatically
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            # If no value variables are provided generate a temporary variable which
+            # outputs unweighted results.
+            values               <- ".temp_values"
+            data_frame[[values]] <- 1
+        }
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Types

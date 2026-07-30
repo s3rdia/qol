@@ -172,6 +172,13 @@ import_data <- function(infile,
                                         dec      = decimal,
                                         header   = var_names,
                                         encoding = "Latin-1")
+
+        # Fix encoding for ä, ö, ü and ß
+        character_columns <- sapply(data_frame, is.character)
+
+        data_frame[character_columns] <- lapply(data_frame[character_columns], function(column){
+            iconv(column, from = "latin1", to = "UTF-8")
+        })
     }
     # xlsx
     else if (extension == "xlsx"){
@@ -248,13 +255,6 @@ import_data <- function(infile,
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Fix encoding for ä, ö, ü and ß
-    character_columns <- sapply(data_frame, is.character)
-
-    data_frame[character_columns] <- lapply(data_frame[character_columns], function(column){
-        iconv(column, from = "latin1", to = "UTF-8")
-    })
-
     if (extension == "xlsx"){
         print_closing(5)
     }
@@ -301,8 +301,18 @@ import_multi <- function(file_list,
     for (i in seq_along(file_list)){
         infile <- file_list[[i]]
 
+        # Apply macros to infile
+        infile <- macro(infile)
+
         filename  <- tools::file_path_sans_ext(basename(infile))
         extension <- tolower(tools::file_ext(infile))
+
+        # Abort on invalid path
+        if (!dir.exists(dirname(infile)) || dirname(infile) == "."){
+            print_message("ERROR", c("Path does not exist: [infile]",
+                                     "Import will be aborted."), infile = infile)
+            next
+        }
 
         # For CSV files just do a simple import
         if (extension %in% c("csv", "txt")){

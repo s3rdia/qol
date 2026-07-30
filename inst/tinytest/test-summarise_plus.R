@@ -1025,4 +1025,20 @@ expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' do
                info = "summarise_plus throws a warning, if invalid format is used")
 
 
+# summarise_plus throws a warning with values stored as character
+result_list <- dummy_df |>
+    summarise_plus(class  = "sex",
+                   values = education)
+
+expect_warning(print_stack_as_messages("WARNING"), "The following <values> are stored as character variables in the data frame",
+               info = "summarise_plus throws a warning with values stored as character")
+
+result_list <- dummy_df |>
+    summarise_plus(class  = "sex",
+                   values = c(education, income_class))
+
+expect_warning(print_stack_as_messages("WARNING"), "The following <values> are stored as character variables in the data frame",
+               info = "summarise_plus throws a warning with values stored as character")
+
+
 set_no_print()

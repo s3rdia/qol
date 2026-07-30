@@ -859,6 +859,20 @@ expect_message(print_stack_as_messages("NOTE"), "The following variables generat
 result_list <- dummy_df |>
     any_table(rows       = "age",
               columns    = "sex",
+              statistics = list("sum"       = income,
+                                "pct_group" = weight),
+              na.rm      = TRUE,
+              print      = FALSE)
+
+expect_equal(collapse::fncol(result_list[[1]]), 6, info = "any_table is able to output specific statistics per variable")
+expect_true(all(c("income_sum_1", "income_sum_2", "weight_pct_group_sex_1", "weight_pct_group_sex_2") %in% names(result_list[[1]])),
+            info = "any_table is able to output specific statistics per variable")
+expect_true(!all(c("income_pct_group_1", "income_pct_group_2", "weight_sum_1", "weight_sum_2") %in% names(result_list[[1]])),
+            info = "any_table is able to output specific statistics per variable")
+
+result_list <- dummy_df |>
+    any_table(rows       = "age",
+              columns    = "sex",
               statistics = list("sum"       = c(income, expenses),
                                 "pct_group" = weight),
               na.rm      = TRUE,
@@ -896,6 +910,38 @@ result_list <- dummy_df |>
 
 expect_true(all(c("weight_sum_Total.dup1", "weight_sum_Total.dup2") %in% names(result_list[[1]])),
             info = "any_table can handle duplicate column names without NA values")
+
+
+# any_table throws a warning with invalid by variable
+result_list <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              by      = "test",
+              values  = weight,
+              print   = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable 'test' is not part of",
+               info = "any_table throws a warning with invalid by variable")
+
+
+# any_table throws a warning with values stored as character
+result_list <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = education,
+              print   = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "The following <values> are stored as character variables in the data frame",
+               info = "any_table throws a warning with values stored as character")
+
+result_list <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = c(education, income_class),
+              print   = FALSE)
+
+expect_warning(print_stack_as_messages("WARNING"), "The following <values> are stored as character variables in the data frame",
+               info = "any_table throws a warning with values stored as character")
 
 
 ###############################################################################
@@ -955,18 +1001,6 @@ result_list <- dummy_df |>
 
 expect_error(print_stack_as_messages("ERROR"), "No valid <rows> variables provided",
              info = "any_table aborts with no valid row variables")
-
-
-# any_table aborts with invalid by variable
-result_list <- dummy_df |>
-       any_table(rows    = "age",
-                 columns = "sex",
-                 by      = "test",
-                 values  = weight,
-                 print   = FALSE)
-
-expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable 'test' is not part of",
-               info = "any_table aborts with invalid by variable")
 
 
 # any_table aborts with row/column variable part of values

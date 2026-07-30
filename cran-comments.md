@@ -24,6 +24,8 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`, `frequencies()`, `crosstabs()`: The additional `by` title is now also taken into account with individual styling, when multiple titles are present.
 * `import_data()`: Fixed a Problem with encoding.
 * `close_file()`: Now sets the `file` entry in the global list of style elements actually to NULL instead of removing it.
+* `any_table()`, `summarise_plus()`: Now keep on running and throw a warning, if a character variable is passed as `values`, instead of throwing a cryptic error.
+* `import_multi()`: Ran into an error when trying to import a not existing Excel workbook. Now the file path is checked before.
 
 ### Additionally
 

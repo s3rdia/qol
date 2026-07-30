@@ -650,7 +650,7 @@ any_table <- function(data_frame,
 
     if (is.null(temp_statistics)){
         vars_per_stat_list <- lapply(as.list(substitute(statistics)), function(element){
-            element <- tolower(as.character(element))
+            element <- as.character(element)
 
             element[!element %in% "c"]
         })[-1]
@@ -662,8 +662,15 @@ any_table <- function(data_frame,
         }
         # If a real list was passed
         else{
-            statistics <- names(vars_per_stat_list)
+            statistics <- tolower(names(vars_per_stat_list))
         }
+    }
+    # Check if statistics is an ll named vector. If so a list was passed, which
+    # had one variable per statistic and no vectors.
+    else if (!is.null(names(temp_statistics)) && all(nzchar(names(temp_statistics)))){
+        statistics <- tolower(names(temp_statistics))
+        values     <- temp_statistics
+        vars_per_stat_list <- as.list(temp_statistics)
     }
     # Prepare statistics vector as normal
     else{
@@ -714,6 +721,27 @@ any_table <- function(data_frame,
     }
 
     values <- remove_doubled_values(values)
+
+    # Check if there are any values stored as character and remove them
+    chararacter_values <- values[sapply(data_frame[values], is.character)]
+
+    if (length(chararacter_values) > 0) {
+        print_message("WARNING", c("The following <values> are stored as character variables in the data frame",
+                                   "and will be removed: [char_vars]"), char_vars = chararacter_values)
+
+        values <- setdiff(values, chararacter_values)
+    }
+
+    # If no value variables are provided generate them automatically
+    if (length(values) <= 1){
+        if (length(values) == 0 || values == ""){
+            # If no value variables are provided generate a temporary variable which
+            # outputs unweighted results.
+            values               <- ".temp_values"
+            var_labels           <- c(var_labels, .temp_values = "")
+            data_frame[[values]] <- 1
+        }
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output
@@ -1648,12 +1676,11 @@ any_table <- function(data_frame,
 
     # Loop through the column variables and add a suffix to the duplicate expressions
     if (length(overlapping_values) > 0){
-        variable           <- gsub("_", "!!!", variable)
         overlapping_values <- paste0("^(", paste(overlapping_values, collapse = "|"), ")$")
 
         # Loop over column variables and add a suffix to the duplicate expressions
         for (i in seq_along(col_vars)){
-            variable    <- col_vars[i]
+            variable    <- gsub("_", "!!!", col_vars[i])
             replacement <- paste0("\\1.dup", i)
 
             # For factor variables rename the factor levels
