@@ -276,9 +276,13 @@ convert_factor <- function(data_frame, variables){
     for (variable in variables){
         if (is.character(data_frame[[variable]])){
             # Extract the number of labels from variable
+			# NOTE: I use base unique here instead of collapse::funique, because the
+			#       base function looks at the visual characters while the collapse
+			#       function looks at the raw binary resulting in e.g. ä != ä and
+			#       therefore causes duplicate expressions.
             label_levels <- data_frame[[variable]] |>
                 unlist(use.names = FALSE) |>
-                collapse::funique() |>
+                unique() |>
                 collapse::na_omit()
 
             # Convert variable to factor

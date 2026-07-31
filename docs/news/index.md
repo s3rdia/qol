@@ -71,6 +71,15 @@
 - [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
   Ran into an error when trying to import a not existing Excel workbook.
   Now the file path is checked before. (30.07.2026)
+- [`convert_factor()`](https://s3rdia.github.io/qol/reference/convert_variables.md):
+  Now uses [`unique()`](https://rdrr.io/r/base/unique.html) instead of
+  `collapse:unique()` to identify german umlauts as they are seen on
+  screen and not as they are stored in memory, which caused errors.
+  (31.07.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  When using interval formats without weight, the sum columns where
+  displayed even though they were equal to the freq columns. This is
+  fixed now. (31.07.2026)
 
 #### Additionally
 

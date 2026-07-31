@@ -26,6 +26,8 @@ Last CRAN release was on 16.07.2026.
 * `close_file()`: Now sets the `file` entry in the global list of style elements actually to NULL instead of removing it.
 * `any_table()`, `summarise_plus()`: Now keep on running and throw a warning, if a character variable is passed as `values`, instead of throwing a cryptic error.
 * `import_multi()`: Ran into an error when trying to import a not existing Excel workbook. Now the file path is checked before.
+* `convert_factor()`: Now uses `unique()` instead of `collapse:unique()` to identify german umlauts as they are seen on screen and not as they are stored in memory, which caused errors.
+* `frequencies()`: When using interval formats without weight, the sum columns where displayed even though they were equal to the freq columns. This is fixed now. 
 
 ### Additionally
 

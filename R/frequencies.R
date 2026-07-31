@@ -419,6 +419,13 @@ frequencies <- function(data_frame,
         freq_tab[["TYPE"]]     <- sub(".*\\+", "", freq_tab[["TYPE"]])
     }
 
+    # When using interval formats without weight, var_sum comes out as double
+    # which results in the output being printed as if a weight was applied.
+    # To counter act this just set var_sum equal to var_freq in this case.
+    if (length(collapse::funique(data_frame[[weight_var]])) == 1){
+        freq_tab[["var_sum"]] <- freq_tab[["var_freq"]]
+    }
+
     if (is.null(freq_tab)){
         print_message("ERROR", "Frequencies could not be computed.")
         return(invisible(NULL))
