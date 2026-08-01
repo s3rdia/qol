@@ -1508,7 +1508,7 @@ split_up_ranges <- function(range){
 #' @param by_as_subheaders Whether to format by variables as subheaders in one table instead
 #' of single tables on multiple sheets.
 #' @param background_color Background cell color for any cell which isn't covered by the other
-#' background color options.
+#' background color options. Use "" for no color.
 #' @param header_back_color Background cell color of the table header.
 #' @param header_font_color Font color of the table header.
 #' @param header_font_size Font size of the table header.
@@ -1570,6 +1570,24 @@ split_up_ranges <- function(range){
 #' @param footnote_font_bold Whether to print the tables footnotes in bold letters.
 #' @param footnote_alignment Set the text alignment of the footnotes.
 #' @param na_symbol Define the symbol that should be used for NA values.
+#' @param toc_background_color Table of contents background cell color for any cell
+#' which isn't covered by the inner background color. Use "" for no color.
+#' @param toc_inner_back_color Table of contents inner background color. Use "" for no color.
+#' @param toc_border_color Table of contents color for all borders.
+#' @param toc_header_font_color Table of contents font color of the main header.
+#' @param toc_header_font_size Table of contents font size of the main header.
+#' @param toc_header_font_bold Whether to print the table of contents main header
+#' in bold letters.
+#' @param toc_header_alignment Set the text alignment of the table of contents main header.
+#' @param toc_subheader_font_color Table of contents font color of the subheader.
+#' @param toc_subheader_font_size Table of contents font size of the subheader.
+#' @param toc_subheader_font_bold Whether to print the table of contents
+#' @param toc_subheader_alignment Set the text alignment of the table of contents
+#' @param toc_other_font_color Table of contents font color of all other texts.
+#' @param toc_other_font_size Table of contents font size of all other texts.
+#' @param toc_other_font_bold Whether to print the table of contents
+#' @param toc_other_alignment Set the text alignment of all other table of contents texts.
+#' @param toc_link_alignment Set the text alignment of the table of contents shet links.
 #'
 #' @details
 #' [excel_output_style()] is based on the Output Delivery System (ODS) in 'SAS',
@@ -1607,84 +1625,100 @@ split_up_ranges <- function(range){
 #' excel_style <- excel_output_style(table_back_color = "")
 #'
 #' @export
-excel_output_style <- function(save_path              = NULL,
-                               file                   = NULL,
-                               sheet_name             = "Table",
-                               font                   = "Arial",
-                               column_widths          = "auto",
-                               row_heights            = "auto",
-                               title_heights          = NULL,
-                               header_heights         = NULL,
-                               subheader_heights      = NULL,
-                               table_heights          = NULL,
-                               footnote_heights       = NULL,
-                               start_row              = 2,
-                               start_column           = 2,
-                               freeze_col_header      = FALSE,
-                               freeze_row_header      = FALSE,
-                               filters                = TRUE,
-                               grid_lines             = TRUE,
-                               by_as_subheaders       = FALSE,
-                               background_color       = "FFFFFF",
-                               header_back_color      = "FFFFFF",
-                               header_font_color      = "000000",
-                               header_font_size       = 10,
-                               header_font_bold       = TRUE,
-                               header_alignment       = "center",
-                               header_stat_merging    = "block",
-                               header_wrap            = "1",
-                               header_indent          = 0,
-                               header_borders         = TRUE,
-                               header_border_color    = "000000",
-                               subheader_back_color   = "FFFFFF",
-                               subheader_font_color   = "000000",
-                               subheader_font_size    = 10,
-                               subheader_font_bold    = TRUE,
-                               subheader_alignment    = "center",
-                               subheader_wrap         = "1",
-                               subheader_indent       = 0,
-                               subheader_borders      = TRUE,
-                               subheader_border_color = "000000",
-                               cat_col_back_color     = "FFFFFF",
-                               cat_col_font_color     = "000000",
-                               cat_col_font_size      = 10,
-                               cat_col_font_bold      = FALSE,
-                               cat_col_alignment      = "left",
-                               cat_col_wrap           = "1",
-                               cat_col_indent         = 1,
-                               cat_col_borders        = TRUE,
-                               cat_col_border_color   = "000000",
-                               table_back_color       = "FFFFFF",
-                               table_font_color       = "000000",
-                               table_font_size        = 10,
-                               table_font_bold        = FALSE,
-                               table_alignment        = "right",
-                               table_indent           = 1,
-                               table_borders          = FALSE,
-                               table_border_color     = "000000",
-                               as_heatmap             = FALSE,
-                               heatmap_low_color      = "F8696B",
-                               heatmap_middle_color   = "FFFFFF",
-                               heatmap_high_color     = "63BE7B",
-                               box_back_color         = "FFFFFF",
-                               box_font_color         = "000000",
-                               box_font_size          = 10,
-                               box_font_bold          = TRUE,
-                               box_alignment          = "center",
-                               box_wrap               = "1",
-                               box_indent             = 0,
-                               box_borders            = TRUE,
-                               box_border_color       = "000000",
-                               number_formats         = number_format_style(),
-                               title_font_color       = "000000",
-                               title_font_size        = 10,
-                               title_font_bold        = TRUE,
-                               title_alignment        = "left",
-                               footnote_font_color    = "000000",
-                               footnote_font_size     = 8,
-                               footnote_font_bold     = FALSE,
-                               footnote_alignment     = "left",
-                               na_symbol              = "."){
+excel_output_style <- function(save_path                = NULL,
+                               file                     = NULL,
+                               sheet_name               = "Table",
+                               font                     = "Arial",
+                               column_widths            = "auto",
+                               row_heights              = "auto",
+                               title_heights            = NULL,
+                               header_heights           = NULL,
+                               subheader_heights        = NULL,
+                               table_heights            = NULL,
+                               footnote_heights         = NULL,
+                               start_row                = 2,
+                               start_column             = 2,
+                               freeze_col_header        = FALSE,
+                               freeze_row_header        = FALSE,
+                               filters                  = TRUE,
+                               grid_lines               = TRUE,
+                               by_as_subheaders         = FALSE,
+                               background_color         = "FFFFFF",
+                               header_back_color        = "FFFFFF",
+                               header_font_color        = "000000",
+                               header_font_size         = 10,
+                               header_font_bold         = TRUE,
+                               header_alignment         = "center",
+                               header_stat_merging      = "block",
+                               header_wrap              = "1",
+                               header_indent            = 0,
+                               header_borders           = TRUE,
+                               header_border_color      = "000000",
+                               subheader_back_color     = "FFFFFF",
+                               subheader_font_color     = "000000",
+                               subheader_font_size      = 10,
+                               subheader_font_bold      = TRUE,
+                               subheader_alignment      = "center",
+                               subheader_wrap           = "1",
+                               subheader_indent         = 0,
+                               subheader_borders        = TRUE,
+                               subheader_border_color   = "000000",
+                               cat_col_back_color       = "FFFFFF",
+                               cat_col_font_color       = "000000",
+                               cat_col_font_size        = 10,
+                               cat_col_font_bold        = FALSE,
+                               cat_col_alignment        = "left",
+                               cat_col_wrap             = "1",
+                               cat_col_indent           = 1,
+                               cat_col_borders          = TRUE,
+                               cat_col_border_color     = "000000",
+                               table_back_color         = "FFFFFF",
+                               table_font_color         = "000000",
+                               table_font_size          = 10,
+                               table_font_bold          = FALSE,
+                               table_alignment          = "right",
+                               table_indent             = 1,
+                               table_borders            = FALSE,
+                               table_border_color       = "000000",
+                               as_heatmap               = FALSE,
+                               heatmap_low_color        = "F8696B",
+                               heatmap_middle_color     = "FFFFFF",
+                               heatmap_high_color       = "63BE7B",
+                               box_back_color           = "FFFFFF",
+                               box_font_color           = "000000",
+                               box_font_size            = 10,
+                               box_font_bold            = TRUE,
+                               box_alignment            = "center",
+                               box_wrap                 = "1",
+                               box_indent               = 0,
+                               box_borders              = TRUE,
+                               box_border_color         = "000000",
+                               number_formats           = number_format_style(),
+                               title_font_color         = "000000",
+                               title_font_size          = 10,
+                               title_font_bold          = TRUE,
+                               title_alignment          = "left",
+                               footnote_font_color      = "000000",
+                               footnote_font_size       = 8,
+                               footnote_font_bold       = FALSE,
+                               footnote_alignment       = "left",
+                               na_symbol                = ".",
+                               toc_background_color     = "FFFFFF",
+                               toc_inner_back_color     = "FFFFFF",
+                               toc_border_color         = "000000",
+                               toc_header_font_color    = "000000",
+                               toc_header_font_size     = 10,
+                               toc_header_font_bold     = TRUE,
+                               toc_header_alignment     = "left",
+                               toc_subheader_font_color = "000000",
+                               toc_subheader_font_size  = 10,
+                               toc_subheader_font_bold  = TRUE,
+                               toc_subheader_alignment  = "left",
+                               toc_other_font_color     = "000000",
+                               toc_other_font_size      = 10,
+                               toc_other_font_bold      = FALSE,
+                               toc_other_alignment      = "left",
+                               toc_link_alignment       = "center"){
 
     as.list(environment())
 }
@@ -1932,4 +1966,327 @@ modify_number_formats <- function(formats_to_modify, ...){
     }
 
     formats_to_modify
+}
+
+
+#' Create Table Of Contents For 'Excel' Workbooks
+#'
+#' @description
+#' Creates a table of contents sheet with custom style based on the provided 'Excel'
+#' workbook.
+#'
+#' @param wb Workbook which receives the table of contents sheet.
+#' @param style A list of options can be passed to control the appearance of the
+#' table of contents. Styles can be created with [excel_output_style()].
+#' @param toc_header The main header.
+#' @param toc_sheet_name The table of contents sheet name.
+#' @param subheaders A list of custom subheaders. The entry names are the actual
+#' subheaders to be displayed, while the values are the sheet names at which the
+#' subheaders start.
+#' @param subheader_colors Subheader background colors. These colors will also be used
+#' to color the tabs, if the option is activated.
+#' @param subheader_underline FALSE by default. If TRUE underlines the subheaders.
+#' @param colored_tabs FALSE by default. If TRUE colors the tabs according to the
+#' subheader colors.
+#'
+#' @return
+#' Returns a modified 'Excel' workbook with table of contents sheet.
+#'
+#' @noRd
+create_table_of_contents <- function(wb,
+                                     style               = excel_output_style(),
+                                     toc_header          = "Table of Contents",
+                                     toc_sheet_name      = "Contents",
+                                     subheaders          = list(),
+                                     subheader_colors    = c(),
+                                     subheader_underline = FALSE,
+                                     colored_tabs        = FALSE){
+    if (colored_tabs && length(subheader_colors) == 0){
+        subheader_colors <- "9BC2E6"
+    }
+
+    ###########################################################################
+    # Preparations
+    ###########################################################################
+
+    sheet_names     <- unname(wb$get_sheet_names())
+    toc_sheet_shift <- 4
+
+    subheader_colors <- fill_or_trim(subheader_colors, length(subheaders))
+
+    # Get the main titles from the single sheets
+    titles <- sapply(sheet_names, function(sheet){
+        tryCatch({
+            title <- openxlsx2::wb_to_df(file         = wb,
+                                         sheet        = sheet,
+                                         named_region = "main_title",
+                                         col_names    = FALSE)
+
+            # Return text if cell exists, otherwise NA
+            if (collapse::fnrow(title) > 0){
+                as.character(title)
+            }
+            else{
+                ""
+            }
+        }, error = function(e) {
+            ""
+        })
+    }, USE.NAMES = FALSE)
+
+    # Put sheet names and titles together in a data frame. It will be used to
+    # merge the titles back to the sheet names after inserting the subheaders.
+    toc <- data.table::as.data.table(list(sheet_names,
+                                     titles))
+
+    # Inject subheaders into sheet name vector
+    flag_subheaders <- length(subheaders) > 0
+
+    if (flag_subheaders){
+        subheaders_names <- names(subheaders)
+        subheaders       <- lapply(subheaders, function(sheets){ sheets[1] })
+        subheaders       <- stats::setNames(subheaders_names, subheaders)
+        subheaders_names <- names(subheaders)
+
+        invalid_sheets   <- subheaders_names[!subheaders_names %in% sheet_names]
+
+        if (length(invalid_sheets) > 0){
+            print_message("ERROR", c("The following sheet name[?s] provided in the subheaders is invalid: [sheets]",
+                                     "Table of contents can't be created."), sheets = invalid_sheets)
+            return(invisible(wb))
+        }
+
+        toc_sheet_shift <- toc_sheet_shift - 1
+
+        # Convert list into a named vector
+        injected_subheaders <- data.table::as.data.table(unlist(lapply(sheet_names, function(sheet){
+                                                if (sheet %in% subheaders_names){
+                                                    c("", subheaders[[sheet]], sheet)
+                                                }
+                                                else{
+                                                    sheet
+                                                }
+                                            }), use.names = FALSE))
+
+        # Join titles for the single sheets
+        toc <- collapse::join(injected_subheaders, toc, on = "V1", verbose = FALSE)
+
+        # Get a list for the subheaders with corresponding
+        sheet_colors      <- c()
+        subheader_count   <- 0
+        current_subheader <- "!!!!!!!!"
+
+        for (row in seq_len(collapse::fnrow(injected_subheaders))){
+            text <- injected_subheaders[row, 1]
+
+            if (text == ""){
+                next
+            }
+
+            if (current_subheader != text && text %in% subheaders){
+                subheader_count <- subheader_count + 1
+                next
+            }
+
+            sheet_colors <- c(sheet_colors, subheader_colors[subheader_count])
+        }
+    }
+
+    # Get sheet and subheader row positions in the workbook for the formatting
+    sheet_index     <- which(!is.na(toc[["V2"]])) + toc_sheet_shift
+    subheader_index <- NA
+
+    if (flag_subheaders){
+        subheader_index <- which(!is.na(toc[["V1"]]) & toc[["V1"]] != "" & is.na(toc[["V2"]])) + toc_sheet_shift
+
+        # Add the overall table of contents header
+        toc <- rbind(data.table::as.data.table(list(toc_header, NA)), toc)
+    }
+    else{
+        # Add the overall table of contents header with an additional empty row
+        toc <- rbind(data.table::as.data.table(list(list(toc_header, ""),
+                                                    list(NA, NA))), toc)
+    }
+
+    ###########################################################################
+    # Prepare font styles
+    ###########################################################################
+
+    wb$styles_mgr$add(
+        openxlsx2::create_font(sz    = style[["toc_header_font_size"]],
+                               color = openxlsx2::wb_color(hex = style[["toc_header_font_color"]]),
+                               b     = style[["toc_header_font_bold"]]),
+        "toc_header_font")
+
+    wb$styles_mgr$add(
+        openxlsx2::create_font(sz    = style[["toc_subheader_font_size"]],
+                               color = openxlsx2::wb_color(hex = style[["toc_subheader_font_color"]]),
+                               b     = style[["toc_subheader_font_bold"]]),
+        "toc_subheader_font")
+
+    wb$styles_mgr$add(
+        openxlsx2::create_font(sz    = style[["toc_other_font_size"]],
+                               color = openxlsx2::wb_color(hex = style[["toc_other_font_color"]]),
+                               b     = style[["toc_other_font_bold"]]),
+        "toc_other_font")
+
+    wb$styles_mgr$add(
+        openxlsx2::create_font(sz    = style[["toc_other_font_size"]],
+                               color = openxlsx2::wb_color(hex = "0000FF"),
+                               u     = "single"),
+        "toc_link_font")
+
+    ###########################################################################
+    # Construct worksheet
+    ###########################################################################
+
+    wb$add_worksheet(toc_sheet_name)
+
+    # Add all the texts to the workbook
+    wb$add_data(x          = toc,
+                start_col  = 3,
+                start_row  = 3,
+                col_names  = FALSE,
+                na.strings = NULL)
+
+    # Fill all cells with background color
+    if (style[["toc_background_color"]] != ""){
+        wb$add_fill(color = openxlsx2::wb_color(style[["toc_background_color"]]))
+        wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+    }
+
+    # Draw borders all around the table of contents
+    if (style[["toc_border_color"]] != ""){
+        toc_border_color <- style[["toc_border_color"]]
+        inner_toc_area   <- paste0("B2:E", collapse::fnrow(toc) + 3)
+
+        wb$add_border(dims         = inner_toc_area,
+                      bottom_color = openxlsx2::wb_color(hex = toc_border_color),
+                      left_color   = openxlsx2::wb_color(hex = toc_border_color),
+                      right_color  = openxlsx2::wb_color(hex = toc_border_color),
+                      top_color    = openxlsx2::wb_color(hex = toc_border_color))
+    }
+
+    # Fill inner contents box with table color
+    if (style[["toc_inner_back_color"]] != ""){
+        wb$add_fill(dims = inner_toc_area, color = openxlsx2::wb_color(style[["toc_inner_back_color"]]))
+    }
+
+    # Add cell style to main header
+    wb$add_cell_style(dims       = "C3",
+                      horizontal = style[["toc_header_alignment"]],
+                      vertical   = "center",
+                      #wrap_text  = "1",
+                      apply_font = TRUE,
+                      font_id    = wb$styles_mgr$get_font_id("toc_header_font"))
+
+    # Add cell style to the sheet names and titles
+    for (i in seq_along(sheet_names)){
+        row   <- sheet_index[i]
+        sheet <- sheet_names[i]
+
+        wb$add_formula(x    = paste0('=HYPERLINK("#', sheet, '!A1", "', sheet, '")'),
+                       dims = paste0("C", row))
+
+        wb$add_cell_style(dims       = paste0("C", row),
+                          horizontal = style[["toc_link_alignment"]],
+                          vertical   = "center",
+                          #wrap_text  = "1",
+                          apply_font = TRUE,
+                          font_id    = wb$styles_mgr$get_font_id("toc_link_font"))
+
+        wb$add_cell_style(dims       = paste0("D", row),
+                          horizontal = style[["toc_other_alignment"]],
+                          vertical   = "center",
+                          wrap_text  = "1",
+                          apply_font = TRUE,
+                          font_id    = wb$styles_mgr$get_font_id("toc_other_font"))
+    }
+
+    # Add subheader styling
+    if (flag_subheaders){
+        for (i in seq_along(subheader_index)){
+            row      <- subheader_index[i]
+            sub_dims <- sprintf("C%d:D%d", row, row)
+
+            # Apply font style
+            wb$add_cell_style(dims       = paste0("C", row),
+                              horizontal = style[["toc_subheader_alignment"]],
+                              vertical   = "center",
+                              #wrap_text  = "1",
+                              apply_font = TRUE,
+                              font_id    = wb$styles_mgr$get_font_id("toc_subheader_font"))
+
+            # Color subheaders, if colors where specified
+            if (length(subheader_colors) > 0){
+                wb$add_fill(dims  = sub_dims,
+                            color = openxlsx2::wb_color(hex = subheader_colors[i]))
+            }
+
+            # Add borders, if specified
+            if (subheader_underline){
+                if (style[["toc_border_color"]] == ""){
+                    toc_border_color <- "000000"
+                }
+
+                wb$add_border(dims         = sub_dims,
+                              bottom_color = openxlsx2::wb_color(hex = toc_border_color),
+                              left_border  = NULL, right_border = NULL, top_border = NULL)
+            }
+
+        }
+    }
+
+    # Merge headers
+    row_indices   <- c(3, subheader_index)
+    header_ranges <- sprintf("C%d:D%d", row_indices, row_indices)
+
+    wb$merge_cells(dims = header_ranges)
+    wb$unmerge_cells(dims = header_ranges)
+
+    # Set column width
+    sheet_width <- get_optimal_width(sheet_names, style[["toc_other_font_size"]])
+    title_width <- get_optimal_width(titles,      style[["toc_other_font_size"]])
+
+    wb$set_col_widths(sheet = toc_sheet_name, cols = c(1, 2, 5), widths = 2)
+    wb$set_col_widths(sheet = toc_sheet_name, cols = 3,          widths = sheet_width)
+    wb$set_col_widths(sheet = toc_sheet_name, cols = 4,          widths = title_width)
+
+    # Order table of contents sheet to the front
+    wb$set_selected(sheet = toc_sheet_name)
+    wb$set_order(c(toc_sheet_name, sheet_names))
+
+    # Color the sheets according to subheader colors
+    if (colored_tabs && length(subheader_colors) > 0){
+        for (i in seq_along(sheet_names)){
+            sheet <- sheet_names[i]
+
+            wb$set_page_setup(sheet = sheet, tab_color = openxlsx2::wb_color(sheet_colors[i]))
+        }
+    }
+
+    invisible(wb)
+}
+
+
+#' Get Optimal Cell Width
+#'
+#' @description
+#' Get the optimal cell width to display a text in one cell without tex twrapping.
+#'
+#' @param texts A vector of texts.
+#' @param font_size The font size that will be applied to the texts.
+#'
+#' @return
+#' Returns a numeric value or "auto".
+#'
+#' @noRd
+get_optimal_width <- function(texts, font_size){
+    longest_text <- max(7, max(nchar(texts)))
+
+    if (longest_text == 0){
+        return("auto")
+    }
+
+    longest_text * max(6, font_size) / 12
 }

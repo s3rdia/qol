@@ -87,7 +87,23 @@ excel_output_style(
   footnote_font_size = 8,
   footnote_font_bold = FALSE,
   footnote_alignment = "left",
-  na_symbol = "."
+  na_symbol = ".",
+  toc_background_color = "FFFFFF",
+  toc_inner_back_color = "FFFFFF",
+  toc_border_color = "000000",
+  toc_header_font_color = "000000",
+  toc_header_font_size = 10,
+  toc_header_font_bold = TRUE,
+  toc_header_alignment = "left",
+  toc_subheader_font_color = "000000",
+  toc_subheader_font_size = 10,
+  toc_subheader_font_bold = TRUE,
+  toc_subheader_alignment = "left",
+  toc_other_font_color = "000000",
+  toc_other_font_size = 10,
+  toc_other_font_bold = FALSE,
+  toc_other_alignment = "left",
+  toc_link_alignment = "center"
 )
 ```
 
@@ -184,7 +200,7 @@ excel_output_style(
 - background_color:
 
   Background cell color for any cell which isn't covered by the other
-  background color options.
+  background color options. Use "" for no color.
 
 - header_back_color:
 
@@ -425,6 +441,71 @@ excel_output_style(
 - na_symbol:
 
   Define the symbol that should be used for NA values.
+
+- toc_background_color:
+
+  Table of contents background cell color for any cell which isn't
+  covered by the inner background color. Use "" for no color.
+
+- toc_inner_back_color:
+
+  Table of contents inner background color. Use "" for no color.
+
+- toc_border_color:
+
+  Table of contents color for all borders.
+
+- toc_header_font_color:
+
+  Table of contents font color of the main header.
+
+- toc_header_font_size:
+
+  Table of contents font size of the main header.
+
+- toc_header_font_bold:
+
+  Whether to print the table of contents main header in bold letters.
+
+- toc_header_alignment:
+
+  Set the text alignment of the table of contents main header.
+
+- toc_subheader_font_color:
+
+  Table of contents font color of the subheader.
+
+- toc_subheader_font_size:
+
+  Table of contents font size of the subheader.
+
+- toc_subheader_font_bold:
+
+  Whether to print the table of contents
+
+- toc_subheader_alignment:
+
+  Set the text alignment of the table of contents
+
+- toc_other_font_color:
+
+  Table of contents font color of all other texts.
+
+- toc_other_font_size:
+
+  Table of contents font size of all other texts.
+
+- toc_other_font_bold:
+
+  Whether to print the table of contents
+
+- toc_other_alignment:
+
+  Set the text alignment of all other table of contents texts.
+
+- toc_link_alignment:
+
+  Set the text alignment of the table of contents shet links.
 
 ## Value
 

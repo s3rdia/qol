@@ -10,6 +10,9 @@
 * `multi_join()`: Variable names in the `on` parameter can now be passed without quotation marks. (23.07.2026)
 * `remove_stat_extension()`: Statistic extensions can now be passed without quotation marks. (24.07.2026)
 * `set_style_options()`: Parameters, which are originally NULL, can now be reset by assigning a value of NULL. (24.07.2026)
+* `combine_into_workbook()`: Can now create a custom styleable table of contents. (01.08.2026)
+* `excel_output_style()`: Added parameters for the custom styleable table of contents. (01.08.2026)
+* `any_table()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. (01.08.2026)
 
 ### Removed
 

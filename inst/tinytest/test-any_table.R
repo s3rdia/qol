@@ -759,6 +759,53 @@ expect_inherits(result_list, "qol_table", info = "Combine tables into a single w
 expect_equal(length(result_list), 3, info = "Combine tables into a single workbook")
 
 
+# Combine tables into a single workbook with table of contents
+my_style <- excel_output_style(sheet_name = "tab1")
+
+tab1 <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = weight,
+              output  = "excel_nostyle",
+              style   = my_style,
+              print   = FALSE)
+
+my_style <- my_style |> modify_output_style(sheet_name = "tab2")
+
+tab2 <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = weight,
+              by      = education,
+              output  = "excel_nostyle",
+              style   = my_style,
+              print   = FALSE)
+
+result <- combine_into_workbook(tab1, tab2,
+                                table_of_contents = TRUE,
+                                subheaders        = list("First Subheader"  = "tab1",
+                                                         "Second Subheader" = "tab21"),
+                                subheader_colors  = c("FF0000", "00FF00", "0000FF"),
+                                colored_tabs      = TRUE,
+                                print             = FALSE)
+
+expect_inherits(result, c("wbWorkbook", "R6"), info = "Combine tables into a single workbook with table of contents")
+expect_true("Contents" %in% openxlsx2::wb_get_sheet_names(result),
+            info = "Combine tables into a single workbook with table of contents")
+
+result <- combine_into_workbook(tab1, tab2, table_of_contents = TRUE,
+                                subheaders        = list("First Subheader"  = "tab1",
+                                                         "Second Subheader" = "tab2"),
+                                subheader_colors  = c("FF0000", "00FF00", "0000FF"),
+                                colored_tabs      = TRUE,
+                                print             = FALSE)
+
+expect_error(print_stack_as_messages("ERROR"), "The following sheet name provided in the subheaders is invalid:",
+             info = "Combine tables into a single workbook with table of contents")
+expect_true(!"Contents" %in% openxlsx2::wb_get_sheet_names(result),
+            info = "Combine tables into a single workbook with table of contents")
+
+
 # any_table throws a warning with missing statistic extension in pre summarised data
 result_list <- sum_df |>
        any_table(rows    = "year",

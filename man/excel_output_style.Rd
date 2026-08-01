@@ -82,7 +82,23 @@ excel_output_style(
   footnote_font_size = 8,
   footnote_font_bold = FALSE,
   footnote_alignment = "left",
-  na_symbol = "."
+  na_symbol = ".",
+  toc_background_color = "FFFFFF",
+  toc_inner_back_color = "FFFFFF",
+  toc_border_color = "000000",
+  toc_header_font_color = "000000",
+  toc_header_font_size = 10,
+  toc_header_font_bold = TRUE,
+  toc_header_alignment = "left",
+  toc_subheader_font_color = "000000",
+  toc_subheader_font_size = 10,
+  toc_subheader_font_bold = TRUE,
+  toc_subheader_alignment = "left",
+  toc_other_font_color = "000000",
+  toc_other_font_size = 10,
+  toc_other_font_bold = FALSE,
+  toc_other_alignment = "left",
+  toc_link_alignment = "center"
 )
 }
 \arguments{
@@ -133,7 +149,7 @@ while scrolling sideways in the document.}
 of single tables on multiple sheets.}
 
 \item{background_color}{Background cell color for any cell which isn't covered by the other
-background color options.}
+background color options. Use "" for no color.}
 
 \item{header_back_color}{Background cell color of the table header.}
 
@@ -254,6 +270,40 @@ the different stats. Number formats can be created with \code{\link[=number_form
 \item{footnote_alignment}{Set the text alignment of the footnotes.}
 
 \item{na_symbol}{Define the symbol that should be used for NA values.}
+
+\item{toc_background_color}{Table of contents background cell color for any cell
+which isn't covered by the inner background color. Use "" for no color.}
+
+\item{toc_inner_back_color}{Table of contents inner background color. Use "" for no color.}
+
+\item{toc_border_color}{Table of contents color for all borders.}
+
+\item{toc_header_font_color}{Table of contents font color of the main header.}
+
+\item{toc_header_font_size}{Table of contents font size of the main header.}
+
+\item{toc_header_font_bold}{Whether to print the table of contents main header
+in bold letters.}
+
+\item{toc_header_alignment}{Set the text alignment of the table of contents main header.}
+
+\item{toc_subheader_font_color}{Table of contents font color of the subheader.}
+
+\item{toc_subheader_font_size}{Table of contents font size of the subheader.}
+
+\item{toc_subheader_font_bold}{Whether to print the table of contents}
+
+\item{toc_subheader_alignment}{Set the text alignment of the table of contents}
+
+\item{toc_other_font_color}{Table of contents font color of all other texts.}
+
+\item{toc_other_font_size}{Table of contents font size of all other texts.}
+
+\item{toc_other_font_bold}{Whether to print the table of contents}
+
+\item{toc_other_alignment}{Set the text alignment of all other table of contents texts.}
+
+\item{toc_link_alignment}{Set the text alignment of the table of contents shet links.}
 }
 \value{
 Returns a list of named style options.

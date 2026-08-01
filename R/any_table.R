@@ -3002,10 +3002,20 @@ format_any_by_excel <- function(wb,
             # Add by info below the titles
             if (length(titles) > 0){
                 titles_temp <- c(titles, "", by_info)
+                titles_temp <- gsub("\\[by_var\\]", value, titles)
             }
             # Or on top if there are no titles
             else{
                 titles_temp <- by_info
+            }
+
+            # Replace by info in the footnotes
+            if (length(footnotes) > 0){
+                footnotes_temp <- gsub("\\[by_var\\]", value, footnotes)
+            }
+            # Otherwise just leave footnotes empty
+            else{
+                footnotes_temp <- footnotes
             }
 
             # The print_miss option enables a shortcut in formatting the sheets after
@@ -3022,7 +3032,7 @@ format_any_by_excel <- function(wb,
                                             statistics,
                                             value,
                                             titles_temp,
-                                            footnotes,
+                                            footnotes_temp,
                                             var_labels,
                                             stat_labels,
                                             box,
@@ -3044,7 +3054,7 @@ format_any_by_excel <- function(wb,
                                             statistics,
                                             value,
                                             titles_temp,
-                                            footnotes,
+                                            footnotes_temp,
                                             var_labels,
                                             stat_labels,
                                             box,
@@ -3227,6 +3237,19 @@ format_by_single_table <- function(wb,
 #' @param file If NULL, opens the output as temporary file. If a filename with path
 #' is specified, saves the output to the specified path.
 #' @param output The following output formats are available: excel and excel_nostyle.
+#' @param style A list of options can be passed to control the appearance of the
+#' table of contents. Styles can be created with [excel_output_style()].
+#' @param table_of_contents Whether to create a table of contents.
+#' @param toc_header The main header.
+#' @param toc_sheet_name The table of contents sheet name.
+#' @param subheaders A list of custom subheaders. The entry names are the actual
+#' subheaders to be displayed, while the values are the sheet names at which the
+#' subheaders start.
+#' @param subheader_colors Subheader background colors. These colors will also be used
+#' to color the tabs, if the option is activated.
+#' @param subheader_underline FALSE by default. If TRUE underlines the subheaders.
+#' @param colored_tabs FALSE by default. If TRUE colors the tabs according to the
+#' subheader colors.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the combined workbook.
 #' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
@@ -3311,16 +3334,34 @@ format_by_single_table <- function(wb,
 #' # styles each table individually and combines them as separate sheets into a single workbook.
 #' combine_into_workbook(tab1, tab2, tab3)
 #'
+#' # Add an automatically generated table of contents with custom styling
+#' combine_into_workbook(tab1, tab2, tab3,
+#'                       table_of_contents = TRUE,
+#'                       subheaders        = list("First Subheader"  = "big table",
+#'                                                "Second Subheader" = "data"),
+#'                       subheader_colors  = c("FF0000", "00FF00", "0000FF"),
+#'                       colored_tabs      = TRUE,
+#'                       style             = excel_output_style(toc_header_font_size    = 20,
+#'                                                              toc_subheader_font_size = 16))
+#'
 #' # Reset the global options afterwards
 #' set_print(TRUE)
 #' set_output("excel")
 #'
 #' @export
 combine_into_workbook <- function(...,
-                                  file    = NULL,
-                                  output  = "excel",
-                                  print   = TRUE,
-                                  monitor = FALSE){
+                                  file                = NULL,
+                                  output              = "excel",
+                                  style               = excel_output_style(),
+                                  table_of_contents   = FALSE,
+                                  toc_header          = "Table of Contents",
+                                  toc_sheet_name      = "Contents",
+                                  subheaders          = list(),
+                                  subheader_colors    = c(),
+                                  subheader_underline = FALSE,
+                                  colored_tabs        = FALSE,
+                                  print               = TRUE,
+                                  monitor             = FALSE){
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Prepare combine", "Prepare")
     #-------------------------------------------------------------------------#
@@ -3413,6 +3454,23 @@ combine_into_workbook <- function(...,
         i <- i + 1
     }
 
+    # Create table of contents
+    if (table_of_contents){
+        print_step("MAJOR", "Generate table of contents")
+
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Generate table of contents", "Generate table of contents")
+        #---------------------------------------------------------------------#
+
+        wb <- create_table_of_contents(wb, style,
+                                       toc_header          = toc_header,
+                                       toc_sheet_name      = toc_sheet_name,
+                                       subheaders          = subheaders,
+                                       subheader_colors    = subheader_colors,
+                                       subheader_underline = subheader_underline,
+                                       colored_tabs        = colored_tabs)
+    }
+
     # Output formatted table into different formats
     if (print){
         print_step("MAJOR", "Exporting Excel Workbook")
@@ -3420,8 +3478,9 @@ combine_into_workbook <- function(...,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#
-
-        file <- macro(file)
+        if (!is.null(file)){
+            file <- macro(file)
+        }
 
         if (is.null(file)){
             if (interactive()){

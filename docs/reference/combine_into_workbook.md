@@ -11,6 +11,14 @@ combine_into_workbook(
   ...,
   file = NULL,
   output = "excel",
+  style = excel_output_style(),
+  table_of_contents = FALSE,
+  toc_header = "Table of Contents",
+  toc_sheet_name = "Contents",
+  subheaders = list(),
+  subheader_colors = c(),
+  subheader_underline = FALSE,
+  colored_tabs = FALSE,
   print = TRUE,
   monitor = FALSE
 )
@@ -31,6 +39,44 @@ combine_into_workbook(
 - output:
 
   The following output formats are available: excel and excel_nostyle.
+
+- style:
+
+  A list of options can be passed to control the appearance of the table
+  of contents. Styles can be created with
+  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md).
+
+- table_of_contents:
+
+  Whether to create a table of contents.
+
+- toc_header:
+
+  The main header.
+
+- toc_sheet_name:
+
+  The table of contents sheet name.
+
+- subheaders:
+
+  A list of custom subheaders. The entry names are the actual subheaders
+  to be displayed, while the values are the sheet names at which the
+  subheaders start.
+
+- subheader_colors:
+
+  Subheader background colors. These colors will also be used to color
+  the tabs, if the option is activated.
+
+- subheader_underline:
+
+  FALSE by default. If TRUE underlines the subheaders.
+
+- colored_tabs:
+
+  FALSE by default. If TRUE colors the tabs according to the subheader
+  colors.
 
 - print:
 
@@ -125,6 +171,16 @@ tab3 <- my_data |> export_with_style(print = FALSE)
 # tabs can be input into the following function, which reads the meta information,
 # styles each table individually and combines them as separate sheets into a single workbook.
 combine_into_workbook(tab1, tab2, tab3)
+
+# Add an automatically generated table of contents with custom styling
+combine_into_workbook(tab1, tab2, tab3,
+                      table_of_contents = TRUE,
+                      subheaders        = list("First Subheader"  = "big table",
+                                               "Second Subheader" = "data"),
+                      subheader_colors  = c("FF0000", "00FF00", "0000FF"),
+                      colored_tabs      = TRUE,
+                      style             = excel_output_style(toc_header_font_size    = 20,
+                                                             toc_subheader_font_size = 16))
 
 # Reset the global options afterwards
 set_print(TRUE)

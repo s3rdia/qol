@@ -124,7 +124,23 @@ by <code><a href="frequencies.html">frequencies()</a></code>, <code><a href="cro
 <span>  footnote_font_size <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  footnote_font_bold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  footnote_alignment <span class="op">=</span> <span class="st">"left"</span>,</span>
-<span>  na_symbol <span class="op">=</span> <span class="st">"."</span></span>
+<span>  na_symbol <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  toc_background_color <span class="op">=</span> <span class="st">"FFFFFF"</span>,</span>
+<span>  toc_inner_back_color <span class="op">=</span> <span class="st">"FFFFFF"</span>,</span>
+<span>  toc_border_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  toc_header_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  toc_header_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  toc_header_font_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  toc_header_alignment <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  toc_subheader_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  toc_subheader_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  toc_subheader_font_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  toc_subheader_alignment <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  toc_other_font_color <span class="op">=</span> <span class="st">"000000"</span>,</span>
+<span>  toc_other_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  toc_other_font_bold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  toc_other_alignment <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  toc_link_alignment <span class="op">=</span> <span class="st">"center"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -216,7 +232,7 @@ of single tables on multiple sheets.</p></dd>
 
 <dt id="arg-background-color">background_color<a class="anchor" aria-label="anchor" href="#arg-background-color"></a></dt>
 <dd><p>Background cell color for any cell which isn't covered by the other
-background color options.</p></dd>
+background color options. Use "" for no color.</p></dd>
 
 
 <dt id="arg-header-back-color">header_back_color<a class="anchor" aria-label="anchor" href="#arg-header-back-color"></a></dt>
@@ -455,6 +471,72 @@ the different stats. Number formats can be created with <code><a href="number_fo
 
 <dt id="arg-na-symbol">na_symbol<a class="anchor" aria-label="anchor" href="#arg-na-symbol"></a></dt>
 <dd><p>Define the symbol that should be used for NA values.</p></dd>
+
+
+<dt id="arg-toc-background-color">toc_background_color<a class="anchor" aria-label="anchor" href="#arg-toc-background-color"></a></dt>
+<dd><p>Table of contents background cell color for any cell
+which isn't covered by the inner background color. Use "" for no color.</p></dd>
+
+
+<dt id="arg-toc-inner-back-color">toc_inner_back_color<a class="anchor" aria-label="anchor" href="#arg-toc-inner-back-color"></a></dt>
+<dd><p>Table of contents inner background color. Use "" for no color.</p></dd>
+
+
+<dt id="arg-toc-border-color">toc_border_color<a class="anchor" aria-label="anchor" href="#arg-toc-border-color"></a></dt>
+<dd><p>Table of contents color for all borders.</p></dd>
+
+
+<dt id="arg-toc-header-font-color">toc_header_font_color<a class="anchor" aria-label="anchor" href="#arg-toc-header-font-color"></a></dt>
+<dd><p>Table of contents font color of the main header.</p></dd>
+
+
+<dt id="arg-toc-header-font-size">toc_header_font_size<a class="anchor" aria-label="anchor" href="#arg-toc-header-font-size"></a></dt>
+<dd><p>Table of contents font size of the main header.</p></dd>
+
+
+<dt id="arg-toc-header-font-bold">toc_header_font_bold<a class="anchor" aria-label="anchor" href="#arg-toc-header-font-bold"></a></dt>
+<dd><p>Whether to print the table of contents main header
+in bold letters.</p></dd>
+
+
+<dt id="arg-toc-header-alignment">toc_header_alignment<a class="anchor" aria-label="anchor" href="#arg-toc-header-alignment"></a></dt>
+<dd><p>Set the text alignment of the table of contents main header.</p></dd>
+
+
+<dt id="arg-toc-subheader-font-color">toc_subheader_font_color<a class="anchor" aria-label="anchor" href="#arg-toc-subheader-font-color"></a></dt>
+<dd><p>Table of contents font color of the subheader.</p></dd>
+
+
+<dt id="arg-toc-subheader-font-size">toc_subheader_font_size<a class="anchor" aria-label="anchor" href="#arg-toc-subheader-font-size"></a></dt>
+<dd><p>Table of contents font size of the subheader.</p></dd>
+
+
+<dt id="arg-toc-subheader-font-bold">toc_subheader_font_bold<a class="anchor" aria-label="anchor" href="#arg-toc-subheader-font-bold"></a></dt>
+<dd><p>Whether to print the table of contents</p></dd>
+
+
+<dt id="arg-toc-subheader-alignment">toc_subheader_alignment<a class="anchor" aria-label="anchor" href="#arg-toc-subheader-alignment"></a></dt>
+<dd><p>Set the text alignment of the table of contents</p></dd>
+
+
+<dt id="arg-toc-other-font-color">toc_other_font_color<a class="anchor" aria-label="anchor" href="#arg-toc-other-font-color"></a></dt>
+<dd><p>Table of contents font color of all other texts.</p></dd>
+
+
+<dt id="arg-toc-other-font-size">toc_other_font_size<a class="anchor" aria-label="anchor" href="#arg-toc-other-font-size"></a></dt>
+<dd><p>Table of contents font size of all other texts.</p></dd>
+
+
+<dt id="arg-toc-other-font-bold">toc_other_font_bold<a class="anchor" aria-label="anchor" href="#arg-toc-other-font-bold"></a></dt>
+<dd><p>Whether to print the table of contents</p></dd>
+
+
+<dt id="arg-toc-other-alignment">toc_other_alignment<a class="anchor" aria-label="anchor" href="#arg-toc-other-alignment"></a></dt>
+<dd><p>Set the text alignment of all other table of contents texts.</p></dd>
+
+
+<dt id="arg-toc-link-alignment">toc_link_alignment<a class="anchor" aria-label="anchor" href="#arg-toc-link-alignment"></a></dt>
+<dd><p>Set the text alignment of the table of contents shet links.</p></dd>
 
 </dl></div>
     <div class="section level2">
