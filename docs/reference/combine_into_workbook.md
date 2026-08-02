@@ -19,8 +19,8 @@ combine_into_workbook(
   subheader_colors = c(),
   subheader_underline = FALSE,
   colored_tabs = FALSE,
-  print = TRUE,
-  monitor = FALSE
+  print = .qol_options[["print"]],
+  monitor = .qol_options[["monitor"]]
 )
 ```
 
@@ -93,6 +93,50 @@ combine_into_workbook(
 
 A fully styled workbook containing the provided tables.
 
+## See also
+
+Creating a custom table style:
+[`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md),
+[`modify_output_style()`](https://s3rdia.github.io/qol/reference/modify_output_style.md),
+[`number_format_style()`](https://s3rdia.github.io/qol/reference/number_format_style.md),
+[`modify_number_formats()`](https://s3rdia.github.io/qol/reference/modify_number_formats.md).
+
+Global style options:
+[`set_style_options()`](https://s3rdia.github.io/qol/reference/style_options.md),
+[`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md).
+
+Other global options:
+[`set_titles()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_footnotes()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_monitor()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_na.rm()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_print_miss()`](https://s3rdia.github.io/qol/reference/qol_options.md),
+[`set_output()`](https://s3rdia.github.io/qol/reference/qol_options.md).
+
+Standalone table of contents:
+[`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md).
+
+Creating formats:
+[`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md)
+and
+[`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md).
+
+Functions that can handle formats and styles:
+[`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+[`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md).
+
+Additional functions that can handle styles:
+[`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md)
+
+Additional functions that can handle formats:
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md),
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md),
+[`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md)
+
 ## Examples
 
 ``` r
@@ -137,7 +181,6 @@ set_footnotes("This is footnote number 1 cell: W22",
 # Catch the output and additionally use the options:
 # print = FALSE and output = "excel_nostyle".
 # This skips the styling and output part, so that the function runs faster.
-# The styling is done later on.
 set_print(FALSE)
 set_output("excel_nostyle")
 set_style_options(sheet_name = "big table")

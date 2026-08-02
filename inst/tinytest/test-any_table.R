@@ -793,7 +793,8 @@ expect_inherits(result, c("wbWorkbook", "R6"), info = "Combine tables into a sin
 expect_true("Contents" %in% openxlsx2::wb_get_sheet_names(result),
             info = "Combine tables into a single workbook with table of contents")
 
-result <- combine_into_workbook(tab1, tab2, table_of_contents = TRUE,
+result <- combine_into_workbook(tab1, tab2,
+                                table_of_contents = TRUE,
                                 subheaders        = list("First Subheader"  = "tab1",
                                                          "Second Subheader" = "tab2"),
                                 subheader_colors  = c("FF0000", "00FF00", "0000FF"),
@@ -804,6 +805,43 @@ expect_error(print_stack_as_messages("ERROR"), "The following sheet name provide
              info = "Combine tables into a single workbook with table of contents")
 expect_true(!"Contents" %in% openxlsx2::wb_get_sheet_names(result),
             info = "Combine tables into a single workbook with table of contents")
+
+
+# Create and save table of contents standalone
+temp_file <- tempfile(fileext = ".xlsx")
+on.exit(unlink(temp_file), add = TRUE)
+
+my_style <- excel_output_style(sheet_name = "tab1")
+
+tab1 <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = weight,
+              output  = "excel_nostyle",
+              style   = my_style,
+              print   = FALSE)
+
+my_style <- my_style |> modify_output_style(sheet_name = "tab2")
+
+tab2 <- dummy_df |>
+    any_table(rows    = "age",
+              columns = "sex",
+              values  = weight,
+              by      = education,
+              output  = "excel_nostyle",
+              style   = my_style,
+              print   = FALSE)
+
+result <- combine_into_workbook(tab1, tab2)
+
+create_table_of_contents(result,
+                         subheaders        = list("First Subheader"  = "tab1",
+                                                  "Second Subheader" = "tab21"),
+                         subheader_colors  = c("FF0000", "00FF00", "0000FF"),
+                         colored_tabs      = TRUE,
+                         file              = temp_file)
+
+expect_true(file.exists(temp_file), info = "Create and save table of contents standalone")
 
 
 # any_table throws a warning with missing statistic extension in pre summarised data

@@ -81,7 +81,7 @@ get_any_table_ranges <- function(table,
                                  footnotes  = NULL,
                                  style      = excel_output_style()){
     # If titles are provided put them in the starting row
-    if (!is.null(titles)){
+    if (!is.null(titles) && length(titles) > 0){
         title.row     <- style[["start_row"]]
         title.column  <- style[["start_column"]]
         title.length  <- length(titles)
@@ -111,7 +111,7 @@ get_any_table_ranges <- function(table,
 
     footnote.row <- table.row + table.length + 1
 
-    if (!is.null(footnotes)){
+    if (!is.null(footnotes) && length(footnotes) > 0){
         footnote.length <- length(footnotes)
     }
     else{
@@ -547,7 +547,7 @@ get_table_ranges <- function(table,
                              footnotes  = NULL,
                              style      = excel_output_style()){
     # If titles are provided put them in the starting row
-    if (!is.null(titles)){
+    if (!is.null(titles) && length(titles) > 0){
         title.row     <- style[["start_row"]]
         title.column  <- style[["start_column"]]
         title.length  <- length(titles)
@@ -576,7 +576,7 @@ get_table_ranges <- function(table,
 
     footnote.row <- table.row + table.length + 1
 
-    if (!is.null(footnotes)){
+    if (!is.null(footnotes) && length(footnotes) > 0){
         footnote.length <- length(footnotes)
     }
     else{
@@ -771,7 +771,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
             text <- type_texts[i]
 
             current_pos  <- openxlsx2::wb_dims(rows = current_row,
-                                               cols = ranges[["title.column"]])
+                                               cols = ranges[["header.column"]])
 
             # Without links just insert plain text
             if (!grepl(pattern, text)){
@@ -851,7 +851,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
         if (!links_present){
             wb$add_data(x         = type_texts,
                         start_row = ranges[[paste0(type, ".row")]],
-                        start_col = ranges[["title.column"]])
+                        start_col = ranges[["header.column"]])
         }
 
         # Set row heights for texts if specified
@@ -871,7 +871,7 @@ format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, outpu
     # Set border above footnotes, if present
     if (length(footnotes) > 0){
         specific_range <- openxlsx2::wb_dims(as.integer(full_range[["row"]][1]),
-                                             ranges[["title.column"]])
+                                             ranges[["header.column"]])
 
         wb$add_border(dims = specific_range,
                       left_border = NULL, right_border = NULL, bottom_border = NULL)
@@ -1718,7 +1718,7 @@ excel_output_style <- function(save_path                = NULL,
                                toc_other_font_size      = 10,
                                toc_other_font_bold      = FALSE,
                                toc_other_alignment      = "left",
-                               toc_link_alignment       = "center"){
+                               toc_link_alignment       = "left"){
 
     as.list(environment())
 }
@@ -1980,6 +1980,7 @@ modify_number_formats <- function(formats_to_modify, ...){
 #' table of contents. Styles can be created with [excel_output_style()].
 #' @param toc_header The main header.
 #' @param toc_sheet_name The table of contents sheet name.
+#' @param titles Input a vector of custom titles displayed along the sheet names.
 #' @param subheaders A list of custom subheaders. The entry names are the actual
 #' subheaders to be displayed, while the values are the sheet names at which the
 #' subheaders start.
@@ -1988,19 +1989,101 @@ modify_number_formats <- function(formats_to_modify, ...){
 #' @param subheader_underline FALSE by default. If TRUE underlines the subheaders.
 #' @param colored_tabs FALSE by default. If TRUE colors the tabs according to the
 #' subheader colors.
+#' @param file If NULL, opens the output as temporary file. If a filename with path
+#' is specified, saves the output to the specified path.
+#' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print
+#' anything. Can be used if one only wants to catch the combined workbook.
 #'
 #' @return
 #' Returns a modified 'Excel' workbook with table of contents sheet.
 #'
-#' @noRd
+#' @seealso
+#' Creating a custom table style: [excel_output_style()], [modify_output_style()],
+#' [number_format_style()], [modify_number_formats()].
+#'
+#' Global style options: [set_style_options()], [set_labels()].
+#'
+#' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
+#' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
+#'
+#' Combine Excel workbooks: [combine_into_workbook()].
+#'
+#' Creating formats: [discrete_format()] and [interval_format()].
+#'
+#' Functions that can handle formats and styles: [frequencies()], [crosstabs()].
+#'
+#' Additional functions that can handle styles: [export_with_style()]
+#'
+#' Additional functions that can handle formats: [summarise_plus()], [recode.()],
+#' [recode_multi()], [transpose_plus()], [sort_plus()]
+#'
+#' @examples
+#' # Example data frame
+#' my_data <- dummy_data(10)
+#'
+#' # First we create a workbook to play around with
+#' # print = FALSE and output = "excel_nostyle".
+#' # This skips the styling and output part, so that the function runs faster.
+#' set_print(FALSE)
+#' set_output("excel_nostyle")
+#'
+#' set_style_options(sheet_name = "sheet1")
+#' tab1 <- my_data |> export_with_style()
+#'
+#' set_style_options(sheet_name = "sheet2")
+#' tab2 <- my_data |> export_with_style()
+#'
+#' set_style_options(sheet_name = "sheet3")
+#' tab3 <- my_data |> export_with_style()
+#'
+#' set_style_options(sheet_name = "sheet4")
+#' tab4 <- my_data |> export_with_style()
+#'
+#' set_style_options(sheet_name = "sheet5")
+#' tab5 <- my_data |> export_with_style()
+#'
+#' set_style_options(sheet_name = "sheet6")
+#' tab6 <- my_data |> export_with_style()
+#'
+#' wb <- combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6)
+#'
+#' # Now add a custom styled table of contents sheet
+#' create_table_of_contents(wb,
+#'                          toc_header     = "My Custom Header",
+#'                          toc_sheet_name = "TOC",
+#'                          titles         = c("A title for sheet number 1",
+#'                                             "A second title, this one goes to number two",
+#'                                             "And a third one",
+#'                                             "By the way: If you don't input titles here",
+#'                                             "The title column will be empty. See below."),
+#'                          subheaders      = list("This is a subheadline" = "sheet1",
+#'                                                 "Another one"           = "sheet3",
+#'                                                 "And another one"       = "sheet5"),
+#'                          subheader_underline = TRUE,
+#'                          colored_tabs        = TRUE,
+#'                          style               = excel_output_style(toc_header_font_size = 20,
+#'                                                                   toc_other_font_size = 14))
+#'
+#' # Reset the global options afterwards
+#' set_print(TRUE)
+#' set_output("excel")
+#'
+#' @export
 create_table_of_contents <- function(wb,
                                      style               = excel_output_style(),
                                      toc_header          = "Table of Contents",
                                      toc_sheet_name      = "Contents",
+                                     titles              = c(),
                                      subheaders          = list(),
                                      subheader_colors    = c(),
                                      subheader_underline = FALSE,
-                                     colored_tabs        = FALSE){
+                                     colored_tabs        = FALSE,
+                                     file                = NULL,
+                                     print               = .qol_options[["print"]]){
+    print_start_message()
+
+    wb <- wb$clone(deep = TRUE)
+
     if (colored_tabs && length(subheader_colors) == 0){
         subheader_colors <- "9BC2E6"
     }
@@ -2009,30 +2092,43 @@ create_table_of_contents <- function(wb,
     # Preparations
     ###########################################################################
 
+    print_step("MAJOR", "Prepare contents")
+
     sheet_names     <- unname(wb$get_sheet_names())
     toc_sheet_shift <- 4
 
     subheader_colors <- fill_or_trim(subheader_colors, length(subheaders))
 
     # Get the main titles from the single sheets
-    titles <- sapply(sheet_names, function(sheet){
-        tryCatch({
-            title <- openxlsx2::wb_to_df(file         = wb,
-                                         sheet        = sheet,
-                                         named_region = "main_title",
-                                         col_names    = FALSE)
+    if (length(titles) == 0){
+        titles <- sapply(sheet_names, function(sheet){
+            tryCatch({
+                title <- openxlsx2::wb_to_df(file         = wb,
+                                             sheet        = sheet,
+                                             named_region = "main_title",
+                                             col_names    = FALSE)
 
-            # Return text if cell exists, otherwise NA
-            if (collapse::fnrow(title) > 0){
-                as.character(title)
-            }
-            else{
+                # Return text if cell exists, otherwise NA
+                if (collapse::fnrow(title) > 0){
+                    as.character(title)
+                }
+                else{
+                    ""
+                }
+            }, error = function(e) {
                 ""
-            }
-        }, error = function(e) {
-            ""
-        })
-    }, USE.NAMES = FALSE)
+            })
+        }, USE.NAMES = FALSE)
+    }
+    else if (length(titles) < length(sheet_names)){
+        titles <- c(titles, "")
+        titles <- fill_or_trim(titles, length(sheet_names))
+    }
+    else if (length(titles) > length(sheet_names)){
+        print_message("NOTE", "More titles provided then there are sheets to be named.")
+
+        titles <- fill_or_trim(titles, length(sheet_names))
+    }
 
     # Put sheet names and titles together in a data frame. It will be used to
     # merge the titles back to the sheet names after inserting the subheaders.
@@ -2052,7 +2148,7 @@ create_table_of_contents <- function(wb,
 
         if (length(invalid_sheets) > 0){
             print_message("ERROR", c("The following sheet name[?s] provided in the subheaders is invalid: [sheets]",
-                                     "Table of contents can't be created."), sheets = invalid_sheets)
+                                     "Table of contents can't be created."), sheets = invalid_sheets, always_print = TRUE)
             return(invisible(wb))
         }
 
@@ -2140,6 +2236,9 @@ create_table_of_contents <- function(wb,
     # Construct worksheet
     ###########################################################################
 
+    print_step("MAJOR", "Format contents")
+    print_step("MINOR", "Add data")
+
     wb$add_worksheet(toc_sheet_name)
 
     # Add all the texts to the workbook
@@ -2151,12 +2250,16 @@ create_table_of_contents <- function(wb,
 
     # Fill all cells with background color
     if (style[["toc_background_color"]] != ""){
+        print_step("MINOR", "Fill background")
+
         wb$add_fill(color = openxlsx2::wb_color(style[["toc_background_color"]]))
         wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
     }
 
     # Draw borders all around the table of contents
     if (style[["toc_border_color"]] != ""){
+        print_step("MINOR", "Draw borders")
+
         toc_border_color <- style[["toc_border_color"]]
         inner_toc_area   <- paste0("B2:E", collapse::fnrow(toc) + 3)
 
@@ -2169,14 +2272,17 @@ create_table_of_contents <- function(wb,
 
     # Fill inner contents box with table color
     if (style[["toc_inner_back_color"]] != ""){
+        print_step("MINOR", "Fill inner background")
+
         wb$add_fill(dims = inner_toc_area, color = openxlsx2::wb_color(style[["toc_inner_back_color"]]))
     }
+
+    print_step("MINOR", "Apply custom styling")
 
     # Add cell style to main header
     wb$add_cell_style(dims       = "C3",
                       horizontal = style[["toc_header_alignment"]],
                       vertical   = "center",
-                      #wrap_text  = "1",
                       apply_font = TRUE,
                       font_id    = wb$styles_mgr$get_font_id("toc_header_font"))
 
@@ -2191,7 +2297,6 @@ create_table_of_contents <- function(wb,
         wb$add_cell_style(dims       = paste0("C", row),
                           horizontal = style[["toc_link_alignment"]],
                           vertical   = "center",
-                          #wrap_text  = "1",
                           apply_font = TRUE,
                           font_id    = wb$styles_mgr$get_font_id("toc_link_font"))
 
@@ -2205,6 +2310,8 @@ create_table_of_contents <- function(wb,
 
     # Add subheader styling
     if (flag_subheaders){
+        print_step("MINOR", "Style subheaders")
+
         for (i in seq_along(subheader_index)){
             row      <- subheader_index[i]
             sub_dims <- sprintf("C%d:D%d", row, row)
@@ -2213,7 +2320,6 @@ create_table_of_contents <- function(wb,
             wb$add_cell_style(dims       = paste0("C", row),
                               horizontal = style[["toc_subheader_alignment"]],
                               vertical   = "center",
-                              #wrap_text  = "1",
                               apply_font = TRUE,
                               font_id    = wb$styles_mgr$get_font_id("toc_subheader_font"))
 
@@ -2238,6 +2344,8 @@ create_table_of_contents <- function(wb,
     }
 
     # Merge headers
+    print_step("MINOR", "Merge cells")
+
     row_indices   <- c(3, subheader_index)
     header_ranges <- sprintf("C%d:D%d", row_indices, row_indices)
 
@@ -2245,12 +2353,14 @@ create_table_of_contents <- function(wb,
     wb$unmerge_cells(dims = header_ranges)
 
     # Set column width
+    print_step("MINOR", "Set column width")
+
     sheet_width <- get_optimal_width(sheet_names, style[["toc_other_font_size"]])
     title_width <- get_optimal_width(titles,      style[["toc_other_font_size"]])
 
-    wb$set_col_widths(sheet = toc_sheet_name, cols = c(1, 2, 5), widths = 2)
-    wb$set_col_widths(sheet = toc_sheet_name, cols = 3,          widths = sheet_width)
-    wb$set_col_widths(sheet = toc_sheet_name, cols = 4,          widths = title_width)
+    wb$set_col_widths(sheet  = toc_sheet_name,
+                      cols   = c(1, 2, 3, 4, 5),
+                      widths = c(2, 2, sheet_width, title_width, 2))
 
     # Order table of contents sheet to the front
     wb$set_selected(sheet = toc_sheet_name)
@@ -2258,12 +2368,41 @@ create_table_of_contents <- function(wb,
 
     # Color the sheets according to subheader colors
     if (colored_tabs && length(subheader_colors) > 0){
+        print_step("MINOR", "Color tabs")
+
         for (i in seq_along(sheet_names)){
             sheet <- sheet_names[i]
 
             wb$set_page_setup(sheet = sheet, tab_color = openxlsx2::wb_color(sheet_colors[i]))
         }
     }
+
+    # Output formatted table into different formats
+    if (print){
+        print_step("MAJOR", "Exporting Excel Workbook")
+
+        if (!is.null(file)){
+            file <- macro(file)
+        }
+
+        if (is.null(file)){
+            if (interactive()){
+                wb$open()
+            }
+        }
+        else if (!dir.exists(dirname(file)) || dirname(file) == "."){
+            print_message("WARNING", "Directory '[file_name]' does not exist. File won't be saved.", file_name = dirname(file))
+
+            if (interactive()){
+                wb$open()
+            }
+        }
+        else{
+            wb$save(file = file, overwrite = TRUE)
+        }
+    }
+
+    print_closing()
 
     invisible(wb)
 }
@@ -2288,5 +2427,7 @@ get_optimal_width <- function(texts, font_size){
         return("auto")
     }
 
-    longest_text * max(6, font_size) / 12
+    font_base_size <- ifelse(longest_text > 12, 13, 11)
+
+    longest_text * max(6, font_size) / font_base_size
 }

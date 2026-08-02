@@ -118,6 +118,8 @@
 #'
 #' Combine Excel workbooks: [combine_into_workbook()].
 #'
+#' Standalone table of contents: [create_table_of_contents()].
+#'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that can handle formats and styles: [frequencies()], [crosstabs()].
@@ -2528,8 +2530,12 @@ format_any_excel <- function(wb,
             wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
 
             # Titles and footnotes need to get an extra fill
-            wb$add_fill(dims = any_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
-            wb$add_fill(dims = any_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            if (length(titles) > 0){
+                wb$add_fill(dims = any_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+            }
+            if (length(footnotes) > 0){
+                wb$add_fill(dims = any_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            }
         }
 
         # Style table
@@ -2627,11 +2633,17 @@ format_any_excel <- function(wb,
     # Add named regions to be able to target certain areas of the workbook more easily
     wb$add_named_region(dims = any_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
     wb$add_named_region(dims = any_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
-    wb$add_named_region(dims = any_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
-    wb$add_named_region(dims = any_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
     wb$add_named_region(dims = any_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
     wb$add_named_region(dims = any_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
-    wb$add_named_region(dims = unlist(strsplit(any_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
+
+    if (length(titles) > 0){
+        wb$add_named_region(dims = any_ranges[["title_range"]], name = "titles", local_sheet = TRUE)
+        wb$add_named_region(dims = unlist(strsplit(any_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
+    }
+
+    if (length(footnotes) > 0){
+        wb$add_named_region(dims = any_ranges[["footnote_range"]], name = "footnotes", local_sheet = TRUE)
+    }
 
     monitor_df <- monitor_df |> monitor_end()
 
@@ -3002,7 +3014,7 @@ format_any_by_excel <- function(wb,
             # Add by info below the titles
             if (length(titles) > 0){
                 titles_temp <- c(titles, "", by_info)
-                titles_temp <- gsub("\\[by_var\\]", value, titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
             }
             # Or on top if there are no titles
             else{
@@ -3011,7 +3023,7 @@ format_any_by_excel <- function(wb,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", value, footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{
@@ -3257,6 +3269,26 @@ format_by_single_table <- function(wb,
 #' @return
 #' A fully styled workbook containing the provided tables.
 #'
+#' @seealso
+#' Creating a custom table style: [excel_output_style()], [modify_output_style()],
+#' [number_format_style()], [modify_number_formats()].
+#'
+#' Global style options: [set_style_options()], [set_labels()].
+#'
+#' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
+#' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
+#'
+#' Standalone table of contents: [create_table_of_contents()].
+#'
+#' Creating formats: [discrete_format()] and [interval_format()].
+#'
+#' Functions that can handle formats and styles: [frequencies()], [crosstabs()].
+#'
+#' Additional functions that can handle styles: [export_with_style()]
+#'
+#' Additional functions that can handle formats: [summarise_plus()], [recode.()],
+#' [recode_multi()], [transpose_plus()], [sort_plus()]
+#'
 #' @examples
 #' # Example data frame
 #' my_data <- dummy_data(1000)
@@ -3299,7 +3331,6 @@ format_by_single_table <- function(wb,
 #' # Catch the output and additionally use the options:
 #' # print = FALSE and output = "excel_nostyle".
 #' # This skips the styling and output part, so that the function runs faster.
-#' # The styling is done later on.
 #' set_print(FALSE)
 #' set_output("excel_nostyle")
 #' set_style_options(sheet_name = "big table")
@@ -3360,8 +3391,8 @@ combine_into_workbook <- function(...,
                                   subheader_colors    = c(),
                                   subheader_underline = FALSE,
                                   colored_tabs        = FALSE,
-                                  print               = TRUE,
-                                  monitor             = FALSE){
+                                  print               = .qol_options[["print"]],
+                                  monitor             = .qol_options[["monitor"]]){
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Prepare combine", "Prepare")
     #-------------------------------------------------------------------------#
@@ -3462,13 +3493,17 @@ combine_into_workbook <- function(...,
         monitor_df <- monitor_df |> monitor_next("Generate table of contents", "Generate table of contents")
         #---------------------------------------------------------------------#
 
-        wb <- create_table_of_contents(wb, style,
-                                       toc_header          = toc_header,
-                                       toc_sheet_name      = toc_sheet_name,
-                                       subheaders          = subheaders,
-                                       subheader_colors    = subheader_colors,
-                                       subheader_underline = subheader_underline,
-                                       colored_tabs        = colored_tabs)
+        wb <- suppressMessages(
+        create_table_of_contents(wb, style,
+                                 toc_header          = toc_header,
+                                 toc_sheet_name      = toc_sheet_name,
+                                 titles              = c(),
+                                 subheaders          = subheaders,
+                                 subheader_colors    = subheader_colors,
+                                 subheader_underline = subheader_underline,
+                                 colored_tabs        = colored_tabs,
+                                 file                = NULL,
+                                 print               = FALSE))
     }
 
     # Output formatted table into different formats

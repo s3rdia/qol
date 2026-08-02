@@ -64,6 +64,10 @@
 #' Other global options: [set_titles()], [set_footnotes()], [set_print()], [set_monitor()],
 #' [set_na.rm()], [set_print()], [set_print_miss()], [set_output()].
 #'
+#' Combine Excel workbooks: [combine_into_workbook()].
+#'
+#' Standalone table of contents: [create_table_of_contents()].
+#'
 #' Creating formats: [discrete_format()] and [interval_format()].
 #'
 #' Functions that can handle formats and styles: [crosstabs()], [any_table()].
@@ -442,6 +446,8 @@ frequencies <- function(data_frame,
         monitor_df <- monitor_df |> monitor_next("Format tables", "Format tables")
         #---------------------------------------------------------------------#
 
+        wb <- NULL
+
         # In case no by variables are provided
         if (length(by) == 0){
             complete_mean  <- format_mean_text(mean_tab, vars_mean, mean_columns, means)
@@ -574,8 +580,9 @@ frequencies <- function(data_frame,
     monitor_df <- monitor_df |> monitor_end()
     monitor_df |> monitor_plot(draw_plot = monitor)
 
-    invisible(structure(list("mean" = mean_tab,
-                             "freq" = freq_tab), class = "qol_freq"))
+    invisible(structure(list("mean"     = mean_tab,
+                             "freq"     = freq_tab,
+                             "workbook" = wb), class = "qol_freq"))
 }
 
 ###############################################################################
@@ -1343,8 +1350,12 @@ format_freq_excel <- function(wb,
                 wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
 
                 # Titles and footnotes need to get an extra fill
-                wb$add_fill(dims = freq_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
-                wb$add_fill(dims = freq_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+                if (length(titles) > 0){
+                    wb$add_fill(dims = freq_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+                }
+                if (length(footnotes) > 0){
+                    wb$add_fill(dims = freq_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+                }
             }
 
             #-----------------------------------------------------------------#
@@ -1406,22 +1417,28 @@ format_freq_excel <- function(wb,
                                                   style) |>
                 handle_auto_dimensions(freq_ranges, style) |>
                 handle_header_table_dim(freq_ranges, style)
+        }
 
-            # Ignore the "number stored as text" error within Excel
-            wb$add_ignore_error(dims = freq_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
+        # Ignore the "number stored as text" error within Excel
+        wb$add_ignore_error(dims = freq_ranges[["cat_col_range"]], number_stored_as_text = TRUE)
 
-            # Add named regions to be able to target certain areas of the workbook more easily
-            wb$add_named_region(dims = freq_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
-            wb$add_named_region(dims = freq_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+        # Add named regions to be able to target certain areas of the workbook more easily
+        wb$add_named_region(dims = freq_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+        wb$add_named_region(dims = freq_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+        wb$add_named_region(dims = freq_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+        wb$add_named_region(dims = freq_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+
+        if (length(titles) > 0){
+            wb$add_named_region(dims = freq_ranges[["title_range"]], name = "titles", local_sheet = TRUE)
             wb$add_named_region(dims = unlist(strsplit(freq_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
         }
 
-        monitor_df <- monitor_df |> monitor_end()
+        if (length(footnotes) > 0){
+            wb$add_named_region(dims = freq_ranges[["footnote_range"]], name = "footnotes", local_sheet = TRUE)
+        }
     }
+
+    monitor_df <- monitor_df |> monitor_end()
 
     # Return workbook
     list(wb, monitor_df)
@@ -1547,13 +1564,31 @@ format_by_text <- function(mean_tab,
                                              mean_columns,
                                              means)
 
+            # Replace by info in the titles
+            if (length(titles) > 0){
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+            }
+            # Or use by info as title, if there are no titles
+            else{
+                titles_temp <- titles
+            }
+
+            # Replace by info in the footnotes
+            if (length(footnotes) > 0){
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+            }
+            # Otherwise just leave footnotes empty
+            else{
+                footnotes_temp <- footnotes
+            }
+
             # Generate frequency tables as normal but base is filtered data frame
             current_freq <- format_freq_text(freq_temp,
                                              variables,
                                              formats,
                                              by,
-                                             titles,
-                                             footnotes,
+                                             titles_temp,
+                                             footnotes_temp,
                                              style)
 
             # Output formatted result
@@ -1726,6 +1761,24 @@ format_by_excel <- function(mean_tab,
             monitor_df <- monitor_df |> monitor_next(paste0("Excel freq (", by_var, "_", value, ")"), "Format by")
             #-----------------------------------------------------------------#
 
+            # Replace by info in the titles
+            if (length(titles) > 0){
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+            }
+            # Or use by info as title, if there are no titles
+            else{
+                titles_temp <- titles
+            }
+
+            # Replace by info in the footnotes
+            if (length(footnotes) > 0){
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+            }
+            # Otherwise just leave footnotes empty
+            else{
+                footnotes_temp <- footnotes
+            }
+
             # The print_miss option enables a shortcut in formatting the sheets after
             # the first one. Since it guarantees that all follow up sheets are printed
             # with the exact same table width and height, because all categories are
@@ -1738,8 +1791,8 @@ format_by_excel <- function(mean_tab,
                                              variables,
                                              formats,
                                              by,
-                                             titles,
-                                             footnotes,
+                                             titles_temp,
+                                             footnotes_temp,
                                              style,
                                              output,
                                              by_info,
@@ -1754,8 +1807,8 @@ format_by_excel <- function(mean_tab,
                                              variables,
                                              formats,
                                              by,
-                                             titles,
-                                             footnotes,
+                                             titles_temp,
+                                             footnotes_temp,
                                              style,
                                              "excel_nostyle",
                                              by_info,

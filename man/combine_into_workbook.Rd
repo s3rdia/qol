@@ -16,8 +16,8 @@ combine_into_workbook(
   subheader_colors = c(),
   subheader_underline = FALSE,
   colored_tabs = FALSE,
-  print = TRUE,
-  monitor = FALSE
+  print = .qol_options[["print"]],
+  monitor = .qol_options[["monitor"]]
 )
 }
 \arguments{
@@ -103,7 +103,6 @@ set_footnotes("This is footnote number 1 cell: W22",
 # Catch the output and additionally use the options:
 # print = FALSE and output = "excel_nostyle".
 # This skips the styling and output part, so that the function runs faster.
-# The styling is done later on.
 set_print(FALSE)
 set_output("excel_nostyle")
 set_style_options(sheet_name = "big table")
@@ -152,4 +151,24 @@ combine_into_workbook(tab1, tab2, tab3,
 set_print(TRUE)
 set_output("excel")
 
+}
+\seealso{
+Creating a custom table style: \code{\link[=excel_output_style]{excel_output_style()}}, \code{\link[=modify_output_style]{modify_output_style()}},
+\code{\link[=number_format_style]{number_format_style()}}, \code{\link[=modify_number_formats]{modify_number_formats()}}.
+
+Global style options: \code{\link[=set_style_options]{set_style_options()}}, \code{\link[=set_labels]{set_labels()}}.
+
+Other global options: \code{\link[=set_titles]{set_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_monitor]{set_monitor()}},
+\code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=set_output]{set_output()}}.
+
+Standalone table of contents: \code{\link[=create_table_of_contents]{create_table_of_contents()}}.
+
+Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
+
+Functions that can handle formats and styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}.
+
+Additional functions that can handle styles: \code{\link[=export_with_style]{export_with_style()}}
+
+Additional functions that can handle formats: \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=recode.]{recode.()}},
+\code{\link[=recode_multi]{recode_multi()}}, \code{\link[=transpose_plus]{transpose_plus()}}, \code{\link[=sort_plus]{sort_plus()}}
 }

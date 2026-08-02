@@ -2,6 +2,13 @@
 
 ## qol 1.3.4 - DEVELOPMENT
 
+#### New functions
+
+- [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
+  Creates a table of contents sheet with custom style based on the
+  provided ‘Excel’ workbook. (02.08.2026, thanks to
+  [@JanMarvin](https://github.com/JanMarvin))
+
 #### New functionality
 
 - [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
@@ -30,11 +37,20 @@
   Parameters, which are originally NULL, can now be reset by assigning a
   value of NULL. (24.07.2026)
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
-  Can now create a custom styleable table of contents. (01.08.2026)
+  Can now create a custom styleable table of contents. (01.08.2026,
+  thanks to [@JanMarvin](https://github.com/JanMarvin))
 - [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
   Added parameters for the custom styleable table of contents.
   (01.08.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When using `by` variables the special keyword `[by_var]` is now
+  replaced with the actual `by` value in the titles and footnotes.
+  (01.08.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  Now also export the Excel workbook. (02.08.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
   When using `by` variables the special keyword `[by_var]` is now
   replaced with the actual `by` value in the titles and footnotes.
   (01.08.2026)
@@ -89,6 +105,16 @@
   When using interval formats without weight, the sum columns where
   displayed even though they were equal to the freq columns. This is
   fixed now. (31.07.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Removed the extra empty row over the tables when no titles where set.
+  Additionally there are no more empty named regions for titles and
+  footnotes, if they are not present. (02.08.2026)
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Now uses the global options for `print` and `monitor` parameter.
+  (02.08.2026)
 
 #### Additionally
 

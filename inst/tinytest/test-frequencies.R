@@ -34,7 +34,7 @@ result_list <- dummy_df |>
                   print     = FALSE)
 
 expect_inherits(result_list, "qol_freq", info = "Simplest form of frequencies")
-expect_equal(length(result_list), 2, info = "Simplest form of frequencies")
+expect_equal(length(result_list), 3, info = "Simplest form of frequencies")
 
 expect_true(is.null(result_list[["mean"]]), info = "Simplest form of frequencies")
 expect_true(all(c("fused_vars", "TYPE", "TYPE_NR", "DEPTH",
@@ -60,7 +60,7 @@ result_list <- dummy_df |>
                     print     = FALSE)
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with titles and footnotes")
-expect_equal(length(result_list), 2, info = "frequencies with titles and footnotes")
+expect_equal(length(result_list), 3, info = "frequencies with titles and footnotes")
 
 
 # frequencies with multiple variables
@@ -257,7 +257,7 @@ result_list <- dummy_df |>
                 print     = FALSE)
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with excel output")
-expect_equal(length(result_list), 2, info = "frequencies with excel output")
+expect_equal(length(result_list), 3, info = "frequencies with excel output")
 
 
 # frequencies with titles and footnotes and weight
@@ -270,7 +270,7 @@ result_list <- dummy_df |>
                 print     = FALSE)
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with titles and footnotes and weight")
-expect_equal(length(result_list), 2, info = "frequencies with titles and footnotes and weight")
+expect_equal(length(result_list), 3, info = "frequencies with titles and footnotes and weight")
 
 
 # frequencies with excel output and by variables
@@ -308,7 +308,7 @@ result_list <- dummy_df |>
                                            row_heights      = c(2, 3)))
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with borders in excel output")
-expect_equal(length(result_list), 2, info = "frequencies with borders in excel output")
+expect_equal(length(result_list), 3, info = "frequencies with borders in excel output")
 
 
 # frequencies with set column width/row heights
@@ -320,7 +320,7 @@ result_list <- dummy_df |>
                                            row_heights   = 3))
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with set column width/row heights")
-expect_equal(length(result_list), 2, info = "frequencies with set column width/row heights")
+expect_equal(length(result_list), 3, info = "frequencies with set column width/row heights")
 
 
 # frequencies with set partial row heights
@@ -336,7 +336,7 @@ result_list <- dummy_df |>
                                            footnote_heights = 10))
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with set partial row heights")
-expect_equal(length(result_list), 2, info = "frequencies with set partial row heights")
+expect_equal(length(result_list), 3, info = "frequencies with set partial row heights")
 
 
 # frequencies with fast none styled excel output
@@ -346,7 +346,7 @@ result_list <- dummy_df |>
                 print     = FALSE)
 
 expect_inherits(result_list, "qol_freq", info = "frequencies with fast none styled excel output")
-expect_equal(length(result_list), 2, info = "frequencies with fast none styled excel output")
+expect_equal(length(result_list), 3, info = "frequencies with fast none styled excel output")
 
 
 # Invalid output format leads to console output

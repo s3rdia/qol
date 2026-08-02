@@ -192,6 +192,10 @@ Global style options: \code{\link[=set_style_options]{set_style_options()}}, \co
 Other global options: \code{\link[=set_titles]{set_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_monitor]{set_monitor()}},
 \code{\link[=set_na.rm]{set_na.rm()}}, \code{\link[=set_print]{set_print()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=set_output]{set_output()}}.
 
+Combine Excel workbooks: \code{\link[=combine_into_workbook]{combine_into_workbook()}}.
+
+Standalone table of contents: \code{\link[=create_table_of_contents]{create_table_of_contents()}}.
+
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
 
 Functions that can handle formats and styles: \code{\link[=crosstabs]{crosstabs()}}, \code{\link[=any_table]{any_table()}}.

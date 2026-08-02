@@ -98,7 +98,7 @@ excel_output_style(
   toc_other_font_size = 10,
   toc_other_font_bold = FALSE,
   toc_other_alignment = "left",
-  toc_link_alignment = "center"
+  toc_link_alignment = "left"
 )
 }
 \arguments{

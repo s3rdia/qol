@@ -1,5 +1,9 @@
 # qol 1.3.4 - DEVELOPMENT
 
+### New functions
+
+* `create_table_of_contents()`: Creates a table of contents sheet with custom style based on the provided 'Excel' workbook. (02.08.2026, thanks to @JanMarvin)
+
 ### New functionality
 
 * `load_file()`, `load_file_multi()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed. (18.07.2026)
@@ -10,9 +14,11 @@
 * `multi_join()`: Variable names in the `on` parameter can now be passed without quotation marks. (23.07.2026)
 * `remove_stat_extension()`: Statistic extensions can now be passed without quotation marks. (24.07.2026)
 * `set_style_options()`: Parameters, which are originally NULL, can now be reset by assigning a value of NULL. (24.07.2026)
-* `combine_into_workbook()`: Can now create a custom styleable table of contents. (01.08.2026)
+* `combine_into_workbook()`: Can now create a custom styleable table of contents. (01.08.2026, thanks to @JanMarvin)
 * `excel_output_style()`: Added parameters for the custom styleable table of contents. (01.08.2026)
 * `any_table()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. (01.08.2026)
+* `frequencies()`, `crosstabs()`: Now also export the Excel workbook. (02.08.2026)
+* `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. (01.08.2026)
 
 ### Removed
 
@@ -30,6 +36,8 @@
 * `import_multi()`: Ran into an error when trying to import a not existing Excel workbook. Now the file path is checked before. (30.07.2026)
 * `convert_factor()`: Now uses `unique()` instead of `collapse:unique()` to identify german umlauts as they are seen on screen and not as they are stored in memory, which caused errors. (31.07.2026)
 * `frequencies()`: When using interval formats without weight, the sum columns where displayed even though they were equal to the freq columns. This is fixed now. (31.07.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Removed the extra empty row over the tables when no titles where set. Additionally there are no more empty named regions for titles and footnotes, if they are not present. (02.08.2026)
+* `combine_into_workbook()`: Now uses the global options for `print` and `monitor` parameter. (02.08.2026)
 
 ### Additionally
 

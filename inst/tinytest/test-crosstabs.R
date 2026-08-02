@@ -13,51 +13,52 @@ dummy_df <- dummy_data(1000)
 
 
 # Different way of passing variables in
-result_df1 <- dummy_df |>
+result_list1 <- dummy_df |>
      crosstabs(rows    = age,
                columns = sex,
                by      = education,
                weight  = weight,
                print   = FALSE)
 
-result_df2 <- dummy_df |>
+result_list2 <- dummy_df |>
      crosstabs(rows    = "age",
                columns = "sex",
                by      = "education",
                weight  = "weight",
                print   = FALSE)
 
-expect_identical(result_df1, result_df2, info = "Different way of passing variables in")
+expect_identical(result_list1, result_list2, info = "Different way of passing variables in")
 
 
 # Simplest form of crosstabs
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               print   = FALSE)
 
-expect_inherits(result_df, "data.table", info = "Simplest form of crosstabs")
+expect_inherits(result_list, "qol_cross", info = "Simplest form of crosstabs")
+expect_equal(length(result_list), 2, info = "Simplest form of crosstabs")
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "Simplest form of crosstabs")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "Simplest form of crosstabs")
 
 
 # crosstabs with titles and footnotes
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows      = age,
               columns   = sex,
               titles    = "Hello world",
               footnotes = "This is a footnote",
               print     = FALSE)
 
-expect_inherits(result_df, "data.table", info = "crosstabs with titles and footnotes")
+expect_inherits(result_list, "qol_cross", info = "crosstabs with titles and footnotes")
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "crosstabs with titles and footnotes")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "crosstabs with titles and footnotes")
 
 
 # crosstabs not allowed with multiple row variables
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = c(age, state),
               columns = sex,
               print   = FALSE)
@@ -66,7 +67,7 @@ expect_warning(print_stack_as_messages("WARNING"), "Only one variable for <rows>
 
 
 # crosstabs not allowed with multiple column variables
-result_df <- dummy_df |>
+result_list <- dummy_df |>
      crosstabs(rows    = sex,
                columns = c(age, state),
                print   = FALSE)
@@ -75,25 +76,25 @@ expect_warning(print_stack_as_messages("WARNING"), "Only one variable for <colum
 
 
 # crosstabs with by variables
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               by      = education,
               print   = FALSE)
 
-expect_true("BY" %in% names(result_df), info = "crosstabs with by variables")
-expect_equal(length(unique(result_df[["BY"]])), 1, info = "crosstabs with by variables")
+expect_true("BY" %in% names(result_list[[1]]), info = "crosstabs with by variables")
+expect_equal(length(unique(result_list[[1]][["BY"]])), 1, info = "crosstabs with by variables")
 
 
 # crosstabs with multiple by variables
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               by      = c(education, year),
               print   = FALSE)
 
-expect_true("BY" %in% names(result_df), info = "crosstabs with multiple by variables")
-expect_equal(length(unique(result_df[["BY"]])), 2, info = "crosstabs with multiple by variables")
+expect_true("BY" %in% names(result_list[[1]]), info = "crosstabs with multiple by variables")
+expect_equal(length(unique(result_list[[1]][["BY"]])), 2, info = "crosstabs with multiple by variables")
 
 
 # crosstabs where by is also part of rows or columns is aborted
@@ -107,40 +108,40 @@ expect_warning(print_stack_as_messages("WARNING"), "The provided <by> variable '
 
 
 # crosstabs with weighted results
-result_df1 <- dummy_df |>
+result_list1 <- dummy_df |>
      crosstabs(rows    = age,
                columns = sex,
                weight  = weight,
                print   = FALSE)
 
-result_df2 <- dummy_df |>
+result_list2 <- dummy_df |>
      crosstabs(rows    = age,
                columns = sex,
                print   = FALSE)
 
-expect_false(identical(as.numeric(result_df1[["var_sum_1"]]),
-                       as.numeric(result_df2[["var_sum_1"]])), info = "crosstabs with weighted results")
+expect_false(identical(as.numeric(result_list1[[1]][["var_sum_1"]]),
+                       as.numeric(result_list2[[1]][["var_sum_1"]])), info = "crosstabs with weighted results")
 
 
 # crosstabs with NAs removed
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               na.rm   = TRUE,
               print   = FALSE)
 
-expect_true(sum(is.na(result_df[["fused_vars"]])) == 0, info = "crosstabs with NAs removed")
+expect_true(sum(is.na(result_list[[1]][["fused_vars"]])) == 0, info = "crosstabs with NAs removed")
 
 
 # crosstabs with multiple statistics
-result_df <- dummy_df |>
+result_list <- dummy_df |>
       crosstabs(rows       = age,
                 columns    = sex,
                 statistics = c("sum", "freq", "pct_row", "pct_column", "pct_total"),
                 print      = FALSE)
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "crosstabs with multiple statistics")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "crosstabs with multiple statistics")
 
 
 # Apply single discrete labels
@@ -160,7 +161,7 @@ no_format_df <- dummy_df |>
 expect_equal(collapse::fsum(format_df[["var_sum_1"]]),
              collapse::fsum(no_format_df[["var_sum_1"]]), info = "Apply single discrete labels")
 expect_true(all(c("Male", "Female")
-                %in% format_df[["sex"]]), info = "Apply single discrete labels")
+                %in% format_df[[1]][["sex"]]), info = "Apply single discrete labels")
 
 
 # Apply discrete multilabel
@@ -181,7 +182,7 @@ format_df <- dummy_df |>
               print   = FALSE)
 
 expect_true(all(c("Total", "Male", "Female")
-                %in% format_df[["sex"]]), info = "Apply discrete multilabel")
+                %in% format_df[[1]][["sex"]]), info = "Apply discrete multilabel")
 
 
 # Apply interval multilabel
@@ -197,7 +198,7 @@ format_df <- dummy_df |>
               print   = FALSE)
 
 expect_true(all(c("Total", "below 500", "2000 and more")
-                %in% format_df[["income"]]), info = "Apply interval multilabel")
+                %in% format_df[[1]][["income"]]), info = "Apply interval multilabel")
 
 
 # crosstabs row multilabel leads to notification
@@ -246,20 +247,20 @@ expect_warning(print_stack_as_messages("WARNING"), "Format for variable 'sex' do
 ###############################################################################
 
 # crosstabs with excel output
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               output  = "excel_nostyle",
               print   = FALSE)
 
-expect_inherits(result_df, "data.table", info = "crosstabs with excel output")
+expect_inherits(result_list, "qol_cross", info = "crosstabs with excel output")
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "crosstabs with excel output")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "crosstabs with excel output")
 
 
 # crosstabs with titles and footnotes and weight (excel)
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows      = age,
               columns   = sex,
               output    = "excel",
@@ -268,14 +269,14 @@ result_df <- dummy_df |>
               weight    = weight,
               print     = FALSE)
 
-expect_inherits(result_df, "data.table", info = "crosstabs with titles and footnotes and weight (excel)")
+expect_inherits(result_list, "qol_cross", info = "crosstabs with titles and footnotes and weight (excel)")
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "crosstabs with titles and footnotes and weight (excel)")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "crosstabs with titles and footnotes and weight (excel)")
 
 
 # crosstabs with excel output and by variables (excel)
-result_df <- dummy_df |>
+result_list <- dummy_df |>
     crosstabs(rows    = age,
               columns = sex,
               by      = education,
@@ -283,20 +284,20 @@ result_df <- dummy_df |>
               print_miss = TRUE, # Has no value here but the test runs faster
               print   = FALSE)
 
-expect_true("BY" %in% names(result_df), info = "crosstabs with excel output and by variables (excel)")
+expect_true("BY" %in% names(result_list[[1]]), info = "crosstabs with excel output and by variables (excel)")
 
 
 # crosstabs with fast none styled excel output (excel)
-result_df <- dummy_df |>
+result_list <- dummy_df |>
       crosstabs(rows    = age,
                 columns = sex,
                 output  = "excel_nostyle",
                 print   = FALSE)
 
-expect_inherits(result_df, "data.table", info = "crosstabs with fast none styled excel output (excel)")
+expect_inherits(result_list, "qol_cross", info = "crosstabs with fast none styled excel output (excel)")
 
 values <- length(unique(dummy_df[["sex"]]))
-expect_equal(collapse::fncol(result_df), (values * 4) + 1, info = "crosstabs with fast none styled excel output (excel)")
+expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "crosstabs with fast none styled excel output (excel)")
 
 
 # crosstabs row multilabel leads to notification (excel)
@@ -354,7 +355,7 @@ expect_message(print_stack_as_messages("NOTE"), "The format for variable 'sex' i
 
 
 # Invalid output format leads to console output
-result_df <- dummy_df |>
+result_list <- dummy_df |>
        crosstabs(rows    = age,
                  columns = sex,
                  by      = education,

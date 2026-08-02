@@ -540,6 +540,8 @@ can be found on GitHub.
   : Export Data Frame With Style
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md)
   : Combine Multiple Tables Into One Workbook
+- [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md)
+  : Create Table Of Contents For 'Excel' Workbooks
 
 ## Creating a Custom Table Style
 

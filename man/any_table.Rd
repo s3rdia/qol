@@ -463,6 +463,8 @@ Other global options: \code{\link[=set_titles]{set_titles()}}, \code{\link[=set_
 
 Combine Excel workbooks: \code{\link[=combine_into_workbook]{combine_into_workbook()}}.
 
+Standalone table of contents: \code{\link[=create_table_of_contents]{create_table_of_contents()}}.
+
 Creating formats: \code{\link[=discrete_format]{discrete_format()}} and \code{\link[=interval_format]{interval_format()}}.
 
 Functions that can handle formats and styles: \code{\link[=frequencies]{frequencies()}}, \code{\link[=crosstabs]{crosstabs()}}.

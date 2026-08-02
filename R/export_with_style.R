@@ -396,8 +396,12 @@ format_df_excel <- function(wb,
             wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
 
             # Titles and footnotes need to get an extra fill
-            wb$add_fill(dims = df_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
-            wb$add_fill(dims = df_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            if (length(titles) > 0){
+                wb$add_fill(dims = df_ranges[["title_range"]],    color = openxlsx2::wb_color(style[["background_color"]]))
+            }
+            if (length(footnotes) > 0){
+                wb$add_fill(dims = df_ranges[["footnote_range"]], color = openxlsx2::wb_color(style[["background_color"]]))
+            }
         }
 
         # Format individual column alignments
@@ -468,18 +472,24 @@ format_df_excel <- function(wb,
                                               style) |>
             handle_any_auto_dimensions(df_ranges, style) |>
             handle_header_table_dim(df_ranges, style)
+    }
 
-        # Ignore the "number stored as text" error within Excel
-        wb$add_ignore_error(dims = df_ranges[["whole_tab_range"]], number_stored_as_text = TRUE)
+    # Ignore the "number stored as text" error within Excel
+    wb$add_ignore_error(dims = df_ranges[["whole_tab_range"]], number_stored_as_text = TRUE)
 
-        # Add named regions to be able to target certain areas of the workbook more easily
-        wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["title_range"]],     name = "titles",       local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["footnote_range"]],  name = "footnotes",    local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
-        wb$add_named_region(dims = df_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+    # Add named regions to be able to target certain areas of the workbook more easily
+    wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
+    wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
+    wb$add_named_region(dims = df_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
+    wb$add_named_region(dims = df_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
+
+    if (length(titles) > 0){
+        wb$add_named_region(dims = df_ranges[["title_range"]], name = "titles", local_sheet = TRUE)
         wb$add_named_region(dims = unlist(strsplit(df_ranges[["title_range"]], ":"))[1], name = "main_title", local_sheet = TRUE)
+    }
+
+    if (length(footnotes) > 0){
+        wb$add_named_region(dims = df_ranges[["footnote_range"]], name = "footnotes", local_sheet = TRUE)
     }
 
     monitor_df <- monitor_df |> monitor_end()

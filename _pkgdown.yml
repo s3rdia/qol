@@ -23,6 +23,7 @@ reference:
   - any_table
   - export_with_style
   - combine_into_workbook
+  - create_table_of_contents
 - title: Creating a Custom Table Style
   contents:
   - excel_output_style
