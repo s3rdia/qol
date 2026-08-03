@@ -8,7 +8,7 @@ provided 'Excel' workbook.
 ``` r
 create_table_of_contents(
   wb,
-  style = excel_output_style(),
+  style = .qol_options[["excel_style"]],
   toc_header = "Table of Contents",
   toc_sheet_name = "Contents",
   titles = c(),
@@ -16,7 +16,6 @@ create_table_of_contents(
   subheader_colors = c(),
   subheader_underline = FALSE,
   colored_tabs = FALSE,
-  file = NULL,
   print = .qol_options[["print"]]
 )
 ```
@@ -64,11 +63,6 @@ create_table_of_contents(
 
   FALSE by default. If TRUE colors the tabs according to the subheader
   colors.
-
-- file:
-
-  If NULL, opens the output as temporary file. If a filename with path
-  is specified, saves the output to the specified path.
 
 - print:
 
@@ -172,6 +166,19 @@ create_table_of_contents(wb,
                          colored_tabs        = TRUE,
                          style               = excel_output_style(toc_header_font_size = 20,
                                                                   toc_other_font_size = 14))
+
+# To save a table as xlsx file you have to set the path and filename in the
+# style element
+# Example files paths
+workbook_file <- tempfile(fileext = ".xlsx")
+
+set_style_options(save_path = dirname(workbook_file),
+                  file      = basename(workbook_file))
+
+create_table_of_contents(wb)
+
+# Manual cleanup for example
+unlink(workbook_file)
 
 # Reset the global options afterwards
 set_print(TRUE)

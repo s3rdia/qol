@@ -55,6 +55,13 @@
   replaced with the actual `by` value in the titles and footnotes.
   (01.08.2026)
 
+#### Changed functionality
+
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  With the function making use of the new `style` parameter, the `file`
+  parameter has been removed. Saving files no works with the `style`
+  parameter like in the other tabulation functions. (03.08.2026)
+
 #### Removed
 
 - [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
@@ -138,6 +145,8 @@
   [@olivroy](https://github.com/olivroy))
 - [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
   Swapped out a copypasta error message with the right one. (22.07.2026)
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Added example on how to save a file. (03.08.2026)
 
 ## qol 1.3.3
 

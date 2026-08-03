@@ -19,7 +19,11 @@ Last CRAN release was on 16.07.2026.
 * `excel_output_style()`: Added parameters for the custom styleable table of contents.
 * `any_table()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
 * `frequencies()`, `crosstabs()`: Now also export the Excel workbook.
-* `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. 
+* `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
+
+### Changed functionality
+
+* `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions.
 
 ### Removed
 
@@ -47,6 +51,7 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added named regions for titles, main title, footnotes, table header and row headers.
 * Cleanup of a partial matches.
 * `stack_data()`: Swapped out a copypasta error message with the right one.
+* `combine_into_workbook()`: Added example on how to save a file.
 
 
 ## R CMD check results

@@ -48,7 +48,7 @@ workbook.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_table_of_contents</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
-<span>  style <span class="op">=</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  style <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"excel_style"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  toc_header <span class="op">=</span> <span class="st">"Table of Contents"</span>,</span>
 <span>  toc_sheet_name <span class="op">=</span> <span class="st">"Contents"</span>,</span>
 <span>  titles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -56,7 +56,6 @@ workbook.</p>
 <span>  subheader_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  subheader_underline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  colored_tabs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  print <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"print"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -104,11 +103,6 @@ to color the tabs, if the option is activated.</p></dd>
 <dt id="arg-colored-tabs">colored_tabs<a class="anchor" aria-label="anchor" href="#arg-colored-tabs"></a></dt>
 <dd><p>FALSE by default. If TRUE colors the tabs according to the
 subheader colors.</p></dd>
-
-
-<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
-<dd><p>If NULL, opens the output as temporary file. If a filename with path
-is specified, saves the output to the specified path.</p></dd>
 
 
 <dt id="arg-print">print<a class="anchor" aria-label="anchor" href="#arg-print"></a></dt>
@@ -182,6 +176,19 @@ anything. Can be used if one only wants to catch the combined workbook.</p></dd>
 <span>                         colored_tabs        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                         style               <span class="op">=</span> <span class="fu"><a href="excel_output_style.html">excel_output_style</a></span><span class="op">(</span>toc_header_font_size <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                                                                  toc_other_font_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To save a table as xlsx file you have to set the path and filename in the</span></span>
+<span><span class="co"># style element</span></span>
+<span><span class="co"># Example files paths</span></span>
+<span><span class="va">workbook_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="style_options.html">set_style_options</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">workbook_file</span><span class="op">)</span>,</span>
+<span>                  file      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">workbook_file</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">create_table_of_contents</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manual cleanup for example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">workbook_file</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Reset the global options afterwards</span></span>
 <span><span class="fu"><a href="qol_options.html">set_print</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>

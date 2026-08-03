@@ -20,6 +20,10 @@
 * `frequencies()`, `crosstabs()`: Now also export the Excel workbook. (02.08.2026)
 * `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. (01.08.2026)
 
+### Changed functionality
+
+* `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions. (03.08.2026)
+
 ### Removed
 
 * `get_integer_length()`: There is no real benefit in this function. (08.07.2026)
@@ -46,6 +50,7 @@
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Added named regions for titles, main title, footnotes, table header and row headers. (22.07.2026)
 * Cleanup of a partial matches. (22.07.2026, thanks to @JanMarvin and @olivroy)
 * `stack_data()`: Swapped out a copypasta error message with the right one. (22.07.2026)
+* `combine_into_workbook()`: Added example on how to save a file. (03.08.2026)
 
 # qol 1.3.3
 

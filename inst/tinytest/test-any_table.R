@@ -741,7 +741,8 @@ tab2 <- dummy_df |>
 temp_file <- tempfile(fileext = ".xlsx")
 on.exit(unlink(temp_file), add = TRUE)
 
-result <- combine_into_workbook(tab1, tab2, file = temp_file)
+result <- combine_into_workbook(tab1, tab2, style = excel_output_style(save_path = dirname(temp_file),
+                                                                       file      = basename(temp_file)))
 
 expect_inherits(result, c("wbWorkbook", "R6"), info = "Combine tables into a single workbook")
 expect_true(file.exists(temp_file), info = "Combine tables into a single workbook")
@@ -832,14 +833,15 @@ tab2 <- dummy_df |>
               style   = my_style,
               print   = FALSE)
 
-result <- combine_into_workbook(tab1, tab2)
+result <- combine_into_workbook(tab1, tab2, print = FALSE)
 
 create_table_of_contents(result,
                          subheaders        = list("First Subheader"  = "tab1",
                                                   "Second Subheader" = "tab21"),
                          subheader_colors  = c("FF0000", "00FF00", "0000FF"),
                          colored_tabs      = TRUE,
-                         file              = temp_file)
+                         style             = excel_output_style(save_path = dirname(temp_file),
+                                                                file      = basename(temp_file)))
 
 expect_true(file.exists(temp_file), info = "Create and save table of contents standalone")
 
@@ -1131,11 +1133,13 @@ expect_error(print_stack_as_messages("ERROR"), "The variable combination of '",
 temp_file <- tempfile(fileext = ".xlsx")
 on.exit(unlink(temp_file), add = TRUE)
 
-result <- combine_into_workbook(1, file = temp_file)
+result <- combine_into_workbook(1, style = excel_output_style(save_path = dirname(temp_file),
+                                                              file      = basename(temp_file)))
 expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
              info = "Combine tables into a single workbook aborts, if no any_table object was found")
 
-result <- combine_into_workbook(list(1), file = temp_file)
+result <- combine_into_workbook(list(1), style = excel_output_style(save_path = dirname(temp_file),
+                                                                    file      = basename(temp_file)))
 expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
              info = "Combine tables into a single workbook aborts, if no any_table or export_with_style object was found")
 

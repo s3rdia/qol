@@ -6,9 +6,8 @@
 \usage{
 combine_into_workbook(
   ...,
-  file = NULL,
   output = "excel",
-  style = excel_output_style(),
+  style = .qol_options[["excel_style"]],
   table_of_contents = FALSE,
   toc_header = "Table of Contents",
   toc_sheet_name = "Contents",
@@ -22,9 +21,6 @@ combine_into_workbook(
 }
 \arguments{
 \item{...}{Provide any number of result lists output by \code{\link[=any_table]{any_table()}}.}
-
-\item{file}{If NULL, opens the output as temporary file. If a filename with path
-is specified, saves the output to the specified path.}
 
 \item{output}{The following output formats are available: excel and excel_nostyle.}
 
@@ -146,6 +142,19 @@ combine_into_workbook(tab1, tab2, tab3,
                       colored_tabs      = TRUE,
                       style             = excel_output_style(toc_header_font_size    = 20,
                                                              toc_subheader_font_size = 16))
+
+# To save a table as xlsx file you have to set the path and filename in the
+# style element
+# Example files paths
+workbook_file <- tempfile(fileext = ".xlsx")
+
+set_style_options(save_path = dirname(workbook_file),
+                  file      = basename(workbook_file))
+
+combine_into_workbook(tab1, tab2, tab3)
+
+# Manual cleanup for example
+unlink(workbook_file)
 
 # Reset the global options afterwards
 set_print(TRUE)

@@ -3246,8 +3246,6 @@ format_by_single_table <- function(wb,
 #' and styles them according to their meta information.
 #'
 #' @param ... Provide any number of result lists output by [any_table()].
-#' @param file If NULL, opens the output as temporary file. If a filename with path
-#' is specified, saves the output to the specified path.
 #' @param output The following output formats are available: excel and excel_nostyle.
 #' @param style A list of options can be passed to control the appearance of the
 #' table of contents. Styles can be created with [excel_output_style()].
@@ -3375,15 +3373,27 @@ format_by_single_table <- function(wb,
 #'                       style             = excel_output_style(toc_header_font_size    = 20,
 #'                                                              toc_subheader_font_size = 16))
 #'
+#' # To save a table as xlsx file you have to set the path and filename in the
+#' # style element
+#' # Example files paths
+#' workbook_file <- tempfile(fileext = ".xlsx")
+#'
+#' set_style_options(save_path = dirname(workbook_file),
+#'                   file      = basename(workbook_file))
+#'
+#' combine_into_workbook(tab1, tab2, tab3)
+#'
+#' # Manual cleanup for example
+#' unlink(workbook_file)
+#'
 #' # Reset the global options afterwards
 #' set_print(TRUE)
 #' set_output("excel")
 #'
 #' @export
 combine_into_workbook <- function(...,
-                                  file                = NULL,
                                   output              = "excel",
-                                  style               = excel_output_style(),
+                                  style               = .qol_options[["excel_style"]],
                                   table_of_contents   = FALSE,
                                   toc_header          = "Table of Contents",
                                   toc_sheet_name      = "Contents",
@@ -3502,7 +3512,6 @@ combine_into_workbook <- function(...,
                                  subheader_colors    = subheader_colors,
                                  subheader_underline = subheader_underline,
                                  colored_tabs        = colored_tabs,
-                                 file                = NULL,
                                  print               = FALSE))
     }
 
@@ -3513,24 +3522,51 @@ combine_into_workbook <- function(...,
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
         #---------------------------------------------------------------------#
-        if (!is.null(file)){
-            file <- macro(file)
+
+        # Apply macros to save path and file
+        if (!is.null(style[["save_path"]])){
+            style[["save_path"]] <- macro(style[["save_path"]])
         }
 
-        if (is.null(file)){
-            if (interactive()){
-                wb$open()
+        if (!is.null(style[["file"]])){
+            style[["file"]] <- macro(style[["file"]])
+        }
+
+        # Check if only save path or file name is specified. If only one is specified
+        # print a note. Otherwise the file would not be saved and opened without a
+        # hint to why the file wasn't saved.
+        if (is.null(style[["save_path"]]) + is.null(style[["file"]]) == 1){
+            if (is.null(style[["save_path"]])){
+                print_message("NOTE", c("No save path specified. Both save path and file name with extension",
+                                        "need to be specified in the global options or style parameter for",
+                                        "the file to be saved. File won't be saved."))
+            }
+            else{
+                print_message("NOTE", c("No file name specified. Both save path and file name with extension",
+                                        "need to be specified in the global options or style parameter for",
+                                        "the file to be saved. File won't be saved."))
             }
         }
-        else if (!dir.exists(dirname(file)) || dirname(file) == "."){
-            print_message("WARNING", "Directory '[file_name]' does not exist. File won't be saved.", file_name = dirname(file))
 
+        # If no save path or file provided just open workbook
+        if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
             if (interactive()){
                 wb$open()
             }
         }
         else{
-            wb$save(file = file, overwrite = TRUE)
+            # If save path doesn't exist, just open workbook
+            if (!file.exists(style[["save_path"]])){
+                print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
+
+                if (interactive()){
+                    wb$open()
+                }
+            }
+            # Save file
+            else{
+                wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+            }
         }
     }
 
