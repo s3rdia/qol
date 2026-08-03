@@ -143,7 +143,7 @@ rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
 # Load file
 my_fst <- load_file(path = dirname(fst_file),
-                    file = basename(rds_file))
+                    file = basename(fst_file))
 my_rds <- load_file(path = dirname(rds_file),
                     file = basename(rds_file))
 
@@ -151,14 +151,22 @@ my_rds <- load_file(path = dirname(rds_file),
 # NOTE: Variable names can be written case insensitive. Meaning if a variable
 #       is stored as "age" and you write "AGE" in keep, the function will find
 #       the variable and rename it to "AGE".
-my_fst_keep<- load_file(path = dirname(fst_file),
-                        file = basename(rds_file),
-                        keep = c(AGE, INCOME_class, State, weight))
+my_fst_keep <- load_file(path = dirname(fst_file),
+                         file = basename(fst_file),
+                         keep = c(AGE, INCOME_class, State, weight))
 
 # Load file and subset observations
 my_fst_where <- load_file(path  = dirname(fst_file),
-                          file  = basename(rds_file),
+                          file  = basename(fst_file),
                           where = sex == 1 & age > 65)
+
+# Load file and directly rename variables
+my_fst_rename <- load_file(path = dirname(fst_file),
+                           file = basename(fst_file),
+                           keep = list(AGE          = SingleAges,
+                                       INCOME_class = NetIncome,
+                                       State        = GermanState,
+                                       weight       = ExtraFactor))
 
 # Load multiple files and stack them
 stack_files <- load_file_multi(c(fst_file, rds_file))

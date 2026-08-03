@@ -219,7 +219,7 @@ returns all data frames in a list.</p></dd>
 <span></span>
 <span><span class="co"># Load file</span></span>
 <span><span class="va">my_fst</span> <span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
-<span>                    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span><span class="op">)</span></span>
+<span>                    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">my_rds</span> <span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span>,</span>
 <span>                    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -227,14 +227,22 @@ returns all data frames in a list.</p></dd>
 <span><span class="co"># NOTE: Variable names can be written case insensitive. Meaning if a variable</span></span>
 <span><span class="co">#       is stored as "age" and you write "AGE" in keep, the function will find</span></span>
 <span><span class="co">#       the variable and rename it to "AGE".</span></span>
-<span><span class="va">my_fst_keep</span><span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
-<span>                        file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span>,</span>
-<span>                        keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">INCOME_class</span>, <span class="va">State</span>, <span class="va">weight</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">my_fst_keep</span> <span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
+<span>                         file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
+<span>                         keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">INCOME_class</span>, <span class="va">State</span>, <span class="va">weight</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load file and subset observations</span></span>
 <span><span class="va">my_fst_where</span> <span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
-<span>                          file  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">rds_file</span><span class="op">)</span>,</span>
+<span>                          file  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
 <span>                          where <span class="op">=</span> <span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&gt;</span> <span class="fl">65</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load file and directly rename variables</span></span>
+<span><span class="va">my_fst_rename</span> <span class="op">&lt;-</span> <span class="fu">load_file</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
+<span>                           file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fst_file</span><span class="op">)</span>,</span>
+<span>                           keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>AGE          <span class="op">=</span> <span class="va">SingleAges</span>,</span>
+<span>                                       INCOME_class <span class="op">=</span> <span class="va">NetIncome</span>,</span>
+<span>                                       State        <span class="op">=</span> <span class="va">GermanState</span>,</span>
+<span>                                       weight       <span class="op">=</span> <span class="va">ExtraFactor</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load multiple files and stack them</span></span>
 <span><span class="va">stack_files</span> <span class="op">&lt;-</span> <span class="fu">load_file_multi</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">fst_file</span>, <span class="va">rds_file</span><span class="op">)</span><span class="op">)</span></span>

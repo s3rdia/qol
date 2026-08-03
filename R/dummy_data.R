@@ -265,7 +265,7 @@ dummy_data <- function(no_obs    = 25000,
 								 overid   = 2)
 
     # Extract NUTS2 region from NUTS3 code
-    dummy_temp[["NUTS2"]] <- substr(dummy_temp[["NUTS3"]], 3, 3)
+    dummy_temp[["NUTS2"]] <- as.integer(substr(dummy_temp[["NUTS3"]], 3, 3))
 
     if (insert_na){
         #-------------------------------------------------------------------------#

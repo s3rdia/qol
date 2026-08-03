@@ -20,6 +20,7 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
 * `frequencies()`, `crosstabs()`: Now also export the Excel workbook.
 * `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
+* `where.()`: Added a html rendered view of the data frame as fallback, if the new window through `utils::View()` can't be opened.
 
 ### Changed functionality
 
@@ -52,6 +53,8 @@ Last CRAN release was on 16.07.2026.
 * Cleanup of a partial matches.
 * `stack_data()`: Swapped out a copypasta error message with the right one.
 * `combine_into_workbook()`: Added example on how to save a file.
+* `dummy_data()`: `NUTS2` variable is now stored as an integer.
+* `load_file()`: Added example which shows how to directly rename variables.
 
 
 ## R CMD check results

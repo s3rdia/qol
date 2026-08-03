@@ -54,6 +54,10 @@
   When using `by` variables the special keyword `[by_var]` is now
   replaced with the actual `by` value in the titles and footnotes.
   (01.08.2026)
+- [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Added
+  a html rendered view of the data frame as fallback, if the new window
+  through [`utils::View()`](https://rdrr.io/r/utils/View.html) can’t be
+  opened. (03.08.2026)
 
 #### Changed functionality
 
@@ -147,6 +151,11 @@
   Swapped out a copypasta error message with the right one. (22.07.2026)
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Added example on how to save a file. (03.08.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  `NUTS2` variable is now stored as an integer. (03.08.2026)
+- [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Added example which shows how to directly rename variables.
+  (03.08.2026)
 
 ## qol 1.3.3
 

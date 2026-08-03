@@ -1000,6 +1000,8 @@ combined_condition <- function(data_frame, condition){
 where. <- function(data_frame,
                    condition = NULL,
                    keep      = NULL){
+    df_name <- deparse(substitute(data_frame))
+
     # Manage conditional subsetting
     condition <- substitute(condition)
     condition <- translate_condition(condition)
@@ -1030,7 +1032,61 @@ where. <- function(data_frame,
 
     # View data frame in new window
     if (interactive()){
-        data_frame |> utils::View()
+        viewer_result <- tryCatch({
+            data_frame |> utils::View()
+            TRUE
+        }, error = function(e){
+            FALSE
+        })
+
+        # If the viewer results in NULL, this means that the viewer window couldn't
+        # be opened. In this case use the fallback option to render in the browser.
+        if (!viewer_result){
+            # Convert variable names into header column
+            header <- paste0("<th>", colnames(data_frame), "</th>", collapse = "")
+
+            # Determine alignment for each column
+            align <- ifelse(vapply(data_frame, is.character, logical(1)), "left", "right")
+
+            # Convert rows into html table
+            rows <- vapply(seq_len(collapse::fnrow(data_frame)), function(i){
+                cells <- paste0("<td style='text-align:", align, ";'>",
+                                data_frame[i, ], "</td>", collapse = "")
+
+                paste0("<tr>", cells, "</tr>")
+            }, character(1))
+
+            rows <- paste(rows, collapse = "\n")
+
+            # Setup html file
+            html_content <- paste0("<!DOCTYPE html>
+                                    <html>
+                                    <head>
+                                      <meta charset='utf-8'>
+                                      <style>
+                                        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+                                        table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                                        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                                        th { background-color: #4CAF50; color: white; }
+                                        tr:hover { background-color: #f5f5f5; }
+                                      </style>
+                                    </head>
+                                    <body>
+                                      <h2>Viewing data frame: ", df_name, "</h2>
+                                      <table>
+                                        <thead><tr>", header, "</tr></thead>
+                                        <tbody>", rows, "</tbody>
+                                      </table>
+                                    </body>
+                                    </html>")
+
+            # Save html to temporary file
+            temp_file <- file.path(tempdir(), paste0("df_table_", as.integer(Sys.time()), ".html"))
+            writeLines(html_content, temp_file, useBytes = TRUE)
+
+            # Open in browser
+            utils::browseURL(temp_file)
+        }
     }
 
     invisible(data_frame)
