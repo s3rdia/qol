@@ -20,6 +20,7 @@
 * `frequencies()`, `crosstabs()`: Now also export the Excel workbook. (02.08.2026)
 * `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes. (01.08.2026)
 * `where.()`: Added a html rendered view of the data frame as fallback, if the new window through `utils::View()` can't be opened. (03.08.2026)
+* `where.()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (04.08.2026)
 
 ### Changed functionality
 

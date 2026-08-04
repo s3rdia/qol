@@ -1004,6 +1004,23 @@ where. <- function(data_frame,
 
     # Manage conditional subsetting
     condition <- substitute(condition)
+
+    # When the condition is passed as character, then parse it to enable all the
+    # SAS like writing styles.
+    if (is.character(condition)){
+        condition <- parse_conditions(condition, na.rm = FALSE)
+
+        # If a name is returned then a single variable name was passed. In this case
+        # revert to character to ensure it is processed right down the road.
+        if (is.name(condition)){
+            condition <- as.character(condition)
+        }
+        # Otherwise transform into a call
+        else{
+            condition <- as.call(condition)
+        }
+    }
+
     condition <- translate_condition(condition)
     condition <- eval(condition, envir = data_frame, enclos = parent.frame())
 
@@ -1033,7 +1050,7 @@ where. <- function(data_frame,
     # View data frame in new window
     if (interactive()){
         viewer_result <- tryCatch({
-            data_frame |> utils::View()
+            suppressWarnings(data_frame |> utils::View())
             TRUE
         }, error = function(e){
             FALSE
@@ -1042,8 +1059,22 @@ where. <- function(data_frame,
         # If the viewer results in NULL, this means that the viewer window couldn't
         # be opened. In this case use the fallback option to render in the browser.
         if (!viewer_result){
-            # Convert variable names into header column
-            header <- paste0("<th>", colnames(data_frame), "</th>", collapse = "")
+            # Determine column types
+            header_color <- vapply(data_frame, function(variable){
+                if (is.character(variable)){
+                    "#D32F2F"
+                }
+                else if (is.numeric(variable)){
+                    "#1976D2"
+                }
+                else{
+                    "#4CAF50"
+                }
+            }, character(1))
+
+            # Convert variable names into colored header
+            header <- paste0("<th style='background-color:", header_color, ";'>",
+                             colnames(data_frame), "</th>", collapse = "")
 
             # Determine alignment for each column
             align <- ifelse(vapply(data_frame, is.character, logical(1)), "left", "right")
@@ -1067,7 +1098,7 @@ where. <- function(data_frame,
                                         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
                                         table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
                                         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-                                        th { background-color: #4CAF50; color: white; }
+                                        th { color: white; text-align: center; }
                                         tr:hover { background-color: #f5f5f5; }
                                       </style>
                                     </head>

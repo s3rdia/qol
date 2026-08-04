@@ -58,6 +58,11 @@
   a html rendered view of the data frame as fallback, if the new window
   through [`utils::View()`](https://rdrr.io/r/utils/View.html) can’t be
   opened. (03.08.2026)
+- [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Is now
+  also able to use the new writing style with conditions as characters
+  introduced by
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
+  (04.08.2026)
 
 #### Changed functionality
 

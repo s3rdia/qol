@@ -412,6 +412,13 @@ test_df <- dummy_df |> where.(sex == 0)
 expect_warning(print_stack_as_messages("WARNING"), "No observations left in the data frame.",
                info = "where. aborts with a warning, if no observations left")
 
+
+# where. works with parsed character conditions
+test_df <- dummy_df |> where.(" 15 <= age < 65 and sex == 2 ")
+
+expect_true(!any(c(1, NA) %in% test_df[["sex"]]), info = "where. works with parsed character conditions")
+expect_true(!any(c(0:14, 65:100) %in% test_df[["age"]]), info = "where. works with parsed character conditions")
+
 ###############################################################################
 # ifelse_multi
 ###############################################################################

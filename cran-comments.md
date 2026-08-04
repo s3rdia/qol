@@ -21,6 +21,7 @@ Last CRAN release was on 16.07.2026.
 * `frequencies()`, `crosstabs()`: Now also export the Excel workbook.
 * `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
 * `where.()`: Added a html rendered view of the data frame as fallback, if the new window through `utils::View()` can't be opened.
+* `where.()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
 
 ### Changed functionality
 
