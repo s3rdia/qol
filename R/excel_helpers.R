@@ -2098,6 +2098,18 @@ create_table_of_contents <- function(wb,
         subheader_colors <- "9BC2E6"
     }
 
+    # If a subheader is identical to a sheet name (meaning in the list was input
+    # "A" = "A"), then the TOC data frame contruction fails. To prevent this a
+    # blank is put at the end of identical subheaders. Is invisible and does the trick.
+    for (i in seq_along(subheaders)) {
+        name   <- names(subheaders)[i]
+        inhalt <- subheaders[[i]]
+
+        if (!is.null(name) && identical(name, inhalt)){
+            names(subheaders)[i] <- paste0(name, " ")
+        }
+    }
+
     ###########################################################################
     # Preparations
     ###########################################################################
@@ -2463,7 +2475,7 @@ get_optimal_width <- function(texts, font_size){
         return("auto")
     }
 
-    font_base_size <- ifelse(longest_text > 12, 13, 11)
+    font_base_size <- ifelse(longest_text > 12, 12.5, 11.5)
 
     longest_text * max(6, font_size) / font_base_size
 }

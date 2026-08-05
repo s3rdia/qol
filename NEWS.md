@@ -55,6 +55,7 @@
 * `combine_into_workbook()`: Added example on how to save a file. (03.08.2026)
 * `dummy_data()`: `NUTS2` variable is now stored as an integer. (03.08.2026)
 * `load_file()`: Added example which shows how to directly rename variables. (03.08.2026)
+* `dummy_data()`: `NUTS3` variable is now stored as an integer. (05.08.2026)
 
 # qol 1.3.3
 

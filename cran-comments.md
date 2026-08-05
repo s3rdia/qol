@@ -56,6 +56,7 @@ Last CRAN release was on 16.07.2026.
 * `combine_into_workbook()`: Added example on how to save a file.
 * `dummy_data()`: `NUTS2` variable is now stored as an integer.
 * `load_file()`: Added example which shows how to directly rename variables.
+* `dummy_data()`: `NUTS3` variable is now stored as an integer.
 
 
 ## R CMD check results

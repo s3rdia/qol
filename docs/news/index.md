@@ -161,6 +161,8 @@
 - [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md):
   Added example which shows how to directly rename variables.
   (03.08.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  `NUTS3` variable is now stored as an integer. (05.08.2026)
 
 ## qol 1.3.3
 
