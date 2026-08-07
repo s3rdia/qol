@@ -713,7 +713,7 @@ get_freq_tab_ranges <- function(freq_tab,
 #' @noRd
 format_titles_foot_excel <- function(wb, titles, footnotes, ranges, style, output){
     # If not a styled export just print titles and footnotes as they are
-    if (output != "excel"){
+    if (!output %in% c("excel", "excel_html")){
         if (length(titles) > 0){
             wb$add_data(x         = titles,
                         start_col = style[["start_column"]],
@@ -1188,7 +1188,7 @@ prepare_styles <- function(wb,
 
         type_length <- length(texts[[type]])
 
-        if (length(type_length) > 0){
+        if (type_length > 0){
             style[[paste0(type, "_font_color")]] <- fill_or_trim(style[[paste0(type, "_font_color")]], type_length)
             style[[paste0(type, "_font_size")]]  <- fill_or_trim(style[[paste0(type, "_font_size")]],  type_length)
             style[[paste0(type, "_font_bold")]]  <- fill_or_trim(style[[paste0(type, "_font_bold")]],  type_length)
@@ -1251,7 +1251,7 @@ handle_col_row_dimensions <- function(wb,
 
     row_heights <- style[["row_heights"]]
     start_row   <- 1
-    end_row     <- style[["start_row"]] + (number_of_rows - 1)
+    end_row     <- number_of_rows - 1
 
     # If specific column widths are specified
     if (length(row_heights) > 1){

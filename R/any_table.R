@@ -71,7 +71,8 @@
 #' creating a new file.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
-#' @param output The following output formats are available: excel and excel_nostyle.
+#' @param output The following output formats are available: excel, excel_nostyle, html and
+#' excel_html.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
@@ -755,7 +756,7 @@ any_table <- function(data_frame,
     }
 
     # Check for invalid output option
-    if (!tolower(output) %in% c("excel", "excel_nostyle")){
+    if (!tolower(output) %in% c("excel", "excel_nostyle", "html", "excel_html")){
         print_message("WARNING", "<Output> format '[output]' not available. Using 'excel' instead.", output = output)
 
         output <- "excel"
@@ -1810,6 +1811,17 @@ any_table <- function(data_frame,
 
                     combi_df <- suppressMessages(combi_df |> if.(max_vars > 0, new_pct = block_values * 100 / max_vars))
 
+                    # Round the block percentages to the decimals specified in the style.
+                    # The block percentage columns are created after the regular rounding
+                    # loop, so they are rounded here explicitly.
+                    pct_block_cols <- intersect(new_pct, names(combi_df))
+
+                    if (length(pct_block_cols) > 0){
+                        for (col in pct_block_cols){
+                            combi_df[[col]] <- round_values(combi_df[[col]], style[["number_formats"]][["pct_decimals"]])
+                        }
+                    }
+
                     # Add new percentages to values to pivot and remove the maximum variables
                     pivot_values <- c(pivot_values, new_pct)
                     combi_df     <- combi_df |> dropp(max_vars)
@@ -2235,37 +2247,46 @@ any_table <- function(data_frame,
         style           <- style_list[[2]]
     }
 
+    html_render <- ""
+
     meta[["style"]] <- style
 
     monitor_df <- monitor_df |> monitor_end()
 
-    # In case no by variables are provided
-    if (length(by) == 0){
-        wb_list <- format_any_excel(workbook, any_tab, rows, columns, statistics,
-                                    by, titles, footnotes, var_labels, stat_labels,
-                                    box, any_header,
-                                    style, output, monitor_df = monitor_df)
+    # In case the html output is used, the excel workbook doesn't need to be formatted.
+    # The table is rendered to html in the output section further down instead.
+    if (output != "html"){
+        # In case no by variables are provided
+        if (length(by) == 0){
+            wb_list <- format_any_excel(workbook, any_tab, rows, columns, statistics,
+                                        by, titles, footnotes, var_labels, stat_labels,
+                                        box, any_header,
+                                        style, output, monitor_df = monitor_df)
 
-        wb         <- wb_list[[1]]
-        monitor_df <- wb_list[[2]]
-    }
-    # In case there are  by variables are provided
-    else{
-        if (!style[["by_as_subheaders"]]){
-            wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
-                                           by, titles, footnotes, var_labels, stat_labels,
-                                           box, any_header,
-                                           style, output, na.rm, print_miss, monitor_df)
+            wb         <- wb_list[[1]]
+            monitor_df <- wb_list[[2]]
         }
+        # In case there are  by variables are provided
         else{
-            wb_list <- format_by_single_table(workbook, any_tab, rows, columns, statistics,
-                                              by, titles, footnotes, var_labels, stat_labels,
-                                              box, any_header,
-                                              style, output, na.rm, print_miss, monitor_df)
-        }
+            if (!style[["by_as_subheaders"]]){
+                wb_list <- format_any_by_excel(workbook, any_tab, rows, columns, statistics,
+                                               by, titles, footnotes, var_labels, stat_labels,
+                                               box, any_header,
+                                               style, output, na.rm, print_miss, monitor_df)
+            }
+            else{
+                wb_list <- format_by_single_table(workbook, any_tab, rows, columns, statistics,
+                                                  by, titles, footnotes, var_labels, stat_labels,
+                                                  box, any_header,
+                                                  style, output, na.rm, print_miss, monitor_df)
+            }
 
-        wb         <- wb_list[[1]]
-        monitor_df <- wb_list[[2]]
+            wb         <- wb_list[[1]]
+            monitor_df <- wb_list[[2]]
+        }
+    }
+    else{
+        wb <- workbook
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2277,57 +2298,67 @@ any_table <- function(data_frame,
 
         monitor_df <- monitor_df |> monitor_next("Output tables", "Output tables")
 
-        # Check if only save path or file name is specified. If only one is specified
-        # print a note. Otherwise the file would not be saved and opened without a
-        # hint to why the file wasn't saved.
-        if (is.null(style[["save_path"]]) + is.null(style[["file"]]) == 1){
-            if (is.null(style[["save_path"]])){
-                print_message("NOTE", c("No save path specified. Both save path and file name with extension",
-                                        "need to be specified in the global options or style parameter for",
-                                        "the file to be saved. File won't be saved."))
+        # Excel based output
+        if (output != "html"){
+            # Check if only save path or file name is specified. If only one is specified
+            # print a note. Otherwise the file would not be saved and opened without a
+            # hint to why the file wasn't saved.
+            if (is.null(style[["save_path"]]) + is.null(style[["file"]]) == 1){
+                if (is.null(style[["save_path"]])){
+                    print_message("NOTE", c("No save path specified. Both save path and file name with extension",
+                                            "need to be specified in the global options or style parameter for",
+                                            "the file to be saved. File won't be saved."))
+                }
+                else{
+                    print_message("NOTE", c("No file name specified. Both save path and file name with extension",
+                                            "need to be specified in the global options or style parameter for",
+                                            "the file to be saved. File won't be saved."))
+                }
             }
-            else{
-                print_message("NOTE", c("No file name specified. Both save path and file name with extension",
-                                        "need to be specified in the global options or style parameter for",
-                                        "the file to be saved. File won't be saved."))
-            }
-        }
 
-        # If no save path or file provided just open workbook
-        if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
-            if (interactive()){
-                wb$open()
-            }
-        }
-        else{
-            # If save path doesn't exist, just open workbook
-            if (!file.exists(style[["save_path"]])){
-                print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
-
+            # If no save path or file provided just open workbook
+            if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
                 if (interactive()){
                     wb$open()
                 }
             }
-            # Save file
             else{
-                extension <- tolower(tools::file_ext(style[["file"]]))
+                # If save path doesn't exist, just open workbook
+                if (!file.exists(style[["save_path"]])){
+                    print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
 
-                # CSV export is based on the actual data frame
-                if (extension == "csv"){
-                    any_tab |> data.table::fwrite(file = paste0(style[["save_path"]], "/", style[["file"]]),
-                                                  sep  = ";",
-                                                  dec  = ",")
+                    if (interactive()){
+                        wb$open()
+                    }
                 }
-                # While XLSX export is based on the workbook
-                else if (extension == "xlsx"){
-                    wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
-                }
-                # If there is no extension or a wrong one, auto correct it
+                # Save file
                 else{
-                    wb$save(file = paste0(style[["save_path"]], "/", basename(style[["file"]]), ".xlsx"), overwrite = TRUE)
+                    extension <- tolower(tools::file_ext(style[["file"]]))
+
+                    # CSV export is based on the actual data frame
+                    if (extension == "csv"){
+                        any_tab |> data.table::fwrite(file = paste0(style[["save_path"]], "/", style[["file"]]),
+                                                      sep  = ";",
+                                                      dec  = ",")
+                    }
+                    # While XLSX export is based on the workbook
+                    else if (extension == "xlsx"){
+                        wb$save(file = paste0(style[["save_path"]], "/", style[["file"]]), overwrite = TRUE)
+                    }
+                    # If there is no extension or a wrong one, auto correct it
+                    else{
+                        wb$save(file = paste0(style[["save_path"]], "/", basename(style[["file"]]), ".xlsx"), overwrite = TRUE)
+                    }
                 }
             }
         }
+    }
+
+    # Render html output in the browser
+    if (output == "html" || output == "excel_html"){
+        html_render <- format_any_html(list("table" = any_tab,
+                                            "meta"  = meta),
+                                       print)
     }
 
     print_closing(10)
@@ -2339,7 +2370,8 @@ any_table <- function(data_frame,
 
     invisible(structure(list("table"    = any_tab,
                              "workbook" = wb,
-                             "meta"     = meta), class = "qol_table"))
+                             "meta"     = meta,
+                             "html"     = html_render), class = "qol_table"))
 }
 
 
@@ -2499,8 +2531,8 @@ format_any_excel <- function(wb,
 
     # Only do the formatting when user specified it. With the excel_nostyle
     # option this whole part gets omitted to get a very quick unformatted
-    # excel output.
-    if (output == "excel"){
+    # excel output. The excel_html output is styled like the excel output.
+    if (output %in% c("excel", "excel_html")){
         if (is.null(by_info)){ print_step("MINOR", "Merge headers") }
 
         # Merge top left box
@@ -2619,7 +2651,7 @@ format_any_excel <- function(wb,
 
         wb <- wb |> handle_col_row_dimensions(any_ranges,
                                               collapse::fncol(any_tab),
-                                              collapse::fnrow(any_tab) + collapse::fnrow(multi_header),
+                                              any_ranges[["footnote.row"]] + length(footnotes),
                                               style) |>
             handle_any_auto_dimensions(any_ranges, style) |>
             handle_header_table_dim(any_ranges, style)
@@ -3014,7 +3046,7 @@ format_any_by_excel <- function(wb,
             # Add by info below the titles
             if (length(titles) > 0){
                 titles_temp <- c(titles, "", by_info)
-                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), titles_temp)
             }
             # Or on top if there are no titles
             else{
@@ -3023,7 +3055,7 @@ format_any_by_excel <- function(wb,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{

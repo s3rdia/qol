@@ -1566,7 +1566,7 @@ format_by_text <- function(mean_tab,
 
             # Replace by info in the titles
             if (length(titles) > 0){
-                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), titles)
             }
             # Or use by info as title, if there are no titles
             else{
@@ -1575,7 +1575,7 @@ format_by_text <- function(mean_tab,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{
@@ -1763,7 +1763,7 @@ format_by_excel <- function(mean_tab,
 
             # Replace by info in the titles
             if (length(titles) > 0){
-                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), titles)
             }
             # Or use by info as title, if there are no titles
             else{
@@ -1772,7 +1772,7 @@ format_by_excel <- function(mean_tab,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{

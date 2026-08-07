@@ -53,7 +53,7 @@ result_list <- dummy_big |>
                 print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "Simplest form of any_table")
-expect_equal(length(result_list), 3, info = "Simplest form of any_table")
+expect_equal(length(result_list), 4, info = "Simplest form of any_table")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "weight_sum_1",
                                         "weight_sum_2", "weight_sum_NA"), info = "Simplest form of any_table")
 expect_equal(result_list[[1]][["var1"]][1:90], as.character(0:89), info = "Simplest form of any_table")
@@ -70,7 +70,7 @@ result_list <- dummy_df |>
                 print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with combinations")
-expect_equal(length(result_list), 3, info = "any_table with combinations")
+expect_equal(length(result_list), 4, info = "any_table with combinations")
 
 
 # any_table with multiple combinations
@@ -82,7 +82,7 @@ result_list <- dummy_df |>
                 print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with multiple combinations")
-expect_equal(length(result_list), 3, info = "any_table with multiple combinations")
+expect_equal(length(result_list), 4, info = "any_table with multiple combinations")
 
 
 # any_table many combinations don't break
@@ -95,7 +95,7 @@ result_list <- dummy_df |>
                   print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table many combinations don't break")
-expect_equal(length(result_list), 3, info = "any_table many combinations don't break")
+expect_equal(length(result_list), 4, info = "any_table many combinations don't break")
 
 
 # any_table with linked titles and footnotes
@@ -110,9 +110,9 @@ set_footnotes("This is a footnote1",
               "This is a footnote3 cell: A8",
               "This is a footnote4 file: txt_file")
 
-set_style_options(as_heatmap = TRUE)
+set_style_options(as_heatmap          = TRUE,
+                  header_stat_merging = "all")
 
-set_style_options(header_stat_merging = "all")
 result_list <- dummy_df |>
       any_table(rows      = "age",
                 columns   = "sex",
@@ -122,8 +122,7 @@ result_list <- dummy_df |>
                 print     = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with linked titles and footnotes")
-expect_equal(length(result_list), 3, info = "any_table with linked titles and footnotes")
-
+expect_equal(length(result_list), 4, info = "any_table with linked titles and footnotes")
 
 # any_table with multiple titles and footnotes
 set_titles("Hello world1", "Hello world2")
@@ -135,7 +134,8 @@ set_style_options(header_stat_merging = "none",
                   title_font_bold     = c(TRUE, FALSE),
                   footnote_font_color = c("FF00FF", "00FF00"),
                   footnote_font_size  = c(10, 11),
-                  footnote_font_bold  = c(TRUE, FALSE))
+                  footnote_font_bold  = c(TRUE, FALSE),
+                  as_heatmap          = FALSE)
 
 result_list <- dummy_df |>
     any_table(rows      = "age",
@@ -146,7 +146,7 @@ result_list <- dummy_df |>
 reset_style_options()
 
 expect_inherits(result_list, "qol_table", info = "any_table with multiple titles and footnotes")
-expect_equal(length(result_list), 3, info = "any_table with multiple titles and footnotes")
+expect_equal(length(result_list), 4, info = "any_table with multiple titles and footnotes")
 
 
 # any_table with multiple titles and footnotes makes style options scale accordingly
@@ -298,7 +298,7 @@ result_list <- dummy_df |>
                   print      = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with a lot of statistics doesn't break")
-expect_equal(length(result_list), 3, info = "any_table with a lot of statistics doesn't break")
+expect_equal(length(result_list), 4, info = "any_table with a lot of statistics doesn't break")
 
 
 # any_table with interleaved order
@@ -647,7 +647,7 @@ result_list <- sum_df |>
              print      = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with pre summarised data")
-expect_equal(length(result_list), 3, info = "any_table with pre summarised data")
+expect_equal(length(result_list), 4, info = "any_table with pre summarised data")
 
 
 # any_table with pre summarised data and by variables
@@ -661,7 +661,7 @@ result_list <- sum_df2 |>
                           print      = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with pre summarised data and by variables")
-expect_equal(length(result_list), 3, info = "any_table with pre summarised data and by variables")
+expect_equal(length(result_list), 4, info = "any_table with pre summarised data and by variables")
 
 
 # any_table with no column variables
@@ -672,7 +672,7 @@ result_list <- dummy_df |>
                  print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table with no column variables")
-expect_equal(length(result_list), 3, info = "any_table with no column variables")
+expect_equal(length(result_list), 4, info = "any_table with no column variables")
 
 
 # any_table throws a warning, if invalid statistic specified
@@ -757,7 +757,7 @@ result_list <- dummy_df |>
               print    = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "Combine tables into a single workbook")
-expect_equal(length(result_list), 3, info = "Combine tables into a single workbook")
+expect_equal(length(result_list), 4, info = "Combine tables into a single workbook")
 
 
 # Combine tables into a single workbook with table of contents
@@ -858,7 +858,7 @@ expect_warning(print_stack_as_messages("WARNING"), "All <values> variables need 
                info = "any_table throws a warning with missing statistic extension in pre summarised data")
 
 expect_inherits(result_list, "qol_table", info = "any_table throws a warning with missing statistic extension in pre summarised data")
-expect_equal(length(result_list), 3, info = "any_table throws a warning with missing statistic extension in pre summarised data")
+expect_equal(length(result_list), 4, info = "any_table throws a warning with missing statistic extension in pre summarised data")
 
 
 # any_table auto generates missing TYPE variable in pre summarised data
@@ -870,7 +870,7 @@ result_list <- sum_df |>
                  print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table auto generates missing TYPE variable in pre summarised data")
-expect_equal(length(result_list), 3, info = "any_table auto generates missing TYPE variable in pre summarised data")
+expect_equal(length(result_list), 4, info = "any_table auto generates missing TYPE variable in pre summarised data")
 
 
 # any_table outputs unweighted results without values variable
@@ -881,7 +881,7 @@ result_list <- dummy_df |>
               print   = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table outputs unweighted results without values variable")
-expect_equal(length(result_list), 3, info = "any_table outputs unweighted results without values variable")
+expect_equal(length(result_list), 4, info = "any_table outputs unweighted results without values variable")
 
 
 # any_table throws a warning, if invalid format is used
@@ -911,7 +911,7 @@ result_list <- dummy_df |>
               print      = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table can compute values on the fly")
-expect_equal(length(result_list), 3, info = "any_table can compute values on the fly")
+expect_equal(length(result_list), 4, info = "any_table can compute values on the fly")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "probability_sum_1",
                                         "probability_sum_2", "sum_wgt_1", "sum_wgt_2",
                                         "percent_sum_1", "percent_sum_2", "pct!!!square_sum_1", "pct!!!square_sum_2"),
@@ -933,7 +933,7 @@ result_list <- dummy_df |>
               print      = FALSE)
 
 expect_inherits(result_list, "qol_table", info = "any_table orders individual variables by name")
-expect_equal(length(result_list), 3, info = "any_table orders individual variables by name")
+expect_equal(length(result_list), 4, info = "any_table orders individual variables by name")
 expect_equal(names(result_list[[1]]), c("row.label", "var1", "pct!!!square_sum_1", "pct!!!square_sum_2",
                                         "percent_sum_1", "percent_sum_2", "sum_wgt_1", "sum_wgt_2",
                                         "probability_sum_1",  "probability_sum_2"),
@@ -1030,6 +1030,433 @@ result_list <- dummy_df |>
 expect_warning(print_stack_as_messages("WARNING"), "The following <values> are stored as character variables in the data frame",
                info = "any_table throws a warning with values stored as character")
 
+###############################################################################
+# Html checks
+###############################################################################
+
+# any_table can render output in html format
+result_html <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = c("sum", "pct_group"),
+              pct_group  = "sex",
+              formats    = list(sex = sex., age = age.),
+              by         = "education",
+              titles     = "My Title",
+              footnotes  = "My Footnote",
+              na.rm      = TRUE,
+              print      = FALSE,
+              output     = "html",
+              style      = excel_output_style(by_as_subheaders = TRUE,
+                                              as_heatmap       = TRUE))
+
+html_out <- result_html[["html"]]
+
+expect_inherits(result_html, "qol_table",                         info = "any_table can render output in html format")
+expect_true(grepl("<!DOCTYPE html>",     html_out, fixed = TRUE), info = "any_table html render returns a html document")
+expect_true(grepl("<thead>",             html_out, fixed = TRUE), info = "any_table html render contains a table header")
+expect_true(grepl("<tbody>",             html_out, fixed = TRUE), info = "any_table html render contains a table body")
+expect_true(grepl("class=\"box\"",       html_out, fixed = TRUE), info = "any_table html render renders the top left box")
+expect_true(grepl("class=\"subheader\"", html_out, fixed = TRUE), info = "any_table html render renders by variable blocks as subheaders")
+expect_true(grepl("My Title",            html_out, fixed = TRUE), info = "any_table html render renders the titles")
+expect_true(grepl("My Footnote",         html_out, fixed = TRUE), info = "any_table html render renders the footnotes")
+expect_true(grepl("</div>\n<div class=\"qol-spacer\"></div>\n               <div class=\"qol-wrap\">", html_out),
+            info = "any_table html render puts the blank row between the titles and the table")
+expect_true(grepl("</div>\n               <div class=\"qol-spacer\"></div>\n<div class=\"qol-footnotes qol-footnotes-first\"", html_out),
+            info = "any_table html render puts the blank row between the table and the footnotes")
+expect_true(grepl(".qol-spacer {", html_out, fixed = TRUE), info = "any_table html render styles the blank row")
+expect_true(grepl('class="qol-footnotes qol-footnotes-first"', html_out, fixed = TRUE),
+            info = "any_table html render marks the top footnote for the separating line")
+expect_true(grepl('.qol-footnotes-first::before', html_out, fixed = TRUE),
+            info = "any_table html render draws the footnote line via a pseudo element")
+expect_true(grepl('width: var(--qol-fn-line, 0px)', html_out, fixed = TRUE),
+            info = "any_table html render sizes the footnote line via a css variable")
+expect_true(grepl('--qol-fn-line", catWidth + "px"', html_out, fixed = TRUE),
+            info = "any_table html render measures the row header width for the footnote line")
+expect_true(grepl('class="qol-sheet" style="margin-left: 8ch"', html_out, fixed = TRUE),
+            info = "any_table html render offsets the sheet by one empty column with start_column = 2")
+expect_true(grepl("<body>\n               <div class=\"qol-spacer\"></div>\n<div class=\"qol-sheet\"", html_out),
+            info = "any_table html render inserts one empty row before the titles with start_row = 2")
+expect_false(grepl('style="height:', html_out, fixed = TRUE), info = "any_table html render writes no inline row heights with row_heights = auto")
+
+
+# any_table html render inserts no empty columns or rows on start at 1,1
+result_offset <- dummy_df |>
+    any_table(rows       = "sex",
+              columns    = "year",
+              output     = "html",
+              print      = FALSE,
+              style      = excel_output_style(start_row = 1, start_column = 1))
+
+html_offset <- result_offset[["html"]]
+
+expect_equal(lengths(regmatches(html_offset, gregexpr("class=\"qol-spacer\"", html_offset))), 0L,
+             info = "any_table html render inserts no empty columns or rows on start at 1,1")
+expect_false(grepl("margin-left:", html_offset),
+             info = "any_table html render inserts no empty columns or rows on start at 1,1")
+
+
+# any_table html render inserts custom statistic labels
+result_stats <- dummy_df |>
+    any_table(rows        = "sex",
+              columns     = "year",
+              values      = weight,
+              statistics  = c("sum", "mean"),
+              formats     = list(sex = sex.),
+              stat_labels = list(sum = "1000", mean = "Average"),
+              output      = "html",
+              print       = FALSE)
+
+html_stats <- result_stats[["html"]]
+
+expect_true(grepl(">1000<",    html_stats, fixed = TRUE), info = "any_table html render inserts custom labels")
+expect_true(grepl(">Average<", html_stats, fixed = TRUE), info = "any_table html render inserts custom labels")
+expect_false(grepl(">sum<",    html_stats),               info = "any_table html render inserts custom labels")
+expect_false(grepl(">mean<",   html_stats),               info = "any_table html render inserts custom labels")
+
+
+# any_table html render sets individual column widths
+result_widths <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              output     = "html",
+              style      = excel_output_style(column_widths = c(2, 20, 20, 20, 10)),
+              print      = FALSE)
+
+html_widths <- result_widths[["html"]]
+
+colgroup <- regmatches(html_widths, regexpr("<colgroup>.*?</colgroup>", html_widths))
+
+expect_true(grepl("width: 20ch",          colgroup,    fixed = TRUE), info = "any_table html render sets individual column widths")
+expect_true(grepl('style="width: 100ch"', html_widths, fixed = TRUE), info = "any_table html render sets individual column widths")
+expect_true(grepl('class="qol-sheet" style="margin-left: 2ch"', html_widths, fixed = TRUE), info = "any_table html render sets individual column widths")
+expect_true(grepl("table-layout: fixed",  html_widths, fixed = TRUE), info = "any_table html render sets individual column widths")
+
+
+# any_table html render sets individual row heights
+result_heights <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              titles     = "My Title",
+              footnotes  = "My Footnote",
+              output     = "html",
+              style      = excel_output_style(row_heights = c(10, 20, 30, 40, 50, 60, 70)),
+              print      = FALSE)
+
+html_heights <- result_heights[["html"]]
+
+expect_true(grepl('<div class="qol-spacer" style="height: 10pt"></div>', html_heights, fixed = TRUE),
+            info = "aany_table html render sets individual row heights")
+expect_true(grepl('<div class="qol-titles" style="height: 20pt[^"]*">My Title</div>', html_heights),
+            info = "any_table html render applies the second row height to the title")
+expect_true(grepl('<div class="qol-spacer" style="height: 30pt"></div>', html_heights, fixed = TRUE),
+            info = "any_table html render applies the third row height to the blank row below the title")
+expect_true(grepl('<tr style="height: 40pt">', html_heights, fixed = TRUE),
+            info = "any_table html render applies a row height to the first column header row")
+expect_true(grepl('<tr style="height: 50pt">', html_heights, fixed = TRUE),
+            info = "any_table html render applies a row height to the second column header row")
+expect_true(grepl('<tr style="height: 60pt">', html_heights, fixed = TRUE),
+            info = "any_table html render applies a row height to the table body rows")
+expect_true(grepl('<div class="qol-spacer" style="height: 70pt"></div>', html_heights, fixed = TRUE),
+            info = "any_table html render applies a row height to the blank row above the footnotes")
+expect_true(grepl('<div class="qol-footnotes qol-footnotes-first" style="height: 70pt[^"]*">My Footnote</div>', html_heights),
+            info = "any_table html render applies the last row height to the footnote")
+
+
+# any_table html render part-specific heights apply only to the parts that exist
+result_parts <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              titles     = c("Title One", "Title Two"),
+              footnotes  = c("Note One", "Note Two"),
+              output     = "html",
+              style      = excel_output_style(title_heights    = c(20, 30),
+                                              footnote_heights = c(12, 14)),
+              print      = FALSE)
+
+html_parts <- result_parts[["html"]]
+
+expect_true(grepl('<div class="qol-titles" style="height: 20pt[^"]*">Title One</div>', html_parts),
+            info = "any_table html render applies the first title height to the first title")
+expect_true(grepl('<div class="qol-titles" style="height: 30pt[^"]*">Title Two</div>', html_parts),
+            info = "any_table html render applies the second title height to the second title")
+expect_true(grepl('<div class="qol-footnotes qol-footnotes-first" style="height: 12pt[^"]*">Note One</div>', html_parts),
+            info = "any_table html render applies the first footnote height to the first footnote")
+expect_true(grepl('<div class="qol-footnotes" style="height: 14pt[^"]*">Note Two</div>', html_parts),
+            info = "any_table html render applies the second footnote height to the second footnote")
+expect_false(grepl('style="height:', gsub("<div class=\"qol-titles\"[^>]*>|<div class=\"qol-footnotes[^\"]*\"[^>]*>", "", html_parts), fixed = TRUE),
+             info = "any_table html render part-specific heights leave header and body rows untouched")
+
+
+# any_table html render part-specific heights override the global row_heights for their own part only
+result_override <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              titles     = "My Title",
+              output     = "html",
+              style      = excel_output_style(row_heights    = c(10, 20, 30, 40, 50, 60),
+                                              title_heights  = 99,
+                                              header_heights = 25,
+                                              table_heights  = 18),
+              print      = FALSE)
+
+html_override <- result_override[["html"]]
+
+expect_true(grepl('<div class="qol-titles" style="height: 99pt[^"]*">My Title</div>', html_override),
+            info = "any_table html render title_heights override row_heights for the title")
+expect_true(grepl('<tr style="height: 25pt">', html_override, fixed = TRUE),
+            info = "any_table html render header_heights override row_heights for the header rows")
+expect_true(grepl('<tr style="height: 18pt">', html_override, fixed = TRUE),
+            info = "any_table html render table_heights override row_heights for the body rows")
+expect_false(grepl('<tr style="height: 40pt">|<tr style="height: 50pt">|<tr style="height: 60pt">', html_override, fixed = TRUE),
+             info = "any_table html render part-specific heights suppress the matching row_heights slices")
+
+
+# any_table html render subheader_heights apply to the by block banners
+result_subheader <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              by         = "education",
+              output     = "html",
+              style      = excel_output_style(by_as_subheaders  = TRUE,
+                                              subheader_heights = 22,
+                                              table_heights    = 15),
+              print      = FALSE)
+
+html_subheader <- result_subheader[["html"]]
+
+expect_true(grepl('<tr style="height: 22pt">', html_subheader, fixed = TRUE),
+            info = "any_table html render subheader_heights apply to the by block banners")
+expect_true(grepl('<tr style="height: 15pt">', html_subheader, fixed = TRUE),
+            info = "any_table html render table_heights apply to the data rows of by blocks")
+
+
+# any_table html render renders every by expression as its own table
+result_by_blocks <- dummy_df |>
+    any_table(rows       = c("sex", "age"),
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex., age = age.),
+              by         = "education",
+              titles     = "My Title",
+              footnotes  = "My Footnote [by_var]",
+              output     = "html",
+              print      = FALSE)
+
+html_by_blocks <- result_by_blocks[["html"]]
+
+n_sheets <- lengths(regmatches(html_by_blocks, gregexpr("class=\"qol-sheet\"",        html_by_blocks)))
+n_tables <- lengths(regmatches(html_by_blocks, gregexpr("<table class=\"qol-table\"", html_by_blocks)))
+
+expect_true(n_sheets == n_tables && n_tables > 1, info = "any_table html render renders every by expression as its own table")
+expect_false(grepl("class=\"subheader\"", html_by_blocks, fixed = TRUE), info = "any_table html render renders no subheaders when by expressions are individual tables")
+expect_true(all(vapply(c("education = low", "education = middle", "education = high", "education = ."),
+                       function(by_info) grepl(by_info, html_by_blocks, fixed = TRUE),
+                       logical(1))), info = "any_table html render adds the by expression to the titles of every table")
+expect_true(grepl("My Footnote low",    html_by_blocks, fixed = TRUE) &&
+            grepl("My Footnote middle", html_by_blocks, fixed = TRUE) &&
+            grepl("My Footnote high",   html_by_blocks, fixed = TRUE), info = "any_table html render replaces the [by_var] placeholder in the footnotes")
+expect_true(grepl("</div>\n<div class=\"qol-spacer\"></div>\n<div class=\"qol-sheet\"", html_by_blocks),
+            info = "any_table html render separates the individual tables by a blank row")
+
+
+# any_table html render adds no width measurement script without titles or footnotes
+result_plain <- dummy_df |>
+    any_table(rows       = "sex",
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex.),
+              output     = "html",
+              style      = excel_output_style(),
+              print      = FALSE)
+
+html_plain <- result_plain[["html"]]
+
+expect_false(grepl("<script>", html_plain, fixed = TRUE), info = "any_table html render adds no width measurement script without titles or footnotes")
+
+
+# any_table html render displays the decimals from the number format style
+result_decimals <- dummy_df |>
+    any_table(rows       = "sex",
+              columns    = "year",
+              values     = income,
+              statistics = "sum",
+              formats    = list(sex = sex.),
+              output     = "html",
+              style      = excel_output_style(
+                  number_formats = number_format_style(
+                      sum_excel    = "#,###,##0", # 0 decimals in the excel format
+                      sum_decimals = 2)),         # but 2 decimals to display
+              print      = FALSE)
+
+html_decimals  <- result_decimals[["html"]]
+cells_decimals <- regmatches(html_decimals, gregexpr('<td class="data"[^>]*>[^<]+</td>', html_decimals))[[1]]
+
+expect_true(any(grepl(",[0-9]{2}</td>$",  cells_decimals)), info = "any_table html render displays the decimals from the number format style")
+expect_false(any(grepl(",[0-9]{3}</td>$", cells_decimals)), info = "any_table html render displays the decimals from the number format style")
+expect_true(any(grepl("^<td[^>]*>[0-9]{2,3}([.][0-9]{3})+,[0-9]{2}</td>$", cells_decimals)), info = "any_table html render uses a dot as thousand separator")
+expect_false(any(grepl("^<td[^>]*>[0-9]{1,3},[0-9]{3}", cells_decimals)), info = "any_table html render does not use the separators of the excel formats")
+
+
+# The outer borders stay open even when all inner borders are switched on
+result_full_borders <- dummy_df |>
+    any_table(rows       = "sex",
+              columns    = "year",
+              values     = weight,
+              statistics = "sum",
+              formats    = list(sex = sex.),
+              output     = "html",
+              style      = excel_output_style(header_borders    = TRUE,
+                                              box_borders       = TRUE,
+                                              cat_col_borders   = TRUE,
+                                              table_borders     = TRUE,
+                                              subheader_borders = TRUE),
+              print      = FALSE)
+
+html_full_borders <- result_full_borders[["html"]]
+
+expect_true(grepl("table.qol-table th.box { border-left: none; }", html_full_borders, fixed = TRUE),
+            info = "any_table html render keeps the outer left edge open when all borders are on")
+expect_true(grepl("table.qol-table td.data { border-right: none; border-bottom: none; }", html_full_borders, fixed = TRUE),
+            info = "any_table html render keeps the outer right and bottom edges open when all borders are on")
+
+
+# Hyperlink keywords are translated into html links. "link:" points to a webpage,
+# "file:" to a file on disk and "cell:" is a pseudo hyperlink that leads nowhere.
+# All links are styled like the excel links with a blue font color and underline.
+result_html_links <- dummy_df |>
+    any_table(rows      = "age",
+              columns   = "sex",
+              values    = weight,
+              titles    = c("Hello world1 link: https://cran.r-project.org/",
+                            "Hello world2 cell: A8",
+                            "Hello world3 file: test.txt"),
+              footnotes = c("This is a footnote1 link: https://cran.r-project.org/",
+                            "This is a footnote2 cell: A8",
+                            "This is a footnote3 file: test.txt"),
+              output    = "html",
+              print     = FALSE)
+
+html_links    <- result_html_links[["html"]]
+link_file_url <- paste0("file:///", gsub("\\\\", "/", "test.txt"))
+
+expect_true(grepl('<a href="https://cran.r-project.org/" target="_blank">Hello world1</a>', html_links, fixed = TRUE),
+            info = "any_table html render renders a link: keyword in a title as a hyperlink")
+expect_true(grepl('<a href="#" onclick="return false;">Hello world2</a>', html_links, fixed = TRUE),
+            info = "any_table html render renders a cell: keyword in a title as a pseudo hyperlink")
+expect_true(grepl(paste0('<a href="', link_file_url, '" target="_blank">Hello world3</a>'), html_links, fixed = TRUE),
+            info = "any_table html render renders a file: keyword in a title as a hyperlink to the file")
+expect_true(grepl('<a href="https://cran.r-project.org/" target="_blank">This is a footnote1</a>', html_links, fixed = TRUE),
+            info = "any_table html render renders a link: keyword in a footnote as a hyperlink")
+expect_true(grepl('<a href="#" onclick="return false;">This is a footnote2</a>', html_links, fixed = TRUE),
+            info = "any_table html render renders a cell: keyword in a footnote as a pseudo hyperlink")
+expect_true(grepl(paste0('<a href="', link_file_url, '" target="_blank">This is a footnote3</a>'), html_links, fixed = TRUE),
+            info = "any_table html render renders a file: keyword in a footnote as a hyperlink to the file")
+expect_true(grepl('Hello world1', html_links, fixed = TRUE),
+            info = "any_table html render leaves titles without a hyperlink keyword unmodified")
+expect_true(grepl(".qol-titles a { color: #0000FF; text-decoration: underline; }", html_links, fixed = TRUE),
+            info = "any_table html render styles title links like the excel links")
+expect_true(grepl(".qol-footnotes a { color: #0000FF; text-decoration: underline; }", html_links, fixed = TRUE),
+            info = "any_table html render styles footnote links like the excel links")
+
+
+# any_table html render styles titles and footnotes
+result_styled <- dummy_df |>
+    any_table(rows      = "sex",
+              columns   = "year",
+              values    = weight,
+              statistics = "sum",
+              formats   = list(sex = sex.),
+              titles    = c("Title A", "Title B"),
+              footnotes = c("Note A", "Note B"),
+              output    = "html",
+              style     = excel_output_style(),
+              print     = FALSE)
+
+html_styled <- result_styled[["html"]]
+
+expect_true(grepl('<div class="qol-titles" style="font-size: 10pt; color: #000000; font-weight: bold; text-align: left">Title A</div>',
+                  html_styled, fixed = TRUE), info = "any_table html render bolds the titles by default")
+expect_true(grepl('<div class="qol-titles" style="font-size: 10pt; color: #000000; font-weight: bold; text-align: left">Title B</div>',
+                  html_styled, fixed = TRUE), info = "any_table html render bolds every title with the default title_font_bold")
+expect_true(grepl('<div class="qol-footnotes qol-footnotes-first" style="font-size: 8pt; color: #000000; font-weight: normal; text-align: left">Note A</div>',
+                  html_styled, fixed = TRUE), info = "any_table html render does not bold the footnotes by default")
+
+result_per_title <- dummy_df |>
+    any_table(rows      = "sex",
+              columns   = "year",
+              values    = weight,
+              statistics = "sum",
+              formats   = list(sex = sex.),
+              titles    = c("Title A", "Title B", "Title C"),
+              footnotes = c("Note A", "Note B"),
+              output    = "html",
+              print     = FALSE,
+              style     = excel_output_style(title_font_color    = c("FF00FF", "00FF00", "0000FF"),
+                                             title_font_size     = c(10, 11, 12),
+                                             title_font_bold     = c(TRUE, FALSE, TRUE),
+                                             title_alignment     = c("left", "center", "right"),
+                                             footnote_font_color = c("FF0000", "000000"),
+                                             footnote_font_bold  = c(TRUE, FALSE)))
+
+html_per_title <- result_per_title[["html"]]
+
+expect_true(grepl('<div class="qol-titles" style="font-size: 10pt; color: #FF00FF; font-weight: bold; text-align: left">Title A</div>',
+                  html_per_title, fixed = TRUE), info = "any_table html render applies the first title font attributes to the first title")
+expect_true(grepl('<div class="qol-titles" style="font-size: 11pt; color: #00FF00; font-weight: normal; text-align: center">Title B</div>',
+                  html_per_title, fixed = TRUE), info = "any_table html render applies the second title font attributes to the second title")
+expect_true(grepl('<div class="qol-titles" style="font-size: 12pt; color: #0000FF; font-weight: bold; text-align: right">Title C</div>',
+                  html_per_title, fixed = TRUE), info = "any_table html render applies the third title font attributes to the third title")
+expect_true(grepl('<div class="qol-footnotes qol-footnotes-first" style="font-size: 8pt; color: #FF0000; font-weight: bold; text-align: left">Note A</div>',
+                  html_per_title, fixed = TRUE), info = "any_table html render applies the first footnote font attributes to the first footnote")
+expect_true(grepl('<div class="qol-footnotes" style="font-size: 8pt; color: #000000; font-weight: normal; text-align: left">Note B</div>',
+                  html_per_title, fixed = TRUE), info = "any_table html render applies the second footnote font attributes to the second footnote")
+
+
+# Subheader wrap and cell indents are translated into css
+expect_true(grepl('td.subheader { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: bold; text-align: center; border: 1px solid #000000; white-space: normal; }',
+                  html_styled, fixed = TRUE),
+            info = "any_table html render wraps the subheader text by default like excel")
+expect_true(grepl('th.cat { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: normal; text-align: left; border: 1px solid #000000; white-space: normal; padding-left: 0.6em; }',
+                  html_styled, fixed = TRUE),
+            info = "any_table html render indents the category column cells by default like excel")
+expect_true(grepl('td.data { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: normal; text-align: right; border: none; padding-left: 0.6em; }',
+                  html_styled, fixed = TRUE),
+            info = "any_table html render indents the table cells by default like excel")
+
+result_no_indent <- dummy_df |>
+    any_table(rows      = "sex",
+              columns   = "year",
+              values    = weight,
+              statistics = "sum",
+              formats   = list(sex = sex.),
+              titles    = "T",
+              output    = "html",
+              print     = FALSE,
+              style     = excel_output_style(cat_col_indent = 0, table_indent = 0))
+
+html_no_indent <- result_no_indent[["html"]]
+
+expect_false(grepl("padding-left", html_no_indent, fixed = TRUE),
+            info = "any_table writes no indents with indent levels of 0")
 
 ###############################################################################
 # Abort checks

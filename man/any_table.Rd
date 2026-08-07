@@ -121,7 +121,8 @@ creating a new file.}
 \item{style}{A list of options can be passed to control the appearance of 'Excel' outputs.
 Styles can be created with \code{\link[=excel_output_style]{excel_output_style()}}.}
 
-\item{output}{The following output formats are available: excel and excel_nostyle.}
+\item{output}{The following output formats are available: excel, excel_nostyle, html and
+excel_html.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the variables.}
 

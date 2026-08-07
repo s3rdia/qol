@@ -252,7 +252,7 @@ set_print_miss(1)
 expect_error(print_stack_as_messages("ERROR"), "Print missing categories option can only be TRUE or FALSE. Global option remains unchanged.", info = "Abort setting global options on empty list")
 
 set_output(1)
-expect_error(print_stack_as_messages("ERROR"), "Output can only be 'console', 'text', 'excel' or 'excel_nostyle'. Global option remains unchanged.", info = "Abort setting global options on empty list")
+expect_error(print_stack_as_messages("ERROR"), "Output can only be 'console', 'text', 'excel', 'excel_nostyle', 'html' or 'excel_html'. Global option remains unchanged.", info = "Abort setting global options on empty list")
 
 set_titles(1)
 expect_error(print_stack_as_messages("ERROR"), "Titles must be provided as character. Global titles remain unchanged.", info = "Abort setting global options on empty list")

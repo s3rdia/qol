@@ -63,6 +63,11 @@
   introduced by
   [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
   (04.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Can now render the tables as html file and show it in a browser
+  window. This can be controlled via the new `output` options `html` and
+  `excel_html`. The function now also returns an additional html
+  element. (07.08.2026)
 
 #### Changed functionality
 
@@ -73,8 +78,8 @@
 
 #### Removed
 
-- [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
-  There is no real benefit in this function. (08.07.2026)
+- `get_integer_length()`: There is no real benefit in this function.
+  (08.07.2026)
 
 #### Fixed
 
@@ -131,6 +136,8 @@
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Now uses the global options for `print` and `monitor` parameter.
   (02.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `pct_block` values are now rounded. (07.08.2026)
 
 #### Additionally
 

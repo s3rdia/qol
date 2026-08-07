@@ -22,6 +22,7 @@ Last CRAN release was on 16.07.2026.
 * `frequencies()`, `crosstabs()`: When using `by` variables the special keyword `[by_var]` is now replaced with the actual `by` value in the titles and footnotes.
 * `where.()`: Added a html rendered view of the data frame as fallback, if the new window through `utils::View()` can't be opened.
 * `where.()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
+* `any_table()`: Can now render the tables as html file and show it in a browser window. This can be controlled via the new `output` options `html` and `excel_html`. The function now also returns an additional html element.
 
 ### Changed functionality
 
@@ -45,6 +46,7 @@ Last CRAN release was on 16.07.2026.
 * `frequencies()`: When using interval formats without weight, the sum columns where displayed even though they were equal to the freq columns. This is fixed now. 
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Removed the extra empty row over the tables when no titles where set. Additionally there are no more empty named regions for titles and footnotes, if they are not present.
 * `combine_into_workbook()`: Now uses the global options for `print` and `monitor` parameter.
+* `any_table()`: `pct_block` values are now rounded.
 
 ### Additionally
 

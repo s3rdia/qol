@@ -200,7 +200,8 @@ any_table(
 
 - output:
 
-  The following output formats are available: excel and excel_nostyle.
+  The following output formats are available: excel, excel_nostyle, html
+  and excel_html.
 
 - na.rm:
 

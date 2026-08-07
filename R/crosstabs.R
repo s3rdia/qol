@@ -488,7 +488,8 @@ crosstabs <- function(data_frame,
         # In case there are  by variables are provided
         else{
             complete_table <- format_cross_by_text(cross_tab, rows, columns, column_names,
-                                                   statistics, formats, by, titles, footnotes, na.rm, show_total)
+                                                   statistics, formats, by, titles, footnotes, na.rm, show_total,
+                                                   style)
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
@@ -1178,6 +1179,8 @@ format_cross_excel <- function(wb,
 #' @param titles Character vector of titles to display above the table.
 #' @param footnotes Character vector of footnotes to display under the table.
 #' @param na.rm If TRUE removes all NA values from the tabulation.
+#' @param show_total Whether to display automatic totals or not.
+#' @param style A list containing the styling elements.
 #'
 #' @return
 #' Returns a character vector with all formatted rows for the tables.
@@ -1193,7 +1196,8 @@ format_cross_by_text <- function(cross_tab,
                                  titles,
                                  footnotes,
                                  na.rm,
-                                  show_total){
+                                 show_total,
+                                 style){
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
         if ("pct_row" %in% statistics){
@@ -1252,7 +1256,7 @@ format_cross_by_text <- function(cross_tab,
 
             # Replace by info in the titles
             if (length(titles) > 0){
-                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), titles)
             }
             # Or use by info as title, if there are no titles
             else{
@@ -1261,7 +1265,7 @@ format_cross_by_text <- function(cross_tab,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{
@@ -1411,7 +1415,7 @@ format_cross_by_excel <- function(cross_tab,
 
             # Replace by info in the titles
             if (length(titles) > 0){
-                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), titles)
+                titles_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), titles)
             }
             # Or use by info as title, if there are no titles
             else{
@@ -1420,7 +1424,7 @@ format_cross_by_excel <- function(cross_tab,
 
             # Replace by info in the footnotes
             if (length(footnotes) > 0){
-                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), "NA", value), footnotes)
+                footnotes_temp <- gsub("\\[by_var\\]", ifelse(is.na(value), style[["na_symbol"]], value), footnotes)
             }
             # Otherwise just leave footnotes empty
             else{
