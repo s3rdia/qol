@@ -565,6 +565,10 @@ save_file_multi <- function(data_frame_list,
 #' insensitive and are returned in provided order. Additionally a subset can be defined
 #' directly.
 #'
+#' @param by_reference Don't load the complete file into memory, instead just load a
+#' reference and only load what is needed on demand from disc. Only works with fst
+#' files.
+#'
 #' @examples
 #' # Example files
 #' fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
@@ -604,6 +608,7 @@ load_file <- function(path,
                       file,
                       keep  = NULL,
                       where = NULL,
+                      by_reference = FALSE,
                       ...){
     print_start_message(suppress = TRUE)
     suppress <- ifelse(is.null(unlist(list(...))), FALSE, TRUE)
@@ -690,7 +695,10 @@ load_file <- function(path,
     if (extension == "fst"){
         suppressMessages(fst::threads_fst(.qol_options[["threads"]]))
 
-        if (!is.null(keep)){
+        if (by_reference){
+            data_frame <- fst::fst(full_path)
+        }
+        else if (!is.null(keep)){
             # Get metadata first to be able to read in the variable names case insensitive
             meta_data      <- suppressMessages(fst::metadata_fst(full_path))
             variable_names <- meta_data[["columnNames"]]
@@ -810,8 +818,9 @@ load_file <- function(path,
 #'
 #' @export
 load_file_multi <- function(file_list,
-                            keep_list   = NULL,
-                            stack_files = TRUE){
+                            keep_list    = NULL,
+                            stack_files  = TRUE,
+                            by_reference = FALSE){
     print_start_message()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -893,14 +902,20 @@ load_file_multi <- function(file_list,
         result_list[[basename(infile)]] <- load_file(path = dirname(infile),
                                                      file = basename(infile),
                                                      keep = vars_to_keep,
-                                                     suppress = TRUE)
+                                                     by_reference = by_reference,
+                                                     suppress     = TRUE)
     }
 
     # Stack data frames
     if (stack_files){
-        print_step("MAJOR", "Stacking files")
+        if (by_reference){
+            print_message("NOTE", "Stacking files only works when files are not loaded by reference.")
+        }
+        else{
+            print_step("MAJOR", "Stacking files")
 
-        result_list <- suppressMessages(stack_data(result_list))
+            result_list <- suppressMessages(stack_data(result_list))
+        }
     }
 
     # Revert used threads

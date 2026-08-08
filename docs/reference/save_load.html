@@ -86,9 +86,14 @@ stacks the files into one data frame.</p>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">load_file</span><span class="op">(</span><span class="va">path</span>, <span class="va">file</span>, keep <span class="op">=</span> <span class="cn">NULL</span>, where <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">load_file</span><span class="op">(</span><span class="va">path</span>, <span class="va">file</span>, keep <span class="op">=</span> <span class="cn">NULL</span>, where <span class="op">=</span> <span class="cn">NULL</span>, by_reference <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">load_file_multi</span><span class="op">(</span><span class="va">file_list</span>, keep_list <span class="op">=</span> <span class="cn">NULL</span>, stack_files <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">load_file_multi</span><span class="op">(</span></span>
+<span>  <span class="va">file_list</span>,</span>
+<span>  keep_list <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stack_files <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  by_reference <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -142,6 +147,12 @@ overwrites existing files.</p></dd>
 <dd><p>Can be a single variable name, a vector or a list of vectors containing
 the variables to keep per file. If there are fewer list entries than files to load, the
 last list element will be used repeatedly.</p></dd>
+
+
+<dt id="arg-by-reference">by_reference<a class="anchor" aria-label="anchor" href="#arg-by-reference"></a></dt>
+<dd><p>Don't load the complete file into memory, instead just load a
+reference and only load what is needed on demand from disc. Only works with fst
+files.</p></dd>
 
 
 <dt id="arg-stack-files">stack_files<a class="anchor" aria-label="anchor" href="#arg-stack-files"></a></dt>

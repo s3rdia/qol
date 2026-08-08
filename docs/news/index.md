@@ -71,6 +71,11 @@
   window. This can be controlled via the new `output` options `html` and
   `excel_html`. The function now also returns an additional html
   element. (07.08.2026)
+- [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+  [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Can now load fst files `by_reference`, which means files are not
+  loaded into memory and instead the necessary values are only loaded on
+  demand. (08.08.2026)
 
 #### Changed functionality
 
@@ -148,6 +153,12 @@
 - [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Now
   shows the full data frame when condition is NULL instead of throwing
   an error. (08.08.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md): The
+  function crashed when NA was assigned to a variable. NA is now
+  assigned. (08.08.2026)
+- `ifelse_multi.()`: When NA was assigned to a variable, all values
+  became NA instead of just the ones for which the condition was TRUE.
+  This is fixed now. (08.08.2026)
 
 #### Additionally
 

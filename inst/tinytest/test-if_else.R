@@ -118,6 +118,14 @@ expect_equal(collapse::funique(result_df[["var1"]])[-1], 1,       info = "if. co
 expect_equal(collapse::funique(result_df[["var2"]])[-1], "Hello", info = "if. converts NA values into format of follow up value")
 
 
+# if. can assign a single NA value
+test_df           <- dummy_df
+test_df[["var1"]] <- 1
+test_df           <- test_df |> if.(state <= 3, var1 = NA)
+
+expect_true(all(is.na(test_df[["var1"]][test_df[["state"]] <= 3])), info = "if. can assign a single NA value")
+
+
 # if. can check for variable expressions starting with letter
 letter_df <- dummy_df |> if.(education == "m:", edu = 1)
 test_df   <- letter_df |> if.(edu)
@@ -513,6 +521,16 @@ value    <- "male"
 result <- ifelse_df |> ifelse_multi("&variable == &gender" = "&value")
 
 expect_equal(result, c("male", NA, "male", NA, NA), info = "ifelse_multi can handle macro variables")
+
+
+# ifelse_multi keeps the variable values when assigning NA without an else.
+result <- ifelse_df |> ifelse_multi("var1 == 10" = NA)
+
+expect_equal(result, c(NA, 20, NA, 20, NA), info = "ifelse_multi NA is translated")
+
+result <- ifelse_df |> ifelse_multi("var1 == 10" = NA, else. = 30)
+
+expect_equal(result, c(NA, 30, NA, 30, NA), info = "ifelse_multi NA is translated")
 
 
 # ifelse_multi NA is translated

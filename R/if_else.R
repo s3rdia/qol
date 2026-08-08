@@ -168,7 +168,7 @@ if. <- function(data_frame, condition, ...){
     # Check for "delete" keyword
     flag_delete <- FALSE
 
-    if (length(assignments) == 1 && assignments[[1]] == "delete"){
+    if (length(assignments) == 1 && isTRUE(assignments[[1]] == "delete")){
         flag_delete      <- TRUE
         assignments[[1]] <- NULL
     }
@@ -1512,6 +1512,17 @@ ifelse_multi <- function(data_frame,
     # quotation marks, the parameter is NULL here and has to be evaluated differently.
     if (is.null(else_temp)){
         else. <- as.name(substitute(else.))
+    }
+
+    # If no else. value is provided and any of the result values is NA, then keep
+    # the current values of the variable used in the conditions instead of setting
+    # all other values to NA.
+    if (is.na(else.) && any(is.na(result_values))){
+        condition_variables <- unique(unlist(lapply(parsed_conditions, all.vars)))
+
+        if (length(condition_variables) > 0){
+            else. <- as.name(condition_variables[1])
+        }
     }
 
     # Look up of which type all the variables are

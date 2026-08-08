@@ -103,6 +103,14 @@ expect_equal(collapse::funique(fst_keep[["first_person"]]), 1, info = "Loading f
 expect_equal(collapse::funique(rds_keep[["first_person"]]), 1, info = "Loading files with subset")
 
 
+# Loading files by reference returns an fst_table
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+
+fst_ref <- load_file(dirname(fst_file), basename(fst_file), by_reference = TRUE)
+
+expect_true(inherits(fst_ref, "fst_table"), info = "Loading files by reference returns an fst_table")
+
+
 # Loading multiple files and stack them
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")

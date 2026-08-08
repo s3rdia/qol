@@ -24,6 +24,7 @@ Last CRAN release was on 16.07.2026.
 * `where.()`: Added a html rendered view of the data frame as fallback, if the new window through `utils::View()` can't be opened.
 * `where.()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
 * `any_table()`: Can now render the tables as html file and show it in a browser window. This can be controlled via the new `output` options `html` and `excel_html`. The function now also returns an additional html element.
+* `load_file()`, `load_file_multi()`: Can now load fst files `by_reference`, which means files are not loaded into memory and instead the necessary values are only loaded on demand.
 
 ### Changed functionality
 
@@ -50,6 +51,8 @@ Last CRAN release was on 16.07.2026.
 * `combine_into_workbook()`: Now uses the global options for `print` and `monitor` parameter.
 * `any_table()`: `pct_block` values are now rounded.
 * `where.()`: Now shows the full data frame when condition is NULL instead of throwing an error.
+* `if.()`: The function crashed when NA was assigned to a variable. NA is now assigned.
+* `ifelse_multi.()`: When NA was assigned to a variable, all values became NA instead of just the ones for which the condition was TRUE. This is fixed now.
 
 ### Additionally
 

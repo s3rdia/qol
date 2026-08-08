@@ -27,9 +27,14 @@ save_file_multi(
   protect = TRUE
 )
 
-load_file(path, file, keep = NULL, where = NULL, ...)
+load_file(path, file, keep = NULL, where = NULL, by_reference = FALSE, ...)
 
-load_file_multi(file_list, keep_list = NULL, stack_files = TRUE)
+load_file_multi(
+  file_list,
+  keep_list = NULL,
+  stack_files = TRUE,
+  by_reference = FALSE
+)
 }
 \arguments{
 \item{data_frame}{The data fame to be saved.}
@@ -58,6 +63,10 @@ overwrites existing files.}
 \item{keep_list}{Can be a single variable name, a vector or a list of vectors containing
 the variables to keep per file. If there are fewer list entries than files to load, the
 last list element will be used repeatedly.}
+
+\item{by_reference}{Don't load the complete file into memory, instead just load a
+reference and only load what is needed on demand from disc. Only works with fst
+files.}
 
 \item{stack_files}{TRUE by default. Stacks data frames after loading them. If FALSE,
 returns all data frames in a list.}

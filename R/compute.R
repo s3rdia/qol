@@ -555,6 +555,12 @@ check_types <- function(data_frame, variable, current){
         return(NULL)
     }
 
+    # Abort if the current value is missing. The type of a missing value cannot
+    # be inferred, so the type of the existing variable is kept.
+    if (all(is.na(current))){
+        return(FALSE)
+    }
+
     type_c <- typeof(current)
     type_d <- typeof(data_frame[[variable]])
 
