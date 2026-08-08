@@ -37,11 +37,15 @@ format_any_html <- function(table, print){
         # The table is rendered from a temporary file. The temporary file is
         # only needed to display the table in the browser and is not meant to
         # be saved.
-        file <- file.path(tempdir(), paste0("qol_table_", as.integer(Sys.time()), ".html"))
+        temp_file <- file.path(tempdir(), paste0("qol_table_", as.integer(Sys.time()), ".html"))
 
-        writeLines(html, file, useBytes = TRUE)
+        writeLines(html, temp_file, useBytes = TRUE)
 
-        utils::browseURL(file)
+        utils::browseURL(temp_file)
+
+        # Delete file after it was opened in the browser
+        Sys.sleep(0.25)
+        unlink(temp_file)
     }
 
     invisible(html)

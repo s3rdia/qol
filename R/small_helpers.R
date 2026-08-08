@@ -450,3 +450,54 @@ round_multi <- function(data_frame,
 
     data_frame
 }
+
+
+#' Check If Required Package Is Installed
+#'
+#' @description
+#' Check whether a certain package is required for a task. This includes the packages
+#' listed under suggestions in the description file. The user will be asked
+#' whether a package should be installed or not.
+#'
+#' @param package The name of the required package.
+#'
+#' @return
+#' Returns TRUE or FALSE.
+#'
+#' @export
+check_required_package <- function(package){
+    # Check if package is available without loading it into the global namespace
+    if (!requireNamespace(package, quietly = TRUE)){
+        # Set up menu message
+        print_message("NOTE", c("The [b]<[package]>[/b] is required for interactive charts but is not currently installed.",
+                                "Would you like to install it now?"), package = package)
+
+        # Ask the user whether to install package or abort execution
+        user_choice <- utils::menu(title   = "",
+                                   choices = c("Yes", "No (abort execution)"))
+
+        # If the user chooses to install the package do so automatically
+        if (user_choice == 1){
+            print_message("NOTE", "Installing <[package]> package.", package = package)
+
+            utils::install.packages(package)
+
+            # Double check if installation was successful
+            if (!requireNamespace(package, quietly = TRUE)){
+                print_message("NOTE", "Installation failed. Try  to install <[package]> manually via install.packages('[package]').", package = package)
+
+                return(invisible(FALSE))
+            }
+
+            print_message("NOTE", "Installing successful.")
+        }
+        # If the user doesn't want to install the package, abort
+        else{
+            print_message("ERROR", "<[package]> is required to perform certain tasks. Execution will be aborted.", package = package)
+
+            return(invisible(FALSE))
+        }
+    }
+
+    TRUE
+}

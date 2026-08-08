@@ -8,6 +8,9 @@
   Creates a table of contents sheet with custom style based on the
   provided ‘Excel’ workbook. (02.08.2026, thanks to
   [@JanMarvin](https://github.com/JanMarvin))
+- [`check_required_package()`](https://s3rdia.github.io/qol/reference/check_required_package.md):
+  Check whether a certain package is required and ask the user whether
+  it should be installed or not. (08.08.2026)
 
 #### New functionality
 
@@ -75,6 +78,10 @@
   With the function making use of the new `style` parameter, the `file`
   parameter has been removed. Saving files no works with the `style`
   parameter like in the other tabulation functions. (03.08.2026)
+- [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md):
+  Without by variable the function now carries forward values through
+  upcoming NA values instead of just writing the first value into all
+  other cells. (08.08.2026)
 
 #### Removed
 
@@ -138,6 +145,9 @@
   (02.08.2026)
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   `pct_block` values are now rounded. (07.08.2026)
+- [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Now
+  shows the full data frame when condition is NULL instead of throwing
+  an error. (08.08.2026)
 
 #### Additionally
 
@@ -170,6 +180,13 @@
   (03.08.2026)
 - [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
   `NUTS3` variable is now stored as an integer. (05.08.2026)
+- New suggested package `yyjsonr` added, which is required, for the new
+  html view of
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md).
+  (08.08.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Clarified error message on old variable names not found in data frame.
+  (08.08.2026)
 
 ## qol 1.3.3
 

@@ -1005,28 +1005,30 @@ where. <- function(data_frame,
     # Manage conditional subsetting
     condition <- substitute(condition)
 
-    # When the condition is passed as character, then parse it to enable all the
-    # SAS like writing styles.
-    if (is.character(condition)){
-        condition <- parse_conditions(condition, na.rm = FALSE)
+    if (!is.null(condition)){
+        # When the condition is passed as character, then parse it to enable all the
+        # SAS like writing styles.
+        if (is.character(condition)){
+            condition <- parse_conditions(condition, na.rm = FALSE)
 
-        # If a name is returned then a single variable name was passed. In this case
-        # revert to character to ensure it is processed right down the road.
-        if (is.name(condition)){
-            condition <- as.character(condition)
+            # If a name is returned then a single variable name was passed. In this case
+            # revert to character to ensure it is processed right down the road.
+            if (is.name(condition)){
+                condition <- as.character(condition)
+            }
+            # Otherwise transform into a call
+            else{
+                condition <- as.call(condition)
+            }
         }
-        # Otherwise transform into a call
-        else{
-            condition <- as.call(condition)
-        }
+
+        condition <- translate_condition(condition)
+        condition <- eval(condition, envir = data_frame, enclos = parent.frame())
+
+        full_condition <- data_frame |> combined_condition(condition)
+
+        data_frame <- data_frame |> collapse::fsubset(full_condition)
     }
-
-    condition <- translate_condition(condition)
-    condition <- eval(condition, envir = data_frame, enclos = parent.frame())
-
-    full_condition <- data_frame |> combined_condition(condition)
-
-    data_frame <- data_frame |> collapse::fsubset(full_condition)
 
     # Manage keeping variables
     keep <- get_origin_as_char(keep, substitute(keep))
@@ -1059,68 +1061,124 @@ where. <- function(data_frame,
         # If the viewer results in NULL, this means that the viewer window couldn't
         # be opened. In this case use the fallback option to render in the browser.
         if (!viewer_result){
-            # Determine column types
-            header_color <- vapply(data_frame, function(variable){
-                if (is.character(variable)){
-                    "#D32F2F"
-                }
-                else if (is.numeric(variable)){
-                    "#1976D2"
-                }
-                else{
-                    "#4CAF50"
-                }
-            }, character(1))
-
-            # Convert variable names into colored header
-            header <- paste0("<th style='background-color:", header_color, ";'>",
-                             colnames(data_frame), "</th>", collapse = "")
-
-            # Determine alignment for each column
-            align <- ifelse(vapply(data_frame, is.character, logical(1)), "left", "right")
-
-            # Convert rows into html table
-            rows <- vapply(seq_len(collapse::fnrow(data_frame)), function(i){
-                cells <- paste0("<td style='text-align:", align, ";'>",
-                                data_frame[i, ], "</td>", collapse = "")
-
-                paste0("<tr>", cells, "</tr>")
-            }, character(1))
-
-            rows <- paste(rows, collapse = "\n")
-
-            # Setup html file
-            html_content <- paste0("<!DOCTYPE html>
-                                    <html>
-                                    <head>
-                                      <meta charset='utf-8'>
-                                      <style>
-                                        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
-                                        table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-                                        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-                                        th { color: white; text-align: center; }
-                                        tr:hover { background-color: #f5f5f5; }
-                                      </style>
-                                    </head>
-                                    <body>
-                                      <h2>Viewing data frame: ", df_name, "</h2>
-                                      <table>
-                                        <thead><tr>", header, "</tr></thead>
-                                        <tbody>", rows, "</tbody>
-                                      </table>
-                                    </body>
-                                    </html>")
-
-            # Save html to temporary file
-            temp_file <- file.path(tempdir(), paste0("df_table_", as.integer(Sys.time()), ".html"))
-            writeLines(html_content, temp_file, useBytes = TRUE)
-
-            # Open in browser
-            utils::browseURL(temp_file)
+            build_html_output(data_frame, df_name)
         }
     }
 
     invisible(data_frame)
+}
+
+
+#' Build Html File For In Browser Data Frame Display
+#'
+#' @description
+#' Constructs a json file from a provided data frame and constructs a html file
+#' which is displayed within a browser window.
+#'
+#' @param data_frame Data frame to be displayed in the browser.
+#' @param df_name Data frame name.
+#'
+#' @return
+#' Returns TRUE or FALSE.
+#'
+#' @noRd
+build_html_output <- function(data_frame,df_name){
+    if (!check_required_package("yyjsonr")){
+        return(invisible(FALSE))
+    }
+
+    # Determine column types
+    header_color <- vapply(data_frame, function(variable){
+        if (is.character(variable)){
+            "#D32F2F"
+        }
+        else if (is.numeric(variable)){
+            "#1976D2"
+        }
+        else{
+            "#4CAF50"
+        }
+    }, character(1))
+
+    # Convert variable names into colored header
+    column_names <- names(data_frame)
+
+    # Determine alignment vectorized across all columns
+    is_text <- vapply(data_frame, function(column){
+                          is.character(column) || is.factor(column)
+                      }, logical(1))
+    alignments <- ifelse(is_text, "left", "right")
+
+    # Construct a metadata data frame where each row corresponds to one column definition
+    header_df <- data.frame(title    = column_names,
+                            field    = column_names,
+                            hozAlign = alignments,
+                            stringsAsFactors = FALSE)
+
+    # Convert header into json format
+    header_json <- yyjsonr::write_json_str(header_df, opts = yyjsonr::opts_write_json(dataframe = "rows"))
+
+    # Convert the whole data frame into json format
+    data_frame_json <- yyjsonr::write_json_str(data_frame, dataframe = "rows")
+
+    # Setup the header styling with different column colors depending on the data type
+    header_css <- vapply(seq_along(header_color), function(i) {
+        sprintf('.tabulator-col[tabulator-field="%s"] { background-color:%s !important; color:white; }',
+                column_names[i],
+                header_color[i])
+    }, character(1))
+
+    header_css <- paste(header_css, collapse = "\n")
+
+    # Inline the css and js libraries to be able to view bigger data frames in chunks
+    tabulator_css <- paste(readLines(system.file("extdata", "tabulator.min.css.txt", package = "qol"),
+                                     warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+    tabulator_js  <- paste(readLines(system.file("extdata", "tabulator.min.js.txt", package = "qol"),
+                                     warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+
+    html_content <- sprintf('<!DOCTYPE html>
+                             <html>
+                             <head>
+                             <meta charset="utf-8">
+                             <style>%s</style>
+                             <script>%s</script>
+                             <style>
+                                 body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+                                 %s
+                             </style>
+                             </head>
+                             <body>
+                                 <h2>Viewing data frame: %s</h2>
+                                 <div id="data-table"></div>
+                                 <script>
+                                     // Row data and column config, generated entirely on the R side
+                                     // with base R string building - no jsonlite involved.
+                                     const rowData = %s;
+                                     const columns = %s;
+                                     new Tabulator("#data-table", {
+                                         data: rowData,
+                                         columns: columns,
+                                         layout: "fitDataStretch",
+                                         height: "80vh",        // fixed height enables virtual scrolling
+                                         virtualDomBuffer: 300, // rows kept rendered just outside the viewport
+                                         placeholder: "No data"
+                                     });
+                                 </script>
+                             </body>
+                             </html>', tabulator_css, tabulator_js, header_css, df_name, data_frame_json, header_json)
+
+    # Save html to temporary file
+    temp_file <- file.path(tempdir(), paste0("df_table_", as.integer(Sys.time()), ".html"))
+    writeLines(html_content, temp_file, useBytes = TRUE)
+
+    # Open in browser
+    utils::browseURL(temp_file)
+
+    # Delete file after it was opened in the browser
+    Sys.sleep(0.25)
+    unlink(temp_file)
+
+    invisible(TRUE)
 }
 
 

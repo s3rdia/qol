@@ -63,7 +63,7 @@ expect_equal(test_df[["last"]],  c(0, 1, 1, 0, 1), info = "Mark first and last c
 test_df[["retain_value"]] <- test_df |>
     retain_value(values = var_num)
 
-expect_equal(test_df[["retain_value"]], c(1, 1, 1, 1, 1), info = "Retain value without by")
+expect_equal(test_df[["retain_value"]], c(1, 1, 1, 2, 2), info = "Retain value without by")
 
 
 # Retain value with by
@@ -77,7 +77,7 @@ expect_equal(test_df[["retain_value"]], c(1, 1, NA, 2, 2), info = "Retain value 
 test_df[["retain_value"]] <- test_df |>
       retain_value(values = var_char)
 
-expect_equal(test_df[["retain_value"]], c("a", "a", "a", "a", "a"), info = "Retain character value")
+expect_equal(test_df[["retain_value"]], c("a", "a", "a", "b", "b"), info = "Retain character value")
 
 
 # Retain multiple values

@@ -251,12 +251,6 @@ retain_value <- function(data_frame,
     # Make sure that the variables provided are part of the data frame.
     by <- data_frame |> part_of_df(by)
 
-    # Generate pseudo var if by is NULL
-    if (is.null(by) || length(by) == 0){
-        data_frame[[".pseudo_by"]] <- 1
-        by <- ".pseudo_by"
-    }
-
     # Convert to character vectors
     values <- get_origin_as_char(values, substitute(values))
 
@@ -271,14 +265,30 @@ retain_value <- function(data_frame,
         }
     }
 
+    values <- unique(values)
+
     ###########################################################################
     # Retain
     ###########################################################################
 
-    group <- collapse::GRP(data_frame, by)
+    # If there are no by variables provided carry a value forward through NA values
+    # until a new value is hit, then carry this forward and so on.
+    if (is.null(by)){
+        # This has to be done variable by variable
+        for (i in seq_along(values)){
+            value <- values[i]
 
-    # If there are as much new variable names provided, as there are values given, then rename them
-    data_frame <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
+            data_frame[[value]] <- data_frame[[value]] |> collapse::na_locf()
+        }
+
+        # Only keep the newly retained variables
+        data_frame <- suppressMessages(data_frame |> keep(values))
+    }
+    # In case of by variables retain by groups
+    else{
+        group      <- collapse::GRP(data_frame, by)
+        data_frame <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
+    }
 
     print_closing()
 

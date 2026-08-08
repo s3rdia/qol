@@ -4,6 +4,7 @@ Last CRAN release was on 16.07.2026.
 ### New functions
 
 * `create_table_of_contents()`: Creates a table of contents sheet with custom style based on the provided 'Excel' workbook.
+* `check_required_package()`: Check whether a certain package is required and ask the user whether it should be installed or not.
 
 ### New functionality
 
@@ -27,6 +28,7 @@ Last CRAN release was on 16.07.2026.
 ### Changed functionality
 
 * `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions.
+* `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. 
 
 ### Removed
 
@@ -47,6 +49,7 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Removed the extra empty row over the tables when no titles where set. Additionally there are no more empty named regions for titles and footnotes, if they are not present.
 * `combine_into_workbook()`: Now uses the global options for `print` and `monitor` parameter.
 * `any_table()`: `pct_block` values are now rounded.
+* `where.()`: Now shows the full data frame when condition is NULL instead of throwing an error.
 
 ### Additionally
 
@@ -59,6 +62,8 @@ Last CRAN release was on 16.07.2026.
 * `dummy_data()`: `NUTS2` variable is now stored as an integer.
 * `load_file()`: Added example which shows how to directly rename variables.
 * `dummy_data()`: `NUTS3` variable is now stored as an integer.
+* New suggested package `yyjsonr` added, which is required, for the new html view of `where.()`.
+* `rename_multi()`: Clarified error message on old variable names not found in data frame.
 
 
 ## R CMD check results

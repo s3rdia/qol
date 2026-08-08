@@ -297,7 +297,8 @@ rename_multi <- function(data_frame, ...){
 
     if (is.list(old_names)){
         print_message("ERROR", c("The provided <old name> '[old]' is not part of",
-								 "the data frame. Renaming will be aborted."), old = old_names[[1]])
+								 "the data frame. Pass in variables to be renamed in the form:",
+								 '"old_var" = "new_var". Renaming will be aborted.'), old = old_names[[1]])
         return(data_frame)
     }
 

@@ -229,6 +229,8 @@
 - [`round_values()`](https://s3rdia.github.io/qol/reference/round_values.md)
   [`round_multi()`](https://s3rdia.github.io/qol/reference/round_values.md)
   : Round Values With Half Rounded Up And Multiples Of X
+- [`check_required_package()`](https://s3rdia.github.io/qol/reference/check_required_package.md)
+  : Check If Required Package Is Installed
 
 ## Split Data Frame
 

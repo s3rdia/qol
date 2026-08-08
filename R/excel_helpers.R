@@ -1227,7 +1227,7 @@ handle_col_row_dimensions <- function(wb,
                                       ranges,
                                       number_of_columns,
                                       number_of_rows,
-                                      style = excel_output_style()){
+                                      style = .qol_options[["excel_style"]]){
     column_widths <- style[["column_widths"]]
     start_column  <- 1
     end_column    <- style[["start_column"]] + (number_of_columns - 1)
@@ -1291,7 +1291,7 @@ handle_col_row_dimensions <- function(wb,
 #' @noRd
 handle_auto_dimensions <- function(wb,
                                    ranges,
-                                   style = excel_output_style()){
+                                   style = .qol_options[["excel_style"]]){
     # If autofit columns is selected, set a manual size after the first table
     # column which is sufficient in most cases. The integrated autofit often
     # gives to narrow columns.
@@ -1340,7 +1340,7 @@ handle_auto_dimensions <- function(wb,
 #' @noRd
 handle_any_auto_dimensions <- function(wb,
                                        ranges,
-                                       style = excel_output_style()){
+                                       style = .qol_options[["excel_style"]]){
     # If autofit columns is selected, set a manual size after the table row header
     # columns which is sufficient in most cases. The integrated autofit often
     # gives to narrow columns.
@@ -1374,7 +1374,7 @@ handle_any_auto_dimensions <- function(wb,
 #' @noRd
 handle_header_table_dim <- function(wb,
                                     ranges,
-                                    style = excel_output_style()){
+                                    style = .qol_options[["excel_style"]]){
     # Set row heights for header if specified
     header_heights <- style[["header_heights"]]
 

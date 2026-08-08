@@ -3,6 +3,7 @@
 ### New functions
 
 * `create_table_of_contents()`: Creates a table of contents sheet with custom style based on the provided 'Excel' workbook. (02.08.2026, thanks to @JanMarvin)
+* `check_required_package()`: Check whether a certain package is required and ask the user whether it should be installed or not. (08.08.2026)
 
 ### New functionality
 
@@ -26,6 +27,7 @@
 ### Changed functionality
 
 * `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions. (03.08.2026)
+* `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. (08.08.2026)
 
 ### Removed
 
@@ -46,6 +48,7 @@
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Removed the extra empty row over the tables when no titles where set. Additionally there are no more empty named regions for titles and footnotes, if they are not present. (02.08.2026)
 * `combine_into_workbook()`: Now uses the global options for `print` and `monitor` parameter. (02.08.2026)
 * `any_table()`: `pct_block` values are now rounded. (07.08.2026)
+* `where.()`: Now shows the full data frame when condition is NULL instead of throwing an error. (08.08.2026)
 
 ### Additionally
 
@@ -58,6 +61,8 @@
 * `dummy_data()`: `NUTS2` variable is now stored as an integer. (03.08.2026)
 * `load_file()`: Added example which shows how to directly rename variables. (03.08.2026)
 * `dummy_data()`: `NUTS3` variable is now stored as an integer. (05.08.2026)
+* New suggested package `yyjsonr` added, which is required, for the new html view of `where.()`. (08.08.2026)
+* `rename_multi()`: Clarified error message on old variable names not found in data frame. (08.08.2026)
 
 # qol 1.3.3
 
