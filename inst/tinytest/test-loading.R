@@ -51,14 +51,14 @@ my_path <- libname(external_path, get_files = TRUE)
 
 expect_true(all(c("qol_example_data_csv.csv",  "qol_example_data_fst.fst", "qol_example_data_rds.rds",
                   "qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "qol_nuts.csv",
-                  "qol_tinytest_results.fst", "LICENSE", "tabulator.min.css.txt", "tabulator.min.js.txt") %in% names(my_path)),
+                  "qol_tinytest_results.fst", "qol_table.min.css.txt", "qol_table.min.js.txt") %in% names(my_path)),
              info = "Retrieve files from path with libname")
 
 
 # Retrieve files with specific extensions from path with libname
 my_path <- libname(external_path, get_files = TRUE, extensions = c("txt", "xlsx"))
 
-expect_true(all(c("qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "tabulator.min.css.txt", "tabulator.min.js.txt")
+expect_true(all(c("qol_example_data_txt.txt", "qol_example_data_xlsx.xlsx", "qol_table.min.css.txt", "qol_table.min.js.txt")
             %in% names(my_path)), info = "Retrieve files with specific extensions from path with libname")
 
 ###############################################################################

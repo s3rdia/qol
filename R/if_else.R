@@ -1123,7 +1123,7 @@ build_html_output <- function(data_frame,df_name){
 
     # Setup the header styling with different column colors depending on the data type
     header_css <- vapply(seq_along(header_color), function(i) {
-        sprintf('.tabulator-col[tabulator-field="%s"] { background-color:%s !important; color:white; }',
+        sprintf('.qol-col[qol-field="%s"] { background-color:%s !important; color:white; }',
                 column_names[i],
                 header_color[i])
     }, character(1))
@@ -1131,9 +1131,9 @@ build_html_output <- function(data_frame,df_name){
     header_css <- paste(header_css, collapse = "\n")
 
     # Inline the css and js libraries to be able to view bigger data frames in chunks
-    tabulator_css <- paste(readLines(system.file("extdata", "tabulator.min.css.txt", package = "qol"),
+    tabulator_css <- paste(readLines(system.file("extdata", "qol_table.min.css.txt", package = "qol"),
                                      warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-    tabulator_js  <- paste(readLines(system.file("extdata", "tabulator.min.js.txt", package = "qol"),
+    tabulator_js  <- paste(readLines(system.file("extdata", "qol_table.min.js.txt", package = "qol"),
                                      warn = FALSE, encoding = "UTF-8"), collapse = "\n")
 
     html_content <- sprintf('<!DOCTYPE html>
@@ -1151,11 +1151,9 @@ build_html_output <- function(data_frame,df_name){
                                  <h2>Viewing data frame: %s</h2>
                                  <div id="data-table"></div>
                                  <script>
-                                     // Row data and column config, generated entirely on the R side
-                                     // with base R string building - no jsonlite involved.
                                      const rowData = %s;
                                      const columns = %s;
-                                     new Tabulator("#data-table", {
+                                     new qolTable("#data-table", {
                                          data: rowData,
                                          columns: columns,
                                          layout: "fitDataStretch",

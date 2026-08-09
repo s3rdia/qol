@@ -1,0 +1,82 @@
+/* Minimal virtual-scroll table styles */
+
+.qol {
+  position: relative;
+  overflow: auto;
+  border: 1px solid #ddd;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  background: #fff;
+  box-sizing: border-box;
+}
+.qol * {
+  box-sizing: border-box;
+}
+
+
+.qol-header-row {
+  display: grid;
+  width: fit-content;
+  min-width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f4f4f4;
+  border-bottom: 2px solid #ccc;
+}
+
+.qol-col {
+  min-width: 0;
+  padding: 8px 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  user-select: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+.qol-col:last-child {
+  border-right: none;
+}
+.qol-sort-arrow {
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+.qol-sizer {
+  position: relative;
+}
+
+.qol-row {
+  position: absolute;
+  left: 0;
+  display: grid;
+  width: fit-content;
+  min-width: 100%;
+  border-bottom: 1px solid #eee;
+}
+.qol-row:hover {
+  background: #f5f9ff;
+}
+.qol-row-even {
+  background: #fafafa;
+}
+
+.qol-cell {
+  min-width: 0;
+  padding: 6px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: 1px solid #f0f0f0;
+}
+.qol-cell:last-child {
+  border-right: none;
+}
+
+.qol-placeholder {
+  padding: 24px;
+  text-align: center;
+  color: #999;
+}

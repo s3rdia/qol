@@ -367,7 +367,7 @@ remove_blanks <- function(data_frame,
                               trim      = trimws(variable_vector, which = "both"),
                               leading   = trimws(variable_vector, which = "left"),
                               trailing  = trimws(variable_vector, which = "right"),
-                              all       = gsub(" +", "", variable_vector),
+                              all       = gsub(" ", "", variable_vector, fixed = TRUE),
                               normalize = {
                                   variable_vector <- trimws(variable_vector)
                                   gsub(" +", " ", variable_vector)
