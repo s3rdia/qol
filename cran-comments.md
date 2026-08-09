@@ -29,7 +29,8 @@ Last CRAN release was on 16.07.2026.
 ### Changed functionality
 
 * `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions.
-* `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. 
+* `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The functions now set the font family per cell instead of a base font for the whole workbook. This enables different fonts per sheet in multi sheet workbooks, if the sheets are created with separate calls.
 
 ### Removed
 

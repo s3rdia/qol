@@ -87,6 +87,14 @@
   Without by variable the function now carries forward values through
   upcoming NA values instead of just writing the first value into all
   other cells. (08.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  The functions now set the font family per cell instead of a base font
+  for the whole workbook. This enables different fonts per sheet in
+  multi sheet workbooks, if the sheets are created with separate calls.
+  (08.08.2026)
 
 #### Removed
 

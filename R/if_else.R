@@ -1517,7 +1517,7 @@ ifelse_multi <- function(data_frame,
     # If no else. value is provided and any of the result values is NA, then keep
     # the current values of the variable used in the conditions instead of setting
     # all other values to NA.
-    if (is.na(else.) && any(is.na(result_values))){
+    if (missing(else.) && any(is.na(result_values))){
         condition_variables <- unique(unlist(lapply(parsed_conditions, all.vars)))
 
         if (length(condition_variables) > 0){

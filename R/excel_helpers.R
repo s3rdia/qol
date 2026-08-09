@@ -1012,9 +1012,6 @@ handle_fill_styles <- function(wb, style = excel_output_style()){
 handle_font_styles <- function(wb,
                                texts = list("title" = c(), "footnote" = c()),
                                style = excel_output_style()){
-    # Font can only be set globally here. Below in create_font seems to be bugged.
-    wb$set_base_font(font_name = style[["font"]])
-
     # Add individual font styles for each table part
     for (type in c("title", "footnote", "header", "subheader", "box", "cat_col", "table")){
         if (type %in% c("title", "footnote")){
@@ -1022,14 +1019,16 @@ handle_font_styles <- function(wb,
             for (i in seq_along(texts[[type]])){
                 # Normal style
                 wb$styles_mgr$add(
-                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
+                    openxlsx2::create_font(name  = style[["font"]],
+                                           sz    = style[[paste0(type, "_font_size")]][i],
                                            color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]][i]),
                                            b     = style[[paste0(type, "_font_bold")]][i]),
                     paste0(type, i, "_font"))
 
                 # Hyperlink style
                 wb$styles_mgr$add(
-                    openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]][i],
+                    openxlsx2::create_font(name  = style[["font"]],
+                                           sz    = style[[paste0(type, "_font_size")]][i],
                                            color = openxlsx2::wb_color(hex = "0000FF"),
                                            u     = "single"),
                     paste0(type, i, "_link_font"))
@@ -1037,7 +1036,8 @@ handle_font_styles <- function(wb,
         }
         else{
             wb$styles_mgr$add(
-                openxlsx2::create_font(sz    = style[[paste0(type, "_font_size")]],
+                openxlsx2::create_font(name  = style[["font"]],
+                                       sz    = style[[paste0(type, "_font_size")]],
                                        color = openxlsx2::wb_color(hex = style[[paste0(type, "_font_color")]]),
                                        b     = style[[paste0(type, "_font_bold")]]),
                 paste0(type, "_font"))
@@ -2231,25 +2231,29 @@ create_table_of_contents <- function(wb,
     ###########################################################################
 
     wb$styles_mgr$add(
-        openxlsx2::create_font(sz    = style[["toc_header_font_size"]],
+        openxlsx2::create_font(name  = style[["font"]],
+                               sz    = style[["toc_header_font_size"]],
                                color = openxlsx2::wb_color(hex = style[["toc_header_font_color"]]),
                                b     = style[["toc_header_font_bold"]]),
         "toc_header_font")
 
     wb$styles_mgr$add(
-        openxlsx2::create_font(sz    = style[["toc_subheader_font_size"]],
+        openxlsx2::create_font(name  = style[["font"]],
+                               sz    = style[["toc_subheader_font_size"]],
                                color = openxlsx2::wb_color(hex = style[["toc_subheader_font_color"]]),
                                b     = style[["toc_subheader_font_bold"]]),
         "toc_subheader_font")
 
     wb$styles_mgr$add(
-        openxlsx2::create_font(sz    = style[["toc_other_font_size"]],
+        openxlsx2::create_font(name  = style[["font"]],
+                               sz    = style[["toc_other_font_size"]],
                                color = openxlsx2::wb_color(hex = style[["toc_other_font_color"]]),
                                b     = style[["toc_other_font_bold"]]),
         "toc_other_font")
 
     wb$styles_mgr$add(
-        openxlsx2::create_font(sz    = style[["toc_other_font_size"]],
+        openxlsx2::create_font(name  = style[["font"]],
+                               sz    = style[["toc_other_font_size"]],
                                color = openxlsx2::wb_color(hex = "0000FF"),
                                u     = "single"),
         "toc_link_font")
@@ -2377,8 +2381,12 @@ create_table_of_contents <- function(wb,
     # Set column width
     print_step("MINOR", "Set column width")
 
-    sheet_width <- get_optimal_width(sheet_names, style[["toc_other_font_size"]])
-    title_width <- get_optimal_width(titles,      style[["toc_other_font_size"]])
+    base_font   <- wb$get_base_font()
+
+    sheet_width <- get_optimal_width(sheet_names, style[["toc_other_font_size"]],
+                                     font_family = style[["font"]], base_font = base_font)
+    title_width <- get_optimal_width(titles,      style[["toc_other_font_size"]],
+                                     font_family = style[["font"]], base_font = base_font)
 
     wb$set_col_widths(sheet  = toc_sheet_name,
                       cols   = c(1, 2, 3, 4, 5),
@@ -2455,27 +2463,81 @@ create_table_of_contents <- function(wb,
     invisible(wb)
 }
 
-
-#' Get Optimal Cell Width
 #'
 #' @description
-#' Get the optimal cell width to display a text in one cell without tex twrapping.
+#' Get the optimal cell width to display a text in one cell without text wrapping.
+#'
+#' The width is computed from the maximum digit width (mdw) of the applied font
+#' taken from the openxlsx2 font width table. This accounts for font family and
+#' font size, so the column is wide enough to display the longest text on one line.
 #'
 #' @param texts A vector of texts.
 #' @param font_size The font size that will be applied to the texts.
+#' @param font_family The font family that will be applied to the texts.
+#' @param base_font The base font of the workbook.
 #'
 #' @return
 #' Returns a numeric value or "auto".
 #'
 #' @noRd
-get_optimal_width <- function(texts, font_size){
-    longest_text <- max(7, max(nchar(texts)))
-
-    if (longest_text == 0){
+get_optimal_width <- function(texts, font_size, font_family = "Arial",
+                              base_font = NULL){
+    if (length(texts) == 0){
         return("auto")
     }
 
-    font_base_size <- ifelse(longest_text > 12, 12.5, 11.5)
+    # Maximum digit width of the applied font
+    mdw_cell <- fontwidth_mdw(font_family, font_size)
+    mdw_base <- fontwidth_mdw(base_font[["name"]][["val"]], as.numeric(base_font[["size"]][["val"]]))
 
-    longest_text * max(6, font_size) / font_base_size
+    # Uppercase letters are wider than lowercase ones, so a single length-based
+    # estimate either underfits all-caps text (causing wrapping) or overpads
+    # mixed-case text. Scale the width by the share of uppercase characters and
+    # add a safety margin on top.
+    get_text_width <- function(text){
+        chars      <- strsplit(text, "")[[1]]
+        caps_share <- sum(grepl("[A-Z]", chars)) / length(chars)
+        factor     <- (0.85 + 0.35 * caps_share) * 1.05
+
+        max(7, ceiling(max(7, nchar(text)) * mdw_cell / mdw_base * factor))
+    }
+
+    max(vapply(texts, get_text_width, numeric(1)))
+}
+
+
+#' Get Optimal Cell Width
+#'
+#' @description
+#' Look up the maximum digit width (in pixels at 96 dpi) of a font from the
+#' openxlsx2 font width table.
+#'
+#' @param font_family The font family.
+#' @param font_size The font size.
+#'
+#' @return
+#' An integer with the maximum digit width of the font.
+#'
+#' @noRd
+fontwidth_mdw <- function(font_family, font_size){
+    font_width_table <- data.table::fread(file = system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2"))
+
+    if (!any(font_family %in% font_width_table[["FontFamilyName"]])){
+        font_family <- "Aptos Narrow"
+    }
+
+    # Round up so that fractional font sizes never underestimate the width.
+    # Clamp to the table range (sizes 2 to 25).
+    font_size <- max(2, min(25, ceiling(font_size)))
+
+    selection <- font_width_table[["FontFamilyName"]] == font_family &
+                 font_width_table[["FontSize"]]       == font_size
+
+    mdw <- font_width_table[["Width"]][selection]
+
+    if (length(mdw) == 0){
+        return(7)
+    }
+
+    mdw
 }
