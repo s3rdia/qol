@@ -49,6 +49,7 @@ result_list <- dummy_df |>
               columns   = sex,
               titles    = "Hello world",
               footnotes = "This is a footnote",
+              full_precision = TRUE,
               print     = FALSE)
 
 expect_inherits(result_list, "qol_cross", info = "crosstabs with titles and footnotes")
@@ -380,6 +381,4 @@ expect_true(file.exists(temp_file), info = "Save crosstabs as Excel file")
 
 
 set_style_options(as_heatmap = FALSE)
-
-
 set_no_print()

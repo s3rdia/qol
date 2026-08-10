@@ -76,6 +76,14 @@
   Can now load fst files `by_reference`, which means files are not
   loaded into memory and instead the necessary values are only loaded on
   demand. (08.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  Added new `full_precision` parameter, which ignores the decimal places
+  given through the `style` parameter and outputs all values with all
+  their decimal places. (10.08.2026)
+- [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md): Can
+  now recode multiple variables into multiple new ones. (10.08.2026)
 
 #### Changed functionality
 
@@ -98,8 +106,8 @@
 
 #### Removed
 
-- `get_integer_length()`: There is no real benefit in this function.
-  (08.07.2026)
+- [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
+  There is no real benefit in this function. (08.07.2026)
 
 #### Fixed
 
@@ -167,6 +175,14 @@
 - `ifelse_multi.()`: When NA was assigned to a variable, all values
   became NA instead of just the ones for which the condition was TRUE.
   This is fixed now. (08.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The column header got corrupted, if value variables had underscores in
+  their names and were used in combination with `pct_block`. This is
+  fixed now. (10.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When using the `pct_block` parameter and formats have overlapping
+  values, then they now will be kept in user provided order.
+  (10.08.2026)
 
 #### Additionally
 
@@ -206,6 +222,9 @@
 - [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
   Clarified error message on old variable names not found in data frame.
   (08.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Updated `pct_block` parameter description and examples to make it more
+  clear how this parameter works and has to be used. (10.08.2026)
 
 ## qol 1.3.3
 

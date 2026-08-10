@@ -46,6 +46,7 @@ expect_true(all(c("fused_vars", "TYPE", "TYPE_NR", "DEPTH",
 result_list <- dummy_df |>
         frequencies(variables = sex,
                     means     = TRUE,
+                    full_precision = TRUE,
                     print     = FALSE)
 
 expect_true(all(c("variable", "mean", "sd", "min", "max", "freq", "miss")

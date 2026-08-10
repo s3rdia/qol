@@ -38,6 +38,13 @@ values_to_round <- c(-2.5, -2.4, -0.5, -0.4, 0.4, 0.5, 2.4, 2.5)
 expect_equal(round_values(values_to_round), c(-3, -2, -1, 0, 0, 1, 2, 3), info = "Round values half up")
 
 
+# Round values with NULL digits returns values unchanged
+values_to_round <- c(-2.5789546547, -5.4563546547, 0.1234546547, 1.45465475465)
+
+expect_equal(round_values(values_to_round, digits = NULL), values_to_round,
+             info = "Round values with NULL digits returns values unchanged")
+
+
 # Round to multiples
 values_to_round <- c(-7.5, -7.4, -2.5, -2.4, -0.5, -0.4, 0.4, 0.5, 2.4, 2.5, 7.4, 7.5)
 

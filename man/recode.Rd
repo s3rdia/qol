@@ -26,7 +26,9 @@ principle with this function.}
 or character depending on the input format instead of leaving them as factors.}
 }
 \value{
-\code{\link[=recode.]{recode.()}}: Returns a vector with recoded values.
+\code{\link[=recode.]{recode.()}}: If one variable is provided, returns a vector with recoded values.
+If multiple variables are provided, returns a list of recoded vectors which can
+be assigned to multiple new variables at once.
 
 \code{\link[=recode_multi]{recode_multi()}}: Returns a data frame with the newly recoded variable.
 }
@@ -61,13 +63,23 @@ my_data[["age_group1"]] <- my_data |> recode.(age = age.)
 # Formats can also be passed as characters
 my_data[["age_group2"]] <- my_data |> recode.(age = "age.")
 
+# Multiple variables can be recoded at once into multiple new variables
+income. <- interval_format(
+    "below 500"          =    0:500,
+    "500 to under 1000"  =  500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
+
+my_data[, c("age_group", "income_group")] <- my_data |>
+    recode.(age = age., income = income.)
+
 # Multilabel recode
 sex. <- discrete_format(
     "Total"  = 1:2,
     "Male"   = 1,
     "Female" = 2)
 
-income. <- interval_format(
+income_multi. <- interval_format(
     "Total"              =    0:100000,
     "below 500"          =    0:500,
     "500 to under 1000"  =  500:1000,
@@ -78,7 +90,7 @@ income. <- interval_format(
 # apply multilabels.
 # NOTE: Recoding will always be in place. When applying multilabels the
 #       result data frame will have more observations than before.
-multi_data <- my_data |> recode_multi(sex = sex., income = income.)
+multi_data <- my_data |> recode_multi(sex = sex., income = income_multi.)
 
 }
 \seealso{

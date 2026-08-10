@@ -17,6 +17,9 @@
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
+#' @param full_precision FALSE by default. If TRUE, the rounding of the values according
+#' to the number formats in the style parameter is skipped and all values are output with all
+#' their decimal places.
 #' @param titles Specify one or more table titles. If you want to add hyperlinks you
 #' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
 #' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
@@ -192,19 +195,20 @@
 crosstabs <- function(data_frame,
                       rows,
                       columns,
-                      show_total = TRUE,
-                      statistics = "sum",
-                      formats    = c(),
-                      by         = c(),
-                      weight     = NULL,
-                      titles     = .qol_options[["titles"]],
-                      footnotes  = .qol_options[["footnotes"]],
-                      style      = .qol_options[["excel_style"]],
-                      output     = .qol_options[["output"]],
-                      na.rm      = .qol_options[["na.rm"]],
-                      print_miss = .qol_options[["print_miss"]],
-                      print      = .qol_options[["print"]],
-                      monitor    = .qol_options[["monitor"]]){
+                      show_total     = TRUE,
+                      statistics     = "sum",
+                      formats        = c(),
+                      by             = c(),
+                      weight         = NULL,
+                      full_precision = FALSE,
+                      titles         = .qol_options[["titles"]],
+                      footnotes      = .qol_options[["footnotes"]],
+                      style          = .qol_options[["excel_style"]],
+                      output         = .qol_options[["output"]],
+                      na.rm          = .qol_options[["na.rm"]],
+                      print_miss     = .qol_options[["print_miss"]],
+                      print          = .qol_options[["print"]],
+                      monitor        = .qol_options[["monitor"]]){
 
     # Measure the time
     print_start_message()
@@ -245,6 +249,12 @@ crosstabs <- function(data_frame,
 
     if (!is.null(style[["file"]])){
         style[["file"]] <- macro(style[["file"]])
+    }
+
+    # If full precision is requested, skip all rounding based on the number formats
+    if (full_precision){
+        decimal_styles <- grep("_decimals$", names(style[["number_formats"]]), value = TRUE)
+        style[["number_formats"]][decimal_styles] <- list(NULL)
     }
 
     ###########################################################################
@@ -483,13 +493,14 @@ crosstabs <- function(data_frame,
         # In case no by variables are provided
         if (length(by) == 0){
             complete_table  <- format_cross_text(cross_tab, rows, columns, column_names,
-                                                 statistics, formats, by, titles, footnotes, show_total)
+                                                 statistics, formats, by, titles, footnotes, show_total,
+                                                 full_precision)
         }
         # In case there are  by variables are provided
         else{
             complete_table <- format_cross_by_text(cross_tab, rows, columns, column_names,
                                                    statistics, formats, by, titles, footnotes, na.rm, show_total,
-                                                   style)
+                                                   style, full_precision)
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
@@ -649,7 +660,8 @@ format_cross_text <- function(cross_tab,
                               by,
                               titles,
                               footnotes,
-                              show_total){
+                              show_total,
+                              full_precision = FALSE){
     complete_tabs <- c()
 
     # Set equal number of maximum column width
@@ -745,7 +757,8 @@ format_cross_text <- function(cross_tab,
             if (stat %in% c("pct_row", "pct_column", "pct_total")){
                 formatted_cols[[column]] <- format_number(var_tab[column + 1],
                                                           width = max_column_width,
-                                                          stat  = names(var_tab[column + 1]))
+                                                          stat  = names(var_tab[column + 1]),
+                                                          decimals = if (full_precision) NULL else 1)
             }
             # Unweighted frequencies
             else if (stat %in% c("freq") ||
@@ -754,14 +767,14 @@ format_cross_text <- function(cross_tab,
                 formatted_cols[[column]] <- format_number(var_tab[column + 1],
                                                           width    = max_column_width,
                                                           stat     = names(var_tab[column + 1]),
-                                                          decimals = 0)
+                                                          decimals = if (full_precision) NULL else 0)
             }
             # Weighted sums
             else if (stat %in% c("sum")){
                 formatted_cols[[column]] <- format_number(var_tab[column + 1],
                                                           width    = max_column_width,
                                                           stat     = names(var_tab[column + 1]),
-                                                          decimals = 3)
+                                                          decimals = if (full_precision) NULL else 3)
             }
 
             # Visually separate total column if there is one
@@ -985,12 +998,12 @@ format_cross_excel <- function(wb,
         # Round values according to style options
         if (stat %in% c("sum", "freq")){
             var_tab <- var_tab |>
-                collapse::fmutate(across(is.numeric, round,
+                collapse::fmutate(across(is.numeric, round_values,
                                          digits = style[["number_formats"]][["sum_decimals"]]))
         }
         else{
             var_tab <- var_tab |>
-                collapse::fmutate(across(is.numeric, round,
+                collapse::fmutate(across(is.numeric, round_values,
                                          digits = style[["number_formats"]][["pct_decimals"]]))
         }
 
@@ -1197,7 +1210,8 @@ format_cross_by_text <- function(cross_tab,
                                  footnotes,
                                  na.rm,
                                  show_total,
-                                 style){
+                                 style,
+                                 full_precision = FALSE){
     # Print message if multilabels are applied
     if (is_multilabel(formats, rows)){
         if ("pct_row" %in% statistics){
@@ -1282,7 +1296,8 @@ format_cross_by_text <- function(cross_tab,
                                                by,
                                                titles_temp,
                                                footnotes_temp,
-                                               show_total)
+                                               show_total,
+                                               full_precision)
 
             # Output formatted result
             complete_tabs <- c(complete_tabs, complete_header, current_cross)

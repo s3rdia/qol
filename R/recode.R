@@ -26,7 +26,9 @@
 #' if_else statements.
 #'
 #' @return
-#' [recode.()]: Returns a vector with recoded values.
+#' [recode.()]: If one variable is provided, returns a vector with recoded values.
+#' If multiple variables are provided, returns a list of recoded vectors which can
+#' be assigned to multiple new variables at once.
 #'
 #' @seealso
 #' Creating formats: [discrete_format()] and [interval_format()].
@@ -52,13 +54,23 @@
 #' # Formats can also be passed as characters
 #' my_data[["age_group2"]] <- my_data |> recode.(age = "age.")
 #'
+#' # Multiple variables can be recoded at once into multiple new variables
+#' income. <- interval_format(
+#'     "below 500"          =    0:500,
+#'     "500 to under 1000"  =  500:1000,
+#'     "1000 to under 2000" = 1000:2000,
+#'     "2000 and more"      = 2000:100000)
+#'
+#' my_data[, c("age_group", "income_group")] <- my_data |>
+#'     recode.(age = age., income = income.)
+#'
 #' # Multilabel recode
 #' sex. <- discrete_format(
 #'     "Total"  = 1:2,
 #'     "Male"   = 1,
 #'     "Female" = 2)
 #'
-#' income. <- interval_format(
+#' income_multi. <- interval_format(
 #'     "Total"              =    0:100000,
 #'     "below 500"          =    0:500,
 #'     "500 to under 1000"  =  500:1000,
@@ -69,7 +81,7 @@
 #' # apply multilabels.
 #' # NOTE: Recoding will always be in place. When applying multilabels the
 #' #       result data frame will have more observations than before.
-#' multi_data <- my_data |> recode_multi(sex = sex., income = income.)
+#' multi_data <- my_data |> recode_multi(sex = sex., income = income_multi.)
 #'
 #' @rdname recode
 #'
@@ -103,116 +115,125 @@ recode. <- function(data_frame,
     }
 
     ###########################################################################
-    # Error handling
-    ###########################################################################
-
-    # Get information from ... list
-    current_var <- names(formats)[1]
-    format_df   <- formats[[current_var]]
-
-    if (!current_var %in% names(data_frame)){
-        print_message("ERROR", "Variable '[var]' not found in the input data frame. No format will be applied.", var = current_var)
-        return(invisible(NULL))
-    }
-
-    if (!data.table::is.data.table(format_df)){
-        print_message("ERROR", "The format for '[var]' must be a data table. No format will be applied.", var = current_var)
-        return(invisible(NULL))
-    }
-
-    if (names(format_df)[1] == "value" && collapse::any_duplicated(format_df[["value"]])){
-        print_message("WARNING", c("The format for '[var]' is a multilabel. A multilabel can't be fully applied in recode.",
-								   "Only one of the matching categories will be applied."), var = current_var)
-
-        format_df <- format_df |> unique(by = "value", fromLast = FALSE)
-    }
-
-    if (is.factor(data_frame[[current_var]])){
-        print_message("NOTE", c("'[var]' is a factor variable. Formats only work if the visible character values",
-								"are specified as input values and not the factor levels."), var = current_var)
-    }
-
-    ###########################################################################
     # Recode
     ###########################################################################
 
-    # Only keep the variable to be recoded
-    data_frame <- data_frame |> keep(current_var)
+    recoded <- list()
 
-    # Look up variable names in format data frame to check whether it is an
-    # interval or discrete format
-    interval_variables <- c("from", "to")
-    actual_variables   <- names(format_df)[1:2]
+    for (current_var in names(formats)){
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Error handling
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # In case of interval format
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        format_df <- formats[[current_var]]
 
-    if (identical(interval_variables, actual_variables)){
-        # Reduce multilabel formats to unique ranges which don't overlap
-        format_original <- format_df
-        format_df       <- format_df |> collapse::fsubset(from >= data.table::shift(cummax(to), fill = -Inf))
-
-        if (collapse::fnrow(format_original) > collapse::fnrow(format_df)){
-            print_message("WARNING", c("The format for '[current_var]' is a multilabel. A multilabel can't be fully applied in recode.",
-                                       "Only one of the matching categories will be applied."), current_var = current_var)
+        if (!current_var %in% names(data_frame)){
+            print_message("ERROR", "Variable '[var]' not found in the input data frame. No format will be applied.", var = current_var)
+            return(invisible(NULL))
         }
 
-        # Get number of rows from data frame to compare after the merge to check for multilabel
-        original_rows <- collapse::fnrow(data_frame)
+        if (!data.table::is.data.table(format_df)){
+            print_message("ERROR", "The format for '[var]' must be a data table. No format will be applied.", var = current_var)
+            return(invisible(NULL))
+        }
 
-        # Separate NAs from rest of the data frame because the used join
-        # can't handle them
-        na_positions <- is.na(data_frame[[current_var]])
-        data_frame   <- data_frame |> collapse::fsubset(!na_positions)
+        if (names(format_df)[1] == "value" && collapse::any_duplicated(format_df[["value"]])){
+            print_message("WARNING", c("The format for '[var]' is a multilabel. A multilabel can't be fully applied in recode.",
+                                       "Only one of the matching categories will be applied."), var = current_var)
 
-        # Generate pseudo variables for range merging
-        data_frame[["qol_from"]] <- data_frame[[as.character(current_var)]]
-        data_frame[["qol_to"]]   <- data_frame[[as.character(current_var)]]
+            format_df <- format_df |> unique(by = "value", fromLast = FALSE)
+        }
 
-        data_frame[["qol_ID"]] <- seq_len(collapse::fnrow(data_frame))
+        if (is.factor(data_frame[[current_var]])){
+            print_message("NOTE", c("'[var]' is a factor variable. Formats only work if the visible character values",
+                                    "are specified as input values and not the factor levels."), var = current_var)
+        }
 
-        # Set key variables
-        temp_dt   <- data.table::as.data.table(data_frame)
-        format_dt <- data.table::copy(format_df)
+        # Only keep the variable to be recoded
+        recode_df <- data_frame |> keep(current_var)
 
-        data.table::setkey(format_dt, from, to)
+        # Look up variable names in format data frame to check whether it is an
+        # interval or discrete format
+        interval_variables <- c("from", "to")
+        actual_variables   <- names(format_df)[1:2]
 
-        # Merge data frame with format by range
-        temp_dt <- data.table::foverlaps(temp_dt, format_dt,
-                                         by.x = c("qol_from", "qol_to"),
-                                         by.y = c("from", "to")) |>
-            keep("label")
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # In case of interval format
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        # NA values are now inserted in the same spots as they where before to
-        # ensure that there will be no missmatch with the original data frame.
-        data_frame                <- rep(NA, original_rows)
-        data_frame[!na_positions] <- temp_dt[["label"]]
-        data_frame                <- data.table::as.data.table(data_frame)
-    }
+        if (identical(interval_variables, actual_variables)){
+            # Reduce multilabel formats to unique ranges which don't overlap
+            format_original <- format_df
+            format_df       <- format_df |> collapse::fsubset(from >= data.table::shift(cummax(to), fill = -Inf))
 
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # In case of discrete format
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            if (collapse::fnrow(format_original) > collapse::fnrow(format_df)){
+                print_message("WARNING", c("The format for '[current_var]' is a multilabel. A multilabel can't be fully applied in recode.",
+                                           "Only one of the matching categories will be applied."), current_var = current_var)
+            }
 
-    else{
-        # Rename label column to be specific to the variable
-        format_df <- format_df |>
-            collapse::frename(stats::setNames("value", current_var))
+            # Get number of rows from data frame to compare after the merge to check for multilabel
+            original_rows <- collapse::fnrow(recode_df)
 
-        # Join format with data frame
-        data_frame <- data_frame |>
-            collapse::join(format_df,
-                           on      = current_var,
-                           how     = "left",
-                           verbose = FALSE,
-						   overid  = 2) |>
-            keep("label")
+            # Separate NAs from rest of the data frame because the used join
+            # can't handle them
+            na_positions <- is.na(recode_df[[current_var]])
+            recode_df    <- recode_df |> collapse::fsubset(!na_positions)
+
+            # Generate pseudo variables for range merging
+            recode_df[["qol_from"]] <- recode_df[[as.character(current_var)]]
+            recode_df[["qol_to"]]   <- recode_df[[as.character(current_var)]]
+
+            recode_df[["qol_ID"]] <- seq_len(collapse::fnrow(recode_df))
+
+            # Set key variables
+            temp_dt   <- data.table::as.data.table(recode_df)
+            format_dt <- data.table::copy(format_df)
+
+            data.table::setkey(format_dt, from, to)
+
+            # Merge data frame with format by range
+            temp_dt <- data.table::foverlaps(temp_dt, format_dt,
+                                             by.x = c("qol_from", "qol_to"),
+                                             by.y = c("from", "to")) |>
+                keep("label")
+
+            # NA values are now inserted in the same spots as they where before to
+            # ensure that there will be no missmatch with the original data frame.
+            recode_df                <- rep(NA, original_rows)
+            recode_df[!na_positions] <- temp_dt[["label"]]
+            recode_df                <- data.table::as.data.table(recode_df)
+        }
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # In case of discrete format
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        else{
+            # Rename label column to be specific to the variable
+            format_df <- format_df |>
+                collapse::frename(stats::setNames("value", current_var))
+
+            # Join format with data frame
+            recode_df <- recode_df |>
+                collapse::join(format_df,
+                               on      = current_var,
+                               how     = "left",
+                               verbose = FALSE,
+                               overid  = 2) |>
+                keep("label")
+        }
+
+        recoded[[current_var]] <- as.vector(recode_df)[[1]]
     }
 
     print_closing()
 
-    as.vector(data_frame)[[1]]
+    if (length(recoded) == 1){
+        recoded[[1]]
+    }
+    else{
+        recoded
+    }
 }
 
 

@@ -15,6 +15,7 @@ crosstabs(
   formats = c(),
   by = c(),
   weight = NULL,
+  full_precision = FALSE,
   titles = .qol_options[["titles"]],
   footnotes = .qol_options[["footnotes"]],
   style = .qol_options[["excel_style"]],
@@ -72,6 +73,12 @@ crosstabs(
 - weight:
 
   Put in a weight variable to compute weighted results.
+
+- full_precision:
+
+  FALSE by default. If TRUE, the rounding of the values according to the
+  number formats in the style parameter is skipped and all values are
+  output with all their decimal places.
 
 - titles:
 

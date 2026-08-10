@@ -25,6 +25,7 @@ Last CRAN release was on 16.07.2026.
 * `where.()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
 * `any_table()`: Can now render the tables as html file and show it in a browser window. This can be controlled via the new `output` options `html` and `excel_html`. The function now also returns an additional html element.
 * `load_file()`, `load_file_multi()`: Can now load fst files `by_reference`, which means files are not loaded into memory and instead the necessary values are only loaded on demand.
+* `any_table()`, `frequencies()`, `crosstabs()`: Added new `full_precision` parameter, which ignores the decimal places given through the `style` parameter and outputs all values with all their decimal places.
 
 ### Changed functionality
 
@@ -54,6 +55,9 @@ Last CRAN release was on 16.07.2026.
 * `where.()`: Now shows the full data frame when condition is NULL instead of throwing an error.
 * `if.()`: The function crashed when NA was assigned to a variable. NA is now assigned.
 * `ifelse_multi.()`: When NA was assigned to a variable, all values became NA instead of just the ones for which the condition was TRUE. This is fixed now.
+* `any_table()`: The column header got corrupted, if value variables had underscores in their names and were used in combination with `pct_block`. This is fixed now.
+* `any_table()`: When using the `pct_block` parameter and formats have overlapping values, then they now will be kept in user provided order.
+* `recode.()`: Can now recode multiple variables into multiple new ones.
 
 ### Additionally
 
@@ -68,6 +72,7 @@ Last CRAN release was on 16.07.2026.
 * `dummy_data()`: `NUTS3` variable is now stored as an integer.
 * New suggested package `yyjsonr` added, which is required, for the new html view of `where.()`.
 * `rename_multi()`: Clarified error message on old variable names not found in data frame.
+* `any_table()`: Updated `pct_block` parameter description and examples to make it more clear how this parameter works and has to be used.
 
 
 ## R CMD check results

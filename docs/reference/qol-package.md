@@ -252,6 +252,8 @@ Useful links:
 
 - <https://s3rdia.github.io/qol_blog/>
 
+- Report bugs at <https://github.com/s3rdia/qol/issues>
+
 ## Author
 
 Tim Siebenmorgen

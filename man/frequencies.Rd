@@ -11,6 +11,7 @@ frequencies(
   by = c(),
   weight = NULL,
   means = FALSE,
+  full_precision = FALSE,
   titles = .qol_options[["titles"]],
   footnotes = .qol_options[["footnotes"]],
   style = .qol_options[["excel_style"]],
@@ -34,6 +35,10 @@ frequencies(
 
 \item{means}{FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
 min, max, total freq and missing values.}
+
+\item{full_precision}{FALSE by default. If TRUE, the rounding of the values according
+to the number formats in the style parameter is skipped and all values are output with all
+their decimal places.}
 
 \item{titles}{Specify one or more table titles. If you want to add hyperlinks you
 can do so by adding "link:" followed by the hyperlink to the main text. To link to a file

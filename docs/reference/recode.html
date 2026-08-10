@@ -76,7 +76,9 @@ or character depending on the input format instead of leaving them as factors.</
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>recode.()</code>: Returns a vector with recoded values.</p>
+    <p><code>recode.()</code>: If one variable is provided, returns a vector with recoded values.
+If multiple variables are provided, returns a list of recoded vectors which can
+be assigned to multiple new variables at once.</p>
 <p><code>recode_multi()</code>: Returns a data frame with the newly recoded variable.</p>
     </div>
     <div class="section level2">
@@ -114,13 +116,23 @@ if_else statements.</p>
 <span><span class="co"># Formats can also be passed as characters</span></span>
 <span><span class="va">my_data</span><span class="op">[[</span><span class="st">"age_group2"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode.</span><span class="op">(</span>age <span class="op">=</span> <span class="st">"age."</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Multiple variables can be recoded at once into multiple new variables</span></span>
+<span><span class="va">income.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">interval_format</a></span><span class="op">(</span></span>
+<span>    <span class="st">"below 500"</span>          <span class="op">=</span>    <span class="fl">0</span><span class="op">:</span><span class="fl">500</span>,</span>
+<span>    <span class="st">"500 to under 1000"</span>  <span class="op">=</span>  <span class="fl">500</span><span class="op">:</span><span class="fl">1000</span>,</span>
+<span>    <span class="st">"1000 to under 2000"</span> <span class="op">=</span> <span class="fl">1000</span><span class="op">:</span><span class="fl">2000</span>,</span>
+<span>    <span class="st">"2000 and more"</span>      <span class="op">=</span> <span class="fl">2000</span><span class="op">:</span><span class="fl">100000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age_group"</span>, <span class="st">"income_group"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">recode.</span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.</span>, income <span class="op">=</span> <span class="va">income.</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Multilabel recode</span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Total"</span>  <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
 <span>    <span class="st">"Male"</span>   <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">income.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">interval_format</a></span><span class="op">(</span></span>
+<span><span class="va">income_multi.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">interval_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Total"</span>              <span class="op">=</span>    <span class="fl">0</span><span class="op">:</span><span class="fl">100000</span>,</span>
 <span>    <span class="st">"below 500"</span>          <span class="op">=</span>    <span class="fl">0</span><span class="op">:</span><span class="fl">500</span>,</span>
 <span>    <span class="st">"500 to under 1000"</span>  <span class="op">=</span>  <span class="fl">500</span><span class="op">:</span><span class="fl">1000</span>,</span>
@@ -131,7 +143,7 @@ if_else statements.</p>
 <span><span class="co"># apply multilabels.</span></span>
 <span><span class="co"># NOTE: Recoding will always be in place. When applying multilabels the</span></span>
 <span><span class="co">#       result data frame will have more observations than before.</span></span>
-<span><span class="va">multi_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode_multi</span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, income <span class="op">=</span> <span class="va">income.</span><span class="op">)</span></span>
+<span><span class="va">multi_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">recode_multi</span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, income <span class="op">=</span> <span class="va">income_multi.</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

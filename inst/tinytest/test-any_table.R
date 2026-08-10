@@ -66,6 +66,7 @@ result_list <- dummy_df |>
                 columns = "sex + year",
                 values  = income,
                 weight  = weight,
+                full_precision = TRUE,
                 output  = "excel_nostyle",
                 print   = FALSE)
 

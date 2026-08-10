@@ -164,6 +164,31 @@ expect_true(all(c("under 18",
                   "55 to under 65",
                   "65 and older") %in% test_df2[["age"]]), info = "Recode will overwrite existing variable")
 
+
+# Recode multiple variables at once into multiple new variables
+age. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:100)
+
+income. <- interval_format(
+    "below 500"          = 0:500,
+    "500 to under 1000"  = 500:1000,
+    "1000 to under 2000" = 1000:2000,
+    "2000 and more"      = 2000:100000)
+
+test_df2 <- test_df
+test_df2[, c("age_group", "income_group")] <- test_df2 |>
+    recode.(age = age., income = income.)
+
+expect_true("age_group"    %in% names(test_df2), info = "Recode multiple variables into multiple new variables (discrete)")
+expect_true("income_group" %in% names(test_df2), info = "Recode multiple variables into multiple new variables (interval)")
+expect_true(length(unique(test_df2[["age_group"]]))    <= 6, info = "Recode multiple variables into multiple new variables (discrete values)")
+expect_true(length(unique(test_df2[["income_group"]])) <= 5, info = "Recode multiple variables into multiple new variables (interval values)")
+
+
 ###############################################################################
 # Multi recode
 ###############################################################################

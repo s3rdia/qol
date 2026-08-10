@@ -16,6 +16,7 @@ frequencies(
   by = c(),
   weight = NULL,
   means = FALSE,
+  full_precision = FALSE,
   titles = .qol_options[["titles"]],
   footnotes = .qol_options[["footnotes"]],
   style = .qol_options[["excel_style"]],
@@ -55,6 +56,12 @@ frequencies(
 
   FALSE by default. If TRUE prints a small summarising table which
   contains mean, sd, min, max, total freq and missing values.
+
+- full_precision:
+
+  FALSE by default. If TRUE, the rounding of the values according to the
+  number formats in the style parameter is skipped and all values are
+  output with all their decimal places.
 
 - titles:
 

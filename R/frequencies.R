@@ -13,6 +13,9 @@
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param means FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
 #' min, max, total freq and missing values.
+#' @param full_precision FALSE by default. If TRUE, the rounding of the values according
+#' to the number formats in the style parameter is skipped and all values are output with all
+#' their decimal places.
 #' @param titles Specify one or more table titles. If you want to add hyperlinks you
 #' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
 #' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
@@ -172,18 +175,19 @@
 #' @export
 frequencies <- function(data_frame,
                         variables,
-                        formats    = c(),
-                        by         = c(),
-                        weight     = NULL,
-                        means      = FALSE,
-                        titles     = .qol_options[["titles"]],
-                        footnotes  = .qol_options[["footnotes"]],
-                        style      = .qol_options[["excel_style"]],
-                        output     = .qol_options[["output"]],
-                        na.rm      = .qol_options[["na.rm"]],
-                        print_miss = .qol_options[["print_miss"]],
-                        print      = .qol_options[["print"]],
-                        monitor    = .qol_options[["monitor"]]){
+                        formats        = c(),
+                        by             = c(),
+                        weight         = NULL,
+                        means          = FALSE,
+                        full_precision = FALSE,
+                        titles         = .qol_options[["titles"]],
+                        footnotes      = .qol_options[["footnotes"]],
+                        style          = .qol_options[["excel_style"]],
+                        output         = .qol_options[["output"]],
+                        na.rm          = .qol_options[["na.rm"]],
+                        print_miss     = .qol_options[["print_miss"]],
+                        print          = .qol_options[["print"]],
+                        monitor        = .qol_options[["monitor"]]){
 
     # Measure the time
     print_start_message()
@@ -224,6 +228,12 @@ frequencies <- function(data_frame,
 
     if (!is.null(style[["file"]])){
         style[["file"]] <- macro(style[["file"]])
+    }
+
+    # If full precision is requested, skip all rounding based on the number formats
+    if (full_precision){
+        decimal_styles <- grep("_decimals$", names(style[["number_formats"]]), value = TRUE)
+        style[["number_formats"]][decimal_styles] <- list(NULL)
     }
 
     ###########################################################################
@@ -450,9 +460,11 @@ frequencies <- function(data_frame,
 
         # In case no by variables are provided
         if (length(by) == 0){
-            complete_mean  <- format_mean_text(mean_tab, vars_mean, mean_columns, means)
+            complete_mean  <- format_mean_text(mean_tab, vars_mean, mean_columns, means,
+                                               full_precision)
             complete_freq  <- format_freq_text(freq_tab, variables, formats,
-                                               by, titles, footnotes, style)
+                                               by, titles, footnotes, style,
+                                               full_precision)
 
             complete_table <- c(complete_mean, complete_freq)
         }
@@ -460,7 +472,7 @@ frequencies <- function(data_frame,
         else{
             complete_table <- format_by_text(mean_tab, freq_tab, variables, mean_columns,
                                              formats, by, titles, footnotes, na.rm, means,
-                                             style)
+                                             style, full_precision)
         }
     }
     else if (output == "excel" || output == "excel_nostyle"){
@@ -610,30 +622,41 @@ format_number <- function(number,
                           decimals = 1){
     number <- unlist(number)
 
-    # Format numbers to make them more readable
-    if (stat %in% c("freq", "miss", "var_freq", "var_cum_freq")){
+    # If no decimals are provided, output all values with full precision
+    if (is.null(decimals)){
         output_format <- format(number,
-                                format       = "d",
-                                decimal.mark = ",",
-                                big.mark     = ".",
-                                scientific   = FALSE,
-                                nsmall       = 0)
-    }
-    else if (stat %in% c("min", "max")){
-        output_format <- format(round_values(number, decimals),
-                                format       = "d",
-                                decimal.mark = ",",
-                                big.mark     = ".",
-                                scientific   = FALSE)
-    }
-    # Any other stat with decimal numbers
-    else{
-        output_format <- format(round_values(number, decimals),
                                 format       = "f",
                                 decimal.mark = ",",
                                 big.mark     = ".",
                                 scientific   = FALSE,
-                                nsmall       = decimals)
+                                digits       = 15)
+    }
+    else{
+        # Format numbers to make them more readable
+        if (stat %in% c("freq", "miss", "var_freq", "var_cum_freq")){
+            output_format <- format(number,
+                                    format       = "d",
+                                    decimal.mark = ",",
+                                    big.mark     = ".",
+                                    scientific   = FALSE,
+                                    nsmall       = 0)
+        }
+        else if (stat %in% c("min", "max")){
+            output_format <- format(round_values(number, decimals),
+                                    format       = "d",
+                                    decimal.mark = ",",
+                                    big.mark     = ".",
+                                    scientific   = FALSE)
+        }
+        # Any other stat with decimal numbers
+        else{
+            output_format <- format(round_values(number, decimals),
+                                    format       = "f",
+                                    decimal.mark = ",",
+                                    big.mark     = ".",
+                                    scientific   = FALSE,
+                                    nsmall       = decimals)
+        }
     }
 
     # Remove NA
@@ -682,12 +705,23 @@ get_column_width <- function(data_frame,
         }
         # Any other stat with decimal numbers
         else{
-            max_width <- max(max_width,
-                             collapse::vlengths(format(round_values(data_frame[[column]], decimals),
-                                                      format     = "f",
-                                                      big.mark   = ",",
-                                                      scientific = FALSE,
-                                                      nsmall     = decimals)))
+            # If no decimals are provided, output all values with full precision
+            if (is.null(decimals)){
+                max_width <- max(max_width,
+                                 collapse::vlengths(format(data_frame[[column]],
+                                                          format     = "f",
+                                                          big.mark   = ",",
+                                                          scientific = FALSE,
+                                                          digits     = 15)))
+            }
+            else{
+                max_width <- max(max_width,
+                                 collapse::vlengths(format(round_values(data_frame[[column]], decimals),
+                                                          format     = "f",
+                                                          big.mark   = ",",
+                                                          scientific = FALSE,
+                                                          nsmall     = decimals)))
+            }
         }
 
         all_widths <- c(all_widths, max_width)
@@ -719,7 +753,8 @@ get_column_width <- function(data_frame,
 format_mean_text <- function(mean_tab,
                              variables,
                              mean_columns,
-                             means){
+                             means,
+                             full_precision = FALSE){
     if (is.null(mean_tab) || !means || collapse::fnrow(mean_tab) == 0){
         return(c())
     }
@@ -740,7 +775,8 @@ format_mean_text <- function(mean_tab,
 
     # Set header row formatting. Loop through all header columns and give
     # each column the optimal width.
-    column_widths  <- get_column_width(mean_tab, mean_columns)
+    column_widths  <- get_column_width(mean_tab, mean_columns,
+                                       decimals = if (full_precision) NULL else 1)
     header_columns <- c()
 
     for (i in seq_len(length(mean_columns))){
@@ -772,7 +808,8 @@ format_mean_text <- function(mean_tab,
     for (column in seq_len(length(mean_columns))){
         formatted_cols[[column]] <- format_number(mean_tab[column + 1],
                                                   width = column_widths[column],
-                                                  stat  = names(mean_tab[column + 1]))
+                                                  stat  = names(mean_tab[column + 1]),
+                                                  decimals = if (full_precision) NULL else 1)
     }
 
     # Convert list to matrix
@@ -977,7 +1014,8 @@ format_freq_text <- function(freq_tab,
                              by,
                              titles,
                              footnotes,
-                             style){
+                             style,
+                             full_precision = FALSE){
     complete_tabs <- c()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1021,7 +1059,8 @@ format_freq_text <- function(freq_tab,
 
         # Set header row formatting. Loop through all header columns and give
         # each column the optimal width.
-        column_widths         <- get_column_width(var_tab, freq_columns, decimals = 3)
+        column_widths         <- get_column_width(var_tab, freq_columns,
+                                                  decimals = if (full_precision) NULL else 3)
         header_top_columns    <- c()
         header_bottom_columns <- c()
 
@@ -1079,7 +1118,8 @@ format_freq_text <- function(freq_tab,
             else{
                 formatted_cols[[column]] <- format_number(var_tab[column + 1],
                                                           width = column_widths[column],
-                                                          stat  = names(var_tab[column + 1]))
+                                                          stat  = names(var_tab[column + 1]),
+                                                          decimals = if (full_precision) NULL else 1)
             }
         }
 
@@ -1483,7 +1523,8 @@ format_by_text <- function(mean_tab,
                            footnotes,
                            na.rm,
                            means,
-                           style){
+                           style,
+                           full_precision = FALSE){
     # Print message if multilabels are applied
     for (variable in variables){
         if (is_multilabel(formats, variable)){
@@ -1562,7 +1603,8 @@ format_by_text <- function(mean_tab,
             current_mean <- format_mean_text(mean_temp,
                                              variables,
                                              mean_columns,
-                                             means)
+                                             means,
+                                             full_precision)
 
             # Replace by info in the titles
             if (length(titles) > 0){
@@ -1589,7 +1631,8 @@ format_by_text <- function(mean_tab,
                                              by,
                                              titles_temp,
                                              footnotes_temp,
-                                             style)
+                                             style,
+                                             full_precision)
 
             # Output formatted result
             complete_tabs <- c(complete_tabs, complete_header, current_mean, current_freq)

@@ -21,6 +21,7 @@ any_table(
   formats = list(),
   by = c(),
   weight = NULL,
+  full_precision = FALSE,
   order_by = "stats",
   titles = .qol_options[["titles"]],
   footnotes = .qol_options[["footnotes"]],
@@ -122,7 +123,13 @@ any_table(
 - pct_block:
 
   Can be "rows" or "columns". Calculates percentages for the last group
-  of variables inside the individual row or column combinations.
+  of variables inside the individual row or column combinations. To make
+  these work use the writing style: sex + education + (last, combined,
+  group). Additionally these formats need to be used with multilabels
+  which carry a total category per variable in the last combined
+  variable group. If you don't want to display these total categories in
+  the results, use the "!" in front of the format expression like
+  "!Total".
 
 - compute:
 
@@ -144,6 +151,12 @@ any_table(
 - weight:
 
   Put in a weight variable to compute weighted results.
+
+- full_precision:
+
+  FALSE by default. If TRUE, the rounding of the values according to the
+  number formats in the style parameter is skipped and all values are
+  output with all their decimal places.
 
 - order_by:
 
@@ -335,7 +348,8 @@ sex. <- discrete_format(
     "Female" = 2)
 
 # NOTE: "!" in front of an expression makes the expression available for
-#       calculations but prevents it from beeing printed out.
+#       calculations but prevents it from beeing printed out. This notation
+#       is especially needed when using pct_block.
 education. <- discrete_format(
     "!Total"           = c("low", "middle", "high"),
     "low education"    = "low",
@@ -430,6 +444,11 @@ my_data |> any_table(rows       = c("age + year"),
 # NOTE: age + (year, education) becomes "age + year" and "age + education"
 #       and will be sorted together. Also works in columns. You can also
 #       do something like this: age + (year, sex + education, education).
+# NOTE: pct_block needs this notation to work properly. Additionally it needs
+#       the use of multilabel formats since it picks the maximum of each variable
+#       within the brackets as total. To calculate this total but suppress it
+#       in the final table use "!" in front of a format expression. See format
+#       creation at the top.
 my_data |> any_table(rows       = c("sex + (age, education)"),
                      columns    = "year",
                      values     = weight,

@@ -40,12 +40,19 @@
 #' @param pct_value You can pass a list here, which contains the information for a new
 #' variable name and between which of the value variables percentages should be computed.
 #' @param pct_block Can be "rows" or "columns". Calculates percentages for the last
-#' group of variables inside the individual row or column combinations.
+#' group of variables inside the individual row or column combinations. To make these work
+#' use the writing style: sex + education + (last, combined, group). Additionally these formats
+#' need to be used with multilabels which carry a total category per variable in the last
+#' combined variable group. If you don't want to display these total categories in the results,
+#' use the "!" in front of the format expression like "!Total".
 #' @param compute A list in which individual calculations are handled. For the writing style
 #' see the [compute.()] function.
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
+#' @param full_precision FALSE by default. If TRUE, the rounding of the values according
+#' to the number formats in the style parameter is skipped and all values are output with all
+#' their decimal places.
 #' @param order_by Determine how the columns will be ordered. "values" orders the results by the
 #' order you provide the variables in values. "stats" orders them by the order under statistics.
 #' "values_stats" is a combination of both. "columns" keeps the order as given in columns
@@ -160,7 +167,8 @@
 #'     "Female" = 2)
 #'
 #' # NOTE: "!" in front of an expression makes the expression available for
-#' #       calculations but prevents it from beeing printed out.
+#' #       calculations but prevents it from beeing printed out. This notation
+#' #       is especially needed when using pct_block.
 #' education. <- discrete_format(
 #'     "!Total"           = c("low", "middle", "high"),
 #'     "low education"    = "low",
@@ -255,6 +263,11 @@
 #' # NOTE: age + (year, education) becomes "age + year" and "age + education"
 #' #       and will be sorted together. Also works in columns. You can also
 #' #       do something like this: age + (year, sex + education, education).
+#' # NOTE: pct_block needs this notation to work properly. Additionally it needs
+#' #       the use of multilabel formats since it picks the maximum of each variable
+#' #       within the brackets as total. To calculate this total but suppress it
+#' #       in the final table use "!" in front of a format expression. See format
+#' #       creation at the top.
 #' my_data |> any_table(rows       = c("sex + (age, education)"),
 #'                      columns    = "year",
 #'                      values     = weight,
@@ -428,6 +441,7 @@ any_table <- function(data_frame,
                       formats        = list(),
                       by             = c(),
                       weight         = NULL,
+                      full_precision = FALSE,
                       order_by       = "stats",
                       titles         = .qol_options[["titles"]],
                       footnotes      = .qol_options[["footnotes"]],
@@ -481,6 +495,12 @@ any_table <- function(data_frame,
 
     if (!is.null(style[["file"]])){
         style[["file"]] <- macro(style[["file"]])
+    }
+
+    # If full precision is requested, skip all rounding based on the number formats
+    if (full_precision){
+        decimal_styles <- grep("_decimals$", names(style[["number_formats"]]), value = TRUE)
+        style[["number_formats"]][decimal_styles] <- list(NULL)
     }
 
     ###########################################################################
@@ -1806,7 +1826,7 @@ any_table <- function(data_frame,
 
                     # Run a do over loop to calculate all the block percentages for
                     # the different value variables.
-                    new_pct  <- paste0(values, "_pct_block_", block)
+                    new_pct  <- paste0(gsub("_", "!!!", values), "_pct_block_", block)
                     max_vars <- paste0(block_values, "_max")
 
                     combi_df <- suppressMessages(combi_df |> if.(max_vars > 0, new_pct = block_values * 100 / max_vars))
@@ -1905,7 +1925,7 @@ any_table <- function(data_frame,
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
             if (is.null(combined_col_df)){
-                row_labels       <- c()
+                row_labels <- c()
 
                 # Loop through all provided labels
                 for (variable in row_combi_vars){
@@ -2059,7 +2079,7 @@ any_table <- function(data_frame,
                 data_part
             }), fill = TRUE, use.names = TRUE)
 
-        any_tab[["TYPE_ORIG"]] <- as.character(row_expand[any_tab[["TYPE"]]])
+        any_tab[["TYPE_ORIG"]] <- as.character(row_expand[[1]][any_tab[["TYPE"]]])
     }
 
     # If only specific variables should be kept per statistic, clean up the additional
@@ -2146,8 +2166,15 @@ any_table <- function(data_frame,
             collapse::funique(unlist(variable))
         })
 
+        # Generate a running number, which keeps the combined last variable in
+        # the user provided order. Otherwise, if it would be converted to factor,
+        # it can happen that format expressions of different variables overlap
+        # and a wrong sorting order would be the result.
+        any_tab[[".sort_var"]] <- seq_len(collapse::fnrow(any_tab))
+        sort_vars <- c(ordered_cols[-length(ordered_cols)], ".sort_var")
+
         # Convert row header variables to factors
-        for (variable in sort_vars){
+        for (variable in setdiff(sort_vars, ".sort_var")){
             var_levels <- levels_list[[variable]]
 
             any_tab[[variable]] <- factor(any_tab[[variable]],
@@ -2159,9 +2186,9 @@ any_table <- function(data_frame,
         # Actual sorting
         data.table::setorderv(any_tab, sort_vars)
 
-        # Convert back to character and drop TYPE variables
+        # Convert back to character and drop TYPE variables and
         any_tab[ordered_cols] <- lapply(any_tab[ordered_cols], as.character)
-        any_tab <- any_tab |> collapse::fselect(-TYPE, -TYPE_ORIG)
+        any_tab <- any_tab |> collapse::fselect(-TYPE, -TYPE_ORIG, -.sort_var)
     }
 
     # Get number of row header variables by getting the maximum number of + signs in the

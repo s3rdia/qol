@@ -337,6 +337,11 @@ round_values <- function(values,
         return(invisible(values))
     }
 
+    # If no digits are provided the values are returned without rounding
+    if (is.null(digits)){
+        return(values)
+    }
+
     eps <- .Machine[["double.eps"]]
 
     if (!is.null(multiple)){

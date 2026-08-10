@@ -224,7 +224,15 @@ render_any_table_html <- function(any_tab,
     # Get the per column statistic to apply the correct number formats
     stats_row     <- as.character(unlist(multi_header[collapse::fnrow(multi_header), ]))
     stat_decimals <- vapply(stats_row, function(stat){
-        style[["number_formats"]][[paste0(stat, "_decimals")]]
+        decimals <- style[["number_formats"]][[paste0(stat, "_decimals")]]
+
+        # If no decimals are provided, output all values with full precision
+        if (is.null(decimals)){
+            15
+        }
+        else{
+            decimals
+        }
     }, numeric(1))
 
     # Generate a list with formatting information about each merged cell from the

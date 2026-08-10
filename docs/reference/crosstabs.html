@@ -55,6 +55,7 @@ weighted sums, unweighted frequencies or different percentages.</p>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  full_precision <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  titles <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"titles"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  footnotes <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"footnotes"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  style <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"excel_style"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -105,6 +106,12 @@ weighted sums, unweighted frequencies or different percentages.</p>
 
 <dt id="arg-weight">weight<a class="anchor" aria-label="anchor" href="#arg-weight"></a></dt>
 <dd><p>Put in a weight variable to compute weighted results.</p></dd>
+
+
+<dt id="arg-full-precision">full_precision<a class="anchor" aria-label="anchor" href="#arg-full-precision"></a></dt>
+<dd><p>FALSE by default. If TRUE, the rounding of the values according
+to the number formats in the style parameter is skipped and all values are output with all
+their decimal places.</p></dd>
 
 
 <dt id="arg-titles">titles<a class="anchor" aria-label="anchor" href="#arg-titles"></a></dt>
