@@ -92,6 +92,16 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                                                by.x = c("qol_from", "qol_to"),
                                                by.y = c("from", "to"))
 
+            # If a value is not covered by the format, keep the original value instead of NA
+            unmatched <- is.na(temp_data[["label"]]) & !is.na(temp_data[["qol_from"]])
+
+            if (any(unmatched)){
+                temp_data[["label"]][unmatched] <- temp_data[["qol_from"]][unmatched]
+            }
+
+            kept_values <- collapse::funique(temp_data[["label"]][unmatched])
+
+            # Clean up data frame
             temp_data |> collapse::fselect(current_var, "qol_from", "qol_to", "from", "to") <- NULL
             temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
 
@@ -102,6 +112,11 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                 unlist(use.names = FALSE) |>
                 collapse::funique() |>
                 collapse::na_omit()
+
+            # Add original values which are not covered by the format, so that they
+            # are not converted to NA by the factor conversion below
+            all_levels <- c(all_levels, kept_values) |>
+                collapse::funique()
         }
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -135,6 +150,10 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                 }
             }
 
+            # Keep the original values which are not covered by the format, so that
+            # they are not converted to NA by the factor conversion below
+            kept_values  <- collapse::funique(temp_data[["label"]][na_positions])
+
             # Drop current variable and rename newly joined label to current variable name
             temp_data |> collapse::fselect(current_var) <- NULL
             temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
@@ -144,6 +163,10 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                 unlist(use.names = FALSE) |>
                 collapse::funique() |>
                 collapse::na_omit()
+
+            # Add the kept original values to the labels
+            all_levels <- c(all_levels, kept_values) |>
+                collapse::funique()
         }
 
         # Make sure that the labels will appear in order of the format when

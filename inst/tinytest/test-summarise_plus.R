@@ -1041,4 +1041,17 @@ expect_warning(print_stack_as_messages("WARNING"), "The following <values> are s
                info = "summarise_plus throws a warning with values stored as character")
 
 
+# summarise_plus keeps original values which are not covered by a format
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
+
+sum_df <- dummy_df |>
+    summarise_plus(class   = "number_of_persons",
+                   formats = list(number_of_persons = sex.))
+
+expect_true(all(c("Male", "Female", as.character(3:5)) %in% sum_df[["number_of_persons"]]),
+            info = "summarise_plus keeps original values which are not covered by a format")
+
+
 set_no_print()

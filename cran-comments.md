@@ -32,6 +32,7 @@ Last CRAN release was on 16.07.2026.
 * `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions.
 * `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The functions now set the font family per cell instead of a base font for the whole workbook. This enables different fonts per sheet in multi sheet workbooks, if the sheets are created with separate calls.
+* `recode_multi()`: `convert` parameter is now set to TRUE by default.
 
 ### Removed
 
@@ -58,6 +59,9 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`: The column header got corrupted, if value variables had underscores in their names and were used in combination with `pct_block`. This is fixed now.
 * `any_table()`: When using the `pct_block` parameter and formats have overlapping values, then they now will be kept in user provided order.
 * `recode.()`: Can now recode multiple variables into multiple new ones.
+* Every function, that is able to apply formats, now keeps original values if they are not captured by the applied formats instead of setting uncovered values zo NA.
+* `recode.()`: Now can also handle the "other" keyword.
+* `any_table()`: `pct_block` percentages are now calculated on unrounded sums, to have maximum precision.
 
 ### Additionally
 

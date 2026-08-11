@@ -1608,6 +1608,13 @@ any_table <- function(data_frame,
         stat <- strsplit(var_name, split = "_")[[1]]
         stat <- stat[length(stat)]
 
+        # Sum variables must stay unrounded if block percentages are calculated,
+        # because the percentages need to be based on the unrounded sums. They
+        # are rounded after the block percentage calculation.
+        if (length(pct_block) > 0 && stat == "sum"){
+            next
+        }
+
         # Round values to the decimals places specified in the style
         if (tolower(stat) %in% c("sum", "freq", "freq", "mean", "median", "mode",
                                  "min", "max")){
@@ -1837,8 +1844,8 @@ any_table <- function(data_frame,
                     pct_block_cols <- intersect(new_pct, names(combi_df))
 
                     if (length(pct_block_cols) > 0){
-                        for (col in pct_block_cols){
-                            combi_df[[col]] <- round_values(combi_df[[col]], style[["number_formats"]][["pct_decimals"]])
+                        for (column in pct_block_cols){
+                            combi_df[[column]] <- round_values(combi_df[[column]], style[["number_formats"]][["pct_decimals"]])
                         }
                     }
 
@@ -1853,6 +1860,13 @@ any_table <- function(data_frame,
                     combi_df <- combi_df |> dropp(block_values)
 
                     pivot_values <- pivot_values[!pivot_values %in% block_values]
+                }
+                # Round the sum variables after the block percentage calculation,
+                # because the percentages needed the unrounded sums.
+                else{
+                    for (column in intersect(block_values, names(combi_df))){
+                        combi_df[[column]] <- round_values(combi_df[[column]], style[["number_formats"]][["sum_decimals"]])
+                    }
                 }
 
                 #-------------------------------------------------------------------------#

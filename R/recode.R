@@ -171,6 +171,9 @@ recode. <- function(data_frame,
                                            "Only one of the matching categories will be applied."), current_var = current_var)
             }
 
+            # Keep the original values to fill positions which are not covered by the format
+            original_values <- recode_df[[current_var]]
+
             # Get number of rows from data frame to compare after the merge to check for multilabel
             original_rows <- collapse::fnrow(recode_df)
 
@@ -195,7 +198,11 @@ recode. <- function(data_frame,
             temp_dt <- data.table::foverlaps(temp_dt, format_dt,
                                              by.x = c("qol_from", "qol_to"),
                                              by.y = c("from", "to")) |>
-                keep("label")
+                keep("label", "qol_from")
+
+            # If a value is not covered by the format, keep the original value instead of NA
+            unmatched <- is.na(temp_dt[["label"]]) & !is.na(temp_dt[["qol_from"]])
+            temp_dt[["label"]][unmatched] <- temp_dt[["qol_from"]][unmatched]
 
             # NA values are now inserted in the same spots as they where before to
             # ensure that there will be no missmatch with the original data frame.
@@ -209,6 +216,9 @@ recode. <- function(data_frame,
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         else{
+            # Keep the original values to fill positions which are not covered by the format
+            original_values <- recode_df[[current_var]]
+
             # Rename label column to be specific to the variable
             format_df <- format_df |>
                 collapse::frename(stats::setNames("value", current_var))
@@ -221,6 +231,21 @@ recode. <- function(data_frame,
                                verbose = FALSE,
                                overid  = 2) |>
                 keep("label")
+
+            # If a value is not covered by the format, keep the original value instead of NA.
+            # The "other" keyword is an exception and catches all remaining values.
+            na_positions <- which(is.na(recode_df[["label"]]) & !is.na(original_values))
+            if (length(na_positions) > 0){
+                if (as.character(.Machine[["integer.max"]]) %in% tolower(format_df[[current_var]])){
+                    recode_df[["label"]][na_positions] <- format_df[["label"]][tolower(format_df[[current_var]]) == as.character(.Machine[["integer.max"]])]
+                }
+                else if(.Machine[["integer.max"]] %in% format_df[[current_var]]){
+                    recode_df[["label"]][na_positions] <- format_df[["label"]][format_df[[current_var]] == .Machine[["integer.max"]]]
+                }
+                else{
+                    recode_df[["label"]][na_positions] <- original_values[na_positions]
+                }
+            }
         }
 
         recoded[[current_var]] <- as.vector(recode_df)[[1]]
@@ -237,8 +262,8 @@ recode. <- function(data_frame,
 }
 
 
-#' @param convert FALSE by default. If TRUE converts recoded variables to numeric
-#' or character depending on the input format instead of leaving them as factors.
+#' @param convert TRUE by default. Converts recoded variables to numeric or character
+#' depending on the input format instead of leaving them as factors.
 #'
 #' @return
 #' [recode_multi()]: Returns a data frame with the newly recoded variable.
@@ -246,7 +271,7 @@ recode. <- function(data_frame,
 #' @rdname recode
 #'
 #' @export
-recode_multi <- function(data_frame, ..., convert = FALSE){
+recode_multi <- function(data_frame, ..., convert = TRUE){
     # Measure the time
     print_start_message(suppress = TRUE)
 

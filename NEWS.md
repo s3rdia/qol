@@ -32,6 +32,7 @@
 * `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions. (03.08.2026)
 * `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. (08.08.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The functions now set the font family per cell instead of a base font for the whole workbook. This enables different fonts per sheet in multi sheet workbooks, if the sheets are created with separate calls. (08.08.2026)
+* `recode_multi()`: `convert` parameter is now set to TRUE by default. (11.08.2026)
 
 ### Removed
 
@@ -57,6 +58,9 @@
 * `ifelse_multi.()`: When NA was assigned to a variable, all values became NA instead of just the ones for which the condition was TRUE. This is fixed now. (08.08.2026)
 * `any_table()`: The column header got corrupted, if value variables had underscores in their names and were used in combination with `pct_block`. This is fixed now. (10.08.2026)
 * `any_table()`: When using the `pct_block` parameter and formats have overlapping values, then they now will be kept in user provided order. (10.08.2026)
+* Every function, that is able to apply formats, now keeps original values if they are not captured by the applied formats instead of setting uncovered values zo NA. (11.08.2026)
+* `recode.()`: Now can also handle the "other" keyword. (11.08.2026)
+* `any_table()`: `pct_block` percentages are now calculated on unrounded sums, to have maximum precision. (11.08.2026)
 
 ### Additionally
 

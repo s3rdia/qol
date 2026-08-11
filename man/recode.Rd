@@ -8,7 +8,7 @@
 \usage{
 recode.(data_frame, ...)
 
-recode_multi(data_frame, ..., convert = FALSE)
+recode_multi(data_frame, ..., convert = TRUE)
 }
 \arguments{
 \item{data_frame}{A data frame which contains the the original variables to recode.}
@@ -22,8 +22,8 @@ multilabels are applied. In occasions were you want to use format containers to
 afterwards perform operations with other packages, you can make use of this
 principle with this function.}
 
-\item{convert}{FALSE by default. If TRUE converts recoded variables to numeric
-or character depending on the input format instead of leaving them as factors.}
+\item{convert}{TRUE by default. Converts recoded variables to numeric or character
+depending on the input format instead of leaving them as factors.}
 }
 \value{
 \code{\link[=recode.]{recode.()}}: If one variable is provided, returns a vector with recoded values.

@@ -189,6 +189,18 @@ expect_true(length(unique(test_df2[["age_group"]]))    <= 6, info = "Recode mult
 expect_true(length(unique(test_df2[["income_group"]])) <= 5, info = "Recode multiple variables into multiple new variables (interval values)")
 
 
+# recode. keeps original values which are not covered by a discrete format
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
+
+test_df2 <- test_df
+test_df2[["persons"]] <- test_df |> recode.(number_of_persons = sex.)
+
+expect_true(all(c("Male", "Female", as.character(3:5)) %in% test_df2[["persons"]]),
+            info = "recode. keeps original values which are not covered by a format")
+
+
 ###############################################################################
 # Multi recode
 ###############################################################################
@@ -242,6 +254,17 @@ recode_df <- test_df |> recode_multi(age = age., income = income.)
 
 expect_true(collapse::fncol(recode_df) == collapse::fncol(test_df), info = "Recode multiple variables at once")
 expect_true(collapse::fnrow(recode_df) > collapse::fnrow(test_df),  info = "Recode multiple variables at once")
+
+
+# recode_multi keeps original values which are not covered by a discrete format
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
+
+recode_df <- test_df |> recode_multi(number_of_persons = sex.)
+
+expect_true(all(c("Male", "Female", as.character(3:5)) %in% recode_df[["number_of_persons"]]),
+            info = "recode_multi keeps original values which are not covered by a format")
 
 
 set_no_print()

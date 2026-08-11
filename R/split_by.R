@@ -116,7 +116,7 @@ split_by <- function(data_frame,
         monitor_df <- NULL |> monitor_start("Applying formats", "Formats")
         #-------------------------------------------------------------------------#
 
-        data_frame <- suppressMessages(do.call(recode_multi, c(list(data_frame), formats)))
+        data_frame <- suppressMessages(do.call(recode_multi, c(list(data_frame), formats, list(convert = FALSE))))
     }
 
     for (condition in conditions){

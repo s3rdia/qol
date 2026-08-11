@@ -103,6 +103,8 @@
   for the whole workbook. This enables different fonts per sheet in
   multi sheet workbooks, if the sheets are created with separate calls.
   (08.08.2026)
+- [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md):
+  `convert` parameter is now set to TRUE by default. (11.08.2026)
 
 #### Removed
 
@@ -183,6 +185,14 @@
   When using the `pct_block` parameter and formats have overlapping
   values, then they now will be kept in user provided order.
   (10.08.2026)
+- Every function, that is able to apply formats, now keeps original
+  values if they are not captured by the applied formats instead of
+  setting uncovered values zo NA. (11.08.2026)
+- [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md): Now
+  can also handle the “other” keyword. (11.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `pct_block` percentages are now calculated on unrounded sums, to have
+  maximum precision. (11.08.2026)
 
 #### Additionally
 

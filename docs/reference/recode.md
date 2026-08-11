@@ -8,7 +8,7 @@ variable, you can use formats to recode a variable into a new one.
 ``` r
 recode.(data_frame, ...)
 
-recode_multi(data_frame, ..., convert = FALSE)
+recode_multi(data_frame, ..., convert = TRUE)
 ```
 
 ## Arguments
@@ -31,9 +31,8 @@ recode_multi(data_frame, ..., convert = FALSE)
 
 - convert:
 
-  FALSE by default. If TRUE converts recoded variables to numeric or
-  character depending on the input format instead of leaving them as
-  factors.
+  TRUE by default. Converts recoded variables to numeric or character
+  depending on the input format instead of leaving them as factors.
 
 ## Value
 
