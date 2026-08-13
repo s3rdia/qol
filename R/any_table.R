@@ -2360,7 +2360,13 @@ any_table <- function(data_frame,
             # If no save path or file provided just open workbook
             if (is.null(style[["save_path"]]) || is.null(style[["file"]])){
                 if (interactive()){
-                    wb$open()
+                    # Check if Excel is available, otherwise fallback to html output
+                    output <- tryCatch({
+                        suppressWarnings(wb$open())
+                        output
+                    }, error = function(e){
+                        "html"
+                    })
                 }
             }
             else{
@@ -2369,7 +2375,13 @@ any_table <- function(data_frame,
                     print_message("WARNING", "Path does not exist: [style]", style = style[["save_path"]])
 
                     if (interactive()){
-                        wb$open()
+                        # Check if Excel is available, otherwise fallback to html output
+                        output <- tryCatch({
+                            suppressWarnings(wb$open())
+                            output
+                        }, error = function(e){
+                            "html"
+                        })
                     }
                 }
                 # Save file

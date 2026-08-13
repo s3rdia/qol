@@ -89,6 +89,9 @@ Global options: \code{\link[=set_style_options]{set_style_options()}}, \code{\li
 \code{\link[=get_titles]{get_titles()}}, \code{\link[=set_footnotes]{set_footnotes()}}, \code{\link[=get_footnotes]{get_footnotes()}}, \code{\link[=set_print_miss]{set_print_miss()}}, \code{\link[=get_print_miss]{get_print_miss()}},
 \code{\link[=set_threads]{set_threads()}}, \code{\link[=get_threads]{get_threads()}}
 
+RStudio helper functions: \code{\link[=run_script]{run_script()}}, \code{\link[=run_folder]{run_folder()}}, \code{\link[=run_project]{run_project()}},
+\code{\link[=run_project_parallel]{run_project_parallel()}}
+
 Other: \code{\link[=build_master]{build_master()}}, \code{\link[=build_rstheme]{build_rstheme()}}, \code{\link[=free_memory]{free_memory()}}, \code{\link[=qol_news]{qol_news()}}, \code{\link[=qol_chat]{qol_chat()}}
 }
 

@@ -1,20 +1,13 @@
 # Build a Master Script From Folder
 
 `build_master()` reads a given folder structure, which contains scripts,
-and builds a master script as a markdown file.
+and builds a master file. The file which gets written depends on the
+selected layout.
 
 ## Usage
 
 ``` r
-build_master(
-  dir,
-  master_name = "Master",
-  author = "",
-  with_structure = TRUE,
-  with_run_all = TRUE,
-  with_run_folder = TRUE,
-  with_monitor = FALSE
-)
+build_master(dir, master_name = "Master", author = "", layout = "compact")
 ```
 
 ## Arguments
@@ -31,29 +24,19 @@ build_master(
 
   Authors name to be put in the header.
 
-- with_structure:
+- layout:
 
-  Whether the folder structure as tree should be written to the master
-  script.
+  The layout which should be written to the master file. Available are:
 
-- with_run_all:
+  - "compact": The header and rebuilt master section followed by one
+    script block which runs all scripts. (default)
 
-  Whether a section, which let's the user run all scripts, should be
-  written to the master script.
-
-- with_run_folder:
-
-  Whether a section, which let's the user run all scripts from a
-  specific folder, should be written to the master script.
-
-- with_monitor:
-
-  FALSE by default. If TRUE, outputs two charts to visualize the time
-  consumption of the individual scripts.
+  - "full": The whole folder structure with an overview, a section which
+    runs all scripts and single blocks for every folder and script.
 
 ## Value
 
-Returns the script as character vector and saves it as markdown file.
+Returns the script as character vector and saves it as master file.
 
 ## Details
 
@@ -81,6 +64,14 @@ root/
 
          ....R
 
+## See also
+
+RStudio helper functions:
+[`run_script()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_folder()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_project()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_project_parallel()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+
 ## Examples
 
 ``` r
@@ -94,6 +85,12 @@ file_name <- basename(tools::file_path_sans_ext(temp_file))
 build_master(dir         = dirname(temp_file),
              master_name = file_name)
 
+# Example compact master
+build_master(dir         = dirname(temp_file),
+             master_name = file_name,
+             layout      = "compact")
+
 # Manual cleanup for example
 unlink(temp_file)
+unlink(paste0(dirname(temp_file), "/", file_name, ".Rmd"))
 ```

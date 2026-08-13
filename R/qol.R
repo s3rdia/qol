@@ -81,6 +81,9 @@
 #' [get_titles()], [set_footnotes()], [get_footnotes()], [set_print_miss()], [get_print_miss()],
 #' [set_threads()], [get_threads()]
 #'
+#' RStudio helper functions: [run_script()], [run_folder()], [run_project()],
+#' [run_project_parallel()]
+#'
 #' Other: [build_master()], [build_rstheme()], [free_memory()], [qol_news()], [qol_chat()]
 #'
 #' @section Snippets:

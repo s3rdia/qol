@@ -4,15 +4,7 @@
 \alias{build_master}
 \title{Build a Master Script From Folder}
 \usage{
-build_master(
-  dir,
-  master_name = "Master",
-  author = "",
-  with_structure = TRUE,
-  with_run_all = TRUE,
-  with_run_folder = TRUE,
-  with_monitor = FALSE
-)
+build_master(dir, master_name = "Master", author = "", layout = "compact")
 }
 \arguments{
 \item{dir}{The folder structure which contains the scripts to build upon.}
@@ -21,24 +13,21 @@ build_master(
 
 \item{author}{Authors name to be put in the header.}
 
-\item{with_structure}{Whether the folder structure as tree should be written
-to the master script.}
-
-\item{with_run_all}{Whether a section, which let's the user run all scripts,
-should be written to the master script.}
-
-\item{with_run_folder}{Whether a section, which let's the user run all scripts from a
-specific folder, should be written to the master script.}
-
-\item{with_monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
-time consumption of the individual scripts.}
+\item{layout}{The layout which should be written to the master file. Available
+are:
+\itemize{
+\item "compact": The header and rebuilt master section followed by one script block
+which runs all scripts. (default)
+\item "full":    The whole folder structure with an overview, a section which runs
+all scripts and single blocks for every folder and script.
+}}
 }
 \value{
-Returns the script as character vector and saves it as markdown file.
+Returns the script as character vector and saves it as master file.
 }
 \description{
 \code{\link[=build_master]{build_master()}} reads a given folder structure, which contains scripts, and builds
-a master script as a markdown file.
+a master file. The file which gets written depends on the selected layout.
 }
 \details{
 The function works with folder structures that look like this:
@@ -70,14 +59,22 @@ root/
 # Example export file paths
 # NOTE: These tempfiles are only for the examples. In reality you just call the
 # main function and put in your desired path and name directly.
-temp_file <- tempfile(fileext = ".rstheme")
-file_name <- basename(tools::file_path_sans_ext(temp_file))
+temp_file <- tempfile(fileext = ".Rmd")
 
 # Example master
 build_master(dir         = dirname(temp_file),
-             master_name = file_name)
+             master_name = basename(temp_file))
+
+# Example compact master
+build_master(dir         = dirname(temp_file),
+             master_name = basename(temp_file),
+             layout      = "full")
 
 # Manual cleanup for example
 unlink(temp_file)
 
+}
+\seealso{
+RStudio helper functions: \code{\link[=run_script]{run_script()}}, \code{\link[=run_folder]{run_folder()}}, \code{\link[=run_project]{run_project()}},
+\code{\link[=run_project_parallel]{run_project_parallel()}}
 }

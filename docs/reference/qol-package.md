@@ -186,6 +186,12 @@ Global options:
 [`set_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md),
 [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
 
+RStudio helper functions:
+[`run_script()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_folder()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_project()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+[`run_project_parallel()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+
 Other:
 [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md),
 [`build_rstheme()`](https://s3rdia.github.io/qol/reference/build_rstheme.md),

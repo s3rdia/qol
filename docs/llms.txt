@@ -791,6 +791,14 @@ can be found on GitHub.
   [`get_threads()`](https://s3rdia.github.io/qol/reference/qol_options.md)
   : Set Global Print Option
 
+## RStudio helper functions
+
+- [`run_script()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+  [`run_folder()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+  [`run_project()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+  [`run_project_parallel()`](https://s3rdia.github.io/qol/reference/run_scripts.md)
+  : Run 'R' Scripts Via File Dialog
+
 ## Other
 
 - [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md)

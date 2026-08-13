@@ -4,6 +4,7 @@
 
 * `create_table_of_contents()`: Creates a table of contents sheet with custom style based on the provided 'Excel' workbook. (02.08.2026, thanks to @JanMarvin)
 * `check_required_package()`: Check whether a certain package is required and ask the user whether it should be installed or not. (08.08.2026)
+* `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: RStudio helper functions that run scripts, folders or whole folder structures via diolog selection. (13.08.2026)
 
 ### New functionality
 
@@ -33,6 +34,7 @@
 * `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. (08.08.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The functions now set the font family per cell instead of a base font for the whole workbook. This enables different fonts per sheet in multi sheet workbooks, if the sheets are created with separate calls. (08.08.2026)
 * `recode_multi()`: `convert` parameter is now set to TRUE by default. (11.08.2026)
+* `build_master()`: Uses a new compact layout as default. Additionally the full layout can now only be created as a whole. (13.08.2026)
 
 ### Removed
 
@@ -76,6 +78,7 @@
 * New suggested package `yyjsonr` added, which is required, for the new html view of `where.()`. (08.08.2026)
 * `rename_multi()`: Clarified error message on old variable names not found in data frame. (08.08.2026)
 * `any_table()`: Updated `pct_block` parameter description and examples to make it more clear how this parameter works and has to be used. (10.08.2026)
+* `any_table()`: Now uses html output as fallback in case Excel is not available. (13.08.2026)
 
 # qol 1.3.3
 

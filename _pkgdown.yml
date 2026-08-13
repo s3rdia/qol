@@ -183,6 +183,12 @@ reference:
   - get_footnotes
   - set_threads
   - get_threads
+- title: RStudio helper functions
+  contents:
+  - run_script
+  - run_folder
+  - run_project
+  - run_project_parallel
 - title: Other
   contents:
   - build_master

@@ -11,6 +11,12 @@
 - [`check_required_package()`](https://s3rdia.github.io/qol/reference/check_required_package.md):
   Check whether a certain package is required and ask the user whether
   it should be installed or not. (08.08.2026)
+- [`run_script()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_folder()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_project()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_project_parallel()`](https://s3rdia.github.io/qol/reference/run_scripts.md):
+  RStudio helper functions that run scripts, folders or whole folder
+  structures via diolog selection. (13.08.2026)
 
 #### New functionality
 
@@ -105,6 +111,9 @@
   (08.08.2026)
 - [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md):
   `convert` parameter is now set to TRUE by default. (11.08.2026)
+- [`build_master()`](https://s3rdia.github.io/qol/reference/build_master.md):
+  Uses a new compact layout as default. Additionally the full layout can
+  now only be created as a whole. (13.08.2026)
 
 #### Removed
 
@@ -235,6 +244,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Updated `pct_block` parameter description and examples to make it more
   clear how this parameter works and has to be used. (10.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Now uses html output as fallback in case Excel is not available.
+  (13.08.2026)
 
 ## qol 1.3.3
 
