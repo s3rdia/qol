@@ -285,13 +285,18 @@ recode_multi <- function(data_frame, ..., convert = TRUE){
     })
 
     if (is.null(formats)){
-        print_message("ERROR", c("Unknown object found. Provide recode arguments in the form: variable_name = format_df.",
+        print_message("ERROR", c("Unknown object found. Provide recode arguments in the form: variable_name = format_name",
 								 "Recoding will be aborted."))
         return(data_frame)
     }
 
-    # Evaluate formats early
-    if (!is_list_of_dfs(formats)){
+    # First check if a list of data frames is wrapped as single entry in a list.
+    # This can happen if e.g. a list of data frames is passed on.
+    if (is_list_of_dfs(formats[[1]])){
+        formats <- formats[[1]]
+    }
+    # Otherwise evaluate formats early
+    else if (!is_list_of_dfs(formats)){
         formats <- evaluate_formats(formats)
     }
 

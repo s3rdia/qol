@@ -35,12 +35,21 @@ save_file_multi(
   protect = TRUE
 )
 
-load_file(path, file, keep = NULL, where = NULL, by_reference = FALSE, ...)
+load_file(
+  path,
+  file,
+  keep = NULL,
+  where = NULL,
+  keep_var_order = FALSE,
+  by_reference = FALSE,
+  ...
+)
 
 load_file_multi(
   file_list,
   keep_list = NULL,
   stack_files = TRUE,
+  keep_var_order = FALSE,
   by_reference = FALSE
 )
 ```
@@ -97,6 +106,12 @@ load_file_multi(
   containing the variables to keep per file. If there are fewer list
   entries than files to load, the last list element will be used
   repeatedly.
+
+- keep_var_order:
+
+  FALSE by default. If TRUE, keeps the variables in order of appearance
+  and ignores the order provided in the keep parameter. If FALSE orders
+  the variables in the keep order.
 
 - by_reference:
 

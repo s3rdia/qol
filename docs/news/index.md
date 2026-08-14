@@ -90,6 +90,26 @@
   their decimal places. (10.08.2026)
 - [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md): Can
   now recode multiple variables into multiple new ones. (10.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Formats can now be applied to pre summarised data. (14.08.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Can now rename variables stored in vectors when passing them like:
+  old_vektor = new_vektor. (14.08.2026)
+- [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+  [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  New `keep_var_order` parameter enables to keep the original stored
+  variable order, when using keep variables, instead of sorting them in
+  provided order. (14.08.2026)
+- [`load_file()`](https://s3rdia.github.io/qol/reference/save_load.md),
+  [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  `where` now works with old and renamed variable names. Additionally
+  the parameter can now handle the new writing style with conditions as
+  characters introduced by
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
+  (14.08.2026)
+- [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  When passing a named vector or list into the `keep` parameter, the
+  original variables will directly be renamed. (14.08.2026)
 
 #### Changed functionality
 
@@ -118,7 +138,7 @@
 #### Removed
 
 - [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
-  There is no real benefit in this function. (08.07.2026)
+  There is no real benefit in this function. (18.07.2026)
 
 #### Fixed
 

@@ -27,6 +27,11 @@
 * `load_file()`, `load_file_multi()`: Can now load fst files `by_reference`, which means files are not loaded into memory and instead the necessary values are only loaded on demand. (08.08.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`: Added new `full_precision` parameter, which ignores the decimal places given through the `style` parameter and outputs all values with all their decimal places. (10.08.2026)
 * `recode.()`: Can now recode multiple variables into multiple new ones. (10.08.2026)
+* `any_table()`: Formats can now be applied to pre summarised data. (14.08.2026)
+* `rename_multi()`: Can now rename variables stored in vectors when passing them like: old_vektor = new_vektor. (14.08.2026)
+* `load_file()`, `load_file_multi()`: New `keep_var_order` parameter enables to keep the original stored variable order, when using keep variables, instead of sorting them in provided order. (14.08.2026)
+* `load_file()`, `save_file()`: `where` now works with old and renamed variable names. Additionally the parameter can now handle the new writing style with conditions as characters introduced by `ifelse_multi()`. (14.08.2026)
+* `save_file()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed. (14.08.2026)
 
 ### Changed functionality
 
@@ -38,7 +43,7 @@
 
 ### Removed
 
-* `get_integer_length()`: There is no real benefit in this function. (08.07.2026)
+* `get_integer_length()`: There is no real benefit in this function. (18.07.2026)
 
 ### Fixed
 

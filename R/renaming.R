@@ -280,16 +280,29 @@ rename_multi <- function(data_frame, ...){
         rename_list <- substitute(list(...))[-1]
     }
 
-    # Get old and new names in separate vectors to rename them in one go
-    old_names <- names(rename_list)
+    if (length(rename_list[[1]]) > 1){
+        # 1. Get the actual vector from the left side (the argument name)
+        old_names <- names(rename_list)[1]
+        old_names <- get(old_names, envir = parent.frame())
 
-    # Depending on how the variable names were passed, thene wvariable names have
-    # to be captured on a different way.
-    if (is.list(rename_list)){
-        new_names <- unlist(rename_list, use.names = FALSE)
+        # 2. Get the vector from the right side (the argument value)
+        new_names <- rename_list[[1]]
+
+        # 3. Zip them together into a named vector: vec1 = vec2
+        rename_list <- as.list(stats::setNames(old_names, new_names))
     }
     else{
-        new_names <- vapply(rename_list, deparse, character(1))
+        # Get old and new names in separate vectors to rename them in one go
+        old_names <- names(rename_list)
+
+        # Depending on how the variable names were passed, thene wvariable names have
+        # to be captured on a different way.
+        if (is.list(rename_list)){
+            new_names <- unlist(rename_list, use.names = FALSE)
+        }
+        else{
+            new_names <- vapply(rename_list, deparse, character(1))
+        }
     }
 
     # Make sure that the variables provided are part of the data frame.

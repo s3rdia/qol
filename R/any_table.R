@@ -807,7 +807,7 @@ any_table <- function(data_frame,
 
         # Only keep provided variables, otherwise it can happen later on that e.g. too many
         # variables are pivoted
-        data_frame <- data_frame |> keep(by, variables, values, ".temp_weight")
+        data_frame <- data_frame |> keep(by, variables, values)
 
         # If the TYPE variable isn't present in the data frame it will be generated here from
         # the provided variables.
@@ -849,7 +849,6 @@ any_table <- function(data_frame,
         pct_group  <- ""
         pct_value  <- ""
         weight     <- NULL
-        formats    <- list()
 
         rm(pattern)
     }
@@ -1102,7 +1101,23 @@ any_table <- function(data_frame,
     }
     else{
         # With pre summarised data just take the input data frame
-        any_tab <- data_frame
+        if (length(formats) == 0){
+            any_tab <- data_frame
+        }
+        else{
+            any_tab <- suppressMessages(data_frame |>
+                summarise_plus(class      = group_vars,
+                               values     = values,
+                               statistics = "sum",
+                               formats    = formats,
+                               nesting    = "all",
+                               types      = combinations,
+                               notes      = FALSE,
+                               na.rm      = na.rm,
+                               print_miss = print_miss)) |>
+                collapse::fsubset(TYPE != "total") |>
+                remove_stat_extension("sum")
+        }
     }
 
     if (is.null(any_tab)){
@@ -1120,11 +1135,6 @@ any_table <- function(data_frame,
 
     # Convert grouping variables to factor to retain value order after sorting later on
     any_tab <- any_tab |> convert_factor(group_vars)
-
-    # In case of pre summarised data frame remove the temporary weight variable
-    if (pre_summed){
-        any_tab <- any_tab |> collapse::fselect(-.temp_weight)
-    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Handle by variables
@@ -1568,16 +1578,21 @@ any_table <- function(data_frame,
 
     # Abort if no values could be computed. This can especially happen during the various
     # percentage calculations if e.g. a wrong variable or expression was provided.
-    if (length(by) == 0 && length(c(row_vars, col_vars, "TYPE", "TYPE_NR", "DEPTH")) == collapse::fncol(any_tab)){
-        print_message("ERROR", c("After calculating the results, there are no valid values.",
-								 "Tabulation will be aborted."))
-        return(invisible(NULL))
+    if (length(by) == 0){
+        if ((!pre_summed && length(c(row_vars, col_vars, "TYPE", "TYPE_NR", "DEPTH")) == collapse::fncol(any_tab)) ||
+            ( pre_summed && length(c(row_vars, col_vars, "TYPE"))                     == collapse::fncol(any_tab))){
+            print_message("ERROR", c("After calculating the results, there are no valid values.",
+                                     "Tabulation will be aborted."))
+            return(invisible(NULL))
+        }
     }
-
-    if (length(by) > 0 && length(c(row_vars, col_vars, "by_vars", "TYPE", "TYPE_NR")) == collapse::fncol(any_tab)){
-        print_message("ERROR", c("After calculating the results, there are no valid values.",
-								 "Tabulation will be aborted."))
-        return(invisible(NULL))
+    else if (length(by) > 0){
+        if ((!pre_summed && length(c(row_vars, col_vars, "by_vars", "TYPE", "TYPE_NR")) == collapse::fncol(any_tab)) ||
+            ( pre_summed && length(c(row_vars, col_vars, "by_vars", "TYPE"))            == collapse::fncol(any_tab))){
+            print_message("ERROR", c("After calculating the results, there are no valid values.",
+    								 "Tabulation will be aborted."))
+            return(invisible(NULL))
+        }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

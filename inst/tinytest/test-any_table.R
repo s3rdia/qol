@@ -665,6 +665,20 @@ expect_inherits(result_list, "qol_table", info = "any_table with pre summarised 
 expect_equal(length(result_list), 4, info = "any_table with pre summarised data and by variables")
 
 
+# any_table with pre summarised data can use formats
+result_list <- sum_df2 |>
+    any_table(rows       = "year + age",
+              columns    = "sex",
+              values     = weight_sum,
+              formats    = list(sex = sex., age = age.),
+              output     = "excel_nostyle",
+              print      = FALSE)
+
+expect_equal(collapse::funique(result_list[["table"]][["var2"]]), c("under 50", "50 and more"), info = "any_table with pre summarised data can use formats")
+expect_true(all(c("weight_sum_Total", "weight_sum_Male", "weight_sum_Female") %in% names(result_list[["table"]])),
+            info = "any_table with pre summarised data can use formats")
+
+
 # any_table with no column variables
 result_list <- dummy_df |>
        any_table(rows    = "age",

@@ -27,6 +27,11 @@ Last CRAN release was on 16.07.2026.
 * `any_table()`: Can now render the tables as html file and show it in a browser window. This can be controlled via the new `output` options `html` and `excel_html`. The function now also returns an additional html element.
 * `load_file()`, `load_file_multi()`: Can now load fst files `by_reference`, which means files are not loaded into memory and instead the necessary values are only loaded on demand.
 * `any_table()`, `frequencies()`, `crosstabs()`: Added new `full_precision` parameter, which ignores the decimal places given through the `style` parameter and outputs all values with all their decimal places.
+* `any_table()`: Formats can now be applied to pre summarised data.
+* `rename_multi()`: Can now rename variables stored in vectors when passing them like: old_vektor = new_vektor.
+* `load_file()`, `load_file_multi()`: New `keep_var_order` parameter enables to keep the original stored variable order, when using keep variables, instead of sorting them in provided order.
+* `load_file()`: `where` now works with old and renamed variable names. Additionally the parameter can now handle the new writing style with conditions as characters introduced by `ifelse_multi()`.
+* `save_file()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed.
 
 ### Changed functionality
 

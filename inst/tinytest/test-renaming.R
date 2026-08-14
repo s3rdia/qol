@@ -24,14 +24,24 @@ expect_true("weight_pct" %in% names(new_names_df), info = "Add extensions to all
 new_names_df <- dummy_df |> rename_multi("sex" = "var1", "age" = "var2")
 
 expect_true(all(c("var1", "var2") %in% names(new_names_df)), info = "Renaming multiple variables")
-expect_true(!all(c("sex", "age") %in% names(new_names_df)), info = "Renaming multiple variables")
+expect_true(!all(c("sex", "age")  %in% names(new_names_df)), info = "Renaming multiple variables")
 
 
 # Renaming multiple variables without quotation marks
 new_names_df <- dummy_df |> rename_multi(sex = var1, age = var2)
 
 expect_true(all(c("var1", "var2") %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
-expect_true(!all(c("sex", "age") %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
+expect_true(!all(c("sex", "age")  %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
+
+
+# Renaming multiple variables using vectors
+old_names <- c("sex",  "age")
+new_names <- c("var1", "var2")
+
+new_names_df <- dummy_df |> rename_multi(old_names = new_names)
+
+expect_true(all(c("var1", "var2") %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
+expect_true(!all(c("sex", "age")  %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
 
 
 # Renaming based on first row in data frame

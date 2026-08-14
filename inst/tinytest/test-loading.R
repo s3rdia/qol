@@ -73,7 +73,7 @@ expect_true(file.exists(fst_file), info = "Example fst and rds files exist")
 expect_true(file.exists(rds_file), info = "Example fst and rds files exist")
 
 
-# Loading files with keep renames variables and reorders them
+# Loading files with keep doesn't reorder them
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
 
@@ -84,12 +84,23 @@ expect_equal(names(fst_keep), c("Sex", "aGe", "STATE"), info = "Loading files wi
 expect_equal(names(rds_keep), c("Sex", "aGe", "STATE"), info = "Loading files with keep renames variables and reorders them")
 
 
+# Loading files with keep_var_order keeps variables in order
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
+
+fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex, aGe, STATE), keep_var_order = TRUE)
+rds_keep <- load_file(dirname(rds_file), basename(rds_file), keep = c(Sex, aGe, STATE), keep_var_order = TRUE)
+
+expect_equal(names(fst_keep), c("STATE", "aGe", "Sex"), info = "Loading files with keep_var_order keeps variables in order")
+expect_equal(names(rds_keep), c("STATE", "aGe", "Sex"), info = "Loading files with keep_var_order keeps variables in order")
+
+
 # Loading files with named list renames variables
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
 
 fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex = var1, aGe = var2, STATE = var3))
 
-expect_equal(names(fst_keep), c("var1", "var2", "var3"), info = "Loading files with keep renames variables and reorders them")
+expect_equal(names(fst_keep), c("var1", "var2", "var3"), info = "Loading files with named list renames variables")
 
 
 # Loading files with subset
@@ -101,6 +112,27 @@ rds_keep <- load_file(dirname(rds_file), basename(rds_file), where = first_perso
 
 expect_equal(collapse::funique(fst_keep[["first_person"]]), 1, info = "Loading files with subset")
 expect_equal(collapse::funique(rds_keep[["first_person"]]), 1, info = "Loading files with subset")
+
+
+# Loading files with subset works on original and renamed variables
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+rds_file <- system.file("extdata", "qol_example_data_rds.rds", package = "qol")
+
+fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex = var1, aGe = var2), where = Sex  == 1)
+rds_keep <- load_file(dirname(rds_file), basename(rds_file), keep = c(Sex = var1, aGe = var2), where = var1 == 1)
+
+expect_equal(collapse::funique(fst_keep[["var1"]]), 1, info = "Loading files with subset works on original and renamed variables")
+expect_equal(collapse::funique(rds_keep[["var1"]]), 1, info = "Loading files with subset works on original and renamed variables")
+
+
+# Loading files with subset can handle SAS style conditions
+fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")
+
+fst_keep <- load_file(dirname(fst_file), basename(fst_file), where = "15 <= age < 65 and sex == 2")
+
+expect_equal(collapse::funique(fst_keep[["sex"]]), 2, info = "Loading files with subset can handle SAS style conditions")
+expect_false(any(00:14  %in% fst_keep[["age"]]), info = "Loading files with subset can handle SAS style conditions")
+expect_false(any(65:100 %in% fst_keep[["age"]]), info = "Loading files with subset can handle SAS style conditions")
 
 
 # Loading files by reference returns an fst_table
@@ -217,6 +249,21 @@ expect_equal(names(fst_df), c("sex", "age", "state"), info = "Saving file with k
 expect_equal(names(rds_df), c("sex", "age", "state"), info = "Saving file with keep works correctly")
 
 
+# Saving files with named list renames variables
+fst_file <- tempfile(fileext = ".fst")
+rds_file <- tempfile(fileext = ".rds")
+on.exit(unlink(c(fst_file, rds_file)), add = TRUE)
+
+dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), keep = c(sex = var1, age = var2, state = var3))
+dummy_df1 |> save_file(dirname(rds_file), basename(rds_file), keep = c(sex = var1, age = var2, state = var3))
+
+fst_df <- load_file(dirname(fst_file), basename(fst_file))
+rds_df <- load_file(dirname(rds_file), basename(rds_file))
+
+expect_equal(names(fst_df), c("var1", "var2", "var3"), info = "Saving files with named list renames variables")
+expect_equal(names(rds_df), c("var1", "var2", "var3"), info = "Saving files with named list renames variables")
+
+
 # Saving file with subset works correctly
 fst_file <- tempfile(fileext = ".fst")
 rds_file <- tempfile(fileext = ".rds")
@@ -233,6 +280,34 @@ rds_df <- load_file(dirname(rds_file), basename(rds_file))
 
 expect_equal(collapse::funique(fst_df[["first_person"]]), 1, info = "Saving file with subset works correctly")
 expect_equal(collapse::funique(rds_df[["first_person"]]), 1, info = "Saving file with subset works correctly")
+
+
+# Saving files with subset works on original and renamed variables
+fst_file <- tempfile(fileext = ".fst")
+rds_file <- tempfile(fileext = ".rds")
+on.exit(unlink(c(fst_file, rds_file)), add = TRUE)
+
+dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), keep = c(sex = var1, age = var2), where = sex  == 1)
+dummy_df1 |> save_file(dirname(rds_file), basename(rds_file), keep = c(sex = var1, age = var2), where = var1 == 1)
+
+fst_df <- load_file(dirname(fst_file), basename(fst_file))
+rds_df <- load_file(dirname(rds_file), basename(rds_file))
+
+expect_equal(collapse::funique(fst_df[["var1"]]), 1, info = "Saving files with subset works on original and renamed variables")
+expect_equal(collapse::funique(rds_df[["var1"]]), 1, info = "Saving files with subset works on original and renamed variables")
+
+
+# Loading files with subset can handle SAS style conditions
+fst_file <- tempfile(fileext = ".fst")
+on.exit(unlink(fst_file), add = TRUE)
+
+dummy_df1 |> save_file(dirname(fst_file), basename(fst_file), where = "15 <= age < 65 and sex == 2")
+
+fst_df <- load_file(dirname(fst_file), basename(fst_file))
+
+expect_equal(collapse::funique(fst_df[["sex"]]), 2, info = "Saving files with subset can handle SAS style conditions")
+expect_false(any(00:14  %in% fst_df[["age"]]), info = "Saving files with subset can handle SAS style conditions")
+expect_false(any(65:100 %in% fst_df[["age"]]), info = "Saving files with subset can handle SAS style conditions")
 
 
 # Saving multiple files

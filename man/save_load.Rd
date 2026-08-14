@@ -27,12 +27,21 @@ save_file_multi(
   protect = TRUE
 )
 
-load_file(path, file, keep = NULL, where = NULL, by_reference = FALSE, ...)
+load_file(
+  path,
+  file,
+  keep = NULL,
+  where = NULL,
+  keep_var_order = FALSE,
+  by_reference = FALSE,
+  ...
+)
 
 load_file_multi(
   file_list,
   keep_list = NULL,
   stack_files = TRUE,
+  keep_var_order = FALSE,
   by_reference = FALSE
 )
 }
@@ -63,6 +72,10 @@ overwrites existing files.}
 \item{keep_list}{Can be a single variable name, a vector or a list of vectors containing
 the variables to keep per file. If there are fewer list entries than files to load, the
 last list element will be used repeatedly.}
+
+\item{keep_var_order}{FALSE by default. If TRUE, keeps the variables in order of
+appearance and ignores the order provided in the keep parameter. If FALSE orders
+the variables in the keep order.}
 
 \item{by_reference}{Don't load the complete file into memory, instead just load a
 reference and only load what is needed on demand from disc. Only works with fst

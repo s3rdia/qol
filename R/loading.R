@@ -360,10 +360,35 @@ save_file <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Convert to character vectors
-    keep_eval <- substitute(keep)
+    keep_eval   <- substitute(keep)
+    rename_keep <- NULL
 
     if (is.call(keep_eval)){
-        keep <- get_origin_as_char(keep, keep_eval)
+        # Get the names from the passed list, if there are any
+        rename_keep <- names(as.list(keep_eval)[-1])
+
+        # In case an unnamed list was passed, just get the variable names as normal
+        if (is.null(rename_keep)){
+            keep        <- get_origin_as_char(keep, keep_eval)
+            rename_keep <- NULL
+        }
+        # In case a named list was passed, separate the names and elements into
+        # a vector of original variable names and one to rename the variables to.
+        else{
+            keep        <- rename_keep
+            rename_keep <- as.character(unlist(as.list(keep_eval)[-1]))
+        }
+    }
+    # In case of save_file_multi keep ends up here as a vector
+    else if(!is.null(keep)){
+        rename_keep <- keep
+        keep        <- names(keep)
+
+        # If keep is NULL here a unnamed list was passed
+        if (is.null(keep)){
+            keep        <- rename_keep
+            rename_keep <- NULL
+        }
     }
 
     # Check if variables exist in the data frame. If not, abort.
@@ -382,19 +407,72 @@ save_file <- function(data_frame,
     compress <- min(100, max(0, compress))
 
     ###########################################################################
-    # Saving
+    # Selection and subsetting
     ###########################################################################
 
     # Select and subset data frame
     if (!is.null(keep)){
         data_frame <- suppressMessages(data_frame |>
                                            collapse::fselect(keep) |>
-                                           data.table::setcolorder(keep) |>
-                                           if.(where))
+                                           data.table::setcolorder(keep))
     }
-    else{
-        data_frame <- suppressMessages(data_frame |> if.(where))
+
+    # Rename variables to the names provided in keep
+    if (!is.null(rename_keep)){
+        data_frame <- suppressMessages(data_frame |> rename_multi(keep = rename_keep))
     }
+
+    df_var_names <- names(data_frame)
+
+    # Filter observations. First check if the variable names in the condition are
+    # the original ones. If they aren't, then try with the renamed ones.
+    where <- gsub('^[\\"]+|[\\"]+$', "", deparse(substitute(where)))
+
+    if (!is.null(where) && where != "NULL"){
+        where_vars <- tryCatch({
+            unique(all.vars(parse(text = where)))
+        }, error = function(e){
+            get_vars_from_where(where)
+        })
+
+        if (!all(where_vars %in% df_var_names) && !is.null(rename_keep)){
+            # Select the current and new names from the complete vectors to reduce
+            # the looping afterwards.
+            match_id <- which(keep %in% where_vars)
+
+            keep_selection   <- keep[match_id]
+            rename_selection <- rename_keep[match_id]
+
+            # Loop through variables used in the condition and replace them with the
+            # renamed versions.
+            for (i in seq_along(keep_selection)){
+                pattern <- paste0("\\b", keep_selection[i],   "\\b")
+                where   <- gsub(pattern, rename_selection[i], where)
+            }
+        }
+
+        # Only select observations, if the variable names from the condition are
+        # part of the data frame.
+        where_vars <- tryCatch({
+            unique(all.vars(parse(text = where)))
+        }, error = function(e){
+            get_vars_from_where(where)
+        })
+
+        where_vars <- data_frame |> part_of_df(where_vars, check_only = TRUE)
+
+        if (is.list(where_vars)){
+            print_message("WARNING", c("The provided <where> variable[?s] '[vars]' [?is/are] not part of",
+                                       "the data frame. No observation selection will be performed."), vars = where_vars[[1]])
+        }
+        else{
+            data_frame <- suppressMessages(data_frame |> if.(where))
+        }
+    }
+
+    ###########################################################################
+    # Saving
+    ###########################################################################
 
     if (extension == "fst"){
         suppressMessages(fst::threads_fst(.qol_options[["threads"]]))
@@ -565,6 +643,9 @@ save_file_multi <- function(data_frame_list,
 #' insensitive and are returned in provided order. Additionally a subset can be defined
 #' directly.
 #'
+#' @param keep_var_order FALSE by default. If TRUE, keeps the variables in order of
+#' appearance and ignores the order provided in the keep parameter. If FALSE orders
+#' the variables in the keep order.
 #' @param by_reference Don't load the complete file into memory, instead just load a
 #' reference and only load what is needed on demand from disc. Only works with fst
 #' files.
@@ -606,9 +687,10 @@ save_file_multi <- function(data_frame_list,
 #' @export
 load_file <- function(path,
                       file,
-                      keep  = NULL,
-                      where = NULL,
-                      by_reference = FALSE,
+                      keep           = NULL,
+                      where          = NULL,
+                      keep_var_order = FALSE,
+                      by_reference   = FALSE,
                       ...){
     print_start_message(suppress = TRUE)
     suppress <- ifelse(is.null(unlist(list(...))), FALSE, TRUE)
@@ -676,7 +758,7 @@ load_file <- function(path,
             rename_keep <- as.character(unlist(as.list(keep_eval)[-1]))
         }
     }
-    # In case of load_file_multi keep ends up hear as a vector
+    # In case of load_file_multi keep ends up here as a vector
     else if(!is.null(keep)){
         rename_keep <- keep
         keep        <- names(keep)
@@ -705,6 +787,7 @@ load_file <- function(path,
 
             # Check if variables exist in the meta data
             invalid_keep <- keep[!tolower(keep) %in% tolower(variable_names)]
+            keep         <- keep[!keep %in% invalid_keep]
 
             if (length(invalid_keep) > 0){
                 print_message("WARNING", "Variables not found: [invalid]", invalid = invalid_keep)
@@ -723,8 +806,14 @@ load_file <- function(path,
                                                          columns       = vars_to_keep,
                                                          as.data.table = TRUE))
 
+            # Reorder variables if desired
+            if (keep_var_order){
+                original_order <- variable_names[variable_names %in% vars_to_keep]
+                data_frame     <- data_frame |> data.table::setcolorder(original_order)
+            }
+
             # Rename variables to the names provided in keep
-            data_frame |> data.table::setnames(vars_to_keep, keep_names)
+            data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
         }
         # Without keep read in the whole data set
         else{
@@ -761,19 +850,70 @@ load_file <- function(path,
             }
 
             # Only keep the desired variables and rename variables to the names provided in keep
-            data_frame <- data_frame |>
-                collapse::fselect(vars_to_keep) |>
-                data.table::setcolorder(vars_to_keep)
+            data_frame <- data_frame |> collapse::fselect(vars_to_keep)
 
-            data_frame |> data.table::setnames(vars_to_keep, keep_names)
+            # Reorder variables if desired
+            if (keep_var_order){
+                original_order <- variable_names[variable_names %in% vars_to_keep]
+                data_frame     <- data_frame |> data.table::setcolorder(original_order)
+            }
+
+            # Rename variables to the names provided in keep
+            data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
         }
     }
 
-    data_frame <- suppressMessages(data_frame |> if.(where))
-
     # If there is a rename vector, rename the original variables into the desired ones
     if (!is.null(rename_keep)){
-        names(data_frame) <- rename_keep
+        data_frame <- suppressMessages(data_frame |> rename_multi(keep_names = rename_keep))
+    }
+
+    df_var_names <- names(data_frame)
+
+    # Filter observations. First check if the variable names in the condition are
+    # the original ones. If they aren't, then try with the renamed ones.
+    where <- gsub('^[\\"]+|[\\"]+$', "", deparse(substitute(where)))
+
+    if (!is.null(where) && where != "NULL"){
+        where_vars <- tryCatch({
+            unique(all.vars(parse(text = where)))
+        }, error = function(e){
+            get_vars_from_where(where)
+        })
+
+        if (!all(where_vars %in% df_var_names) && !is.null(rename_keep)){
+            # Select the current and new names from the complete vectors to reduce
+            # the looping afterwards.
+            match_id <- which(keep_names %in% where_vars)
+
+            keep_selection   <- keep_names[match_id]
+            rename_selection <- rename_keep[match_id]
+
+            # Loop through variables used in the condition and replace them with the
+            # renamed versions.
+            for (i in seq_along(keep_selection)) {
+                pattern <- paste0("\\b", keep_selection[i],   "\\b")
+                where   <- gsub(pattern, rename_selection[i], where)
+            }
+        }
+
+        # Only select observations, if the variable names from the condition are
+        # part of the data frame.
+        where_vars <- tryCatch({
+            unique(all.vars(parse(text = where)))
+        }, error = function(e){
+            get_vars_from_where(where)
+        })
+
+        where_vars <- data_frame |> part_of_df(where_vars, check_only = TRUE)
+
+        if (is.list(where_vars)){
+            print_message("WARNING", c("The provided <where> variable[?s] '[vars]' [?is/are] not part of",
+                                       "the data frame. No observation selection will be performed."), vars = where_vars[[1]])
+        }
+        else{
+            data_frame <- suppressMessages(data_frame |> if.(where))
+        }
     }
 
     # Revert used threads
@@ -818,9 +958,10 @@ load_file <- function(path,
 #'
 #' @export
 load_file_multi <- function(file_list,
-                            keep_list    = NULL,
-                            stack_files  = TRUE,
-                            by_reference = FALSE){
+                            keep_list      = NULL,
+                            stack_files    = TRUE,
+                            keep_var_order = FALSE,
+                            by_reference   = FALSE){
     print_start_message()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -899,11 +1040,12 @@ load_file_multi <- function(file_list,
         }
 
         # Load file and add to list
-        result_list[[basename(infile)]] <- load_file(path = dirname(infile),
-                                                     file = basename(infile),
-                                                     keep = vars_to_keep,
-                                                     by_reference = by_reference,
-                                                     suppress     = TRUE)
+        result_list[[basename(infile)]] <- load_file(path           = dirname(infile),
+                                                     file           = basename(infile),
+                                                     keep           = vars_to_keep,
+                                                     keep_var_order = keep_var_order,
+                                                     by_reference   = by_reference,
+                                                     suppress       = TRUE)
     }
 
     # Stack data frames
@@ -924,4 +1066,27 @@ load_file_multi <- function(file_list,
     print_closing(15)
 
     invisible(result_list)
+}
+
+
+#' Get Variable Names From Where Condition
+#'
+#' @description
+#' Get variable names from where if written as character.
+#'
+#' @param where Where subset condition.
+#'
+#' @return
+#' Returns variable names.
+#'
+#' @noRd
+get_vars_from_where <- function(where){
+    # Find word tokens starting with a letter or underscore
+    matches <- regmatches(where, gregexpr("[a-zA-Z_][a-zA-Z0-9_]*", where))[[1]]
+
+    # List keywords to exclude
+    keywords <- c("and", "or", "not", "in", "is", "null", "true", "false")
+
+    # Filter out variable names
+    unique(matches[!tolower(matches) %in% keywords])
 }

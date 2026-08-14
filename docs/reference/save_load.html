@@ -86,12 +86,21 @@ stacks the files into one data frame.</p>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">load_file</span><span class="op">(</span><span class="va">path</span>, <span class="va">file</span>, keep <span class="op">=</span> <span class="cn">NULL</span>, where <span class="op">=</span> <span class="cn">NULL</span>, by_reference <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">load_file</span><span class="op">(</span></span>
+<span>  <span class="va">path</span>,</span>
+<span>  <span class="va">file</span>,</span>
+<span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  where <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep_var_order <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  by_reference <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">load_file_multi</span><span class="op">(</span></span>
 <span>  <span class="va">file_list</span>,</span>
 <span>  keep_list <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stack_files <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  keep_var_order <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  by_reference <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -147,6 +156,12 @@ overwrites existing files.</p></dd>
 <dd><p>Can be a single variable name, a vector or a list of vectors containing
 the variables to keep per file. If there are fewer list entries than files to load, the
 last list element will be used repeatedly.</p></dd>
+
+
+<dt id="arg-keep-var-order">keep_var_order<a class="anchor" aria-label="anchor" href="#arg-keep-var-order"></a></dt>
+<dd><p>FALSE by default. If TRUE, keeps the variables in order of
+appearance and ignores the order provided in the keep parameter. If FALSE orders
+the variables in the keep order.</p></dd>
 
 
 <dt id="arg-by-reference">by_reference<a class="anchor" aria-label="anchor" href="#arg-by-reference"></a></dt>
