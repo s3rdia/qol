@@ -32,6 +32,7 @@ Last CRAN release was on 16.07.2026.
 * `load_file()`, `load_file_multi()`: New `keep_var_order` parameter enables to keep the original stored variable order, when using keep variables, instead of sorting them in provided order.
 * `load_file()`: `where` now works with old and renamed variable names. Additionally the parameter can now handle the new writing style with conditions as characters introduced by `ifelse_multi()`.
 * `save_file()`: When passing a named vector or list into the `keep` parameter, the original variables will directly be renamed.
+* `summarise_plus()`, `any_table()`, `frequencies()`, `crosstabs()`: The `print_miss` parameter now also has an effect when not using formats.
 
 ### Changed functionality
 

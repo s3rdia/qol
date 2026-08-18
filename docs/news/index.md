@@ -110,6 +110,12 @@
 - [`save_file()`](https://s3rdia.github.io/qol/reference/save_load.md):
   When passing a named vector or list into the `keep` parameter, the
   original variables will directly be renamed. (14.08.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  The `print_miss` parameter now also has an effect when not using
+  formats. (17.08.2026)
 
 #### Changed functionality
 

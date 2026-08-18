@@ -756,9 +756,9 @@ age. <- discrete_format(
 
 format_df <- dummy_df |>
     if.(sex == 1 & (age < 25 | age >= 55)) |>
-    summarise_plus(class   = c(year, sex, age),
-                   values  = weight,
-                   formats = list(sex = sex., age = age.),
+    summarise_plus(class      = c(year, sex, age),
+                   values     = weight,
+                   formats    = list(sex = sex., age = age.),
                    print_miss = TRUE)
 
 expect_true("Female" %in% format_df[["sex"]], info = "Output missing categories in summarise_plus with deepest nesting")
@@ -778,14 +778,24 @@ age. <- discrete_format(
 
 format_df <- dummy_df |>
     if.(sex == 1 & (age < 25 | age >= 55)) |>
-    summarise_plus(class   = c(year, sex, age),
-                   values  = weight,
-                   formats = list(sex = sex., age = age.),
-                   nesting = "all",
+    summarise_plus(class      = c(year, sex, age),
+                   values     = weight,
+                   formats    = list(sex = sex., age = age.),
+                   nesting    = "all",
                    print_miss = TRUE)
 
 expect_true("Female" %in% format_df[["sex"]], info = "Output missing categories in summarise_plus with all combnations")
 expect_true("25 to under 55" %in% format_df[["age"]], info = "Output missing categories in summarise_plus with all combnations")
+
+
+# Output missing categories in summarise_plus also works without formats
+missing_df <- dummy_df |>
+    if.(sex == 1, education = "low") |>
+    summarise_plus(class      = c(sex, education),
+                   values     = weight,
+                   print_miss = TRUE)
+
+expect_true(all(c("middle", "high") %in% missing_df[sex == 1, education]), info = "Output missing categories in summarise_plus also works without formats")
 
 
 # Use the 'other' format keyword with summarise_plus
