@@ -479,7 +479,7 @@ display_themes <- function(){
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "age",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.),
 #'                     visuals        = graphic_visuals(

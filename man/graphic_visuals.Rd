@@ -286,14 +286,14 @@ custom_visuals <- graphic_visuals(title_font_color = "#00FF00",
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     visuals        = custom_visuals)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     visuals        = graphic_visuals(title_font_color = "#00FF00",
                                                      line_markers     = FALSE))
 
@@ -304,7 +304,7 @@ set_graphic_options(title_font_color = "#00FF00",
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 
 }
 \seealso{

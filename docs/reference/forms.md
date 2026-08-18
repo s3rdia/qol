@@ -69,7 +69,7 @@ my_data |>
      design_graphic(axes_variables = "age",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex., age = age.),
                     add_forms      = list(add_line(c(2, 15), c(5, 5)),
                                           add_line(c(5, 10), c(1, 8), "#FF00FF", "dashed", 3)))

@@ -108,14 +108,14 @@ custom_output <- graphic_output(save_path = "C:/MyFolder/",
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     output         = custom_output)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     output         = graphic_output(save_path = "C:/MyFolder/",
                                                     file      = "MyGraphic.png"))
 
@@ -126,5 +126,5 @@ set_graphic_options(save_path = "C:/MyFolder/",
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 ```

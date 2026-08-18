@@ -9,6 +9,7 @@ All parameters can also be set globally via
 
 ``` r
 graphic_axes(
+  primary_axes_visible = TRUE,
   primary_axes_max = "auto",
   primary_axes_min = "auto",
   primary_axes_steps = 5,
@@ -23,6 +24,7 @@ graphic_axes(
   primary_values_decimal_mark = ",",
   primary_values_prefix = "",
   primary_values_suffix = "",
+  secondary_axes_visible = TRUE,
   secondary_axes_max = "auto",
   secondary_axes_min = "auto",
   secondary_axes_steps = 5,
@@ -42,6 +44,10 @@ graphic_axes(
 ```
 
 ## Arguments
+
+- primary_axes_visible:
+
+  TRUE by default. Whether to display the primary axes or not.
 
 - primary_axes_max:
 
@@ -104,6 +110,10 @@ graphic_axes(
 - primary_values_suffix:
 
   What to put after the values plotted on the primary axes have.
+
+- secondary_axes_visible:
+
+  TRUE by default. Whether to display the primary axes or not.
 
 - secondary_axes_max:
 
@@ -219,14 +229,14 @@ custom_axes <- graphic_axes(primary_axes_max      = 100,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     axes           = custom_axes)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     axes           = graphic_axes(primary_axes_max      = 100,
                                                   primary_axes_decimals = 1))
 
@@ -237,5 +247,5 @@ set_graphic_options(primary_axes_max      = 100,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 ```

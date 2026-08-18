@@ -151,14 +151,14 @@
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     visuals        = custom_visuals)
 #'
 #' # Or direct
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     visuals        = graphic_visuals(title_font_color = "#00FF00",
 #'                                                      line_markers     = FALSE))
 #'
@@ -169,7 +169,7 @@
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars)
+#'                     diagram        = dg_vertical_bars)
 #'
 #' @rdname graphic_visuals
 #'
@@ -246,7 +246,9 @@ graphic_visuals <- function(font                        = "Arial",
                             segment_hover_opacity       = 0.85,
                             group_hover_color           = "#6495ED",
                             group_hover_opacity         = 0.25){
-    as.list(environment())
+    parameters <- as.list(environment())
+
+    parameters[order(names(parameters))]
 }
 
 ###############################################################################
@@ -335,14 +337,14 @@ graphic_visuals <- function(font                        = "Arial",
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     axes           = custom_axes)
 #'
 #' # Or direct
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     axes           = graphic_axes(primary_axes_max      = 100,
 #'                                                   primary_axes_decimals = 1))
 #'
@@ -353,7 +355,7 @@ graphic_visuals <- function(font                        = "Arial",
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars)
+#'                     diagram        = dg_vertical_bars)
 #'
 #' @rdname graphic_axes
 #'
@@ -389,7 +391,9 @@ graphic_axes <- function(primary_axes_visible          = TRUE,
                          secondary_values_prefix       = "",
                          secondary_values_suffix       = "",
                          variable_axes_interval        = 1){
-    as.list(environment())
+    parameters <- as.list(environment())
+
+    parameters[order(names(parameters))]
 }
 
 ###############################################################################
@@ -472,14 +476,14 @@ graphic_axes <- function(primary_axes_visible          = TRUE,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     dimensions     = custom_dimensions)
 #'
 #' # Or direct
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     dimensions     = graphic_dimensions(graphic_width  = 10,
 #'                                                         graphic_height = 10))
 #'
@@ -490,7 +494,7 @@ graphic_axes <- function(primary_axes_visible          = TRUE,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars)
+#'                     diagram        = dg_vertical_bars)
 #'
 #' @rdname graphic_dimensions
 #'
@@ -545,7 +549,9 @@ graphic_dimensions <- function(graphic_width                   = 16,
         diagram_start_top <- margins
     }
 
-    as.list(environment())
+    parameters <- as.list(environment())
+
+    parameters[order(names(parameters))]
 }
 
 ###############################################################################
@@ -612,14 +618,14 @@ graphic_dimensions <- function(graphic_width                   = 16,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     output         = custom_output)
 #'
 #' # Or direct
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     output         = graphic_output(save_path = "C:/MyFolder/",
 #'                                                     file      = "MyGraphic.png"))
 #'
@@ -630,7 +636,7 @@ graphic_dimensions <- function(graphic_width                   = 16,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars)
+#'                     diagram        = dg_vertical_bars)
 #'
 #' @rdname graphic_output
 #'
@@ -691,6 +697,11 @@ graphic_output <- function(save_path    = NULL,
 #' positions look like in the static version.
 #' @param svg_line_height_adjust Text line height in interactive SVG graphics is bigger and needs
 #' to be turned down.
+#' @param default_stack_width The stack width is controlled via the space_between_bars parameter
+#' inside [graphic_dimensions()]. Since this value defaults to 0, it would completely collapse
+#' the stacks. There this parameter jumps into place and overrides the default.
+#' @param stacked_value_vjust Vertical adjustment of the values inside vertical stacked charts.
+#' @param segment_line_length_stacked The length of the segment lines in stacked charts.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -721,14 +732,14 @@ graphic_output <- function(save_path    = NULL,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     fine_tuning    = custom_fine_tuning)
 #'
 #' # Or direct
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     fine_tuning    = graphic_fine_tuning(values_vjust_positive = 2.5,
 #'                                                          tick_length           = 0.05))
 #'
@@ -739,36 +750,41 @@ graphic_output <- function(save_path    = NULL,
 #' my_data |>
 #'      design_graphic(axes_variables = "sex",
 #'                     segments       = "education",
-#'                     diagram        = dg_vbars)
+#'                     diagram        = dg_vertical_bars)
 #'
 #' @rdname graphic_fine_tuning
 #'
 #' @export
-graphic_fine_tuning <- function(diagram_margin             = 0.01,
-                                values_vjust_positive      = 1.7,
-                                values_vjust_negative      = -0.7,
-                                values_vjust_90_positive   = 1.2,
-                                values_vjust_90_negative   = -0.2,
-                                value_overlap_factor       = 1.35,
-                                shrink_segment_width       = 0.55,
-                                values_hjust               = 0.5,
-                                values_hjust_90            = 0.35,
-                                values_hjust_90_plus       = 0.05,
-                                values_zero_line_offset    = 0.2,
-                                values_below_axes_just     = 1.5,
-                                values_below_axes_90_just  = 1.4,
-                                tick_length                = 0.02,
-                                value_axes_margin          = 0.02,
-                                y_axes_scaling             = 1.1,
-                                swap_direction_threshold   = 0.75,
-                                segment_line_offset        = 0.3,
-                                segment_line_treshhold     = 0.95,
-                                segment_label_hjust        = 0.05,
-                                max_segment_label_shift    = 0.25,
-                                cm_to_inch_factor          = 2.54,
-                                svg_anchor_adjust          = 0.6,
-                                svg_line_height_adjust     = 0.65){
-    as.list(environment())
+graphic_fine_tuning <- function(diagram_margin              = 0.01,
+                                values_vjust_positive       = 1.7,
+                                values_vjust_negative       = -0.7,
+                                values_vjust_90_positive    = 1.2,
+                                values_vjust_90_negative    = -0.2,
+                                value_overlap_factor        = 1.35,
+                                shrink_segment_width        = 0.55,
+                                values_hjust                = 0.5,
+                                values_hjust_90             = 0.35,
+                                values_hjust_90_plus        = 0.05,
+                                values_zero_line_offset     = 0.2,
+                                values_below_axes_just      = 1.5,
+                                values_below_axes_90_just   = 1.4,
+                                tick_length                 = 0.02,
+                                value_axes_margin           = 0.02,
+                                y_axes_scaling              = 1.1,
+                                swap_direction_threshold    = 0.75,
+                                segment_line_offset         = 0.3,
+                                segment_line_treshhold      = 0.95,
+                                segment_label_hjust         = 0.05,
+                                max_segment_label_shift     = 0.25,
+                                cm_to_inch_factor           = 2.54,
+                                svg_anchor_adjust           = 0.6,
+                                svg_line_height_adjust      = 0.65,
+                                default_stack_width         = 35,
+                                stacked_value_vjust         = 0.4,
+                                segment_line_length_stacked = 0.05){
+    parameters <- as.list(environment())
+
+    parameters[order(names(parameters))]
 }
 
 ###############################################################################

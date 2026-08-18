@@ -56,7 +56,7 @@
 #'      design_graphic(axes_variables = "age",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex., age = age.),
 #'                     add_texts      = list(add_textbox("Hello",  3.5, 3),
 #'                                           add_textbox("World!", 6,   5),
@@ -587,7 +587,7 @@ get_text_height <- function(text,
 #'      design_graphic(axes_variables = "age",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex., age = age.),
 #'                     add_forms      = list(add_line(c(2, 15), c(5, 5)),
 #'                                           add_line(c(5, 10), c(1, 8), "#FF00FF", "dashed", 3)))
@@ -644,6 +644,7 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
     visuals     <- arguments[["visuals"]]
     dimensions  <- arguments[["dimensions"]]
     fine_tuning <- arguments[["fine_tuning"]]
+    stacked     <- arguments[["stacked"]]
 
     # Set up a new viewport for the whole diagram area to be able to safely work
     # in this area.
@@ -702,12 +703,42 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
                               line_height = dimensions[["line_height"]],
                               name        = "main_diagram")
 
+    # Measure whether the value heights fit the segment heights
+    diagram_info <- get_vertical_value_fit(diagram_info, dimensions, visuals, fine_tuning, stacked)
+
+    invisible(diagram_info[order(names(diagram_info))])
+}
+
+
+#' @description
+#' [back_to_the_root()]: Pops out of all viewports.
+#'
+#' @param to_main TRUE by default. Pops out of all viewports but the main canvas.
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
+#' @param stacked FALSE by default. If TRUE, the segments are stacked instead of grouped.
+#' Only possible for certain diagram types.
+#'
+#' @return
+#' Returns the grid::current.vpPath.
+#'
+#' @rdname viewport
+#'
+#' @export
+get_vertical_value_fit <- function(diagram_info, dimensions, visuals, fine_tuning, stacked){
     # Measure whether the value heights fit the segment heights. This is done after
     # setting up the inner viewport to get the dimensions right. A tiny bit is added
     # to the padding, so that the values are shifted outside before they reach the axes.
     diagram_info[["value_widths"]]  <- get_text_width(diagram_info[["formatted_values"]], "value", dimensions, visuals)
-    diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
-                                                           "native", valueOnly =TRUE)
+
+    if (!stacked){
+        diagram_info[["value_padding"]] <- grid::convertHeight(grid::unit(fine_tuning[["values_vjust_positive"]] + 0.1, "mm"),
+                                                               "native", valueOnly =TRUE)
+    }
+    else{
+        diagram_info[["value_padding"]] <- 0
+    }
 
     diagram_info[["values_fit_vertical"]] <- TRUE
 
@@ -736,9 +767,21 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
     values_fit_inside <- diagram_info[["values_fit_vertical"]]
 
     # Set font color according to whether values are drawn inside or outside the segments
-    font_color                     <- character(diagram_info[["number_of_elements"]])
-    font_color[values_fit_inside]  <- diagram_info[["colors_inside"]][values_fit_inside]
-    font_color[!values_fit_inside] <- diagram_info[["colors_outside"]][!values_fit_inside]
+    font_color <- character(diagram_info[["number_of_elements"]])
+
+    # In grouped charts the font color will be changed if values get displayed outside
+    if (!stacked){
+        font_color[values_fit_inside]  <- diagram_info[["colors_inside"]][values_fit_inside]
+        font_color[!values_fit_inside] <- diagram_info[["colors_outside"]][!values_fit_inside]
+    }
+    # In stacked charts values are removed, when they are too small
+    else if (stacked){
+        font_color <- diagram_info[["colors_inside"]]
+
+        if (visuals[["remove_small_values"]]){
+            diagram_info[["formatted_values"]][!values_fit_inside] <- ""
+        }
+    }
 
     # Reverse font colors, if option is set accordingly.
     if (visuals[["reverse_colors"]]){
@@ -747,7 +790,7 @@ setup_nested_diagram_viewport <- function(arguments, diagram_info){
 
     diagram_info[["font_color"]] <- font_color
 
-    invisible(diagram_info[order(names(diagram_info))])
+    diagram_info
 }
 
 
@@ -979,12 +1022,15 @@ get_diagram_dimensions <- function(arguments){
     visuals      <- arguments[["visuals"]]
     fine_tuning  <- arguments[["fine_tuning"]]
     stat_labels  <- arguments[["stat_labels"]]
+    stacked      <- arguments[["stacked"]]
 
     # TODO: THE VALUES THING WILL BREAK AS SOON AS A SECOND VALUE AXES IS IMPLEMENTED
     # Get actual values and statistic types
-    value_types <- sub(".*_", "", value_vars)
-    values      <- graphic_tab[[value_vars]]
-    value_vars  <- sub("_[^_]*$", "", value_vars)
+    value_types   <- sub(".*_", "", value_vars)
+    values        <- graphic_tab[[value_vars]]
+    original_vars <- value_vars
+    value_vars    <- sub("_[^_]*$", "", value_vars)
+    value_vars    <- sub("_pct$",   "", value_vars)
 
     # Get the variable labels
     value_labels <- value_vars
@@ -1029,6 +1075,12 @@ get_diagram_dimensions <- function(arguments){
     group_pos     <- group_width * (seq_len(number_of_groups) - 1)
     segment_width <- (group_width - (margin * 2)) / number_of_segments
 
+    # In stacked charts the base width is the whole group width, since there is
+    # only one stack per group.
+    if (stacked){
+        segment_width <- group_width - (margin * 2)
+    }
+
     individual_group_widths <- vapply(individual_number_of_groups, function(no_of_groups){
         1 / no_of_groups
     }, numeric(1))
@@ -1060,13 +1112,29 @@ get_diagram_dimensions <- function(arguments){
     # At last calculate the exact segment positions within each group
     segment_pos <- group_offset + (group_ids * group_width) + (segment_ids * overlap_segment_width)
 
+    # Calculate group centers
+    group_centers <- (seq_len(number_of_groups) - 0.5) / number_of_groups
+    group_centers <- group_centers[group_ids + 1]
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # y axes calculations
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Get extreme values for the axes measuring.
+    if (!stacked){
+        extreme_values <- c(collapse::fmin(values), collapse::fmax(values))
+    }
+    # For stacked charts the extreme values are the sum of all values by axes grouping
+    else{
+        axes_group <- collapse::GRP(graphic_tab[axes_vars])
+
+        extreme_values <- c(collapse::fsum(data.table::fifelse(values < 0, values, 0), g = axes_group),
+                            collapse::fsum(data.table::fifelse(values > 0, values, 0), g = axes_group))
+    }
+
     # Get the values and tick positions for the y axes, which is basically an even
     # distribution.
-    primary_y_values   <- get_y_axes_values(values, axes, fine_tuning)
+    primary_y_values   <- get_y_axes_values(extreme_values, axes, fine_tuning)
     #secondary_y_values <- get_y_axes_values(values, axes, fine_tuning, "secondary")
 
     primary_y_tick_width <- 1 / (length(primary_y_values) - 1)
@@ -1095,19 +1163,74 @@ get_diagram_dimensions <- function(arguments){
         zero_pos <- 1
     }
 
+    # Get stacked values and their segment heights. Positive and negative values
+    # are stacked individually, to be able to display the whole stack in both
+    # directions.
+    stacked_values  <- list()
+    stacked_heights <- list()
+    stacked_centers <- list()
+    stacked_order   <- list()
+
+    # In case of multiple nested axes variables, a temporary concatenated variable
+    # is created for the loop.
+    if (!"axes" %in% names(graphic_tab)){
+        graphic_tab[["axes"]] <- do.call(paste, c(graphic_tab[axes_vars], sep = "_"))
+    }
+
+    for (i in seq_along(unique_groups)){
+        single_group <- unique_groups[[i]]
+
+        # Split up positive and negative values to have the stacks side by side
+        # for both directions.
+        values_per_group <- graphic_tab[[original_vars]][graphic_tab[["axes"]] == single_group]
+
+        positive_values <- values_per_group[values_per_group >= 0]
+        negative_values <- values_per_group[values_per_group <  0]
+
+        # Set up list entries. The first list contains the positions of the stacked
+        # values, meaning the top positions. The second list contains the values,
+        # split according to the stack. The actual values are the segment heights.
+        group_name <- as.character(single_group)
+
+        stacked_values[[group_name]]  <- c(collapse::fcumsum(positive_values),
+                                           collapse::fcumsum(negative_values))
+        stacked_heights[[group_name]] <- c(positive_values, negative_values)
+        stacked_centers[[group_name]] <- stacked_values[[group_name]] - (stacked_heights[[group_name]] / 2)
+
+        # Get vector order
+        stacked_order[[group_name]] <- c((seq_len(number_of_segments) + (i - 1) * number_of_segments)[values_per_group >= 0],
+                                         (seq_len(number_of_segments) + (i - 1) * number_of_segments)[values_per_group <  0])
+    }
+
+    stack_labels <- c()
+
+    if (stacked){
+        # Get back the values to format in the stack order
+        values <- unlist(stacked_heights)
+
+        # Get segment labels in the order of the last stack
+        stack_labels <- c(unique_segments[values_per_group >= 0], unique_segments[values_per_group <  0])
+    }
+
     # Calculate the actual drawing heights of the segments, which is needed in case
     # of the bottom line of the viewport not being the zero line of the axes. Or if
     # the zero line starts at a higher value than zero.
     if (primary_y_min <= 0){
+        # Shortened, all negative axes
         if (primary_y_max < 0){
             actual_drawing_height <- values - primary_y_max
+            actual_stack_heights  <- lapply(stacked_heights, function(values_per_group){ values_per_group - primary_y_max })
         }
+        # Axes with zero line = 0
         else{
             actual_drawing_height <- values
+            actual_stack_heights  <- stacked_heights
         }
     }
+    # Shortened, all positive axes
     else{
         actual_drawing_height <- values - primary_y_min
+        actual_stack_heights  <- lapply(stacked_heights, function(values_per_group){ values_per_group - primary_y_min })
     }
 
     # Format values according to options
@@ -1350,10 +1473,24 @@ get_diagram_dimensions <- function(arguments){
 
     border_color <- rep(border_color, length.out = number_of_elements)
 
+    # Reorder colors based on the reordered stacks. This only has an effect, if
+    # positive and negative values are mixed, because the segments then can get
+    # out of order.
+    if (stacked){
+        flat_stacked_order <- unlist(stacked_order)
+
+        colors_to_use  <- colors_to_use[flat_stacked_order]
+        colors_inside  <- colors_inside[flat_stacked_order]
+        colors_outside <- colors_outside[flat_stacked_order]
+        border_color   <- border_color[flat_stacked_order]
+    }
+
     # Reverse colors if option is set accordingly.
     if (visuals[["reverse_colors"]]){
-        colors_to_use <- rev(colors_to_use)
-        border_color  <- rev(border_color)
+        colors_to_use  <- rev(colors_to_use)
+        colors_inside  <- rev(colors_inside)
+        colors_outside <- rev(colors_outside)
+        border_color   <- rev(border_color)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1380,6 +1517,8 @@ get_diagram_dimensions <- function(arguments){
          group_ids                   = group_ids,
          segment_ids                 = segment_ids,
          segment_pos                 = segment_pos,
+         group_centers               = group_centers,
+         extreme_values              = extreme_values,
          primary_y_values            = primary_y_values,
          primary_y_tick_width        = primary_y_tick_width,
          primary_y_tick_pos          = primary_y_tick_pos,
@@ -1387,7 +1526,13 @@ get_diagram_dimensions <- function(arguments){
          primary_y_min               = primary_y_min,
          primary_y_distance          = primary_y_distance,
          zero_pos                    = zero_pos,
+         stacked_values              = stacked_values,
+         stacked_heights             = stacked_heights,
+         stacked_centers             = stacked_centers,
+         stacked_order               = stacked_order,
+         stack_labels                = stack_labels,
          actual_drawing_height       = actual_drawing_height,
+         actual_stack_heights        = actual_stack_heights,
          primary_y_tick_values       = primary_y_tick_values,
          primary_y_axes_width        = primary_y_axes_width,
          values_inner_vjust          = values_inner_vjust,
@@ -1972,7 +2117,13 @@ get_y_axes_values <- function(values,
     # value doesn't go up to the end of the axes. Leave a little room to breathe.
     else{
         min_value <- collapse::fmin(c(0, values))
-        min_value <- min_value * fine_tuning[["y_axes_scaling"]]
+
+        # Only add to the max value in case the scaling is not seemingly a percentage
+        # scaling from 0 to 100. This lets especially stacked charts adding up to
+        # 100 look as expected.
+        if (!(as.integer(min_value) == -100 && max_value %in% c("auto", 0))){
+            min_value <- min_value * fine_tuning[["y_axes_scaling"]]
+        }
     }
 
     # Replace auto generated value by statically set global values
@@ -1983,7 +2134,13 @@ get_y_axes_values <- function(values,
     # value doesn't go up to the end of the axes. Leave a little room to breathe.
     else{
         max_value <- collapse::fmax(c(0, values))
-        max_value <- max_value * fine_tuning[["y_axes_scaling"]]
+
+        # Only add to the max value in case the scaling is not seemingly a percentage
+        # scaling from 0 to 100. This lets especially stacked charts adding up to
+        # 100 look as expected.
+        if (!(min_value == 0 && as.integer(max_value) == 100)){
+            max_value <- max_value * fine_tuning[["y_axes_scaling"]]
+        }
     }
 
     # In case minimum value is greater than the maximum value, just swap them
@@ -2053,26 +2210,40 @@ even_prettier <- function(min_value,
         return(seq(-negative_steps * pretty_step, positive_steps * pretty_step, by = pretty_step))
     }
 
-    # In case there are only positive or negative values
-    # Calculate possible candidate steps
+    # Calculate pretty step
     needed_step_size <- (max_value - min_value) / number_of_steps
-    candidates       <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
 
-    # Calculate possible candidate boundaries
-    lowers <- floor(min_value   / candidates) * candidates
-    uppers <- ceiling(max_value / candidates) * candidates
+    if (!(min_value == 0 && abs(as.integer(max_value)) == 100)){
+        # In case there are only positive or negative values
+        # Calculate possible candidate steps
+        candidates <- 10^floor(log10(abs(needed_step_size))) * standard_intervals
 
-    # Calculate step sizes and the corresponding score to determine which step size
-    # is nearest to the provided number of steps.
-    step_sizes <- (uppers - lowers) / candidates
-    scores     <- abs(step_sizes - number_of_steps)
+        # Calculate possible candidate boundaries
+        lowers <- floor(min_value   / candidates) * candidates
+        uppers <- ceiling(max_value / candidates) * candidates
 
-    # Select the step with the smallest score which is used as the equal length step
-    score_id    <- which.min(scores)
-    pretty_step <- candidates[which.min(scores)]
+        # Calculate step sizes and the corresponding score to determine which step size
+        # is nearest to the provided number of steps.
+        step_sizes <- (uppers - lowers) / candidates
+        scores     <- abs(step_sizes - number_of_steps)
 
-    # Return the pretty sequence
-    seq(lowers[score_id], uppers[score_id], by = pretty_step)
+        # Select the step with the smallest score which is used as the equal length step
+        score_id    <- which.min(scores)
+        pretty_step <- candidates[which.min(scores)]
+
+        # Return the pretty sequence
+        seq(lowers[score_id], uppers[score_id], by = pretty_step)
+    }
+    # Shortcut in case of 0 to 100 scaling for percentages
+    else{
+        # If a not so pretty step for this scaling was chosen, set a standard value
+        if (!number_of_steps %in% c(2, 4, 5, 10)){
+            needed_step_size <- 20
+        }
+
+        # Return the pretty sequence
+        seq(min_value, max_value, by = needed_step_size)
+    }
 }
 
 
@@ -2328,7 +2499,83 @@ direct_vertical_labels <- function(diagram_info,
                                      y     = grid::unit(segment_end_y + offset_y, "native"),
                                      hjust = horizontal_alignment,
                                      vjust = vertical_alignment,
-                                     rot = rotate,
+                                     rot   = rotate,
+                                     name  = "segment_labels",
+                                     gp    = grid::gpar(col        = visuals[["label_font_color"]],
+                                                        fontfamily = visuals[["font"]],
+                                                        fontsize   = dimensions[["label_font_size"]],
+                                                        fontface   = visuals[["label_font_face"]],
+                                                        lineheight = dimensions[["line_height"]]))
+
+    # Return whole label object
+    grid::gList(lines, segment_labels)
+}
+
+
+#' @description
+#' [direct_horizontal_stacked_labels()]: Set up segment labels which are connected directly
+#' to stacked segments by a line.
+#'
+#' @return
+#' [direct_horizontal_stacked_labels()]: Returns a grid::gList.
+#'
+#' @rdname segment_labels
+#'
+#' @export
+direct_horizontal_stacked_labels <- function(diagram_info,
+                                             arguments){
+    visuals     <- arguments[["visuals"]]
+    dimensions  <- arguments[["dimensions"]]
+    fine_tuning <- arguments[["fine_tuning"]]
+
+    if (tolower(visuals[["segment_label_type"]]) != "lines"){
+        return(grid::nullGrob(name  = "segment_labels"))
+    }
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Set up segment lines
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    stacked_centers_y    <- diagram_info[["stacked_centers"]]
+    last_stack_centers_y <- unlist(stacked_centers_y[length(stacked_centers_y)])
+
+    number_of_labels <- length(last_stack_centers_y)
+
+    # Put together the vector containing start and end points for the lines.
+    # In addition double up the x segment centers to match the length of the y vector.
+    line_start_x <- rep(1,                                                number_of_labels)
+    line_end_x   <- rep(1 + fine_tuning[["segment_line_length_stacked"]], number_of_labels)
+
+    line_vector   <- as.vector(rbind(line_start_x, line_end_x))
+    center_vector <- rep(last_stack_centers_y, each = 2)
+
+    # To be able to draw each line as a separate line, the points inside the line_vector
+    # need to receive an id. Meaning each point pair gets the same id to be identified
+    # as two points of the same line by the grob function.
+    line_ids <- rep(seq_along(last_stack_centers_y), each = 2)
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate graphical objects
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    rotate <- rep(0, number_of_labels)
+
+    # Generate the lines
+    lines <- grid::polylineGrob(x    = grid::unit(line_vector, "native"),
+                                y    = grid::unit(center_vector, "native"),
+                                id   = line_ids,
+                                name = "segment_lines",
+                                gp   = grid::gpar(col = visuals[["segment_line_color"]],
+                                                  lty = visuals[["segment_line_type"]],
+                                                  lwd = dimensions[["segment_line_thickness"]]))
+
+    # Generate the labels beside the lineslines
+    segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
+                                     x     = grid::unit(1 + fine_tuning[["segment_line_length_stacked"]] + (fine_tuning[["diagram_margin"]] * 2), "native"),
+                                     y     = grid::unit(last_stack_centers_y, "native"),
+                                     hjust = 0,
+                                     vjust = fine_tuning[["stacked_value_vjust"]],
+                                     rot   = rotate,
                                      name  = "segment_labels",
                                      gp    = grid::gpar(col        = visuals[["label_font_color"]],
                                                         fontfamily = visuals[["font"]],

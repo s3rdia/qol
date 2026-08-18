@@ -711,7 +711,7 @@ summarise_plus <- function(data_frame,
                 dropp(".temp_weight")
         }
         # If formats are applied and all format categories should be output
-        else if (print_miss && !is.null(formats)){
+        else if (print_miss){
             result_df <- result_df |> print_missing(formats, group_vars)
         }
 
@@ -1056,7 +1056,7 @@ summarise_plus <- function(data_frame,
                     group_df[["DEPTH"]]   <- as.integer(i)
 
                     # If formats are applied and all format categories schould be output
-                    if (print_miss && !is.null(formats)){
+                    if (print_miss){
                         group_df <- group_df |> print_missing(formats, combination)
                     }
 
@@ -1429,13 +1429,13 @@ print_missing <- function(data_frame,
     format_names <- names(formats)
     format_vars  <- group_vars[group_vars %in% format_names]
 
-    if (length(format_vars) == 0){
-        return(data_frame)
-    }
-
     # Determine which variables are actually formatted in the data frame and which
     # have to be added unformatted.
     no_format_vars <- group_vars[!group_vars %in% format_names]
+
+    if (length(format_vars) == 0 && length(no_format_vars) == 0){
+        return(data_frame)
+    }
 
     # Make sure only variables stay in the format list which are part of the group variables.
     # There is a missmatch, when generating all combinations. Some combinations have lesser
@@ -1471,7 +1471,7 @@ print_missing <- function(data_frame,
     # categories.
     format_df <- suppressMessages(expand_formats(format_list)) |>
         data.table::setcolorder(group_vars) |>
-        data.table::setorderv(group_vars)
+        data.table::setorderv(group_vars, na.last = TRUE)
 
     # Generate pseudo variable to join
     format_df[[".pseudo_join"]] <- 1

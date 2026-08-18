@@ -11,18 +11,16 @@
   can take in custom diagram functions. (21.02.2026)
 - Graphic options:
   - [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),
-    [`modify_graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.html),
+    `modify_graphic_visuals()`,
     [`graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.md),
-    [`modify_graphic_axes()`](https://s3rdia.github.io/qol/reference/graphic_axes.html),
+    `modify_graphic_axes()`,
     [`graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.md),
-    [`modify_graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.html),
+    `modify_graphic_dimensions()`,
     [`graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.md),
-    [`modify_graphic_output()`](https://s3rdia.github.io/qol/reference/graphic_output.html).
-    (21.02.2026)
+    `modify_graphic_output()`. (21.02.2026)
   - [`graphic_fine_tuning ()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.md),
-    [`modify_graphic_fine_tuning()`](https://s3rdia.github.io/qol/reference/graphic_fine_tuning.html):
-    Made all fixed values available as new fine tuning parameters.
-    (16.03.2026)
+    `modify_graphic_fine_tuning()`: Made all fixed values available as
+    new fine tuning parameters. (16.03.2026)
 - Global graphic options:
   [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),
   `set_color_theme()`,
@@ -49,8 +47,7 @@
     (21.02.2026)
   - Diagram:
     [`get_diagram_dimensions()`](https://s3rdia.github.io/qol/reference/diagram.md),
-    [`vbar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md).
-    (21.02.2026)
+    `vbar_grob()`. (21.02.2026)
   - Axes: `get_value_axes_width()`, `get_variable_axes_dimension()`,
     `get_group_tick_positions_x()`, `get_y_axes_values()`,
     [`setup_y_axes()`](https://s3rdia.github.io/qol/reference/axes.md),
@@ -72,6 +69,8 @@
   example to the README. (21.02.2026)
 
 ## qol 1.3.3 - DEVELOPMENT
+
+CRAN release: 2026-07-16
 
 #### New functions
 

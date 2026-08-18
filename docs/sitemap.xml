@@ -24,6 +24,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/convert_variables.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/crosstabs.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/design_graphic.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/dg_vbars.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/diagram.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/do_if.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/drop_type_vars.html</loc></url>
@@ -95,6 +96,7 @@
 <url><loc>https://s3rdia.github.io/qol/reference/textboxes.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/transpose_plus.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/vars_between.html</loc></url>
+<url><loc>https://s3rdia.github.io/qol/reference/vbar_grob.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/viewport.html</loc></url>
 <url><loc>https://s3rdia.github.io/qol/reference/where..html</loc></url>
 </urlset>

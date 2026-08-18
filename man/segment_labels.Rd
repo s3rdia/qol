@@ -3,10 +3,13 @@
 \name{segment_labels}
 \alias{segment_labels}
 \alias{direct_vertical_labels}
+\alias{direct_horizontal_stacked_labels}
 \alias{setup_legend}
 \title{Generate Segment Labels And Legends}
 \usage{
 direct_vertical_labels(diagram_info, arguments)
+
+direct_horizontal_stacked_labels(diagram_info, arguments)
 
 setup_legend(diagram_info, visuals, dimensions)
 }
@@ -22,11 +25,16 @@ setup_legend(diagram_info, visuals, dimensions)
 \value{
 \code{\link[=direct_vertical_labels]{direct_vertical_labels()}}: Returns a grid::gList.
 
+\code{\link[=direct_horizontal_stacked_labels]{direct_horizontal_stacked_labels()}}: Returns a grid::gList.
+
 \code{\link[=setup_legend]{setup_legend()}}: Returns a grid::gList and adjusted diagram dimensions.
 }
 \description{
 \code{\link[=direct_vertical_labels]{direct_vertical_labels()}}: Set up segment labels which are connected directly
 to the segments by a line.
+
+\code{\link[=direct_horizontal_stacked_labels]{direct_horizontal_stacked_labels()}}: Set up segment labels which are connected directly
+to stacked segments by a line.
 
 \code{\link[=setup_legend]{setup_legend()}}: Set up a legend for the segment labels. The legend consists
 of a colored shape followed by th label of the individual segment. The legend

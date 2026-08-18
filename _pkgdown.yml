@@ -36,10 +36,11 @@ reference:
   - add_line
 - title: Main Diagram Types
   contents:
-  - dg_vbars
+  - dg_vertical_bars
 - title: Main Grob Generation
   contents:
-  - vbar_grob
+  - vertical_grouped_bar_grob
+  - vertical_stacked_bar_grob
 - title: Graphic Options
   contents:
   - graphic_visuals

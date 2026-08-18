@@ -6,12 +6,18 @@ They have to be used inside a custom diagram function, which builds the
 whole diagram and can be plugged into the "diagram" parameter of
 [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md).
 
-`vbar_grob()`: Set up the main segments for vertical bars.
+`vertical_grouped_bar_grob()`: Set up the main segments for vertical
+bars.
+
+`vertical_stacked_bar_grob()`: Set up the main segments for vertical
+bars.
 
 ## Usage
 
 ``` r
-vbar_grob(diagram_info, arguments)
+vertical_grouped_bar_grob(diagram_info, arguments)
+
+vertical_stacked_bar_grob(diagram_info, arguments)
 ```
 
 ## Arguments

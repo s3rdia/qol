@@ -50,7 +50,7 @@ Main graphic function:
 [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md)
 
 Main diagram types:
-[`dg_vbars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
+[`dg_vertical_bars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
 
 Graphic options:
 [`graphic_visuals()`](https://s3rdia.github.io/qol/reference/graphic_visuals.md),

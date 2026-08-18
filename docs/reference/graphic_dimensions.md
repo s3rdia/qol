@@ -213,14 +213,14 @@ custom_dimensions <- graphic_dimensions(graphic_width  = 10,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     dimensions     = custom_dimensions)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     dimensions     = graphic_dimensions(graphic_width  = 10,
                                                         graphic_height = 10))
 
@@ -231,5 +231,5 @@ set_graphic_options(graphic_width  = 10,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 ```

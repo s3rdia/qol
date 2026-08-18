@@ -19,7 +19,8 @@ design_graphic(
   footnotes = .qol_options[["footnotes"]],
   var_labels = .qol_options[["var_labels"]],
   stat_labels = .qol_options[["stat_labels"]],
-  diagram = dg_vbars,
+  diagram = dg_vertical_bars,
+  stacked = FALSE,
   visuals = .qol_options[["graphic_visuals"]],
   axes = .qol_options[["graphic_axes"]],
   dimensions = .qol_options[["graphic_dimensions"]],
@@ -91,7 +92,10 @@ which variable instead of the variable name.}
 which statistic instead of the statistic name.}
 
 \item{diagram}{Function that provides the generation of the main diagram area. Built in are:
-dg_vbars.}
+dg_vertical_bars.}
+
+\item{stacked}{FALSE by default. If TRUE, the segments are stacked instead of grouped.
+Only possible for certain diagram types.}
 
 \item{visuals}{Visual parameters set with \code{\link[=graphic_visuals]{graphic_visuals()}}.}
 
@@ -158,6 +162,13 @@ age. <- discrete_format(
     "18 to under 65" = 18:64,
     "65 and older"   = 65:100)
 
+age2. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 65" = 55:64,
+    "65 and older"   = 65:100)
+
 sex. <- discrete_format(
     "Male"   = 1,
     "Female" = 2)
@@ -172,7 +183,7 @@ my_data |>
      design_graphic(axes_variables = "age",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.))
 
@@ -181,7 +192,7 @@ my_data |>
      design_graphic(axes_variables = "age + education",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.))
 
@@ -190,7 +201,7 @@ my_data |>
      design_graphic(axes_variables = "age",
                     segments       = "sex + education",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.))
 
@@ -205,7 +216,7 @@ my_data |>
      design_graphic(axes_variables = "age + education",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.))
 
@@ -215,12 +226,22 @@ my_data |>
      design_graphic(axes_variables = "age + education",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.),
                     dimensions = graphic_dimensions(graphic_width  = 18,
                                                     graphic_height = 12,
                                                     margins        = 0.4))
+
+# To make a stacked diagram instead of a grouped one, use the "stacked" parameter
+my_data |>
+     design_graphic(axes_variables = "age",
+                    segments       = "sex",
+                    values         = weight,
+                    diagram        = dg_vertical_bars,
+                    stacked        = TRUE,
+                    formats        = list(sex = sex.,
+                                          age = age2.))
 
 }
 \seealso{

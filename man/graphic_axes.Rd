@@ -137,14 +137,14 @@ custom_axes <- graphic_axes(primary_axes_max      = 100,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     axes           = custom_axes)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     axes           = graphic_axes(primary_axes_max      = 100,
                                                   primary_axes_decimals = 1))
 
@@ -155,7 +155,7 @@ set_graphic_options(primary_axes_max      = 100,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 
 }
 \seealso{

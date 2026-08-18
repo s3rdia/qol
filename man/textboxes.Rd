@@ -117,7 +117,7 @@ my_data |>
      design_graphic(axes_variables = "age",
                     segments       = "sex",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex., age = age.),
                     add_texts      = list(add_textbox("Hello",  3.5, 3),
                                           add_textbox("World!", 6,   5),

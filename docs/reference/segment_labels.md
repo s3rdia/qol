@@ -3,6 +3,9 @@
 `direct_vertical_labels()`: Set up segment labels which are connected
 directly to the segments by a line.
 
+`direct_horizontal_stacked_labels()`: Set up segment labels which are
+connected directly to stacked segments by a line.
+
 `setup_legend()`: Set up a legend for the segment labels. The legend
 consists of a colored shape followed by th label of the individual
 segment. The legend is drawn in single or multi column layout.
@@ -11,6 +14,8 @@ segment. The legend is drawn in single or multi column layout.
 
 ``` r
 direct_vertical_labels(diagram_info, arguments)
+
+direct_horizontal_stacked_labels(diagram_info, arguments)
 
 setup_legend(diagram_info, visuals, dimensions)
 ```
@@ -40,5 +45,7 @@ setup_legend(diagram_info, visuals, dimensions)
 ## Value
 
 `direct_vertical_labels()`: Returns a grid::gList.
+
+`direct_horizontal_stacked_labels()`: Returns a grid::gList.
 
 `setup_legend()`: Returns a grid::gList and adjusted diagram dimensions.

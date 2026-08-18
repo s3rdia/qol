@@ -33,7 +33,10 @@ graphic_fine_tuning(
   max_segment_label_shift = 0.25,
   cm_to_inch_factor = 2.54,
   svg_anchor_adjust = 0.6,
-  svg_line_height_adjust = 0.65
+  svg_line_height_adjust = 0.65,
+  default_stack_width = 35,
+  stacked_value_vjust = 0.4,
+  segment_line_length_stacked = 0.05
 )
 ```
 
@@ -146,6 +149,23 @@ graphic_fine_tuning(
   Text line height in interactive SVG graphics is bigger and needs to be
   turned down.
 
+- default_stack_width:
+
+  The stack width is controlled via the space_between_bars parameter
+  inside
+  [`graphic_dimensions()`](https://s3rdia.github.io/qol/reference/graphic_dimensions.md).
+  Since this value defaults to 0, it would completely collapse the
+  stacks. There this parameter jumps into place and overrides the
+  default.
+
+- stacked_value_vjust:
+
+  Vertical adjustment of the values inside vertical stacked charts.
+
+- segment_line_length_stacked:
+
+  The length of the segment lines in stacked charts.
+
 ## Value
 
 Returns a list of named graphic options.
@@ -193,14 +213,14 @@ custom_fine_tuning <- graphic_fine_tuning(values_vjust_positive = 2.5,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     fine_tuning    = custom_fine_tuning)
 
 # Or direct
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     fine_tuning    = graphic_fine_tuning(values_vjust_positive = 2.5,
                                                          tick_length           = 0.05))
 
@@ -211,5 +231,5 @@ set_graphic_options(values_vjust_positive = 2.5,
 my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "education",
-                    diagram        = dg_vbars)
+                    diagram        = dg_vertical_bars)
 ```

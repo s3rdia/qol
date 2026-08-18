@@ -5,12 +5,12 @@ package. These functions don't work on their own and have to be plugged
 into the "diagram" parameter of
 [`design_graphic()`](https://s3rdia.github.io/qol/reference/design_graphic.md).
 
-`dg_vbars()`: Grouped vertical bars.
+`dg_vertical_bars()`: Grouped vertical bars.
 
 ## Usage
 
 ``` r
-dg_vbars(arguments, diagram_info)
+dg_vertical_bars(arguments, diagram_info)
 ```
 
 ## Arguments
@@ -48,11 +48,11 @@ sex. <- discrete_format(
     "Female" = 2)
 
 # Design grouped vertical bar chart
-qol_graphic <- my_data |>
+grouped_vbars <- my_data |>
      design_graphic(axes_variables = "sex",
                     segments       = "age",
                     values         = weight,
-                    diagram        = dg_vbars,
+                    diagram        = dg_vertical_bars,
                     formats        = list(sex = sex.,
                                           age = age.))
 ```

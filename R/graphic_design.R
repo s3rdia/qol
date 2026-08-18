@@ -54,7 +54,9 @@
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area. Built in are:
-#' dg_vbars.
+#' dg_vertical_bars.
+#' @param stacked FALSE by default. If TRUE, the segments are stacked instead of grouped.
+#' Only possible for certain diagram types.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -126,6 +128,13 @@
 #'     "18 to under 65" = 18:64,
 #'     "65 and older"   = 65:100)
 #'
+#' age2. <- discrete_format(
+#'     "under 18"       = 0:17,
+#'     "18 to under 25" = 18:24,
+#'     "25 to under 55" = 25:54,
+#'     "55 to under 65" = 55:64,
+#'     "65 and older"   = 65:100)
+#'
 #' sex. <- discrete_format(
 #'     "Male"   = 1,
 #'     "Female" = 2)
@@ -140,7 +149,7 @@
 #'      design_graphic(axes_variables = "age",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.))
 #'
@@ -149,7 +158,7 @@
 #'      design_graphic(axes_variables = "age + education",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.))
 #'
@@ -158,7 +167,7 @@
 #'      design_graphic(axes_variables = "age",
 #'                     segments       = "sex + education",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.))
 #'
@@ -173,7 +182,7 @@
 #'      design_graphic(axes_variables = "age + education",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.))
 #'
@@ -183,12 +192,22 @@
 #'      design_graphic(axes_variables = "age + education",
 #'                     segments       = "sex",
 #'                     values         = weight,
-#'                     diagram        = dg_vbars,
+#'                     diagram        = dg_vertical_bars,
 #'                     formats        = list(sex = sex.,
 #'                                           age = age.),
 #'                     dimensions = graphic_dimensions(graphic_width  = 18,
 #'                                                     graphic_height = 12,
 #'                                                     margins        = 0.4))
+#'
+#' # To make a stacked diagram instead of a grouped one, use the "stacked" parameter
+#' my_data |>
+#'      design_graphic(axes_variables = "age",
+#'                     segments       = "sex",
+#'                     values         = weight,
+#'                     diagram        = dg_vertical_bars,
+#'                     stacked        = TRUE,
+#'                     formats        = list(sex = sex.,
+#'                                           age = age2.))
 #'
 #' @export
 design_graphic <- function(data_frame,
@@ -205,7 +224,8 @@ design_graphic <- function(data_frame,
                            footnotes      = .qol_options[["footnotes"]],
                            var_labels     = .qol_options[["var_labels"]],
                            stat_labels    = .qol_options[["stat_labels"]],
-                           diagram        = dg_vbars,
+                           diagram        = dg_vertical_bars,
+                           stacked        = FALSE,
                            visuals        = .qol_options[["graphic_visuals"]],
                            axes           = .qol_options[["graphic_axes"]],
                            dimensions     = .qol_options[["graphic_dimensions"]],
@@ -446,7 +466,6 @@ design_graphic <- function(data_frame,
         statistics <- "mean"
         pct_value  <- ""
         weight     <- NULL
-        formats    <- list()
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -522,7 +541,7 @@ design_graphic <- function(data_frame,
         print_message("WARNING", "'[diagram_name]' is not a function. Vertical bars will be used instead.",
                       diagram_name = diagram_name)
 
-        diagram <- match.fun("dg_vbars")
+        diagram <- match.fun("dg_vertical_bars")
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -608,12 +627,22 @@ design_graphic <- function(data_frame,
         group_vars <- c(group_vars, "axes")
     }
 
-    # Convert missing values to 0
+    # Convert missing values to 0 and "NA"
     value_vars <- graphic_tab |> inverse(c(group_vars, "TYPE", "TYPE_NR", "DEPTH", "segments"))
 
     graphic_tab[value_vars] <- lapply(graphic_tab[value_vars], function(variable){
         variable[is.na(variable)] <- 0
         variable
+    })
+
+    graphic_tab[,c(axes_vars, "segments")] <- lapply(graphic_tab[,c(axes_vars, "segments")], function(variable){
+        if (is.factor(variable)){
+            addNA(variable, ifany = TRUE)
+        }
+        else{
+            variable[is.na(variable)] <- "NA"
+            variable
+        }
     })
 
     if (is.null(graphic_tab)){
@@ -663,6 +692,9 @@ design_graphic <- function(data_frame,
                 paste(obs[!obs %in% by], collapse = "+")
             }, character(1L))
         }
+
+        # Convert missing values to "NA"
+        graphic_tab[["by_vars"]][is.na(graphic_tab[["by_vars"]])] <- "NA"
 
         # Convert to factor to keep them in order when sorting later
         graphic_tab <- graphic_tab |> convert_factor(c("BY", "by_vars"))
@@ -792,11 +824,30 @@ design_graphic <- function(data_frame,
         graphic_tab <- graphic_tab |> data.table::setcolorder(c("BY", "by_vars"), before = 1)
     }
 
-    # Convert back to character and drop TYPE variables
+    # Check for duplicate expressions. If there are any, throw an note and summarise
+    # again, to prevent corrupted graphics later on. If e.g. two segment variables
+    # are used and both have NA, then this expression is doubled and misscounted
+    # as 1 expression later on.
+    graphic_tab[[".temp_weight"]] <- 1
+
+    if ("axes_type" %in% names(graphic_tab)){
+        sort_vars <- c("axes_type", sort_vars[-1])
+    }
+    else{
+        sort_vars <- sort_vars[-1]
+    }
+
+    result_list <- graphic_tab |>
+        matrix_summarise(value_vars,
+                         sort_vars,
+                         graphic_tab[[".temp_weight"]],
+                         "sum",
+                         get_complete_statistics_list("sum"),
+                         monitor_df,
+                         FALSE)
+
+    graphic_tab            <- result_list[[1]] |> remove_stat_extension("sum")
     graphic_tab[sort_vars] <- lapply(graphic_tab[sort_vars], as.character)
-    graphic_tab <- graphic_tab |>
-        drop_type_vars() |>
-        collapse::fselect(-TYPE_ORIG)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
@@ -813,7 +864,7 @@ design_graphic <- function(data_frame,
     if (length(by) == 0){
         graphic_list <- generate_graphic(graphic_tab, axes_vars, "segments", statistics,
                                          by, titles, footnotes, var_labels, stat_labels,
-                                         diagram, visuals, axes, dimensions,
+                                         diagram, stacked, visuals, axes, dimensions,
                                          fine_tuning, add_texts, add_forms, output, print,
                                          monitor_df = monitor_df)
 
@@ -824,7 +875,7 @@ design_graphic <- function(data_frame,
     else{
         graphic_list <- generate_graphic_by(graphic_tab, axes_vars, "segments", statistics,
                                             by, titles, footnotes, var_labels, stat_labels,
-                                            diagram, visuals, axes, dimensions,
+                                            diagram, stacked, visuals, axes, dimensions,
                                             fine_tuning, add_texts, add_forms, output, na.rm,
                                             print, monitor_df)
 
@@ -866,6 +917,8 @@ design_graphic <- function(data_frame,
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area.
+#' @param stacked FALSE by default. If TRUE, the segments are stacked instead of grouped.
+#' Only possible for certain diagram types.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -895,6 +948,7 @@ generate_graphic <- function(graphic_tab,
                              var_labels,
                              stat_labels,
                              diagram,
+                             stacked,
                              visuals,
                              axes,
                              dimensions,
@@ -970,7 +1024,7 @@ generate_graphic <- function(graphic_tab,
 
     dimensions[["diagram_start_left"]] <- ifelse(dimensions[["diagram_start_left"]] == "auto", dimensions[["margins"]], dimensions[["diagram_start_left"]])
     dimensions[["diagram_start_top"]]  <- get_diagram_start_cm(dimensions, title_height)
-    dimensions[["diagram_width"]]      <- get_diagram_width_cm(dimensions)
+    dimensions[["diagram_width"]]      <- get_diagram_width_cm(dimensions, visuals, fine_tuning, stacked, unique(graphic_tab[["segments"]]))
     dimensions[["diagram_height"]]     <- get_diagram_height_cm(dimensions, title_height, footnote_height, origin_height)
 
     # Put the passed arguments into a list to pass them on to a function which
@@ -982,6 +1036,7 @@ generate_graphic <- function(graphic_tab,
                       statistics      = c(statistics),
                       var_labels      = c(var_labels),
                       stat_labels     = c(stat_labels),
+                      stacked         = stacked,
                       visuals         = visuals,
                       axes            = axes,
                       dimensions      = dimensions,
@@ -1135,6 +1190,8 @@ generate_graphic <- function(graphic_tab,
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param diagram Function that provides the generation of the main diagram area.
+#' @param stacked FALSE by default. If TRUE, the segments are stacked instead of grouped.
+#' Only possible for certain diagram types.
 #' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param axes Axes parameters set with [graphic_axes()].
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
@@ -1161,6 +1218,7 @@ generate_graphic_by <- function(graphic_tab,
                                 var_labels,
                                 stat_labels,
                                 diagram,
+                                stacked,
                                 visuals,
                                 axes,
                                 dimensions,
@@ -1316,6 +1374,7 @@ generate_graphic_by <- function(graphic_tab,
                                                 var_labels,
                                                 stat_labels,
                                                 diagram,
+                                                stacked,
                                                 visuals,
                                                 axes,
                                                 dimensions,

@@ -34,7 +34,7 @@
 #'
 #' Main graphic function: [design_graphic()]
 #'
-#' Main diagram types: [dg_vbars()]
+#' Main diagram types: [dg_vertical_bars()]
 #'
 #' Graphic options: [graphic_visuals()], [graphic_axes()], [graphic_dimensions()],
 #' [graphic_output()], [graphic_fine_tuning()], [modify_graphic_options()]

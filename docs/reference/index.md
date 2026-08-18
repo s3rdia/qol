@@ -56,12 +56,13 @@
 
 ## Main Diagram Types
 
-- [`dg_vbars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
+- [`dg_vertical_bars()`](https://s3rdia.github.io/qol/reference/main_diagram.md)
   : Generate The Main Diagram Area
 
 ## Main Grob Generation
 
-- [`vbar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md)
+- [`vertical_grouped_bar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md)
+  [`vertical_stacked_bar_grob()`](https://s3rdia.github.io/qol/reference/main_grobs.md)
   : Generate The Main Graphical Objects
 
 ## Graphic Options
@@ -86,6 +87,7 @@
   [`get_text_height()`](https://s3rdia.github.io/qol/reference/textboxes.md)
   : Add Textboxes As Graphical Object
 - [`setup_nested_diagram_viewport()`](https://s3rdia.github.io/qol/reference/viewport.md)
+  [`get_vertical_value_fit()`](https://s3rdia.github.io/qol/reference/viewport.md)
   [`back_to_the_root()`](https://s3rdia.github.io/qol/reference/viewport.md)
   : Set Up Viewports To Draw On
 - [`get_diagram_dimensions()`](https://s3rdia.github.io/qol/reference/diagram.md)
@@ -99,6 +101,7 @@
   [`even_prettier()`](https://s3rdia.github.io/qol/reference/axes.md) :
   Measure And Generate Custom Axes
 - [`direct_vertical_labels()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
+  [`direct_horizontal_stacked_labels()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
   [`setup_legend()`](https://s3rdia.github.io/qol/reference/segment_labels.md)
   : Generate Segment Labels And Legends
 

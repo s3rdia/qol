@@ -42,7 +42,7 @@ Creating a custom table style: \code{\link[=excel_output_style]{excel_output_sty
 
 Main graphic function: \code{\link[=design_graphic]{design_graphic()}}
 
-Main diagram types: \code{\link[=dg_vbars]{dg_vbars()}}
+Main diagram types: \code{\link[=dg_vertical_bars]{dg_vertical_bars()}}
 
 Graphic options: \code{\link[=graphic_visuals]{graphic_visuals()}}, \code{\link[=graphic_axes]{graphic_axes()}}, \code{\link[=graphic_dimensions]{graphic_dimensions()}},
 \code{\link[=graphic_output]{graphic_output()}}, \code{\link[=graphic_fine_tuning]{graphic_fine_tuning()}}, \code{\link[=modify_graphic_options]{modify_graphic_options()}}

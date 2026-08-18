@@ -73,7 +73,8 @@ function modular and extendable.</p>
 <span>  footnotes <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"footnotes"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  var_labels <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"var_labels"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  stat_labels <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"stat_labels"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  diagram <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>  diagram <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
+<span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  visuals <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"graphic_visuals"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  axes <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"graphic_axes"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  dimensions <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"graphic_dimensions"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -176,7 +177,12 @@ which statistic instead of the statistic name.</p></dd>
 
 <dt id="arg-diagram">diagram<a class="anchor" aria-label="anchor" href="#arg-diagram"></a></dt>
 <dd><p>Function that provides the generation of the main diagram area. Built in are:
-dg_vbars.</p></dd>
+dg_vertical_bars.</p></dd>
+
+
+<dt id="arg-stacked">stacked<a class="anchor" aria-label="anchor" href="#arg-stacked"></a></dt>
+<dd><p>FALSE by default. If TRUE, the segments are stacked instead of grouped.
+Only possible for certain diagram types.</p></dd>
 
 
 <dt id="arg-visuals">visuals<a class="anchor" aria-label="anchor" href="#arg-visuals"></a></dt>
@@ -278,6 +284,13 @@ with the fun part.</p>
 <span>    <span class="st">"18 to under 65"</span> <span class="op">=</span> <span class="fl">18</span><span class="op">:</span><span class="fl">64</span>,</span>
 <span>    <span class="st">"65 and older"</span>   <span class="op">=</span> <span class="fl">65</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">age2.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
+<span>    <span class="st">"under 18"</span>       <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">17</span>,</span>
+<span>    <span class="st">"18 to under 25"</span> <span class="op">=</span> <span class="fl">18</span><span class="op">:</span><span class="fl">24</span>,</span>
+<span>    <span class="st">"25 to under 55"</span> <span class="op">=</span> <span class="fl">25</span><span class="op">:</span><span class="fl">54</span>,</span>
+<span>    <span class="st">"55 to under 65"</span> <span class="op">=</span> <span class="fl">55</span><span class="op">:</span><span class="fl">64</span>,</span>
+<span>    <span class="st">"65 and older"</span>   <span class="op">=</span> <span class="fl">65</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">sex.</span> <span class="op">&lt;-</span> <span class="fu"><a href="formats.html">discrete_format</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Male"</span>   <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    <span class="st">"Female"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -292,7 +305,7 @@ with the fun part.</p>
 <span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age"</span>,</span>
 <span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                    diagram        <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
 <span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
 <span>                                          age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -301,7 +314,7 @@ with the fun part.</p>
 <span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age + education"</span>,</span>
 <span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                    diagram        <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
 <span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
 <span>                                          age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -310,7 +323,7 @@ with the fun part.</p>
 <span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age"</span>,</span>
 <span>                    segments       <span class="op">=</span> <span class="st">"sex + education"</span>,</span>
 <span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                    diagram        <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
 <span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
 <span>                                          age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -325,7 +338,7 @@ with the fun part.</p>
 <span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age + education"</span>,</span>
 <span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                    diagram        <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
 <span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
 <span>                                          age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -335,12 +348,22 @@ with the fun part.</p>
 <span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age + education"</span>,</span>
 <span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
-<span>                    diagram        <span class="op">=</span> <span class="va">dg_vbars</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
 <span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
 <span>                                          age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
 <span>                    dimensions <span class="op">=</span> <span class="fu"><a href="graphic_dimensions.html">graphic_dimensions</a></span><span class="op">(</span>graphic_width  <span class="op">=</span> <span class="fl">18</span>,</span>
 <span>                                                    graphic_height <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>                                                    margins        <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To make a stacked diagram instead of a grouped one, use the "stacked" parameter</span></span>
+<span><span class="va">my_data</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu">design_graphic</span><span class="op">(</span>axes_variables <span class="op">=</span> <span class="st">"age"</span>,</span>
+<span>                    segments       <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                    values         <span class="op">=</span> <span class="va">weight</span>,</span>
+<span>                    diagram        <span class="op">=</span> <span class="va">dg_vertical_bars</span>,</span>
+<span>                    stacked        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                    formats        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>,</span>
+<span>                                          age <span class="op">=</span> <span class="va">age2.</span><span class="op">)</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

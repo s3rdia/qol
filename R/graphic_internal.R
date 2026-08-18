@@ -41,18 +41,36 @@ get_diagram_start_cm <- function(dimensions   = .qol_options[["graphic_dimension
 #' Get the actual diagram width in cm. Margins on both sides are subtracted.
 #'
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
+#' @param stacked FALSE by default. If TRUE, the segments are stacked instead of grouped.
+#' Only possible for certain diagram types.
 #'
 #' @return
 #' Returns a numeric width in cm.
 #'
 #' @noRd
-get_diagram_width_cm <- function(dimensions = .qol_options[["graphic_dimensions"]]){
+get_diagram_width_cm <- function(dimensions  = .qol_options[["graphic_dimensions"]],
+                                 visuals     = .qol_options[["graphic_visuals"]],
+                                 fine_tuning = .qol_options[["fine_tuning"]],
+                                 stacked     = FALSE,
+                                 segments    = ""){
     width <- dimensions[["diagram_width"]]
 
     # Measure diagram width automatically and set it to span from side to side or
     # take the manually set height.
     if (width == "auto"){
         width <- (dimensions[["graphic_width"]] - (dimensions[["margins"]] * 2))
+
+        # When drawing stacked diagrams with direct labels, reserve space on the
+        # side for the texts.
+        # TODO: THIS WILL NARROW THE WIDTH ON HORIZONTAL BARS AS WELL, EVEN THOUGH
+        #       LABELS WON'T BE AT THE SIDE!
+        if (stacked && visuals[["segment_label_type"]] == "lines"){
+            label_width <- max(get_text_width(segments, "label", dimensions, visuals, "cm")) +
+                           grid::convertWidth(grid::unit(fine_tuning[["segment_line_length_stacked"]] + fine_tuning[["diagram_margin"]], "npc"), "cm", valueOnly = TRUE)
+
+            width <- width - min(dimensions[["textbox_width"]], label_width)
+        }
     }
 
     invisible(width)
