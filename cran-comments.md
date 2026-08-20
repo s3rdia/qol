@@ -86,6 +86,7 @@ Last CRAN release was on 16.07.2026.
 * `rename_multi()`: Clarified error message on old variable names not found in data frame.
 * `any_table()`: Updated `pct_block` parameter description and examples to make it more clear how this parameter works and has to be used.
 * `any_table()`: Now uses html output as fallback in case Excel is not available.
+* Minimum `openxlsx2` version is now 1.29, which fixes a bug that caused damaged output when tabulating with by-Variables and `print_miss`.
 
 
 ## R CMD check results

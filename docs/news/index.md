@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.4 - DEVELOPMENT
+## qol 1.3.4
 
 #### New functions
 
@@ -143,8 +143,8 @@
 
 #### Removed
 
-- [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
-  There is no real benefit in this function. (18.07.2026)
+- `get_integer_length()`: There is no real benefit in this function.
+  (18.07.2026)
 
 #### Fixed
 
@@ -273,6 +273,9 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Now uses html output as fallback in case Excel is not available.
   (13.08.2026)
+- Minimum `openxlsx2` version is now 1.29, which fixes a bug that caused
+  damaged output when tabulating with by-Variables and `print_miss`.
+  (20.08.2026)
 
 ## qol 1.3.3
 

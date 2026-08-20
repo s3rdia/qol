@@ -1,4 +1,4 @@
-# qol 1.3.4 - DEVELOPMENT
+# qol 1.3.4
 
 ### New functions
 
@@ -85,6 +85,7 @@
 * `rename_multi()`: Clarified error message on old variable names not found in data frame. (08.08.2026)
 * `any_table()`: Updated `pct_block` parameter description and examples to make it more clear how this parameter works and has to be used. (10.08.2026)
 * `any_table()`: Now uses html output as fallback in case Excel is not available. (13.08.2026)
+* Minimum `openxlsx2` version is now 1.29, which fixes a bug that caused damaged output when tabulating with by-Variables and `print_miss`. (20.08.2026)
 
 # qol 1.3.3
 
