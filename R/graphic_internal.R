@@ -118,7 +118,7 @@ get_diagram_height_cm <- function(dimensions      = .qol_options[["graphic_dimen
 ###############################################################################
 # Adjust labels
 ###############################################################################
-#' Decollision Segment labels
+#' Decollision Segment Labels Horizontal
 #'
 #' @description
 #' Tries to decollide segment labels, which are drawn with segment lines on the
@@ -129,81 +129,202 @@ get_diagram_height_cm <- function(dimensions      = .qol_options[["graphic_dimen
 #' @param segment_labels The actual segment label texts.
 #' @param x_label_positions The current label x positions.
 #' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
 #' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
 #'
 #' @return
 #' Returns adjusted segment label x positions.
 #'
 #' @noRd
-decollide_labels <- function(segment_labels,
-                             x_label_positions,
-                             dimensions,
-                             fine_tuning){
-    # Maximum shift is half of the maximum textbox width. Meaning label can only
-    # be shifted of half its size from a centered point. So the textbox edge ends
-    # up at the segment line at max.
-    max_shift <- (dimensions[["textbox_width"]] / dimensions[["diagram_width"]]) * fine_tuning[["max_segment_label_shift"]]
-
-    # If there are no labels or just one, return original positions
+decollide_group_labels <- function(segment_labels,
+                                   x_label_positions,
+                                   dimensions,
+                                   visuals,
+                                   fine_tuning){
     number_of_labels <- length(segment_labels)
+
+    # If there are no labels or just one, nothing can overlap
     if (number_of_labels <= 1){
         return(x_label_positions)
     }
 
-    # Get the actual text widths of the segment labels
-    widths <- grid::convertWidth(grid::stringWidth(segment_labels), "native", valueOnly = TRUE)
+    # Maximum shift is a bit more than half of the textbox width, meaning a label
+    # can only move half its own size away from its centered point, so its far
+    # edge ends up at the segment line at most. A bit more than half because
+    # somehow otherwise labels get shifted too far occasionally.
+    half_widths <- get_text_width(segment_labels, "labels", dimensions, visuals) / 2.5
+    max_shifts  <- rep(half_widths, number_of_labels)
 
-    half_widths <- widths / 2
+    # Split labels into a left half and right half. With an odd label count the
+    # exact middle label belongs to neither half and is used only as a fixed anchor
+    # without moving itself.
+    has_middle_label <- number_of_labels %% 2 == 1
+    left_size        <- floor(number_of_labels / 2)
+    right_start      <- left_size + 1 + as.integer(has_middle_label)
+    middle_index     <- left_size + 1
 
-    # Labels are separated in left and right side. The labels on the left side
-    # get shifted to the left, beginning from the middle to reduce needed decollision
-    # iterations.
+    # The first comparison on each side needs a fixed reference: the static
+    # middle label on an uneven segment number or with an even number of segments
+    # the other side's nearest label, at whatever position it currently
+    # holds.
+    if (has_middle_label){
+        anchor_for_left  <- middle_index
+        anchor_for_right <- middle_index
+    }
+    else{
+        anchor_for_left  <- right_start
+        anchor_for_right <- left_size
+    }
+
+    # Move from middle to outward first. Left and right side will be processed
+    # independently.
+    movable_left  <- left_size:1
+    movable_right <- right_start:number_of_labels
+
+    side_groups <- list(list(movable = movable_left,  anchor = anchor_for_left,  direction = -1), # away from middle -> left
+                        list(movable = movable_right, anchor = anchor_for_right, direction =  1)) # away from middle -> right
+
     shifted_x_positions <- x_label_positions
-    middle_id           <- (number_of_labels + 1) / 2
 
-    start_segment <- floor(middle_id) - (middle_id %% 1 == 0)
+    for (side in side_groups){
+        # Pass 1: push labels apart, away from the middle. The anchor is
+        # prepended so the nearest movable label's first overlap check is
+        # against it. The anchor itself is only the reference and never
+        # the one being shifted.
+        shifted_x_positions <- push_labels_apart(c(side[["anchor"]], side[["movable"]]),
+                                                 shifted_x_positions,
+                                                 half_widths,
+                                                 max_shifts,
+                                                 side[["direction"]])
 
-    # Calculate overlap with right neighbors
-    for (label in start_segment:1){
-        # Far right point of the current label is checked against far left
-        # side of the previous label.
-        overlap <- ((shifted_x_positions[label] + half_widths[label])
-                  - (shifted_x_positions[label + 1] - half_widths[label + 1]))
-
-        # If there is an overlap, decollide
-        if (overlap > 0){
-            # The label shifting is minimized, depending on what is smaller:
-            # either by the actual overlap or the maximum shift. Maximum
-            # shift would most of the time mean that there is still an overlap,
-            # but shifting further would make no sense, because then the label
-            # and segment would be decoupled.
-            shifted_x_positions[label] <- max(shifted_x_positions[label] - overlap,
-                                              shifted_x_positions[label] - max_shift)
+        # No second pass needed if there is only one moveable label
+        if (length(side[["movable"]]) <= 1){
+            next
         }
+
+        # Pass 2: pull back toward the middle, resolving any overlaps pass 1
+        # left behind when a label got clamped at max_shift. Only the
+        # movable labels are involved.
+        shifted_x_positions <- push_labels_apart(rev(side[["movable"]]),
+                                                 shifted_x_positions,
+                                                 half_widths,
+                                                 max_shifts,
+                                                 -side[["direction"]])
     }
 
-    # The labels on the right side get shifted to the right
-    start_segment <- ceiling(middle_id) + (middle_id %% 1 == 0)
-
-    # Calculate overlap with left neighbors
-    for (label in start_segment:number_of_labels){
-        # Far right point of the previous label is checked against far left
-        # side of the current label.
-        overlap <- ((shifted_x_positions[label - 1] + half_widths[label - 1])
-                  - (shifted_x_positions[label] - half_widths[label]))
-
-        # If there is an overlap, decollide
-        if (overlap > 0){
-            # The label shifting is minimized, depending on what is smaller:
-            # either by the actual overlap or the maximum shift. Maximum
-            # shift would most of the time mean that there is still an overlap,
-            # but shifting further would make no sense, because then the label
-            # and segment would be decoupled.
-            shifted_x_positions[label] <- min(shifted_x_positions[label] + overlap,
-                                              shifted_x_positions[label] + max_shift)
-        }
-    }
-
-    # Return shifted positions
     shifted_x_positions
+}
+
+
+#' Decollision Segment Labels Vertical
+#'
+#' @description
+#' Tries to decollide segment labels, which are drawn beside stacked segments.
+#' Labels are shifted up and down between the corresponding segment bounds to try
+#' to decollide labels. This is not a guarantee that labels are actually not
+#' colliding, but it is enough for smaller labels.
+#'
+#' @param segment_labels The actual segment label texts.
+#' @param y_label_positions The current label y positions in native units.
+#' @param diagram_info The list of measurements generated by [get_diagram_dimensions()].
+#' @param dimensions Dimension parameters set with [graphic_dimensions()].
+#' @param visuals Visual parameters set with [graphic_visuals()].
+#' @param fine_tuning Fine tuning parameters set with [graphic_fine_tuning()].
+#'
+#' @return
+#' Returns adjusted segment label y positions.
+#'
+#' @noRd
+decollide_stack_labels <- function(segment_labels,
+                                   y_label_positions,
+                                   diagram_info,
+                                   dimensions,
+                                   visuals,
+                                   fine_tuning){
+    # If there are no labels or just one, nothing can overlap
+    if (length(segment_labels) <= 1) {
+        return(y_label_positions)
+    }
+
+    # Maximum shift per label is half the segment height of the last stack. This
+    # is because labels are centered to the segments.
+    stacked_heights <- diagram_info[["stacked_heights"]]
+    last_heights    <- unlist(stacked_heights[length(stacked_heights)])
+    max_shifts      <- abs(last_heights) / 2
+
+    half_sizes <- get_text_height(segment_labels, "labels", dimensions, visuals) / 2
+
+    # Positive and negative stacks will be processed independently
+    sign_groups <- list(list(indices = which(last_heights >= 0), direction =  1), # away from zero -> up
+                        list(indices = which(last_heights <  0), direction = -1)) # away from zero -> down
+
+    shifted_y_positions <- y_label_positions
+
+    for (group in sign_groups){
+        # Nothing to decollide within this group
+        if (length(group[["indices"]]) <= 1){
+            next
+        }
+
+        # Pass 1: push labels apart, away from zero. With this it can happen, that
+        # labels are pushed into each other. Which is why there is a second pass.
+        shifted_y_positions <- push_labels_apart(group[["indices"]],
+                                                 shifted_y_positions,
+                                                 half_sizes,
+                                                 max_shifts,
+                                                 group[["direction"]])
+
+        # Pass 2: pull back toward zero, resolving any overlaps the previous pass
+        # produced. Same operation as before, just reversed.
+        shifted_y_positions <- push_labels_apart(rev(group[["indices"]]),
+                                                 shifted_y_positions,
+                                                 half_sizes,
+                                                 max_shifts,
+                                                 -group[["direction"]])
+    }
+
+    shifted_y_positions
+}
+
+
+#' Push Neighboring Labels Apart
+#'
+#' @description
+#' Loops through all labels and pushes each label apart from the previous one
+#' whenever their label boxes overlap, clamped at the boundaries of the corresponding
+#' segments.
+#'
+#' @param ordered_indices A list to tell apart positive and negative values.
+#' @param positions The original label positions.
+#' @param half_sizes Half the text heights of each label.
+#' @param max_shifts The maximum allowed shifts, which correspond to the individual
+#' segment heights.
+#' @param direction The direction of the pass.
+#'
+#' @return
+#' Returns adjusted segment label positions.
+#'
+#' @noRd
+push_labels_apart <- function(ordered_indices,
+                              positions,
+                              half_sizes,
+                              max_shifts,
+                              direction){
+    for (step in 2:length(ordered_indices)){
+        previous_label <- ordered_indices[step - 1]
+        current_label  <- ordered_indices[step]
+
+        # Check whether half the text heights of neighboring labels are greater
+        # than the distance between the two labels.
+        overlap <- (direction * (positions[previous_label] - positions[current_label])) +
+                                 half_sizes[previous_label] + half_sizes[current_label]
+
+        # If labels are overlapping, add the smallest bit to the current label
+        # position to decollide them.
+        if (overlap > 0){
+            positions[current_label] <- positions[current_label] + direction * min(overlap, max_shifts[current_label])
+        }
+    }
+
+    positions
 }

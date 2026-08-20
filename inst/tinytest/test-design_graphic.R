@@ -6,13 +6,23 @@ on.exit(dev.off())
 set_titles("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
 set_footnotes("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore")
 
-dummy_df <- dummy_data(100)
+dummy_df <- dummy_data(1000)
 dummy_df[["balance"]] <- data.table::fifelse(dummy_df[["sex"]] == "1", 1000, -1000)
 
 age. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 65" = 18:64,
     "65 and older"   = 65:100)
+
+age2. <- discrete_format(
+    "under 18"       = 0:17,
+    "18 to under 25" = 18:24,
+    "25 to under 55" = 25:54,
+    "55 to under 60" = 55:59,
+    "60 to under 65 60 to under 65" = 60:64,
+    "65 to under 75 65 to under 7565 to under 75 65 to under 7565 to under 75 65 to under 75" = 65:74,
+    "75 and older"   = 75:100,
+    "Total"          = 0:100)
 
 sex. <- discrete_format(
     "Male"   = 1,
@@ -53,7 +63,18 @@ result_list <- dummy_df |>
                    diagram        = dg_vertical_bars,
                    print          = FALSE)
 
-expect_true(all(c("low", "middle", "high") %in% collapse::funique(result_list[["table"]][["segments"]])), info = "design_graphic with segments")
+expect_equal(c("high", "low", "middle", "NA"), collapse::funique(result_list[["table"]][["segments"]]), info = "design_graphic with segments")
+
+
+# design_graphic with reversed segments
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "education",
+                   diagram        = dg_vertical_bars,
+                   visuals        = graphic_visuals(reverse_segments = TRUE),
+                   print          = FALSE)
+
+expect_equal(c("NA", "middle", "low", "high"), collapse::funique(result_list[["table"]][["segments"]]), info = "design_graphic with reversed segments")
 
 
 # design_graphic with multiple segments
@@ -281,10 +302,12 @@ result_list <- dummy_df |>
                    formats        = list(sex = sex., age = age.),
                    visuals        = graphic_visuals(font               = "sans",
                                                     segment_label_type = "legend",
-                                                    legend_x_pos       = "right"),
+                                                    legend_x_pos       = "right",
+                                                    legend_y_pos       = 1),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
+expect_equal(as.character(result_list[["graphic"]][["children"]][["legend_symbol1"]][["y"]]), "1cm", info = "design_graphic with legend presets")
 
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",
@@ -307,10 +330,12 @@ result_list <- dummy_df |>
                    formats        = list(sex = sex., age = age.),
                    visuals        = graphic_visuals(font               = "sans",
                                                     segment_label_type = "legend",
-                                                    legend_y_pos       = "bottom"),
+                                                    legend_y_pos       = "bottom",
+                                                    legend_x_pos       = 1),
                    print          = FALSE)
 
 expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")), info = "design_graphic with legend presets")
+expect_equal(as.character(result_list[["graphic"]][["children"]][["legend_symbol1"]][["x"]]), "1cm", info = "design_graphic with legend presets")
 
 
 # design_graphic with reverse colors
@@ -744,6 +769,16 @@ result_list <- dummy_df |>
                    print          = FALSE)
 
 expect_true(all(c("low", "middle", "high") %in% collapse::funique(result_list[["table"]][["segments"]])), info = "design_graphic with stacked segments")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "education",
+                   segments       = "age",
+                   diagram        = dg_vertical_bars,
+                   stacked        = TRUE,
+                   formats        = list(age = age2.),
+                   print          = FALSE)
+
+expect_true(all(c("low", "middle", "high") %in% collapse::funique(result_list[["table"]][["axes"]])), info = "design_graphic with stacked segments (decollision trigger)")
 
 
 # design_graphic with multiple stacked segments

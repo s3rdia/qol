@@ -59,6 +59,7 @@ design_graphic(). All parameters can also be set globally via set_graphic_option
 <span>  label_font_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
 <span>  origin_font_color <span class="op">=</span> <span class="st">"#2B2B2B"</span>,</span>
 <span>  other_font_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
+<span>  stack_total_font_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
 <span>  title_font_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
 <span>  footnote_font_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
 <span>  primary_axes_font_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
@@ -73,6 +74,7 @@ design_graphic(). All parameters can also be set globally via set_graphic_option
 <span>  hbar_alignment <span class="op">=</span> <span class="st">"right"</span>,</span>
 <span>  other_alignment <span class="op">=</span> <span class="st">"left"</span>,</span>
 <span>  reverse_colors <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reverse_segments <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  primary_axes_color <span class="op">=</span> <span class="st">"#9A9A9A"</span>,</span>
 <span>  secondary_axes_color <span class="op">=</span> <span class="st">"#9A9A9A"</span>,</span>
 <span>  variable_axes_color <span class="op">=</span> <span class="st">"#9A9A9A"</span>,</span>
@@ -97,6 +99,7 @@ design_graphic(). All parameters can also be set globally via set_graphic_option
 <span>  segment_label_rotation <span class="op">=</span> <span class="fl">90</span>,</span>
 <span>  remove_small_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  display_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  stack_total_keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Insgesamt"</span>, <span class="st">"Zusammen"</span><span class="op">)</span>,</span>
 <span>  bar_values_inside <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rotate_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  value_rotation <span class="op">=</span> <span class="fl">90</span>,</span>
@@ -107,6 +110,7 @@ design_graphic(). All parameters can also be set globally via set_graphic_option
 <span>  legend_y_pos <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  legend_columns <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  legend_symbol_size <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  legend_reverse <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  origin <span class="op">=</span> <span class="st">"Graphic: qol"</span>,</span>
 <span>  tooltip_font_color <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  tooltip_background_color <span class="op">=</span> <span class="st">"auto"</span>,</span>
@@ -180,6 +184,10 @@ how they are set up look up the topic <a href="color_themes.html">color_themes</
 <dd><p>Font color of every other text element.</p></dd>
 
 
+<dt id="arg-stack-total-font-color">stack_total_font_color<a class="anchor" aria-label="anchor" href="#arg-stack-total-font-color"></a></dt>
+<dd><p>Font color of the total values drawn on top of stacks.</p></dd>
+
+
 <dt id="arg-title-font-face">title_font_face<a class="anchor" aria-label="anchor" href="#arg-title-font-face"></a></dt>
 <dd><p>Font face of the title.</p></dd>
 
@@ -234,6 +242,11 @@ how they are set up look up the topic <a href="color_themes.html">color_themes</
 
 <dt id="arg-reverse-colors">reverse_colors<a class="anchor" aria-label="anchor" href="#arg-reverse-colors"></a></dt>
 <dd><p>FALSE by default. If TRUE reverses the color order.</p></dd>
+
+
+<dt id="arg-reverse-segments">reverse_segments<a class="anchor" aria-label="anchor" href="#arg-reverse-segments"></a></dt>
+<dd><p>FALSE by default. If TRUE reverses the segment order
+throughout the diagram.</p></dd>
 
 
 <dt id="arg-primary-axes-color">primary_axes_color<a class="anchor" aria-label="anchor" href="#arg-primary-axes-color"></a></dt>
@@ -346,6 +359,13 @@ always displays values.</p></dd>
 removes all values and just draws the segments.</p></dd>
 
 
+<dt id="arg-stack-total-keywords">stack_total_keywords<a class="anchor" aria-label="anchor" href="#arg-stack-total-keywords"></a></dt>
+<dd><p>Character vector of keywords (default: c("Total",
+"Insgesamt", "Zusammen")). If any keyword matches an entry in stack_labels
+(case-insensitive), that entry is visually neutralized: its segment gets the
+diagram background color, font color becomes black, and the label is blanked.</p></dd>
+
+
 <dt id="arg-bar-values-inside">bar_values_inside<a class="anchor" aria-label="anchor" href="#arg-bar-values-inside"></a></dt>
 <dd><p>TRUE by default. In grouped bar charts the segment values
 will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.</p></dd>
@@ -393,6 +413,11 @@ all labels will be drawn beside each other.</p></dd>
 
 <dt id="arg-legend-symbol-size">legend_symbol_size<a class="anchor" aria-label="anchor" href="#arg-legend-symbol-size"></a></dt>
 <dd><p>The size of the symbol that is drawn to the left of the expression text.</p></dd>
+
+
+<dt id="arg-legend-reverse">legend_reverse<a class="anchor" aria-label="anchor" href="#arg-legend-reverse"></a></dt>
+<dd><p>FALSE by default. If TRUE the legend order is reversed, meaning
+entries are drawn from bottom to top or right to left depending on the layout.</p></dd>
 
 
 <dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>

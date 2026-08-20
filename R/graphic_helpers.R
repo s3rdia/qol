@@ -1024,6 +1024,20 @@ get_diagram_dimensions <- function(arguments){
     stat_labels  <- arguments[["stat_labels"]]
     stacked      <- arguments[["stacked"]]
 
+    # On stacked diagrams total segment categories are handled separately. Basically
+    # the basic diagram should be drawn as normal and the totals are added later on
+    # just on top of the stacks, like an addon and not an actual value that is part
+    # of the stack. Therefore these values will be extracted here.
+    stacked_totals <- graphic_tab[["segments"]] %in% visuals[["stack_total_keywords"]]
+    total_values   <- c()
+
+    if (stacked && any(stacked_totals)){
+        total_values <- unname(unlist(graphic_tab |>
+            collapse::fsubset(segments %in% visuals[["stack_total_keywords"]]) |>
+            collapse::fselect(value_vars)))
+        graphic_tab <- graphic_tab |> collapse::fsubset(!segments %in% visuals[["stack_total_keywords"]])
+    }
+
     # TODO: THE VALUES THING WILL BREAK AS SOON AS A SECOND VALUE AXES IS IMPLEMENTED
     # Get actual values and statistic types
     value_types   <- sub(".*_", "", value_vars)
@@ -1202,6 +1216,9 @@ get_diagram_dimensions <- function(arguments){
                                          (seq_len(number_of_segments) + (i - 1) * number_of_segments)[values_per_group <  0])
     }
 
+    number_of_stacks <- length(stacked_values)
+    stack_centers    <- group_centers[seq(number_of_segments, length(group_centers), by = number_of_segments)]
+
     stack_labels <- c()
 
     if (stacked){
@@ -1291,6 +1308,12 @@ get_diagram_dimensions <- function(arguments){
 
     # Format values to final form
     formatted_values <- format_diagram_values(list(values = values, value_types = value_types),
+                                              list(axes        = axes,
+                                                   visuals     = visuals,
+                                                   fine_tuning = fine_tuning,
+                                                   stat_labels = stat_labels))
+
+    formatted_totals <- format_diagram_values(list(values = total_values, value_types = value_types),
                                               list(axes        = axes,
                                                    visuals     = visuals,
                                                    fine_tuning = fine_tuning,
@@ -1498,7 +1521,9 @@ get_diagram_dimensions <- function(arguments){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Return information as list
-    list(values                      = values,
+    list(stacked_totals              = stacked_totals,
+         total_values                = total_values,
+         values                      = values,
          value_types                 = value_types,
          value_vars                  = value_vars,
          value_labels                = value_labels,
@@ -1530,6 +1555,8 @@ get_diagram_dimensions <- function(arguments){
          stacked_heights             = stacked_heights,
          stacked_centers             = stacked_centers,
          stacked_order               = stacked_order,
+         number_of_stacks            = number_of_stacks,
+         stack_centers               = stack_centers,
          stack_labels                = stack_labels,
          actual_drawing_height       = actual_drawing_height,
          actual_stack_heights        = actual_stack_heights,
@@ -1539,6 +1566,7 @@ get_diagram_dimensions <- function(arguments){
          values_outer_vjust          = values_outer_vjust,
          values_x_pos                = values_x_pos,
          formatted_values            = formatted_values,
+         formatted_totals            = formatted_totals,
          group_label_x_pos           = group_label_x_pos,
          group_label_y_pos           = group_label_y_pos,
          wrapped_group_labels        = wrapped_group_labels,
@@ -2041,8 +2069,8 @@ get_variable_axes_height <- function(wrapped_text,
 #'
 #' @export
 swap_scaling <- function(measuring,
-                         from = "width",
-                         to   = "height"){
+                         from,
+                         to){
     measuring * from / to
 }
 
@@ -2121,7 +2149,7 @@ get_y_axes_values <- function(values,
         # Only add to the max value in case the scaling is not seemingly a percentage
         # scaling from 0 to 100. This lets especially stacked charts adding up to
         # 100 look as expected.
-        if (!(as.integer(min_value) == -100 && max_value %in% c("auto", 0))){
+        if (as.integer(min_value) != -100){
             min_value <- min_value * fine_tuning[["y_axes_scaling"]]
         }
     }
@@ -2138,7 +2166,7 @@ get_y_axes_values <- function(values,
         # Only add to the max value in case the scaling is not seemingly a percentage
         # scaling from 0 to 100. This lets especially stacked charts adding up to
         # 100 look as expected.
-        if (!(min_value == 0 && as.integer(max_value) == 100)){
+        if (as.integer(max_value) != 100){
             max_value <- max_value * fine_tuning[["y_axes_scaling"]]
         }
     }
@@ -2471,10 +2499,11 @@ direct_vertical_labels <- function(diagram_info,
     else{
         # In case no rotation is active try to decollide the labels
         if (!visuals[["rotate_segment_labels"]]){
-            segment_centers_x <- decollide_labels(diagram_info[["wrapped_segment_labels"]],
-                                                  segment_centers_x,
-                                                  dimensions,
-                                                  fine_tuning)
+            segment_centers_x <- decollide_group_labels(diagram_info[["wrapped_segment_labels"]],
+                                                        segment_centers_x,
+                                                        dimensions,
+                                                        visuals,
+                                                        fine_tuning)
         }
         # With rotation, apply it and set the text alignment to left center
         else{
@@ -2540,6 +2569,16 @@ direct_horizontal_stacked_labels <- function(diagram_info,
     last_stack_centers_y <- unlist(stacked_centers_y[length(stacked_centers_y)])
 
     number_of_labels <- length(last_stack_centers_y)
+
+    # Try to decollide labels on the y-axis when there are multiple labels.
+    if (number_of_labels > 1){
+        last_stack_centers_y <- decollide_stack_labels(diagram_info[["wrapped_segment_labels"]],
+                                                       last_stack_centers_y,
+                                                       diagram_info,
+                                                       dimensions,
+                                                       visuals,
+                                                       fine_tuning)
+    }
 
     # Put together the vector containing start and end points for the lines.
     # In addition double up the x segment centers to match the length of the y vector.
@@ -2614,9 +2653,18 @@ setup_legend <- function(diagram_info,
     number_of_columns <- min(visuals[["legend_columns"]], number_of_labels)
     margins           <- dimensions[["margins"]]
 
+    # Reverse legend order before layout
+    if (visuals[["legend_reverse"]]){
+        segment_labels <- rev(segment_labels)
+    }
+
     # Check if legend preset was set
     legend_x_pos <- visuals[["legend_x_pos"]]
     legend_y_pos <- visuals[["legend_y_pos"]]
+
+    # Save original values to detect user provided fixed positions
+    original_legend_x_pos <- legend_x_pos
+    original_legend_y_pos <- legend_y_pos
 
     preset <- NULL
 
@@ -2684,6 +2732,10 @@ setup_legend <- function(diagram_info,
     for(column in seq_len(number_of_columns)){
         # Find label with the most letters in the current column
         current_column <- which(column_id == column)
+
+        # Skip columns with no entries
+        if (length(current_column) == 0) next
+
         longest_label  <- segment_labels[current_column[which.max(nchar(segment_labels[current_column]))]]
 
         # Measure only this single label
@@ -2737,9 +2789,15 @@ setup_legend <- function(diagram_info,
             # The width shrinks by the total_width
             dimensions[["diagram_width"]] <- dimensions[["graphic_width"]] - (total_width + margins * 2)
 
-            # The legends y position is centered compared to the diagram
-            adjust_y     <- abs(dimensions[["diagram_height"]] - total_height) / 2
-            legend_y_pos <- legend_y_pos - adjust_y
+            # The legends y position is centered compared to the diagram, unless
+            # a fixed y position was provided.
+            if (is.numeric(original_legend_y_pos)){
+                legend_y_pos <- legend_y_pos - (legend_y_pos[1] - original_legend_y_pos)
+            }
+            else{
+                adjust_y     <- (dimensions[["diagram_height"]] - total_height) / 2
+                legend_y_pos <- legend_y_pos - adjust_y
+            }
         }
         else if (preset == "left"){
             # The diagram start is shifted to the right by the legends total width.
@@ -2747,9 +2805,15 @@ setup_legend <- function(diagram_info,
             dimensions[["diagram_start_left"]] <- total_width + margins / 2
             dimensions[["diagram_width"]]      <- dimensions[["diagram_width"]] - total_width
 
-            # The legends y position is centered compared to the diagram
-            adjust_y     <- abs(dimensions[["diagram_height"]] - total_height) / 2
-            legend_y_pos <- legend_y_pos - adjust_y
+            # The legends y position is centered compared to the diagram, unless
+            # a fixed y position was provided.
+            if (is.numeric(original_legend_y_pos)){
+                legend_y_pos <- legend_y_pos - (legend_y_pos[1] - original_legend_y_pos)
+            }
+            else{
+                adjust_y     <- (dimensions[["diagram_height"]] - total_height) / 2
+                legend_y_pos <- legend_y_pos - adjust_y
+            }
         }
         else if (preset == "bottom"){
             # Diagram height shrinks by the legends height
@@ -2758,9 +2822,15 @@ setup_legend <- function(diagram_info,
             # The top position is set below the diagram with additional margin
             legend_y_pos <- legend_y_pos + dimensions[["diagram_start_top"]] - dimensions[["diagram_height"]] - margins / 2
 
-            # The legends x position is centered compared to the diagram
-            adjust_x     <- abs(dimensions[["graphic_width"]] - total_width) / 2
-            legend_x_pos <- legend_x_pos + adjust_x
+            # The legends x position is centered compared to the diagram, unless
+            # a fixed x position was provided.
+            if (is.numeric(original_legend_x_pos)){
+                legend_x_pos <- legend_x_pos + (original_legend_x_pos - margins)
+            }
+            else{
+                adjust_x     <- (dimensions[["graphic_width"]] - total_width) / 2
+                legend_x_pos <- legend_x_pos + adjust_x
+            }
 
         }
         else if (preset == "top"){
@@ -2769,15 +2839,26 @@ setup_legend <- function(diagram_info,
             dimensions[["diagram_start_top"]] <- dimensions[["diagram_start_top"]] - total_height
             dimensions[["diagram_height"]]    <- dimensions[["diagram_height"]]    - total_height
 
-            # The legends x position is centered compared to the diagram
-            adjust_x     <- abs(dimensions[["graphic_width"]] - total_width) / 2
-            legend_x_pos <- legend_x_pos + adjust_x
+            # The legends x position is centered compared to the diagram, unless
+            # a fixed x position was provided.
+            if (is.numeric(original_legend_x_pos)){
+                legend_x_pos <- legend_x_pos + (original_legend_x_pos - margins)
+            }
+            else{
+                adjust_x     <- (dimensions[["graphic_width"]] - total_width) / 2
+                legend_x_pos <- legend_x_pos + adjust_x
+            }
         }
     }
 
     # Draw colored rectangles aligned within each column
     colors_to_use <- diagram_info[["colors_to_use"]][1:diagram_info[["number_of_segments"]]]
     border_colors <- diagram_info[["border_color"]][1:diagram_info[["number_of_segments"]]]
+
+    if (visuals[["legend_reverse"]]){
+        colors_to_use <- rev(colors_to_use)
+        border_colors <- rev(border_colors)
+    }
 
     rects <- do.call(grid::gList, lapply(seq_len(number_of_labels), function(i){
         grid::rectGrob(x      = grid::unit(legend_x_pos[i], "cm"),

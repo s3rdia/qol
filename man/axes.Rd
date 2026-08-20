@@ -18,7 +18,7 @@ setup_xy_axes(diagram_info, arguments)
 
 setup_guiding_lines(diagram_info, arguments)
 
-swap_scaling(measuring, from = "width", to = "height")
+swap_scaling(measuring, from, to)
 
 even_prettier(min_value, max_value, number_of_steps)
 }

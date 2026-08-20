@@ -799,6 +799,11 @@ design_graphic <- function(data_frame,
         collapse::funique(unlist(variable))
     })
 
+    # Reverse segment order if option is set
+    if (visuals[["reverse_segments"]]){
+        levels_list[["segments"]] <- rev(levels_list[["segments"]])
+    }
+
     # Convert row header variables to factors
     for (variable in sort_vars){
         var_levels <- levels_list[[variable]]

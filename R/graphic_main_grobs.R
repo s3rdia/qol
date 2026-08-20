@@ -256,9 +256,9 @@ vertical_stacked_bar_grob <- function(diagram_info, arguments){
     if (visuals[["display_values"]]){
         number_of_values <- length(value_y_pos)
 
-        hjust      <- numeric(number_of_values)
-        vjust      <- numeric(number_of_values)
-        rotate     <- numeric(number_of_values)
+        hjust  <- numeric(number_of_values)
+        vjust  <- numeric(number_of_values)
+        rotate <- numeric(number_of_values)
 
         # If a small scale is used it can happen that a negative symbol appears in front
         # of 0 values. This gets removed here.
@@ -303,14 +303,90 @@ vertical_stacked_bar_grob <- function(diagram_info, arguments){
                                                                 fontsize   = dimensions[["value_font_size"]],
                                                                 fontface   = visuals[["value_font_face"]],
                                                                 lineheight = dimensions[["line_height"]]))
-                         }))
+                          }))
     }
     else{
         texts <- grid::nullGrob(name = "no_vbars")
     }
 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate total value texts above stacks
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    total_texts <- grid::nullGrob(name = "no_totals")
+
+    total_values     <- diagram_info[["total_values"]]
+    number_of_stacks <- diagram_info[["number_of_stacks"]]
+
+    if (length(total_values) > 0){
+        if (length(total_values) > number_of_stacks){
+            print_message("WARNING", c("There are more total values than there are stacks. This can be caused",
+                                       "by the use of multiple keywords defined in the <stack_total_keywords>",
+                                       " parameter withtin the <graphic_visuals>. Total values will not be drawn."))
+        }
+        else{
+            # Get the top of each stack, which is the last element per group in
+            # stacked_values.
+            stacked_values <- diagram_info[["stacked_values"]]
+            stack_tops <- vapply(stacked_values, function(stack_values){
+                stack_values[length(stack_values)]
+            }, numeric(1))
+
+            # Measure half the total values text heights to be able to set them
+            # above the stacks.
+            if (!visuals[["rotate_values"]]){
+                totals_height <- get_text_height(diagram_info[["formatted_totals"]],
+                                                 "value",
+                                                 dimensions,
+                                                 visuals) / 2
+            }
+            else{
+                totals_height <- swap_scaling(get_text_width(diagram_info[["formatted_totals"]],
+                                              "value", dimensions, visuals) / 2,
+                                              dimensions[["inner_canvas_width"]],
+                                              dimensions[["inner_canvas_height"]]) * diagram_info[["primary_y_distance"]]
+            }
+
+            # Add fixed distance between each total value and the top of its stack
+            label_offset <- grid::convertHeight(grid::unit(fine_tuning[["stacked_totals_distance"]], "mm"), "native", valueOnly = TRUE)
+
+            if (diagram_info[["zero_pos"]] != 1){
+                label_y_positions <- stack_tops + totals_height + label_offset
+            }
+            else{
+                label_y_positions <- stack_tops - totals_height - label_offset
+            }
+
+            # Rotation only ever depended on visuals[["rotate_values"]], never on
+            # zero_pos - with hjust/vjust gone there's no more branching needed here.
+            rotate <- rep(if (visuals[["rotate_values"]]) visuals[["value_rotation"]] else 0, length(total_values))
+
+            # Generate totals on top of stacks
+            total_texts <- do.call(grid::gList,
+                                   lapply(seq_along(total_values), function(i){
+                                       grid::textGrob(diagram_info[["formatted_totals"]][i],
+                                                      x      = grid::unit(diagram_info[["stack_centers"]][i], "native"),
+                                                      y      = grid::unit(label_y_positions[i], "native"),
+                                                      vjust  = 0.5,
+                                                      hjust  = 0.5,
+                                                      rot    = rotate[1],
+                                                      name   = paste0("total_value", i),
+                                                      gp     = grid::gpar(col        = visuals[["stack_total_font_color"]],
+                                                                          fontfamily = visuals[["font"]],
+                                                                          fontsize   = dimensions[["value_font_size"]],
+                                                                          fontface   = visuals[["value_font_face"]],
+                                                                          lineheight = dimensions[["line_height"]]))
+                                   }))
+        }
+    }
+
     # Return final segments
-    if (inherits(texts, "gList")){
+    all_texts <- grid::gList(texts, total_texts)
+
+    if (inherits(total_texts, "gList")){
+        list(grid::gList(rects, all_texts), grid::convertUnit(grid::unit(value_y_pos, "native") + y_offset, "native", valueOnly = TRUE))
+    }
+    else if (inherits(texts, "gList")){
         list(grid::gList(rects, texts), grid::convertUnit(grid::unit(value_y_pos, "native") + y_offset, "native", valueOnly = TRUE))
     }
     else{

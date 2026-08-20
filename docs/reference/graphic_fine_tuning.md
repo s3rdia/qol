@@ -36,7 +36,8 @@ graphic_fine_tuning(
   svg_line_height_adjust = 0.65,
   default_stack_width = 35,
   stacked_value_vjust = 0.4,
-  segment_line_length_stacked = 0.05
+  segment_line_length_stacked = 0.05,
+  stacked_totals_distance = 3
 )
 ```
 
@@ -165,6 +166,10 @@ graphic_fine_tuning(
 - segment_line_length_stacked:
 
   The length of the segment lines in stacked charts.
+
+- stacked_totals_distance:
+
+  Distance in mm of the total values from the stacks.
 
 ## Value
 

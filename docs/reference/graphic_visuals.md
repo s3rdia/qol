@@ -22,6 +22,7 @@ graphic_visuals(
   label_font_color = "#000000",
   origin_font_color = "#2B2B2B",
   other_font_color = "#000000",
+  stack_total_font_color = "#000000",
   title_font_face = "bold",
   footnote_font_face = "plain",
   primary_axes_font_face = "plain",
@@ -36,6 +37,7 @@ graphic_visuals(
   hbar_alignment = "right",
   other_alignment = "left",
   reverse_colors = FALSE,
+  reverse_segments = FALSE,
   primary_axes_color = "#9A9A9A",
   secondary_axes_color = "#9A9A9A",
   variable_axes_color = "#9A9A9A",
@@ -60,6 +62,7 @@ graphic_visuals(
   segment_label_rotation = 90,
   remove_small_values = TRUE,
   display_values = TRUE,
+  stack_total_keywords = c("Total", "Insgesamt", "Zusammen"),
   bar_values_inside = TRUE,
   rotate_values = FALSE,
   value_rotation = 90,
@@ -70,6 +73,7 @@ graphic_visuals(
   legend_y_pos = "auto",
   legend_columns = 1,
   legend_symbol_size = 0.3,
+  legend_reverse = FALSE,
   origin = "Graphic: qol",
   tooltip_font_color = "auto",
   tooltip_background_color = "auto",
@@ -146,6 +150,10 @@ graphic_visuals(
 
   Font color of every other text element.
 
+- stack_total_font_color:
+
+  Font color of the total values drawn on top of stacks.
+
 - title_font_face:
 
   Font face of the title.
@@ -201,6 +209,11 @@ graphic_visuals(
 - reverse_colors:
 
   FALSE by default. If TRUE reverses the color order.
+
+- reverse_segments:
+
+  FALSE by default. If TRUE reverses the segment order throughout the
+  diagram.
 
 - primary_axes_color:
 
@@ -311,6 +324,14 @@ graphic_visuals(
   TRUE by default. Displays the values with the segments. If FALSE,
   removes all values and just draws the segments.
 
+- stack_total_keywords:
+
+  Character vector of keywords (default: c("Total", "Insgesamt",
+  "Zusammen")). If any keyword matches an entry in stack_labels
+  (case-insensitive), that entry is visually neutralized: its segment
+  gets the diagram background color, font color becomes black, and the
+  label is blanked.
+
 - bar_values_inside:
 
   TRUE by default. In grouped bar charts the segment values will be
@@ -361,6 +382,12 @@ graphic_visuals(
 
   The size of the symbol that is drawn to the left of the expression
   text.
+
+- legend_reverse:
+
+  FALSE by default. If TRUE the legend order is reversed, meaning
+  entries are drawn from bottom to top or right to left depending on the
+  layout.
 
 - origin:
 

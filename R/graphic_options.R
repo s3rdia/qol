@@ -27,6 +27,7 @@
 #' @param label_font_color Font color of the segment labels.
 #' @param origin_font_color Font color of the origin text.
 #' @param other_font_color Font color of every other text element.
+#' @param stack_total_font_color Font color of the total values drawn on top of stacks.
 #' @param title_font_face Font face of the title.
 #' @param footnote_font_face Font face of the footnote.
 #' @param primary_axes_font_face Font face of the primary axes.
@@ -41,6 +42,8 @@
 #' @param hbar_alignment The alignment of the axes group labels in horizontal bars.
 #' @param other_alignment Alignment of other elements, like freely positionable textboxes.
 #' @param reverse_colors FALSE by default. If TRUE reverses the color order.
+#' @param reverse_segments FALSE by default. If TRUE reverses the segment order
+#' throughout the diagram.
 #' @param segment_border_color The border color of each segment.
 #' @param primary_axes_color The color of the primary axes.
 #' @param secondary_axes_color The color of the secondary axes.
@@ -79,6 +82,10 @@
 #' always displays values.
 #' @param display_values TRUE by default. Displays the values with the segments. If FALSE,
 #' removes all values and just draws the segments.
+#' @param stack_total_keywords Character vector of keywords (default: c("Total",
+#' "Insgesamt", "Zusammen")). If any keyword matches an entry in stack_labels
+#' (case-insensitive), that entry is visually neutralized: its segment gets the
+#' diagram background color, font color becomes black, and the label is blanked.
 #' @param bar_values_inside TRUE by default. In grouped bar charts the segment values
 #' will be drawn inside the bars. If FALSE, values will be drawn above/beside the bars.
 #' @param rotate_values FALSE by default. If TRUE rotates values inside the segments by
@@ -98,6 +105,8 @@
 #' If 0, all labels will be drawn below each other. If max number of segments, then
 #' all labels will be drawn beside each other.
 #' @param legend_symbol_size The size of the symbol that is drawn to the left of the expression text.
+#' @param legend_reverse FALSE by default. If TRUE the legend order is reversed, meaning
+#' entries are drawn from bottom to top or right to left depending on the layout.
 #' @param origin A character value that will be written in the bottom right corner of the
 #' graphic.
 #' @param tooltip_font_color Font color of the tooltips in interactive charts. If set to "auto"
@@ -186,6 +195,7 @@ graphic_visuals <- function(font                        = "Arial",
                             label_font_color            = "#000000",
                             origin_font_color           = "#2B2B2B",
                             other_font_color            = "#000000",
+                            stack_total_font_color      = "#000000",
                             title_font_face             = "bold",
                             footnote_font_face          = "plain",
                             primary_axes_font_face      = "plain",
@@ -200,6 +210,7 @@ graphic_visuals <- function(font                        = "Arial",
                             hbar_alignment              = "right",
                             other_alignment             = "left",
                             reverse_colors              = FALSE,
+                            reverse_segments            = FALSE,
                             primary_axes_color          = "#9A9A9A",
                             secondary_axes_color        = "#9A9A9A",
                             variable_axes_color         = "#9A9A9A",
@@ -224,6 +235,7 @@ graphic_visuals <- function(font                        = "Arial",
                             segment_label_rotation      = 90,
                             remove_small_values         = TRUE,
                             display_values              = TRUE,
+                            stack_total_keywords        = c("Total", "Insgesamt", "Zusammen"),
                             bar_values_inside           = TRUE,
                             rotate_values               = FALSE,
                             value_rotation              = 90,
@@ -234,6 +246,7 @@ graphic_visuals <- function(font                        = "Arial",
                             legend_y_pos                = "auto",
                             legend_columns              = 1,
                             legend_symbol_size          = 0.3,
+                            legend_reverse              = FALSE,
                             origin                      = "Graphic: qol",
                             tooltip_font_color          = "auto",
                             tooltip_background_color    = "auto",
@@ -702,6 +715,7 @@ graphic_output <- function(save_path    = NULL,
 #' the stacks. There this parameter jumps into place and overrides the default.
 #' @param stacked_value_vjust Vertical adjustment of the values inside vertical stacked charts.
 #' @param segment_line_length_stacked The length of the segment lines in stacked charts.
+#' @param stacked_totals_distance Distance in mm of the total values from the stacks.
 #'
 #' @return
 #' Returns a list of named graphic options.
@@ -781,7 +795,8 @@ graphic_fine_tuning <- function(diagram_margin              = 0.01,
                                 svg_line_height_adjust      = 0.65,
                                 default_stack_width         = 35,
                                 stacked_value_vjust         = 0.4,
-                                segment_line_length_stacked = 0.05){
+                                segment_line_length_stacked = 0.05,
+                                stacked_totals_distance     = 3){
     parameters <- as.list(environment())
 
     parameters[order(names(parameters))]
