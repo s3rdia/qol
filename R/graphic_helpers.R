@@ -2513,28 +2513,31 @@ direct_vertical_labels <- function(diagram_info,
         }
     }
 
-    # Generate the lines
-    lines <- grid::polylineGrob(x    = grid::unit(center_vector, "npc"),
-                                y    = grid::unit(line_vector, "native"),
-                                id   = line_ids,
-                                name = "segment_lines",
-                                gp   = grid::gpar(col = visuals[["segment_line_color"]],
-                                                  lty = visuals[["segment_line_type"]],
-                                                  lwd = dimensions[["segment_line_thickness"]]))
+    # Generate individual line grobs so each can be targeted by interactive hover
+    lines <- do.call(grid::gList, lapply(seq_along(segment_centers_x), function(i){
+        grid::polylineGrob(x    = grid::unit(center_vector[c((2 * i) - 1, 2 * i)], "npc"),
+                           y    = grid::unit(line_vector[c((2 * i) - 1, 2 * i)], "native"),
+                           name = paste0("segment_line_", i),
+                           gp   = grid::gpar(col = visuals[["segment_line_color"]],
+                                             lty = visuals[["segment_line_type"]],
+                                             lwd = dimensions[["segment_line_thickness"]]))
+    }))
 
-    # Generate the labels on top of the lines
-    segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
-                                     x     = grid::unit(segment_centers_x, "npc"),
-                                     y     = grid::unit(segment_end_y + offset_y, "native"),
-                                     hjust = horizontal_alignment,
-                                     vjust = vertical_alignment,
-                                     rot   = rotate,
-                                     name  = "segment_labels",
-                                     gp    = grid::gpar(col        = visuals[["label_font_color"]],
-                                                        fontfamily = visuals[["font"]],
-                                                        fontsize   = dimensions[["label_font_size"]],
-                                                        fontface   = visuals[["label_font_face"]],
-                                                        lineheight = dimensions[["line_height"]]))
+    # Generate the labels on top of the lines as individual grobs for interactive hover
+    segment_labels <- do.call(grid::gList, lapply(seq_len(number_of_labels), function(i){
+        grid::textGrob(label = diagram_info[["wrapped_segment_labels"]][i],
+                       x     = grid::unit(segment_centers_x[i], "npc"),
+                       y     = grid::unit(segment_end_y[i] + offset_y, "native"),
+                       hjust = horizontal_alignment,
+                       vjust = vertical_alignment,
+                       rot   = rotate[i],
+                       name  = paste0("segment_labels_", i),
+                       gp    = grid::gpar(col        = visuals[["label_font_color"]],
+                                          fontfamily = visuals[["font"]],
+                                          fontsize   = dimensions[["label_font_size"]],
+                                          fontface   = visuals[["label_font_face"]],
+                                          lineheight = dimensions[["line_height"]]))
+    }))
 
     # Return whole label object
     grid::gList(lines, segment_labels)
@@ -2599,28 +2602,31 @@ direct_horizontal_stacked_labels <- function(diagram_info,
 
     rotate <- rep(0, number_of_labels)
 
-    # Generate the lines
-    lines <- grid::polylineGrob(x    = grid::unit(line_vector, "native"),
-                                y    = grid::unit(center_vector, "native"),
-                                id   = line_ids,
-                                name = "segment_lines",
-                                gp   = grid::gpar(col = visuals[["segment_line_color"]],
-                                                  lty = visuals[["segment_line_type"]],
-                                                  lwd = dimensions[["segment_line_thickness"]]))
+    # Generate individual line grobs so each can be targeted by interactive hover
+    lines <- do.call(grid::gList, lapply(seq_along(last_stack_centers_y), function(i){
+        grid::polylineGrob(x    = grid::unit(line_vector[c((2 * i) - 1, 2 * i)], "native"),
+                           y    = grid::unit(center_vector[c((2 * i) - 1, 2 * i)], "native"),
+                           name = paste0("segment_line_", i),
+                           gp   = grid::gpar(col = visuals[["segment_line_color"]],
+                                             lty = visuals[["segment_line_type"]],
+                                             lwd = dimensions[["segment_line_thickness"]]))
+    }))
 
-    # Generate the labels beside the lineslines
-    segment_labels <- grid::textGrob(label = diagram_info[["wrapped_segment_labels"]],
-                                     x     = grid::unit(1 + fine_tuning[["segment_line_length_stacked"]] + (fine_tuning[["diagram_margin"]] * 2), "native"),
-                                     y     = grid::unit(last_stack_centers_y, "native"),
-                                     hjust = 0,
-                                     vjust = fine_tuning[["stacked_value_vjust"]],
-                                     rot   = rotate,
-                                     name  = "segment_labels",
-                                     gp    = grid::gpar(col        = visuals[["label_font_color"]],
-                                                        fontfamily = visuals[["font"]],
-                                                        fontsize   = dimensions[["label_font_size"]],
-                                                        fontface   = visuals[["label_font_face"]],
-                                                        lineheight = dimensions[["line_height"]]))
+    # Generate the labels beside the lines as individual grobs for interactive hover
+    segment_labels <- do.call(grid::gList, lapply(seq_len(number_of_labels), function(i){
+        grid::textGrob(label = diagram_info[["wrapped_segment_labels"]][i],
+                       x     = grid::unit(1 + fine_tuning[["segment_line_length_stacked"]] + (fine_tuning[["diagram_margin"]] * 2), "native"),
+                       y     = grid::unit(last_stack_centers_y[i], "native"),
+                       hjust = 0,
+                       vjust = fine_tuning[["stacked_value_vjust"]],
+                       rot   = rotate[i],
+                       name  = paste0("segment_labels_", i),
+                       gp    = grid::gpar(col        = visuals[["label_font_color"]],
+                                          fontfamily = visuals[["font"]],
+                                          fontsize   = dimensions[["label_font_size"]],
+                                          fontface   = visuals[["label_font_face"]],
+                                          lineheight = dimensions[["line_height"]]))
+    }))
 
     # Return whole label object
     grid::gList(lines, segment_labels)

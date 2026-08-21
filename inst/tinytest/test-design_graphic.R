@@ -523,9 +523,9 @@ result_list <- dummy_df |>
                                                     theme_override = override_theme(1, "#FF0000", "#00FF00", "#0000FF")),
                    print          = FALSE)
 
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]    == "#0000FF", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]         == "#0000FF", info = "design_graphic with theme override")
 
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",
@@ -538,12 +538,12 @@ result_list <- dummy_df |>
                                                                           override_theme(2, "#0000FF", "#FF0000", "#00FF00"))),
                    print          = FALSE)
 
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]    == "#0000FF", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment2"]][["gp"]][["fill"]] == "#0000FF", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment2"]][["gp"]][["col"]]  == "#FF0000", info = "design_graphic with theme override")
-expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value2"]][["gp"]][["col"]]    == "#00FF00", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s1"]][["gp"]][["fill"]] == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s1"]][["gp"]][["col"]]  == "#00FF00", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value1"]][["gp"]][["col"]]         == "#0000FF", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s2"]][["gp"]][["fill"]] == "#0000FF", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["tooltip_segment_g1_s2"]][["gp"]][["col"]]  == "#FF0000", info = "design_graphic with theme override")
+expect_true(result_list[["graphic"]][["children"]][["diagram"]][["children"]][["segment_value2"]][["gp"]][["col"]]         == "#00FF00", info = "design_graphic with theme override")
 
 
 

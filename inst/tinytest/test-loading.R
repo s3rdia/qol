@@ -49,7 +49,7 @@ expect_equal(my_path, external_path, info = "Retrieve path with libname")
 # Retrieve files from path with libname
 my_path <- libname(external_path, get_files = TRUE)
 
-expect_equal(length(my_path), 11, info = "Retrieve files from path with libname")
+expect_equal(length(my_path), 13, info = "Retrieve files from path with libname")
 
 
 # Retrieve files with specific extensions from path with libname

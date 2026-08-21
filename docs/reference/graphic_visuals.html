@@ -115,14 +115,18 @@ design_graphic(). All parameters can also be set globally via set_graphic_option
 <span>  tooltip_font_color <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  tooltip_background_color <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  tooltip_border_color <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tooltip_group_font_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
+<span>  tooltip_group_back_color <span class="op">=</span> <span class="st">"#FFFFFF"</span>,</span>
+<span>  tooltip_group_border_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
 <span>  tooltip_border_width <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  tooltip_background_opacity <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  tooltip_x_padding <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  tooltip_y_padding <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  tooltip_corner_radius <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  segment_hover_opacity <span class="op">=</span> <span class="fl">0.85</span>,</span>
+<span>  tooltip_behaviour <span class="op">=</span> <span class="st">"dynamic"</span>,</span>
+<span>  segment_hover_opacity <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  group_hover_color <span class="op">=</span> <span class="st">"#6495ED"</span>,</span>
-<span>  group_hover_opacity <span class="op">=</span> <span class="fl">0.25</span></span>
+<span>  group_hover_opacity <span class="op">=</span> <span class="fl">0.35</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -440,6 +444,18 @@ If set to "auto" the background color will match the color of the corresponding 
 If set to "auto" the border color will match the color of the corresponding segment.</p></dd>
 
 
+<dt id="arg-tooltip-group-font-color">tooltip_group_font_color<a class="anchor" aria-label="anchor" href="#arg-tooltip-group-font-color"></a></dt>
+<dd><p>Background color of the group tooltips in interactive charts.</p></dd>
+
+
+<dt id="arg-tooltip-group-back-color">tooltip_group_back_color<a class="anchor" aria-label="anchor" href="#arg-tooltip-group-back-color"></a></dt>
+<dd><p>Font color of the group tooltips in interactive charts.</p></dd>
+
+
+<dt id="arg-tooltip-group-border-color">tooltip_group_border_color<a class="anchor" aria-label="anchor" href="#arg-tooltip-group-border-color"></a></dt>
+<dd><p>Border color of the group tooltips in interactive charts.</p></dd>
+
+
 <dt id="arg-tooltip-border-width">tooltip_border_width<a class="anchor" aria-label="anchor" href="#arg-tooltip-border-width"></a></dt>
 <dd><p>Width of the border of the tooltips in interactive charts.</p></dd>
 
@@ -462,6 +478,12 @@ the borders.</p></dd>
 <dt id="arg-tooltip-corner-radius">tooltip_corner_radius<a class="anchor" aria-label="anchor" href="#arg-tooltip-corner-radius"></a></dt>
 <dd><p>Radius of the corners of the tooltips in interactive charts.
 0 means sharp corners, tooltip displays as rectangle.</p></dd>
+
+
+<dt id="arg-tooltip-behaviour">tooltip_behaviour<a class="anchor" aria-label="anchor" href="#arg-tooltip-behaviour"></a></dt>
+<dd><p>Controls how interactive tooltips are positioned. Can be "dynamic"
+(default), where the tooltip follows the mouse cursor, or "static", where the tooltip is
+anchored directly above the hovered segment or centered on the hovered group.</p></dd>
 
 
 <dt id="arg-segment-hover-opacity">segment_hover_opacity<a class="anchor" aria-label="anchor" href="#arg-segment-hover-opacity"></a></dt>

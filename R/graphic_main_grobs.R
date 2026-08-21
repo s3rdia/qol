@@ -53,11 +53,11 @@ vertical_grouped_bar_grob <- function(diagram_info, arguments){
     rects <- do.call(grid::gList,
                      lapply(seq_len(diagram_info[["number_of_elements"]]), function(i){
         grid::rectGrob(x      = grid::unit(diagram_info[["segment_pos"]][i], "native") + (diagram_info[["shrink_width"]] / 2),
-                       y      = diagram_info[["zero_pos"]],
+                       y      = grid::unit(diagram_info[["zero_pos"]], "native"),
                        width  = grid::unit(diagram_info[["segment_width"]], "native") - diagram_info[["shrink_width"]],
                        height = grid::unit(diagram_info[["actual_drawing_height"]][i], "native"),
                        just   = c("left", "bottom"),
-                       name   = paste0("tooltip_segment", i),
+                       name   = paste0("tooltip_segment_g", diagram_info[["group_ids"]][i] + 1, "_s", diagram_info[["segment_ids"]][i] + 1),
                        gp     = grid::gpar(fill = diagram_info[["colors_to_use"]][i],
                                            col  = diagram_info[["border_color"]][i],
                                            lwd  = dimensions[["line_thickness"]]))
@@ -154,7 +154,6 @@ vertical_grouped_bar_grob <- function(diagram_info, arguments){
         if (length(theme_override) > 0){
             for (override in theme_override){
                 font_color[override[["number"]]] <- override[["font_color"]]
-                font_color[override[["number"]]] <- override[["font_color"]]
             }
         }
 
@@ -229,6 +228,9 @@ vertical_stacked_bar_grob <- function(diagram_info, arguments){
     if (dimensions[["space_between_bars"]] == 0){
         space_between_bars <- fine_tuning[["default_stack_width"]]
     }
+    else{
+        space_between_bars <- dimensions[["space_between_bars"]]
+    }
 
     stack_width <- diagram_info[["segment_width"]] * ((100 - space_between_bars) / 100)
 
@@ -238,12 +240,15 @@ vertical_stacked_bar_grob <- function(diagram_info, arguments){
     #       overlap by one pixel, in case colored outlines are used.
     rects <- do.call(grid::gList,
                      lapply(seq_len(diagram_info[["number_of_elements"]]), function(i){
+                         seg_in_group <- ((i - 1) %% diagram_info[["number_of_segments"]]) + 1
+                         group_index  <- ceiling(i / diagram_info[["number_of_segments"]])
+
                          grid::rectGrob(x      = grid::unit(diagram_info[["group_centers"]][i], "native"),
                                         y      = grid::unit(stacked_values[i], "native"),
                                         width  = grid::unit(stack_width, "native"),
                                         height = grid::unit(stacked_heights[i], "native"),
                                         just   = c("center", "top"),
-                                        name   = paste0("tooltip_segment", i),
+                                        name   = paste0("tooltip_segment_g", group_index, "_s", seg_in_group),
                                         gp     = grid::gpar(fill = diagram_info[["colors_to_use"]][i],
                                                             col  = diagram_info[["border_color"]][i],
                                                             lwd  = dimensions[["line_thickness"]]))
@@ -281,7 +286,6 @@ vertical_stacked_bar_grob <- function(diagram_info, arguments){
         # Inject overrides
         if (length(theme_override) > 0){
             for (override in theme_override){
-                font_color[override[["number"]]] <- override[["font_color"]]
                 font_color[override[["number"]]] <- override[["font_color"]]
             }
         }

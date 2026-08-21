@@ -1,0 +1,490 @@
+<script type="application/ecmascript"><![CDATA[
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Grab the styling values from the R code and inject them into global variables
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+var tooltipOptions = {
+    fontColor:   "%FONT_COLOR%",
+    fillColor:   "%FILL_COLOR%",
+    borderColor: "%BORDER_COLOR%",
+    fillOpacity:  %FILL_OPACITY%,
+    borderWidth:  %BORDER_WIDTH%,
+    fontFamily:  "%FONT_FAMILY%",
+    fontSize:     %FONT_SIZE%,
+    paddingX:     %PADDING_X%,
+    paddingY:     %PADDING_Y%,
+    cornerRadius: %CORNER_RADIUS%,
+    groupColor:  "%GROUP_COLOR%"
+};
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Set up the function that makes the toolstip pop up
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function showTooltip(evt, text){
+    // Dom element selection
+    var svg     = evt.target.ownerSVGElement;
+    var tooltip = svg.querySelector("#tooltip");
+    var label   = svg.querySelector("#tooltip-text");
+    var bg      = svg.querySelector("#tooltip-bg");
+
+    var isGroup = evt.target.id && evt.target.id.indexOf("tooltip_group") === 0;
+
+    // Extract {bg:COLOR} marker if present (compare tooltips). The marker is
+    // stripped from the display text and used as the tooltip background color.
+    var bgColor = null;
+    var bgMatch = text.match(/^\{bg:([^}]+)\}/);
+    if (bgMatch){
+        bgColor = bgMatch[1];
+        text = text.substring(bgMatch[0].length);
+    }
+
+    // Font must be scaled according to the current displayed size of the graphic.
+    // The zoom has to be countered basically.
+    var scaleFactor     = svg.viewBox.baseVal.width / svg.getBoundingClientRect().width;
+    var adaptedFontSize = parseFloat(tooltipOptions.fontSize) * scaleFactor;
+    var adaptedPaddingX = parseFloat(tooltipOptions.paddingX) * scaleFactor;
+    var adaptedPaddingY = parseFloat(tooltipOptions.paddingY) * scaleFactor;
+
+    // Set up font
+    label.setAttribute("font-family", tooltipOptions.fontFamily);
+    label.setAttribute("font-size", adaptedFontSize + "px");
+
+    // Clear previous multi line text element
+    while(label.firstChild) { label.removeChild(label.firstChild); }
+
+    // Put together and format multi line tooltips
+    var lines = text.split("!!!");
+
+    for(var lineIndex = 0; lineIndex < lines.length; lineIndex++){
+        var line = lines[lineIndex];
+
+        // Extract legend color if present
+        var legendColor = null;
+        var legendMatch = line.match(/\{legend:([^}]+)\}/);
+
+        if(legendMatch){
+            legendColor = legendMatch[1];
+
+            line = line.replace(/\{legend:[^}]+\}/, "{sq}");
+        }
+
+        var bold = false;
+        var xPos = adaptedPaddingX;
+
+        // Current line is cut up into pieces which determine whether parts of
+        // the text are drawn in bold or in normal font weight.
+        var pieces = line.split(/(\{b\}|\{\/b\}|\{sq\})/);
+
+        for(var pieceIndex = 0; pieceIndex < pieces.length; pieceIndex++){
+            var piece = pieces[pieceIndex];
+
+            // Set bold entry and exit points
+            if(piece === "{b}")  { bold = true;  continue; }
+            if(piece === "{/b}") { bold = false; continue; }
+            if(piece === "")     {               continue; }
+
+            // Create and append inline sub-text tag (tspan)
+            var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+
+            // Replace the square placeholder and fill it with the corresponding legend color
+            if(piece === "{sq}"){
+                tspan.textContent = "■\u00A0";
+                tspan.setAttribute("fill", legendColor);
+                tspan.style.fill = legendColor; // Doppelte Absicherung für SVG-Rendering
+
+                // Hier machen wir das Quadrat um ca. 30% größer als die normale Schrift
+                tspan.setAttribute("font-size", (adaptedFontSize * 1.3) + "px");
+                tspan.setAttribute("font-weight", "normal");
+            }
+            // Use normal style on standard text
+            else{
+                tspan.textContent = piece;
+                tspan.setAttribute("font-weight", bold ? "bold" : "normal");
+                // Falls das Tooltip standardmäßig eine Textfarbe hat (z. B. weiß oder schwarz), hier erzwingen:
+                tspan.setAttribute("fill", window.getComputedStyle(label).fill || "black");
+            }
+
+            tspan.setAttribute("x", xPos);
+            tspan.setAttribute("y", adaptedPaddingY + adaptedFontSize + (lineIndex * adaptedFontSize * 1.3));
+
+            label.appendChild(tspan);
+
+            // Advance cursor by the pixel width of rendered piece
+            xPos += tspan.getComputedTextLength();
+        }
+    }
+
+    // Calculate the tooltip box dimensions
+    var bbox = label.getBBox();
+
+    var tooltipWidth  = bbox.width + (2 * adaptedPaddingX);
+    var tooltipHeight = bbox.height + (2 * adaptedPaddingY);
+
+    //-------------------------------------------------------------------------
+    // Function which sets the text color dynamically to black or white depending
+    // on the tooltip background color
+    //-------------------------------------------------------------------------
+
+    function getContrastColor(color){
+        var rgb;
+
+        if (color.charAt(0) === "#"){
+            var hex = color.substring(1);
+
+            if (hex.length === 3){
+                rgb = [parseInt(hex[0]+hex[0],16), parseInt(hex[1]+hex[1],16), parseInt(hex[2]+hex[2],16)];
+            }
+            else{
+                rgb = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
+            }
+        }
+        else{
+            rgb = color.match(/\d+/g);
+        }
+
+        if(!rgb || rgb.length < 3) { return "black"; }
+
+        // Calculate YIQ relative luminance formula to dynamically check light vs. dark
+        var brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+        return brightness > 128 ? "black" : "white";
+    }
+
+    //-------------------------------------------------------------------------
+    // Formatting tooltips
+    //-------------------------------------------------------------------------
+
+    var tooltipTextColor, tooltipFillColor, tooltipBorderColor;
+
+    // On auto grab the color of the respective segment
+    if(tooltipOptions.fillColor === "auto"){
+        // Compare tooltip: use the explicit background color from {bg:COLOR}
+        if (bgColor){
+            tooltipFillColor = bgColor;
+        }
+        // Group tooltip: use configured group background color
+        else if (isGroup){
+            tooltipFillColor = "%GROUP_TOOLTIP_BG%";
+        }
+        // Segment tooltip: use the hovered segment fill
+        else{
+            tooltipFillColor = window.getComputedStyle(evt.target).fill;
+        }
+    }
+    // Otherwise get the user defined color (group still uses its own)
+    else{
+        tooltipFillColor = isGroup ? "%GROUP_TOOLTIP_BG%" : tooltipOptions.fillColor;
+    }
+
+    // On auto dynamically set the color to black or white
+    if(tooltipOptions.fontColor === "auto"){
+        if (bgColor){
+            tooltipTextColor = getContrastColor(tooltipFillColor);
+        }
+        else if (isGroup){
+            tooltipTextColor = "%GROUP_TOOLTIP_FONT%";
+        }
+        else{
+            tooltipTextColor = getContrastColor(tooltipFillColor);
+        }
+    }
+    // Otherwise get the user defined color (group still uses its own)
+    else{
+        tooltipTextColor = isGroup ? "%GROUP_TOOLTIP_FONT%" : tooltipOptions.fontColor;
+    }
+
+    // On auto grab the color of the respective segment
+    if(tooltipOptions.borderColor === "auto"){
+        tooltipBorderColor = isGroup ? "%GROUP_TOOLTIP_BORDER%" : "#000000";
+    }
+    // Otherwise get the user defined color (group still uses its own)
+    else{
+        tooltipBorderColor = isGroup ? "%GROUP_TOOLTIP_BORDER%" : tooltipOptions.borderColor;
+    }
+
+    // Apply user defined style options
+    bg.setAttribute("fill", tooltipFillColor);
+    bg.setAttribute("fill-opacity", tooltipOptions.fillOpacity);
+    bg.setAttribute("stroke", tooltipBorderColor);
+    bg.setAttribute("stroke-width", parseFloat(tooltipOptions.borderWidth) * scaleFactor);
+    bg.setAttribute("rx", parseFloat(tooltipOptions.cornerRadius) * scaleFactor);
+    bg.setAttribute("ry", parseFloat(tooltipOptions.cornerRadius) * scaleFactor);
+    label.setAttribute("fill", tooltipTextColor);
+
+    // Align background
+    bg.setAttribute("x", bbox.x - adaptedPaddingX);
+    bg.setAttribute("y", bbox.y - adaptedPaddingY);
+    bg.setAttribute("width", tooltipWidth);
+    bg.setAttribute("height", tooltipHeight);
+
+    //-------------------------------------------------------------------------
+    // Static positioning: Compare tooltips (bgColor present) are centered in
+    // the diagram area. Segment tooltips sit centered above the segment; group
+    // tooltips sit centered on the group. getBBox() gives the element's extent
+    // in its OWN local coordinate space, so it's transformed into the svg root's
+    // coordinate space via the combined screen-space matrices.
+    //-------------------------------------------------------------------------
+
+    var svgWidth  = svg.viewBox.baseVal.width;
+    var svgHeight = svg.viewBox.baseVal.height;
+
+    var tooltipX, tooltipY;
+
+    if (bgColor){
+        // Center in the diagram area
+        var diagBg = svg.querySelector("[id^='diagram_background']");
+
+        if (diagBg){
+            var diagBBox = diagBg.getBBox();
+            var toSvgDiag = svg.getScreenCTM().inverse().multiply(diagBg.getScreenCTM());
+            var diagCenter = svg.createSVGPoint();
+
+            diagCenter.x = diagBBox.x + diagBBox.width  / 2;
+            diagCenter.y = diagBBox.y + diagBBox.height / 2;
+            diagCenter = diagCenter.matrixTransform(toSvgDiag);
+
+            tooltipX = diagCenter.x - tooltipWidth  / 2;
+            tooltipY = diagCenter.y - tooltipHeight / 2;
+        }
+        else{
+            tooltipX = (svgWidth  - tooltipWidth)  / 2;
+            tooltipY = (svgHeight - tooltipHeight) / 2;
+        }
+    }
+    else{
+        var targetBBox = evt.target.getBBox();
+
+        var anchorLocalX = targetBBox.x + targetBBox.width / 2;
+        var anchorLocalY = isGroup
+            ? (targetBBox.y + targetBBox.height / 2)
+            : (targetBBox.y + targetBBox.height);
+
+        var toSvgSpace = svg.getScreenCTM().inverse().multiply(evt.target.getScreenCTM());
+
+        var anchorPoint = svg.createSVGPoint();
+        anchorPoint.x = anchorLocalX;
+        anchorPoint.y = anchorLocalY;
+        anchorPoint = anchorPoint.matrixTransform(toSvgSpace);
+
+        var offset = 10 * scaleFactor;
+
+        tooltipX = anchorPoint.x - (tooltipWidth / 2);
+        tooltipY = isGroup
+            ? (anchorPoint.y - (tooltipHeight / 2))
+            : (anchorPoint.y - tooltipHeight - offset);
+
+        // Keep the tooltip within the visible canvas. Segment tooltips that
+        // don't have room above (e.g. a segment right at the top edge) flip to
+        // sit below instead; everything else just clamps to the canvas bounds.
+        if (!isGroup && tooltipY < 0){
+            tooltipY = anchorPoint.y + offset;
+        }
+
+        tooltipX = Math.max(0, Math.min(tooltipX, svgWidth  - tooltipWidth));
+        tooltipY = Math.max(0, Math.min(tooltipY, svgHeight - tooltipHeight));
+    }
+
+    // Transform coordinate group placement matrix and release display
+    tooltip.setAttribute("transform", "translate(" + tooltipX + "," + tooltipY + ")");
+    tooltip.setAttribute("visibility", "visible");
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Hide tooltip
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function hideTooltip(){
+	// Get selected value and create a clean html id without spaces or umlauts
+    var selected_element = document.getElementById("dropdown").value;
+    var clean_id = selected_element.replace(/[^A-Za-z0-9]/g, "");
+
+	// Find target svg container
+    var target_container = document.getElementById("container_" + clean_id);
+
+	// Look for tooltip inside visible svg container and hide it
+    if (target_container){
+        var tooltip = target_container.querySelector("#tooltip");
+		
+        if (tooltip){
+            tooltip.setAttribute("visibility", "hidden");
+        }
+    }
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Helpers
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function setOpacity(el, val){
+    el.setAttribute("opacity", val);
+    el.style.setProperty("opacity", val, "important");
+}
+
+// Applies setOpacity to every element in a NodeList
+function setOpacityForAll(nodeList, val){
+    for (var i = 0; i < nodeList.length; i++){
+        setOpacity(nodeList[i], val);
+    }
+}
+
+// gridSVG disambiguates duplicate SVG element ids by appending ".1",
+// ".2", ".3", etc. - and text grobs specifically get wrapped in their
+// own sub-hierarchy for rendering: an outer ".scale" <g> (the y-flip),
+// a ".text" <text>, and one or more ".tspan.N" <tspan> children. Since
+// elements are matched by id PREFIX, all of those nested pieces get
+// picked up too and each needs to resolve back to the same base id.
+// Stripping suffixes one at a time, repeatedly, handles any mix of
+// numeric duplicate suffixes and these named wrapper suffixes in
+// whatever order/combination they appear.
+function cleanId(id){
+    var suffixPattern = /\.(scale|text|tspan\.\d+|\d+)$/;
+    var clean = id;
+    var match = clean.match(suffixPattern);
+
+    while (match){
+        clean = clean.slice(0, clean.length - match[0].length);
+        match = clean.match(suffixPattern);
+    }
+
+    return clean;
+}
+
+function getSegType(id){
+    var clean = cleanId(id);
+    var match = clean.match(/_s(\d+)$/);
+    return match ? parseInt(match[1], 10) : -1;
+}
+
+// Extract the numeric index from "segment_line_{N}" or "segment_labels_{N}"
+function getLineIndex(id){
+    var clean = cleanId(id);
+    var match = clean.match(/(?:segment_line|segment_labels)_(\d+)$/);
+    return match ? parseInt(match[1], 10) : -1;
+}
+
+// Every hover handler needs the same node lists - collected once here
+// instead of each function independently re-querying the DOM.
+function getChartElements(svg){
+    return {
+        groups:   svg.querySelectorAll("[id^='tooltip_group']"),
+        segments: svg.querySelectorAll("[id^='tooltip_segment_']"),
+        labels:   svg.querySelectorAll("[id^='segment_labels_']"),
+        lines:    svg.querySelectorAll("[id^='segment_line_']"),
+        syms:     svg.querySelectorAll("[id^='legend_symbol']"),
+        ltxts:    svg.querySelectorAll("[id^='legend_labels']")
+    };
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Segment hover: ONLY the hovered segment + its legend entry + its label
+// stay fully visible. Everything else receives a lowered opacity to make the
+// main focused segment stand out.
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function dimOtherSegments(el){
+    var svg      = el.ownerSVGElement;
+    var elements = getChartElements(svg);
+
+    var hoveredId = cleanId(el.id);
+    var segType   = getSegType(el.id);
+
+    for (var i = 0; i < elements.segments.length; i++){
+        var isHovered = cleanId(elements.segments[i].id) === hoveredId;
+        setOpacity(elements.segments[i], isHovered ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.labels.length; i++){
+        var isMatch = cleanId(elements.labels[i].id) === "segment_labels_" + segType;
+        setOpacity(elements.labels[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.lines.length; i++){
+        var isMatch = getLineIndex(elements.lines[i].id) === segType;
+        setOpacity(elements.lines[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.syms.length; i++){
+        var isMatch = cleanId(elements.syms[i].id) === "legend_symbol" + segType;
+        setOpacity(elements.syms[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.ltxts.length; i++){
+        var isMatch = cleanId(elements.ltxts[i].id) === "legend_labels" + segType;
+        setOpacity(elements.ltxts[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Group hover: segments outside the group receive a lower opacity. Labels,
+// legend, and lines stay visible.
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function dimOtherGroups(el, groupIndex){
+    var svg      = el.ownerSVGElement;
+    var elements = getChartElements(svg);
+
+    var groupPrefix = "tooltip_segment_g" + groupIndex + "_";
+
+    var hoveredId = cleanId(el.id);
+
+    for (var i = 0; i < elements.groups.length; i++){
+        var isHovered = cleanId(elements.groups[i].id) === hoveredId;
+        setOpacity(elements.groups[i], isHovered ? "%GROUP_HOVER_OPACITY%" : "0");
+    }
+    for (var i = 0; i < elements.segments.length; i++){
+        var inGroup = elements.segments[i].id.indexOf(groupPrefix) !== -1;
+        setOpacity(elements.segments[i], inGroup ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+
+    setOpacityForAll(elements.labels, "1");
+    setOpacityForAll(elements.lines, "1");
+    setOpacityForAll(elements.syms, "1");
+    setOpacityForAll(elements.ltxts, "1");
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Type hover (legend entries and segment labels): every segment of the
+// matching type + its legend entry + its label stay fully visible. Lines and
+// other types receive a lower opacity.
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function dimOtherByType(el, typeIndex){
+    var svg      = el.ownerSVGElement;
+    var elements = getChartElements(svg);
+
+    for (var i = 0; i < elements.segments.length; i++){
+        var isMatch = getSegType(elements.segments[i].id) === typeIndex;
+        setOpacity(elements.segments[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.labels.length; i++){
+        var isMatch = cleanId(elements.labels[i].id) === "segment_labels_" + typeIndex;
+        setOpacity(elements.labels[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.lines.length; i++){
+        var isMatch = getLineIndex(elements.lines[i].id) === typeIndex;
+        setOpacity(elements.lines[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.syms.length; i++){
+        var isMatch = cleanId(elements.syms[i].id) === "legend_symbol" + typeIndex;
+        setOpacity(elements.syms[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+    for (var i = 0; i < elements.ltxts.length; i++){
+        var isMatch = cleanId(elements.ltxts[i].id) === "legend_labels" + typeIndex;
+        setOpacity(elements.ltxts[i], isMatch ? "1" : "%SEGMENT_HOVER_OPACITY%");
+    }
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Reset everything
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+function resetAll(el){
+    var svg      = el.ownerSVGElement;
+    var elements = getChartElements(svg);
+
+    setOpacityForAll(elements.segments, "1");
+    setOpacityForAll(elements.labels, "1");
+    setOpacityForAll(elements.lines, "1");
+    setOpacityForAll(elements.syms, "1");
+    setOpacityForAll(elements.ltxts, "1");
+    setOpacityForAll(elements.groups, "0");
+}
+
+]]></script>

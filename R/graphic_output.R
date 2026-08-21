@@ -113,9 +113,9 @@ output_graphic <- function(graphic_object,
             extension <- tolower(tools::file_ext(output[["file"]]))
             filename  <- tools::file_path_sans_ext(output[["file"]])
 
-            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "html")){
+            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "pdf", "html")){
                 print_message("WARNING", c("Filetype '[extension]' not supported, 'png' will be used. Valid filetypes are:",
-                                           "png, svg, jpeg, jpg, bmp, tiff"), extension = extension)
+                                           "png, svg, jpeg, jpg, bmp, tiff, pdf"), extension = extension)
 
                 extension <- "png"
             }
@@ -163,7 +163,8 @@ output_graphic <- function(graphic_object,
                                     jpeg = grDevices::jpeg,
                                     jpg  = grDevices::jpeg,
                                     bmp  = grDevices::bmp,
-                                    tiff = grDevices::tiff)
+                                    tiff = grDevices::tiff,
+                                    pdf  = grDevices::cairo_pdf)
 
                     device_function <- devices[[extension]]
 
@@ -258,9 +259,9 @@ output_grid <- function(dimensions,
             extension <- tolower(tools::file_ext(output[["file"]]))
             filename  <- tools::file_path_sans_ext(output[["file"]])
 
-            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "html")){
+            if (!extension %in% c("png", "svg", "jpeg", "jpg", "bmp", "tiff", "pdf", "html")){
                 print_message("WARNING", c("Filetype '[extension]' not supported, 'png' will be used. Valid filetypes are:",
-                                           "png, svg, jpeg, jpg, bmp, tiff"), extension = extension)
+                                           "png, svg, jpeg, jpg, bmp, tiff, pdf"), extension = extension)
 
                 extension <- "png"
             }
@@ -315,7 +316,8 @@ output_grid <- function(dimensions,
                                     jpeg = grDevices::jpeg,
                                     jpg  = grDevices::jpeg,
                                     bmp  = grDevices::bmp,
-                                    tiff = grDevices::tiff)
+                                    tiff = grDevices::tiff,
+                                    pdf  = grDevices::cairo_pdf)
 
                     device_function <- devices[[extension]]
 
@@ -408,7 +410,8 @@ output_interactive_html <- function(graphic_object,
     grDevices::png(filename = temp_image,
                    width    = graphic_width,
                    height   = graphic_height,
-                   res      = dpi)
+                   res      = dpi,
+                   type     = "cairo")
 
     # First draw the static gTree and then capture it with gridSVG to build the
     # base for the interactive structure.
@@ -574,12 +577,16 @@ output_interactive_html <- function(graphic_object,
     if (is.null(by_info)){ print_step("MINOR", "Inject Java Script") }
 
     # Put together the whole java script and inject the custom tooltip design
+    tooltip_behaviour <- visuals[["tooltip_behaviour"]]
+
     if (!by_as_grid || is.null(by_info)){
-        full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
+        js_file <- paste0("qol_js_tooltip_", tooltip_behaviour, ".txt")
     }
     else{
-        full_java_script <- paste(readLines(system.file("extdata", "qol_js_tooltip_dropdown.txt", package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
+        js_file <- paste0("qol_js_tooltip_dropdown_", tooltip_behaviour, ".txt")
     }
+
+    full_java_script <- paste(readLines(system.file("extdata", js_file, package = "qol"), encoding = "UTF-8", warn = FALSE), collapse = "\n")
 
     full_java_script <- gsub("%FONT_COLOR%",    visuals[["tooltip_font_color"]],         full_java_script, fixed = TRUE)
     full_java_script <- gsub("%FILL_COLOR%",    visuals[["tooltip_background_color"]],   full_java_script, fixed = TRUE)
@@ -592,6 +599,11 @@ output_interactive_html <- function(graphic_object,
     full_java_script <- gsub("%PADDING_Y%",     visuals[["tooltip_y_padding"]],          full_java_script, fixed = TRUE)
     full_java_script <- gsub("%CORNER_RADIUS%", visuals[["tooltip_corner_radius"]],      full_java_script, fixed = TRUE)
     full_java_script <- gsub("%GROUP_COLOR%",   visuals[["group_hover_color"]],          full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%SEGMENT_HOVER_OPACITY%", visuals[["segment_hover_opacity"]], full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%GROUP_HOVER_OPACITY%",   visuals[["group_hover_opacity"]],   full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%GROUP_TOOLTIP_BG%",      visuals[["tooltip_group_back_color"]], full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%GROUP_TOOLTIP_FONT%",    visuals[["tooltip_group_font_color"]], full_java_script, fixed = TRUE)
+    full_java_script <- gsub("%GROUP_TOOLTIP_BORDER%",  visuals[["tooltip_group_border_color"]], full_java_script, fixed = TRUE)
 
     #-------------------------------------------------------------------------#
     # Set up segment tooltips
@@ -608,14 +620,17 @@ output_interactive_html <- function(graphic_object,
         # Tooltip text to display on mouse over
         tooltip <- paste0(tooltip_header[i], "!!!\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013!!!", value_labels[i], "!!!{b}", " ", values[i], "{/b}")
 
+        # Compute group and segment index within group
+        seg_in_group <- ((i - 1) %% diagram_info[["number_of_segments"]]) + 1
+        group_index  <- ceiling(i / diagram_info[["number_of_segments"]])
+
         # Capture only the segments which should receive tooltips.
         # All the ids in the SVG files receive a .1 at the end. Don't know why.
-        current_segment_part <- paste0('id="tooltip_segment', i, '.1"')
+        current_segment_part <- paste0('id="tooltip_segment_g', group_index, '_s', seg_in_group, '.1"')
 
         # Put together the new part
-        new_segment_part <- sprintf(
-            "%s onmousemove=\"showTooltip(evt, '%s'); this.setAttribute('opacity','%s');\" onmouseout=\"hideTooltip(); this.setAttribute('opacity','1');\"",
-            current_segment_part, tooltip, visuals[["segment_hover_opacity"]])
+        new_segment_part <- sprintf("%s onmousemove=\"showTooltip(evt, '%s'); dimOtherSegments(this);\" onmouseout=\"hideTooltip(); resetAll(this);\"",
+                                    current_segment_part, tooltip)
 
         # Swap out the static for the dynamic part
         svg_string <- sub(current_segment_part, new_segment_part, svg_string, fixed = TRUE)
@@ -627,12 +642,13 @@ output_interactive_html <- function(graphic_object,
 
     number_of_groups   <- diagram_info[["number_of_groups"]]
     number_of_segments <- diagram_info[["number_of_segments"]]
+    segment_labels     <- diagram_info[["unique_segments"]]
+    value_label        <- diagram_info[["value_labels"]]
 
+    # Transform values into a matrix so that all values that should appear in one
+    # tooltip are ordered in rows.
     values         <- matrix(diagram_info[["formatted_values"]], nrow = number_of_groups, byrow = TRUE)
     tooltip_header <- build_tooltip_header(c(rev(diagram_info[["individual_groups"]])))
-
-    segment_labels <- diagram_info[["unique_segments"]]
-    value_label    <- diagram_info[["value_labels"]]
 
     # Gather the group tooltips
     for(i in seq_len(number_of_groups)){
@@ -648,12 +664,47 @@ output_interactive_html <- function(graphic_object,
         current_group_part <- paste0('id="tooltip_group', i, '.1"')
 
         # Put together the new part
-        new_group_part <- sprintf(
-            "%s opacity=\"0\" onmousemove=\"showTooltip(evt, '%s'); this.setAttribute('opacity','%s');\" onmouseout=\"hideTooltip(); this.setAttribute('opacity','0');\"",
-            current_group_part, tooltip, visuals[["group_hover_opacity"]])
+        new_group_part <- sprintf("%s opacity=\"0\" onmousemove=\"showTooltip(evt, '%s'); dimOtherGroups(this, %d);\" onmouseout=\"hideTooltip(); resetAll(this);\"",
+                                  current_group_part, tooltip, i)
 
         # Swap out the static for the dynamic part
         svg_string <- sub(current_group_part, new_group_part, svg_string, fixed = TRUE)
+    }
+
+    #-------------------------------------------------------------------------#
+    # Set up legend and segment label tooltips
+    #-------------------------------------------------------------------------#
+
+    segment_colors <- diagram_info[["colors_to_use"]]
+
+    # Transform values into a matrix so that all values that should appear in one
+    # tooltip are ordered in columns.
+    values         <- matrix(diagram_info[["formatted_values"]], nrow = number_of_groups, byrow = TRUE)
+    tooltip_header <- build_tooltip_header(c(rev(diagram_info[["individual_groups"]])))
+
+    # Inject hover events on legend symbols, legend labels and segment labels
+    for (i in seq_len(number_of_segments)){
+        segment_lines <- paste0(tooltip_header, "\u00A0:\u00A0{b}", values[, i], "{/b}")
+
+        # Tooltip text to display on mouse over. The background color is the
+        # segments color.
+        tooltip <- paste0("{bg:", segment_colors[i], "}{b}", segment_labels[i], "{/b}",
+                                  "!!!\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013",
+                                  "!!!", value_label, "!!!",
+                                  paste(segment_lines, collapse = "!!!"))
+
+        # Build handler attributes for all three targets
+        hover_attrs <- sprintf("onmousemove=\"dimOtherByType(this, %d); showTooltip(evt, '%s');\" onmouseout=\"hideTooltip(); resetAll(this);\"",
+                               i, tooltip)
+
+        current_legend_symbol <- paste0('id="legend_symbol',   i, '.1"')
+        current_legend_text   <- paste0('id="legend_labels',   i, '.1"')
+        current_segment_label <- paste0('id="segment_labels_', i, '.1"')
+
+        # Inject the the attributes into the svg string
+        svg_string <- sub(current_legend_symbol, paste(current_legend_symbol, hover_attrs), svg_string, fixed = TRUE)
+        svg_string <- sub(current_legend_text,   paste(current_legend_text,   hover_attrs), svg_string, fixed = TRUE)
+        svg_string <- sub(current_segment_label, paste(current_segment_label, hover_attrs), svg_string, fixed = TRUE)
     }
 
     #-------------------------------------------------------------------------#
@@ -661,7 +712,7 @@ output_interactive_html <- function(graphic_object,
     #-------------------------------------------------------------------------#
 
     # This needs to be added to make the tooltips visible
-    tooltip_layer <- '<g id="tooltip" visibility="hidden">
+    tooltip_layer <- '<g id="tooltip" visibility="hidden" pointer-events="none">
                       <rect id="tooltip-bg"/>
                       <text id="tooltip-text"/></g>'
 

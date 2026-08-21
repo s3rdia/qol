@@ -73,14 +73,18 @@ graphic_visuals(
   tooltip_font_color = "auto",
   tooltip_background_color = "auto",
   tooltip_border_color = "auto",
+  tooltip_group_font_color = "#000000",
+  tooltip_group_back_color = "#FFFFFF",
+  tooltip_group_border_color = "#000000",
   tooltip_border_width = 2,
   tooltip_background_opacity = 0.95,
   tooltip_x_padding = 8,
   tooltip_y_padding = 4,
   tooltip_corner_radius = 2,
-  segment_hover_opacity = 0.85,
+  tooltip_behaviour = "dynamic",
+  segment_hover_opacity = 0.5,
   group_hover_color = "#6495ED",
-  group_hover_opacity = 0.25
+  group_hover_opacity = 0.35
 )
 }
 \arguments{
@@ -258,6 +262,12 @@ If set to "auto" the background color will match the color of the corresponding 
 \item{tooltip_border_color}{Border color of the tooltips in interactive charts.
 If set to "auto" the border color will match the color of the corresponding segment.}
 
+\item{tooltip_group_font_color}{Background color of the group tooltips in interactive charts.}
+
+\item{tooltip_group_back_color}{Font color of the group tooltips in interactive charts.}
+
+\item{tooltip_group_border_color}{Border color of the group tooltips in interactive charts.}
+
 \item{tooltip_border_width}{Width of the border of the tooltips in interactive charts.}
 
 \item{tooltip_background_opacity}{Background opacity of the tooltips in interactive charts.
@@ -271,6 +281,10 @@ the borders.}
 
 \item{tooltip_corner_radius}{Radius of the corners of the tooltips in interactive charts.
 0 means sharp corners, tooltip displays as rectangle.}
+
+\item{tooltip_behaviour}{Controls how interactive tooltips are positioned. Can be "dynamic"
+(default), where the tooltip follows the mouse cursor, or "static", where the tooltip is
+anchored directly above the hovered segment or centered on the hovered group.}
 
 \item{segment_hover_opacity}{When hovering with the mouse cursor over a segment of an
 interactive chart, this parameter determines at how much opacity the segment is displayed.}
