@@ -10,7 +10,7 @@
 Version](https://www.r-pkg.org/badges/version/qol?color=green)](https://cran.r-project.org/package=qol)
 [![r-universe](https://s3rdia.r-universe.dev/badges/qol)](https://s3rdia.r-universe.dev/qol)
 [![DEVELOPMENT
-Version](https://img.shields.io/badge/GitHub-1.3.4-blue.svg)](https://github.com/s3rdia/qol)
+Version](https://img.shields.io/badge/GitHub-1.3.5-blue.svg)](https://github.com/s3rdia/qol)
 [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/s3rdia/qol)
 [![qol_blog](https://img.shields.io/badge/qol-Blog-036f30)](https://s3rdia.github.io/qol_blog/)

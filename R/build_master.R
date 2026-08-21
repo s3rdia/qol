@@ -726,8 +726,8 @@ run_project <- function(path = NULL){
 
 
 #' @description
-#' [run_project()]: Runs all scripts found in a folder structure, including all
-#' scripts within subfolders. Folders, which are marked with an "!" at the end
+#' [run_project_parallel()]: Runs all scripts found in a folder structure, including
+#' all scripts within subfolders. Folders, which are marked with an "!" at the end
 #' of their folder name, are run as background jobs in parallel, all other folders
 #' are run sequentially.
 #'

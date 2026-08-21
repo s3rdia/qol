@@ -1,3 +1,9 @@
+# qol 1.3.5 - DEVELOPMENT
+
+### Fixed
+
+* `combine_into_workbook()`: Fixed table of contents example not working as intended. (21.08.2026)
+
 # qol 1.3.4
 
 ### New functions
@@ -36,7 +42,7 @@
 
 ### Changed functionality
 
-* `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files no works with the `style` parameter like in the other tabulation functions. (03.08.2026)
+* `combine_into_workbook()`: With the function making use of the new `style` parameter, the `file` parameter has been removed. Saving files now works with the `style` parameter like in the other tabulation functions. (03.08.2026)
 * `retain_value()`: Without by variable the function now carries forward values through upcoming NA values instead of just writing the first value into all other cells. (08.08.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: The functions now set the font family per cell instead of a base font for the whole workbook. This enables different fonts per sheet in multi sheet workbooks, if the sheets are created with separate calls. (08.08.2026)
 * `recode_multi()`: `convert` parameter is now set to TRUE by default. (11.08.2026)

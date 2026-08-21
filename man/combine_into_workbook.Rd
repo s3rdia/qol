@@ -87,10 +87,10 @@ set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
-set_titles("This is title number 1 link: https://cran.r-project.org/",
-           "This is title number 2 cell: W22",
+set_titles("This is title number 1,
+           "This is title number 2 link: https://cran.r-project.org/"",
            "This is title number 3 file: C:/MyFolder/MyFile.docx",
-           "This is title number 4")
+           "This is title number 4 cell: W22")
 set_footnotes("This is footnote number 1 cell: W22",
               "This is footnote number 2 file: C:/MyFolder/MyFile.docx",
               "This is footnote number 3 link: https://cran.r-project.org/",
@@ -101,7 +101,7 @@ set_footnotes("This is footnote number 1 cell: W22",
 # This skips the styling and output part, so that the function runs faster.
 set_print(FALSE)
 set_output("excel_nostyle")
-set_style_options(sheet_name = "big table")
+set_style_options(sheet_name = "big_table")
 
 tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
                              columns    = c("year", "education + year"),
@@ -134,9 +134,12 @@ tab3 <- my_data |> export_with_style(print = FALSE)
 combine_into_workbook(tab1, tab2, tab3)
 
 # Add an automatically generated table of contents with custom styling
+#' set_titles("This is title number 1,
+              "Back to Contents cell: Contents!A1")
+
 combine_into_workbook(tab1, tab2, tab3,
                       table_of_contents = TRUE,
-                      subheaders        = list("First Subheader"  = "big table",
+                      subheaders        = list("First Subheader"  = "big_table",
                                                "Second Subheader" = "data"),
                       subheader_colors  = c("FF0000", "00FF00", "0000FF"),
                       colored_tabs      = TRUE,

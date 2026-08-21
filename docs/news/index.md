@@ -1,6 +1,15 @@
 # Changelog
 
+## qol 1.3.5 - DEVELOPMENT
+
+#### Fixed
+
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Fixed table of contents example not working as intended. (21.08.2026)
+
 ## qol 1.3.4
+
+CRAN release: 2026-08-21
 
 #### New functions
 
@@ -121,7 +130,7 @@
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   With the function making use of the new `style` parameter, the `file`
-  parameter has been removed. Saving files no works with the `style`
+  parameter has been removed. Saving files now works with the `style`
   parameter like in the other tabulation functions. (03.08.2026)
 - [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md):
   Without by variable the function now carries forward values through
