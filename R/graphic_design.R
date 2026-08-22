@@ -1058,10 +1058,10 @@ generate_graphic <- function(graphic_tab,
 
     # Adjust diagram dimensions according to legend presets, if legend is present
     if (length(segment_labels) > 1){
-        arguments[["dimensions"]][["diagram_start_left"]] <- segment_labels[[2]]
-        arguments[["dimensions"]][["diagram_start_top"]]  <- segment_labels[[3]]
-        arguments[["dimensions"]][["diagram_width"]]      <- segment_labels[[4]]
-        arguments[["dimensions"]][["diagram_height"]]     <- segment_labels[[5]]
+        arguments[["dimensions"]][["diagram_start_left"]] <- min(dimensions[["graphic_width"]] - 1, segment_labels[[2]])
+        arguments[["dimensions"]][["diagram_start_top"]]  <- max(1, segment_labels[[3]])
+        arguments[["dimensions"]][["diagram_width"]]      <- max(1, segment_labels[[4]])
+        arguments[["dimensions"]][["diagram_height"]]     <- max(1, segment_labels[[5]])
         segment_labels <- grid::gList(segment_labels[[1]])
     }
 

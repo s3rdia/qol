@@ -338,6 +338,67 @@ expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legen
 expect_equal(as.character(result_list[["graphic"]][["children"]][["legend_symbol1"]][["x"]]), "1cm", info = "design_graphic with legend presets")
 
 
+# design_graphic with legend presets doesn't break with many expressions
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   values         = "weight",
+                   diagram        = dg_vertical_bars,
+                   formats        = list(sex = sex.),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_x_pos       = "left",
+                                                    legend_columns     = 5),
+                   print          = FALSE)
+
+expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")),
+            info = "design_graphic with legend presets doesn't break with many expressions")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   values         = "weight",
+                   diagram        = dg_vertical_bars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_x_pos       = "right",
+                                                    legend_columns     = 5),
+                   print          = FALSE)
+
+expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")),
+            info = "design_graphic with legend presets doesn't break with many expressions")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   values         = "weight",
+                   diagram        = dg_vertical_bars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_y_pos       = "top"),
+                   print          = FALSE)
+
+expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")),
+            info = "design_graphic with legend presets doesn't break with many expressions")
+
+result_list <- dummy_df |>
+    design_graphic(axes_variables = "sex",
+                   segments       = "age",
+                   values         = "weight",
+                   diagram        = dg_vertical_bars,
+                   formats        = list(sex = sex., age = age.),
+                   visuals        = graphic_visuals(font               = "sans",
+                                                    segment_label_type = "legend",
+                                                    legend_y_pos       = "bottom",
+                                                    legend_x_pos       = 1),
+                   print          = FALSE)
+
+expect_true(any(startsWith(names(result_list[["graphic"]][["children"]]), "legend")),
+            info = "design_graphic with legend presets doesn't break with many expressions")
+
+
 # design_graphic with reverse colors
 result_list <- dummy_df |>
     design_graphic(axes_variables = "age",
