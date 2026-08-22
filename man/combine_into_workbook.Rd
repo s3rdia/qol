@@ -87,8 +87,8 @@ set_style_options(column_widths = c(2, 15, 15, 15, 9))
 
 # Define titles and footnotes. If you want to add hyperlinks you can do so by
 # adding "link:" followed by the hyperlink to the main text.
-set_titles("This is title number 1,
-           "This is title number 2 link: https://cran.r-project.org/"",
+set_titles("This is title number 1",
+           "This is title number 2 link: https://cran.r-project.org/",
            "This is title number 3 file: C:/MyFolder/MyFile.docx",
            "This is title number 4 cell: W22")
 set_footnotes("This is footnote number 1 cell: W22",
@@ -134,8 +134,8 @@ tab3 <- my_data |> export_with_style(print = FALSE)
 combine_into_workbook(tab1, tab2, tab3)
 
 # Add an automatically generated table of contents with custom styling
-#' set_titles("This is title number 1,
-              "Back to Contents cell: Contents!A1")
+set_titles("This is title number 1",
+           "Back to Contents cell: Contents!A1")
 
 combine_into_workbook(tab1, tab2, tab3,
                       table_of_contents = TRUE,
