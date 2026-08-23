@@ -9,7 +9,7 @@ sort_plus(
   by,
   preserve = NULL,
   order = "ascending",
-  formats = c(),
+  formats = list(),
   na.last = TRUE
 )
 }

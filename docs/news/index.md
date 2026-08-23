@@ -2,6 +2,13 @@
 
 ## qol 1.3.5 - DEVELOPMENT
 
+#### Changed functionality
+
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When only passing `class` variables without `values` and using the
+  default `statistics` then only frequencies will be calculated instead
+  of sums and frequencies, which would be identical. (23.08.2026)
+
 #### Fixed
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):

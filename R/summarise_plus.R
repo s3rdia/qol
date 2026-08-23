@@ -442,13 +442,22 @@ summarise_plus <- function(data_frame,
             # If a statistics list with variable names is given, extract them an set
             # them as value variables.
             if (!is.null(vars_per_stat_list)){
-                values       <- collapse::funique(unlist(vars_per_stat_list))
+                values        <- collapse::funique(unlist(vars_per_stat_list))
                 names(values) <- NULL
             }
             # Otherwise create a pseudo grouping variable
             else{
                 values               <- ".temp_values"
                 data_frame[[values]] <- 1
+
+                # If there are no values provided and the default statistics are
+                # chosen, then only use freq, because sum and freq are identical.
+                if (identical(statistics, c("sum", "freq"))){
+                    statistics     <- "freq"
+                    requested      <- "freq"
+                    valid_stats    <- "freq"
+                    selected_stats <- list_of_statistics[valid_stats]
+                }
             }
         }
     }
@@ -476,6 +485,15 @@ summarise_plus <- function(data_frame,
             # outputs unweighted results.
             values               <- ".temp_values"
             data_frame[[values]] <- 1
+
+            # If there are no values provided and the default statistics are
+            # chosen, then only use freq, because sum and freq are identical.
+            if (identical(statistics, c("sum", "freq"))){
+                statistics     <- "freq"
+                requested      <- "freq"
+                valid_stats    <- "freq"
+                selected_stats <- list_of_statistics[valid_stats]
+            }
         }
     }
 

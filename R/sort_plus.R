@@ -66,7 +66,7 @@ sort_plus <- function(data_frame,
                       by,
                       preserve = NULL,
                       order    = "ascending",
-                      formats  = c(),
+                      formats  = list(),
                       na.last  = TRUE){
     # Measure the time
     print_start_message()

@@ -435,6 +435,14 @@ expect_equal(collapse::fncol(result_df), 6, info = "Simplest form without specif
 expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df)), info = "Simplest form without specifying statistics leads to sum and freq output")
 
 
+# Simplest form without specifying statistics and without values leads to only freq output
+result_df <- dummy_df |>
+    summarise_plus(class  = year)
+
+expect_equal(collapse::fncol(result_df), 5, info = "Simplest form without specifying statistics and without values leads to only freq output")
+expect_true(!"income_sum" %in% names(result_df), info = "Simplest form without specifying statistics and without values leads to only freq output")
+
+
 # Weighted vs. unweighted output
 result_df1 <- dummy_df |>
     summarise_plus(class  = year,
@@ -595,7 +603,7 @@ expect_equal(collapse::fnrow(result_df), 1, info = "Summarise possible with no c
 # Summarise uses temporary variable, if no analysis variable is provided
 result_df <- dummy_df |> summarise_plus()
 
-expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000", "1000"),
+expect_equal(as.character(result_df[1, ]), c("pseudo_class", "1", "1", "1000"),
              info = "Summarise uses temporary variable, if no analysis variable is provided")
 
 
