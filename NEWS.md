@@ -7,6 +7,8 @@
 ### Fixed
 
 * `combine_into_workbook()`: Fixed table of contents example not working as intended. (21.08.2026)
+* `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one. (26.08.2026)
+* `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now. (26.08.2026)
 
 # qol 1.3.4
 

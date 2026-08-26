@@ -308,7 +308,7 @@ crosstabs <- function(data_frame,
     }
 
     if (length(columns) > 1){
-        columns <- columns[[2]]
+        columns <- columns[[1]]
         print_message("WARNING", "Only one variable for <columns> allowed. First variable will be used.")
     }
 
@@ -662,7 +662,7 @@ format_cross_text <- function(cross_tab,
                               footnotes,
                               show_total,
                               full_precision = FALSE){
-    complete_tabs <- c()
+    complete_tabs <- list()
 
     # Set equal number of maximum column width
     sum_tab          <- setup_print_table(cross_tab, rows, "sum")
@@ -1221,7 +1221,7 @@ format_cross_by_text <- function(cross_tab,
         }
     }
 
-    complete_tabs <- c()
+    complete_tabs <- list()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables

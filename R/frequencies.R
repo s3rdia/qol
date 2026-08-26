@@ -433,16 +433,16 @@ frequencies <- function(data_frame,
         freq_tab[["TYPE"]]     <- sub(".*\\+", "", freq_tab[["TYPE"]])
     }
 
+    if (is.null(freq_tab)){
+        print_message("ERROR", "Frequencies could not be computed.")
+        return(invisible(NULL))
+    }
+
     # When using interval formats without weight, var_sum comes out as double
     # which results in the output being printed as if a weight was applied.
     # To counter act this just set var_sum equal to var_freq in this case.
     if (length(collapse::funique(data_frame[[weight_var]])) == 1){
         freq_tab[["var_sum"]] <- freq_tab[["var_freq"]]
-    }
-
-    if (is.null(freq_tab)){
-        print_message("ERROR", "Frequencies could not be computed.")
-        return(invisible(NULL))
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -766,12 +766,8 @@ format_mean_text <- function(mean_tab,
 
     # Get the maximum width of the provided variable names to determine the width
     # of the first column.
-    first_column_width <- collapse::vlengths("variable")
-
-    for (variable in variables){
-        first_column_width <- max(first_column_width,
-                                  collapse::vlengths(mean_tab[["variable"]]))
-    }
+    first_column_width <- max(collapse::vlengths("variable"),
+                              collapse::vlengths(mean_tab[["variable"]]))
 
     # Set header row formatting. Loop through all header columns and give
     # each column the optimal width.
@@ -1016,7 +1012,7 @@ format_freq_text <- function(freq_tab,
                              footnotes,
                              style,
                              full_precision = FALSE){
-    complete_tabs <- c()
+    complete_tabs <- list()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Generate a separate frequency table for each variable
@@ -1534,7 +1530,7 @@ format_by_text <- function(mean_tab,
         }
     }
 
-    complete_tabs <- c()
+    complete_tabs <- list()
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all by variables

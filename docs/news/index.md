@@ -13,6 +13,14 @@
 
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Fixed table of contents example not working as intended. (21.08.2026)
+- [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  If a vector of variables is provided for `columns` then now the first
+  variable will be picked instead of the second one. (26.08.2026)
+- `else_if()`,
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): When
+  assigning to multiple variables in a do-over-loop situation the
+  functions would only consider the first assignment. This is fixed now.
+  (26.08.2026)
 
 ## qol 1.3.4
 
@@ -159,8 +167,8 @@ CRAN release: 2026-08-21
 
 #### Removed
 
-- `get_integer_length()`: There is no real benefit in this function.
-  (18.07.2026)
+- [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
+  There is no real benefit in this function. (18.07.2026)
 
 #### Fixed
 

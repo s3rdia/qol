@@ -846,7 +846,7 @@ load_file <- function(path,
             invalid_names <- keep[is.na(vars_to_keep)]
 
             if (length(invalid_names) > 0){
-                print_message("WARNING", "Variables not found: [invalid]", invalid = missing)
+                print_message("WARNING", "Variables not found: [invalid]", invalid = invalid_names)
             }
 
             # Only keep the desired variables and rename variables to the names provided in keep

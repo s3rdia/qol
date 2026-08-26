@@ -8,6 +8,8 @@ Last CRAN release was on 20.08.2026.
 ### Fixed
 
 * `combine_into_workbook()`: Fixed table of contents example not working as intended.
+* `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one.
+* `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now. 
 
 
 ## R CMD check results

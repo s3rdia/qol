@@ -177,21 +177,28 @@ expect_true(!"high" %in% collapse::funique(test_df[["education"]]), info = "if. 
 # if. as do over loop
 vars1  <- c("income", "balance")
 vars2  <- c("VAR1", "VAR2")
+vars3  <- c("VAR3", "VAR4")
 values <- c(1, 2)
 
-do_over_df <- dummy_df |> if.(vars1 > 0, vars2 = values)
+do_over_df <- dummy_df |> if.(vars1 > 0, vars2 = values, vars3 = values)
 
 expect_true(all(c("VAR1", "VAR2") %in% names(do_over_df)), info = "if. as do over loop")
 expect_true(all(collapse::funique(do_over_df[["VAR1"]]) %in% c(1, NA)), info = "if. as do over loop")
 expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, NA)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR3"]]) %in% c(1, NA)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR4"]]) %in% c(2, NA)), info = "if. as do over loop")
 
-do_over_df <- do_over_df |> else_if.(vars1 > 500, vars2 = 3)
+do_over_df <- do_over_df |> else_if.(vars1 > 500, vars2 = 3, vars3 = 5)
 expect_true(all(collapse::funique(do_over_df[["VAR1"]]) %in% c(1, 3, NA)), info = "if. as do over loop")
 expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, 3, NA)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR3"]]) %in% c(1, 5, NA)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR4"]]) %in% c(2, 5, NA)), info = "if. as do over loop")
 
-do_over_df <- do_over_df |> else.(vars2 = 4)
+do_over_df <- do_over_df |> else.(vars2 = 4, vars3 = 6)
 expect_true(all(collapse::funique(do_over_df[["VAR1"]]) %in% c(1, 3, 4)), info = "if. as do over loop")
 expect_true(all(collapse::funique(do_over_df[["VAR2"]]) %in% c(2, 3, 4)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR3"]]) %in% c(1, 5, 6)), info = "if. as do over loop")
+expect_true(all(collapse::funique(do_over_df[["VAR4"]]) %in% c(2, 5, 6)), info = "if. as do over loop")
 
 
 # if. as do over loop doesn't overwrite existing values with NA

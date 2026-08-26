@@ -156,7 +156,7 @@ set_style_options <- function(..., save_file = NULL){
                 extension <- "rds"
             }
 
-            if (!extension == "rds"){
+            if (extension != "rds"){
                 save_file <- gsub(extension, "rds", save_file)
             }
 

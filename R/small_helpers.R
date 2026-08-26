@@ -337,8 +337,8 @@ round_values <- function(values,
         return(invisible(values))
     }
 
-    # If no digits are provided the values are returned without rounding
-    if (is.null(digits)){
+    # If no digits and no multiple are provided the values are returned without rounding
+    if (is.null(digits) && is.null(multiple)){
         return(values)
     }
 
@@ -423,29 +423,25 @@ round_multi <- function(data_frame,
 
     # Loop through all provided variables and check whether they are numeric.
     # Non numeric variables will be excluded.
-    invalid_vars <- c()
+    is_numeric <- vapply(variables, function(v){
+			is.numeric(data_frame[[v]])
+		}, logical(1))
+    invalid_vars  <- variables[!is_numeric]
+    valid_indices <- which(is_numeric)
 
-    for (i in seq_along(variables)){
+    for (i in valid_indices){
         variable <- variables[[i]]
         new_name <- new_names[[i]]
         digit    <- digits[[i]]
         multi    <- multiple[[i]]
 
-        # Exclude non numeric variables
-        if (!is.numeric(data_frame[[variable]])){
-            invalid_vars <- c(invalid_vars, variable)
-            variables    <- variables[!variable %in% variables]
+        # Overwrite existing variables if no new names are provided
+        if (is.null(new_name)){
+            new_name <- variable
         }
-        # Actual rounding
-        else{
-            # Overwrite existing variables if no new names are provided
-            if (is.null(new_name)){
-                new_name <- variable
-            }
 
-            data_frame[[new_name]] <- data_frame[[variable]] |>
-                round_values(digits = digit, multiple = multi)
-        }
+        data_frame[[new_name]] <- data_frame[[variable]] |>
+            round_values(digits = digit, multiple = multi)
     }
 
     if (length(invalid_vars)){

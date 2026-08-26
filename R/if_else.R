@@ -611,7 +611,7 @@ else_if. <- function(data_frame, condition, ...){
                     # Get the target variable from the assignment list and look whether
                     # it is a vector or not. If it is a vector, extract the current element
                     # and use its name.
-                    target_variable <- names(assignments)[1]
+                    target_variable <- names(assignments)[[entry]]
 
                     if (target_variable %in% names(content_list)){
                         target_variable <- content_list[[target_variable]][element]
@@ -647,7 +647,7 @@ else_if. <- function(data_frame, condition, ...){
         else{
             print_message("WARNING", c("No valid target variables found in data frame. For else_if. to work the",
                                        "variables you assign values to must already be present in the data frame.",
-                                       "To computation will be executed."))
+                                       "No computation will be executed."))
         }
     }
     else{
@@ -792,7 +792,7 @@ else. <- function(data_frame, ...){
                     # Get the target variable from the assignment list and look whether
                     # it is a vector or not. If it is a vector, extract the current element
                     # and use its name.
-                    target_variable <- names(assignments)[1]
+                    target_variable <- names(assignments)[[entry]]
 
                     if (target_variable %in% names(content_list)){
                         target_variable <- content_list[[target_variable]][element]
@@ -823,7 +823,7 @@ else. <- function(data_frame, ...){
     else{
         print_message("WARNING", c("No valid target variables found in data frame. For else_if. to work the",
                                    "variables you assign values to must already be present in the data frame.",
-                                   "To computation will be executed."))
+                                   "No computation will be executed."))
     }
 
     print_closing()

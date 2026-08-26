@@ -1777,7 +1777,8 @@ modify_output_style <- function(style_to_modify, ...){
         name <- names(style_elements)[element]
 
         if (!name %in% names(style_to_modify)){
-            print_message("WARNING", "Style element '{name}' is invalid and will be omitted.", name = name)
+            print_message("WARNING", "Style element '[name]' is invalid and will be omitted.", name = name)
+            next
         }
 
         style_to_modify[[name]] <- style_elements[[element]]
@@ -1960,6 +1961,7 @@ modify_number_formats <- function(formats_to_modify, ...){
 
         if (!name %in% names(formats_to_modify)){
             print_message("WARNING", "Number format '[name]' is invalid and will be omitted.", name = name)
+            next
         }
 
         formats_to_modify[[name]] <- format_elements[[element]]
