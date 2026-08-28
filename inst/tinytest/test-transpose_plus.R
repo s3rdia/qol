@@ -8,6 +8,7 @@ set_no_print(TRUE)
 ###############################################################################
 
 dummy_df      <- dummy_data(1000)
+no_na_df      <- dummy_data(1000, insert_na = FALSE)
 dummy_wide_df <- dummy_df |>
     transpose_plus(preserve = year,
                    pivot    = c("sex", "education"),
@@ -29,6 +30,68 @@ wide_df <- dummy_df |>
                    weight   = weight)
 
 expect_equal(names(wide_df), c("year", "1", "2", NA), info = "Simple long to wide transposition")
+
+
+# Long to wide without values supplied creates counts
+wide_df <- dummy_df |>
+    transpose_plus(preserve = year,
+                   pivot    = "sex",
+                   na.rm    = TRUE)
+
+expect_true(all(c("year", "1", "2") %in% names(wide_df)),        info = "Long to wide without values supplied creates counts")
+expect_true(all(wide_df[["1"]] >= 1) & all(wide_df[["2"]] >= 1), info = "Long to wide without values supplied creates counts")
+
+
+# Long to wide without summarise transposes actual values
+wide_df <- dummy_df |>
+    transpose_plus(preserve  = year,
+                   pivot     = "sex",
+                   summarise = FALSE,
+                   na.rm     = TRUE)
+
+expect_true(all(c("year", "1", "2") %in% names(wide_df)),        info = "Long to wide without summarise transposes values")
+expect_true(all(wide_df[["1"]] == 1) & all(wide_df[["2"]] == 1), info = "Long to wide without summarise transposes values")
+
+wide_df <- dummy_df |>
+    transpose_plus(preserve  = year,
+                   pivot     = "person_id",
+                   values    = c("sex", "education"),
+                   summarise = FALSE,
+                   na.rm     = TRUE)
+
+wide_sex_cols  <- grep("^sex",       names(wide_df), value = TRUE)
+wide_edu_cols  <- grep("^education", names(wide_df), value = TRUE)
+
+expect_true(length(wide_sex_cols) > 1, info = "Long to wide without summarise transposes actual values")
+expect_true(length(wide_edu_cols) > 1, info = "Long to wide without summarise transposes actual values")
+
+
+# Invalid value variable falls back to producing counts
+wide_df <- dummy_df |>
+    transpose_plus(pivot  = "sex",
+                   values = test)
+
+expect_true(all(wide_df[["1"]] >= 1) & all(wide_df[["2"]] >= 1), info = "Invalid value variable falls back to producing counts")
+
+
+# Variable combinations inside a multiple pivot transposition add up to toal individually
+no_na_df <- no_na_df |> sort_plus(by = c(sex, education))
+sex. <- discrete_format("Total"  = 1:2,
+                        "Male"   = 1,
+                        "Female" = 2)
+
+wide_df <- no_na_df |>
+    transpose_plus(preserve = year,
+                   pivot    = c("sex", "education", "sex + education"),
+                   na.rm    = TRUE,
+                   formats  = list(sex = sex.))
+
+expect_true(all(wide_df[["Total"]] - (wide_df[["Male"]] + wide_df[["Female"]]) == 0),
+            info = "Single variables inside a multiple pivot transposition add up to toal individually")
+expect_true(all(wide_df[["Total"]] - (wide_df[["low"]] + wide_df[["middle"]] + wide_df[["high"]]) == 0),
+            info = "Single variables inside a multiple pivot transposition add up to toal individually")
+expect_true(all(wide_df[["Total"]] - (wide_df[["Total_low"]] + wide_df[["Total_middle"]] + wide_df[["Total_high"]]) == 0),
+            info = "Single variables inside a multiple pivot transposition add up to toal individually")
 
 
 # Side by side long to wide transposition
@@ -189,24 +252,6 @@ wide_df <- dummy_wide_df |>
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <pivot> variable",
              info = "Abort transposition if pivot variable is part of preserve")
-
-
-# Abort transposition if no valid value variable is provided
-wide_df <- dummy_df |>
-			transpose_plus(preserve = year,
-						   pivot    = "sex")
-
-expect_error(print_stack_as_messages("ERROR"), "No <values> provided. Transposition will be aborted.",
-             info = "Abort transposition if no valid value variable is provided")
-
-
-# Abort transposition if value variable is not part of the data frame
-wide_df <- dummy_df |>
-			transpose_plus(pivot  = "sex",
-						   values = test)
-
-expect_error(print_stack_as_messages("ERROR"), "No valid <values> to transpose provided. Transposition will be aborted.",
-             info = "Abort transposition if value variable is not part of the data frame")
 
 
 # Abort if value variable in transposition is also part of pivot

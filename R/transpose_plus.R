@@ -22,6 +22,8 @@
 #' @param values A vector containing all value variables that should be transposed.
 #' @param formats A list in which is specified which formats should be applied to which
 #' variables.
+#' @param summarise If TRUE the data will be summarised before the long to wide
+#' transposition. Set to FALSE to skip the summarisation step.
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the preserve and
 #' pivot variables.
@@ -144,13 +146,14 @@
 #'
 #' @export
 transpose_plus <- function(data_frame,
-                           preserve   = NULL,
-                           pivot      = NULL,
-                           values     = NULL,
-                           formats    = c(),
-                           weight     = NULL,
-                           na.rm      = .qol_options[["na.rm"]],
-                           monitor    = .qol_options[["monitor"]]){
+                           preserve  = NULL,
+                           pivot     = NULL,
+                           values    = NULL,
+                           formats   = c(),
+                           weight    = NULL,
+                           na.rm     = .qol_options[["na.rm"]],
+                           summarise = TRUE,
+                           monitor   = .qol_options[["monitor"]]){
     # Measure the time
     print_start_message()
     print_step("GREY", "Error handling")
@@ -323,14 +326,27 @@ transpose_plus <- function(data_frame,
     # Value variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # Check for pre summarised data, to be able to take a shortcut
+    pre_summed <- data_frame |> is_pre_summed(c(preserve, pivot_vars))
+
     if (long_to_wide){
         values <- get_origin_as_char(values, substitute(values))
 
-        # If no value variables are provided abort
+        # If no value variables are provided, generate a temporary variable with
+        # value 1, so that the transposition basically produces counts.
         if (length(values) <= 1){
             if (length(values) == 0 || values == ""){
-                print_message("ERROR", "No <values> provided. Transposition will be aborted.")
-                return(invisible(NULL))
+                # If data frame is not pre summarised add a variable with value 1
+                # to generate counts.
+                if (!pre_summed){
+                    values               <- ".temp_values"
+                    data_frame[[values]] <- 1
+                }
+                # On pre summarised data select the variables which are there
+                # additionally to the preserve, pivot and auto generated ones.
+                else{
+                    values <- data_frame |> inverse(c(preserve, pivot, weight_var, "TYPE", "TYPE_NR", "DEPTH"))
+                }
             }
         }
 
@@ -346,16 +362,24 @@ transpose_plus <- function(data_frame,
             return(invisible(NULL))
         }
 
-        values <- data_frame |> part_of_df(values, check_only = TRUE)
+        values <- data_frame |> part_of_df(values)
 
-        if (is.list(values)){
-            print_message("ERROR", "No valid <values> to transpose provided. Transposition will be aborted.")
-            return(invisible(NULL))
-        }
-
-        if (length(values) == 0){
-            print_message("ERROR", "No <values> variables provided. Summarise will be aborted.")
-            return(invisible(NULL))
+        # If no value variables are provided, generate a temporary variable with
+        # value 1, so that the transposition basically produces counts.
+        if (length(values) <= 1){
+            if (length(values) == 0 || values == ""){
+                # If data frame is not pre summarised add a variable with value 1
+                # to generate counts.
+                if (!pre_summed){
+                    values               <- ".temp_values"
+                    data_frame[[values]] <- 1
+                }
+                # On pre summarised data select the variables which are there
+                # additionally to the preserve, pivot and auto generated ones.
+                else{
+                    values <- data_frame |> inverse(c(preserve, pivot, weight_var, "TYPE", "TYPE_NR", "DEPTH"))
+                }
+            }
         }
     }
 
@@ -378,9 +402,6 @@ transpose_plus <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Preparation", "Preparation")
     #-------------------------------------------------------------------------#
 
-    # Check for pre summarised data, to be able to take a shortcut
-    pre_summed <- data_frame |> is_pre_summed(c(preserve, pivot_vars))
-
     # Determine transposition method - only necessary for long to wide
     # transposition. For wide to long a named list is already given.
     # If variable names are combined with a + sign, then they will be crossed
@@ -399,13 +420,22 @@ transpose_plus <- function(data_frame,
 
     if (long_to_wide){
         # Summarise data first in order to apply formats, if specified
-        if (!pre_summed && !is.null(formats)){
+        summarised <- FALSE
+
+        if (summarise || (!pre_summed && !is.null(formats))){
             #-----------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next("Summarise", "Long to wide")
             #-----------------------------------------------------------------#
-            print_step("MAJOR", "Summarising data.")
+            print_step("MAJOR", "Summarising data")
 
             group_vars <- c(preserve, pivot_vars)
+
+            # Build the combinations that need to be summarised. Each method
+            # (nested or single pivot variables) is combined with the preserve
+            # variables, so that each combination is treated separately.
+            combinations <- vapply(transpose_methods, function(method){
+                    paste(c(preserve, method), collapse = " + ")
+                }, character(1), USE.NAMES = FALSE)
 
             data_frame <- suppressMessages(data_frame |>
                 summarise_plus(class      = group_vars,
@@ -413,7 +443,8 @@ transpose_plus <- function(data_frame,
                                statistics = "sum",
                                formats    = formats,
                                weight     = weight_var,
-                               nesting    = "deepest",
+                               nesting    = "all",
+                               types      = combinations,
                                notes      = FALSE,
                                na.rm      = na.rm)) |>
                 remove_stat_extension("sum")
@@ -434,7 +465,17 @@ transpose_plus <- function(data_frame,
         for (method in transpose_methods){
             print_step("MINOR", paste(method, collapse = " + "))
 
-            transpose_df <- data_frame |>
+            transpose_df <- data_frame
+
+            # Select the right combination for the current method from the
+            # summarised data.
+            if (summarise){
+                combination  <- paste(c(preserve, method), collapse = "+")
+                transpose_df <- transpose_df[transpose_df[["TYPE"]] == combination, ]
+            }
+
+            # Actual transposition for current combination
+            transpose_df <- transpose_df |>
                 collapse::pivot(ids    = preserve,
                                 names  = method,
                                 values = values,

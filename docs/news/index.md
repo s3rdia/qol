@@ -2,12 +2,25 @@
 
 ## qol 1.3.5 - DEVELOPMENT
 
+#### New functionality
+
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Can now generate a dummy data frame in wide format using the new
+  `wide` parameter. (28.08.2026)
+
 #### Changed functionality
 
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   When only passing `class` variables without `values` and using the
   default `statistics` then only frequencies will be calculated instead
   of sums and frequencies, which would be identical. (23.08.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Instead of aborting when no values are passed, the function now
+  generates a variable to output unweighted results. (28.08.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Received a new parameter `summarise` which summarises the data before
+  transposing. This is the default behaviour when using formats, but was
+  not without formats. `summarise` is TRUE by default. (28.08.2026)
 
 #### Fixed
 
@@ -21,6 +34,11 @@
   assigning to multiple variables in a do-over-loop situation the
   functions would only consider the first assignment. This is fixed now.
   (26.08.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  The function had a serious flaw. When transposing multiple variables
+  at once the results were always picked from the all nested results
+  even though they have to be picked from their respective combination.
+  This is fixed now. (28.08.2026)
 
 ## qol 1.3.4
 
@@ -167,8 +185,8 @@ CRAN release: 2026-08-21
 
 #### Removed
 
-- [`get_integer_length()`](https://s3rdia.github.io/qol/reference/get_integer_length.html):
-  There is no real benefit in this function. (18.07.2026)
+- `get_integer_length()`: There is no real benefit in this function.
+  (18.07.2026)
 
 #### Fixed
 

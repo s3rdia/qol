@@ -24,6 +24,7 @@ transpose_plus(
   formats = c(),
   weight = NULL,
   na.rm = .qol_options[["na.rm"]],
+  summarise = TRUE,
   monitor = .qol_options[["monitor"]]
 )
 ```
@@ -61,6 +62,11 @@ transpose_plus(
 
   FALSE by default. If TRUE removes all NA values from the preserve and
   pivot variables.
+
+- summarise:
+
+  If TRUE the data will be summarised before the long to wide
+  transposition. Set to FALSE to skip the summarisation step.
 
 - monitor:
 

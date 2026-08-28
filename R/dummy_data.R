@@ -7,16 +7,27 @@
 #'
 #' @param no_obs Number of observations.
 #' @param insert_na TRUE by default. Inserts random NA values into variables.
-#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
+#' @param wide FALSE by default. If TRUE returns the data in wide format where
+#' each row represents one household and person-level variables are suffixed
+#' with the person number (e.g. sex1, sex2, age1, age2).
+#' @param monitor FALSE by default. If TRUE outputs two charts to visualize the
+#' functions time consumption.
 #'
 #' @return Returns a dummy data table.
 #'
 #' @examples
+#' # Long format dataset
 #' my_data <- dummy_data(1000)
+#'
+#' # Wide format dataset
+#' # NOTE: Here 1000 is not the number of households (rows in the data frame),
+#' #       but the number of persons in the data frame.
+#' my_data_wide <- dummy_data(1000, wide = TRUE)
 #'
 #' @export
 dummy_data <- function(no_obs    = 25000,
                        insert_na = TRUE,
+                       wide      = FALSE,
                        monitor   = .qol_options[["monitor"]]){
     # Measure the time
     print_start_message()
@@ -380,6 +391,23 @@ dummy_data <- function(no_obs    = 25000,
                                      "sex", "education", "body_height", "body_weight",
                                      "income_class", "income", "expenses", "balance", "probability",
                                      "weight", "weight_per_year", order_vars = TRUE)
+
+    if (wide){
+        #-------------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Convert to wide format")
+        #-------------------------------------------------------------------------#
+        print_step("MAJOR", "Convert to wide format")
+
+        preserve <- c("year", "state", "NUTS2", "NUTS3", "household_id",
+                      "number_of_persons", "weight", "weight_per_year")
+        value    <- setdiff(names(dummy_temp), c(preserve, "person_id"))
+
+        dummy_temp <- suppressMessages(dummy_temp |>
+                              transpose_plus(preserve   = preserve,
+                                             pivot      = "person_id",
+                                             values     = value,
+                                             summarise  = FALSE))
+    }
 
     print_closing(5)
 

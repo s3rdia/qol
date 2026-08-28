@@ -30,4 +30,22 @@ first <- test_df |> collapse::fsubset(first_person == 1)
 expect_equal(collapse::funique(first[["person_id"]]), 1, info = "Dummy data first_person has always person_id 1")
 
 
+# Dummy data wide format has one row per household
+test_df_wide <- dummy_data(100, wide = TRUE)
+
+expect_equal(collapse::fnrow(test_df_wide), collapse::fnrow(unique(test_df_wide[, c("year", "state", "household_id")])),
+             info = "Dummy data wide format has one row per household")
+
+
+# Dummy data wide format has multiple variables with same name correpsonding to different persons
+test_df_long <- dummy_data(100)
+test_df_wide <- dummy_data(100, wide = TRUE)
+
+long_age_cols  <- grep("^age", names(test_df_long), value = TRUE)
+wide_age_cols  <- grep("^age", names(test_df_wide), value = TRUE)
+
+expect_equal(length(long_age_cols), 1, info = "Dummy data wide format has multiple variables with same name correpsonding to different persons")
+expect_true(length(wide_age_cols) > 1, info = "Dummy data wide format has multiple variables with same name correpsonding to different persons")
+
+
 set_no_print()

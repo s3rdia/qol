@@ -1,14 +1,21 @@
 # qol 1.3.5 - DEVELOPMENT
 
+### New functionality
+
+* `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter. (28.08.2026)
+
 ### Changed functionality
 
 * `summarise_plus()`: When only passing `class` variables without `values` and using the default `statistics` then only frequencies will be calculated instead of sums and frequencies, which would be identical. (23.08.2026)
+* `transpose_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (28.08.2026)
+* `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default. (28.08.2026)
 
 ### Fixed
 
 * `combine_into_workbook()`: Fixed table of contents example not working as intended. (21.08.2026)
 * `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one. (26.08.2026)
 * `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now. (26.08.2026)
+* `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now. (28.08.2026)
 
 # qol 1.3.4
 

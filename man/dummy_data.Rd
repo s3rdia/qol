@@ -7,6 +7,7 @@
 dummy_data(
   no_obs = 25000,
   insert_na = TRUE,
+  wide = FALSE,
   monitor = .qol_options[["monitor"]]
 )
 }
@@ -15,7 +16,12 @@ dummy_data(
 
 \item{insert_na}{TRUE by default. Inserts random NA values into variables.}
 
-\item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.}
+\item{wide}{FALSE by default. If TRUE returns the data in wide format where
+each row represents one household and person-level variables are suffixed
+with the person number (e.g. sex1, sex2, age1, age2).}
+
+\item{monitor}{FALSE by default. If TRUE outputs two charts to visualize the
+functions time consumption.}
 }
 \value{
 Returns a dummy data table.
@@ -26,6 +32,12 @@ age, income and weight to test out functionalities. It can be generated with the
 number of observations.
 }
 \examples{
+# Long format dataset
 my_data <- dummy_data(1000)
+
+# Wide format dataset
+# NOTE: Here 1000 is not the number of households (rows in the data frame),
+#       but the number of persons in the data frame.
+my_data_wide <- dummy_data(1000, wide = TRUE)
 
 }
