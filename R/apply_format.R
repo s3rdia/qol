@@ -78,8 +78,6 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
             temp_data[["qol_from"]] <- temp_data[[current_var]]
             temp_data[["qol_to"]]   <- temp_data[[current_var]]
 
-            data_frame[["qol_ID"]] <- seq_len(collapse::fnrow(data_frame))
-
             # Make a copy of format data frame or otherwise the original will be
             # altered by the following key sorting
             format_dt <- data.table::copy(format_df)
@@ -137,8 +135,9 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
 
             # If not all values are represented in the format container, check where there are gaps
             # and fill them at the affected positions. This implements the "other" keyword in formats.
-            na_positions <- which(is.na(temp_data[["label"]]) & !is.na(temp_data[[current_var]]))
-            if (length(na_positions) > 0){
+            na_positions <- is.na(temp_data[["label"]]) & !is.na(temp_data[[current_var]])
+
+            if (any(na_positions)){
                 if (as.character(.Machine[["integer.max"]]) %in% tolower(format_df[[current_var]])){
                     temp_data[["label"]][na_positions] <- format_df[["label"]][tolower(format_df[[current_var]]) == as.character(.Machine[["integer.max"]])]
                 }
@@ -148,11 +147,14 @@ apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TR
                 else{
                     temp_data[["label"]][na_positions] <- temp_data[[current_var]][na_positions]
                 }
-            }
 
-            # Keep the original values which are not covered by the format, so that
-            # they are not converted to NA by the factor conversion below
-            kept_values  <- collapse::funique(temp_data[["label"]][na_positions])
+                # Keep the original values which are not covered by the format, so that
+                # they are not converted to NA by the factor conversion below
+                kept_values <- collapse::funique(temp_data[["label"]][na_positions])
+            }
+            else{
+                kept_values <- character(0)
+            }
 
             # Drop current variable and rename newly joined label to current variable name
             temp_data |> collapse::fselect(current_var) <- NULL

@@ -40,6 +40,16 @@
   even though they have to be picked from their respective combination.
   This is fixed now. (28.08.2026)
 
+#### Optimization
+
+- `apply_formats()`: Removed unnecessary calculation. Additionally
+  optimzed checking for NA values for discrete formats. (29.08.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  With `nesting = "all" or "single` a list of logical vectors containing
+  non NA observations is now computed once before generating all
+  combinations, which allows to remove the individual data frame
+  scanning per combination. (29.08.2026)
+
 ## qol 1.3.4
 
 CRAN release: 2026-08-21

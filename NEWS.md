@@ -17,6 +17,11 @@
 * `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now. (26.08.2026)
 * `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now. (28.08.2026)
 
+### Optimization
+
+* `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats. (29.08.2026)
+* `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination. (29.08.2026)
+
 # qol 1.3.4
 
 ### New functions

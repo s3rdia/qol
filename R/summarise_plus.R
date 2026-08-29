@@ -645,7 +645,7 @@ summarise_plus <- function(data_frame,
         }
 
         print_step("MAJOR", "Executing nested merge")
-        get_group_missings(original_df[group_vars], notes, na.rm)
+        get_group_missings(collapse::missing_cases(original_df[group_vars]), notes, na.rm)
 
         if (!merge_back){
             rm(original_df)
@@ -886,6 +886,22 @@ summarise_plus <- function(data_frame,
 
             print_step("MAJOR", "Executing combination merge:")
 
+            # If NA values should be removed (or, when they should not be removed, if
+            # the missing observations should be counted), build a list which carries
+            # logical vectors of valid (non NA) observations once here. It is then
+            # reused for all combinations, avoiding that the original data frame has
+            # to be subsetted and rescanned for every single combination.
+            if (length(group_vars) > 0 && !flag_shortcut && (na.rm || (!na.rm && notes))){
+                valid_observation_list <- lapply(group_vars, function(variable){
+                        !is.na(original_df[[variable]])
+                    })
+
+                names(valid_observation_list) <- group_vars
+            }
+            else{
+                valid_observation_list <- NULL
+            }
+
             for (i in seq_along(group_vars)){
                 # Break loop early if the maximum depth of combinations is surpassed.
                 # This only takes effect if types are selected.
@@ -942,13 +958,23 @@ summarise_plus <- function(data_frame,
                             data_frame <- original_df_shortcut[!collapse::missing_cases(original_df_shortcut[combination]), ]
                         }
                         else{
-                            data_frame <- original_df[!collapse::missing_cases(original_df[combination]), ]
+                            # Use the precomputed valid observation list to subset the data frame
+                            keep_rows  <- Reduce("&", valid_observation_list[combination])
+                            data_frame <- original_df[keep_rows, ]
                         }
                     }
 
                     print_step("MINOR", paste(combination, collapse = " + "))
 
-                    get_group_missings(original_df[combination], notes, na.rm)
+                    # Count the missings of the current combination. If the valid
+                    # observation list was precomputed it is reused here, otherwise
+                    # the combination is subsetted from the original data frame.
+                    if (length(valid_observation_list) > 0){
+                        get_group_missings(!Reduce("&", valid_observation_list[combination]), notes, na.rm)
+                    }
+                    else{
+                        get_group_missings(collapse::missing_cases(original_df[combination]), notes, na.rm)
+                    }
 
                     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                     # Shortcut crossroad
