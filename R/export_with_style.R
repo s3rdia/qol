@@ -379,6 +379,21 @@ format_df_excel <- function(wb,
     # excel output.
     if (output == "excel"){
         #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+        #---------------------------------------------------------------------#
+        print_step("MINOR", "Adjust row heights and column widths")
+
+        # Adjust table dimensions before the background color is, because they are
+        # faster when the sheet does not yet span the full range used for background
+        # fill.
+        wb <- wb |> handle_col_row_dimensions(df_ranges,
+                                              collapse::fncol(data_frame) + (style[["start_column"]] - 1),
+                                              collapse::fnrow(data_frame) + (style[["start_row"]] - 1),
+                                              style) |>
+            handle_any_auto_dimensions(df_ranges, style) |>
+            handle_header_table_dim(df_ranges, style)
+
+        #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel cell styles", "Format")
         #---------------------------------------------------------------------#
         print_step("MINOR", "Add cell styles")
@@ -459,19 +474,6 @@ format_df_excel <- function(wb,
         else if (style[["freeze_row_header"]]){
             wb$freeze_pane(first_active_row = df_ranges[["table.row"]])
         }
-
-        # Adjust table dimensions
-        #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
-        #---------------------------------------------------------------------#
-        print_step("MINOR", "Adjust row heights and column widths")
-
-        wb <- wb |> handle_col_row_dimensions(df_ranges,
-                                              collapse::fncol(data_frame) + (style[["start_column"]] - 1),
-                                              collapse::fnrow(data_frame) + (style[["start_row"]] - 1),
-                                              style) |>
-            handle_any_auto_dimensions(df_ranges, style) |>
-            handle_header_table_dim(df_ranges, style)
     }
 
     # Ignore the "number stored as text" error within Excel

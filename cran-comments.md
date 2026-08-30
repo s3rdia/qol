@@ -25,6 +25,7 @@ Last CRAN release was on 20.08.2026.
 
 * `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats.
 * `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet.
 
 
 ## R CMD check results

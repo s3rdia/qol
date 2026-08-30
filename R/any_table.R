@@ -2619,6 +2619,21 @@ format_any_excel <- function(wb,
         wb <- wb |>
             handle_row_header_merge(any_tab[, 1:any_ranges[["cat_col.width"]]], any_ranges)
 
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+        #---------------------------------------------------------------------#
+        if (is.null(by_info)){ print_step("MINOR", "Adjust row heights and column widths") }
+
+        # Adjust table dimensions before the background color is, because they are
+        # faster when the sheet does not yet span the full range used for background
+        # fill.
+        wb <- wb |> handle_col_row_dimensions(any_ranges,
+                                              collapse::fncol(any_tab),
+                                              any_ranges[["footnote.row"]] + length(footnotes),
+                                              style) |>
+            handle_any_auto_dimensions(any_ranges, style) |>
+            handle_header_table_dim(any_ranges, style)
+
         # Fill all cells with background color
         if (style[["background_color"]] != ""){
             #-----------------------------------------------------------------#
@@ -2710,19 +2725,6 @@ format_any_excel <- function(wb,
         else if (style[["freeze_row_header"]]){
             wb$freeze_pane(first_active_row = any_ranges[["table.row"]])
         }
-
-        # Adjust table dimensions
-        #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
-        #---------------------------------------------------------------------#
-        if (is.null(by_info)){ print_step("MINOR", "Adjust row heights and column widths") }
-
-        wb <- wb |> handle_col_row_dimensions(any_ranges,
-                                              collapse::fncol(any_tab),
-                                              any_ranges[["footnote.row"]] + length(footnotes),
-                                              style) |>
-            handle_any_auto_dimensions(any_ranges, style) |>
-            handle_header_table_dim(any_ranges, style)
     }
 
     # Ignore the "number stored as text" error within Excel

@@ -75,6 +75,8 @@
 <code>apply_formats()</code>: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats. (29.08.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: With <code>nesting = "all" or "single</code> a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination. (29.08.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet. (30.08.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

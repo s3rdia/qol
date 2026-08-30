@@ -63,6 +63,13 @@
   non NA observations is now computed once before generating all
   combinations, which allows to remove the individual data frame
   scanning per combination. (29.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  Moved column width and row height adjustments before the background
+  coloring to make it run only over the table span instead of the whole
+  sheet. (30.08.2026)
 
 ## qol 1.3.4
 

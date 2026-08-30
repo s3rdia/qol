@@ -909,33 +909,6 @@ format_mean_excel <- function(mean_tab,
     # option this whole part gets omitted to get a very quick unformatted
     # excel output.
     if (output == "excel"){
-        # Fill all cells with background color
-        if (style[["background_color"]] != ""){
-            #-----------------------------------------------------------------#
-            monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
-            #-----------------------------------------------------------------#
-
-            wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
-            wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
-        }
-
-        #---------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_next("Excel cell styles (mean)", "Format mean")
-        #---------------------------------------------------------------------#
-        wb <- wb |> handle_cell_styles(mean_ranges, style)
-
-        # Set up inner table number formats
-        col_index <- 1
-
-        for (type in c("mean", "sd", "min", "max", "freq", "missing")){
-            wb$add_cell_style(dims                = mean_ranges[[paste0("mean_col_ranges", col_index)]],
-                              apply_number_format = TRUE,
-                              num_fmt_id          = wb$styles_mgr$get_numfmt_id(paste0(type, "_numfmt")))
-
-            col_index <- col_index + 1
-        }
-
-        # If there are width or heights defined
         #---------------------------------------------------------------------#
         monitor_df <- monitor_df |> monitor_next("Excel widths/heights (mean)", "Format mean")
         #---------------------------------------------------------------------#
@@ -943,6 +916,9 @@ format_mean_excel <- function(mean_tab,
         column_width <- style[["column_widths"]]
         row_heights  <- style[["row_heights"]]
 
+        # Adjust table dimensions before the background color is, because they are
+        # faster when the sheet does not yet span the full range used for background
+        # fill.
         if (length(column_width) == 1 && length(row_heights) == 1){
             if (column_width != "auto" || row_heights != "auto"){
                 wb <- wb |> handle_col_row_dimensions(mean_ranges,
@@ -969,6 +945,32 @@ format_mean_excel <- function(mean_tab,
                 wb$set_col_widths(cols   = start_col:mean_ranges[["table.end"]],
                                   widths = 10)
             }
+        }
+
+        # Fill all cells with background color
+        if (style[["background_color"]] != ""){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel background", "Format")
+            #-----------------------------------------------------------------#
+
+            wb$add_fill(color = openxlsx2::wb_color(style[["background_color"]]))
+            wb$set_cell_style_across(cols = "A:XFD", style = wb$get_cell_style(dims = "A1"))
+        }
+
+        #---------------------------------------------------------------------#
+        monitor_df <- monitor_df |> monitor_next("Excel cell styles (mean)", "Format mean")
+        #---------------------------------------------------------------------#
+        wb <- wb |> handle_cell_styles(mean_ranges, style)
+
+        # Set up inner table number formats
+        col_index <- 1
+
+        for (type in c("mean", "sd", "min", "max", "freq", "missing")){
+            wb$add_cell_style(dims                = mean_ranges[[paste0("mean_col_ranges", col_index)]],
+                              apply_number_format = TRUE,
+                              num_fmt_id          = wb$styles_mgr$get_numfmt_id(paste0(type, "_numfmt")))
+
+            col_index <- col_index + 1
         }
 
         # Add named regions to be able to target certain areas of the workbook more easily
@@ -1375,6 +1377,21 @@ format_freq_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel widths/heights (freq)", "Format freq")
+            #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[variable]: Adjust row heights and column widths", variable = variable) }
+
+            # Adjust table dimensions before the background color is, because they are
+            # faster when the sheet does not yet span the full range used for background
+            # fill.
+            wb <- wb |> handle_col_row_dimensions(freq_ranges,
+                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
+                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
+                                                  style) |>
+                handle_auto_dimensions(freq_ranges, style) |>
+                handle_header_table_dim(freq_ranges, style)
+
             # Fill all cells with background color
             if (style[["background_color"]] != ""){
                 #-----------------------------------------------------------------#
@@ -1440,19 +1457,6 @@ format_freq_excel <- function(wb,
                                                         style[["heatmap_high_color"]]),
                                               type  = "colorScale")
             }
-
-            # Adjust table dimensions
-            #-----------------------------------------------------------------#
-            monitor_df <- monitor_df |> monitor_next("Excel widths/heights (freq)", "Format freq")
-            #-----------------------------------------------------------------#
-            if (is.null(by_info)){ print_step("MINOR", "[variable]: Adjust row heights and column widths", variable = variable) }
-
-            wb <- wb |> handle_col_row_dimensions(freq_ranges,
-                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
-                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
-                                                  style) |>
-                handle_auto_dimensions(freq_ranges, style) |>
-                handle_header_table_dim(freq_ranges, style)
         }
 
         # Ignore the "number stored as text" error within Excel

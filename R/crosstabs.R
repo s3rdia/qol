@@ -1080,6 +1080,21 @@ format_cross_excel <- function(wb,
         # option this whole part gets omitted to get a very quick unformatted
         # excel output.
         if (output == "excel"){
+            #-----------------------------------------------------------------#
+            monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
+            #-----------------------------------------------------------------#
+            if (is.null(by_info)){ print_step("MINOR", "[stat]: Adjust row heights and column widths", stat = stat) }
+
+            # Adjust table dimensions before the background color is, because they are
+            # faster when the sheet does not yet span the full range used for background
+            # fill.
+            wb <- wb |> handle_col_row_dimensions(cross_ranges,
+                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
+                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
+                                                  style) |>
+                handle_auto_dimensions(cross_ranges, style) |>
+                handle_header_table_dim(cross_ranges, style)
+
             # Fill all cells with background color
             if (style[["background_color"]] != ""){
                 #-----------------------------------------------------------------#
@@ -1130,19 +1145,6 @@ format_cross_excel <- function(wb,
                                                         style[["heatmap_high_color"]]),
                                               type  = "colorScale")
             }
-
-            # Adjust table dimensions
-            #-----------------------------------------------------------------#
-            monitor_df <- monitor_df |> monitor_next("Excel widths/heights", "Format")
-            #-----------------------------------------------------------------#
-            if (is.null(by_info)){ print_step("MINOR", "[stat]: Adjust row heights and column widths", stat = stat) }
-
-            wb <- wb |> handle_col_row_dimensions(cross_ranges,
-                                                  collapse::fncol(var_tab) + (style[["start_column"]] - 1),
-                                                  collapse::fnrow(var_tab) + (style[["start_row"]] - 1),
-                                                  style) |>
-                handle_auto_dimensions(cross_ranges, style) |>
-                handle_header_table_dim(cross_ranges, style)
         }
 
         # Ignore the "number stored as text" error within Excel

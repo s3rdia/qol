@@ -24,6 +24,7 @@
 
 * `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats. (29.08.2026)
 * `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination. (29.08.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet. (30.08.2026)
 
 # qol 1.3.4
 
