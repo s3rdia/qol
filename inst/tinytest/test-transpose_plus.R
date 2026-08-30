@@ -29,7 +29,7 @@ wide_df <- dummy_df |>
                    values   = income,
                    weight   = weight)
 
-expect_equal(names(wide_df), c("year", "1", "2", NA), info = "Simple long to wide transposition")
+expect_equal(names(wide_df), c("year", "1", "2", "NA"), info = "Simple long to wide transposition")
 
 
 # Long to wide without values supplied creates counts
@@ -142,6 +142,30 @@ wide_df <- dummy_df |>
                                        "Female" = 2)))
 
 expect_equal(names(wide_df), c("year", "Total", "Male", "Female"), info = "Using formats in long to wide transposition")
+
+
+# Tranpose keeps statistic extensions, if multiple statistics are selected
+result_df <- dummy_df |>
+    transpose_plus(preserve   = year,
+                   pivot      = "sex",
+                   values     = weight,
+                   statistics = c("sum", "freq"))
+
+expect_true(all(c("weight_sum_1", "weight_sum_2", "weight_sum_NA", "weight_freq_1", "weight_freq_2", "weight_freq_NA") %in% names(result_df)),
+            info = "Tranpose keeps statistic extensions, if multiple statistics are selected")
+
+
+# Tranpose is able to output specific statistics per variable
+result_df <- dummy_df |>
+    transpose_plus(preserve   = year,
+                   pivot      = "sex",
+                   statistics = list("sum"       = weight,
+                                     "pct_group" = income))
+
+expect_true(all(c("weight_1", "weight_2", "weight_NA", "income_1", "income_2", "income_NA") %in% names(result_df)),
+            info = "Tranpose is able to output specific statistics per variable")
+expect_equal(collapse::funique(round(result_df[["income_1"]] + result_df[["income_2"]] + result_df[["income_NA"]])), 100,
+             info = "Tranpose is able to output specific statistics per variable")
 
 
 # Simple wide to long transposition

@@ -3,6 +3,7 @@
 ### New functionality
 
 * `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter. (28.08.2026)
+* `transpose_plus()`: Added `statistics` parameter which enables the function to not only transpose sums but any available `statistic`. Can also take in a named list to output specific stats per variable like in `any_table()` and `summarise_plus()`. (30.08.2026)
 
 ### Changed functionality
 
@@ -16,6 +17,8 @@
 * `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one. (26.08.2026)
 * `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now. (26.08.2026)
 * `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now. (28.08.2026)
+* `transpose_plus()`: If an invalid format is passed, this now throws a warning instead of removing all formats silently. (30.08.2026)
+* `remove_stat_extension()`: When a vector was passed only the last element was considered. Now all passed stat extensions are removed. (30.08.2026)
 
 ### Optimization
 

@@ -82,13 +82,13 @@ remove_stat_extension <- function(data_frame, statistics){
 
     # Remove statistic extensions
     for (stat in statistics){
-        new_names <- sub(paste0("_", stat, "$"), "", var_names)
+        var_names <- sub(paste0("_", stat, "$"), "", var_names)
     }
 
     # Check if unique new names still have the same length as the original names.
     # Only if this is true the new names can be applied.
-    if (length(var_names) == length(collapse::funique(new_names))){
-        names(data_frame) <- new_names
+    if (length(var_names) == length(collapse::funique(var_names))){
+        names(data_frame) <- var_names
     }
     # If there are duplicate names abort
     else{

@@ -4,6 +4,7 @@ Last CRAN release was on 20.08.2026.
 ### New functionality
 
 * `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter.
+* `transpose_plus()`: Added `statistics` parameter which enables the function to not only transpose sums but any available `statistic`. Can also take in a named list to output specific stats per variable like in `any_table()` and `summarise_plus()`.
 
 ### Changed functionality
 
@@ -17,6 +18,8 @@ Last CRAN release was on 20.08.2026.
 * `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one.
 * `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now.
 * `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now.
+* `transpose_plus()`: If an invalid format is passed, this now throws a warning instead of removing all formats silently.
+* `remove_stat_extension()`: When a vector was passed only the last element was considered. Now all passed stat extensions are removed.
 
 ### Optimization
 
