@@ -106,6 +106,8 @@ is_multilabel <- function(format_list, variable){
 #'
 #' @noRd
 order_interleaved <- function(data_frame, patterns){
+    patterns <- paste0("(^|_)", patterns, "(_|$)")
+
     # Find columns for each pattern
     columns <- lapply(patterns, function(pattern){
         grep(pattern, names(data_frame), value = TRUE)

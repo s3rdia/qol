@@ -261,14 +261,13 @@ interval_format <- function(...,
     # occasions were a single value and not a range should be included in the format.
     single_value <- from == to
 
-    # Add the smallest piece to "from" in case lower bound should not be included
+    # Add the smallest piece to "from" in case the lower bound should not be included.
     if (!include_lower){
-        from[!single_value] <- from[!single_value] + .Machine[["double.eps"]] * 1000
+        from <- shift_bound(from, 1, single_value)
     }
-
-    # Subtract the smallest piece from "to" in case upper bound should not be included
+    # Subtract the smallest piece from "to" in case the upper bound should not be included.
     if (!include_upper){
-        to[!single_value] <- to[!single_value] - .Machine[["double.eps"]] * 1000
+        to <- shift_bound(to, -1, single_value)
     }
 
     print_closing()
@@ -277,6 +276,29 @@ interval_format <- function(...,
     data.table::data.table(from  = from,
                            to    = to,
                            label = labels) |> convert_numeric("label")
+}
+
+
+#' Shift Bound Of Interval Format
+#'
+#' @description
+#' Shifts the bound of an interval format the slightest bit into one direction.
+#'
+#' @param bound The bound to shift.
+#' @param direction The direction in which the bound should be shifted.
+#' @param single_value The value when there is no range provided.
+#'
+#' @return
+#' Returns the shifted bound
+#'
+#' @noRd
+shift_bound <- function(bound, direction, single_value){
+    adjustable <- !single_value & is.finite(bound)
+    step       <- (abs(bound[adjustable]) + 1) * .Machine[["double.eps"]] * 1000
+
+    bound[adjustable] <- bound[adjustable] + (direction * step)
+
+    bound
 }
 
 

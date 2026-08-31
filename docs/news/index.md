@@ -53,6 +53,20 @@
 - [`remove_stat_extension()`](https://s3rdia.github.io/qol/reference/remove_stat_extension.md):
   When a vector was passed only the last element was considered. Now all
   passed stat extensions are removed. (30.08.2026)
+- [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  Include boundaries weren’t detected correctly, this is fixed now.
+  (31.08.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Doesn’t error anymore if the `class` variable is identical to the
+  `values` variable. (31.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Tabulating pre summarised data ran into an error if the `value`
+  variables had no statistic extensions. This is fixed now. (31.08.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Column header columns could be sorted in the wrong order if a
+  statistic extension was also part of a label in some way. The sorting
+  is now adjusted that only the real extensions are detected.
+  (31.08.2026)
 
 #### Optimization
 

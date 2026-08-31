@@ -19,6 +19,10 @@
 * `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now. (28.08.2026)
 * `transpose_plus()`: If an invalid format is passed, this now throws a warning instead of removing all formats silently. (30.08.2026)
 * `remove_stat_extension()`: When a vector was passed only the last element was considered. Now all passed stat extensions are removed. (30.08.2026)
+* `interval_format()`: Include boundaries weren't detected correctly, this is fixed now. (31.08.2026)
+* `summarise_plus()`: Doesn't error anymore if the `class` variable is identical to the `values` variable. (31.08.2026)
+* `any_table()`: Tabulating pre summarised data ran into an error if the `value` variables had no statistic extensions. This is fixed now. (31.08.2026)
+* `any_table()`: Column header columns could be sorted in the wrong order if a statistic extension was also part of a label in some way. The sorting is now adjusted that only the real extensions are detected. (31.08.2026)
 
 ### Optimization
 

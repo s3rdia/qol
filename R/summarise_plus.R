@@ -469,13 +469,15 @@ summarise_plus <- function(data_frame,
     values <- data_frame |> part_of_df(values)
 
     # Check if there are any values stored as character and remove them
-    chararacter_values <- values[sapply(data_frame[values], is.character)]
+    if (length(values) > 0){
+        chararacter_values <- values[sapply(data_frame[values], is.character)]
 
-    if (length(chararacter_values) > 0) {
-        print_message("WARNING", c("The following <values> are stored as character variables in the data frame",
-                                   "and will be removed: [char_vars]"), char_vars = chararacter_values)
+        if (length(chararacter_values) > 0){
+            print_message("WARNING", c("The following <values> are stored as character variables in the data frame",
+                                       "and will be removed: [char_vars]"), char_vars = chararacter_values)
 
-        values <- setdiff(values, chararacter_values)
+            values <- setdiff(values, chararacter_values)
+        }
     }
 
     # If no value variables are provided generate them automatically

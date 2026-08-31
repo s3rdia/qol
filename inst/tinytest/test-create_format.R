@@ -5,6 +5,9 @@ set_no_print(TRUE)
 # on how much time they took.
 ###############################################################################
 
+edge_case_df <- data.frame(x = c(1, 1999, 2000, 2001, 3000),
+                           w = c(1, 1999, 2000, 2001, 3000))
+
 # Create single discrete label
 sex. <- discrete_format(
         "Male"   = 1,
@@ -132,6 +135,84 @@ age. <- interval_format(
 
 expect_true(age.[1, "from"] >  0 && age.[1, "to"] ==  65, info = "Interval formats including upper bounds and excluding lower bounds")
 expect_true(age.[2, "from"] > 65 && age.[2, "to"] == 100, info = "Interval formats including upper bounds and excluding lower bounds")
+
+
+# Edge cases in appplied interval formats fall into the correct category
+include. <- interval_format(
+    "A" = 0001:2000,
+    "B" = 2000:3000,
+    include_lower = TRUE,
+    include_upper = FALSE)
+
+edge_case_result <- edge_case_df |>
+    summarise_plus(class      = x,
+                   values     = w,
+                   statistics = "sum",
+                   formats    = list(x = include.),
+                   nesting    = "deepest",
+                   na.rm      = TRUE)
+
+edge_case_result[["x"]] <- as.character(edge_case_result[["x"]])
+
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "A"], 2000, info = "Edge cases in appplied interval formats fall into the correct category")
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "B"], 4001, info = "Edge cases in appplied interval formats fall into the correct category")
+
+include. <- interval_format(
+    "A" = 0001:2000,
+    "B" = 2000:3000,
+    include_lower = TRUE,
+    include_upper = TRUE)
+
+edge_case_result <- edge_case_df |>
+    summarise_plus(class      = x,
+                   values     = w,
+                   statistics = "sum",
+                   formats    = list(x = include.),
+                   nesting    = "deepest",
+                   na.rm      = TRUE)
+
+edge_case_result[["x"]] <- as.character(edge_case_result[["x"]])
+
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "A"], 4000, info = "Edge cases in appplied interval formats fall into the correct category")
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "B"], 7001, info = "Edge cases in appplied interval formats fall into the correct category")
+
+include. <- interval_format(
+    "A" = 0001:2000,
+    "B" = 2000:3000,
+    include_lower = FALSE,
+    include_upper = FALSE)
+
+edge_case_result <- edge_case_df |>
+    summarise_plus(class      = x,
+                   values     = w,
+                   statistics = "sum",
+                   formats    = list(x = include.),
+                   nesting    = "deepest",
+                   na.rm      = TRUE)
+
+edge_case_result[["x"]] <- as.character(edge_case_result[["x"]])
+
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "A"], 1999, info = "Edge cases in appplied interval formats fall into the correct category")
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "B"], 2001, info = "Edge cases in appplied interval formats fall into the correct category")
+
+include. <- interval_format(
+    "A" = 0001:2000,
+    "B" = 2000:3000,
+    include_lower = FALSE,
+    include_upper = TRUE)
+
+edge_case_result <- edge_case_df |>
+    summarise_plus(class      = x,
+                   values     = w,
+                   statistics = "sum",
+                   formats    = list(x = include.),
+                   nesting    = "deepest",
+                   na.rm      = TRUE)
+
+edge_case_result[["x"]] <- as.character(edge_case_result[["x"]])
+
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "A"], 3999, info = "Edge cases in appplied interval formats fall into the correct category")
+expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "B"], 5001, info = "Edge cases in appplied interval formats fall into the correct category")
 
 ###############################################################################
 # Abort checks

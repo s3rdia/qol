@@ -832,14 +832,24 @@ any_table <- function(data_frame,
         # Check if value variables have statistics extension
         pattern <- paste0("(", paste(extensions, collapse = "|"), ")$")
 
-        # If one of the value variables hasn't got any of the above extension, add extensions automatically as provided
+        # If one of the value variables hasn't got any of the above extension,
+        # add extensions automatically as provided
         if (!all(grepl(pattern, values))){
             print_message("WARNING", c("All <values> variables need to have the <statistic> extension in their variable name.",
 									   "You can use the function 'add_extension' to achieve this. Provided <statistic> will be used.",
 									   "This can lead to a wrong table structure, better add extensions by yourself."))
 
+            # Map the provided statistics to the value variables. If more statistics
+            # are provided than there are value variables, only the matching number of
+            # statistics is used. If fewer are provided, they are recycled.
+            stat_extension <- rep(statistics, length.out = length(values))
+
             data_frame <- data_frame |> add_extension(length(c(by, variables, "TYPE")) + 1,
-                                                      rep(statistics, length(values))[1:length(values)])
+                                                      stat_extension)
+
+            # Apply the same extensions to the value variable names, so that the
+            # upcoming summarise can find the renamed columns.
+            values <- paste0(values, "_", stat_extension)
         }
 
         # Set up options to make sure nothing errors below. Statistics is set to "mean"
@@ -1601,11 +1611,13 @@ any_table <- function(data_frame,
 
     # Reorder variables according to statistics. This is necessary because some
     # percentages can only be computed after summarise_plus and therefor aren't ordered.
+    stats_pattern <- paste0("(^|_)", statistics, "(_|$)")
+
     if ("pct_group" %in% statistics){
         any_tab <- any_tab |> setcolorder_by_pattern(order_pct)
     }
 
-    any_tab <- any_tab |> setcolorder_by_pattern(statistics)
+    any_tab <- any_tab |> setcolorder_by_pattern(stats_pattern)
 
     # Get value variable names
     if (length(by) == 0){
@@ -2134,8 +2146,9 @@ any_table <- function(data_frame,
 
     # Reorder variables according to statistics
     if (tolower(order_by) == "stats" || tolower(order_by) == "values_stats" || tolower(order_by) == "blocks"){
-        any_tab    <- any_tab    |> setcolorder_by_pattern(statistics)
-        any_header <- any_header |> setcolorder_by_pattern(statistics)
+        stats_pattern <- paste0("(^|_)", statistics, "(_|$)")
+        any_tab    <- any_tab    |> setcolorder_by_pattern(stats_pattern)
+        any_header <- any_header |> setcolorder_by_pattern(stats_pattern)
     }
 
     # Reorder variables by provided values
