@@ -15,6 +15,22 @@
   and
   [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md).
   (30.08.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md):
+  Now also capture the meta styling information. (01.09.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  New `output` option “no” prevents any styling and additionally sets
+  `print = FALSE` so that only the table and meta information are
+  captured. (01.09.2026)
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Can now also combine
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md)
+  and
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md)
+  outputs. (01.09.2026)
 
 #### Changed functionality
 

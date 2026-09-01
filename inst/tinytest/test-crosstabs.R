@@ -37,7 +37,7 @@ result_list <- dummy_df |>
               print   = FALSE)
 
 expect_inherits(result_list, "qol_cross", info = "Simplest form of crosstabs")
-expect_equal(length(result_list), 2, info = "Simplest form of crosstabs")
+expect_equal(length(result_list), 3, info = "Simplest form of crosstabs")
 
 values <- length(unique(dummy_df[["sex"]]))
 expect_equal(collapse::fncol(result_list[[1]]), (values * 4) + 1, info = "Simplest form of crosstabs")

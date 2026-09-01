@@ -1,7 +1,11 @@
 # Combine Multiple Tables Into One Workbook
 
 Combines any number of tables created with
-[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+[`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+[`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md)
+or
+[`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md)
 into one workbook and styles them according to their meta information.
 
 ## Usage
@@ -28,7 +32,11 @@ combine_into_workbook(
 - ...:
 
   Provide any number of result lists output by
-  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md).
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md)
+  or
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md).
 
 - output:
 
@@ -173,10 +181,10 @@ set_footnotes("This is footnote number 1 cell: W22",
               "This is footnote number 4")
 
 # Catch the output and additionally use the options:
-# print = FALSE and output = "excel_nostyle".
+# print = FALSE and output = "no".
 # This skips the styling and output part, so that the function runs faster.
 set_print(FALSE)
-set_output("excel_nostyle")
+set_output("no")
 set_style_options(sheet_name = "big_table")
 
 tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),

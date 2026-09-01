@@ -58,7 +58,7 @@ table_end, table_header.}
 Styles can be created with \code{\link[=excel_output_style]{excel_output_style()}}.}
 
 \item{output}{The following output formats are available: console (default), text,
-excel and excel_nostyle.}
+excel, excel_nostyle and no.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the variables.}
 

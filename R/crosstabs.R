@@ -35,7 +35,7 @@
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: console (default), text,
-#' excel and excel_nostyle.
+#' excel, excel_nostyle and no.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
@@ -337,8 +337,13 @@ crosstabs <- function(data_frame,
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # The "no" output forces print = FALSE and skips all Excel and HTML styling
+    if (tolower(output) == "no"){
+        print <- FALSE
+    }
+
     # Check for invalid output option
-    if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
+    if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle", "no")){
         print_message("WARNING", "<Output> format '[output]' not available. Using 'console' instead.", output = output)
 
         output <- "console"
@@ -477,6 +482,12 @@ crosstabs <- function(data_frame,
         return(invisible(NULL))
     }
 
+    # Grab all information, which is necessary to format the workbook. This list will be
+    # returned at the end and can be grabbed by the workbook combine function.
+    meta <- mget(c("rows", "columns", "column_names", "statistics", "formats",
+                   "by", "titles", "footnotes", "style", "output",
+                   "show_total", "na.rm", "print_miss"))
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -510,6 +521,8 @@ crosstabs <- function(data_frame,
         wb    <- style_list[[1]]
         style <- style_list[[2]]
 
+        meta[["style"]] <- style
+
         monitor_df <- monitor_df |> monitor_end()
 
         # In case no by variables are provided
@@ -530,6 +543,9 @@ crosstabs <- function(data_frame,
             wb         <- wb_list[[1]]
             monitor_df <- wb_list[[2]]
         }
+    }
+    else if (output == "no"){
+        wb <- NULL
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -623,7 +639,8 @@ crosstabs <- function(data_frame,
     #-------------------------------------------------------------------------#
 
     invisible(structure(list("table"    = cross_tab,
-                             "workbook" = wb), class = "qol_cross"))
+                             "workbook" = wb,
+                             "meta"     = meta), class = "qol_cross"))
 }
 
 ###############################################################################

@@ -78,8 +78,8 @@
 #' creating a new file.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
-#' @param output The following output formats are available: excel, excel_nostyle, html and
-#' excel_html.
+#' @param output The following output formats are available: excel, excel_nostyle, html,
+#' excel_html and no.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
@@ -770,13 +770,18 @@ any_table <- function(data_frame,
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # The "no" output forces print = FALSE and skips all Excel and HTML styling
+    if (tolower(output) == "no"){
+        print <- FALSE
+    }
+
     # Silent conversion of global options, which are invalid for any_table
     if (tolower(output) %in% c("console", "text")){
         output <- "excel"
     }
 
     # Check for invalid output option
-    if (!tolower(output) %in% c("excel", "excel_nostyle", "html", "excel_html")){
+    if (!tolower(output) %in% c("excel", "excel_nostyle", "html", "excel_html", "no")){
         print_message("WARNING", "<Output> format '[output]' not available. Using 'excel' instead.", output = output)
 
         output <- "excel"
@@ -2322,9 +2327,13 @@ any_table <- function(data_frame,
 
     monitor_df <- monitor_df |> monitor_end()
 
-    # In case the html output is used, the excel workbook doesn't need to be formatted.
-    # The table is rendered to html in the output section further down instead.
-    if (output != "html"){
+    # With the "no" output all Excel styling is skipped. Only the table and the
+    # meta information are returned, so that combine_into_workbook can style the
+    # table at a later point.
+    if (output == "no"){
+        wb <- NULL
+    }
+    else if (output != "html"){
         # In case no by variables are provided
         if (length(by) == 0){
             wb_list <- format_any_excel(workbook, any_tab, rows, columns, statistics,
@@ -3357,10 +3366,12 @@ format_by_single_table <- function(wb,
 #' Combine Multiple Tables Into One Workbook
 #'
 #' @description
-#' Combines any number of tables created with [any_table()] into one workbook
+#' Combines any number of tables created with [any_table()], [crosstabs()],
+#' [frequencies()] or [export_with_style()] into one workbook
 #' and styles them according to their meta information.
 #'
-#' @param ... Provide any number of result lists output by [any_table()].
+#' @param ... Provide any number of result lists output by [any_table()], [crosstabs()],
+#' [frequencies()] or [export_with_style()].
 #' @param output The following output formats are available: excel and excel_nostyle.
 #' @param style A list of options can be passed to control the appearance of the
 #' table of contents. Styles can be created with [excel_output_style()].
@@ -3442,10 +3453,10 @@ format_by_single_table <- function(wb,
 #'               "This is footnote number 4")
 #'
 #' # Catch the output and additionally use the options:
-#' # print = FALSE and output = "excel_nostyle".
+#' # print = FALSE and output = "no".
 #' # This skips the styling and output part, so that the function runs faster.
 #' set_print(FALSE)
-#' set_output("excel_nostyle")
+#' set_output("no")
 #' set_style_options(sheet_name = "big_table")
 #'
 #' tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),
@@ -3538,14 +3549,17 @@ combine_into_workbook <- function(...,
     })
 
     if (is.null(tables)){
-        print_message("ERROR", c("Unknown object found. Provide <any_table> or <export_with_style> results.",
+        print_message("ERROR", c("Unknown object found. Provide <any_table>, <crosstabs>, <frequencies> or <export_with_style> results.",
 								 "Combining tables to workbook will be aborted."))
         return(invisible(NULL))
     }
 
     for (table in tables){
-        if (!is.list(table) || !all(c("table", "workbook", "meta") %in% names(table))){
-            print_message("ERROR", c("Unknown object found. Provide <any_table> or <export_with_style> results.",
+        valid_table <- is.list(table) && (  all(c("table", "meta") %in% names(table)) ||
+            (inherits(table, "qol_freq") && all(c("freq",  "meta") %in% names(table))))
+
+        if (!valid_table){
+            print_message("ERROR", c("Unknown object found. Provide <any_table>, <crosstabs>, <frequencies> or <export_with_style> results.",
 									 "Combining tables to workbook will be aborted."))
             return(invisible(NULL))
         }
@@ -3566,21 +3580,15 @@ combine_into_workbook <- function(...,
 
         meta <- table[["meta"]]
 
-        # Style data frame for export
-        if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
-            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]])
-            wb              <- style_list[[1]]
-            meta[["style"]] <- style_list[[2]]
-
-            wb_list <- suppressMessages(
-                format_df_excel(wb, table[["table"]], meta[["titles"]], meta[["footnotes"]],
-                                meta[["var_labels"]], meta[["style"]], meta[["column_align"]],
-                                meta[["output"]], monitor_df))
-
-            wb <- wb_list[[1]]
+        # Tables created with the "no" output were not styled during creation.
+        # Treat them like a regular excel output here, so that the table gets
+        # styled properly.
+        if (meta[["output"]] == "no"){
+            meta[["output"]] <- "excel"
         }
+
         # Style any_table output for export
-        else{
+        if (inherits(table, "qol_table")){
             style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]], meta[["by"]])
             wb              <- style_list[[1]]
             meta[["style"]] <- style_list[[2]]
@@ -3605,6 +3613,81 @@ combine_into_workbook <- function(...,
                                         meta[["box"]], meta[["any_header"]],
                                         meta[["style"]], meta[["output"]], meta[["na.rm"]], meta[["print_miss"]],
                                         monitor_df))
+
+                wb <- wb_list[[1]]
+            }
+        }
+        # Style data frame for export
+        else if (is.character(meta[[length(meta)]]) && meta[[length(meta)]] == "DATA"){
+            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]])
+            wb              <- style_list[[1]]
+            meta[["style"]] <- style_list[[2]]
+
+            wb_list <- suppressMessages(
+                format_df_excel(wb, table[["table"]], meta[["titles"]], meta[["footnotes"]],
+                                meta[["var_labels"]], meta[["style"]], meta[["column_align"]],
+                                meta[["output"]], monitor_df))
+
+            wb <- wb_list[[1]]
+        }
+        # Style crosstabs output for export
+        else if (inherits(table, "qol_cross")){
+            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]], meta[["by"]])
+            wb              <- style_list[[1]]
+            meta[["style"]] <- style_list[[2]]
+
+            # In case no by variables are provided
+            if (length(meta[["by"]]) == 0){
+                wb_list <- suppressMessages(
+                    format_cross_excel(wb, table[["table"]], meta[["rows"]], meta[["columns"]],
+                                       meta[["column_names"]], meta[["statistics"]], meta[["formats"]],
+                                       meta[["by"]], meta[["titles"]], meta[["footnotes"]],
+                                       meta[["style"]], meta[["output"]], meta[["show_total"]],
+                                       monitor_df = monitor_df))
+
+                wb <- wb_list[[1]]
+            }
+            # In case there are by variables provided
+            else{
+                wb_list <- suppressMessages(
+                    format_cross_by_excel(table[["table"]], meta[["rows"]], meta[["columns"]],
+                                          meta[["column_names"]], meta[["statistics"]], meta[["formats"]],
+                                          meta[["by"]], meta[["titles"]], meta[["footnotes"]],
+                                          meta[["style"]], meta[["output"]], meta[["show_total"]],
+                                          meta[["na.rm"]], meta[["print_miss"]], wb, monitor_df))
+
+                wb <- wb_list[[1]]
+            }
+        }
+        # Style frequencies output for export
+        else if (inherits(table, "qol_freq")){
+            style_list      <- wb |> prepare_styles(list("title" = meta[["titles"]], "footnote" = meta[["footnotes"]]), meta[["style"]], meta[["by"]])
+            wb              <- style_list[[1]]
+            meta[["style"]] <- style_list[[2]]
+
+            # In case no by variables are provided
+            if (length(meta[["by"]]) == 0){
+                wb_list <- suppressMessages(
+                    format_mean_excel(meta[["mean_tab"]], meta[["mean_columns"]], meta[["style"]],
+                                      meta[["output"]], meta[["means"]], wb = wb, monitor_df = monitor_df))
+
+                wb <- wb_list[[1]]
+
+                wb_list <- suppressMessages(
+                    format_freq_excel(wb, table[["freq"]], meta[["variables"]], meta[["formats"]],
+                                      meta[["by"]], meta[["titles"]], meta[["footnotes"]],
+                                      meta[["style"]], meta[["output"]], monitor_df = wb_list[[2]]))
+
+                wb <- wb_list[[1]]
+            }
+            # In case there are by variables provided
+            else{
+                wb_list <- suppressMessages(
+                    format_by_excel(meta[["mean_tab"]], table[["freq"]], meta[["variables"]],
+                                    meta[["mean_columns"]], meta[["formats"]], meta[["by"]],
+                                    meta[["titles"]], meta[["footnotes"]], meta[["style"]],
+                                    meta[["output"]], meta[["na.rm"]], meta[["print_miss"]],
+                                    wb, monitor_df, meta[["means"]]))
 
                 wb <- wb_list[[1]]
             }

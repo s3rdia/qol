@@ -4,6 +4,9 @@
 
 * `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter. (28.08.2026)
 * `transpose_plus()`: Added `statistics` parameter which enables the function to not only transpose sums but any available `statistic`. Can also take in a named list to output specific stats per variable like in `any_table()` and `summarise_plus()`. (30.08.2026)
+* `frequencies()`, `crosstabs()`: Now also capture the meta styling information. (01.09.2026)
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: New `output` option "no" prevents any styling and additionally sets `print = FALSE` so that only the table and meta information are captured. (01.09.2026)
+* `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs. (01.09.2026)
 
 ### Changed functionality
 

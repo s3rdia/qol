@@ -31,7 +31,7 @@
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param output The following output formats are available: console (default), text,
-#' excel and excel_nostyle.
+#' excel, excel_nostyle and no.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
@@ -279,8 +279,13 @@ frequencies <- function(data_frame,
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # The "no" output forces print = FALSE and skips all Excel and HTML styling
+    if (tolower(output) == "no"){
+        print <- FALSE
+    }
+
     # Check for invalid output option
-    if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle")){
+    if (!tolower(output) %in% c("console", "text", "excel", "excel_nostyle", "no")){
         print_message("WARNING", "<Output> format '[output]' not available. Using 'console' instead.", output = output)
 
         output <- "console"
@@ -382,7 +387,8 @@ frequencies <- function(data_frame,
         mean_tab <- data.table::rbindlist(all_rows, use.names = TRUE, fill = TRUE)
     }
     else{
-        mean_tab <- c()
+        mean_tab      <- c()
+        mean_columns  <- c()
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -445,6 +451,12 @@ frequencies <- function(data_frame,
         freq_tab[["var_sum"]] <- freq_tab[["var_freq"]]
     }
 
+    # Grab all information, which is necessary to format the workbook. This list will be
+    # returned at the end and can be grabbed by the workbook combine function.
+    meta <- mget(c("mean_tab", "mean_columns", "variables", "formats",
+                   "by", "titles", "footnotes", "style", "output",
+                   "na.rm", "print_miss", "means"))
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -482,6 +494,8 @@ frequencies <- function(data_frame,
         wb    <- style_list[[1]]
         style <- style_list[[2]]
 
+        meta[["style"]] <- style
+
         monitor_df <- monitor_df |> monitor_end()
 
         # In case no by variables are provided
@@ -503,6 +517,9 @@ frequencies <- function(data_frame,
             wb         <- wb_list[[1]]
             monitor_df <- wb_list[[2]]
         }
+    }
+    else if (output == "no"){
+        wb <- NULL
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -594,7 +611,8 @@ frequencies <- function(data_frame,
 
     invisible(structure(list("mean"     = mean_tab,
                              "freq"     = freq_tab,
-                             "workbook" = wb), class = "qol_freq"))
+                             "workbook" = wb,
+                             "meta"     = meta), class = "qol_freq"))
 }
 
 ###############################################################################

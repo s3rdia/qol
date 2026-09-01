@@ -1577,12 +1577,12 @@ on.exit(unlink(temp_file), add = TRUE)
 
 result <- combine_into_workbook(1, style = excel_output_style(save_path = dirname(temp_file),
                                                               file      = basename(temp_file)))
-expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
+expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table>, <crosstabs>, <frequencies> or <export_with_style> results.",
              info = "Combine tables into a single workbook aborts, if no any_table object was found")
 
 result <- combine_into_workbook(list(1), style = excel_output_style(save_path = dirname(temp_file),
                                                                     file      = basename(temp_file)))
-expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table> or <export_with_style> results.",
+expect_error(print_stack_as_messages("ERROR"), "Unknown object found. Provide <any_table>, <crosstabs>, <frequencies> or <export_with_style> results.",
              info = "Combine tables into a single workbook aborts, if no any_table or export_with_style object was found")
 
 expect_true(!file.exists(temp_file), info = "Combine tables into a single workbook aborts, if no any_table or export_with_style object was found")

@@ -69,7 +69,8 @@ export_with_style(
 
 - output:
 
-  The following output formats are available: excel and excel_nostyle.
+  The following output formats are available: excel, excel_nostyle and
+  no.
 
 - print:
 

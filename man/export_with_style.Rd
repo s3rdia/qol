@@ -45,7 +45,7 @@ Styles can be created with \code{\link[=excel_output_style]{excel_output_style()
 
 \item{column_align}{Individually align the data frame columns in the final 'Excel' output.}
 
-\item{output}{The following output formats are available: excel and excel_nostyle.}
+\item{output}{The following output formats are available: excel, excel_nostyle and no.}
 
 \item{print}{TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 if one only wants to catch the output workbook.}

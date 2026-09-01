@@ -109,7 +109,7 @@ crosstabs(
 - output:
 
   The following output formats are available: console (default), text,
-  excel and excel_nostyle.
+  excel, excel_nostyle and no.
 
 - na.rm:
 

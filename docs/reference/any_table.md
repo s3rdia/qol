@@ -213,8 +213,8 @@ any_table(
 
 - output:
 
-  The following output formats are available: excel, excel_nostyle, html
-  and excel_html.
+  The following output formats are available: excel, excel_nostyle,
+  html, excel_html and no.
 
 - na.rm:
 

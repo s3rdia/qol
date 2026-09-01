@@ -24,7 +24,7 @@
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
 #' Styles can be created with [excel_output_style()].
 #' @param column_align Individually align the data frame columns in the final 'Excel' output.
-#' @param output The following output formats are available: excel and excel_nostyle.
+#' @param output The following output formats are available: excel, excel_nostyle and no.
 #' @param print TRUE by default. If TRUE prints the output, if FALSE doesn't print anything. Can be used
 #' if one only wants to catch the output workbook.
 #' @param monitor FALSE by default. If TRUE outputs two charts to visualize the functions time consumption.
@@ -171,13 +171,18 @@ export_with_style <- function(data_frame,
     # Output
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	# The "no" output forces print = FALSE and skips all Excel and HTML styling
+	if (tolower(output) == "no"){
+	    print <- FALSE
+	}
+
     # Silent conversion of global options, which are invalid for any_table
     if (tolower(output) %in% c("console", "text")){
         output <- "excel"
     }
 
     # Check for invalid output option
-    if (!tolower(output) %in% c("excel", "excel_nostyle")){
+    if (!tolower(output) %in% c("excel", "excel_nostyle", "no")){
         print_message("WARNING", "<Output> format '[output]' not available. Using 'excel' instead.", output = output)
 
         output <- "excel"
@@ -206,31 +211,39 @@ export_with_style <- function(data_frame,
     monitor_df <- monitor_df |> monitor_next("Excel prepare", "Format")
     #-------------------------------------------------------------------------#
 
-    # Setup styling in new workbook if no other is provided
-    if (is.null(workbook)){
-        style_list <- openxlsx2::wb_workbook() |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
-
-        workbook <- style_list[[1]]
-        style    <- style_list[[2]]
+    # With the "no" output all Excel styling is skipped. Only the table and the
+    # meta information are returned, so that combine_into_workbook can style the
+    # table at a later point.
+    if (output == "no"){
+        wb <- NULL
     }
-    # Update style options in provided workbook
     else{
-        style_list <- workbook |>
-            prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+        # Setup styling in new workbook if no other is provided
+        if (is.null(workbook)){
+            style_list <- openxlsx2::wb_workbook() |>
+                prepare_styles(list("title" = titles, "footnote" = footnotes), style)
 
-        workbook <- style_list[[1]]
-        style    <- style_list[[2]]
+            workbook <- style_list[[1]]
+            style    <- style_list[[2]]
+        }
+        # Update style options in provided workbook
+        else{
+            style_list <- workbook |>
+                prepare_styles(list("title" = titles, "footnote" = footnotes), style)
+
+            workbook <- style_list[[1]]
+            style    <- style_list[[2]]
+        }
+
+        monitor_df <- monitor_df |> monitor_end()
+
+        # Style data frame for export
+        wb_list <- format_df_excel(workbook, data_frame, titles, footnotes, var_labels,
+                                   style, column_align, output, monitor_df)
+
+        wb         <- wb_list[[1]]
+        monitor_df <- wb_list[[2]]
     }
-
-    monitor_df <- monitor_df |> monitor_end()
-
-    # Style data frame for export
-    wb_list <- format_df_excel(workbook, data_frame, titles, footnotes, var_labels,
-                               style, column_align, output, monitor_df)
-
-    wb         <- wb_list[[1]]
-    monitor_df <- wb_list[[2]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Output formatted table into different formats

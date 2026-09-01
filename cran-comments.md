@@ -5,6 +5,9 @@ Last CRAN release was on 20.08.2026.
 
 * `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter.
 * `transpose_plus()`: Added `statistics` parameter which enables the function to not only transpose sums but any available `statistic`. Can also take in a named list to output specific stats per variable like in `any_table()` and `summarise_plus()`.
+* `frequencies()`, `crosstabs()`: Now also capture the meta styling information.
+* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: New `output` option "no" prevents any styling and additionally sets `print = FALSE` so that only the table and meta information are captured.
+* `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs.
 
 ### Changed functionality
 

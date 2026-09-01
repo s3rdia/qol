@@ -44,6 +44,12 @@
 <code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Can now generate a dummy data frame in wide format using the new <code>wide</code> parameter. (28.08.2026)</li>
 <li>
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Added <code>statistics</code> parameter which enables the function to not only transpose sums but any available <code>statistic</code>. Can also take in a named list to output specific stats per variable like in <code><a href="../reference/any_table.html">any_table()</a></code> and <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>. (30.08.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>: Now also capture the meta styling information. (01.09.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: New <code>output</code> option “no” prevents any styling and additionally sets <code>print = FALSE</code> so that only the table and meta information are captured. (01.09.2026)</li>
+<li>
+<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Can now also combine <code><a href="../reference/frequencies.html">frequencies()</a></code> and <code><a href="../reference/crosstabs.html">crosstabs()</a></code> outputs. (01.09.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-3-5">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-5"></a></h4>

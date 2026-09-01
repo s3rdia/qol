@@ -22,7 +22,7 @@ which can display missing categories.
 
 `set_output()`: Set the output option globally for each function that
 can output results to "console", "text", "excel", "excel_nostyle",
-"html" or "excel_html".
+"html", "excel_html" or "no".
 
 `get_output()`: Get the globally stored output option.
 

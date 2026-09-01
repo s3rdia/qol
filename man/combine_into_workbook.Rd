@@ -20,7 +20,8 @@ combine_into_workbook(
 )
 }
 \arguments{
-\item{...}{Provide any number of result lists output by \code{\link[=any_table]{any_table()}}.}
+\item{...}{Provide any number of result lists output by \code{\link[=any_table]{any_table()}}, \code{\link[=crosstabs]{crosstabs()}},
+\code{\link[=frequencies]{frequencies()}} or \code{\link[=export_with_style]{export_with_style()}}.}
 
 \item{output}{The following output formats are available: excel and excel_nostyle.}
 
@@ -54,7 +55,8 @@ if one only wants to catch the combined workbook.}
 A fully styled workbook containing the provided tables.
 }
 \description{
-Combines any number of tables created with \code{\link[=any_table]{any_table()}} into one workbook
+Combines any number of tables created with \code{\link[=any_table]{any_table()}}, \code{\link[=crosstabs]{crosstabs()}},
+\code{\link[=frequencies]{frequencies()}} or \code{\link[=export_with_style]{export_with_style()}} into one workbook
 and styles them according to their meta information.
 }
 \examples{
@@ -97,10 +99,10 @@ set_footnotes("This is footnote number 1 cell: W22",
               "This is footnote number 4")
 
 # Catch the output and additionally use the options:
-# print = FALSE and output = "excel_nostyle".
+# print = FALSE and output = "no".
 # This skips the styling and output part, so that the function runs faster.
 set_print(FALSE)
-set_output("excel_nostyle")
+set_output("no")
 set_style_options(sheet_name = "big_table")
 
 tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),

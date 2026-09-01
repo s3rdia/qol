@@ -110,7 +110,7 @@ missing categories.
 \code{\link[=get_print_miss]{get_print_miss()}}: Get the globally stored print_miss option.
 
 \code{\link[=set_output]{set_output()}}: Set the output option globally for each function that can output
-results to "console", "text", "excel", "excel_nostyle", "html" or "excel_html".
+results to "console", "text", "excel", "excel_nostyle", "html", "excel_html" or "no".
 
 \code{\link[=get_output]{get_output()}}: Get the globally stored output option.
 

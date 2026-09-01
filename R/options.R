@@ -684,7 +684,7 @@ get_print_miss <- function(){
 #'
 #' @description
 #' [set_output()]: Set the output option globally for each function that can output
-#' results to "console", "text", "excel", "excel_nostyle", "html" or "excel_html".
+#' results to "console", "text", "excel", "excel_nostyle", "html", "excel_html" or "no".
 #'
 #' @param ... [set_print_miss()]: Input option to set global output style.
 #'
@@ -714,12 +714,12 @@ set_output <- function(...){
     }
 
     if (!is.character(output_option)){
-        print_message("ERROR", "Output can only be 'console', 'text', 'excel', 'excel_nostyle', 'html' or 'excel_html'. Global option remains unchanged.")
+        print_message("ERROR", "Output can only be 'console', 'text', 'excel', 'excel_nostyle', 'html', 'excel_html' or 'no'. Global option remains unchanged.")
         return(invisible(.qol_options[["output"]]))
     }
 
-    if (!tolower(output_option) %in% c("console", "text", "excel", "excel_nostyle", "html", "excel_html")){
-        print_message("ERROR", "Output can only be 'console', 'text', 'excel', 'excel_nostyle', 'html' or 'excel_html'. Global option remains unchanged.")
+    if (!tolower(output_option) %in% c("console", "text", "excel", "excel_nostyle", "html", "excel_html", "no")){
+        print_message("ERROR", "Output can only be 'console', 'text', 'excel', 'excel_nostyle', 'html', 'excel_html' or 'no'. Global option remains unchanged.")
         return(invisible(.qol_options[["output"]]))
     }
 
