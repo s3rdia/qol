@@ -187,6 +187,25 @@ if. <- function(data_frame, condition, ...){
 
     list_entry_lengths <- lengths(content_list)
 
+    # Variables used in the condition or the calculations must either be part of
+    # the data frame or be provided as external vectors. Otherwise the evaluation
+    # would abort. External vectors referenced in the calculations are looked up
+    # separately, so that the content_list keeps on controlling the branch
+    # selection between normal and do over evaluation.
+    variables_used <- unique(c(all.vars(condition),
+                               unlist(lapply(assignments, all.vars))))
+    external_content <- Filter(is_valid_vector, mget(variables_used, envir = parent_env, ifnotfound = list(NULL)))
+
+    invalid_vars <- variables_used[!variables_used %in% names(data_frame) &
+                                   !variables_used %in% names(content_list) &
+                                   !variables_used %in% names(external_content)]
+
+    if (length(invalid_vars) > 0){
+        print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                 "the data frame. Evaluation will be aborted."), vars = invalid_vars)
+        return(invisible(data_frame))
+    }
+
     # If no vector was passed in the condition or the assignments, then evaluate
     # as normal if statement.
     flag_filter    <- FALSE
@@ -505,6 +524,20 @@ else_if. <- function(data_frame, condition, ...){
     # variable name and not a vector of variable names.
     content_list <- Filter(is_valid_vector, content_list)
 
+    # Variables used in the condition or the calculations must either be part of
+    # the data frame or be provided as external vectors. Otherwise the evaluation
+    # would abort.
+    invalid_vars <- unique(c(all.vars(condition),
+                             unlist(lapply(assignments, all.vars))))
+    invalid_vars <- invalid_vars[!invalid_vars %in% names(data_frame) &
+                                 !invalid_vars %in% names(content_list)]
+
+    if (length(invalid_vars) > 0){
+        print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                 "the data frame. Evaluation will be aborted."), vars = invalid_vars)
+        return(invisible(data_frame))
+    }
+
     # If no vector was passed in the condition or the assignments, then evaluate
     # as normal if statement.
     condition_list <- list()
@@ -690,6 +723,18 @@ else. <- function(data_frame, ...){
     # Remove invalid empty entries. This is the case if a variable is an original
     # variable name and not a vector of variable names.
     content_list <- Filter(is_valid_vector, content_list)
+
+    # Variables used in the calculations must either be part of the data frame or
+    # be provided as external vectors. Otherwise the evaluation would abort.
+    invalid_vars <- unique(unlist(lapply(assignments, all.vars)))
+    invalid_vars <- invalid_vars[!invalid_vars %in% names(data_frame) &
+                                 !invalid_vars %in% names(content_list)]
+
+    if (length(invalid_vars) > 0){
+        print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                 "the data frame. No computation will be executed."), vars = invalid_vars)
+        return(invisible(data_frame))
+    }
 
     # If no vector was passed in the condition or the assignments, then evaluate
     # as normal if statement.
@@ -1002,6 +1047,8 @@ where. <- function(data_frame,
                    keep      = NULL){
     df_name <- deparse(substitute(data_frame))
 
+    parent_env <- parent.frame()
+
     # Manage conditional subsetting
     condition <- substitute(condition)
 
@@ -1022,8 +1069,23 @@ where. <- function(data_frame,
             }
         }
 
+        # Variables used in the condition must either be part of the data frame or
+        # be provided as external vectors in the calling frame. Otherwise the
+        # evaluation would abort.
+        used_variables <- unique(all.vars(condition))
+        external_content <- Filter(is_valid_vector,
+                                   mget(used_variables, envir = parent_env, ifnotfound = list(NULL)))
+        invalid_vars <- used_variables[!used_variables %in% names(data_frame) &
+                                       !used_variables %in% names(external_content)]
+
+        if (length(invalid_vars) > 0){
+            print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                     "the data frame. Evaluation will be aborted."), vars = invalid_vars)
+            return(invisible(data_frame))
+        }
+
         condition <- translate_condition(condition)
-        condition <- eval(condition, envir = data_frame, enclos = parent.frame())
+        condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
         full_condition <- data_frame |> combined_condition(condition)
 
@@ -1588,6 +1650,17 @@ ifelse_multi <- function(data_frame,
 
     if (any(sapply(parsed_conditions, is.null))){
         print_message("ERROR", c("The <do_if> condition couldn't be parsed and is NULL."))
+        return(invisible(NA))
+    }
+
+    # Variables used in the conditions must be part of the data frame. Otherwise
+    # the evaluation would abort.
+    condition_variables <- unique(unlist(lapply(parsed_conditions, all.vars)))
+    invalid_vars <- condition_variables[!condition_variables %in% names(data_frame)]
+
+    if (length(invalid_vars) > 0){
+        print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                 "the data frame. Evaluation will be aborted."), vars = invalid_vars)
         return(invisible(NA))
     }
 

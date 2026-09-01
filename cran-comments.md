@@ -27,6 +27,9 @@ Last CRAN release was on 20.08.2026.
 * `summarise_plus()`: Doesn't error anymore if the `class` variable is identical to the `values` variable.
 * `any_table()`: Tabulating pre summarised data ran into an error if the `value` variables had no statistic extensions. This is fixed now.
 * `any_table()`: Column header columns could be sorted in the wrong order if a statistic extension was also part of a label in some way. The sorting is now adjusted that only the real extensions are detected.
+* `recode_multi()`: When recoding a variable into numeric values then the desired numeric values are output instead of the factor values.
+* `recode_multi()`: When a variable is invalid then the function aborts with an error message instead of just crashing.
+* `if.()`, `else_if.()`, `else.()`, `ifelse_multi()`, `where.()`: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing.
 
 ### Optimization
 

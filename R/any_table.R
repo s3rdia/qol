@@ -3456,7 +3456,7 @@ format_by_single_table <- function(wb,
 #' # print = FALSE and output = "no".
 #' # This skips the styling and output part, so that the function runs faster.
 #' set_print(FALSE)
-#' set_output("no")
+#' set_output("excel_nostyle")
 #' set_style_options(sheet_name = "big_table")
 #'
 #' tab1 <- my_data |> any_table(rows       = c("sex + age", "sex", "age"),

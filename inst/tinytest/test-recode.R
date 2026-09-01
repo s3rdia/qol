@@ -267,4 +267,25 @@ expect_true(all(c("Male", "Female", as.character(3:5)) %in% recode_df[["number_o
             info = "recode_multi keeps original values which are not covered by a format")
 
 
+# recode_multi outputs the numeric label values, not the factor codes
+sex. <- discrete_format(
+    "3" = 1,
+    "4" = 2)
+
+recode_df <- test_df |> recode_multi(sex = sex.)
+
+recode_sex <- recode_df[["sex"]][!is.na(recode_df[["sex"]])]
+
+expect_true(is.numeric(recode_sex),       info = "recode_multi outputs the numeric label values, not the factor codes")
+expect_true(all(recode_sex %in% c(3, 4)), info = "recode_multi outputs the numeric label values, not the factor codes")
+
+
+# recode_multi aborts if a variable name is not part of the data frame
+recoded_df <- test_df |> recode_multi(test = sex.)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame",
+             info = "recode_multi aborts if a variable name is not part of the data frame")
+expect_true(identical(recoded_df, test_df), info = "recode_multi aborts if a variable name is not part of the data frame")
+
+
 set_no_print()

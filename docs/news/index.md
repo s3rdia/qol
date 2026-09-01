@@ -83,6 +83,20 @@
   statistic extension was also part of a label in some way. The sorting
   is now adjusted that only the real extensions are detected.
   (31.08.2026)
+- [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md):
+  When recoding a variable into numeric values then the desired numeric
+  values are output instead of the factor values. (01.09.2026)
+- [`recode_multi()`](https://s3rdia.github.io/qol/reference/recode.md):
+  When a variable is invalid then the function aborts with an error
+  message instead of just crashing. (01.09.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md): When a
+  variable inside a condition or an assignment is invalid then the
+  function aborts with an error message instead of just crashing.
+  (01.09.2026)
 
 #### Optimization
 

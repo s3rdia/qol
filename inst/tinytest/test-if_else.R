@@ -402,6 +402,47 @@ expect_error(print_stack_as_messages("ERROR"), "No variable for subsetting provi
 expect_equal(test_df, dummy_df, info = "Abort subset with if., if variable is not part of the data frame")
 
 
+# Abort if. with a condition using a variable which is not part of the data frame
+test_df <- dummy_df |> if.(test == 1)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort if. with a condition using a variable which is not part of the data frame")
+
+
+# Abort if. with an assignment using a variable which is not part of the data frame
+test_df <- dummy_df |> if.(age > 0, age_group = test)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort if. with an assignment using a variable which is not part of the data frame")
+
+
+# Abort else_if. with a condition using a variable which is not part of the data frame
+test_df <- dummy_df |>
+     if.(age > 0,   age_group = "under 18") |>
+else_if.(test == 1, age_group = "18 to under 65")
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort else_if. with a condition using a variable which is not part of the data frame")
+
+
+# Abort else_if. with an assignment using a variable which is not part of the data frame
+test_df <- dummy_df |>
+     if.(age > 0, age_group = "under 18") |>
+else_if.(age > 0, age_group = test)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort else_if. with an assignment using a variable which is not part of the data frame")
+
+
+# Abort else. with an assignment using a variable which is not part of the data frame
+test_df <- dummy_df |>
+     if.(age > 0, age_group = "under 18") |>
+else.(age_group = test)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort else. with an assignment using a variable which is not part of the data frame")
+
+
 # Abort subset with if., if multiple variables are provided
 test_df <- dummy_df |> if.(c("age", "sex"))
 
@@ -428,6 +469,13 @@ expect_warning(print_stack_as_messages("WARNING"), "No observations left in the 
                info = "where. aborts with a warning, if no observations left")
 
 
+# where. aborts with a condition using a variable which is not part of the data frame
+test_df <- dummy_df |> where.(test == 1)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "where. aborts with a condition using a variable which is not part of the data frame")
+
+
 # where. works with parsed character conditions
 test_df <- dummy_df |> where.(" 15 <= age < 65 and sex == 2 ")
 
@@ -444,6 +492,20 @@ result <- ifelse_df |> ifelse_multi("age < 18" = 1,
                                     else.      = 3)
 
 expect_equal(result, c(1, 2, 2, 3, 3), info = "ifelse_multi basic recoding works")
+
+
+# Abort ifelse_multi with a condition using a variable which is not part of the data frame
+result <- ifelse_df |> ifelse_multi("test == 1" = 1, else. = 0)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort ifelse_multi with a condition using a variable which is not part of the data frame")
+
+
+# Abort ifelse_multi with a do_if condition using a variable which is not part of the data frame
+result <- ifelse_df |> ifelse_multi("age < 18" = 1, else. = 0, do_if = "test != 1")
+
+expect_error(print_stack_as_messages("ERROR"), "The provided variable 'test' is not part of the data frame.",
+             info = "Abort ifelse_multi with a do_if condition using a variable which is not part of the data frame")
 
 
 # ifelse_multi SAS intervals are translated

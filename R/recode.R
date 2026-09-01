@@ -304,6 +304,15 @@ recode_multi <- function(data_frame, ..., convert = TRUE){
     variables <- names(formats)
     var_order <- names(data_frame)
 
+    # Check if all variables are part of the data frame
+    variables <- data_frame |> part_of_df(variables, check_only = TRUE)
+
+    if (is.list(variables)){
+        print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
+                                 "the data frame. Recoding will be aborted."), vars = variables[[1]])
+        return(data_frame)
+    }
+
     # Apply formats
     data_frame <- data_frame |>
         apply_format(formats, variables) |>
@@ -313,7 +322,7 @@ recode_multi <- function(data_frame, ..., convert = TRUE){
     if (convert){
         for (variable in variables){
             if (is.numeric(formats[[variable]][["label"]])){
-                data_frame[[variable]] <- as.numeric(data_frame[[variable]])
+                data_frame[[variable]] <- as.numeric(as.character(data_frame[[variable]]))
             }
             else{
                 data_frame[[variable]] <- as.character(data_frame[[variable]])

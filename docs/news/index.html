@@ -82,6 +82,12 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Tabulating pre summarised data ran into an error if the <code>value</code> variables had no statistic extensions. This is fixed now. (31.08.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Column header columns could be sorted in the wrong order if a statistic extension was also part of a label in some way. The sorting is now adjusted that only the real extensions are detected. (31.08.2026)</li>
+<li>
+<code><a href="../reference/recode.html">recode_multi()</a></code>: When recoding a variable into numeric values then the desired numeric values are output instead of the factor values. (01.09.2026)</li>
+<li>
+<code><a href="../reference/recode.html">recode_multi()</a></code>: When a variable is invalid then the function aborts with an error message instead of just crashing. (01.09.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>, <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>, <code><a href="../reference/where..html">where.()</a></code>: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing. (01.09.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-5">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-5"></a></h4>
