@@ -31,6 +31,13 @@
   and
   [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md)
   outputs. (01.09.2026)
+- [`run_script()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_folder()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_project()`](https://s3rdia.github.io/qol/reference/run_scripts.md),
+  [`run_project_parallel()`](https://s3rdia.github.io/qol/reference/run_scripts.md):
+  Single files and entire folders can be silenced (code will not be
+  executed) by adding a “\_” to the end of the file or folder name.
+  (03.09.2026)
 
 #### Changed functionality
 
@@ -97,6 +104,12 @@
   variable inside a condition or an assignment is invalid then the
   function aborts with an error message instead of just crashing.
   (01.09.2026)
+- [`import_data()`](https://s3rdia.github.io/qol/reference/import_export.md),
+  [`import_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Should now detect csv and txt encoding correctly. (03.09.2026)
+- [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  First column isn’t set up as row header column anymore it is now
+  treated as part of the table. (03.09.2026)
 
 #### Optimization
 

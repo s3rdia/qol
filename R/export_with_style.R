@@ -496,7 +496,6 @@ format_df_excel <- function(wb,
     wb$add_named_region(dims = df_ranges[["whole_tab_range"]], name = "table",        local_sheet = TRUE)
     wb$add_named_region(dims = df_ranges[["table_range"]],     name = "data",         local_sheet = TRUE)
     wb$add_named_region(dims = df_ranges[["header_range"]],    name = "table_header", local_sheet = TRUE)
-    wb$add_named_region(dims = df_ranges[["cat_col_range"]],   name = "row_headers",  local_sheet = TRUE)
 
     if (length(titles) > 0){
         wb$add_named_region(dims = df_ranges[["title_range"]], name = "titles", local_sheet = TRUE)

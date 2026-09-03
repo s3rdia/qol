@@ -4,6 +4,9 @@ Opens an RStudio file selection dialog to pick a single script/folder or
 a whole folder structure and runs it after confirmation. The dialog
 starts in the folder of the currently opened script in RStudio.
 
+Single files and entire folders can be silenced (code will not be
+executed) by adding a "\_" to the end of the file or folder name.
+
 `run_script()`: Runs the selected script.
 
 `run_folder()`: Runs all scripts in the selected folder.

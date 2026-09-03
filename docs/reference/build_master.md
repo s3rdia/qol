@@ -84,7 +84,7 @@ temp_file <- tempfile(fileext = ".Rmd")
 build_master(dir         = dirname(temp_file),
              master_name = basename(temp_file))
 
-# Example compact master
+# Example full master
 build_master(dir         = dirname(temp_file),
              master_name = basename(temp_file),
              layout      = "full")

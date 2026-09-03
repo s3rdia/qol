@@ -45,7 +45,7 @@ export_multi(
 )
 }
 \arguments{
-\item{infile}{Full file path with extension to a csv or xlsx file to be imported.}
+\item{infile}{Full file path with extension to a csv, txt or xlsx file to be imported.}
 
 \item{sheet}{Only used in xlsx import. Which sheet of the workbook to import.}
 

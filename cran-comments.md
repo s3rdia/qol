@@ -8,6 +8,7 @@ Last CRAN release was on 20.08.2026.
 * `frequencies()`, `crosstabs()`: Now also capture the meta styling information.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: New `output` option "no" prevents any styling and additionally sets `print = FALSE` so that only the table and meta information are captured.
 * `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs.
+* `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name.
 
 ### Changed functionality
 
@@ -30,6 +31,8 @@ Last CRAN release was on 20.08.2026.
 * `recode_multi()`: When recoding a variable into numeric values then the desired numeric values are output instead of the factor values.
 * `recode_multi()`: When a variable is invalid then the function aborts with an error message instead of just crashing.
 * `if.()`, `else_if.()`, `else.()`, `ifelse_multi()`, `where.()`: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing.
+* `import_data()`, `import_multi()`: Should now detect csv and txt encoding correctly.
+* `export_with_style()`: First column isn't set up as row header column anymore it is now treated as part of the table.
 
 ### Optimization
 

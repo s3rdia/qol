@@ -63,7 +63,8 @@ export_multi(
 
 - infile:
 
-  Full file path with extension to a csv or xlsx file to be imported.
+  Full file path with extension to a csv, txt or xlsx file to be
+  imported.
 
 - sheet:
 

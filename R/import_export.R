@@ -6,7 +6,7 @@
 #' [import_data()]: A wrapper for [data.table::fread()] and [openxlsx2::wb_to_df()],
 #' providing basic import functionality with minimal code. Uses "Latin-1" encoding.
 #'
-#' @param infile Full file path with extension to a csv or xlsx file to be imported.
+#' @param infile Full file path with extension to a csv, txt or xlsx file to be imported.
 #' @param sheet Only used in xlsx import. Which sheet of the workbook to import.
 #' @param region Only used in xlsx import. Can either be an 'Excel' range like 'A1:BY27'
 #' or the name of a named region.
@@ -167,18 +167,22 @@ import_data <- function(infile,
         # Actual import
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+        encoding <- detect_encoding(infile)
+
         data_frame <- data.table::fread(file     = infile,
                                         sep      = separator,
                                         dec      = decimal,
                                         header   = var_names,
-                                        encoding = "Latin-1")
+                                        encoding = encoding)
 
-        # Fix encoding for ä, ö, ü and ß
-        character_columns <- sapply(data_frame, is.character)
+        # Normalize Latin-1 files to UTF-8 for consistent internal representation
+        if (encoding == "Latin-1"){
+            character_columns <- sapply(data_frame, is.character)
 
-        data_frame[character_columns] <- lapply(data_frame[character_columns], function(column){
-            iconv(column, from = "latin1", to = "UTF-8")
-        })
+            data_frame[character_columns] <- lapply(data_frame[character_columns], function(column){
+                iconv(column, from = "latin1", to = "UTF-8")
+            })
+        }
     }
     # xlsx
     else if (extension == "xlsx"){
@@ -391,6 +395,53 @@ import_multi <- function(file_list,
     print_closing(10)
 
     invisible(result_list)
+}
+
+
+#' Detect File Encoding
+#'
+#' @description
+#' Identify UTF-8 vs. Latin-1 encoding.
+#'
+#' @return
+#' Returns encoding as character.
+#'
+#' @noRd
+detect_encoding <- function(infile){
+    # Check for UTF-8 BOM (EF BB BF) in the first 3 bytes
+    raw <- readBin(infile, what = "raw", n = 3)
+
+    if (length(raw) >= 3 &&
+        raw[1] == as.raw(0xef) &&
+        raw[2] == as.raw(0xbb) &&
+        raw[3] == as.raw(0xbf)){
+        return("UTF-8")
+    }
+
+    # Read first 10KB and validate as UTF-8
+    bytes <- readBin(infile, what = "raw", n = 10240)
+
+    # Pure ASCII is valid UTF-8
+    if (!any(as.integer(bytes) > 127L)){
+        return("UTF-8")
+    }
+
+    # Try interpreting as UTF-8. If the bytes are valid UTF-8, iconv
+    # preserves them in full; if they are Latin-1 single-byte characters,
+    # iconv strips the invalid byte sequences.
+    text <- rawToChar(bytes)
+
+    converted <- tryCatch(iconv(text, from = "UTF-8", to = "UTF-8", toRaw = TRUE, sub = ""),
+                          error   = function(e) NULL,
+                          warning = function(w) NULL)
+
+    if (!is.null(converted) &&
+        length(converted) == 1L &&
+        length(converted[[1]]) == length(bytes)){
+        return("UTF-8")
+    }
+
+    "Latin-1"
 }
 
 

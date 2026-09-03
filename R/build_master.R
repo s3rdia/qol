@@ -57,7 +57,7 @@
 #' build_master(dir         = dirname(temp_file),
 #'              master_name = basename(temp_file))
 #'
-#' # Example compact master
+#' # Example full master
 #' build_master(dir         = dirname(temp_file),
 #'              master_name = basename(temp_file),
 #'              layout      = "full")
@@ -507,6 +507,9 @@ print_folder_structure <- function(file_list){
 #' whole folder structure and runs it after confirmation. The dialog starts in the
 #' folder of the currently opened script in RStudio.
 #'
+#' Single files and entire folders can be silenced (code will not be executed) by
+#' adding a "_" to the end of the file or folder name.
+#'
 #' [run_script()]: Runs the selected script.
 #'
 #' @param path The folder in which the file selection dialog should start. If
@@ -565,6 +568,20 @@ run_script <- function(path = NULL){
         path     = path,
         existing = TRUE)
 
+    # Identify which files are silent. These files are marked by an "_" at the
+    # end of the file name. These files are ignored and not executed. This also
+    # counts for entire folders marked with an "_" at the end.
+    is_silent_script <- grepl("_.R$", basename(selected_script))
+    is_silent_folder <- grepl("_$",   dirname(selected_script))
+    is_silent        <- is_silent_script | is_silent_folder
+
+    if (is_silent){
+        print_message("NOTE", c("The following script is silent and will not be executed:",
+                                "[silent]"), silent = basename(selected_script))
+
+        selected_script <- NULL
+    }
+
     if (is.null(selected_script)){
         print_message("ERROR", "No script selected.")
         return(invisible(FALSE))
@@ -620,6 +637,22 @@ run_folder <- function(path = NULL){
 
     # Get all scripts in the selected folder
     scripts <- suppressMessages(libname(selected_folder, get_files = TRUE, extensions = "R"))
+
+    # Identify which files are silent. These files are marked by an "_" at the
+    # end of the file name. These files are ignored and not executed. This also
+    # counts for entire folders marked with an "_" at the end.
+    is_silent_script <- grepl("_.R$", basename(scripts))
+    is_silent_folder <- grepl("_$",   dirname(scripts))
+    is_silent        <- is_silent_script | is_silent_folder
+
+    # Extract silent scripts from the script list
+    silent  <- scripts[is_silent]
+    scripts <- scripts[!is_silent]
+
+    if (length(silent) > 0){
+        print_message("NOTE", c("The following [?script/scripts] [?is/are] silent and will not be executed:",
+                                "[silent]"), silent = names(silent))
+    }
 
     if (length(scripts) == 0){
         print_message("ERROR", "No scripts found in: [folder]", folder = selected_folder)
@@ -686,9 +719,25 @@ run_project <- function(path = NULL){
 
     # Get all scripts in the selected project folder, including subfolders
     scripts <- suppressMessages(libname(selected_project,
-                                             get_files  = TRUE,
-                                             extensions = "R",
-                                             recursive  = TRUE))
+                                        get_files  = TRUE,
+                                        extensions = "R",
+                                        recursive  = TRUE))
+
+    # Identify which files are silent. These files are marked by an "_" at the
+    # end of the file name. These files are ignored and not executed. This also
+    # counts for entire folders marked with an "_" at the end.
+    is_silent_script <- grepl("_.R$", basename(scripts))
+    is_silent_folder <- grepl("_$",   dirname(scripts))
+    is_silent        <- is_silent_script | is_silent_folder
+
+    # Extract silent scripts from the script list
+    silent  <- scripts[is_silent]
+    scripts <- scripts[!is_silent]
+
+    if (length(silent) > 0){
+        print_message("NOTE", c("The following [?script/scripts] [?is/are] silent and will not be executed:",
+                                "[silent]"), silent = names(silent))
+    }
 
     if (length(scripts) == 0){
         print_message("ERROR", "No scripts found in: [folder]", folder = selected_project)
@@ -713,9 +762,19 @@ run_project <- function(path = NULL){
 
     # Loop through all scripts and run them
     for (script in scripts){
-        print_headline("[b]Executing file: [script][/b]", script = basename(script), line_char = ".")
+        # Identify if the currently processed file should be executed. Silent files
+        # are marked by an "_" at the end of the file name. These files are
+        # ignored and not executed. This also counts for entire folders marked with
+        # an "_" at the end.
+        script_name <- basename(script)
+        folder_name <- dirname(script)
+        is_silent   <- grepl("_.R$", script_name) || grepl("_$", folder_name)
 
-        source(script, local = FALSE)
+        if (!is_silent){
+            print_headline("[b]Executing file: [script][/b]", script = basename(script), line_char = ".")
+
+            source(script, local = FALSE)
+        }
     }
 
     print_message("NOTE", "Running project was successful.")
@@ -761,6 +820,22 @@ run_project_parallel <- function(path = NULL){
                                         get_files  = TRUE,
                                         extensions = "R",
                                         recursive  = TRUE))
+
+    # Identify which files are silent. These files are marked by an "_" at the
+    # end of the file name. These files are ignored and not executed. This also
+    # counts for entire folders marked with an "_" at the end.
+    is_silent_script <- grepl("_.R$", basename(scripts))
+    is_silent_folder <- grepl("_$",   dirname(scripts))
+    is_silent        <- is_silent_script | is_silent_folder
+
+    # Extract silent scripts from the script list
+    silent  <- scripts[is_silent]
+    scripts <- scripts[!is_silent]
+
+    if (length(silent) > 0){
+        print_message("NOTE", c("The following [?script/scripts] [?is/are] silent and will not be executed:",
+                                "[silent]"), silent = names(silent))
+    }
 
     if (length(scripts) == 0){
         print_message("ERROR", "No scripts found in: [folder]", folder = selected_project)

@@ -476,7 +476,8 @@ get_df_ranges <- function(data_frame,
                           footnotes  = NULL,
                           style      = excel_output_style()){
     # Get basic table ranges
-    table_ranges <- get_table_ranges(data_frame, titles, footnotes, style)
+    table_ranges <- get_table_ranges(data_frame, titles, footnotes, style,
+                                     cat_col.width = 0)
 
     # Get specific parts of mean table
     df_col_ranges <- list()
@@ -537,15 +538,19 @@ get_df_ranges <- function(data_frame,
 #' @param titles Titles if there are any.
 #' @param footnotes Footnotes if there are any.
 #' @param style A list of style elements to format the table.
+#' @param cat_col.width The number of category (row header) columns. Defaults to 1
+#' for tables produced by [frequencies()], [crosstabs()] or [any_table()]. Set to 0 when
+#' exporting via [export_with_style()].
 #'
 #' @return
 #' Returns a list with table ranges.
 #'
 #' @noRd
 get_table_ranges <- function(table,
-                             titles     = NULL,
-                             footnotes  = NULL,
-                             style      = excel_output_style()){
+                             titles        = NULL,
+                             footnotes     = NULL,
+                             style         = excel_output_style(),
+                             cat_col.width = 1){
     # If titles are provided put them in the starting row
     if (!is.null(titles) && length(titles) > 0){
         title.row     <- style[["start_row"]]
@@ -572,7 +577,6 @@ get_table_ranges <- function(table,
     table.length  <- collapse::fnrow(table)
     table.width   <- collapse::fncol(table)
     table.end     <- header.column + table.width - 1
-    cat_col.width <- 1
 
     footnote.row <- table.row + table.length + 1
 
@@ -600,12 +604,17 @@ get_table_ranges <- function(table,
                                  to_row    = header.row,
                                  to_column = header.column)
 
-    cat_col_range <- get_excel_range(from_row  = table.row, from_column = header.column,
-                                     to_row    = header.row    + table.length,
-                                     to_column = header.column)
+    if (cat_col.width > 0){
+        cat_col_range <- get_excel_range(from_row  = table.row, from_column = header.column,
+                                         to_row    = header.row    + table.length,
+                                         to_column = header.column + cat_col.width - 1)
+    }
+    else{
+        cat_col_range <- NULL
+    }
 
     table_range <- get_excel_range(from_row    = table.row,
-                                   from_column = header.column + 1,
+                                   from_column = header.column + cat_col.width,
                                    to_row      = header.row    + table.length,
                                    to_column   = header.column + header.width)
 
@@ -618,7 +627,11 @@ get_table_ranges <- function(table,
     all    <- as.list(environment())
     ranges <- names(formals(sys.function()))
 
-    all[setdiff(names(all), ranges)]
+    ranges_out <- all[setdiff(names(all), ranges)]
+
+    ranges_out[["cat_col.width"]] <- cat_col.width
+
+    ranges_out
 }
 
 
@@ -901,6 +914,11 @@ handle_cell_styles <- function(wb,
                                style = excel_output_style()){
     # Apply individual styles for each table part
     for (type in c("header", "box", "cat_col", "table", "subheader")){
+
+        # Skip table parts which have no range
+        if (is.null(ranges[[paste0(type, "_range")]])){
+            next
+        }
 
         apply_font <- NULL
         font_id    <- NULL
@@ -1242,11 +1260,15 @@ handle_col_row_dimensions <- function(wb,
         column_widths <- fill_or_trim(column_widths,
                                       end_column)
     }
-    # On auto format only format row header columns. On large workbooks this
-    # is very slow so only make sure the text in front are readable.
+    # On auto format only row header columns. On large workbooks this
+    # is very slow so only make sure the text in front are readable. Plain data
+    # frames have no row header columns, so all columns are sized instead.
     else{
-        start_column      <- ranges[["header.column"]]
-        number_of_columns <- ranges[["header.column"]] + (ranges[["cat_col.width"]] - 1)
+        start_column <- ranges[["header.column"]]
+
+        if (ranges[["cat_col.width"]] > 0){
+            end_column <- ranges[["header.column"]] + (ranges[["cat_col.width"]] - 1)
+        }
     }
 
     row_heights <- style[["row_heights"]]
