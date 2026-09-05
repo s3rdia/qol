@@ -32,6 +32,7 @@
 * `if.()`, `else_if.()`, `else.()`, `ifelse_multi()`, `where.()`: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing. (01.09.2026)
 * `import_data()`, `import_multi()`: Should now detect csv and txt encoding correctly. (03.09.2026)
 * `export_with_style()`: First column isn't set up as row header column anymore it is now treated as part of the table. (03.09.2026)
+* `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. (05.09.2026)
 
 ### Optimization
 

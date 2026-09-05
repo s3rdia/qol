@@ -110,6 +110,10 @@
 - [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
   First column isn’t set up as row header column anymore it is now
   treated as part of the table. (03.09.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): If
+  the same variable name was used more than once for an assignment, the
+  function now returns the last result for this variable instead of the
+  first. (05.09.2026)
 
 #### Optimization
 

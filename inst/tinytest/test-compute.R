@@ -120,7 +120,9 @@ result_df <- test_df |> compute.(var4 = 1, var4 = 2)
 expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable name",
                info = "Adding multiple variables of the same name in compute throws a warning")
 expect_true("var4" %in% names(result_df))
-expect_equal(collapse::funique(result_df[["var4"]]), 1)
+expect_equal(collapse::funique(result_df[["var4"]]), 2,
+             info = "The last assignment to a duplicated variable name overwrites the earlier one")
+
 
 ###############################################################################
 # Abort checks

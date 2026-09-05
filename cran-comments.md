@@ -33,6 +33,7 @@ Last CRAN release was on 20.08.2026.
 * `if.()`, `else_if.()`, `else.()`, `ifelse_multi()`, `where.()`: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing.
 * `import_data()`, `import_multi()`: Should now detect csv and txt encoding correctly.
 * `export_with_style()`: First column isn't set up as row header column anymore it is now treated as part of the table.
+* `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. 
 
 ### Optimization
 

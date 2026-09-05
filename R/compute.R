@@ -188,13 +188,13 @@ compute. <- function(data_frame,
     # Go trough each assignment and collect the translated calls
     for (entry in seq_along(assignments)){
         variable    <- names(assignments)[[entry]]
-        calculation <- assignments[[variable]]
+        calculation <- assignments[[entry]]
         calc_text   <- deparse(calculation)
 
         # Get used variables especially for this condition in combination mit
         # assigned variables.
         used_variables <- unique(c(names(assignments)[[entry]], # Get all variables to which a value should be assigned
-                                   unlist(lapply(assignments[[variable]], all.names)))) # Get all assigned variables
+                                   unlist(lapply(assignments[[entry]], all.names)))) # Get all assigned variables
 
         # If no vector was passed then evaluate as normal.
         if (!any(used_variables %in% names(content_list))){
