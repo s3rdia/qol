@@ -813,7 +813,9 @@ load_file <- function(path,
             }
 
             # Rename variables to the names provided in keep
-            data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
+            if (!identical(vars_to_keep, keep_names)){
+                data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
+            }
         }
         # Without keep read in the whole data set
         else{
@@ -859,7 +861,9 @@ load_file <- function(path,
             }
 
             # Rename variables to the names provided in keep
-            data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
+            if (!identical(vars_to_keep, keep_names)){
+                data_frame <- suppressMessages(data_frame |> rename_multi(vars_to_keep = keep_names))
+            }
         }
     }
 

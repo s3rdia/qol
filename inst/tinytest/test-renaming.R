@@ -57,6 +57,12 @@ result_df <- test_df |> first_row_as_names()
 expect_equal(names(result_df), c("id", "var2", "value", "var4", "var5"), info = "Renaming based on first row in data frame")
 expect_equal(nrow(test_df) - 1, nrow(result_df), info = "Renaming based on first row in data frame")
 
+
+# Renaming doesnt overwrite if new variable name is already in data frame
+new_names_df <- dummy_df |> rename_multi("sex" = "age", "education" = "edu", "state" = "weight")
+
+expect_true(all(c("sex", "edu", "state") %in% names(new_names_df)), info = "Renaming aborts if new variable name is already in data frame")
+
 ###############################################################################
 # Abort checks
 ###############################################################################
@@ -65,12 +71,6 @@ expect_equal(nrow(test_df) - 1, nrow(result_df), info = "Renaming based on first
 new_names_df <- dummy_df |> rename_multi("var1" = "var2")
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <old name> '", info = "Renaming aborts if old variable name not found in data frame")
-
-
-# Renaming aborts if new variable name is already data frame
-new_names_df <- dummy_df |> rename_multi("sex" = "age")
-
-expect_error(print_stack_as_messages("ERROR"), "The provided <new name> '", info = "Renaming aborts if new variable name is already data frame")
 
 
 set_no_print()

@@ -548,12 +548,37 @@ transpose_plus <- function(data_frame,
 
             # Get value variables again
             values <- setdiff(names(data_frame), c(group_vars, "TYPE", "TYPE_NR", "DEPTH"))
+        }
 
-            # Convert missing values into character NA so that the new transposed
-            # variable name isn't empty.
-            for (variable in group_vars){
-                data_frame[[variable]] <- as.character(data_frame[[variable]])
-                data_frame[[variable]][is.na(data_frame[[variable]])] <- "NA"
+        # Convert missing values into character NA so that the new transposed
+        # variable name isn't empty.
+        transpose_method_vars <- collapse::funique(unlist(transpose_methods, use.names = FALSE))
+
+        for (variable in transpose_method_vars){
+            data_frame[[variable]] <- as.character(data_frame[[variable]])
+            data_frame[[variable]][is.na(data_frame[[variable]])] <- "NA"
+        }
+
+        # Check for upcoming duplicate variable names. This happens if column variables
+        # somewhere have an expression in common. After pivoting later on this will
+        # produce identical variable names. These equal expressions will be altered
+        # before.
+        # Identify expressions that appear in more than one variable
+        unique_value_list <- lapply(transpose_method_vars, function(variable){
+            collapse::funique(data_frame[[variable]])
+        })
+
+        value_counts       <- table(unlist(unique_value_list))
+        overlapping_values <- names(value_counts[value_counts > 1])
+
+        # Add a suffix to the overlapping values
+        if (length(overlapping_values) > 0){
+            overlapping_values <- paste0("^(", paste(overlapping_values, collapse = "|"), ")$")
+
+            for (i in seq_along(transpose_method_vars)){
+                variable    <- transpose_method_vars[i]
+                replacement <- paste0("\\1.dup", i)
+                data_frame[[variable]] <- sub(overlapping_values, replacement, data_frame[[variable]])
             }
         }
 

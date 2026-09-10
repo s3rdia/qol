@@ -200,6 +200,12 @@ expect_warning(print_stack_as_messages("WARNING"), "<Padding length> is longer t
 expect_equal(test_df[["concat_vec"]], c("000010000010000abc", "0001000000000000ab", "00100000003000000a"), info = "Concatenating with too long individual padding length")
 
 
+# Concatenate multiple variables with automatic padding inside compute.()
+concat_df <- test_df |> compute.(concat_vec = concat(var1, var2, var3, padding_char = "0"))
+
+expect_equal(concat_df[["concat_vec"]], c("0011abc", "01000ab", "100300a"), info = "Concatenating multiple variables with automatic padding inside compute.()")
+
+
 # Substring throws a warning when variable is provided as a vector
 test_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3)
 
@@ -281,6 +287,13 @@ text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var2)
 
 expect_error(print_stack_as_messages("ERROR"), "Blank removal only works with a character <variable>. Blank removal will be aborted.",
                info = "Abort blank removal if variable is not character")
+
+
+# Abort if there is a variable which is not part of the data frame
+test_df[["test"]] <- test_df |> concat(var1, var2, var4)
+
+expect_error(print_stack_as_messages("ERROR"), "The provided <variable> 'var4' is not part of",
+             info = "Abort if there is a variable which is not part of the data frame")
 
 
 set_no_print()

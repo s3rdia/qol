@@ -186,9 +186,21 @@ get_origin_as_char <- function(original, substituted){
 get_origin_symbol <- function(symbol){
     symbol <- as.character(symbol)
 
-    # Loop through the thee of parent environments
+    # Loop through the tree of parent environments
     for (i in rev(seq_len(sys.nframe()))){
         env <- sys.frame(i)
+
+        # If the environment is a data frame (e.g. when the expression is
+        # evaluated inside compute.() with the data frame as evaluation
+        # environment), the symbol is a column name. Return the name instead
+        # of the column contents in this case.
+        if (inherits(env, "data.frame")){
+            if (symbol %in% names(env)){
+                return(symbol)
+            }
+
+            next
+        }
 
         # If the symbol is found in the current parent environment return it
         value <- tryCatch({
@@ -205,11 +217,56 @@ get_origin_symbol <- function(symbol){
         })
 
         if (!is.null(value) && is.character(value)){
+            # If the value found is a column of a data frame inside the calling
+            # stack, the symbol refers to that column. Return the column name
+            # instead of the column contents in this case. This happens when
+            # the expression is evaluated inside compute.() with the data frame
+            # as evaluation environment where the columns are bound as separate
+            # objects.
+            if (symbol_is_data_frame_column(symbol, value)){
+                return(symbol)
+            }
+
             return(value)
         }
     }
 
     symbol
+}
+
+
+
+#' Get The Original Symbol From Parent Environments
+#'
+#' @description
+# Check whether the given symbol refers to a column of a data frame in the
+# calling stack. The found value is compared against the column contents in
+# order to avoid false positives with ordinary character vectors.
+#'
+#' @param symbol The symbol to look up in the parent environments.
+#' @param value The value to look up in the parent environments.
+#'
+#' @return
+#' TRUE or FALSE
+#'
+#' @noRd
+symbol_is_data_frame_column <- function(symbol, value){
+    for (frame in sys.frames()){
+        bindings <- ls(frame, all.names = TRUE)
+
+        for (binding in bindings){
+            candidate <- tryCatch(get0(binding, envir = frame, inherits = FALSE),
+                                  error = function(e) NULL)
+
+            if (inherits(candidate, "data.frame") &&
+                symbol %in% names(candidate) &&
+                identical(value, candidate[[symbol]])){
+                return(TRUE)
+            }
+        }
+    }
+
+    FALSE
 }
 
 

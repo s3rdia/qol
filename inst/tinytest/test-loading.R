@@ -102,6 +102,10 @@ fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex = var1
 
 expect_equal(names(fst_keep), c("var1", "var2", "var3"), info = "Loading files with named list renames variables")
 
+fst_keep <- load_file(dirname(fst_file), basename(fst_file), keep = c(Sex = var1, aGe = age, STATE = var3))
+
+expect_equal(names(fst_keep), c("var1", "age", "var3"), info = "Loading files with named list renames variables")
+
 
 # Loading files with subset
 fst_file <- system.file("extdata", "qol_example_data_fst.fst", package = "qol")

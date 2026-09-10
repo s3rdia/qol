@@ -318,15 +318,15 @@ rename_multi <- function(data_frame, ...){
     # If any of the new variable names is already part of the data frame abort
     invalid_new_names <- new_names[new_names %in% names(data_frame)]
 
-    # If not all old names are part of the data frame abort
-    if (length(invalid_new_names) > 0){
-        print_message("ERROR", c("The provided <new name> '[new]' is already part of",
-								 "the data frame. Renaming will be aborted."), new = invalid_new_names)
-        return(data_frame)
-    }
+    # Extract identical variable names and only rename the ones who differ
+    invalid_new_names <- new_names[new_names %in% names(data_frame)]
+    old_names         <- old_names[!new_names %in% invalid_new_names]
+    new_names         <- new_names[!new_names %in% invalid_new_names]
 
     # Rename all variables in one go
-    data_frame <- data_frame |> collapse::frename(stats::setNames(old_names, new_names))
+    if (length(new_names) > 0 && length(old_names) > 0){
+        data_frame <- data_frame |> collapse::frename(stats::setNames(old_names, new_names))
+    }
 
     print_closing()
 

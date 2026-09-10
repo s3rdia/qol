@@ -38,6 +38,9 @@
   Single files and entire folders can be silenced (code will not be
   executed) by adding a “\_” to the end of the file or folder name.
   (03.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Can now handle duplicate column names by making them unique.
+  (10.09.2026)
 
 #### Changed functionality
 
@@ -52,6 +55,10 @@
   Received a new parameter `summarise` which summarises the data before
   transposing. This is the default behaviour when using formats, but was
   not without formats. `summarise` is TRUE by default. (28.08.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Instead of throwing an error when a variable name already exists in
+  the data frame, this renaming operation will be omitted without error
+  instead. (10.09.2026)
 
 #### Fixed
 
@@ -114,6 +121,13 @@
   the same variable name was used more than once for an assignment, the
   function now returns the last result for this variable instead of the
   first. (05.09.2026)
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md): Now
+  throws an error if a variable name is not part of the data frame.
+  (10.09.2026)
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md): Now
+  also works within
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md).
+  (10.09.2026)
 
 #### Optimization
 

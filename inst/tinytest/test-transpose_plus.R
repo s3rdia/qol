@@ -168,6 +168,15 @@ expect_equal(collapse::funique(round(result_df[["income_1"]] + result_df[["incom
              info = "Tranpose is able to output specific statistics per variable")
 
 
+# Deduplicate identical variable names before transposition
+result_df <- dummy_df |>
+    transpose_plus(preserve = year,
+                   pivot    = c("sex", "education"),
+                   values   = income)
+
+expect_true(all(c("NA.dup1", "NA.dup2") %in% names(result_df)), info = "Deduplicate identical variable names before transposition")
+
+
 # Simple wide to long transposition
 wide_to_long <- dummy_wide_df |>
         transpose_plus(preserve = year,
@@ -209,7 +218,6 @@ wide_to_long <- dummy_wide_df |>
 
 expect_equal(names(wide_to_long), c("year", "sex", "hello", "world"),
              info = "Transpose multiple variables from wide to long (side by side)")
-
 
 
 ###############################################################################
@@ -285,16 +293,6 @@ wide_df <- dummy_df |>
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <values> variable",
              info = "Abort if value variable in transposition is also part of pivot")
-
-
-# Abort on duplicate variable names after transposition
-wide_df <- dummy_df |>
-			transpose_plus(preserve = year,
-						   pivot    = c("sex", "education"),
-						   values   = income)
-
-expect_error(print_stack_as_messages("ERROR"), "Duplicate column names found:",
-             info = "Abort on duplicate variable names after transposition")
 
 
 # Abort if no valid pivot variable is provided in transposition

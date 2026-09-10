@@ -51,6 +51,16 @@ concat <- function(data_frame,
                    padding_right  = FALSE){
     variables <- dots_to_char(...)
 
+    # Make sure that all provided variables are part of the data frame. Variables
+    # which are not part of the data frame are omitted.
+    variables <- data_frame |> part_of_df(variables, check_only = TRUE)
+
+    if (is.list(variables)){
+        print_message("ERROR", c("The provided <variable[?s]> '[vars]' [?is/are] not part of",
+                                 "the data frame. Concatenation will be aborted."), vars = variables[[1]])
+        return(invisible(NULL))
+    }
+
     # If no padding or separator is defined just concatenate provided variables as they are
     if (is.null(padding_char) && is.null(padding_length) && is.null(separator)){
         return(do.call(paste0, data_frame[variables]))

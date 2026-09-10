@@ -8,12 +8,14 @@
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: New `output` option "no" prevents any styling and additionally sets `print = FALSE` so that only the table and meta information are captured. (01.09.2026)
 * `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs. (01.09.2026)
 * `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name. (03.09.2026)
+* `transpose_plus()`: Can now handle duplicate column names by making them unique. (10.09.2026)
 
 ### Changed functionality
 
 * `summarise_plus()`: When only passing `class` variables without `values` and using the default `statistics` then only frequencies will be calculated instead of sums and frequencies, which would be identical. (23.08.2026)
 * `transpose_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (28.08.2026)
 * `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default. (28.08.2026)
+* `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. (10.09.2026)
 
 ### Fixed
 
@@ -33,6 +35,8 @@
 * `import_data()`, `import_multi()`: Should now detect csv and txt encoding correctly. (03.09.2026)
 * `export_with_style()`: First column isn't set up as row header column anymore it is now treated as part of the table. (03.09.2026)
 * `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. (05.09.2026)
+* `concat()`: Now throws an error if a variable name is not part of the data frame. (10.09.2026)
+* `concat()`: Now also works within `compute.()`. (10.09.2026)
 
 ### Optimization
 
