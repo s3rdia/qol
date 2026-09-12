@@ -151,7 +151,7 @@ result_df <- dummy_df |>
                    values     = weight,
                    statistics = c("sum", "freq"))
 
-expect_true(all(c("weight_sum_1", "weight_sum_2", "weight_sum_NA", "weight_freq_1", "weight_freq_2", "weight_freq_NA") %in% names(result_df)),
+expect_true(all(c("1_sum", "2_sum", "NA_sum", "1_freq", "2_freq", "NA_freq") %in% names(result_df)),
             info = "Tranpose keeps statistic extensions, if multiple statistics are selected")
 
 

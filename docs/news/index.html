@@ -104,6 +104,10 @@
 <code><a href="../reference/concat.html">concat()</a></code>: Now throws an error if a variable name is not part of the data frame. (10.09.2026)</li>
 <li>
 <code><a href="../reference/concat.html">concat()</a></code>: Now also works within <code><a href="../reference/compute..html">compute.()</a></code>. (10.09.2026)</li>
+<li>
+<code><a href="../reference/sub_string.html">sub_string()</a></code>: Now also works within <code><a href="../reference/compute..html">compute.()</a></code>. (12.09.2026)</li>
+<li>
+<code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: When using multiple statistics the new variable names are now named as intended. (12.09.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-5">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-5"></a></h4>
@@ -113,6 +117,11 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: With <code>nesting = "all" or "single</code> a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination. (29.08.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet. (30.08.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-3-5">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-5"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix. (12.09.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

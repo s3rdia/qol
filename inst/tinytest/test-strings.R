@@ -206,6 +206,12 @@ concat_df <- test_df |> compute.(concat_vec = concat(var1, var2, var3, padding_c
 expect_equal(concat_df[["concat_vec"]], c("0011abc", "01000ab", "100300a"), info = "Concatenating multiple variables with automatic padding inside compute.()")
 
 
+# Substring works inside compute.()
+sub_df <- text_df |> compute.(sub_vec = sub_string(var1, to = 3))
+
+expect_equal(sub_df[["sub_vec"]], c("Thi", "Hel", "thi"), info = "Substring works inside compute.()")
+
+
 # Substring throws a warning when variable is provided as a vector
 test_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3)
 

@@ -128,6 +128,13 @@
   also works within
   [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md).
   (10.09.2026)
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
+  Now also works within
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md).
+  (12.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  When using multiple statistics the new variable names are now named as
+  intended. (12.09.2026)
 
 #### Optimization
 
@@ -145,6 +152,13 @@
   Moved column width and row height adjustments before the background
   coloring to make it run only over the table span instead of the whole
   sheet. (30.08.2026)
+
+#### Additionally
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  The deduplicated variable names are now cleaned up so that they only
+  receive one duplicate suffix. (12.09.2026)
 
 ## qol 1.3.4
 

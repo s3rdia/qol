@@ -37,12 +37,18 @@
 * `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. (05.09.2026)
 * `concat()`: Now throws an error if a variable name is not part of the data frame. (10.09.2026)
 * `concat()`: Now also works within `compute.()`. (10.09.2026)
+* `sub_string()`: Now also works within `compute.()`. (12.09.2026)
+* `transpose_plus()`: When using multiple statistics the new variable names are now named as intended. (12.09.2026)
 
 ### Optimization
 
 * `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats. (29.08.2026)
 * `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination. (29.08.2026)
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet. (30.08.2026)
+
+### Additionally
+
+* `any_table()`, `transpose_plus()`: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix. (12.09.2026)
 
 # qol 1.3.4
 

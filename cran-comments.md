@@ -38,12 +38,18 @@ Last CRAN release was on 20.08.2026.
 * `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. 
 * `concat()`: Now throws an error if a variable name is not part of the data frame.
 * `concat()`: Now also works within `compute.()`.
+* `sub_string()`: Now also works within `compute.()`.
+* `transpose_plus()`: When using multiple statistics the new variable names are now named as intended.
 
 ### Optimization
 
 * `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats.
 * `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination.
 * `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet.
+
+### Additionally
+
+* `any_table()`, `transpose_plus()`: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix.
 
 
 ## R CMD check results

@@ -643,6 +643,36 @@ transpose_plus <- function(data_frame,
                 combined_df <- cbind(combined_df, transpose_df)
             }
         }
+
+        # If multiple statistics are used restructure the names so that the pivot
+        # values come first and the statistic is moved to the end.
+        if (length(statistics) > 1){
+            # Determine the base value variable names by removing the statistic
+            # extensions from the value variables.
+            value_bases <- unique(sub(paste0("_", statistics, "$", collapse = "|"), "", values))
+
+            # One pattern covers every base - statistic combination at once via
+            # alternation.
+            pattern <- paste0("^(", paste(value_bases, collapse = "|"), ")_",
+                              "(",  paste(statistics,  collapse = "|"), ")_(.+)$")
+
+            # Drop the base value variable if only one is used, otherwise keep it to
+            # keep the names unique.
+            if (length(value_bases) == 1){
+                replacement <- "\\3_\\2"
+            }
+            else{
+                replacement <- "\\1_\\3_\\2"
+            }
+
+            names(combined_df) <- sub(pattern, replacement, names(combined_df))
+        }
+
+        # Clean up variable names with multiple duplicate suffixes. When nested
+        # combinations contain expressions that had to be adjusted for duplicates
+        # before the transposition, the resulting variable names contain the "dup"
+        # suffix multiple times. Remove all of them and add a single one at the end.
+        names(combined_df) <- remove_duplicate_suffixes(names(combined_df))
     }
     # Wide to long
     else{

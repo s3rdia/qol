@@ -153,7 +153,17 @@ get_origin_as_char <- function(original, substituted){
     tryCatch({
         # Force evaluation to see if it exists
         if (is.character(original)){
-            original
+            # If the value is a column of a data frame inside the calling stack
+            # (e.g. when the function is evaluated inside compute.() with the
+            # data frame as evaluation environment), the substituted symbol is
+            # the variable name. Return the name instead of the column contents.
+            if (is.symbol(substituted) &&
+                symbol_is_data_frame_column(as.character(substituted), original)){
+                as.character(substituted)
+            }
+            else{
+                original
+            }
         }
         else{
             args_to_char(substituted)

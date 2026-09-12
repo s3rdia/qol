@@ -2128,6 +2128,18 @@ any_table <- function(data_frame,
         any_tab[["TYPE_ORIG"]] <- as.character(row_expand[[1]][any_tab[["TYPE"]]])
     }
 
+    # Clean up variable names with duplicate suffixes. Before duplicates were just
+    # made unique in a broad way, now names are cleaned up to just have a "dup" suffix.
+    old_header_names  <- names(any_header)
+    names(any_header) <- remove_duplicate_suffixes(old_header_names)
+
+    # Transfer the cleaned header names to the corresponding columns of the data
+    # frame. The variables that are not part of the header keep their original
+    # names as they don't contain any duplicate suffixes.
+    any_tab_names  <- names(any_tab)
+    ref_positions  <- match(any_tab_names, old_header_names)
+    names(any_tab) <- ifelse(is.na(ref_positions), any_tab_names, names(any_header)[ref_positions])
+
     # If only specific variables should be kept per statistic, clean up the additional
     # not needed variables.
     if (!is.null(vars_per_stat_list)){

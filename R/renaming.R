@@ -373,3 +373,52 @@ first_row_as_names <- function(data_frame){
     # Delete first row and return
     data_frame[-1, , drop = FALSE]
 }
+
+
+#' Clean Duplicate Suffixes From Variable Names
+#'
+#' @description
+#' This function removes all automatically generated duplicate suffixes ".dup"
+#' from variable names. Variable names that appear more than once after this
+#' removal get a number at the end to make them unique again.
+#'
+#' @param names A vector of variable names.
+#'
+#' @return
+#' Returns the variable names without duplicate suffixes. Names that are still
+#' not unique get a number appended at the end.
+#'
+#' @noRd
+remove_duplicate_suffixes <- function(names){
+    # First remove all duplicate suffixes from all variable names
+    clean_names <- gsub("\\.dup[0-9]+", "", names)
+
+    # Rescan the cleaned names and identify the names that are not unique
+    counts           <- table(clean_names)
+    duplicated_names <- names(counts)[counts > 1]
+
+    if (length(duplicated_names) == 0){
+        return(clean_names)
+    }
+
+    # Add a number at the end of every occurrence of a duplicated name
+    result <- clean_names
+
+    for (dup_name in duplicated_names){
+        number <- 1
+        for (i in which(clean_names == dup_name)){
+            new_name <- paste0(dup_name, ".dup", number)
+
+            # Use the next free number if a name is already taken
+            while (new_name %in% result[-i]){
+                number   <- number + 1
+                new_name <- paste0(dup_name, ".dup", number)
+            }
+
+            result[i] <- new_name
+            number    <- number + 1
+        }
+    }
+
+    result
+}
