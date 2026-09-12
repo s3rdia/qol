@@ -186,7 +186,7 @@ expect_equal(names(wide_to_long), c("year", "sex", "VALUE"), info = "Simple wide
 expect_equal(collapse::funique(wide_to_long[["sex"]]), c("Total", "Male", "Female"), info = "Simple wide to long transposition")
 
 
-# Transpose multiple variables from wide to long
+# Transpose multiple variables from wide to long (below each other)
 wide_to_long <- dummy_wide_df |>
          transpose_plus(preserve = year,
                         pivot    = list(sex       = c("Male", "Female"),
@@ -194,11 +194,42 @@ wide_to_long <- dummy_wide_df |>
                         formats  = list(sex =
                             discrete_format("Total"  = c("Male", "Female"),
                                             "Male"   = "Male",
-                                            "Female" = "Female")))
+                                            "Female" = "Female")),
+                        stack    = TRUE)
 
 expect_equal(names(wide_to_long), c("year", "BY", "VARIABLE", "VALUE"), info = "Transpose multiple variables from wide to long")
 expect_equal(as.character(collapse::funique(wide_to_long[["VARIABLE"]])), c("Total", "Male", "Female", "high", "low", "middle"),
              info = "Simple wide to long transposition")
+
+
+# Put variables beside each other by default. If every list entry has its own
+# name, the names become the new variables that are placed beside each other.
+# The variable labels are kept in a generic variable.
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("Total", "Male", "Female"),
+                                   education = c("low", "middle", "high")))
+
+expect_equal(names(wide_to_long), c("year", "sex", "education"),
+             info = "Transpose multiple variables from wide to long (beside each other)")
+
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("Total", "Male", "Female"),
+                                   education = c("low", "middle", "high")),
+                   values   = c(hello, world))
+
+expect_equal(names(wide_to_long), c("year", "hello", "world"),
+             info = "Transpose multiple variables from wide to long (beside each other, values provided)")
+
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("Total", "Male", "Female"),
+                                   education = c("low", "middle", "high")),
+                   stack    = TRUE)
+
+expect_equal(names(wide_to_long), c("year", "BY", "VARIABLE", "VALUE"),
+             info = "Transpose multiple variables from wide to long (stacked)")
 
 
 # Transpose multiple variables from wide to long (side by side)

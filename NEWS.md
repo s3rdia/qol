@@ -16,6 +16,7 @@
 * `transpose_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results. (28.08.2026)
 * `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default. (28.08.2026)
 * `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. (10.09.2026)
+* `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered. (12.09.2026)
 
 ### Fixed
 

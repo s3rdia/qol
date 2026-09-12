@@ -20,6 +20,8 @@
 #' variable combinations that should be transposed. To nest variables use the form:
 #' "var1 + var2 + var3 + ...".
 #' @param values A vector containing all value variables that should be transposed.
+#' @param stack FALSE by default. If TRUE the variables are stacked below each other
+#' in a wide to long transposition. Otherwise the variables are put beside each other.
 #' @param statistics Available functions (only long to wider transposition):
 #' - "sum"       -> Weighted and unweighted sum
 #' - "sum_wgt"   -> Sum of all weights
@@ -115,12 +117,20 @@
 #'                    weight   = weight,
 #'                    na.rm    = TRUE)
 #'
-#' # Transpose back from wide to long and put results below each other. To trigger
-#' # this behavior every list entry in pivot has to have a different name.
+#' # Transpose back from wide to long and put results beside each other. The list
+#' # entry names determine the new variable names.
 #' wide_to_long <- long_to_wide |>
 #'     transpose_plus(preserve = c(year, age),
 #'                    pivot    = list(sex       = c("Total", "Male", "Female"),
 #'                                    education = c("low", "middle", "high")))
+#'
+#' # Transpose back from wide to long and put results below each other by setting
+#' # stack to TRUE.
+#' wide_to_long <- long_to_wide |>
+#'     transpose_plus(preserve = c(year, age),
+#'                    pivot    = list(sex       = c("Total", "Male", "Female"),
+#'                                    education = c("low", "middle", "high")),
+#'                    stack    = TRUE)
 #'
 #' # Transpose from long to wide and use a multilabel to generate additional categories
 #' long_to_wide <- my_data |>
@@ -168,6 +178,7 @@ transpose_plus <- function(data_frame,
                            preserve   = NULL,
                            pivot      = NULL,
                            values     = NULL,
+                           stack      = FALSE,
                            statistics = "sum",
                            formats    = c(),
                            weight     = NULL,
@@ -246,6 +257,21 @@ transpose_plus <- function(data_frame,
                                          "to long transposition, if all variable names are the same.",
                                          "Transposition will be aborted."))
                 return(invisible(NULL))
+            }
+            # If all variable names are different, the variables are either put below
+            # each other (stack = TRUE) or beside each other (stack = FALSE).
+            else{
+                side_by_side <- !stack
+
+                if (side_by_side){
+                    values <- get_origin_as_char(values, substitute(values))
+
+                    # In case of no provided values (which would name the new variables
+                    # in this case) the pivot list names are used instead.
+                    if (is.null(values)){
+                        values <- names(pivot)
+                    }
+                }
             }
         }
     }
@@ -687,6 +713,19 @@ transpose_plus <- function(data_frame,
             #-----------------------------------------------------------------#
             variable <- names(pivot)[i]
 
+            # In a side by side transposition every list entry contributes its own
+            # value variable. The variable labels are kept in the pivot variable,
+            # which is either named after the list names (if they are all the same)
+            # or uses the generic name VARIABLE.
+            if (side_by_side){
+                if (length(unique_var_names) == 1){
+                    key_col <- variable
+                }
+                else{
+                    key_col <- "VARIABLE"
+                }
+            }
+
             # Only keep the necessary variables because otherwise all variables will be transposed.
             # Since it should be possible to transpose multiple variables into multiple categories,
             # this step is essential.
@@ -757,7 +796,7 @@ transpose_plus <- function(data_frame,
                 else if (side_by_side){
                     transpose_df <- suppressMessages(transpose_df |>
                         collapse::fselect(-BY) |>
-                        rename_multi("VARIABLE" = variable,
+                        rename_multi("VARIABLE" = key_col,
                                      "VALUE"    = values[i]))
                 }
 
@@ -782,18 +821,24 @@ transpose_plus <- function(data_frame,
                     # Prepare data frame for the join
                     transpose_df <- suppressMessages(transpose_df |>
                         collapse::fselect(-BY) |>
-                        rename_multi("VARIABLE" = variable,
+                        rename_multi("VARIABLE" = key_col,
                                      "VALUE"    = values[i]))
 
                     # Join to main data frame
                     combined_df <- combined_df |>
                         collapse::join(transpose_df,
-                                       on      = c(preserve, variable),
+                                       on      = c(preserve, key_col),
                                        how     = "left",
                                        verbose = FALSE,
                                        overid  = 2)
                 }
             }
+        }
+
+        # If the variables are put beside each other and all pivot list entries have
+        # a different name, the variable labels are not kept in an additional variable.
+        if (side_by_side && !is.null(combined_df) && length(unique_var_names) > 1){
+            combined_df <- combined_df |> collapse::fselect(-VARIABLE)
         }
     }
 

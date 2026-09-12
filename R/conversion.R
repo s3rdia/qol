@@ -249,9 +249,9 @@ get_origin_symbol <- function(symbol){
 #' Get The Original Symbol From Parent Environments
 #'
 #' @description
-# Check whether the given symbol refers to a column of a data frame in the
-# calling stack. The found value is compared against the column contents in
-# order to avoid false positives with ordinary character vectors.
+#' Check whether the given symbol refers to a column of a data frame in the
+#' calling stack. The found value is compared against the column contents in
+#' order to avoid false positives with ordinary character vectors.
 #'
 #' @param symbol The symbol to look up in the parent environments.
 #' @param value The value to look up in the parent environments.
