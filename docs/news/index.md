@@ -41,6 +41,12 @@
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   Can now handle duplicate column names by making them unique.
   (10.09.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md): When
+  using the “in” operator it is now possible to capture NA values with a
+  “.” like “age in (1 2 3 4 .)”. (14.09.2026)
 
 #### Changed functionality
 
@@ -63,6 +69,10 @@
   Now has a new default wide to long behaviour by setting variables
   beside each other. When setting the new `stack` parameter to TRUE, the
   old default behaviour is triggered. (12.09.2026)
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
+  If a numeric variable is passed, then now the function doesn’t throw
+  an error anymore, but rather takes the substring of the numeric
+  values. (14.09.2026)
 
 #### Fixed
 
@@ -139,6 +149,14 @@
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   When using multiple statistics the new variable names are now named as
   intended. (12.09.2026)
+- [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md):
+  Now also works within
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md).
+  (14.09.2026)
+- [`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  When the keyword “other” is used while the original values are
+  characters, they will now stay as provided instead of being translated
+  into all lower case. (14.09.2026)
 
 #### Optimization
 

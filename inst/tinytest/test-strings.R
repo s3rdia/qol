@@ -156,6 +156,12 @@ text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var1, which = "normalize"
 
 expect_equal(text_df2[["gone_blanks"]], c("This is a text", "Hello World", "this is a Text"), info = "Normalize blanks")
 
+
+# Substring converts numeric variables to character and back to numeric
+test_df[["sub_vec"]] <- test_df |> sub_string(var1, to = 2)
+
+expect_equal(test_df[["sub_vec"]], c(1, 10, 10), info = "Substring converts numeric variables to character and back to numeric")
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -260,11 +266,11 @@ test_df[["sub_vec"]] <- text_df |> sub_string(var2, to = 3)
 expect_error(print_stack_as_messages("ERROR"), "The provided <variable> '", info = "Substring aborts if variable is not part of the data frame")
 
 
-# Substring aborts if variable is not character
-test_df[["sub_vec"]] <- test_df |> sub_string(var1, to = 3)
+# Substring aborts if variable is neither character nor numeric
+logical_sub <- data.frame(x = c(TRUE, FALSE)) |> sub_string(x, to = 2)
 
-expect_error(print_stack_as_messages("ERROR"), "<Variable> type must be character. Substring will be aborted.",
-               info = "Substring aborts if variable is not character")
+expect_error(print_stack_as_messages("ERROR"), "<Variable> type must be character or numeric. Substring will be aborted.",
+               info = "Substring aborts if variable is neither character nor numeric")
 
 
 # Substring aborts if neither from nor to are provided

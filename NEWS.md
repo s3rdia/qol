@@ -9,6 +9,7 @@
 * `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs. (01.09.2026)
 * `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name. (03.09.2026)
 * `transpose_plus()`: Can now handle duplicate column names by making them unique. (10.09.2026)
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)". (14.09.2026)
 
 ### Changed functionality
 
@@ -17,6 +18,7 @@
 * `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default. (28.08.2026)
 * `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. (10.09.2026)
 * `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered. (12.09.2026)
+* `sub_string()`: If a numeric variable is passed, then now the function doesn't throw an error anymore, but rather takes the substring of the numeric values. (14.09.2026)
 
 ### Fixed
 
@@ -40,6 +42,8 @@
 * `concat()`: Now also works within `compute.()`. (10.09.2026)
 * `sub_string()`: Now also works within `compute.()`. (12.09.2026)
 * `transpose_plus()`: When using multiple statistics the new variable names are now named as intended. (12.09.2026)
+* `ifelse_multi()`: Now also works within `compute.()`. (14.09.2026)
+* `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case. (14.09.2026)
 
 ### Optimization
 

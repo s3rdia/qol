@@ -10,6 +10,7 @@ Last CRAN release was on 20.08.2026.
 * `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs.
 * `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name.
 * `transpose_plus()`: Can now handle duplicate column names by making them unique.
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)".
 
 ### Changed functionality
 
@@ -18,6 +19,7 @@ Last CRAN release was on 20.08.2026.
 * `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default.
 * `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. 
 * `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered.
+* `sub_string()`: If a numeric variable is passed, then now the function doesn't throw an error anymore, but rather takes the substring of the numeric values.
 
 ### Fixed
 
@@ -41,6 +43,8 @@ Last CRAN release was on 20.08.2026.
 * `concat()`: Now also works within `compute.()`.
 * `sub_string()`: Now also works within `compute.()`.
 * `transpose_plus()`: When using multiple statistics the new variable names are now named as intended.
+* `ifelse_multi()`: Now also works within `compute.()`.
+* `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case.
 
 ### Optimization
 

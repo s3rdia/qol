@@ -175,7 +175,8 @@ discrete_format <- function(...){
 
     # Convert "other" keyword to integer max. This should be a value no one would pick normally.
     if ("other" %in% tolower(unwrapped_format[["value"]])){
-        unwrapped_format[["value"]] <- sub("other", .Machine[["integer.max"]], tolower(unwrapped_format[["value"]]))
+        unwrapped_format[["value"]] <- sub("^other$", .Machine[["integer.max"]], unwrapped_format[["value"]],
+                                           ignore.case = TRUE)
 
         # If value column is all numeric then convert it to numeric
         unwrapped_format <- unwrapped_format |> convert_numeric("value")

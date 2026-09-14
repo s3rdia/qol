@@ -1524,23 +1524,13 @@ ifelse_multi <- function(data_frame,
     # Convert conditions
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    conditions <- tryCatch({
-        # Force evaluation to see if it exists
-        list(...)
-    }, error = function(e){
-        # Evaluation failed
-        NULL
-    })
+    # Capture the untouched arguments. substitute() is used so that column names
+    # passed as values stay unevaluated. This matters when the function is evaluated
+    # from compute.() with the data frame as evaluation environment, where list()
+    # would turn the symbols into the actual column vectors too early.
+    conditions <- as.list(substitute(list(...)))[-1]
 
-    # In case a variable name was passed as result value, meaning a name without
-    # quotation marks, the condition is NULL here and has to be evaluated differently.
-    if (is.null(conditions)){
-        # Get unevaluated arguments and convert into a list of symbols
-        conditions <- substitute(list(...))
-        conditions <- sapply(conditions[-1], as.name)
-    }
-
-    if (is.null(conditions) || !is_named_list(conditions)){
+    if (length(conditions) == 0 || !is_named_list(conditions)){
         print_message("ERROR", c("You have to pass conditions and assignments in the form",
                                  "<condition> = <value>, <condition> = <value>, ...",
                                  "Evaluation will be aborted."))
@@ -1551,33 +1541,38 @@ ifelse_multi <- function(data_frame,
     parsed_conditions <- lapply(names(conditions), parse_conditions, na.rm = na.rm)
 
     # Apply macro variables to result values
-    result_values <- unlist(conditions)
+    result_values <- conditions
+    char_values   <- vapply(conditions, is.character, logical(1))
 
-    if (is.character(result_values)){
-        result_values <- apply_macro(result_values)
+    if (any(char_values)){
+        result_values[char_values] <- lapply(conditions[char_values], apply_macro)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Convert else.
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    else_temp <- tryCatch({
-        # Force evaluation to see if it exists
-        !is.na(else.)
-    }, error = function(e){
-        NULL
-    })
+    flag_missing_else <- missing(else.)
+    variable_names    <- names(data_frame)
 
-    # In case a variable name was passed as result value, meaning a name without
-    # quotation marks, the parameter is NULL here and has to be evaluated differently.
-    if (is.null(else_temp)){
-        else. <- as.name(substitute(else.))
+    # Keep the else. expression unevaluated so that column names stay symbols.
+    # If it points to an external variable instead of a column, evaluate it
+    # right away in the calling environment.
+    else. <- substitute(else.)
+
+    if (is.name(else.) && !as.character(else.) %in% variable_names){
+        else. <- tryCatch(eval(else., envir = parent.frame()), error = function(e){
+            else.
+        })
     }
 
     # If no else. value is provided and any of the result values is NA, then keep
     # the current values of the variable used in the conditions instead of setting
     # all other values to NA.
-    if (missing(else.) && any(is.na(result_values))){
+    if (flag_missing_else && any(vapply(result_values, function(element){
+        identical(element, quote(NA)) ||
+        (is.atomic(element) && length(element) == 1 && is.na(element))
+    }, logical(1)))){
         condition_variables <- unique(unlist(lapply(parsed_conditions, all.vars)))
 
         if (length(condition_variables) > 0){
@@ -1586,10 +1581,10 @@ ifelse_multi <- function(data_frame,
     }
 
     # Look up of which type all the variables are
-    variable_names <- names(data_frame)
-
     types <- vapply(c(result_values, list(else.)), function(element){
-        if (!is.name(element) && !is.symbol(element) && is.na(element)){
+        # Literal missing values count as numeric
+        if (identical(element, quote(NA)) ||
+            (is.atomic(element) && length(element) == 1 && is.na(element))){
             return(TRUE)
         }
 
@@ -1624,13 +1619,13 @@ ifelse_multi <- function(data_frame,
             else. <- macro(else.)
         }
         # In case of variable names alter the type in the provided data frame
-        else if (is.name(else.)){
+        else if (is.name(else.) && !identical(else., quote(NA))){
             value_char               <- as.character(else.)
             data_frame[[value_char]] <- as.character(data_frame[[value_char]])
         }
         # Otherwise convert the value directly
         else{
-            else. <- as.character(else.)
+            else. <- as.character(eval(else., envir = data_frame))
         }
     }
 
@@ -1678,13 +1673,13 @@ ifelse_multi <- function(data_frame,
         # If there are mixed types
         if (is_mixed_type){
             # In case of variable names alter the type in the provided data frame
-            if (is.name(value)){
+            if (is.name(value) && !identical(value, quote(NA))){
                 value_char               <- as.character(value)
                 data_frame[[value_char]] <- as.character(data_frame[[value_char]])
             }
             # Otherwise convert the value directly
             else{
-                value <- as.character(value)
+                value <- as.character(eval(value, envir = data_frame))
             }
         }
 
@@ -1797,8 +1792,22 @@ parse_in <- function(condition){
         # blanks in character expressions.
         values <- regmatches(values, gregexpr(bracket_pattern, values, perl = TRUE))[[1]]
 
+        # A lone "." is treated as a placeholder for missing values. Remove it
+        # from the list of values and translate the condition to also match NAs.
+        flag_missing <- any(trimws(values) == ".")
+        values       <- values[trimws(values) != "."]
+
         # Actual translation into the R %in% statement
-        replacement <- sprintf("%s %%in%% c(%s)", variable, paste(values, collapse = ", "))
+        if (flag_missing && length(values) > 0){
+            replacement <- sprintf("%s %%in%% c(%s) | is.na(%s)",
+                                   variable, paste(values, collapse = ", "), variable)
+        }
+        else if (flag_missing){
+            replacement <- sprintf("is.na(%s)", variable)
+        }
+        else{
+            replacement <- sprintf("%s %%in%% c(%s)", variable, paste(values, collapse = ", "))
+        }
 
         # Add negation for "not in"
         if(nzchar(trimws(not_part))){

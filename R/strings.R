@@ -227,8 +227,8 @@ sub_string <- function(data_frame,
         return(invisible(NULL))
     }
 
-    if (!is.character(data_frame[[variable]])){
-        print_message("ERROR", "<Variable> type must be character. Substring will be aborted.")
+    if (!is.character(data_frame[[variable]]) && !is.numeric(data_frame[[variable]])){
+        print_message("ERROR", "<Variable> type must be character or numeric. Substring will be aborted.")
         return(invisible(NULL))
     }
 
@@ -251,6 +251,14 @@ sub_string <- function(data_frame,
     }
 
     variable_vector <- data_frame[[variable]]
+
+    # Numeric variables are converted to character for the substring operation
+    # and converted back to numeric afterwards.
+    flag_numeric <- is.numeric(variable_vector)
+
+    if (flag_numeric){
+        variable_vector <- as.character(variable_vector)
+    }
 
     # If to is a character, extract the text up until the first match of to
     if (is.character(to)){
@@ -287,6 +295,11 @@ sub_string <- function(data_frame,
     # In case both positions are given, extract text in between these two points
     else{
         sub_variable <- substring(variable_vector, from, to)
+    }
+
+    # Convert the result back to numeric, if the source variable was numeric.
+    if (flag_numeric){
+        sub_variable <- as.numeric(sub_variable)
     }
 
     sub_variable
