@@ -534,6 +534,47 @@ result <- ifelse_df |> ifelse_multi("age not in (10 20)" = 1, else. = 0)
 expect_equal(result, c(0, 0, 1, 1, 1), info = "ifelse_multi NOT IN works")
 
 
+# ifelse_multi "." inside IN equals == . or == 10
+result1 <- ifelse_df |> ifelse_multi("age == 10 or age == ." = 1, else. = 0)
+result2 <- ifelse_df |> ifelse_multi("age in (10, .)"        = 1, else. = 0)
+
+expect_equal(result1, c(1, 0, 0, 0, 1), info = "ifelse_multi '.' inside IN equals == . or == 10")
+expect_equal(result2, c(1, 0, 0, 0, 1), info = "ifelse_multi '.' inside IN equals == . or == 10")
+
+
+# ifelse_multi "not in" with "." equals != 10 and != .
+result1 <- ifelse_df |> ifelse_multi("age != 10 and age != ." = 1, else. = 0)
+result2 <- ifelse_df |> ifelse_multi("age not in (10, .)"     = 1, else. = 0)
+
+expect_equal(result1, c(0, 1, 1, 1, 0), info = "ifelse_multi NOT IN with '.' equals != 10 and != .")
+expect_equal(result2, c(0, 1, 1, 1, 0), info = "ifelse_multi NOT IN with '.' equals != 10 and != .")
+
+
+# ifelse_multi "in (.)" alone equals == .
+result1 <- ifelse_df |> ifelse_multi("age == ."   = 1, else. = 0)
+result2 <- ifelse_df |> ifelse_multi("age in (.)" = 1, else. = 0)
+
+expect_equal(result1, c(0, 0, 0, 0, 1), info = "ifelse_multi '.' inside IN equals == .")
+expect_equal(result2, c(0, 0, 0, 0, 1), info = "ifelse_multi '.' inside IN equals == .")
+
+
+# ifelse_multi "." inside IN combined with an AND condition stays a self-contained unit
+result1 <- ifelse_df |> ifelse_multi("sex == 1 and (age == 10 or age == .)" = 1, else. = 0)
+result2 <- ifelse_df |> ifelse_multi("sex == 1 and age in (10, .)"          = 1, else. = 0)
+
+expect_equal(result1, c(1, 0, 0, 0, 0), info = "ifelse_multi '.' inside IN works with AND conditions")
+expect_equal(result2, c(1, 0, 0, 0, 0), info = "ifelse_multi '.' inside IN works with AND conditions")
+
+
+# if. and else_if. work with "." inside IN
+result_df <- ifelse_df |>
+     if.("age in (10, .)",  age_group = 1) |>
+else_if.("age in (30, 70)", age_group = 2) |>
+else.   (                   age_group = 0)
+
+expect_equal(result_df[["age_group"]], c(1, 0, 2, 2, 1), info = "if. and else_if. work with '.' inside IN")
+
+
 # ifelse_multi character with spaces works with IN
 result <- ifelse_df |> ifelse_multi("name in ('Hello World' 'Hello Again')" = 1, else. = 0)
 

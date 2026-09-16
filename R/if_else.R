@@ -1797,13 +1797,15 @@ parse_in <- function(condition){
         flag_missing <- any(trimws(values) == ".")
         values       <- values[trimws(values) != "."]
 
-        # Actual translation into the R %in% statement
+        # Actual translation into the R %in% statement. The "missing" part is wrapped
+        # in parentheses so that the whole "in" statement stays a self-contained
+        # unit in case it is combined with other and/or conditions.
         if (flag_missing && length(values) > 0){
-            replacement <- sprintf("%s %%in%% c(%s) | is.na(%s)",
+            replacement <- sprintf("(%s %%in%% c(%s) | is.na(%s))",
                                    variable, paste(values, collapse = ", "), variable)
         }
         else if (flag_missing){
-            replacement <- sprintf("is.na(%s)", variable)
+            replacement <- sprintf("(is.na(%s))", variable)
         }
         else{
             replacement <- sprintf("%s %%in%% c(%s)", variable, paste(values, collapse = ", "))
