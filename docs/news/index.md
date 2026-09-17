@@ -73,6 +73,13 @@
   If a numeric variable is passed, then now the function doesn’t throw
   an error anymore, but rather takes the substring of the numeric
   values. (14.09.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md),
+  [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): On a
+  type mismatch the type of the newly calculated value now always wins
+  instead of converting everything to character and emitting a warning.
+  (17.09.2026)
 
 #### Fixed
 

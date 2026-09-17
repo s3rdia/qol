@@ -261,10 +261,36 @@ get_origin_symbol <- function(symbol){
 #'
 #' @noRd
 symbol_is_data_frame_column <- function(symbol, value){
-    for (frame in sys.frames()){
-        bindings <- ls(frame, all.names = TRUE)
+    for (i in seq_len(sys.nframe())){
+        frame <- sys.frame(i)
 
-        for (binding in bindings){
+        # Data frames used as evaluation environments (e.g. inside compute.())
+        # are part of the calling stack directly. In this case the columns can
+        # be compared without having to force any bindings.
+        if (inherits(frame, "data.frame") &&
+            symbol %in% names(frame) &&
+            identical(value, frame[[symbol]])){
+            return(TRUE)
+        }
+
+        # Get the formal argument names of the function which created this
+        # frame. Forcing such unevaluated argument promises out of context
+        # interrupts their evaluation. When they are evaluated for real later
+        # on, this can lead to "restarting interrupted promise evaluation"
+        # warnings. It can also trigger the recursive evaluation of complete
+        # pipelines when the data frame argument is still unforced.
+        frame_function <- tryCatch(sys.function(i), error = function(e) NULL)
+
+        skippable <- if (is.function(frame_function)){
+            names(formals(frame_function))
+        }
+        else{
+            NULL
+        }
+
+        # Only force bindings which are not unforced argument promises of the
+        # current frame
+        for (binding in setdiff(ls(frame, all.names = TRUE), skippable)){
             candidate <- tryCatch(get0(binding, envir = frame, inherits = FALSE),
                                   error = function(e) NULL)
 

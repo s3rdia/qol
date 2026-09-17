@@ -176,7 +176,7 @@ compute. <- function(data_frame,
     if (any(duplicate_vars)){
         duplicate_vars <- names(assignments)[duplicate_vars]
 
-        print_message("WARNING", "Duplicate variable name[?s] '{var}' in compute. The last entry will overwrite the others before.",
+        print_message("NOTE", "Duplicate variable name[?s] '{var}' in compute. The last entry will overwrite the others before.",
                       var = duplicate_vars)
     }
 
@@ -213,32 +213,9 @@ compute. <- function(data_frame,
             expression <- get_custom_functions(calculation, parent_env)
             value      <- suppressMessages(eval(expression, envir = data_frame))
 
-            # If there already is a variable with the given name pick the existing value as fallback
-            flag_var_in_data <- FALSE
-
-            if (original_var %in% variable_names){
-                flag_var_in_data <- TRUE
-
-                # Check if existing variable type is of same type as assigned value.
-                # Put out a warning on type mismatch.
-                is_type_missmatch <- check_types(data_frame, original_var, value)
-
-                # If result is NULL, then there is a variable with all NA values
-                # which has to be converted into the right type.
-                if (is.null(is_type_missmatch)){
-                    if (is.character(value)){
-                        data_frame[[variable]] <- NA_character_
-                    }
-                    else if (is.numeric(value)){
-                        data_frame[[variable]] <- NA_real_
-                    }
-                }
-                # Convert to character on type miss match
-                else if (is_type_missmatch){
-                    data_frame[[original_var]] <- as.character(data_frame[[original_var]])
-                    value <- as.character(value)
-                }
-            }
+            # If there already is a variable with the given name pick the existing
+            # value as fallback. The type of the calculated value always wins.
+            flag_var_in_data <- original_var %in% variable_names
 
             # Values are now conditionally evaluated. Which route is used depends on whether
             # this function is called on its own or via an if statement.
@@ -253,7 +230,8 @@ compute. <- function(data_frame,
                     # not NA, but the values which are already there. This is in case of
                     # else_if.() or else.().
                     if (flag_var_in_data){
-                        conditional_value <- data.table::fifelse(full_condition, value, data_frame[[original_var]])
+                        conditional_value <- data.table::fifelse(full_condition, value,
+                                                                 convert_type(data_frame[[original_var]], value))
                     }
                     # When function is called via if statement and variable is not already in the
                     # data frame, then variable will be created.
@@ -290,7 +268,8 @@ compute. <- function(data_frame,
                     # is in the data frame, then variable will be created, but fallback
                     # value is not NA, but the values which are already there.
                     if (flag_var_in_data){
-                        conditional_value <- data.table::fifelse(full_condition, value, data_frame[[original_var]])
+                        conditional_value <- data.table::fifelse(full_condition, value,
+                                                                 convert_type(data_frame[[original_var]], value))
                     }
                     else{
                         conditional_value <- data.table::fifelse(full_condition, value, NA)
@@ -354,32 +333,9 @@ compute. <- function(data_frame,
                     value <- value[element]
                 }
 
-                # If there already is a variable with the given name pick the existing value as fallback
-                flag_var_in_data <- FALSE
-
-                if (target_variable %in% variable_names){
-                    flag_var_in_data <- TRUE
-
-                    # Check if existing variable type is of same type as assigned value.
-                    # Put out a warning on type mismatch.
-                    is_type_missmatch <- check_types(data_frame, target_variable, value)
-
-                    # If result is NULL, then there is a variable with all NA values
-                    # which has to be converted into the right type.
-                    if (is.null(is_type_missmatch)){
-                        if (is.character(value)){
-                            data_frame[[variable]] <- NA_character_
-                        }
-                        else if (is.numeric(value)){
-                            data_frame[[variable]] <- NA_real_
-                        }
-                    }
-                    # Convert to character on type miss match
-                    else if (is_type_missmatch){
-                        data_frame[[target_variable]] <- as.character(data_frame[[target_variable]])
-                        value <- as.character(value)
-                    }
-                }
+                # If there already is a variable with the given name pick the existing
+                # value as fallback. The type of the calculated value always wins.
+                flag_var_in_data <- target_variable %in% variable_names
 
                 # Values are now conditionally evaluated. Which route is used depends on whether
                 # this function is called on its own or via an if statement.
@@ -399,7 +355,8 @@ compute. <- function(data_frame,
                     # not NA, but the values which are already there. This is in case of
                     # else_if.() or else.().
                     if (flag_var_in_data){
-                        conditional_value <- data.table::fifelse(full_condition, value, data_frame[[target_variable]])
+                        conditional_value <- data.table::fifelse(full_condition, value,
+                                                                 convert_type(data_frame[[target_variable]], value))
                     }
                     # When function is called via if statement and variable is not already in the
                     # data frame, then variable will be created.
@@ -425,7 +382,8 @@ compute. <- function(data_frame,
                         # is in the data frame, then variable will be created, but fallback
                         # value is not NA, but the values which are already there.
                         if (flag_var_in_data){
-                            conditional_value <- data.table::fifelse(full_condition, value, data_frame[[target_variable]])
+                            conditional_value <- data.table::fifelse(full_condition, value,
+                                                                     convert_type(data_frame[[target_variable]], value))
                         }
                         else{
                             conditional_value <- data.table::fifelse(full_condition, value, NA)
@@ -536,47 +494,38 @@ get_custom_functions <- function(expression, env){
 }
 
 
-#' Check for Identical Types
+#' Convert to the Type of a Template Value
 #'
 #' @description
-#' Check if a certain value is of the same type as a variable.
+#' Converts a vector to the type of a template value. This is used to merge an
+#' existing variable with a newly calculated value when their types differ. The
+#' type of the newly calculated value always wins.
 #'
-#' @param data_frame The data frame which contains the variables to check.
-#' @param variable The main variable whose data type should be compared to value.
-#' @param current The current value whose data type should be compared to variable.
+#' @param vector The vector to convert.
+#' @param template The value whose type is used as the target type.
 #'
 #' @return
-#' Returns a further formatted workbook.
+#' Returns the converted vector.
 #'
 #' @noRd
-check_types <- function(data_frame, variable, current){
-    # Abort if all values are NA
-    if (all(is.na(data_frame[[variable]]))){
-        return(NULL)
+convert_type <- function(vector, template){
+    # Nothing to do if both are already of the same type
+    if (identical(typeof(vector), typeof(template))){
+        return(vector)
     }
 
-    # Abort if the current value is missing. The type of a missing value cannot
-    # be inferred, so the type of the existing variable is kept.
-    if (all(is.na(current))){
-        return(FALSE)
+    # Both numeric types can be combined directly, so no conversion is needed
+    if (is.numeric(vector) && is.numeric(template)){
+        return(vector)
     }
 
-    type_c <- typeof(current)
-    type_d <- typeof(data_frame[[variable]])
-
-    # Abort, if types are identical
-    if (identical(type_c, type_d)){
-        return(FALSE)
-    }
-    # Also abort, if both types are of a numerical type
-    else if(type_c %in% c("integer", "double") && type_d %in% c("integer", "double")){
-        return(FALSE)
+    # A value which only consists of NA has no usable type, so the existing
+    # type is kept.
+    if (all(is.na(template))){
+        return(vector)
     }
 
-    print_message("WARNING", c("Type mismatch: Current value [current] is of type [type_c] but should be of",
-							   "type [type_d]. [variable] will be converted to character."),
-                  current = current[1], type_c = type_c, type_d = type_d, variable = variable,
-				  always_print = TRUE)
+    converter <- match.fun(paste0("as.", typeof(template)))
 
-    TRUE
+    converter(vector)
 }

@@ -118,12 +118,20 @@ expect_equal(collapse::funique(result_df[["var1"]])[-1], 1,       info = "if. co
 expect_equal(collapse::funique(result_df[["var2"]])[-1], "Hello", info = "if. converts NA values into format of follow up value")
 
 
+# if. keeps the type of the calculated value on type conversions
+result_df <- dummy_df |> if.(sex == 1, income = as.character(income))
+
+expect_equal(result_df[["income"]], as.character(dummy_df[["income"]]), info = "if. keeps the type of the calculated value on type conversions")
+
+
 # if. can assign a single NA value
 test_df           <- dummy_df
 test_df[["var1"]] <- 1
 test_df           <- test_df |> if.(state <= 3, var1 = NA)
 
 expect_true(all(is.na(test_df[["var1"]][test_df[["state"]] <= 3])), info = "if. can assign a single NA value")
+expect_true(is.numeric(test_df[["var1"]]), info = "if. can assign a single NA value")
+expect_true(all(test_df[["var1"]][test_df[["state"]] > 3] == 1), info = "if. can assign a single NA value")
 
 
 # if. can check for variable expressions starting with letter

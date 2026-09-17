@@ -20,6 +20,7 @@ Last CRAN release was on 20.08.2026.
 * `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. 
 * `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered.
 * `sub_string()`: If a numeric variable is passed, then now the function doesn't throw an error anymore, but rather takes the substring of the numeric values.
+* `compute.()`, `if.()`, `else_if.()`, `else.()`: On a type mismatch the type of the newly calculated value now always wins instead of converting everything to character and emitting a warning.
 
 ### Fixed
 

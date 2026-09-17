@@ -104,25 +104,29 @@ expected <- test_df[["var2"]] + test_df[["var3"]]
 
 expect_equal(result_df[["sum"]], expected, info = "Compute evaluates list passed as argument")
 
+
+# Type conversions within compute. keep the type of the calculated value
+result_df <- test_df |> compute.(var2 = as.character(var2))
+
+expect_equal(result_df[["var2"]], as.character(test_df[["var2"]]), info = "Type conversions within compute. keep the type of the calculated value")
+
+# Assigning a value of a different type makes the calculated type win
+result_df <- test_df |> compute.(var1 = var2)
+
+expect_equal(result_df[["var1"]], test_df[["var2"]], info = "Assigning a value of a different type makes the calculated type win")
+
 ###############################################################################
 # Warning checks
 ###############################################################################
 
-# Type mismatch in compute
-result_df <- test_df |> compute.(var1 = var2)
-
-expect_warning(print_stack_as_messages("WARNING"), "Type mismatch", info = "Type mismatch in compute")
-
-
 # Adding multiple variables of the same name in compute throws a warning
 result_df <- test_df |> compute.(var4 = 1, var4 = 2)
 
-expect_warning(print_stack_as_messages("WARNING"), "Duplicate variable name",
+expect_message(print_stack_as_messages("NOTE"), "Duplicate variable name",
                info = "Adding multiple variables of the same name in compute throws a warning")
 expect_true("var4" %in% names(result_df))
 expect_equal(collapse::funique(result_df[["var4"]]), 2,
              info = "The last assignment to a duplicated variable name overwrites the earlier one")
-
 
 ###############################################################################
 # Abort checks
