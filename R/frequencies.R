@@ -339,6 +339,7 @@ frequencies <- function(data_frame,
                                 statistics = c("mean", "sd", "min", "max", "freq", "missing"),
                                 weight     = weight_var,
                                 notes      = FALSE,
+                                convert    = FALSE,
                                 na.rm      = na.rm) |>
                      drop_type_vars())
         }
@@ -353,6 +354,7 @@ frequencies <- function(data_frame,
                                 nesting    = "all",
                                 types      = by,
                                 notes      = FALSE,
+                                convert    = FALSE,
                                 na.rm      = na.rm))
 
             if (!is.null(mean_tab)){
@@ -411,6 +413,7 @@ frequencies <- function(data_frame,
                             weight     = weight_var,
                             nesting    = "single",
                             notes      = FALSE,
+                            convert    = FALSE,
                             na.rm      = na.rm,
                             print_miss = print_miss))
     }
@@ -429,6 +432,7 @@ frequencies <- function(data_frame,
                             nesting    = "all",
                             types      = combinations,
                             notes      = FALSE,
+                            convert    = FALSE,
                             na.rm      = na.rm,
                             print_miss = print_miss)) |>
              fuse_variables("fused_vars", variables) |>

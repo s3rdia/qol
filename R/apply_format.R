@@ -8,21 +8,44 @@
 #' @param formats A list in which is specified which formats should be applied
 #' to which variables.
 #' @param group_vars A vector containing all grouping variables.
+#' @param print_miss FALSE by default. If TRUE outputs all possible categories of
+#' the grouping variables based on the provided formats.
+#' @param convert FALSE by default. If TRUE, unformatted numeric variables stored
+#' as character are converted to numerically ordered factors to preserve their
+#' original characters. Otherwise they are converted to numeric.
 #'
 #' @return
 #' Returns a data table to which a format data frame was joined.
 #'
 #' @noRd
-apply_format <- function(data_frame, formats, group_vars = NULL, print_miss = TRUE){
+apply_format <- function(data_frame,
+                         formats,
+                         group_vars = NULL,
+                         print_miss = TRUE,
+                         convert    = FALSE){
     if (length(formats) == 0){
         return(data_frame)
     }
 
-    arguments     <- formats
+    arguments <- formats
 
-    # See comment above about numeric conversion
-    inverse_group <- group_vars[!group_vars %in% names(arguments)]
-    temp_data     <- data_frame |> convert_numeric(inverse_group)
+    # Unformatted grouping variables might be sorted numerically later on. This is
+    # only possible if their type allows a numerical sorting. Depending on the
+    # convert option they keep their original characters in a numerically ordered
+    # factor or are converted to numeric.
+    unformatted_group <- group_vars[!group_vars %in% names(arguments)]
+
+    if (length(unformatted_group) > 0){
+        if (convert){
+            temp_data <- data_frame |> convert_ordered_factor(unformatted_group)
+        }
+        else{
+            temp_data <- data_frame |> convert_numeric(unformatted_group)
+        }
+    }
+    else{
+        temp_data <- data_frame
+    }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Loop through all given variables and join each format with the data frame

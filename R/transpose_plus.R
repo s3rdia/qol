@@ -548,6 +548,7 @@ transpose_plus <- function(data_frame,
                                nesting    = "all",
                                types      = combinations,
                                notes      = FALSE,
+                               convert    = FALSE,
                                na.rm      = na.rm))
 
             # If only specific variables should be kept per statistic, clean up the additional
@@ -778,9 +779,10 @@ transpose_plus <- function(data_frame,
                                   values     = VALUE,
                                   statistics = "sum",
                                   formats    = formats_copy,
-                                  nesting    = "deepest",
-                                  notes      = FALSE,
-                                  na.rm      = na.rm)) |>
+                                   nesting    = "deepest",
+                                   notes      = FALSE,
+                                   convert    = FALSE,
+                                   na.rm      = na.rm)) |>
                     remove_stat_extension("sum") |>
                     drop_type_vars()
 

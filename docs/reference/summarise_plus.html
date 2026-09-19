@@ -68,6 +68,7 @@ setting a weight variable.</p>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  nesting <span class="op">=</span> <span class="st">"deepest"</span>,</span>
 <span>  merge_back <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  convert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"na.rm"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  print_miss <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"print_miss"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  monitor <span class="op">=</span> <span class="va">.qol_options</span><span class="op">[[</span><span class="st">"monitor"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -138,6 +139,11 @@ only outputs the ungrouped summary of all class variables in one data table.</p>
 <dt id="arg-merge-back">merge_back<a class="anchor" aria-label="anchor" href="#arg-merge-back"></a></dt>
 <dd><p>Newly summarised variables can be merged back to the original
 data frame if TRUE. Only works if nested = "deepest" and no formats are defined.</p></dd>
+
+
+<dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
+<dd><p>TRUE by default. Converts all class variables back to their original
+type after summarisation. If FALSE, returns variables as factors.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>

@@ -14,6 +14,7 @@ summarise_plus(
   weight = NULL,
   nesting = "deepest",
   merge_back = FALSE,
+  convert = TRUE,
   na.rm = .qol_options[["na.rm"]],
   print_miss = .qol_options[["print_miss"]],
   monitor = .qol_options[["monitor"]],
@@ -65,6 +66,9 @@ only outputs the ungrouped summary of all class variables in one data table.}
 
 \item{merge_back}{Newly summarised variables can be merged back to the original
 data frame if TRUE. Only works if nested = "deepest" and no formats are defined.}
+
+\item{convert}{TRUE by default. Converts all class variables back to their original
+type after summarisation. If FALSE, returns variables as factors.}
 
 \item{na.rm}{FALSE by default. If TRUE removes all NA values from the class variables.}
 

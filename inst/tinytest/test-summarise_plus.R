@@ -777,6 +777,7 @@ expect_true("25 to under 55" %in% format_df[["age"]], info = "Output missing cat
 sex. <- discrete_format(
     "Male"   = 1,
     "Female" = 2)
+
 age. <- discrete_format(
     "under 18"       = 0:17,
     "18 to under 25" = 18:24,
@@ -852,8 +853,45 @@ result_df <- dummy_df |>
       summarise_plus(class  = age,
                      values = weight,
                      statistics = "mean")
-
 expect_equal(result_df[["age"]][1:5], c(0, 1, 2, 3, 4), info = "summarise_plus converts numeric values back to numeric (long route)")
+
+
+# summarise_plus keeps the type of an unformatted character-numeric variable when a format is applied to a different variable
+sex. <- discrete_format(
+    "Male"   = 1,
+    "Female" = 2)
+
+result_df <- dummy_df |>
+    summarise_plus(class   = c(sex, binary),
+                   values  = weight,
+                   formats = list(sex = sex.))
+
+expect_equal(collapse::funique(result_df[["binary"]]), c("00", "01", "10", "11"),
+             info = "summarise_plus keeps the type of an unformatted character-numeric variable when a format is applied to a different variable")
+
+
+# summarise_plus sorts character-numeric variables numerically
+dummy_df[["char_num"]] <- c("2", "10", "1")[((seq_len(nrow(dummy_df)) - 1) %% 3) + 1]
+
+result_df <- dummy_df |>
+    summarise_plus(class   = c(char_num, sex),
+                   values  = weight,
+                   formats = list(sex = sex.))
+
+expect_equal(collapse::funique(result_df[["char_num"]]), c("1", "2", "10"),
+             info = "summarise_plus sorts character-numeric variables numerically")
+
+
+# With convert = FALSE character-numeric variables are converted to numeric
+result_df <- dummy_df |>
+    summarise_plus(class   = c(sex, binary),
+                   values  = weight,
+                   formats = list(sex = sex.),
+                   convert = FALSE)
+
+expect_equal(collapse::funique(result_df[["binary"]]), c(0, 1, 10, 11),
+             info = "With convert = FALSE character-numeric variables are converted to numeric")
+
 
 ###############################################################################
 # Warning checks

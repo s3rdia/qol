@@ -11,6 +11,7 @@ Last CRAN release was on 20.08.2026.
 * `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name.
 * `transpose_plus()`: Can now handle duplicate column names by making them unique.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)".
+* `summarise_plus()`: New `convert` parameter converts all class variables back to their original type after summarising. Formatted variables become character to keep their format labels, unformatted variables receive the type they had in the original data frame.
 
 ### Changed functionality
 
@@ -21,6 +22,7 @@ Last CRAN release was on 20.08.2026.
 * `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered.
 * `sub_string()`: If a numeric variable is passed, then now the function doesn't throw an error anymore, but rather takes the substring of the numeric values.
 * `compute.()`, `if.()`, `else_if.()`, `else.()`: On a type mismatch the type of the newly calculated value now always wins instead of converting everything to character and emitting a warning.
+* `summarise_plus()`: Class variables are now converted to either character or numeric by default instead of being returned as factors. Set the new `convert` parameter to FALSE to get back the past behaviour.
 
 ### Fixed
 
@@ -46,6 +48,7 @@ Last CRAN release was on 20.08.2026.
 * `transpose_plus()`: When using multiple statistics the new variable names are now named as intended.
 * `ifelse_multi()`: Now also works within `compute.()`.
 * `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case.
+* `summarise_plus()`: Numeric variables stored as character no longer lose their original characters (e.g. leading zeros) when a format is applied to another variable. They now stay as character variables.
 
 ### Optimization
 

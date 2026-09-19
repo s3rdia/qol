@@ -399,6 +399,7 @@ retain_stat <- function(data_frame,
                           values     = values,
                           statistics = statistics,
                           nesting    = "deepest",
+                          convert    = FALSE,
                           merge_back = TRUE))
 
     print_closing()

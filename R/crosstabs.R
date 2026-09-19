@@ -406,6 +406,7 @@ crosstabs <- function(data_frame,
                             nesting    = "deepest",
                             notes      = FALSE,
                             na.rm      = na.rm,
+                            convert    = FALSE,
                             print_miss = print_miss)) |>
             drop_type_vars() |>
             collapse::frename(var_pct_group = var_pct_row)
@@ -447,6 +448,7 @@ crosstabs <- function(data_frame,
                            types      = combinations,
                            notes      = FALSE,
                            na.rm      = na.rm,
+                           convert    = FALSE,
                            print_miss = print_miss)) |>
             collapse::frename(var_pct_group = var_pct_row) |>
             fuse_variables("by_vars", by)

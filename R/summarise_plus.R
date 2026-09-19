@@ -42,6 +42,8 @@
 #' only outputs the ungrouped summary of all class variables in one data table.
 #' @param merge_back Newly summarised variables can be merged back to the original
 #' data frame if TRUE. Only works if nested = "deepest" and no formats are defined.
+#' @param convert TRUE by default. Converts all class variables back to their original
+#' type after summarisation. If FALSE, returns variables as factors.
 #' @param na.rm FALSE by default. If TRUE removes all NA values from the class variables.
 #' @param print_miss FALSE by default. If TRUE outputs all possible categories of the
 #' grouping variables based on the provided formats, even if there are no observations
@@ -208,6 +210,7 @@ summarise_plus <- function(data_frame,
                            weight     = NULL,
                            nesting    = "deepest",
                            merge_back = FALSE,
+                           convert    = TRUE,
                            na.rm      = .qol_options[["na.rm"]],
                            print_miss = .qol_options[["print_miss"]],
                            monitor    = .qol_options[["monitor"]],
@@ -589,6 +592,11 @@ summarise_plus <- function(data_frame,
     # for merge back option
     original_df <- data_frame
 
+    # Store the original types of all class variables to restore them later on,
+    # if convert is set to TRUE.
+    original_types <- lapply(collapse::fselect(original_df, intersect(group_vars, names(original_df))),
+                             function(x) class(x))
+
     result_df <- NULL
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -658,7 +666,7 @@ summarise_plus <- function(data_frame,
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if (flag_shortcut){
-            result_df <- data_frame |> apply_format(formats, group_vars)
+            result_df <- data_frame |> apply_format(formats, group_vars, convert = convert)
 
             # Final summarise with formatted data frame
             result_df <- result_df |>
@@ -673,7 +681,7 @@ summarise_plus <- function(data_frame,
         }
         else{
             # Apply formats first
-            result_df <- data_frame |> apply_format(formats, group_vars)
+            result_df <- data_frame |> apply_format(formats, group_vars, convert = convert)
 
             monitor_df <- monitor_df |> monitor_end()
 
@@ -987,7 +995,7 @@ summarise_plus <- function(data_frame,
                         group_df <- data_frame |>
                             collapse::fgroup_by(combination) |>
                             collapse::fsummarise(across(values, collapse::fsum)) |>
-                            apply_format(formats, combination)
+                            apply_format(formats, combination, convert = convert)
 
                         # Final summarise with formatted data frame
                         group_df <- group_df |>
@@ -1004,7 +1012,7 @@ summarise_plus <- function(data_frame,
                         # Apply formats first
                         group_df <- data_frame |>
                             collapse::fselect(combination, values, weight_var) |>
-                            apply_format(formats, combination)
+                            apply_format(formats, combination, convert = convert)
 
                         monitor_df <- monitor_df |> monitor_end()
 
@@ -1212,6 +1220,34 @@ summarise_plus <- function(data_frame,
     # Drop pseudo group variable if there is one
     if (any(class == "pseudo_class")){
         result_df <- result_df |> dropp(class)
+    }
+
+    # Convert factor class variables back to their original type, if convert is
+    # set to TRUE. Variables with a format become character to keep the format
+    # labels. Unformatted variables become the type they had in the original data
+    # frame, so that e.g. numbers stored as character keep their original form.
+    if (convert){
+        for (variable in names(result_df)){
+            if (!is.factor(result_df[[variable]])){
+                next
+            }
+
+            # Variables with formats receive their format labels as character
+            if (variable %in% names(formats)){
+                result_df[[variable]] <- as.character(result_df[[variable]])
+                next
+            }
+
+            # Variables without formats receive their original data frame type
+            var_type <- original_types[[variable]]
+
+            # Factors which were factors originally are kept as they are
+            if (is.null(var_type) || length(var_type) != 1 || var_type == "factor"){
+                next
+            }
+
+            result_df[[variable]] <- match.fun(paste0("as.", var_type))(result_df[[variable]])
+        }
     }
 
     #---------------------------------------------------------------------#

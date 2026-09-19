@@ -1110,6 +1110,7 @@ any_table <- function(data_frame,
                              types      = combinations,
                              notes      = FALSE,
                              na.rm      = na.rm,
+                             convert    = FALSE,
                              print_miss = print_miss)) |>
             rename_pattern("pct_group", paste0("pct_group_", pct_group[1])) |>
             collapse::fsubset(TYPE != "total")
@@ -1129,6 +1130,7 @@ any_table <- function(data_frame,
                                types      = combinations,
                                notes      = FALSE,
                                na.rm      = na.rm,
+                               convert    = FALSE,
                                print_miss = print_miss)) |>
                 collapse::fsubset(TYPE != "total") |>
                 remove_stat_extension("sum")
@@ -1226,6 +1228,7 @@ any_table <- function(data_frame,
                              types      = combinations,
                              notes      = FALSE,
                              na.rm      = na.rm,
+                             convert    = FALSE,
                              print_miss = print_miss)) |>
             rename_pattern("_sum", "")
 
@@ -1312,10 +1315,12 @@ any_table <- function(data_frame,
                             weight     = weight_var,
                             nesting    = "all",
                             types      = combinations,
-                            notes      = FALSE,
-                            na.rm      = na.rm,
-                            print_miss = print_miss)) |>
+                             notes      = FALSE,
+                             na.rm      = na.rm,
+                             convert    = FALSE,
+                             print_miss = print_miss)) |>
             rename_pattern("_sum", "")
+
 
 
         # The TYPE is put into the grouping, otherwise the row variable expressions
@@ -1425,6 +1430,7 @@ any_table <- function(data_frame,
                                types      = combinations,
                                notes      = FALSE,
                                na.rm      = na.rm,
+                               convert    = FALSE,
                                print_miss = print_miss)) |>
                 rename_pattern("pct_group", paste0("pct_group_", pct_group[group])) |>
                 drop_type_vars()
@@ -1861,6 +1867,7 @@ any_table <- function(data_frame,
                                         values     = block_values,
                                         statistics = "max",
                                         notes      = FALSE,
+                                        convert    = FALSE,
                                         merge_back = TRUE))
 
                     # Run a do over loop to calculate all the block percentages for

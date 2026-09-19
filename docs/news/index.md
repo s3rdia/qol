@@ -47,6 +47,11 @@
   [`where.()`](https://s3rdia.github.io/qol/reference/where..md): When
   using the “in” operator it is now possible to capture NA values with a
   “.” like “age in (1 2 3 4 .)”. (14.09.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  New `convert` parameter converts all class variables back to their
+  original type after summarising. Formatted variables become character
+  to keep their format labels, unformatted variables receive the type
+  they had in the original data frame. (19.09.2026)
 
 #### Changed functionality
 
@@ -80,6 +85,10 @@
   type mismatch the type of the newly calculated value now always wins
   instead of converting everything to character and emitting a warning.
   (17.09.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Class variables are now converted to either character or numeric by
+  default instead of being returned as factors. Set the new `convert`
+  parameter to FALSE to get back the past behaviour. (19.09.2026)
 
 #### Fixed
 
@@ -164,6 +173,10 @@
   When the keyword “other” is used while the original values are
   characters, they will now stay as provided instead of being translated
   into all lower case. (14.09.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Numeric variables stored as character no longer lose their original
+  characters (e.g. leading zeros) when a format is applied to another
+  variable. They now stay as character variables. (19.09.2026)
 
 #### Optimization
 

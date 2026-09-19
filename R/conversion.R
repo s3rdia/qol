@@ -390,6 +390,52 @@ convert_factor <- function(data_frame, variables){
 }
 
 
+#' Convert Numeric Character Variables Into Sortable Factors
+#'
+#' @description
+#' [convert_ordered_factor()] converts all given character variables that only
+#' contain numbers into ordered factors. The factor levels are sorted in numerical
+#' order so that the variable is sorted numerically, while its original textual
+#' representation is preserved. Variables which are not character or which contain
+#' non numerical values are left unchanged.
+#'
+#' @param data_frame A data frame containing variables to convert.
+#' @param variables Variables from the data frame which should be converted.
+#'
+#' @return
+#' Returns the same data frame with converted variables.
+#'
+#' @rdname convert_variables
+#'
+#' @noRd
+convert_ordered_factor <- function(data_frame, variables){
+    data_frame[variables] <- lapply(data_frame[variables], function(variable){
+        # Only character variables will be converted
+        if (!is.character(variable)){
+            return(variable)
+        }
+
+        # Try to convert to numeric
+        var_converted <- suppressWarnings(as.numeric(variable))
+
+        # If NA values are equal, conversion was successful
+        if (!all(is.na(variable) == is.na(var_converted))){
+            return(variable)
+        }
+
+        # Sort the unique values in numerical order to get the factor levels
+        label_levels <- unique(variable)
+        label_levels <- label_levels[!is.na(label_levels)]
+        label_levels <- label_levels[order(as.numeric(label_levels))]
+
+        # Convert variable to a numerically ordered factor
+        factor(variable, levels = label_levels, ordered = TRUE)
+    })
+
+    data_frame
+}
+
+
 #' Convert Color Codes
 #'
 #' @name hex_ansi
