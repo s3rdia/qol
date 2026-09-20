@@ -12,6 +12,7 @@ Last CRAN release was on 20.08.2026.
 * `transpose_plus()`: Can now handle duplicate column names by making them unique.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)".
 * `summarise_plus()`: New `convert` parameter converts all class variables back to their original type after summarising. Formatted variables become character to keep their format labels, unformatted variables receive the type they had in the original data frame.
+* `transpose_plus()`: In wide to long transposition, when putting variables side by side, then it is now possible to pass in multiple vectors of unequal length into `pivot`, if multilabel formats are applied which equalize the expression count.
 
 ### Changed functionality
 

@@ -1,4 +1,4 @@
-# qol 1.3.5 - DEVELOPMENT
+# qol 1.3.5
 
 ### New functionality
 
@@ -11,6 +11,7 @@
 * `transpose_plus()`: Can now handle duplicate column names by making them unique. (10.09.2026)
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)". (14.09.2026)
 * `summarise_plus()`: New `convert` parameter converts all class variables back to their original type after summarising. Formatted variables become character to keep their format labels, unformatted variables receive the type they had in the original data frame. (19.09.2026)
+* `transpose_plus()`: In wide to long transposition, when putting variables side by side, then it is now possible to pass in multiple vectors of unequal length into `pivot`, if multilabel formats are applied which equalize the expression count. (20.09.2026)
 
 ### Changed functionality
 

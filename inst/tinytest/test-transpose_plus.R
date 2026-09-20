@@ -19,6 +19,12 @@ dummy_wide_df <- dummy_df |>
                        "Male"   = 1,
                        "Female" = 2)))
 
+raw_wide_df <- dummy_df |>
+    transpose_plus(preserve = year,
+                   pivot    = c("sex", "education"),
+                   values   = income,
+                   na.rm    = TRUE)
+
 
 # Simple long to wide transposition
 dummy_df <- dummy_df |> sort_plus(by = sex)
@@ -251,6 +257,41 @@ expect_equal(names(wide_to_long), c("year", "sex", "hello", "world"),
              info = "Transpose multiple variables from wide to long (side by side)")
 
 
+# Side by side wide to long transposition only applies format to the first list entry
+sex. <- discrete_format("Total"  = c("Male", "Female"),
+                        "Male"   = "Male",
+                        "Female" = "Female")
+
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex = c("Male", "Female"),
+                                   sex = c("low", "middle", "high")),
+                   formats  = list(sex = sex.))
+
+expect_equal(names(wide_to_long), c("year", "sex", "value1", "value2"),
+             info = "Side by side wide to long transposition only applies format to the first list entry")
+expect_true(any(!is.na(wide_to_long[["value2"]])),
+            info = "Side by side wide to long transposition only applies format to the first list entry")
+expect_true("Total" %in% as.character(wide_to_long[["sex"]]),
+            info = "Side by side wide to long transposition only applies format to the first list entry")
+
+
+# Unequal pivot lengths can still be transposed beside each other with multilabel
+sex. <- discrete_format("Total"  = 1:2,
+                        "Male"   = 1,
+                        "Female" = 2)
+
+wide_to_long <- raw_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("1", "2"),
+                                   education = c("low", "middle", "high")),
+                   formats  = list(sex = sex.))
+
+expect_equal(names(wide_to_long), c("year", "sex", "education"),
+             info = "Unequal pivot lengths can still be transposed beside each other with multilabel")
+expect_equal(collapse::fnrow(wide_to_long), length(collapse::funique(raw_wide_df[["year"]])) * 3,
+             info = "Unequal pivot lengths can still be transposed beside each other with multilabel")
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -343,6 +384,31 @@ wide_df <- dummy_wide_df |>
 
 expect_error(print_stack_as_messages("ERROR"), "Every <pivot> list entry has to have the same number of variables for a",
              info = "Abort side by side transposition, if list entries are of unequal lengths")
+
+
+# Abort side by side transposition with different list names, if list entries are of unequal lengths
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("Male", "Female"),
+                                   education = c("low", "middle", "high")))
+
+expect_error(print_stack_as_messages("ERROR"), "Every <pivot> list entry has to have the same number of variables for a",
+             info = "Abort side by side transposition, if list entries with different names are of unequal lengths")
+
+
+# Abort side by side transposition, if formats don't equalise the number of resulting categories
+sex. <- discrete_format("Total"  = 1:2,
+                        "Male"   = 1,
+                        "Female" = 2)
+
+wide_df <- raw_wide_df |>
+    transpose_plus(preserve = year,
+                   pivot    = list(sex       = c("1", "2"),
+                                   education = c("low", "middle")),
+                   formats  = list(sex = sex.))
+
+expect_error(print_stack_as_messages("ERROR"), "Every <pivot> list entry has to result in the same number of variables",
+             info = "Abort side by side transposition, if formats don't equalise the number of resulting categories")
 
 
 # Abort side by side transposition, if list entries contain a unique variable name but also others

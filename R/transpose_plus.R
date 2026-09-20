@@ -234,7 +234,9 @@ transpose_plus <- function(data_frame,
             # name list, then all variable names are the same and results should be
             # put together side by side.
             if (length(unique_var_names) == 1){
-                if (length(collapse::funique(lengths(pivot))) > 1){
+                # Formats can change the number of categories a list entry produces,
+                # so differing pivot lengths can still result in equally long data frames.
+                if (is.null(formats) && length(collapse::funique(lengths(pivot))) > 1){
                     print_message("ERROR", c("Every <pivot> list entry has to have the same number of variables for a",
                                              "side by side transposition to work. Transposition will be aborted."))
                     return(invisible(NULL))
@@ -264,6 +266,14 @@ transpose_plus <- function(data_frame,
                 side_by_side <- !stack
 
                 if (side_by_side){
+                    # Formats can change the number of categories a list entry produces,
+                    # so differing pivot lengths can still result in equally long data frames.
+                    if (is.null(formats) && length(collapse::funique(lengths(pivot))) > 1){
+                        print_message("ERROR", c("Every <pivot> list entry has to have the same number of variables for a",
+                                                 "side by side transposition to work. Transposition will be aborted."))
+                        return(invisible(NULL))
+                    }
+
                     values <- get_origin_as_char(values, substitute(values))
 
                     # In case of no provided values (which would name the new variables
@@ -757,8 +767,11 @@ transpose_plus <- function(data_frame,
 
             transpose_df[[var_name]] <- as.character(transpose_df[[var_name]])
 
-            # Recode variable, if format is given
-            if (!is.null(formats) && variable %in% names(formats)){
+            # Recode variable, if format is given. In a side by side transposition
+            # with a shared list name, the format is only applied to the first list
+            # entry that goes by this name. The following entries should contain
+            # different variables and would otherwise lose all their observations.
+            if (!is.null(formats) && variable %in% names(formats) && i == match(variable, names(pivot))){
                 #-------------------------------------------------------------#
                 monitor_df <- monitor_df |> monitor_next("Summarise", "Wide to long")
                 #-------------------------------------------------------------#
@@ -815,10 +828,22 @@ transpose_plus <- function(data_frame,
                     # renamed, so that a new primary key variable exists on which
                     # the iterations can be joined. Whether the result makes sense
                     # or not, is entirely in the users hands to decide.
+                    # The expressions of the current list entry are paired positionally
+                    # with the expressions of the first list entry. Since formats can
+                    # change the number of categories, only the resulting labels have
+                    # to match in length.
                     current_expressions <- collapse::funique(transpose_df[["VARIABLE"]])
-                    rename_map          <- stats::setNames(pivot[[1]], current_expressions)
+                    key_labels          <- collapse::funique(combined_df[[key_col]])
 
-                    transpose_df[["VARIABLE"]] <- rename_map[transpose_df[["VARIABLE"]]]
+                    if (length(key_labels) != length(current_expressions)){
+                        print_message("ERROR", c("Every <pivot> list entry has to result in the same number of variables",
+                                                 "for a side by side transposition to work. Transposition will be aborted."))
+                        return(invisible(NULL))
+                    }
+
+                    rename_map <- stats::setNames(key_labels, as.character(current_expressions))
+
+                    transpose_df[["VARIABLE"]] <- rename_map[as.character(transpose_df[["VARIABLE"]])]
 
                     # Prepare data frame for the join
                     transpose_df <- suppressMessages(transpose_df |>

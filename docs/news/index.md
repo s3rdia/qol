@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.5 - DEVELOPMENT
+## qol 1.3.5
 
 #### New functionality
 
@@ -52,6 +52,11 @@
   original type after summarising. Formatted variables become character
   to keep their format labels, unformatted variables receive the type
   they had in the original data frame. (19.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  In wide to long transposition, when putting variables side by side,
+  then it is now possible to pass in multiple vectors of unequal length
+  into `pivot`, if multilabel formats are applied which equalize the
+  expression count. (20.09.2026)
 
 #### Changed functionality
 
