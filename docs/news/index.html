@@ -126,6 +126,10 @@
 <code><a href="../reference/formats.html">discrete_format()</a></code>: When the keyword “other” is used while the original values are characters, they will now stay as provided instead of being translated into all lower case. (14.09.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Numeric variables stored as character no longer lose their original characters (e.g. leading zeros) when a format is applied to another variable. They now stay as character variables. (19.09.2026)</li>
+<li>
+<code><a href="../reference/dummy_data.html">dummy_data()</a></code>: Fixed a rare edge case were fewer observations were generated than intended. (20.09.2026)</li>
+<li>
+<code><a href="../reference/multi_join.html">multi_join()</a></code>: When joining more than two data frames with different join methods, then now the observations which are added by a widening join (e.g. right, full, outer) are kept by the following joins instead of being dropped. (20.09.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-5">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-5"></a></h4>
@@ -140,6 +144,8 @@
 <h4 id="additionally-1-3-5">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-5"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix. (12.09.2026)</li>
+<li>
+<code><a href="../reference/multi_join.html">multi_join()</a></code>: Now displays duplicated variable combinations in the error message. (20.09.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

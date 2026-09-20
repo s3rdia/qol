@@ -48,6 +48,8 @@
 * `ifelse_multi()`: Now also works within `compute.()`. (14.09.2026)
 * `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case. (14.09.2026)
 * `summarise_plus()`: Numeric variables stored as character no longer lose their original characters (e.g. leading zeros) when a format is applied to another variable. They now stay as character variables. (19.09.2026)
+* `dummy_data()`: Fixed a rare edge case were fewer observations were generated than intended. (20.09.2026)
+* `multi_join()`: When joining more than two data frames with different join methods, then now the observations which are added by a widening join (e.g. right, full, outer) are kept by the following joins instead of being dropped. (20.09.2026)
 
 ### Optimization
 
@@ -58,6 +60,7 @@
 ### Additionally
 
 * `any_table()`, `transpose_plus()`: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix. (12.09.2026)
+* `multi_join()`: Now displays duplicated variable combinations in the error message. (20.09.2026)
 
 # qol 1.3.4
 

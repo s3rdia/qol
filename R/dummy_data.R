@@ -65,6 +65,22 @@ dummy_data <- function(no_obs    = 25000,
     persons_per_household <- sample(1:7, size = number_of_households, replace = TRUE,
                                     prob = c(0.4, 0.27, 0.15, 0.08, 0.06, 0.03, 0.01))
 
+    # The persons are expanded over several years further down below, which multiplies the
+    # number of rows. In rare edge cases the randomly drawn household sizes can add up to fewer
+    # persons than the requested number of observations. Add households until the minimum
+    # number of persons is guaranteed, otherwise sampling without replacement below would fail.
+    number_of_years <- 5
+    min_persons     <- ceiling(no_obs / number_of_years)
+
+    if (collapse::fsum(persons_per_household) < min_persons){
+        extra_households <- min_persons - collapse::fsum(persons_per_household)
+
+        persons_per_household <- c(persons_per_household,
+                                   sample(1:7, size = extra_households, replace = TRUE,
+                                          prob = c(0.4, 0.27, 0.15, 0.08, 0.06, 0.03, 0.01)))
+        number_of_households  <- length(persons_per_household)
+    }
+
     # Generate unique household ids and a running number for each person inside the
     # household
     dummy_temp <- data.table::data.table(
@@ -307,7 +323,7 @@ dummy_data <- function(no_obs    = 25000,
 
     # Prepare years
     current_year <- as.numeric(format(Sys.Date(), "%Y"))
-    start_year   <- current_year - 4
+    start_year   <- current_year - (number_of_years - 1)
 
     years_seq <- data.table::data.table(temp. = 1,
                                         year  = start_year:current_year,

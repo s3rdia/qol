@@ -177,6 +177,14 @@
   Numeric variables stored as character no longer lose their original
   characters (e.g. leading zeros) when a format is applied to another
   variable. They now stay as character variables. (19.09.2026)
+- [`dummy_data()`](https://s3rdia.github.io/qol/reference/dummy_data.md):
+  Fixed a rare edge case were fewer observations were generated than
+  intended. (20.09.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  When joining more than two data frames with different join methods,
+  then now the observations which are added by a widening join
+  (e.g. right, full, outer) are kept by the following joins instead of
+  being dropped. (20.09.2026)
 
 #### Optimization
 
@@ -201,6 +209,9 @@
   [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   The deduplicated variable names are now cleaned up so that they only
   receive one duplicate suffix. (12.09.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Now displays duplicated variable combinations in the error message.
+  (20.09.2026)
 
 ## qol 1.3.4
 

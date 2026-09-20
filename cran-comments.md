@@ -49,6 +49,8 @@ Last CRAN release was on 20.08.2026.
 * `ifelse_multi()`: Now also works within `compute.()`.
 * `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case.
 * `summarise_plus()`: Numeric variables stored as character no longer lose their original characters (e.g. leading zeros) when a format is applied to another variable. They now stay as character variables.
+* `dummy_data()`: Fixed a rare edge case were fewer observations were generated than intended.
+* `multi_join()`: When joining more than two data frames with different join methods, then now the observations which are added by a widening join (e.g. right, full, outer) are kept by the following joins instead of being dropped.
 
 ### Optimization
 
@@ -59,6 +61,7 @@ Last CRAN release was on 20.08.2026.
 ### Additionally
 
 * `any_table()`, `transpose_plus()`: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix.
+* `multi_join()`: Now displays duplicated variable combinations in the error message.
 
 
 ## R CMD check results

@@ -393,7 +393,7 @@ convert_factor <- function(data_frame, variables){
 #' Convert Numeric Character Variables Into Sortable Factors
 #'
 #' @description
-#' [convert_ordered_factor()] converts all given character variables that only
+#' convert_ordered_factor: converts all given character variables that only
 #' contain numbers into ordered factors. The factor levels are sorted in numerical
 #' order so that the variable is sorted numerically, while its original textual
 #' representation is preserved. Variables which are not character or which contain

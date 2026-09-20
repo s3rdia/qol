@@ -98,6 +98,57 @@ multiple_joined2 <-
 expect_equal(multiple_joined, multiple_joined2, info = "Join multiple data frames on different variable names")
 
 
+# multi_join can handle many to one joins
+base_df <- data.frame(key = c(1, 1, 2),
+                      a   = c("a", "a", "a"))
+
+join_df  <- data.frame(key = c(2, 3),
+                       b   = c("b", "b"))
+
+keys_expected <- c(left        = 3,
+                   right       = 2,
+                   inner       = 1,
+                   full        = 4,
+                   outer       = 3,
+                   left_inner  = 2,
+                   right_inner = 1)
+
+for (method in names(keys_expected)){
+    joined <- multi_join(list(base_df, join_df),
+                         on      = "key",
+                         how     = method,
+                         monitor = FALSE)
+
+    expect_equal(nrow(joined), unname(keys_expected[[method]]),
+                 info = paste("multi_join can handle many to one joins: ", method))
+}
+
+
+# Multi-frame joins where a widening join (right, full, outer) is followed by another join
+df1_3 <- data.frame(key = c(1, 2, 3), a = "a")
+df2_3 <- data.frame(key = c(2, 3, 4), b = "b")
+df3_3 <- data.frame(key = c(3, 4, 5), c = "c")
+
+wide_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right", "left"), monitor = FALSE)
+
+expect_equal(sort(wide_left[["key"]]), 2:4, info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
+
+full_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("full", "left"), monitor = FALSE)
+
+expect_equal(sort(full_left[["key"]]), 1:4, info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
+
+outer_outer <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("outer", "outer"), monitor = FALSE)
+
+expect_equal(sort(outer_outer[["key"]]), c(1, 3, 5), info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
+
+right_inner_right_inner <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right_inner", "right_inner"), monitor = FALSE)
+
+expect_equal(sort(right_inner_right_inner[["key"]]), c(3, 5), info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
+
+###############################################################################
+# Warning checks
+###############################################################################
+
 # Warning on invalid join method
 left_joined <- multi_join(list(df1, df2), on = "key", how = "test")
 

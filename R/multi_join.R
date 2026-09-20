@@ -233,16 +233,26 @@ multi_join <- function(data_frames,
         if (!unequal_names){
             # Check for duplicate combinations
             if (collapse::any_duplicated(data_frames[[i]][on])){
+                dup_combinations <- get_duplicate_expressions(data_frames[[i]], on)
+
                 print_message("ERROR", c("The second and all following data frames need to have unique combinations",
-										 "in the provided <on> variables. Join will be aborted."))
+                                         "in the provided <on> variables. The following duplicated value combinations",
+                                         "were found: [duplicates]",
+                                         "Join will be aborted."),
+                              duplicates = dup_combinations)
                 return(invisible(NULL))
             }
         }
         # On unequal names each individual variable combination has to be checked on the corresponding data frame
         else{
             if (collapse::any_duplicated(data_frames[[i]][on[[i]]])){
+                dup_combinations <- get_duplicate_expressions(data_frames[[i]], on[[i]])
+
                 print_message("ERROR", c("The second and all following data frames need to have unique combinations",
-										 "in the provided <on> variables. Join will be aborted."))
+                                         "in the provided <on> variables. The following duplicated value combinations",
+                                         "were found: [duplicates]",
+                                         "Join will be aborted."),
+                              duplicates = dup_combinations)
                 return(invisible(NULL))
             }
         }
@@ -416,6 +426,15 @@ multi_join <- function(data_frames,
             joined_df <- joined_df |> collapse::fsubset(is.na(joined_df[[join_keys[[1]]]]) & joined_df[[join_keys[[i]]]] == 1)
         }
 
+        # Refresh the base indicator, if more joins are coming. This way it shows
+        # how it corresponds to the current running join instead of only the
+        # original base data frame. Otherwise rows which were added to the
+        # running join by a widening join (e.g. right, full, outer) would be
+        # dropped by the next join, because their base indicator is not set.
+        if (i < length(data_frames)){
+            joined_df[[join_keys[[1]]]] <- rep(1, collapse::fnrow(joined_df))
+        }
+
         # Drop indicator of joined data frame
         if (!keep_indicators){
             key_to_drop <- as.character(join_keys[[i]])
@@ -449,4 +468,31 @@ multi_join <- function(data_frames,
     #-------------------------------------------------------------------------#
 
     joined_df
+}
+
+
+#' Get Duplicated Variable Expressions
+#'
+#' @description
+#' Get a string of the unique duplicated value combinations for the "on"
+#' variables of a data frame.
+#'
+#' @param data_frame The data frame containing the "on" variables.
+#' @param on The actual variables on which to join.
+#'
+#' @return
+#' Returns a concatenated string of variable expressions.
+#'
+#' @noRd
+get_duplicate_expressions <- function(data_frame, on){
+    # Only keep the unique duplicated combinations
+    combos <- data_frame[on]
+    combos <- collapse::funique(combos[duplicated(combos), , drop = FALSE])
+
+    # Create a string representation for each combination
+    combo_strings <- vapply(seq_len(nrow(combos)), function(row){
+        paste(unlist(combos[row, , drop = FALSE], use.names = FALSE), collapse = " - ")
+    }, character(1))
+
+    paste(combo_strings, collapse = "; ")
 }
