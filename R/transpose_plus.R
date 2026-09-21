@@ -20,6 +20,10 @@
 #' variable combinations that should be transposed. To nest variables use the form:
 #' "var1 + var2 + var3 + ...".
 #' @param values A vector containing all value variables that should be transposed.
+#' In a wide to long transposition it can also be a named list with a single
+#' entry. The list name then determines the name of the id variable and the vector
+#' provides custom value expressions for the id variable. The length of these custom
+#' expressions has to match the number of expressions that every pivot list entry transposes.
 #' @param stack FALSE by default. If TRUE the variables are stacked below each other
 #' in a wide to long transposition. Otherwise the variables are put beside each other.
 #' @param statistics Available functions (only long to wider transposition):
@@ -173,6 +177,18 @@
 #'                    weight   = weight,
 #'                    na.rm    = TRUE)
 #'
+#' # Transpose a data frame from wide to long and use the values parameter as a
+#' # named list with a single entry to give the new categorical variable a custom
+#' # name and custom value expressions. The pivot list names then become the new
+#' # value variables.
+#' my_data <- dummy_data(1000, wide = TRUE)
+#'
+#' wide_df <- my_data |>
+#'     transpose_plus(preserve = c(year, state, household_id),
+#'                    values   = list(person_id = paste0("person_", 1:7)),
+#'                    pivot    = list(sex       = paste0("sex_",    1:7),
+#'                                    age       = paste0("age_",    1:7)))
+#'
 #' @export
 transpose_plus <- function(data_frame,
                            preserve   = NULL,
@@ -215,6 +231,38 @@ transpose_plus <- function(data_frame,
             formats[[variable]] <- NULL
             print_message("WARNING", "Format for variable '[variable]' does not exist and can't be applied.", variable = variable)
         }
+    }
+
+    # Values can be a named list with a single entry. The list name then determines
+    # the name of the id variable and the vector provides custom value expressions
+    # for it.
+    custom_key_values     <- NULL
+    values_expression     <- substitute(values)
+    values_is_custom_list <- is.call(values_expression) && identical(values_expression[[1]], quote(list))
+
+    if (values_is_custom_list && !is.null(names(pivot)) && all(nzchar(names(pivot)))){
+        custom_key_values <- values[[1]]
+
+        if (any(lengths(pivot) != length(custom_key_values))){
+            print_message("ERROR", c("The custom value expressions in <values> must have the same length",
+                                     "as every <pivot> list entry. Transposition will be aborted."))
+            return(invisible(NULL))
+        }
+
+        if (length(collapse::funique(custom_key_values)) != length(custom_key_values)){
+            print_message("ERROR", c("The custom value expressions in <values> must be unique.",
+                                     "Transposition will be aborted."))
+            return(invisible(NULL))
+        }
+
+        # Values and pivot parameter expressions are now swapped around to be able
+        # to use the existing pivoting mechanic. The list names become the new value
+        # variable names and all list entries get the name of the custom id variable.
+        # At the end down below there will be just one check inserted whether to
+        # use the custom keys, if there are any.
+        id_variable  <- names(values)[[1]]
+        values       <- names(pivot)
+        pivot        <- stats::setNames(pivot, rep(id_variable, length(pivot)))
     }
 
     # If all pivot list/vector entries have a name, transposition will be wide to long
@@ -766,6 +814,15 @@ transpose_plus <- function(data_frame,
                 data.table::setcolorder(c("BY", var_name, "VALUE"), after = length(preserve))
 
             transpose_df[[var_name]] <- as.character(transpose_df[[var_name]])
+
+            # If custom value expressions for the id variable were provided then
+            # use those instead of the variable names of the first pivot list entry.
+            # The position of a custom value corresponds to the position of the
+            # expression in the first pivot list entry.
+            if (i == 1 && !is.null(custom_key_values)){
+                mappings <- stats::setNames(custom_key_values, pivot[[1]])
+                transpose_df[[var_name]] <- mappings[as.character(transpose_df[[var_name]])]
+            }
 
             # Recode variable, if format is given. In a side by side transposition
             # with a shared list name, the format is only applied to the first list

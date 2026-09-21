@@ -98,6 +98,51 @@ multiple_joined2 <-
 expect_equal(multiple_joined, multiple_joined2, info = "Join multiple data frames on different variable names")
 
 
+# Join the first data frame on different variables with each following data frame
+df1d <- data.frame(key1 = c(1, 1, 2),
+                   key2 = c("a", "a", "b"),
+                   key3 = c(10, 20, 20),
+                   a    = "a")
+
+df2d <- data.frame(var1 = c(1, 2),
+                   var2 = c("a", "b"),
+                   b    = "b")
+
+df3d <- data.frame(any  = c("a", "a", "b"),
+                   name = c(10, 20, 20),
+                   c    = "c")
+
+different_keys_join <-
+    multi_join(list(df1d, df2d, df3d),
+               on = list(df1d = list(c("key1", "key2"), c("key3", "key2")),
+                         df2d = c("var1", "var2"),
+                         df3d = c("name", "any")))
+
+expect_equal(collapse::fnrow(different_keys_join), 3, info = "Join the first data frame on different variables with each following data frame")
+expect_true(all(different_keys_join[["b"]] == "b"), info = "Join the first data frame on different variables with each following data frame")
+expect_true(all(different_keys_join[["c"]] == "c"), info = "Join the first data frame on different variables with each following data frame")
+
+
+# Unquoted join variables give the same result as quoted ones
+different_keys_join2 <-
+    multi_join(list(df1d, df2d, df3d),
+               on = list(df1d = list(c(key1, key2), c(key3, key2)),
+                         df2d = c(var1, var2),
+                         df3d = c(name, any)))
+
+expect_equal(different_keys_join, different_keys_join2, info = "Unquoted join variables give the same result as quoted ones")
+
+
+# The last variable combination is repeated if too few are provided
+repeated_joined <-
+    multi_join(list(df1c, df2c, df3c),
+               on = list(df1c = list(c("key1", "key2")),
+                         df2c = c("var1", "var2"),
+                         df3c = c("any", "name")))
+
+expect_true(all(c("b", "c") %in% names(repeated_joined)), info = "The last variable combination is repeated if too few are provided")
+
+
 # multi_join can handle many to one joins
 base_df <- data.frame(key = c(1, 1, 2),
                       a   = c("a", "a", "a"))

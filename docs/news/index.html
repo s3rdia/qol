@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,24 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.5" id="qol-135">qol 1.3.5<a class="anchor" aria-label="anchor" href="#qol-135"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.3.6" id="qol-136---development">qol 1.3.6 - DEVELOPMENT<a class="anchor" aria-label="anchor" href="#qol-136---development"></a></h2>
+<div class="section level4">
+<h4 id="new-functionality-1-3-6">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-6"></a></h4>
+<ul><li>
+<code><a href="../reference/macro.html">macro()</a></code>: If a non character variable is passed it is now converted to character instead of aborting and throwing an error. (21.09.2026)</li>
+<li>
+<code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: In a wide to long transposition the <code>values</code> parameter can now take in a named list which carries custom variable expressions for the generated id variable. (21.09.2026)</li>
+<li>
+<code><a href="../reference/multi_join.html">multi_join()</a></code>: When joining multiple data frames on different variable names it is now possible to pass in a list of vectors for the first <code>on</code> list entry to enable joining each data frame on the first one on different variable names. (21.09.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="fixed-1-3-6">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-6"></a></h4>
+<ul><li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Some custom functions didn’t work consistently in different situations. This is fixed now. (21.09.2026)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.3.5" id="qol-135">qol 1.3.5<a class="anchor" aria-label="anchor" href="#qol-135"></a></h2><p class="text-muted">CRAN release: 2026-09-20</p>
 <div class="section level4">
 <h4 id="new-functionality-1-3-5">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-5"></a></h4>
 <ul><li>

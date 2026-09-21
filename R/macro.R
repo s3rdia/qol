@@ -49,8 +49,7 @@
 #' @export
 macro <- function(text){
     if (!is.character(text)){
-        print_message("ERROR", "<Text> must be a character. Macro will be aborted.")
-        return(invisible(text))
+        text <- as.character(text)
     }
 
     if (length(text) > 1){

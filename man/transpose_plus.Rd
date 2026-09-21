@@ -27,7 +27,11 @@ transpose_plus(
 variable combinations that should be transposed. To nest variables use the form:
 "var1 + var2 + var3 + ...".}
 
-\item{values}{A vector containing all value variables that should be transposed.}
+\item{values}{A vector containing all value variables that should be transposed.
+In a wide to long transposition it can also be a named list with a single
+entry. The list name then determines the name of the id variable and the vector
+provides custom value expressions for the id variable. The length of these custom
+expressions has to match the number of expressions that every pivot list entry transposes.}
 
 \item{stack}{FALSE by default. If TRUE the variables are stacked below each other
 in a wide to long transposition. Otherwise the variables are put beside each other.}
@@ -197,6 +201,18 @@ both <- my_data |>
                    formats  = list(sex = sex., age = age.),
                    weight   = weight,
                    na.rm    = TRUE)
+
+# Transpose a data frame from wide to long and use the values parameter as a
+# named list with a single entry to give the new categorical variable a custom
+# name and custom value expressions. The pivot list names then become the new
+# value variables.
+my_data <- dummy_data(1000, wide = TRUE)
+
+wide_df <- my_data |>
+    transpose_plus(preserve = c(year, state, household_id),
+                   values   = list(person_id = paste0("person_", 1:7)),
+                   pivot    = list(sex       = paste0("sex_",    1:7),
+                                   age       = paste0("age_",    1:7)))
 
 }
 \seealso{

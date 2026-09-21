@@ -1,68 +1,15 @@
-# Resubmission qol 1.3.5
-Last CRAN release was on 20.08.2026.
+# Resubmission qol 1.3.6
+Last CRAN release was on 20.09.2026.
 
 ### New functionality
 
-* `dummy_data()`: Can now generate a dummy data frame in wide format using the new `wide` parameter.
-* `transpose_plus()`: Added `statistics` parameter which enables the function to not only transpose sums but any available `statistic`. Can also take in a named list to output specific stats per variable like in `any_table()` and `summarise_plus()`.
-* `frequencies()`, `crosstabs()`: Now also capture the meta styling information.
-* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: New `output` option "no" prevents any styling and additionally sets `print = FALSE` so that only the table and meta information are captured.
-* `combine_into_workbook()`: Can now also combine `frequencies()` and `crosstabs()` outputs.
-* `run_script()`, `run_folder()`, `run_project()`, `run_project_parallel()`: Single files and entire folders can be silenced (code will not be executed) by adding a "_" to the end of the file or folder name.
-* `transpose_plus()`: Can now handle duplicate column names by making them unique.
-* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: When using the "in" operator it is now possible to capture NA values with a "." like "age in (1 2 3 4 .)".
-* `summarise_plus()`: New `convert` parameter converts all class variables back to their original type after summarising. Formatted variables become character to keep their format labels, unformatted variables receive the type they had in the original data frame.
-* `transpose_plus()`: In wide to long transposition, when putting variables side by side, then it is now possible to pass in multiple vectors of unequal length into `pivot`, if multilabel formats are applied which equalize the expression count.
-
-### Changed functionality
-
-* `summarise_plus()`: When only passing `class` variables without `values` and using the default `statistics` then only frequencies will be calculated instead of sums and frequencies, which would be identical.
-* `transpose_plus()`: Instead of aborting when no values are passed, the function now generates a variable to output unweighted results.
-* `transpose_plus()`: Received a new parameter `summarise` which summarises the data before transposing. This is the default behaviour when using formats, but was not without formats. `summarise` is TRUE by default.
-* `rename_multi()`: Instead of throwing an error when a variable name already exists in the data frame, this renaming operation will be omitted without error instead. 
-* `transpose_plus()`: Now has a new default wide to long behaviour by setting variables beside each other. When setting the new `stack` parameter to TRUE, the old default behaviour is triggered.
-* `sub_string()`: If a numeric variable is passed, then now the function doesn't throw an error anymore, but rather takes the substring of the numeric values.
-* `compute.()`, `if.()`, `else_if.()`, `else.()`: On a type mismatch the type of the newly calculated value now always wins instead of converting everything to character and emitting a warning.
-* `summarise_plus()`: Class variables are now converted to either character or numeric by default instead of being returned as factors. Set the new `convert` parameter to FALSE to get back the past behaviour.
+* `macro()`: If a non character variable is passed it is now converted to character instead of aborting and throwing an error.
+* `transpose_plus()`: In a wide to long transposition the `values` parameter can now take in a named list which carries custom variable expressions for the generated id variable.
+* `multi_join()`: When joining multiple data frames on different variable names it is now possible to pass in a list of vectors for the first `on` list entry to enable joining each data frame on the first one on different variable names.
 
 ### Fixed
 
-* `combine_into_workbook()`: Fixed table of contents example not working as intended.
-* `crosstabs()`: If a vector of variables is provided for `columns` then now the first variable will be picked instead of the second one.
-* `else_if()`, `else.()`: When assigning to multiple variables in a do-over-loop situation the functions would only consider the first assignment. This is fixed now.
-* `transpose_plus()`: The function had a serious flaw. When transposing multiple variables at once the results were always picked from the all nested results even though they have to be picked from their respective combination. This is fixed now.
-* `transpose_plus()`: If an invalid format is passed, this now throws a warning instead of removing all formats silently.
-* `remove_stat_extension()`: When a vector was passed only the last element was considered. Now all passed stat extensions are removed.
-* `interval_format()`: Include boundaries weren't detected correctly, this is fixed now.
-* `summarise_plus()`: Doesn't error anymore if the `class` variable is identical to the `values` variable.
-* `any_table()`: Tabulating pre summarised data ran into an error if the `value` variables had no statistic extensions. This is fixed now.
-* `any_table()`: Column header columns could be sorted in the wrong order if a statistic extension was also part of a label in some way. The sorting is now adjusted that only the real extensions are detected.
-* `recode_multi()`: When recoding a variable into numeric values then the desired numeric values are output instead of the factor values.
-* `recode_multi()`: When a variable is invalid then the function aborts with an error message instead of just crashing.
-* `if.()`, `else_if.()`, `else.()`, `ifelse_multi()`, `where.()`: When a variable inside a condition or an assignment is invalid then the function aborts with an error message instead of just crashing.
-* `import_data()`, `import_multi()`: Should now detect csv and txt encoding correctly.
-* `export_with_style()`: First column isn't set up as row header column anymore it is now treated as part of the table.
-* `compute.()`: If the same variable name was used more than once for an assignment, the function now returns the last result for this variable instead of the first. 
-* `concat()`: Now throws an error if a variable name is not part of the data frame.
-* `concat()`: Now also works within `compute.()`.
-* `sub_string()`: Now also works within `compute.()`.
-* `transpose_plus()`: When using multiple statistics the new variable names are now named as intended.
-* `ifelse_multi()`: Now also works within `compute.()`.
-* `discrete_format()`: When the keyword "other" is used while the original values are characters, they will now stay as provided instead of being translated into all lower case.
-* `summarise_plus()`: Numeric variables stored as character no longer lose their original characters (e.g. leading zeros) when a format is applied to another variable. They now stay as character variables.
-* `dummy_data()`: Fixed a rare edge case were fewer observations were generated than intended.
-* `multi_join()`: When joining more than two data frames with different join methods, then now the observations which are added by a widening join (e.g. right, full, outer) are kept by the following joins instead of being dropped.
-
-### Optimization
-
-* `apply_formats()`: Removed unnecessary calculation. Additionally optimzed checking for NA values for discrete formats.
-* `summarise_plus()`: With `nesting = "all" or "single` a list of logical vectors containing non NA observations is now computed once before generating all combinations, which allows to remove the individual data frame scanning per combination.
-* `any_table()`, `frequencies()`, `crosstabs()`, `export_with_style()`: Moved column width and row height adjustments before the background coloring to make it run only over the table span instead of the whole sheet.
-
-### Additionally
-
-* `any_table()`, `transpose_plus()`: The deduplicated variable names are now cleaned up so that they only receive one duplicate suffix.
-* `multi_join()`: Now displays duplicated variable combinations in the error message.
+* `compute.()`: Some custom functions didn't work consistently in different situations. This is fixed now.
 
 
 ## R CMD check results

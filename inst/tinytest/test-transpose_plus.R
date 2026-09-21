@@ -257,6 +257,19 @@ expect_equal(names(wide_to_long), c("year", "sex", "hello", "world"),
              info = "Transpose multiple variables from wide to long (side by side)")
 
 
+# Wide to long transposition with custom values
+wide_to_long <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   values   = list(category = c("cat1", "cat2", "cat3")),
+                   pivot    = list(income   = c("Total", "Male", "Female"),
+                                   sex      = c("low", "middle", "high")))
+
+expect_equal(names(wide_to_long), c("year", "category", "income", "sex"),
+             info = "Wide to long transposition with custom values")
+expect_equal(collapse::funique(wide_to_long[["category"]]), c("cat1", "cat2", "cat3"),
+             info = "Wide to long transposition with custom values")
+
+
 # Side by side wide to long transposition only applies format to the first list entry
 sex. <- discrete_format("Total"  = c("Male", "Female"),
                         "Male"   = "Male",
@@ -420,6 +433,28 @@ wide_df <- dummy_wide_df |>
 
 expect_error(print_stack_as_messages("ERROR"), "The new result columns can only be set side by side in a wide",
              info = "Abort side by side transposition, if list entries contain a unique variable name but also others")
+
+
+# Abort side by side transposition, if the custom value expressions do not match the pivot length
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   values   = list(category = c("cat1", "cat2")),
+                   pivot    = list(income   = c("Total", "Male", "Female"),
+                                   sex      = c("low", "middle", "high")))
+
+expect_error(print_stack_as_messages("ERROR"), "The custom value expressions in <values> must have the same length",
+             info = "Abort side by side transposition, if the custom value expressions do not match the pivot length")
+
+
+# Abort side by side transposition, if the custom value expressions are not unique
+wide_df <- dummy_wide_df |>
+    transpose_plus(preserve = year,
+                   values   = list(category = c("cat", "cat", "cat")),
+                   pivot    = list(income   = c("Total", "Male", "Female"),
+                                   sex      = c("low", "middle", "high")))
+
+expect_error(print_stack_as_messages("ERROR"), "The custom value expressions in <values> must be unique",
+             info = "Abort side by side transposition, if the custom value expressions are not unique")
 
 
 set_no_print()

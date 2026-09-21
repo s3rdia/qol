@@ -1,6 +1,31 @@
 # Changelog
 
+## qol 1.3.6 - DEVELOPMENT
+
+#### New functionality
+
+- [`macro()`](https://s3rdia.github.io/qol/reference/macro.md): If a non
+  character variable is passed it is now converted to character instead
+  of aborting and throwing an error. (21.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  In a wide to long transposition the `values` parameter can now take in
+  a named list which carries custom variable expressions for the
+  generated id variable. (21.09.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  When joining multiple data frames on different variable names it is
+  now possible to pass in a list of vectors for the first `on` list
+  entry to enable joining each data frame on the first one on different
+  variable names. (21.09.2026)
+
+#### Fixed
+
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Some custom functions didn’t work consistently in different
+  situations. This is fixed now. (21.09.2026)
+
 ## qol 1.3.5
+
+CRAN release: 2026-09-20
 
 #### New functionality
 

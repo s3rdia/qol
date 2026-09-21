@@ -18,8 +18,12 @@ following data frames will be joined on the first one.}
 
 \item{on}{The key variables on which the data frames should be joined. If a
 character vector is provided, the function assumes all the variables are in every
-data frame. To join on different  variable names a list of character vectors has
-to be provided.}
+data frame. To join on different variable names a named list of character
+vectors has to be provided, with one list entry per data frame. If the first
+data frame should be joined on different variables with each following data
+frame, its list entry can be a list of character vectors with one vector per
+join. If fewer combinations are provided than there are remaining data frames,
+the last combination is repeated.}
 
 \item{how}{A character vector containing the join method names. Available methods are:
 left, right, inner, full, outer, left_inner and right_inner.}
@@ -49,6 +53,10 @@ in the final dataset.
 do more joins at the same time. Additionally to what Merge can do, this function
 also makes use of the Proc SQL possibility to join datasets on different variable
 names.
+
+All data frames are joined on the first one. The first data frame can therefore
+be joined on different variables with each following data frame, similar to a
+SQL statement with multiple JOIN clauses.
 }
 \examples{
 # Example data frames
@@ -107,5 +115,24 @@ multiple_joined3 <- multi_join(list(df1c, df2c, df3c),
                                on = list(df1c = c("key1", "key2"),
                                          df2c = c("var1", "var2"),
                                          df3c = c("any", "name")))
+
+# Joining the first data frame on different variables with each following data frame
+df1d <- data.frame(key1 = c(1, 1, 2),
+                   key2 = c("a", "a", "b"),
+                   key3 = c(10, 20, 20),
+                   a    = "a")
+
+df2d <- data.frame(var1 = c(1, 2),
+                   var2 = c("a", "b"),
+                   b    = "b")
+
+df3d <- data.frame(any  = c("a", "a", "b"),
+                   name = c(10, 20, 20),
+                   c    = "c")
+
+multiple_joined4 <- multi_join(list(df1d, df2d, df3d),
+                               on = list(df1d = list(c("key1", "key2"), c("key3", "key2")),
+                                         df2d = c("var1", "var2"),
+                                         df3d = c("name", "any")))
 
 }

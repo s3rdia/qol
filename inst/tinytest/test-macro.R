@@ -30,6 +30,11 @@ expect_equal(text_vector, c("The current year is 2026",
                             "The current year is 2026",
                             "The current year is 2026"), info = "Resolving character vector containing macro variables")
 
+# Resolving macro coerces non-character text to character
+text <- macro(1)
+
+expect_equal(text, "1", info = "Resolving macro coerces non-character text to character")
+
 ###############################################################################
 # Warning checks
 ###############################################################################
@@ -62,16 +67,6 @@ expect_warning(print_stack_as_messages("WARNING"), "Macro variable \'&year\' is 
                info = "Resolving macro variable throws a warning if macro variable is neither character nor numeric")
 
 expect_equal(text, "The current year is year", info = "Resolving macro variable throws a warning if macro variable is neither character nor numeric")
-
-###############################################################################
-# Abort checks
-###############################################################################
-
-# Resolving macro aborts if something other than a text is provided
-text <- macro(1)
-
-expect_error(print_stack_as_messages("ERROR"), "<Text> must be a character. Macro will be aborted.",
-             info = "Resolving macro aborts if something other than a text is provided")
 
 
 set_no_print()

@@ -477,15 +477,34 @@ get_custom_functions <- function(expression, env){
             NULL
         })
 
-        # If expression is a function check whether it is a function from this package
+        # If expression is a function check whether it expects a data frame
         if (is.function(custom_function)){
             function_args <- names(formals(custom_function))
 
-            # If the first function argument is "data_frame" then the function is
-            # from this package. In this case "data_frame" need to be added as first
-            # argument so that the function can be evaluated correctly.
+            # Translates all nested function calls first, so that data frame aware
+            # functions also get their "data_frame" argument injected when they are
+            # used inside of other functions.
+            expression <- as.call(c(expression[[1]],
+                                    as.list(lapply(as.list(expression)[-1],
+                                                   get_custom_functions, env = env))))
+
+            # If the first function argument receives the data frame then the
+            # "data_frame" argument has to be added as first argument so that the
+            # function can be evaluated correctly. Base masking functions that
+            # evaluate expressions in their given data object are
+            # excluded, because for them the data frame is already implied.
             if (length(function_args) > 0 && function_args[1] == "data_frame"){
-                expression <- as.call(c(expression[[1]], quote(data_frame), as.list(expression[-1])))
+
+                if (is.symbol(expression[[1]])){
+                    function_name <- as.character(expression[[1]])
+                }
+                else{
+                    function_name <- ""
+                }
+
+                if (!function_name %in% c("with", "within", "transform")){
+                    expression <- as.call(c(expression[[1]], quote(data_frame), as.list(expression[-1])))
+                }
             }
         }
     }

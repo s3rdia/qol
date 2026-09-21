@@ -300,6 +300,21 @@ symbol_is_data_frame_column <- function(symbol, value){
                 return(TRUE)
             }
         }
+
+        # The data frame which serves as the evaluation environment (e.g. the
+        # "data_frame" argument of compute.()) normally ends up in "skippable"
+        # because its name matches a formal argument name, although it is
+        # already fully evaluated at that point.
+        if ("data_frame" %in% ls(frame, all.names = TRUE)){
+            data_frame_binding <- tryCatch(get0("data_frame", envir = frame, inherits = FALSE),
+                                           error = function(e) NULL)
+
+            if (inherits(data_frame_binding, "data.frame") &&
+                symbol %in% names(data_frame_binding) &&
+                identical(value, data_frame_binding[[symbol]])){
+                return(TRUE)
+            }
+        }
     }
 
     FALSE

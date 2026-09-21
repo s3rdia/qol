@@ -8,8 +8,12 @@
 #' following data frames will be joined on the first one.
 #' @param on The key variables on which the data frames should be joined. If a
 #' character vector is provided, the function assumes all the variables are in every
-#' data frame. To join on different  variable names a list of character vectors has
-#' to be provided.
+#' data frame. To join on different variable names a named list of character
+#' vectors has to be provided, with one list entry per data frame. If the first
+#' data frame should be joined on different variables with each following data
+#' frame, its list entry can be a list of character vectors with one vector per
+#' join. If fewer combinations are provided than there are remaining data frames,
+#' the last combination is repeated.
 #' @param how A character vector containing the join method names. Available methods are:
 #' left, right, inner, full, outer, left_inner and right_inner.
 #' @param keep_indicators FALSE by default. If TRUE, a variable for each data frame
@@ -29,6 +33,10 @@
 #' do more joins at the same time. Additionally to what Merge can do, this function
 #' also makes use of the Proc SQL possibility to join datasets on different variable
 #' names.
+#'
+#' All data frames are joined on the first one. The first data frame can therefore
+#' be joined on different variables with each following data frame, similar to a
+#' SQL statement with multiple JOIN clauses.
 #'
 #' @return
 #' Returns a single data frame with joined variables from all given data frames.
@@ -90,6 +98,25 @@
 #'                                on = list(df1c = c("key1", "key2"),
 #'                                          df2c = c("var1", "var2"),
 #'                                          df3c = c("any", "name")))
+#'
+#' # Joining the first data frame on different variables with each following data frame
+#' df1d <- data.frame(key1 = c(1, 1, 2),
+#'                    key2 = c("a", "a", "b"),
+#'                    key3 = c(10, 20, 20),
+#'                    a    = "a")
+#'
+#' df2d <- data.frame(var1 = c(1, 2),
+#'                    var2 = c("a", "b"),
+#'                    b    = "b")
+#'
+#' df3d <- data.frame(any  = c("a", "a", "b"),
+#'                    name = c(10, 20, 20),
+#'                    c    = "c")
+#'
+#' multiple_joined4 <- multi_join(list(df1d, df2d, df3d),
+#'                                on = list(df1d = list(c("key1", "key2"), c("key3", "key2")),
+#'                                          df2d = c("var1", "var2"),
+#'                                          df3d = c("name", "any")))
 #'
 #' @export
 multi_join <- function(data_frames,
@@ -163,6 +190,22 @@ multi_join <- function(data_frames,
             if (is.symbol(element)){
                 as.character(element)
             }
+            # A nested list means the first data frame is joined on different
+            # variables with each following data frame. Each list entry is one
+            # join variable combination.
+            else if (is.call(element) && identical(element[[1]], quote(list))){
+                lapply(as.list(element)[-1], function(inner_element){
+                    if (is.symbol(inner_element)){
+                        as.character(inner_element)
+                    }
+                    else if (is.call(inner_element) && identical(inner_element[[1]], quote(c))){
+                        as.character(as.list(inner_element)[-1])
+                    }
+                    else{
+                        as.character(inner_element)
+                    }
+                })
+            }
             else{
                 sapply(as.list(element)[-1], as.character)
             }
@@ -170,8 +213,6 @@ multi_join <- function(data_frames,
     }
 
     if (is.list(on)){
-        base_on <- on[[1]]
-
         # If all list entries have a name
         if (!is.null(names(on)) && all(nzchar(names(on)))){
             # Check if number of list entries matches number of data frames
@@ -181,6 +222,38 @@ multi_join <- function(data_frames,
             }
 
             unequal_names <- TRUE
+
+            # Number of joins equals the number of data frames minus one
+            join_count <- length(data_frames) - 1
+
+            # The first data frame can either provide the same join variables
+            # for every join (a character vector) or different join variables
+            # for each join (a list of character vectors, with one entry per
+            # join).
+            base_on <- on[[1]]
+
+            if (is.list(base_on)){
+                # If not enough variable combinations are provided, the last
+                # combination is repeated until it fits the remaining data frames.
+                if (length(base_on) < join_count){
+                    base_on <- c(base_on, rep(base_on[length(base_on)], join_count - length(base_on)))
+                }
+                # If too many variable combinations are provided, cut the excess
+                else if (length(base_on) > join_count){
+                    base_on <- base_on[seq_len(join_count)]
+                }
+            }
+            # The same variable combination is used for every join
+            else{
+                base_on <- rep(list(base_on), join_count)
+            }
+
+            # All other data frames have exactly one join variable combination
+            if (!all(vapply(on[-1], is.character, logical(1)))){
+                print_message("ERROR", c("The second and all following data frames in <on> must provide their",
+                                         "join variables as a character vector. Join will be aborted."))
+                return(invisible(NULL))
+            }
         }
         # If a list entry is missing a name
         else{
@@ -217,9 +290,18 @@ multi_join <- function(data_frames,
             }
         }
         else{
-            if (!all(on[[i]] %in% names(data_frames[[i]]))){
+            # The first data frame can have different join variables for each
+            # join, so all its combinations have to be checked.
+            if (i == 1){
+                variables_to_check <- unique(unlist(base_on))
+            }
+            else{
+                variables_to_check <- on[[i]]
+            }
+
+            if (!all(variables_to_check %in% names(data_frames[[i]]))){
                 print_message("ERROR", c("Not all <on> variables ([on]) appear in data frame [name].",
-										 "Join will be aborted."), on = on, name = i)
+                                         "Join will be aborted."), on = variables_to_check, name = i)
                 return(invisible(NULL))
             }
         }
@@ -357,21 +439,33 @@ multi_join <- function(data_frames,
         else{
             to_join_on <- on[[i]]
 
+            # The join variables of the first data frame for this specific join
+            base_join_vars <- base_on[[i - 1]]
+
             # Check if the same number of 'on' variables are provided
-            if (length(base_on) != length(to_join_on)){
+            if (length(base_join_vars) != length(to_join_on)){
                 print_message("ERROR", c("Unequal number of <on> variables provided: [on1] vs [on_i].",
-                                         "Join will be aborted."), on1 = base_on, on_i = to_join_on)
+                                         "Join will be aborted."), on1 = base_join_vars, on_i = to_join_on)
                 return(invisible(NULL))
             }
 
-            join_variables  <- stats::setNames(to_join_on, base_on)
+            join_variables  <- stats::setNames(to_join_on, base_join_vars)
         }
 
         # Check for intersecting variable names and clear them before the join,
         # because otherwise it can happen that multiple variables with the exact
         # same name get created through the join below.
-        joined_df_var_names <- joined_df_var_names[!joined_df_var_names %in% on]
-        to_join_var_names   <- to_join_var_names[!to_join_var_names %in% on]
+        if (!unequal_names){
+            joined_exclude  <- on
+            to_join_exclude <- on
+        }
+        else{
+            joined_exclude  <- base_on[[i - 1]]
+            to_join_exclude <- on[[i]]
+        }
+
+        joined_df_var_names <- joined_df_var_names[!joined_df_var_names %in% joined_exclude]
+        to_join_var_names   <- to_join_var_names[!to_join_var_names %in% to_join_exclude]
 
         duplicate_names <- intersect(joined_df_var_names, to_join_var_names)
 
