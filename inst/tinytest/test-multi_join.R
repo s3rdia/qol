@@ -80,6 +80,14 @@ multiple_joined <- multi_join(list(df1, df2, df3), on = "key")
 expect_true(all(c("b", "c") %in% names(multiple_joined)), info = "Join more than two data frames")
 
 
+# Join data frames with renaming variables
+multiple_joined <- multi_join(list(df1 |> rename_multi(a = x),
+                                   df2 |> rename_multi(b = y),
+                                   df3 |> rename_multi(c = z)), on = "key")
+
+expect_true(all(c("x", "y", "z") %in% names(multiple_joined)), info = "Join data frames with renaming variables")
+
+
 # Join multiple data frames on different variable names
 multiple_joined <-
     multi_join(list(df1c, df2c, df3c),

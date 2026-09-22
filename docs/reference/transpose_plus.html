@@ -229,13 +229,6 @@ with no effort, just with the help of multilabels.</p>
 <span>                   weight   <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                   na.rm    <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Transpose back from wide to long and put results beside each other. The list</span></span>
-<span><span class="co"># entry names determine the new variable names.</span></span>
-<span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">transpose_plus</span><span class="op">(</span>preserve <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">age</span><span class="op">)</span>,</span>
-<span>                   pivot    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
-<span>                                   education <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"middle"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Transpose back from wide to long and put results below each other by setting</span></span>
 <span><span class="co"># stack to TRUE.</span></span>
 <span><span class="va">wide_to_long</span> <span class="op">&lt;-</span> <span class="va">long_to_wide</span> <span class="op">|&gt;</span></span>

@@ -98,6 +98,11 @@ DEPTH. With this functions these variables are dropped.</p><ul><li><p><strong><c
 <span>                   nesting    <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>                   na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">drop_type_vars</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The function also works when data frames are stored inside a list. It then</span></span>
+<span><span class="co"># drops the variables from every data frame inside the list.</span></span>
+<span><span class="va">type_df</span>   <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="summarise_plus.html">summarise_plus</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">type_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">type_df</span>, <span class="va">type_df</span>, <span class="va">type_df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">drop_type_vars</span><span class="op">(</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

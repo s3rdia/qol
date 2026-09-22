@@ -76,6 +76,21 @@ expect_true(collapse::fsum(new_df[["var1"]] == new_df[["round1"]]) == 0,
 expect_true(collapse::fsum(new_df[["var2"]] == new_df[["round2"]]) == 0,
             info = "Round multiple variables in a data frame and add them as new variables")
 
+
+# Drop automatically generated type variables
+type_df <- dummy_df |> summarise_plus() |> drop_type_vars()
+
+expect_true(collapse::fncol(type_df) == 1, info = "Drop automatically generated type variables")
+
+
+# Drop automatically generated type variables in list scenario
+type_df   <- dummy_df |> summarise_plus()
+type_list <- list(type_df, type_df, type_df) |> drop_type_vars()
+
+expect_true(collapse::fncol(type_list[[1]]) == 1, info = "Drop automatically generated type variables in list scenario")
+expect_true(collapse::fncol(type_list[[2]]) == 1, info = "Drop automatically generated type variables in list scenario")
+expect_true(collapse::fncol(type_list[[3]]) == 1, info = "Drop automatically generated type variables in list scenario")
+
 ###############################################################################
 # Abort checks
 ###############################################################################

@@ -35,9 +35,23 @@
 #'                    na.rm      = TRUE) |>
 #'     drop_type_vars()
 #'
+#' # The function also works when data frames are stored inside a list. It then
+#' # drops the variables from every data frame inside the list.
+#' type_df   <- my_data |> summarise_plus()
+#' type_list <- list(type_df, type_df, type_df) |> drop_type_vars()
+#'
 #' @export
 drop_type_vars <- function(data_frame){
-    data_frame |> dropp("TYPE", "TYPE_NR", "DEPTH")
+    if (data.table::is.data.table(data_frame)){
+        data_frame <- data_frame |> dropp("TYPE", "TYPE_NR", "DEPTH")
+    }
+    else{
+        for (i in seq_along(data_frame)){
+            data_frame[[i]] <- data_frame[[i]] |> dropp("TYPE", "TYPE_NR", "DEPTH")
+        }
+    }
+
+    data_frame
 }
 
 

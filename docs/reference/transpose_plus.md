@@ -213,13 +213,6 @@ long_to_wide <- my_data |>
                    weight   = weight,
                    na.rm    = TRUE)
 
-# Transpose back from wide to long and put results beside each other. The list
-# entry names determine the new variable names.
-wide_to_long <- long_to_wide |>
-    transpose_plus(preserve = c(year, age),
-                   pivot    = list(sex       = c("Total", "Male", "Female"),
-                                   education = c("low", "middle", "high")))
-
 # Transpose back from wide to long and put results below each other by setting
 # stack to TRUE.
 wide_to_long <- long_to_wide |>

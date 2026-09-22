@@ -169,9 +169,218 @@ get_origin_as_char <- function(original, substituted){
             args_to_char(substituted)
         }
     }, error = function(e){
-        # If evaluation failed (object not found), convert the symbol name
-        args_to_char(substituted)
+        # If evaluation failed (object not found), convert the symbol names.
+        # Symbols which are parameters of an enclosing custom function are
+        # resolved to the argument values provided by the user of that custom
+        # function.
+        args_to_char_with_params(substituted)
     })
+}
+
+
+#' Convert Variable Names From An Expression
+#'
+#' @description
+#' args_to_char_with_params: is used when the direct evaluation of an argument fails
+#' (e.g. because the argument contains a  bare variable name which is not defined
+#' in the calling environment). It also resolves symbols which correspond to
+#' parameters of an enclosing custom function.
+#'
+#' @param argument The captured expression of the function argument.
+#'
+#' @return
+#' Returns a character vector of variable names.
+#'
+#' @noRd
+args_to_char_with_params <- function(argument){
+    # Build a snapshot of the calling stack once and resolve all symbols
+    # against that same snapshot.
+    args_to_char_with_params_rec(argument, build_resolution_cache())
+}
+
+
+#' Convert Variable Names From An Expression
+#'
+#' @description
+#' The snapshot of the calling stack is passed down so that every symbol is resolved
+#' against the same set of frames.
+#'
+#' @param argument The captured expression of the function argument.
+#' @param snapshot The snapshot of the calling stack.
+#'
+#' @return
+#' Returns a character vector of variable names.
+#'
+#' @noRd
+args_to_char_with_params_rec <- function(argument, snapshot){
+    # Null: Return as is
+    if (is.null(argument)){
+        return(NULL)
+    }
+
+    # Single Character: Just return as is
+    if (is.character(argument)){
+        return(argument)
+    }
+
+    # Single symbol: Convert to character and return. Symbols which are
+    # parameters of an enclosing custom function are resolved to the argument
+    # values provided by the user before that.
+    if (is.symbol(argument)){
+        value <- resolve_custom_function_argument(argument, snapshot)
+
+        if (!is.null(value)){
+            return(value)
+        }
+
+        return(as.character(argument))
+    }
+
+    # Vector/List: Convert all elements to character with parameter resolution.
+    # vapply replicates the exact behaviour of args_to_char: names are
+    # preserved and a nested element which resolves to more than one value
+    # results in an error.
+    if (is.call(argument) && (identical(argument[[1]], quote(c)) ||
+                              identical(argument[[1]], quote(list)))){
+        return(vapply(argument[-1], args_to_char_with_params_rec,
+                      character(1), snapshot = snapshot))
+    }
+
+    # If there is a ":" in the call, this returns the call as is so that it can be used
+    # as in e.g. keep/dropp to make use of ranges.
+    if (is.call(argument) && identical(argument[[1]], quote(`:`))){
+        return(paste(as.character(argument[[2]]),
+                     as.character(argument[[3]]),
+                     sep = ":"))
+    }
+
+    stop(" X ERROR: Something went wrong with the argument conversion.\n",
+         "          Only single character and symbols, as well as vectors and flat lists are allowed.\n",
+         "          Function will be aborted.")
+}
+
+
+#' Build A Snapshot Of The Calling Stack
+#'
+#' @description
+#' Walks the calling stack once and stores every frame together with its formal
+#' argument names and a flag whether the frame belongs to a package (i.e. a
+#' namespace). Additionally the union of all formals of custom (non-package)
+#' functions is computed.
+#'
+#' @return
+#' A list with the elements "frames" (one entry per frame, NULL when the call
+#' could not be retrieved) and "union" (the unique formal names of all custom
+#' functions on the stack).
+#'
+#' @noRd
+build_resolution_cache <- function(){
+    number_of_frames <- sys.nframe()
+    frames           <- vector("list", number_of_frames)
+    main_union       <- character(0)
+
+    for (i in seq_len(number_of_frames)){
+        fn <- tryCatch(sys.function(i), error = function(e) NULL)
+
+        if (is.null(fn)){
+            frames[[i]] <- NULL
+            next
+        }
+
+        frame <- list(ns    = isNamespace(environment(fn)),
+                      fname = names(formals(fn)),
+                      env   = sys.frame(i))
+
+        frames[[i]] <- frame
+
+        if (!frame[["ns"]]){
+            main_union <- c(main_union, frame[["fname"]])
+        }
+    }
+
+    list(frames = frames, union = unique(main_union))
+}
+
+
+#' Resolve The Argument Value Of An Enclosing Custom Function
+#'
+#' @description
+#' Looks up the snapshot of the calling stack for a function which is not a
+#' package function and contains a formal argument with the name of the given
+#' symbol. In that case the argument value provided to the custom function by
+#' its caller is returned as character.
+#'
+#' @param argument The symbol to look up in the snapshot of the calling stack.
+#' @param snapshot The snapshot of the calling stack.
+#'
+#' @return
+#' The argument value as character or NULL when no enclosing custom function
+#' parameter matches the symbol.
+#'
+#' @noRd
+resolve_custom_function_argument <- function(argument, snapshot){
+    argument <- as.character(argument)
+
+    # An empty expression (e.g. a missing function argument which was captured
+    # with substitute()) cannot be resolved.
+    if (length(argument) == 0 || is.na(argument)){
+        return(NULL)
+    }
+
+    # Fast path: the symbol does not name a parameter of any custom function on
+    # the stack, so it cannot be resolved at all.
+    if (!(argument %in% snapshot$union)){
+        return(NULL)
+    }
+
+    # Walk the frames from the innermost to the outermost one
+    for (fr in snapshot$frames){
+        if (is.null(fr) || fr$ns){
+            next
+        }
+
+        if (!(argument %in% fr$fname)){
+            next
+        }
+
+        # Get the expression handed over for this parameter. This does not
+        # evaluate the argument, it only substitutes the symbol in the calling
+        # frame.
+        arg_expr <- tryCatch(
+            eval(substitute(substitute(sym, env),
+                            list(sym = as.name(argument), env = fr$env))),
+            error = function(e) NULL
+        )
+
+        if (is.null(arg_expr)){
+            next
+        }
+
+        # Literal values provided by the user of the custom function
+        if (is.character(arg_expr) || is.numeric(arg_expr)){
+            return(as.character(arg_expr))
+        }
+
+        # A bare symbol (e.g. a wrapper parameter which was passed on from an
+        # even more outer custom function, or a data frame column name). Try to
+        # force the contained value. If that fails, keep the symbol name.
+        if (is.symbol(arg_expr)){
+            value <- tryCatch(get(as.character(arg_expr), envir = fr$env,
+                                  inherits = FALSE),
+                              error = function(e) NULL)
+
+            if (is.character(value) || is.numeric(value)){
+                return(as.character(value))
+            }
+
+            return(as.character(arg_expr))
+        }
+
+        # Any other expression (e.g. c(...)) is converted recursively
+        return(args_to_char_with_params_rec(arg_expr, snapshot))
+    }
+
+    NULL
 }
 
 

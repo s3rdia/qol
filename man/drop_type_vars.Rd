@@ -43,4 +43,9 @@ all_possible <- my_data |>
                    na.rm      = TRUE) |>
     drop_type_vars()
 
+# The function also works when data frames are stored inside a list. It then
+# drops the variables from every data frame inside the list.
+type_df   <- my_data |> summarise_plus()
+type_list <- list(type_df, type_df, type_df) |> drop_type_vars()
+
 }
