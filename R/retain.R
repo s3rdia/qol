@@ -402,6 +402,15 @@ retain_stat <- function(data_frame,
                           convert    = FALSE,
                           merge_back = TRUE))
 
+    # Compute the cumulative sum for every value within the same group
+    if ("cum_sum" %in% tolower(statistics)){
+        data_frame <- data_frame |>
+            collapse::add_vars(stats::setNames(
+                collapse::fcumsum(data_frame[values],
+                                  g = collapse::GRP(data_frame, by)),
+                paste0(values, "_cum_sum")))
+    }
+
     print_closing()
 
     if (length(values) == 1 && length(statistics) == 1){

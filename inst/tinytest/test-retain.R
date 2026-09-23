@@ -114,6 +114,20 @@ expect_equal(test_df[["var_num_sum"]],  c(1, 1, NA, 2, 2), info = "Retain multip
 expect_equal(test_df[["var_num2_sum"]], c(3, 3, 3, 9, 9), info = "Retain multiple sums")
 
 
+# Retain cumulative sum
+test_df[["retain_cum_sum"]] <- test_df |>
+      retain_stat(values = var_num2, statistics = "cum_sum")
+
+expect_equal(test_df[["retain_cum_sum"]], c(1, 3, 6, 10, 15), info = "Retain cumulative sum")
+
+
+# Retain cumulative sum with by
+test_df[["retain_cum_sum"]] <- test_df |>
+      retain_stat(values = var_num2, by = var_by, statistics = "cum_sum")
+
+expect_equal(test_df[["retain_cum_sum"]], c(1, 3, 3, 4, 9), info = "Retain cumulative sum with by")
+
+
 # Retain columns in a data frame and order them to the front
 retain_df <- dummy_df |>
       retain_variables(age, sex, income)

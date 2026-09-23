@@ -20,6 +20,8 @@
   When passing in a list of data frames, the function now removes the
   variables `TYPE`, `TYPE_NR` and `DEPTH` from all data frames within
   the list. (22.09.2026)
+- [`retain_stat()`](https://s3rdia.github.io/qol/reference/retain.md):
+  Can now generate cumulative values. (23.09.2026)
 
 #### Fixed
 

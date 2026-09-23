@@ -7,6 +7,7 @@ Last CRAN release was on 20.09.2026.
 * `transpose_plus()`: In a wide to long transposition the `values` parameter can now take in a named list which carries custom variable expressions for the generated id variable.
 * `multi_join()`: When joining multiple data frames on different variable names it is now possible to pass in a list of vectors for the first `on` list entry to enable joining each data frame on the first one on different variable names.
 * `drop_type_vars()`: When passing in a list of data frames, the function now removes the variables `TYPE`, `TYPE_NR` and `DEPTH` from all data frames within the list. 
+* `retain_stat()`: Can now generate cumulative values.
 
 ### Fixed
 
