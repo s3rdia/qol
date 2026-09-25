@@ -2181,6 +2181,11 @@ any_table <- function(data_frame,
         any_header <- any_header |> setcolorder_by_pattern(value_sort)
     }
 
+    if (pre_summed){
+        any_tab    <- any_tab    |> setcolorder_by_pattern(value_sort)
+        any_header <- any_header |> setcolorder_by_pattern(value_sort)
+    }
+
     # Reorder variables by blocks depending on the root variable names
     if (tolower(order_by) == "blocks"){
         root_names <- collapse::funique(sub("_[^_]*$", "", names(any_header)))
@@ -2899,12 +2904,17 @@ build_multi_header <- function(var_names,
                                any_header,
                                var_labels,
                                style){
-    # Make sure no statistic is part of the variable labels
-    extensions <- c("sum", "pctgroup", "pcttotal", "pctvalue", "pctblock", "pct",
-                    "freqg0", "freq", "mean", "median", "mode", "min", "max", "first",
-                    "last", "sumwgt", "p[0-9]+$", "sd", "variance", "missing")
+    # Make sure no statistic is part of the variable labels. Statistic extensions
+    # are only recognized if they appear at the very end of a variable name, preceded
+    # by an underscore. This ensures that statistic keywords are not detected within
+    # other words.
+    extensions <- c("sum", "sum_wgt", "pct_group", "pct_total", "pct_value",
+                    "pct_block", "pct", "freq_g0", "freq", "mean", "median",
+                    "mode", "min", "max", "first", "last", "p[0-9]+", "sd",
+                    "variance", "missing")
 
-    labels_to_drop <- grepl(paste(extensions, collapse = "|"), names(var_labels))
+    labels_to_drop <- grepl(paste0("(^|_)(", paste(extensions, collapse = "|"), ")$"),
+                            names(var_labels))
 
     var_labels <- var_labels[!labels_to_drop]
 

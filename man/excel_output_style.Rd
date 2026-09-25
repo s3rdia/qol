@@ -60,6 +60,8 @@ excel_output_style(
   table_indent = 1,
   table_borders = FALSE,
   table_border_color = "000000",
+  block_borders = FALSE,
+  block_border_color = "000000",
   as_heatmap = FALSE,
   heatmap_low_color = "F8696B",
   heatmap_middle_color = "FFFFFF",
@@ -223,6 +225,11 @@ background color options. Use "" for no color.}
 \item{table_borders}{Whether to draw borders around the inner table cells.}
 
 \item{table_border_color}{Borders colors of the inner table cells.}
+
+\item{block_borders}{Whether to draw a vertical line on the left side of each
+statistic block.}
+
+\item{block_border_color}{Border color of the statistic block borders.}
 
 \item{as_heatmap}{Whether to lay a conditional formatting over the values.}
 

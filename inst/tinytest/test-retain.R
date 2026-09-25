@@ -13,8 +13,8 @@ test_df <- data.frame(
     var_sum  = c(1, 1, 1, 1, 1))
 
 test_df2 <- data.frame(
-    var1 = c(1, 1, 2, 2, 2, 3, 3, 3),
-    var2 = c(3, 3, 2, 2, 2, 1, 1, 1))
+    var1 = c(1, 1, 2, 2, 2, 2, 2, 2),
+    var2 = c(1, 1, 1, 1, 1, 2, 2, 2))
 
 dummy_df <- dummy_data(10)
 
@@ -34,13 +34,13 @@ expect_equal(test_df[["run_nr"]], c(1, 2, 1, 1, 2), info = "Generate running num
 # Generate running number with by and sort
 test_df2[["run_nr"]] <- test_df2 |> running_number(by = c(var2, var1), sort = TRUE)
 
-expect_equal(test_df2[["run_nr"]], c(1, 2, 3, 1, 2, 3, 1, 2), info = "Generate running number with by and sort")
+expect_equal(test_df2[["run_nr"]], c(1, 2, 1, 2, 3, 1, 2, 3), info = "Generate running number with by and sort")
 
 
 # Generate running number with by and group
 test_df2[["run_nr"]] <- test_df2 |> running_number(by = c(var2, var1), sort = TRUE, group_nr = TRUE)
 
-expect_equal(test_df2[["run_nr"]], c(1, 1, 1, 2, 2, 2, 3, 3), info = "Generate running number with by and group")
+expect_equal(test_df2[["run_nr"]], c(1, 1, 2, 2, 2, 3, 3, 3), info = "Generate running number with by and group")
 
 
 # Mark first and last cases without by

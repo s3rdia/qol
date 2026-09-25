@@ -269,10 +269,10 @@ between. And they are retrieved in provided order.
 ``` r
 
 # Save file
-my_data |> save_file(path    = tempdir(),
-                     file    = "testfile.fst",
-                     keep    = c(income_class, sex, age, state, weight, NUTS3),
-                     where   = sex == 1)
+my_data |> save_file(path  = tempdir(),
+                     file  = "testfile.fst",
+                     keep  = c(income_class, sex, age, state, weight, NUTS3),
+                     where = sex == 1)
                      
 # Load file
 my_fst_where <- load_file(path  = tempdir(),

@@ -50,12 +50,28 @@
 <code><a href="../reference/drop_type_vars.html">drop_type_vars()</a></code>: When passing in a list of data frames, the function now removes the variables <code>TYPE</code>, <code>TYPE_NR</code> and <code>DEPTH</code> from all data frames within the list. (22.09.2026)</li>
 <li>
 <code><a href="../reference/retain.html">retain_stat()</a></code>: Can now generate cumulative values. (23.09.2026)</li>
+<li>
+<code><a href="../reference/multi_join.html">multi_join()</a></code>: Single variables passed to the <code>on</code> parameter can now be written without quotation marks. (25.09.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/excel_output_style.html">excel_output_style()</a></code>: The new <code>block_borders</code> style parameter enables to draw borders between statistic blocks within the table area. (25.09.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="fixed-1-3-6">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-6"></a></h4>
 <ul><li>
 <code><a href="../reference/compute..html">compute.()</a></code>: Some custom functions didn’t work consistently in different situations. This is fixed now. (21.09.2026)</li>
 <li>Most of the functions couldn’t resolve custom parameters passed on from a wrapper function by themselves. This is hopefully fixed. (22.09.2026)</li>
+<li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Doesn’t error anymore when calculations are written on multiple lines. (24.09.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Variable labels weren’t set when the variable name contained a <code>statistics</code> keyword. This is fixed now. (25.09.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: When working with pre summarised data then now the value variables appear in user provided order instead of order of appearance within the given data frame. (25.09.2026)</li>
+<li>
+<code><a href="../reference/retain.html">running_number()</a></code>: Now considers all variables when passing a vector of variable names into <code>by</code>. (25.09.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>, <code><a href="../reference/where..html">where.()</a></code>: Don’t error anymore on parsing variable names ending in a number. (25.09.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: In case the function was used inside a custom function, percentiles weren’t detected as <code>statistics</code>. This is fixed now. (25.09.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

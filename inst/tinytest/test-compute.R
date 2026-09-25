@@ -115,6 +115,14 @@ result_df <- test_df |> compute.(var1 = var2)
 
 expect_equal(result_df[["var1"]], test_df[["var2"]], info = "Assigning a value of a different type makes the calculated type win")
 
+
+# Compute supports calculations written over multiple lines
+result_df <- test_df |> compute.(multiline_sum = var2 +
+                                     var3)
+
+expect_equal(result_df[["multiline_sum"]], test_df[["var2"]] + test_df[["var3"]],
+             info = "Compute supports calculations written over multiple lines")
+
 ###############################################################################
 # Warning checks
 ###############################################################################

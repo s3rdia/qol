@@ -65,6 +65,8 @@ excel_output_style(
   table_indent = 1,
   table_borders = FALSE,
   table_border_color = "000000",
+  block_borders = FALSE,
+  block_border_color = "000000",
   as_heatmap = FALSE,
   heatmap_low_color = "F8696B",
   heatmap_middle_color = "FFFFFF",
@@ -347,6 +349,15 @@ excel_output_style(
 - table_border_color:
 
   Borders colors of the inner table cells.
+
+- block_borders:
+
+  Whether to draw a vertical line on the left side of each statistic
+  block.
+
+- block_border_color:
+
+  Border color of the statistic block borders.
 
 - as_heatmap:
 

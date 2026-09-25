@@ -372,6 +372,7 @@ summarise_plus <- function(data_frame,
     if (length(valid_stats) == 0 && is.list(original_statistics)){
         vars_per_stat_list <- original_statistics
         statistics         <- names(vars_per_stat_list)
+        list_of_statistics <- get_complete_statistics_list(statistics)
 
         requested   <- collapse::funique(unlist(list(statistics)))
         valid_stats <- requested[requested %in% names(list_of_statistics)]

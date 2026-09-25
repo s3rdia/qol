@@ -1730,7 +1730,7 @@ parse_conditions <- function(condition, na.rm = TRUE){
     # [number] [operator] [variable_name] [operator] [number]
     # and transform to:
     # [number] [operator] [variable_name] & [variable_name] [operator] [number]
-    pattern <- "([0-9.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(<=|<|>=|>)\\s*([0-9.]+)"
+    pattern <- "([a-zA-Z0-9_.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z0-9_.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z0-9_.]+)"
 
     while(grepl(pattern, condition)){
         condition <- gsub(pattern, "(\\1 \\2 \\3 & \\3 \\4 \\5)", condition, perl = TRUE)

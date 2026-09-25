@@ -189,7 +189,7 @@ compute. <- function(data_frame,
     for (entry in seq_along(assignments)){
         variable    <- names(assignments)[[entry]]
         calculation <- assignments[[entry]]
-        calc_text   <- deparse(calculation)
+        calc_text   <- gsub("\\s+", " ", paste(deparse(calculation), collapse = " "))
 
         # Get used variables especially for this condition in combination mit
         # assigned variables.
@@ -322,7 +322,8 @@ compute. <- function(data_frame,
                 expression <- get_custom_functions(value_var, parent_env)
                 value      <- suppressMessages(eval(expression, envir = data_frame))
 
-                print_step("MINOR", "{target} = [value]", target = target_variable, value = deparse(value_var))
+                print_step("MINOR", "{target} = [value]", target = target_variable,
+                           value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
 
                 # Look up, if single value was passed or vector of values. Only if a
                 # vector of values is passed, which has fewer observations than the

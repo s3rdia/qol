@@ -65,8 +65,8 @@ set_style_options <- function(..., save_file = NULL){
 
     logicals <- c("freeze_col_header", "freeze_row_header", "filters", "grid_lines", "by_as_subheaders", "header_font_bold",
                   "header_borders", "cat_col_font_bold", "cat_col_borders", "table_font_bold", "table_borders",
-                  "box_font_bold", "box_borders", "title_font_bold", "footnote_font_bold", "as_heatmap", "toc_header_font_bold",
-                  "toc_subheader_font_bold", "toc_other_font_bold")
+                  "box_font_bold", "box_borders", "block_borders", "title_font_bold", "footnote_font_bold", "as_heatmap",
+                  "toc_header_font_bold", "toc_subheader_font_bold", "toc_other_font_bold")
 
     numerics <- c("start_row", "start_column", "header_font_size", "header_indent", "subheader_font_size", "subheader_indent",
                   "cat_col_font_size", "cat_col_indent", "table_font_size", "table_indent",
@@ -80,8 +80,8 @@ set_style_options <- function(..., save_file = NULL){
                      "toc_subheader_alignment", "toc_other_alignment", "toc_link_alignment")
 
     colors <- c("header_back_color", "header_font_color", "header_border_color", "subheader_back_color", "subheader_font_color",
-                "subheader_border_color", "cat_col_back_color", "cat_col_font_color", "cat_col_border_color", "table_back_color",
-                "table_font_color", "table_border_color", "box_back_color", "box_font_color", "box_border_color", "title_font_color",
+                 "subheader_border_color", "cat_col_back_color", "cat_col_font_color", "cat_col_border_color", "table_back_color",
+                 "table_font_color", "table_border_color", "block_border_color", "box_back_color", "box_font_color", "box_border_color", "title_font_color",
                 "footnote_font_color", "heatmap_low_color", "heatmap_middle_color", "heatmap_high_color", "background_color",
                 "toc_background_color", "toc_inner_back_color", "toc_border_color", "toc_header_font_color", "toc_subheader_font_color",
                 "toc_other_font_color")

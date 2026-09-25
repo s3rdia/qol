@@ -103,15 +103,13 @@ running_number <- function(data_frame,
             data.table::setorderv(cols    = by,
                                   order   = 1,
                                   na.last = TRUE)
-
-        by <- by[length(by)]
     }
 
     # In case of a running number inside a by variable group
-    if (length(by) == 1){
+    if (length(by) >= 1){
         # Generate a running number where every element of the group has the same
         # number. Meaning the whole group receives a running number.
-        variable <- data.table::rleid(data_frame[[by]])
+        variable <- data.table::rleidv(data_frame, by)
 
         # Generate a running number within the group
         if (!group_nr){

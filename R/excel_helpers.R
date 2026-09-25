@@ -238,6 +238,42 @@ get_any_tab_ranges <- function(any_tab,
         }
     }
 
+    # Get the ranges to draw the statistic block borders at. This is needed to draw
+    # a vertical line on the left side of every block.
+    if (style[["block_borders"]] && style[["block_border_color"]] != ""){
+        if (!"block_lengths" %in% names(any_col_ranges)){
+            start_var <- (collapse::fncol(any_tab) - collapse::fncol(multi_header)) + 1
+
+            # Get the root variable names to count the number of group elements
+            root_names <- sub("^([^_]+_[^_]+)_.*$", "\\1", names(any_tab)[start_var:collapse::fncol(any_tab)])
+
+            block_lengths <- rle(root_names)[["lengths"]]
+        }
+        else{
+            block_lengths <- any_col_ranges[["block_lengths"]]
+        }
+
+        # The border is drawn on the first column of every block and spans the
+        # rows of the table body.
+        any_col_ranges[["block_border_ranges"]] <- c()
+        current_column <- col_start
+
+        for (block_length in block_lengths){
+            block_range <- get_excel_range(from_row    = table_ranges[["table.row"]],
+                                           from_column = current_column,
+                                           to_row      = table_ranges[["table.row"]] +
+                                                        (table_ranges[["table.length"]] - 1),
+                                           to_column   = current_column)
+
+            if (!is.null(block_range)){
+                any_col_ranges[["block_border_ranges"]] <- c(any_col_ranges[["block_border_ranges"]],
+                                                             block_range)
+            }
+
+            current_column <- current_column + block_length
+        }
+    }
+
     # Get the wider blocks per statistic
     for (i in seq_along(chunk_lengths)){
         from_col <- col_start + sum(chunk_lengths[seq_len(i - 1)])
@@ -509,8 +545,7 @@ get_df_ranges <- function(data_frame,
         df_col_ranges[[range_name]] <-
             get_excel_range(from_row    = table_ranges[["table.row"]],
                             from_column = col_to_format,
-                            to_row      = table_ranges[["table.row"]] +
-                                (table_ranges[["table.length"]] - 1),
+                            to_row      = table_ranges[["table.row"]] + (table_ranges[["table.length"]] - 1),
                             to_column   = col_to_format)
 
         df_col_types[[type_name]] <- var_end
@@ -970,6 +1005,27 @@ handle_cell_styles <- function(wb,
                               border_id    = border_id,
                               apply_fill   = apply_fill,
                               fill_id      = fill_id)
+
+            # Draw the block borders on top of the already styled table cells. Every
+            # other style element is taken from the table as well, only the border
+            # switches to the block border style.
+            if (type == "table" && "block_borders" %in% wb$styles_mgr$border$name){
+                block_border_id <- wb$styles_mgr$get_border_id(paste0("block", "_borders"))
+
+                for (block_range in ranges[["block_border_ranges"]]){
+                    wb$add_cell_style(dims         = block_range,
+                                      horizontal   = style[[paste0(type, "_alignment")]],
+                                      vertical     = "center",
+                                      wrap_text    = style[[paste0(type, "_wrap")]],
+                                      indent       = style[[paste0(type, "_indent")]],
+                                      apply_font   = apply_font,
+                                      font_id      = font_id,
+                                      apply_border = TRUE,
+                                      border_id    = block_border_id,
+                                      apply_fill   = apply_fill,
+                                      fill_id      = fill_id)
+                }
+            }
         }
     }
 
@@ -1128,6 +1184,13 @@ handle_border_styles <- function(wb, style = excel_output_style()){
                       top_color  = openxlsx2::wb_color(hex = style[["table_border_color"]]),
                       left_color = openxlsx2::wb_color(hex = style[["table_border_color"]])),
             "table_borders")
+    }
+    if (style[["block_borders"]]){
+        wb$styles_mgr$add(
+            openxlsx2::create_border(
+                      left = "thin",
+                      left_color = openxlsx2::wb_color(hex = style[["block_border_color"]])),
+            "block_borders")
     }
 
     wb$styles_mgr$add(
@@ -1568,6 +1631,8 @@ split_up_ranges <- function(range){
 #' @param table_indent Indentation level of the inner table cells.
 #' @param table_borders Whether to draw borders around the inner table cells.
 #' @param table_border_color Borders colors of the inner table cells.
+#' @param block_borders Whether to draw a vertical line on side of each statistic block.
+#' @param block_border_color Border color of the statistic block borders.
 #' @param as_heatmap Whether to lay a conditional formatting over the values.
 #' @param heatmap_low_color The color for lower values in the conditional formatting.
 #' @param heatmap_middle_color The color for middle values in the conditional formatting.
@@ -1702,6 +1767,8 @@ excel_output_style <- function(save_path                = NULL,
                                table_indent             = 1,
                                table_borders            = FALSE,
                                table_border_color       = "000000",
+                               block_borders            = FALSE,
+                               block_border_color       = "000000",
                                as_heatmap               = FALSE,
                                heatmap_low_color        = "F8696B",
                                heatmap_middle_color     = "FFFFFF",

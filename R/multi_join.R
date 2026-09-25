@@ -183,7 +183,14 @@ multi_join <- function(data_frames,
     if (is.null(on)){
         # Capture the complete "on" argument
         on_call <- match.call()
-        on_call <- as.list(on_call[["on"]])[-1]
+
+        # If there are no quotation marks around a single variable then wrap it up
+        if (is.symbol(on_call[["on"]])){
+            on_call <- list(on_call[["on"]])
+        }
+        else{
+            on_call <- as.list(on_call[["on"]])[-1]
+        }
 
         # Convert list elements to characters
         on <- lapply(on_call, function(element){

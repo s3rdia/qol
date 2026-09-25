@@ -1343,7 +1343,8 @@ result_full_borders <- dummy_df |>
                                               box_borders       = TRUE,
                                               cat_col_borders   = TRUE,
                                               table_borders     = TRUE,
-                                              subheader_borders = TRUE),
+                                              subheader_borders = TRUE,
+                                              block_borders     = TRUE),
               print      = FALSE)
 
 html_full_borders <- result_full_borders[["html"]]
@@ -1619,3 +1620,35 @@ expect_error(print_stack_as_messages("ERROR"), "Workbook object is invalid. You 
 
 set_style_options(as_heatmap = FALSE)
 set_no_print()
+
+
+# Variable labels are kept if the variable contains a statistics keyword
+label_df <- data.frame(Wärmebelastung   = c(10, 20, 30, 40),
+                       stringsAsFactors = FALSE)
+
+result_list <- label_df |>
+    any_table(rows       = "Wärmebelastung",
+              var_labels = list(Wärmebelastung = "Heat"),
+              print      = FALSE)
+
+expect_true("Heat" %in% result_list[["table"]][["row.label"]],
+            info = "Variable labels are kept if the variable contains a statistics keyword")
+
+
+# Pre summarised value variables appear in the user provided order
+pre_summed_df <- data.frame(group = c("a", "a", "b", "b"),
+                            sex   = c("m", "f", "m", "f"),
+                            m_sum = c(1, 2, 3, 4),
+                            q_sum = c(5, 6, 7, 8),
+                            z_sum = c(9, 10, 11, 12),
+                            stringsAsFactors = FALSE)
+
+result_list <- pre_summed_df |>
+    any_table(rows    = "group",
+              columns = "sex",
+              values  = c("z_sum", "m_sum", "q_sum"),
+              print   = FALSE)
+
+expect_equal(names(result_list[["table"]])[-(1:2)],
+             c("z_sum_m", "z_sum_f", "m_sum_m", "m_sum_f", "q_sum_m", "q_sum_f"),
+             info = "Pre summarised value variables appear in the user provided order")

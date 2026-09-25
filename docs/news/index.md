@@ -22,6 +22,13 @@
   the list. (22.09.2026)
 - [`retain_stat()`](https://s3rdia.github.io/qol/reference/retain.md):
   Can now generate cumulative values. (23.09.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Single variables passed to the `on` parameter can now be written
+  without quotation marks. (25.09.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  The new `block_borders` style parameter enables to draw borders
+  between statistic blocks within the table area. (25.09.2026)
 
 #### Fixed
 
@@ -31,6 +38,28 @@
 - Most of the functions couldn’t resolve custom parameters passed on
   from a wrapper function by themselves. This is hopefully fixed.
   (22.09.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Doesn’t error anymore when calculations are written on multiple lines.
+  (24.09.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Variable labels weren’t set when the variable name contained a
+  `statistics` keyword. This is fixed now. (25.09.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  When working with pre summarised data then now the value variables
+  appear in user provided order instead of order of appearance within
+  the given data frame. (25.09.2026)
+- [`running_number()`](https://s3rdia.github.io/qol/reference/retain.md):
+  Now considers all variables when passing a vector of variable names
+  into `by`. (25.09.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Don’t
+  error anymore on parsing variable names ending in a number.
+  (25.09.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  In case the function was used inside a custom function, percentiles
+  weren’t detected as `statistics`. This is fixed now. (25.09.2026)
 
 ## qol 1.3.5
 
