@@ -1631,7 +1631,7 @@ split_up_ranges <- function(range){
 #' @param table_indent Indentation level of the inner table cells.
 #' @param table_borders Whether to draw borders around the inner table cells.
 #' @param table_border_color Borders colors of the inner table cells.
-#' @param block_borders Whether to draw a vertical line on side of each statistic block.
+#' @param block_borders Whether to draw a vertical line on the side of each statistic block.
 #' @param block_border_color Border color of the statistic block borders.
 #' @param as_heatmap Whether to lay a conditional formatting over the values.
 #' @param heatmap_low_color The color for lower values in the conditional formatting.

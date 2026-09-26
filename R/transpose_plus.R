@@ -161,6 +161,26 @@
 #'                    weight   = weight,
 #'                    na.rm    = TRUE)
 #'
+#' # Select the statistics which should be computed for all value variables
+#' with_stats <- my_data |>
+#'     transpose_plus(preserve   = state,
+#'                    pivot      = "sex",
+#'                    values     = weight,
+#'                    statistics = c("sum", "pct_group"),
+#'                    formats    = list(sex = sex.),
+#'                    na.rm      = TRUE)
+#'
+#' # Select specific statistics for specific variables. The value variables are
+#' # taken from the statistics list, so the values parameter can be skipped.
+#' specific_stats <- my_data |>
+#'     transpose_plus(preserve   = age,
+#'                    pivot      = "sex",
+#'                    statistics = list("sum"       = c(weight, income),
+#'                                      "pct_group" = balance,
+#'                                      "max"       = expenses),
+#'                    formats   = list(sex = sex., age = age.),
+#'                    na.rm     = TRUE)
+#'
 #' # Or both, nested and un-nested, at the same time
 #' both <- my_data |>
 #'     transpose_plus(preserve = c(year, age),
@@ -447,11 +467,7 @@ transpose_plus <- function(data_frame,
     vars_per_stat_list <- NULL
 
     if (is.null(temp_statistics)){
-        vars_per_stat_list <- lapply(as.list(substitute(statistics)), function(element){
-            element <- as.character(element)
-
-            element[!element %in% "c"]
-        })[-1]
+        vars_per_stat_list <- get_stats_per_vars_list(substitute(statistics))
 
         # Set to NULL again on empty list
         if (length(vars_per_stat_list) == 0){
@@ -484,6 +500,13 @@ transpose_plus <- function(data_frame,
 
     if (long_to_wide){
         values <- get_origin_as_char(values, substitute(values))
+
+        # If the variables were assigned to specific statistics, the value variables
+        # can be taken from that list. This makes it possible to just provide the
+        # statistics list and to skip the values parameter entirely.
+        if (is.null(values) && !is.null(vars_per_stat_list)){
+            values <- unname(unlist(vars_per_stat_list, use.names = FALSE))
+        }
 
         # If no value variables are provided, generate a temporary variable with
         # value 1, so that the transposition basically produces counts.
@@ -932,4 +955,52 @@ transpose_plus <- function(data_frame,
     #-------------------------------------------------------------------------#
 
     combined_df
+}
+
+
+#' Convert A List Of Variables Per Statistic
+#'
+#' @description
+#' Converts the captured expression of the statistics parameter into a named list of
+#' character vectors, if the parameter is a list which assigns specific variables to
+#' specific statistics.
+#'
+#' @param statistics The captured expression of the statistics parameter.
+#'
+#' @return
+#' Returns a named list of statistics.
+#'
+#' @noRd
+get_stats_per_vars_list <- function(statistics){
+    # Only a list can be split into statistics and their variables
+    if (!(is.call(statistics) && identical(statistics[[1]], quote(list)))){
+        return(NULL)
+    }
+
+    entries     <- as.list(statistics)[-1]
+    entry_names <- names(entries)
+
+    # The list names are the statistics, so every entry has to be named
+    if (is.null(entry_names) || !all(nzchar(entry_names))){
+        return(NULL)
+    }
+
+    # Convert the variables of every single statistic into a character vector
+    variables <- lapply(entries, function(entry){
+        tryCatch({
+            unlist(args_to_char(entry), use.names = FALSE)
+        }, error = function(e){
+            NULL
+        })
+    })
+
+    # Discard entries without any variable and abort if nothing is left
+    variables <- variables[lengths(variables) > 0]
+
+    if (length(variables) == 0){
+        return(NULL)
+    }
+
+    # Returned named vector
+    stats::setNames(variables, entry_names[seq_along(variables)])
 }

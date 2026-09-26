@@ -9,6 +9,7 @@
 * `retain_stat()`: Can now generate cumulative values. (23.09.2026)
 * `multi_join()`: Single variables passed to the `on` parameter can now be written without quotation marks. (25.09.2026)
 * `any_table()`, `excel_output_style()`: The new `block_borders` style parameter enables to draw borders between statistic blocks within the table area. (25.09.2026)
+* `transpose_plus()`: If specific `statistics` are chosen per variable then now the `values` parameter can be omitted. (26.09.2026)
 
 ### Fixed
 
@@ -20,6 +21,7 @@
 * `running_number()`: Now considers all variables when passing a vector of variable names into `by`. (25.09.2026)
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Don't error anymore on parsing variable names ending in a number. (25.09.2026)
 * `summarise_plus()`: In case the function was used inside a custom function, percentiles weren't detected as `statistics`. This is fixed now. (25.09.2026)
+* `transpose_plus()`: If specific `statistics` are chosen per variable then now variable vectors without quotation marks can be passed. (26.09.2026)
 
 # qol 1.3.5
 

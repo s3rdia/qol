@@ -10,6 +10,7 @@ Last CRAN release was on 20.09.2026.
 * `retain_stat()`: Can now generate cumulative values.
 * `multi_join()`: Single variables passed to the `on` parameter can now be written without quotation marks.
 * `any_table()`, `excel_output_style()`: The new `block_borders` style parameter enables to draw borders between statistic blocks within the table area.
+* `transpose_plus()`: If specific `statistics` are chosen per variable then now the `values` parameter can be omitted.
 
 ### Fixed
 
@@ -21,6 +22,7 @@ Last CRAN release was on 20.09.2026.
 * `running_number()`: Now considers all variables when passing a vector of variable names into `by`.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Don't error anymore on parsing variable names ending in a number.
 * `summarise_plus()`: In case the function was used inside a custom function, percentiles weren't detected as `statistics`. This is fixed now.
+* `transpose_plus()`: If specific `statistics` are chosen per variable then now variable vectors without quotation marks can be passed.
 
 
 ## R CMD check results

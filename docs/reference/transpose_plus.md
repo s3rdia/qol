@@ -253,6 +253,26 @@ nested <- my_data |>
                    weight   = weight,
                    na.rm    = TRUE)
 
+# Select the statistics which should be computed for all value variables
+with_stats <- my_data |>
+    transpose_plus(preserve   = state,
+                   pivot      = "sex",
+                   values     = weight,
+                   statistics = c("sum", "pct_group"),
+                   formats    = list(sex = sex.),
+                   na.rm      = TRUE)
+
+# Select specific statistics for specific variables. The value variables are
+# taken from the statistics list, so the values parameter can be skipped.
+specific_stats <- my_data |>
+    transpose_plus(preserve   = age,
+                   pivot      = "sex",
+                   statistics = list("sum"       = c(weight, income),
+                                     "pct_group" = balance,
+                                     "max"       = expenses),
+                   formats   = list(sex = sex., age = age.),
+                   na.rm     = TRUE)
+
 # Or both, nested and un-nested, at the same time
 both <- my_data |>
     transpose_plus(preserve = c(year, age),

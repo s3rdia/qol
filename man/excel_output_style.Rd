@@ -226,8 +226,7 @@ background color options. Use "" for no color.}
 
 \item{table_border_color}{Borders colors of the inner table cells.}
 
-\item{block_borders}{Whether to draw a vertical line on the left side of each
-statistic block.}
+\item{block_borders}{Whether to draw a vertical line on the side of each statistic block.}
 
 \item{block_border_color}{Border color of the statistic block borders.}
 

@@ -352,8 +352,7 @@ excel_output_style(
 
 - block_borders:
 
-  Whether to draw a vertical line on the left side of each statistic
-  block.
+  Whether to draw a vertical line on the side of each statistic block.
 
 - block_border_color:
 

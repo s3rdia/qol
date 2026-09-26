@@ -29,6 +29,9 @@
   [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
   The new `block_borders` style parameter enables to draw borders
   between statistic blocks within the table area. (25.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  If specific `statistics` are chosen per variable then now the `values`
+  parameter can be omitted. (26.09.2026)
 
 #### Fixed
 
@@ -60,6 +63,9 @@
 - [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
   In case the function was used inside a custom function, percentiles
   weren’t detected as `statistics`. This is fixed now. (25.09.2026)
+- [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  If specific `statistics` are chosen per variable then now variable
+  vectors without quotation marks can be passed. (26.09.2026)
 
 ## qol 1.3.5
 

@@ -343,7 +343,7 @@ summarise_plus <- function(data_frame,
             statistics <- tolower(names(vars_per_stat_list))
         }
     }
-    # Check if statistics is an ll named vector. If so a list was passed, which
+    # Check if statistics is an all named vector. If so a list was passed, which
     # had one variable per statistic and no vectors.
     else if (!is.null(names(temp_statistics)) && all(nzchar(names(temp_statistics)))){
         statistics <- tolower(names(temp_statistics))

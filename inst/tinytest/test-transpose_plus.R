@@ -174,6 +174,32 @@ expect_equal(collapse::funique(round(result_df[["income_1"]] + result_df[["incom
              info = "Tranpose is able to output specific statistics per variable")
 
 
+# Tranpose is able to output specific statistics for multiple variables per statistic
+result_df <- dummy_df |>
+    transpose_plus(preserve   = year,
+                   pivot      = "sex",
+                   statistics = list("sum"       = c(weight, income),
+                                     "pct_group" = balance))
+
+expect_true(all(c("weight_1", "weight_2", "weight_NA",
+                  "income_1", "income_2", "income_NA",
+                  "balance_1", "balance_2", "balance_NA") %in% names(result_df)),
+            info = "Tranpose is able to output specific statistics for multiple variables per statistic")
+expect_equal(collapse::funique(round(result_df[["balance_1"]] + result_df[["balance_2"]] + result_df[["balance_NA"]])), 100,
+             info = "Tranpose is able to output specific statistics for multiple variables per statistic")
+
+
+# Value variables can be provided without quotation marks
+result_df <- dummy_df |>
+    transpose_plus(preserve = year,
+                   pivot    = "sex",
+                   values   = c(weight, income))
+
+expect_true(all(c("weight_1", "weight_2", "weight_NA",
+                  "income_1", "income_2", "income_NA") %in% names(result_df)),
+            info = "Value variables can be provided without quotation marks")
+
+
 # Deduplicate identical variable names before transposition
 result_df <- dummy_df |>
     transpose_plus(preserve = year,
