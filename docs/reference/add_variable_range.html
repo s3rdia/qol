@@ -58,7 +58,8 @@ data frame, what paste0("age", 1:10) does for a vector.</p>
 
 
 <dt id="arg-var-range">var_range<a class="anchor" aria-label="anchor" href="#arg-var-range"></a></dt>
-<dd><p>A range of variables to add, provided in the form: var_name1:var_name10.</p></dd>
+<dd><p>A range of variables to add, provided in the form:
+var_name1:var_name10 or var_name1-var_name10.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -73,6 +74,9 @@ data frame, what paste0("age", 1:10) does for a vector.</p>
 <span></span>
 <span><span class="co"># Add variable range</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">add_variable_range</span><span class="op">(</span><span class="va">status1</span><span class="op">:</span><span class="va">status12</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The range can also be provided with a hyphen</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">add_variable_range</span><span class="op">(</span><span class="va">status13</span><span class="op">-</span><span class="va">status24</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

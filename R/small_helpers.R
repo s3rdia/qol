@@ -194,7 +194,8 @@ setcolorder_by_pattern <- function(data_frame, pattern){
 #' data frame, what paste0("age", 1:10) does for a vector.
 #'
 #' @param data_frame A data frame to add variables to.
-#' @param var_range A range of variables to add, provided in the form: var_name1:var_name10.
+#' @param var_range A range of variables to add, provided in the form:
+#' var_name1:var_name10 or var_name1-var_name10.
 #'
 #' @return
 #' Returns a data frame with added variables.
@@ -206,24 +207,27 @@ setcolorder_by_pattern <- function(data_frame, pattern){
 #' # Add variable range
 #' my_data <- my_data |> add_variable_range(status1:status12)
 #'
+#' # The range can also be provided with a hyphen
+#' my_data <- my_data |> add_variable_range(status13-status24)
+#'
 #' @export
 add_variable_range <- function(data_frame, var_range){
     var_range <- get_origin_as_char(var_range, substitute(var_range))
 
-    # Using regex to capture prefix, start number, and end number
-    # Meaning: (prefix)(start):(prefix)(end)
-    pattern <- "^([A-Za-z_.]+)([0-9]+):\\1([0-9]+)$"
+    # Using regex to capture prefix, start number, separator and end number
+    # Meaning: (prefix)(start)(:|-)(prefix)(end)
+    pattern <- "^([A-Za-z_.]+)([0-9]+)(:|-)\\1([0-9]+)$"
 
     if (!grepl(pattern, var_range)){
-        print_message("ERROR", c("Variable range has to be provided in the form 'var_name1:var_name10'.",
-								 "Variable names must match. No variables will be added."))
+        print_message("ERROR", c("Variable range has to be provided in the form 'var_name1:var_name10'",
+								 "or 'var_name1-var_name10'. Variable names must match. No variables will be added."))
         return(invisible(data_frame))
     }
 
     # Put together variable names
     prefix <- gsub(pattern, "\\1", var_range)
     start  <- as.numeric(gsub(pattern, "\\2", var_range))
-    end    <- as.numeric(gsub(pattern, "\\3", var_range))
+    end    <- as.numeric(gsub(pattern, "\\4", var_range))
 
     var_names <- paste0(prefix, start:end)
 
@@ -239,9 +243,9 @@ add_variable_range <- function(data_frame, var_range){
     # Create new variables in their own data frame first
     new_columns <- collapse::qDF(matrix(NA_integer_,
                                         nrow = collapse::fnrow(data_frame),
-                                        ncol = end))
+                                        ncol = length(var_names)))
 
-    names(new_columns) <- paste0(prefix, start:end)
+    names(new_columns) <- var_names
 
     # Add new empty variables to data frame
     collapse::add_vars(data_frame, new_columns)

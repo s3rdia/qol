@@ -16,6 +16,10 @@ test_df2 <- data.frame(
     var1 = c(1, 1, 2, 2, 2, 2, 2, 2),
     var2 = c(1, 1, 1, 1, 1, 2, 2, 2))
 
+alt_df <- as.data.frame(matrix(0, nrow = 3, ncol = 20,
+                               dimnames = list(NULL, as.vector(rbind(paste0("age", 1:10),
+                                                                     paste0("sex", 1:10))))))
+
 dummy_df <- dummy_data(10)
 
 
@@ -204,6 +208,29 @@ expect_equal(names(retain_df)[1:12], c("age", "sex", "education", "state", "hous
                                        "number_of_persons", "first_person", "status1", "status2", "status3",
                                        "income"), info = "Retain variables with all actions together doesn't break")
 
+
+# Add new NA column range provided as a pattern based range
+retain_df <- (dummy_df |>
+                  retain_variables(status1-status3))
+
+expect_equal(names(retain_df)[1:3], c("status1", "status2", "status3"), info = "Add new NA column range with a pattern based range")
+
+
+# Retain a pattern based range, which selects by name and not by position
+retain_alt <- alt_df |>
+    retain_variables(age1-age3)
+
+expect_equal(names(retain_alt)[1:3], c("age1", "age2", "age3"),
+             info = " Retain a pattern based range, which selects by name and not by position")
+
+
+# A pattern based range with order_last puts the variables to the end
+retain_last <- alt_df |>
+    retain_variables(age1-age2, order_last = TRUE)
+
+expect_equal(utils::tail(names(retain_last), 2), c("age1", "age2"),
+             info = "A pattern based range with order_last puts the variables to the end")
+
 ###############################################################################
 # Note checks
 ###############################################################################
@@ -246,7 +273,7 @@ expect_error(print_stack_as_messages("ERROR"), "Must provide a <values> to retai
 retain_df <- (dummy_df |>
      retain_variables(status1:age3))
 
-expect_error(print_stack_as_messages("ERROR"), "Variable range has to be provided in the form 'var_name1:var_name10'.", info = "Add new NA column range with wrong pattern returns original data frame")
+expect_error(print_stack_as_messages("ERROR"), "Variable range has to be provided in the form 'var_name1:var_name10'", info = "Add new NA column range with wrong pattern returns original data frame")
 
 expect_equal(dummy_df, retain_df, info = "Add new NA column range with wrong pattern returns original data frame")
 

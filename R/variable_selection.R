@@ -116,3 +116,89 @@ vars_between <- function(data_frame, from, to){
     columns <- start:end
     names(data_frame[columns])
 }
+
+
+#' Split A Pattern Based Variable Range Into Its Parts
+#'
+#' @description
+#' Splits a pattern based variable range like 'age1-age10' into the shared name
+#' prefix and the numeric start and end value.
+#'
+#' @param variable An expression to check for a variable range.
+#'
+#' @return
+#' Returns a list with the elements 'prefix', 'from' and 'to', or NULL if the
+#' given string is not a pattern based variable range.
+#'
+#' @noRd
+parse_pattern_range <- function(variable){
+    # The name parts must not contain digits, so a variable name is split
+    # unambiguously into its name prefix and its number.
+    pattern <- "^([A-Za-z_.][A-Za-z_.]*)([0-9]+)-([A-Za-z_.][A-Za-z_.]*)([0-9]+)$"
+
+    if (!grepl(pattern, variable)){
+        return(NULL)
+    }
+
+    parts <- regmatches(variable, regexec(pattern, variable))[[1]]
+
+    # Both sides of the range must share the same prefix, otherwise the selection
+    # is not a pattern based range but rather two unrelated variable names
+    if (!identical(parts[2], parts[4])){
+        return(NULL)
+    }
+
+    list(prefix = parts[2],
+         from   = as.numeric(parts[3]),
+         to     = as.numeric(parts[5]))
+}
+
+
+#' Select Variables By Name Pattern Instead Of By Position
+#'
+#' @description
+#' Selects all variables which share the same name prefix and whose number lies
+#' inside the given numeric range. In contrast to a colon range, which selects
+#' everything between two variables inside the data frame, this selects by name
+#' pattern only.
+#'
+#' @param data_frame The data frame which contains the variable names to be selected.
+#' @param variable An expression to check for a variable range.
+#'
+#' @return
+#' Returns the matching variable names in the order they appear inside the data
+#' frame, or NULL if the given selection is not a pattern based variable range.
+#'
+#' @noRd
+deparse_pattern_range <- function(data_frame, variable){
+    # Selections with a colon are handled in another function
+    if (grepl(":", variable, fixed = TRUE)){
+        return(NULL)
+    }
+
+    # A variable which is part of the data frame is never treated as a range, so
+    # variable names which really contain a hyphen keep working.
+    var_names <- names(data_frame)
+
+    if (variable %in% var_names){
+        return(NULL)
+    }
+
+    # Actually parse the expression
+    range <- parse_pattern_range(variable)
+
+    if (is.null(range)){
+        return(NULL)
+    }
+
+    pattern  <- paste0("^", range[["prefix"]], "([0-9]+)$")
+    is_match <- grepl(pattern, var_names)
+
+    # Compare the numbers behind the prefix instead of the variable names themselves,
+    # so age1 and age10 are both inside the range age1-age10
+    numbers  <- suppressWarnings(as.numeric(gsub(pattern, "\\1", var_names[is_match])))
+    in_range <- numbers >= min(range[["from"]], range[["to"]]) &
+                numbers <= max(range[["from"]], range[["to"]])
+
+    var_names[is_match][in_range]
+}

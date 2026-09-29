@@ -9,7 +9,8 @@ add_variable_range(data_frame, var_range)
 \arguments{
 \item{data_frame}{A data frame to add variables to.}
 
-\item{var_range}{A range of variables to add, provided in the form: var_name1:var_name10.}
+\item{var_range}{A range of variables to add, provided in the form:
+var_name1:var_name10 or var_name1-var_name10.}
 }
 \value{
 Returns a data frame with added variables.
@@ -24,5 +25,8 @@ my_data <- dummy_data(100)
 
 # Add variable range
 my_data <- my_data |> add_variable_range(status1:status12)
+
+# The range can also be provided with a hyphen
+my_data <- my_data |> add_variable_range(status13-status24)
 
 }

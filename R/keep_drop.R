@@ -31,6 +31,14 @@
 #' new_dt8 <- my_data |> keep(year, state:income)
 #' new_dt9 <- my_data |> dropp(year, state:income)
 #'
+#' # A colon range selects everything between the two variables inside the data
+#' # frame. If the variables you are looking for are not stored next to each
+#' # other, you can use a hyphen instead. It then selects all variables which
+#' # share the same pattern in the given range, no matter where they are stored
+#' # inside the data frame.
+#' wide_data   <- dummy_data(1000, wide = TRUE)
+#' ranged_data <- wide_data |> keep(age1-age5)
+#'
 #' # You can also use the colon as a placeholder for any text
 #' start1 <- my_data |> keep("s:") # Variable names start with "s"
 #' start2 <- my_data |> dropp("s:")
@@ -173,6 +181,21 @@ deparse_colon <- function(data_frame, variable_vector){
     # Loop through variable vector to decide whether it is a single variable or
     # a variable range with colon should be selected.
     for (variable in variable_vector){
+        # Check if the selection is a pattern based range like "age1-age10", which
+        # selects by name pattern instead of by position inside the data frame
+        pattern_matches <- data_frame |> deparse_pattern_range(variable)
+
+        if (!is.null(pattern_matches)){
+            if (length(pattern_matches) == 0){
+                print_message("WARNING", c("The pattern range '[variable]' does not match any variable",
+                                           "inside the data frame. Selection will be ignored."),
+                              variable = variable, always_print = TRUE)
+            }
+
+            variables <- c(variables, pattern_matches)
+            next
+        }
+
         only_colons <- gsub(":", "", variable)
 
         # If it's just colons with no text, skip "variable" and put out a warning

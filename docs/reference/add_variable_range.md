@@ -18,7 +18,7 @@ add_variable_range(data_frame, var_range)
 - var_range:
 
   A range of variables to add, provided in the form:
-  var_name1:var_name10.
+  var_name1:var_name10 or var_name1-var_name10.
 
 ## Value
 
@@ -32,4 +32,7 @@ my_data <- dummy_data(100)
 
 # Add variable range
 my_data <- my_data |> add_variable_range(status1:status12)
+
+# The range can also be provided with a hyphen
+my_data <- my_data |> add_variable_range(status13-status24)
 ```

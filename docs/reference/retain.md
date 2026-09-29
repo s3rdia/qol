@@ -102,7 +102,10 @@ retain_variables(data_frame, ..., order_last = FALSE)
 
   `retain_variables()`: Put in single variable names or variable ranges
   (var_name1:var_name10) which should be ordered to the front or back of
-  the data frame. It is also possible to provide none existent variable
+  the data frame. A range can also be provided as a pattern based range
+  (var_name1-var_name10), which selects all variables share the same
+  pattern in the given range, no matter where they are stored inside the
+  data frame. It is also possible to provide none existent variable
   names which will then be added to the data frame.
 
 - retain_variables:
@@ -203,6 +206,13 @@ my_data <- my_data |> retain_variables(age:income, order_last = TRUE)
 
 # Retain columns inside data frame and add new variables with all NA values
 my_data <- my_data |> retain_variables(age, sex, income, status1:status5)
+
+# A pattern based range selects by name and not by position, so the variables
+# do not have to be stored next to each other. If they are not part of the
+# data frame, they are added.
+wide_data <- dummy_data(1000, wide = TRUE)
+wide_data <- wide_data |> retain_variables(age_1)
+wide_data <- wide_data |> retain_variables(age_1-age_5)
 
 # You can also use the colon as a placeholder for any text
 start1   <- my_data |> retain_variables("s:")   # Variable names start with "s"

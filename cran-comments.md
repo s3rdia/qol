@@ -11,6 +11,7 @@ Last CRAN release was on 20.09.2026.
 * `multi_join()`: Single variables passed to the `on` parameter can now be written without quotation marks.
 * `any_table()`, `excel_output_style()`: The new `block_borders` style parameter enables to draw borders between statistic blocks within the table area.
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now the `values` parameter can be omitted.
+* `keep()`, `dropp()`, `retain_variables()`, `add_variable_range`: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) then alle "age" variables from 1 to 10 are selected regardless of where they are located in the data set.
 
 ### Fixed
 

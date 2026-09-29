@@ -427,6 +427,9 @@ retain_stat <- function(data_frame,
 #'
 #' @param ... [retain_variables()]: Put in single variable names or variable ranges
 #' (var_name1:var_name10) which should be ordered to the front or back of the data frame.
+#' A range can also be provided as a pattern based range (var_name1-var_name10), which
+#' selects all variables share the same pattern in the given range, no matter where
+#' they are stored inside the data frame.
 #' It is also possible to provide none existent variable names which will then be added
 #' to the data frame.
 #' @param retain_variables [retain_variables()]: FALSE by default. If TRUE puts the
@@ -445,6 +448,13 @@ retain_stat <- function(data_frame,
 #'
 #' # Retain columns inside data frame and add new variables with all NA values
 #' my_data <- my_data |> retain_variables(age, sex, income, status1:status5)
+#'
+#' # A pattern based range selects by name and not by position, so the variables
+#' # do not have to be stored next to each other. If they are not part of the
+#' # data frame, they are added.
+#' wide_data <- dummy_data(1000, wide = TRUE)
+#' wide_data <- wide_data |> retain_variables(age_1)
+#' wide_data <- wide_data |> retain_variables(age_1-age_5)
 #'
 #' # You can also use the colon as a placeholder for any text
 #' start1   <- my_data |> retain_variables("s:")   # Variable names start with "s"
@@ -479,6 +489,22 @@ retain_variables <- function(data_frame,
     variables <- character(0)
 
     for (variable in retain_list){
+        # Check if the selection is a pattern based range like "age1-age10", which
+        # selects by name pattern instead of by position inside the data frame.
+        pattern_matches <- data_frame |> deparse_pattern_range(variable)
+
+        if (!is.null(pattern_matches)){
+            # If the pattern range does not match anything, the variables are added
+            # to the data frame, just like it is done for colon ranges.
+            if (length(pattern_matches) == 0){
+                data_frame      <- data_frame |> add_variable_range(variable)
+                pattern_matches <- data_frame |> deparse_pattern_range(variable)
+            }
+
+            variables <- c(variables, pattern_matches)
+            next
+        }
+
         if (grepl(":", variable, fixed = TRUE)){
             parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
 

@@ -23,6 +23,13 @@ added_df <- dummy_df |>
 expect_equal(utils::tail(names(added_df), 3), c("status1", "status2", "status3"), info = "Add new NA column range with helper function")
 
 
+# Add new NA column range provided as a pattern based range
+added_df <- dummy_df |>
+      add_variable_range(status1-status3)
+
+expect_equal(utils::tail(names(added_df), 3), c("status1", "status2", "status3"), info = "Add new NA column range with a pattern based range")
+
+
 # Get duplicate variable names
 expect_equal(get_duplicate_var_names(dup_df),
              c("age", "AGE", "Age", "sex", "SeX"), info = "Get duplicate variable names")
@@ -99,7 +106,16 @@ expect_true(collapse::fncol(type_list[[3]]) == 1, info = "Drop automatically gen
 added_df <- dummy_df |>
      add_variable_range(status1:age3)
 
-expect_error(print_stack_as_messages("ERROR"), "Variable range has to be provided in the form 'var_name1:var_name10'.", info = "Adding NA variables to data frame aborts on wrong pattern")
+expect_error(print_stack_as_messages("ERROR"), "Variable range has to be provided in the form 'var_name1:var_name10'",
+             info = "Adding NA variables to data frame aborts on wrong pattern")
+
+
+# Adding NA variables to data frame aborts on wrong pattern provided with a hyphen
+added_df <- dummy_df |>
+     add_variable_range(status1-age3)
+
+expect_error(print_stack_as_messages("ERROR"), "Variable range has to be provided in the form 'var_name1:var_name10'",
+             info = "Adding NA variables to data frame aborts on wrong pattern provided with a hyphen")
 
 
 # Adding NA variables aborts, if variables are already part of data frame

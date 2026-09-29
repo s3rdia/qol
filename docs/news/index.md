@@ -32,6 +32,13 @@
 - [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   If specific `statistics` are chosen per variable then now the `values`
   parameter can be omitted. (26.09.2026)
+- [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md),
+  `add_variable_range`: Are now able to select variable ranges by
+  pattern. When writing e.g. age1-age10 (the hyphen triggers this
+  behaviour) then alle “age” variables from 1 to 10 are selected
+  regardless of where they are located in the data set. (29.09.2026)
 
 #### Fixed
 

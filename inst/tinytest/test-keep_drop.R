@@ -7,6 +7,14 @@ set_no_print(TRUE)
 
 test_df <- dummy_data(10)
 
+alt_df <- as.data.frame(matrix(0, nrow = 3, ncol = 20,
+                               dimnames = list(NULL, as.vector(rbind(paste0("age", 1:10),
+                                                                     paste0("sex", 1:10))))))
+
+hyphen_df <- alt_df
+hyphen_df[["jan-2026"]] <- 1
+hyphen_df[["dec-2026"]] <- 2
+
 ###############################################################################
 # Keep
 ###############################################################################
@@ -114,6 +122,27 @@ sorted   <- test_df |> keep(weight, age, order_vars = TRUE)
 expect_equal(names(unsorted)[1], "age", info = "Keep with sorted variables")
 expect_equal(names(sorted)[1], "weight", info = "Keep with sorted variables")
 
+
+# Keep a pattern based range, which selects by name and not by position
+keep_alt <- alt_df |> keep(age1-age10)
+
+expect_identical(names(keep_alt), paste0("age", 1:10), info = "Keep a pattern based range, which selects by name and not by position")
+expect_identical(alt_df |> keep("age1-age10"), keep_alt, info = "Keep a pattern based range, which selects by name and not by position")
+
+# The provided variable order is kept
+keep_order <- alt_df |> keep(age1-age2, sex9-sex10, order_vars = TRUE)
+
+expect_identical(names(keep_order), c("age1", "age2", "sex9", "sex10"), info = "The provided variable order is kept")
+
+
+# Keep variables with hyphen
+expect_identical(names(hyphen_df |> keep("jan-2026")), "jan-2026", info = "Keep variables with hyphen")
+expect_identical(names(hyphen_df |> keep(jan-2026)), "jan-2026", info = "Keep variables with hyphen")
+
+
+# Keep range of hyphenated variables
+expect_identical(names(hyphen_df |> keep("jan-2026:dec-2026")), c("jan-2026", "dec-2026"), info = "Keep range of hyphenated variables")
+
 ###############################################################################
 # Drop
 ###############################################################################
@@ -186,7 +215,6 @@ expect_true(!all(c("cats", "dogs") %in% names(test_df)), info = "Variables to dr
 drop_df <- test_df |> dropp(cats, dogs)
 
 expect_warning(print_stack_as_messages("WARNING"), "The provided variable to drop", info = "Drop only variables that are not part of the data frame")
-
 expect_identical(drop_df, test_df, info = "Drop only variables that are not part of the data frame")
 
 
@@ -194,6 +222,22 @@ expect_identical(drop_df, test_df, info = "Drop only variables that are not part
 drop_df <- test_df |> dropp()
 
 expect_identical(drop_df, test_df, info = "Drop without any variables provided")
+
+
+# Drop a pattern based range, which selects by name and not by position
+drop_alt <- alt_df |> dropp(age1-age10)
+
+expect_identical(names(drop_alt), paste0("sex", 1:10), info = "Drop a pattern based range, which selects by name and not by position")
+
+
+# Drop variables with hyphen
+expect_true(!"jan-2026" %in% names(hyphen_df |> dropp("jan-2026")), info = "Drop variables with hyphen")
+expect_true(!"jan-2026" %in% names(hyphen_df |> dropp(jan-2026)), info = "Drop variables with hyphen")
+
+
+# Drop range of hyphenated variables
+expect_true(!all(c("jan-2026", "dec-2026") %in% names(hyphen_df |> dropp("jan-2026:dec-2026"))), info = "Drop range of hyphenated variables")
+
 
 
 set_no_print()

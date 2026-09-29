@@ -59,6 +59,14 @@ new_dt7 <- my_data |> dropp(var_names)
 new_dt8 <- my_data |> keep(year, state:income)
 new_dt9 <- my_data |> dropp(year, state:income)
 
+# A colon range selects everything between the two variables inside the data
+# frame. If the variables you are looking for are not stored next to each
+# other, you can use a hyphen instead. It then selects all variables which
+# share the same pattern in the given range, no matter where they are stored
+# inside the data frame.
+wide_data   <- dummy_data(1000, wide = TRUE)
+ranged_data <- wide_data |> keep(age1-age5)
+
 # You can also use the colon as a placeholder for any text
 start1 <- my_data |> keep("s:") # Variable names start with "s"
 start2 <- my_data |> dropp("s:")

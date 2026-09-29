@@ -88,6 +88,14 @@ args_to_char <- function(argument){
                      sep = ":"))
     }
 
+    # If there is a "-" in the call, this returns the call as is so that it can be used
+    # as in e.g. keep/dropp to make use of pattern based ranges.
+    if (is.call(argument) && identical(argument[[1]], quote(`-`))){
+        return(paste(as.character(argument[[2]]),
+                     as.character(argument[[3]]),
+                     sep = "-"))
+    }
+
     stop(" X ERROR: Something went wrong with the argument conversion.\n",
          "          Only single character and symbols, as well as vectors and flat lists are allowed.\n",
          "          Function will be aborted.")
@@ -252,6 +260,14 @@ args_to_char_with_params_rec <- function(argument, snapshot){
         return(paste(as.character(argument[[2]]),
                      as.character(argument[[3]]),
                      sep = ":"))
+    }
+
+    # If there is a "-" in the call, this returns the call as is so that it can be used
+    # as in e.g. keep/dropp to make use of pattern based ranges.
+    if (is.call(argument) && identical(argument[[1]], quote(`-`))){
+        return(paste(as.character(argument[[2]]),
+                     as.character(argument[[3]]),
+                     sep = "-"))
     }
 
     stop(" X ERROR: Something went wrong with the argument conversion.\n",
