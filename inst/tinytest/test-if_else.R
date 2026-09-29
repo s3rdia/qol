@@ -401,6 +401,16 @@ expect_equal(length(unique_male), 1, info = "Warning on doubled logical operator
 expect_true(all(c("low", "middle", "high") %in% unique_female), info = "Warning on doubled logical operators")
 
 
+# if. works with multiline character conditions
+test_df <- ifelse_df |>
+    if.("age > 18
+         and sex == 2", age_group = "group1")
+
+expect_true("age_group" %in% names(test_df), info = "if. works with multiline character conditions")
+expect_identical(test_df[["age_group"]], c(NA, "group1", NA, "group1", NA),
+                 info = "if. works with multiline character conditions")
+
+
 # Abort subset with if., if variable is not part of the data frame
 test_df <- dummy_df |> if.("test")
 
@@ -489,6 +499,13 @@ test_df <- dummy_df |> where.(" 15 <= age < 65 and sex == 2 ")
 
 expect_true(!any(c(1, NA) %in% test_df[["sex"]]), info = "where. works with parsed character conditions")
 expect_true(!any(c(0:14, 65:100) %in% test_df[["age"]]), info = "where. works with parsed character conditions")
+
+
+# where. works with multiline character conditions
+multi_df <- ifelse_df |> where.("age > 18
+                                 and sex == 2")
+
+expect_identical(multi_df[["age"]], c(20, 70), info = "where. works with multiline character conditions")
 
 ###############################################################################
 # ifelse_multi
@@ -672,6 +689,15 @@ result <- ifelse_df |> ifelse_multi(do_if = "sex == 1",
                                     else.      = 3)
 
 expect_equal(result, c(1, 3, 2, 3, 3), info = "ifelse_multi do_if condition is used on all other conditions")
+
+
+# ifelse_multi works with multiline character conditions
+result <- ifelse_df |> ifelse_multi("age < 18
+                                     and sex == 1" = 1,
+                                    "age < 65"     = 2,
+                                    else.          = 3)
+
+expect_equal(result, c(1, 2, 2, 3, 3), info = "ifelse_multi works with multiline character conditions")
 
 
 # ifelse_multi throws a note on value conversion

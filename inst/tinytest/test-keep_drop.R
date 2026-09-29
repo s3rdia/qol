@@ -143,6 +143,12 @@ expect_identical(names(hyphen_df |> keep(jan-2026)), "jan-2026", info = "Keep va
 # Keep range of hyphenated variables
 expect_identical(names(hyphen_df |> keep("jan-2026:dec-2026")), c("jan-2026", "dec-2026"), info = "Keep range of hyphenated variables")
 
+# Keep ignores ranges with two invalid variables
+range_keep <- test_df |> keep(AB0302P:TL0102L)
+
+expect_warning(print_stack_as_messages("WARNING"), "No variables found with the given pattern", info = "Keep ignores ranges with two invalid variables")
+expect_identical(names(range_keep), names(test_df), info = "Keep ignores ranges with two invalid variables")
+
 ###############################################################################
 # Drop
 ###############################################################################
@@ -238,6 +244,12 @@ expect_true(!"jan-2026" %in% names(hyphen_df |> dropp(jan-2026)), info = "Drop v
 # Drop range of hyphenated variables
 expect_true(!all(c("jan-2026", "dec-2026") %in% names(hyphen_df |> dropp("jan-2026:dec-2026"))), info = "Drop range of hyphenated variables")
 
+
+# Drop ignores ranges with two invalid variables
+range_drop <- test_df |> dropp(AB0302P:TL0102L)
+
+expect_warning(print_stack_as_messages("WARNING"), "No variables found with the given pattern", info = "Drop ignores ranges with two invalid variables")
+expect_identical(names(range_drop), names(test_df), info = "Drop ignores ranges with two invalid variables")
 
 
 set_no_print()

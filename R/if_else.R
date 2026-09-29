@@ -1696,7 +1696,46 @@ ifelse_multi <- function(data_frame,
 }
 
 
+#' Remove Line Breaks From Conditions
+#'
 #' @description
+#' Removes line breaks from a character condition if written across multiple lines.
+#' R terminates an expression at a line break, which breaks conditions where the
+#' operator starts the next line. Therefore every line break, including the indentation
+#' around it, is replaced by a single blank.
+#'
+#' @param condition A single unevaluated condition as character.
+#'
+#' @return
+#' Returns a translated condition as language object.
+#'
+#' @noRd
+remove_line_breaks <- function(condition){
+    # Nothing to do for single line conditions
+    if (!grepl("[\r\n]", condition)){
+        return(condition)
+    }
+
+    # Find all starting positions of single and double quotes in the condition string
+    quotes <- gregexpr("[\"']", condition, perl = TRUE)[[1]]
+    quotes <- quotes[quotes != -1]
+
+    # Create boundary cut points: start of string, quote positions, and end of string + 1
+    positions <- c(1, quotes, nchar(condition) + 1)
+
+    # Slice the condition string into alternating segments (outside vs. inside quotes)
+    segments <- substring(condition, positions[-length(positions)], positions[-1] - 1)
+
+    # Determine the indices of segments that lie outside of quotes (odd-numbered segments)
+    outside <- seq(1, length(segments), by = 2)
+
+    # Replace all newlines (and surrounding whitespace) with a single space only in unquoted text
+    segments[outside] <- gsub("[\t ]*[\r\n]+[\t ]*", " ", segments[outside])
+
+    paste(segments, collapse = "")
+}
+
+
 #' Parses unevaluated character conditions to translate SAS like syntax into
 #' R syntax.
 #'
@@ -1704,10 +1743,14 @@ ifelse_multi <- function(data_frame,
 #' @param na.rm Sets the default value even though a condition results in NA.
 #' If FALSE leaves NA as missing value.
 #'
-#' @return Returns a translated condition as language object.
+#' @return
+#' Returns a translated condition as language object.
 #'
 #' @noRd
 parse_conditions <- function(condition, na.rm = TRUE){
+    # Join multiline conditions into a single line before they are translated.
+    condition <- remove_line_breaks(condition)
+
     # Replace 'and' and 'or' with the actual operators. Also translate the not
     # operator and turn single = into ==.
     condition <- gsub("\\bAND\\b", " & ", condition, ignore.case = TRUE)

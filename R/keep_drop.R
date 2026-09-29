@@ -234,7 +234,16 @@ deparse_colon <- function(data_frame, variable_vector){
             # If colon is in the middle ("var1:var10"), select a range of varaibles between
             # these two.
             else{
-                parts     <- strsplit(variable, ":", fixed = TRUE)[[1]]
+                parts <- strsplit(variable, ":", fixed = TRUE)[[1]]
+
+                # A range needs at least one of its two boundaries inside the data frame.
+                # If none is, the selection is ignored.
+                if (!any(parts %in% names(data_frame))){
+                    print_message("WARNING", c("None of the boundary variables of the range '[variable]'",
+                                               "is part of the data frame. Selection will be ignored."),
+                                  variable = variable, always_print = TRUE)
+                    next
+                }
 
                 variables <- c(variables, data_frame |> vars_between(parts[1], parts[2]))
             }

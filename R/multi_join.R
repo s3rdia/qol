@@ -148,6 +148,11 @@ multi_join <- function(data_frames,
         if (!data.table::is.data.table(data_frames[[i]])){
             data_frames[[i]] <- data.table::as.data.table(data_frames[[i]])
         }
+        # Data tables which are already provided are copied, because the data frames
+        # are sorted in place below.
+        else{
+            data_frames[[i]] <- data.table::copy(data_frames[[i]])
+        }
     }
 
     # If the user passed an unnamed list, get the data frame names back and set
@@ -284,15 +289,18 @@ multi_join <- function(data_frames,
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Check if all data frames (except the first) one only have unique value
-    # combinations for the 'on' variables
+    # combinations for the "on" variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     for (i in seq_along(data_frames)){
         # Check if provided variable names are in the base data frame
         if (!unequal_names){
-            if (!all(on %in% names(data_frames[[i]]))){
+            # On equal names the same "on" variables are used for every data frame
+            variables_to_check <- on
+
+            if (!all(variables_to_check %in% names(data_frames[[i]]))){
                 print_message("ERROR", c("Not all <on> variables ([on]) appear in data frame [name].",
-										 "Join will be aborted."), on = on, name = i)
+										 "Join will be aborted."), on = variables_to_check, name = i)
                 return(invisible(NULL))
             }
         }
@@ -312,6 +320,11 @@ multi_join <- function(data_frames,
                 return(invisible(NULL))
             }
         }
+
+        # Sort the data frame by its "on" variables make the duplicated value
+        # combination check and the join itself as fast as possible. Sorting costs
+        # nothing here compared to the work that has to be done on unsorted data.
+        data.table::setorderv(data_frames[[i]], variables_to_check)
 
         # Skip first data frame. This is the only one that is allowed to have duplicate combinations.
         if (i == 1){
@@ -449,7 +462,7 @@ multi_join <- function(data_frames,
             # The join variables of the first data frame for this specific join
             base_join_vars <- base_on[[i - 1]]
 
-            # Check if the same number of 'on' variables are provided
+            # Check if the same number of "on" variables are provided
             if (length(base_join_vars) != length(to_join_on)){
                 print_message("ERROR", c("Unequal number of <on> variables provided: [on1] vs [on_i].",
                                          "Join will be aborted."), on1 = base_join_vars, on_i = to_join_on)

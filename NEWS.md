@@ -23,6 +23,12 @@
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Don't error anymore on parsing variable names ending in a number. (25.09.2026)
 * `summarise_plus()`: In case the function was used inside a custom function, percentiles weren't detected as `statistics`. This is fixed now. (25.09.2026)
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now variable vectors without quotation marks can be passed. (26.09.2026)
+* `dropp()`: Now ignores ranges which consist of two invalid variables instead of returning an empty data frame. (29.09.2026)
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Now allow multi line character conditions instead of aborting with an error. (29.09.2026)
+
+### Optimization
+
+* `multi_join()`: Now sorts all variables on the `on` variables before joining, which has a big impact when joining larger data frames on multiple key variables. Smaller joins might suffer from a small penalty because of that, but this should be neglectable. (29.09.2026)
 
 # qol 1.3.5
 

@@ -87,16 +87,6 @@ running_number <- function(data_frame,
     # Retain
     ###########################################################################
 
-    # If the user specified a vector of by variables, only take the last one, as this is
-    # most likely the group in which the running number should be generated.
-    if (length(by) > 1 && !sort){
-        print_message("NOTE", c("Running number is generated in current data frame order. Only last variable",
-								"inside provided <by> vector '[by]' will be used. Use the <sort> parameter, if",
-								"you want to create a new order before generating the running number."), by = by)
-
-        by <- by[length(by)]
-    }
-
     # In case by variables should be sorted
     if (length(by) > 0 && sort){
         data_frame <- data_frame |>

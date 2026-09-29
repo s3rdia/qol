@@ -24,6 +24,12 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Don't error anymore on parsing variable names ending in a number.
 * `summarise_plus()`: In case the function was used inside a custom function, percentiles weren't detected as `statistics`. This is fixed now.
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now variable vectors without quotation marks can be passed.
+* `dropp()`: Now ignores ranges which consist of two invalid variables instead of returning an empty data frame.
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Now allow multi line character conditions instead of aborting with an error.
+
+### Optimization
+
+* `multi_join()`: Now sorts all variables on the `on` variables before joining, which has a big impact when joining larger data frames on multiple key variables. Smaller joins might suffer from a small penalty because of that, but this should be neglectable.
 
 
 ## R CMD check results

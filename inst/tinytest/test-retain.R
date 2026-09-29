@@ -235,12 +235,6 @@ expect_equal(utils::tail(names(retain_last), 2), c("age1", "age2"),
 # Note checks
 ###############################################################################
 
-# Generate running number with multiple by variables
-dummy_df[["run_nr"]] <- dummy_df |> running_number(by = c(year, sex))
-
-expect_message(print_stack_as_messages("NOTE"), "Running number is generated in current data frame order.", info = "Generate running number with multiple by variables")
-
-
 # Mark first and last cases with multiple by variables
 dummy_df[["first"]] <- dummy_df |> mark_case(by = c(sex, household_id))
 
