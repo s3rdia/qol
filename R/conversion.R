@@ -120,8 +120,8 @@ args_to_char <- function(argument){
 dots_to_char <- function(...){
     expressions <- as.list(substitute(list(...)))[-1]
 
-    # Resolve the different expressions into a character vector
-    unlist(lapply(expressions, function(expression){
+    # Resolve a single expression into a character vector
+    resolve_expression <- function(expression){
         # Character: Just return as is
         if (is.character(expression)){
             return(expression)
@@ -139,8 +139,18 @@ dots_to_char <- function(...){
             return(as.character(expression))
         }
 
-        # Calls: c(), list(), :
-        args_to_char(expression)}), use.names = FALSE)
+        # Vectors and flat lists: Resolve every entry on its own, so that single
+        # variable names, characters and whole vectors of names can be mixed
+        if (is.call(expression) && (identical(expression[[1]], quote(c)) ||
+                                    identical(expression[[1]], quote(list)))){
+            return(unlist(lapply(as.list(expression)[-1], resolve_expression), use.names = FALSE))
+        }
+
+        args_to_char(expression)
+    }
+
+    # Resolve the different expressions into a character vector
+    unlist(lapply(expressions, resolve_expression), use.names = FALSE)
 }
 
 

@@ -39,6 +39,22 @@
   pattern. When writing e.g. age1-age10 (the hyphen triggers this
   behaviour) then alle “age” variables from 1 to 10 are selected
   regardless of where they are located in the data set. (29.09.2026)
+- [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md): Is now
+  also able to use the new writing style with conditions as characters
+  introduced by
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
+  (30.09.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Single variables and vectors of variable names can now be renamed in
+  the same call. (30.09.2026)
+- [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md): Now
+  also accept vectors. (30.09.2026)
+- [`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md),
+  [`interval_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  Added `as_character` paramter which ensures that the value labels are
+  kept as character. Meaning numbers like “00110” keep their leading
+  zeros instead of beeing converted into numeric value 110. (30.09.2026)
 
 #### Fixed
 
@@ -82,6 +98,19 @@
   [`where.()`](https://s3rdia.github.io/qol/reference/where..md): Now
   allow multi line character conditions instead of aborting with an
   error. (29.09.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md),
+  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md): In SAS
+  like patterns like “15 \<= age \< 65” now formulas are accepted,
+  e.g. “median \* 60 / 100 \<= income \< median \* 120 / 100”.
+  (30.09.2026)
+- [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md):
+  Don’t error anymore when duplicate variable names are passed or
+  duplicates are generated in combination with variable ranges.
+  (30.09.2026)
 
 #### Optimization
 

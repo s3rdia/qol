@@ -13,9 +13,14 @@ recommended to let format names end with a dot to make them stand out.
 ## Usage
 
 ``` r
-discrete_format(...)
+discrete_format(..., as_character = FALSE)
 
-interval_format(..., include_lower = TRUE, include_upper = FALSE)
+interval_format(
+  ...,
+  include_lower = TRUE,
+  include_upper = FALSE,
+  as_character = FALSE
+)
 ```
 
 ## Arguments
@@ -25,6 +30,12 @@ interval_format(..., include_lower = TRUE, include_upper = FALSE)
   List all the desired recodings/recoding ranges. Every element
   containsa text for the new category name and the values/value ranges
   which should be recoded into this new category.
+
+- as_character:
+
+  FALSE by default. By default labels which are all numeric are
+  converted to numeric. Set this to TRUE to prevent this, for example to
+  keep values with leading zeros intact, like "00110" instead of 110.
 
 - include_lower:
 

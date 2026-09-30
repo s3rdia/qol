@@ -12,6 +12,9 @@ ifelse_df <- data.table::data.table(age  = c(10, 20, 30, 70, NA),
                                     var1 = c(10, 20, 10, 20, 10),
                                     name = c("Hello World", "Hello Again", "Hello", "World", NA))
 
+range_df <- data.table::data.table(inc = c( 50, 100, 100, 150, 200, 200, 250, 300, 400,  NA),
+                                   med = c(200, 200, 200, 200, 200, 200, 200, 200, 200, 200))
+
 
 # if. can convert values conditionally
 test_df <- dummy_df |>
@@ -299,6 +302,15 @@ expect_true(all(c("sum", "col_sum", "row_sum", "var1", "var2", "NEW_VAR1", "NEW_
             info = "if. can do all kinds of calculations")
 
 
+# do_if works with a character condition using SAS like syntax
+do_if_df <- ifelse_df |>
+    do_if("18 <= age < 70") |>
+        if.(var1 >= 10, group = 1) |>
+    end_do()
+
+expect_true(all(c(1, NA) %in% do_if_df[["group"]]), info = "do_if works with a character condition using SAS like syntax")
+
+
 # if. and else_if. work with parsed character conditions
 vars1  <- c("income", "balance")
 vars2  <- c("VAR1", "VAR2")
@@ -409,6 +421,30 @@ test_df <- ifelse_df |>
 expect_true("age_group" %in% names(test_df), info = "if. works with multiline character conditions")
 expect_identical(test_df[["age_group"]], c(NA, "group1", NA, "group1", NA),
                  info = "if. works with multiline character conditions")
+
+
+# SAS like ranges accept formulas on both bounds
+test_df <- range_df |> if.("med * 150 / 100 <= inc < med * 200 / 100")
+
+expect_identical(test_df[["inc"]], 300, info = "SAS like ranges accept formulas on both bounds")
+
+
+# SAS like ranges accept bracketed expressions as the bounds
+test_df <- range_df |> if.("(med * 150) / 100 <= inc < (med * 200) / 100")
+
+expect_identical(test_df[["inc"]], 300, info = "SAS like ranges accept bracketed expressions as the bounds")
+
+
+# SAS like ranges accept function calls as the bounds
+test_df <- range_df |> if.("pmin(med, 250) <= inc < pmin(med, 250) * 1.5")
+
+expect_identical(test_df[["inc"]], c(200, 200, 250), info = "SAS like ranges accept function calls as the bounds")
+
+
+# SAS like ranges with formulas can be combined with other conditions
+test_df <- range_df |> if.("med * 0.75 <= inc and inc < med * 1.25 and inc != .")
+
+expect_identical(test_df[["inc"]], c(150, 200, 200), info = "SAS like ranges with formulas can be combined with other conditions")
 
 
 # Abort subset with if., if variable is not part of the data frame

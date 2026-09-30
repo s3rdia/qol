@@ -75,6 +75,10 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
 
+    # Vectors and single variable names can be mixed, which can lead to the same
+    # variable being provided multiple times. Only keep the first occurrence.
+    variables <- unique(variables)
+
     if (length(variables) == 0){
         print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")
         return(invisible(data_frame))
@@ -130,6 +134,10 @@ dropp <- function(data_frame, ...){
 
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
+
+    # Vectors and single variable names can be mixed, which can lead to the same
+    # variable being provided multiple times. Only keep the first occurrence.
+    variables <- unique(variables)
 
     if (length(variables) == 0){
         print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")

@@ -38,4 +38,17 @@ new_names_df <- my_data |> rename_multi(sex   = var1,
 new_names_df <- my_data |> rename_multi("sex"   = "var1",
                                         "age"   = "var2",
                                         "state" = "var3")
+
+# It is also possible to rename variables stored in vectors
+old_names <- c("sex", "age", "state")
+new_names <- c("var1", "var2", "var3")
+
+new_names_df <- my_data |> rename_multi(old_names = new_names)
+
+# Single variables and vectors can be mixed in one call
+old_names <- c("income", "balance")
+new_names <- c("var1", "var2")
+
+new_names_df <- my_data |> rename_multi(sex       = var3,
+                                        old_names = new_names)
 ```

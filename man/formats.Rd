@@ -6,13 +6,22 @@
 \alias{interval_format}
 \title{Create Format Container}
 \usage{
-discrete_format(...)
+discrete_format(..., as_character = FALSE)
 
-interval_format(..., include_lower = TRUE, include_upper = FALSE)
+interval_format(
+  ...,
+  include_lower = TRUE,
+  include_upper = FALSE,
+  as_character = FALSE
+)
 }
 \arguments{
 \item{...}{List all the desired recodings/recoding ranges. Every element containsa text for
 the new category name and the values/value ranges which should be recoded into this new category.}
+
+\item{as_character}{FALSE by default. By default labels which are all numeric
+are converted to numeric. Set this to TRUE to prevent this, for example to keep
+values with leading zeros intact, like "00110" instead of 110.}
 
 \item{include_lower}{TRUE by default. Whether to include lower bound value in
 interval formats.}

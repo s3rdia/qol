@@ -20,6 +20,9 @@
 #' interval formats.
 #' @param include_upper FALSE by default. Whether to include upper bound value in
 #' interval formats.
+#' @param as_character FALSE by default. By default labels which are all numeric
+#' are converted to numeric. Set this to TRUE to prevent this, for example to keep
+#' values with leading zeros intact, like "00110" instead of 110.
 #'
 #' @details
 #' The concept of having formats as molds or stencils to put the data through, is inspired by
@@ -130,7 +133,8 @@ NULL
 #' @rdname formats
 #'
 #' @export
-discrete_format <- function(...){
+discrete_format <- function(...,
+                            as_character = FALSE){
     # Measure the time
     print_start_message(suppress = TRUE)
 
@@ -170,8 +174,11 @@ discrete_format <- function(...){
     # Flatten to long format
     unwrapped_format <- data.table::rbindlist(unwrap_all_groupings)
 
-    # If label column is all numeric then convert it to numeric
-    unwrapped_format <- unwrapped_format |> convert_numeric("label")
+    # If label column is all numeric then convert it to numeric, if there is no
+    # overide set.
+    if (!as_character){
+        unwrapped_format <- unwrapped_format |> convert_numeric("label")
+    }
 
     # Convert "other" keyword to integer max. This should be a value no one would pick normally.
     if ("other" %in% tolower(unwrapped_format[["value"]])){
@@ -193,7 +200,8 @@ discrete_format <- function(...){
 #' @export
 interval_format <- function(...,
                             include_lower = TRUE,
-                            include_upper = FALSE){
+                            include_upper = FALSE,
+                            as_character  = FALSE){
     # Measure the time
     print_start_message(suppress = TRUE)
 
@@ -273,10 +281,19 @@ interval_format <- function(...,
 
     print_closing()
 
-    # Put everything together in a data frame
-    data.table::data.table(from  = from,
-                           to    = to,
-                           label = labels) |> convert_numeric("label")
+    # Put everything together in a data frame. Set as_character to TRUE to keep labels
+    # like "00110" as they are, instead of converting them to 110.
+    result <- data.table::data.table(from  = from,
+                                     to    = to,
+                                     label = labels)
+
+    # If label column is all numeric then convert it to numeric, if there is no
+    # overide set.
+    if (!as_character){
+        result <- result |> convert_numeric("label")
+    }
+
+    result
 }
 
 

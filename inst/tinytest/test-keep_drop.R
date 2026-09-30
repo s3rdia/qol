@@ -15,6 +15,11 @@ hyphen_df <- alt_df
 hyphen_df[["jan-2026"]] <- 1
 hyphen_df[["dec-2026"]] <- 2
 
+vector_df <- data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12, e = 13:15)
+
+vector_names <- c("a", "b")
+other_names  <- c("c", "d")
+
 ###############################################################################
 # Keep
 ###############################################################################
@@ -149,6 +154,30 @@ range_keep <- test_df |> keep(AB0302P:TL0102L)
 expect_warning(print_stack_as_messages("WARNING"), "No variables found with the given pattern", info = "Keep ignores ranges with two invalid variables")
 expect_identical(names(range_keep), names(test_df), info = "Keep ignores ranges with two invalid variables")
 
+
+# Keep accepts vectors of variable names
+expect_identical(names(vector_df |> keep(vector_names)), c("a", "b"), info = "Keep accepts vectors of variable names")
+expect_identical(names(vector_df |> keep(vector_names, other_names)), c("a", "b", "c", "d"),
+                 info = "Keep accepts vectors of variable names")
+
+
+# Keep can mix single variable names and vectors
+expect_identical(names(vector_df |> keep(vector_names, e)), c("a", "b", "e"),
+                 info = "Keep can mix single variable names and vectors")
+expect_identical(names(vector_df |> keep(e, vector_names)), c("a", "b", "e"),
+                 info = "Keep can mix single variable names and vectors")
+expect_identical(names(vector_df |> keep(vector_names, c, other_names)), c("a", "b", "c", "d"),
+                 info = "Keep can mix single variable names and vectors")
+
+
+# Keep does not fail when the same variable is provided multiple times
+expect_identical(names(vector_df |> keep(vector_names, a)), c("a", "b"),
+                 info = "Keep does not fail when the same variable is provided multiple times")
+expect_identical(names(vector_df |> keep(vector_names, "a")), c("a", "b"),
+                 info = "Keep does not fail when the same variable is provided multiple times")
+expect_identical(names(vector_df |> keep(vector_names, a:c)), c("a", "b", "c"),
+                 info = "Keep does not fail when the same variable is provided multiple times")
+
 ###############################################################################
 # Drop
 ###############################################################################
@@ -250,6 +279,31 @@ range_drop <- test_df |> dropp(AB0302P:TL0102L)
 
 expect_warning(print_stack_as_messages("WARNING"), "No variables found with the given pattern", info = "Drop ignores ranges with two invalid variables")
 expect_identical(names(range_drop), names(test_df), info = "Drop ignores ranges with two invalid variables")
+
+
+# Drop accepts vectors of variable names
+expect_identical(names(vector_df |> dropp(vector_names)), c("c", "d", "e"),
+                 info = "Drop accepts vectors of variable names")
+expect_identical(names(vector_df |> dropp(vector_names, other_names)), "e",
+                 info = "Drop accepts vectors of variable names")
+
+
+# Drop can mix single variable names and vectors
+expect_identical(names(vector_df |> dropp(vector_names, e)), c("c", "d"),
+                 info = "Drop can mix single variable names and vectors")
+expect_identical(names(vector_df |> dropp(e, vector_names)), c("c", "d"),
+                 info = "Drop can mix single variable names and vectors")
+expect_identical(names(vector_df |> dropp(vector_names, c, other_names)), "e",
+                 info = "Drop can mix single variable names and vectors")
+
+
+# Drop does not fail when the same variable is provided multiple times
+expect_identical(names(vector_df |> dropp(vector_names, a)), c("c", "d", "e"),
+                 info = "Drop does not fail when the same variable is provided multiple times")
+expect_identical(names(vector_df |> dropp(vector_names, "a")), c("c", "d", "e"),
+                 info = "Drop does not fail when the same variable is provided multiple times")
+expect_identical(names(vector_df |> dropp(vector_names, a:c)), c("d", "e"),
+                 info = "Drop does not fail when the same variable is provided multiple times")
 
 
 set_no_print()

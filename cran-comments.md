@@ -12,6 +12,10 @@ Last CRAN release was on 20.09.2026.
 * `any_table()`, `excel_output_style()`: The new `block_borders` style parameter enables to draw borders between statistic blocks within the table area.
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now the `values` parameter can be omitted.
 * `keep()`, `dropp()`, `retain_variables()`, `add_variable_range`: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) then alle "age" variables from 1 to 10 are selected regardless of where they are located in the data set.
+* `do_if()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
+* `rename_multi()`: Single variables and vectors of variable names can now be renamed in the same call.
+* `keep()`, `dropp()`: Now also accept vectors.
+* `discrete_format()`, `interval_format()`: Added `as_character` paramter which ensures that the value labels are kept as character. Meaning numbers like "00110" keep their leading zeros instead of beeing converted into numeric value 110.
 
 ### Fixed
 
@@ -26,6 +30,8 @@ Last CRAN release was on 20.09.2026.
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now variable vectors without quotation marks can be passed.
 * `dropp()`: Now ignores ranges which consist of two invalid variables instead of returning an empty data frame.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Now allow multi line character conditions instead of aborting with an error.
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: In SAS like patterns like "15 <= age < 65" now formulas are accepted, e.g. "median * 60 / 100 <= income < median * 120 / 100".
+* `keep()`, `dropp()`: Don't error anymore when duplicate variable names are passed or duplicates are generated in combination with variable ranges.
 
 ### Optimization
 

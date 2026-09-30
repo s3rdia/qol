@@ -1316,8 +1316,26 @@ build_html_output <- function(data_frame,df_name){
 do_if <- function(data_frame, condition){
     parent_env <- parent.frame()
 
+    # When the condition is passed as character, then parse it to enable all the
+    # SAS like writing styles.
+    condition <- substitute(condition)
+
+    if (is.character(condition)){
+        condition <- parse_conditions(condition, na.rm = FALSE)
+
+        # If a name is returned then a single variable name was passed. In this case
+        # revert to character to ensure it is processed right down the road.
+        if (is.name(condition)){
+            condition <- as.character(condition)
+        }
+        # Otherwise transform into a call
+        else{
+            condition <- as.call(condition)
+        }
+    }
+
     # Evaluate condition to get a logical vector
-    condition <- translate_condition(substitute(condition))
+    condition <- translate_condition(condition)
     condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
     # Check whether there are already filter variables and add a new one. Every
@@ -1770,10 +1788,24 @@ parse_conditions <- function(condition, na.rm = TRUE){
     condition <- parse_colon(condition)
 
     # Look out for SAS like pattern: 15 <= age < 65, meaning:
-    # [number] [operator] [variable_name] [operator] [number]
+    # [lower_bound] [operator] [variable_name] [operator] [upper_bound]
     # and transform to:
-    # [number] [operator] [variable_name] & [variable_name] [operator] [number]
-    pattern <- "([a-zA-Z0-9_.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z0-9_.]+)\\s*(<=|<|>=|>)\\s*([a-zA-Z0-9_.]+)"
+    # [lower_bound] [operator] [variable_name] & [variable_name] [operator] [upper_bound]
+    #
+    # The bounds are usually plain values or variable names, but they can also be
+    # formulas like "x_median * 150 / 100". A term is either a function call, a
+    # bracketed expression or a plain token. Calls and brackets are tried first,
+    # otherwise a call like "mean(inc)" would be cut off after "mean".
+    inner   <- "(?:[^()]|\\([^()]*\\))*"
+    call    <- sprintf("[a-zA-Z0-9_.]+\\(%s\\)", inner)
+    bracket <- sprintf("\\(%s\\)",               inner)
+    token   <- "[a-zA-Z0-9_.]+"
+    term    <- sprintf("(?:%s|%s|%s)", call, bracket, token)
+
+    operand <- sprintf("%s(?:\\s*[-+*/]\\s*%s)*", term, term)
+
+    pattern <- sprintf("(%s)\\s*(<=|<|>=|>)\\s*(%s)\\s*(<=|<|>=|>)\\s*(%s)",
+                       operand, term, operand)
 
     while(grepl(pattern, condition)){
         condition <- gsub(pattern, "(\\1 \\2 \\3 & \\3 \\4 \\5)", condition, perl = TRUE)

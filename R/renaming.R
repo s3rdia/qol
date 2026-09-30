@@ -260,49 +260,80 @@ replace_except <- function(vector,
 #'                                         "age"   = "var2",
 #'                                         "state" = "var3")
 #'
+#' # It is also possible to rename variables stored in vectors
+#' old_names <- c("sex", "age", "state")
+#' new_names <- c("var1", "var2", "var3")
+#'
+#' new_names_df <- my_data |> rename_multi(old_names = new_names)
+#'
+#' # Single variables and vectors can be mixed in one call
+#' old_names <- c("income", "balance")
+#' new_names <- c("var1", "var2")
+#'
+#' new_names_df <- my_data |> rename_multi(sex       = var3,
+#'                                         old_names = new_names)
+#'
 #' @export
 rename_multi <- function(data_frame, ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 
-    # Translate ... into a list if possible
-    rename_list <- tryCatch({
-        # Force evaluation to see if it exists
-        list(...)
-    }, error = function(e){
-        # Evaluation failed
-        NULL
-    })
+    parent_env <- parent.frame()
 
-    # If capturing the ellipses failed, the variable names are probably passed
-    # without quotation marks. If this is the case, capture them on another way.
-    if (is.null(rename_list)){
-        rename_list <- substitute(list(...))[-1]
-    }
+    # Capture the ellipsis as it was passed in. This keeps quoted, unquoted and
+    # vector based renamings apart, which is needed because a single variable and
+    # a vector of variables can be passed in the same call.
+    rename_list <- as.list(substitute(list(...)))[-1]
 
-    if (length(rename_list[[1]]) > 1){
-        # 1. Get the actual vector from the left side (the argument name)
-        old_names <- names(rename_list)[1]
-        old_names <- get(old_names, envir = parent.frame())
+    # Collect all arguments as old and new name pairs.
+    old_names <- character(0)
+    new_names <- character(0)
 
-        # 2. Get the vector from the right side (the argument value)
-        new_names <- rename_list[[1]]
+    for (arg_name in names(rename_list)){
+        # Depending on whether the variable names were passed in with or without
+        # quotation marks, they have to be captured on a different way.
+        new_name <- tryCatch(eval(rename_list[[arg_name]], envir = parent_env),
+                             error = function(e){
+                                 NULL
+                             })
 
-        # 3. Zip them together into a named vector: vec1 = vec2
-        rename_list <- as.list(stats::setNames(old_names, new_names))
-    }
-    else{
-        # Get old and new names in separate vectors to rename them in one go
-        old_names <- names(rename_list)
+        # Arguments which are not a variable of the data frame, but a vector of
+        # variable names, belong to a vector renaming.
+        old_name <- tryCatch(get(arg_name, envir = parent_env),
+                             error = function(e){
+                                 NULL
+                             })
 
-        # Depending on how the variable names were passed, thene wvariable names have
-        # to be captured on a different way.
-        if (is.list(rename_list)){
-            new_names <- unlist(rename_list, use.names = FALSE)
+        # Check if arg_name refers to an external character vector in parent_env
+        # rather than a direct column name in data_frame (vector-based renaming).
+        if (is.character(old_name) && !(arg_name %in% names(data_frame))){
+            old_names <- c(old_names, old_name)
+            new_names <- c(new_names, new_name)
         }
+        # Treat arg_name itself as the target column name to be renamed
         else{
-            new_names <- vapply(rename_list, deparse, character(1))
+            old_names <- c(old_names, arg_name)
+
+            # If new_name evaluated successfully to a character string, keep it as is
+            if (is.character(new_name)){
+                new_name <- new_name
+            }
+            # Otherwise, capture unquoted symbol names by converting the expression
+            # to a string.
+            else{
+                new_name <- deparse(rename_list[[arg_name]])
+            }
+
+            new_names <- c(new_names, new_name)
         }
+    }
+
+    # Old and new names have to match up one to one
+    if (length(old_names) != length(new_names)){
+        print_message("ERROR", c("The provided <old names> and <new names> differ in length",
+                                 "([old] vs. [new]). Renaming will be aborted."),
+                      old = length(old_names), new = length(new_names))
+        return(data_frame)
     }
 
     # Make sure that the variables provided are part of the data frame.
@@ -310,8 +341,8 @@ rename_multi <- function(data_frame, ...){
 
     if (is.list(old_names)){
         print_message("ERROR", c("The provided <old name> '[old]' is not part of",
-								 "the data frame. Pass in variables to be renamed in the form:",
-								 '"old_var" = "new_var". Renaming will be aborted.'), old = old_names[[1]])
+ 								 "the data frame. Pass in variables to be renamed in the form:",
+ 								 '"old_var" = "new_var". Renaming will be aborted.'), old = old_names[[1]])
         return(data_frame)
     }
 
@@ -319,7 +350,6 @@ rename_multi <- function(data_frame, ...){
     invalid_new_names <- new_names[new_names %in% names(data_frame)]
 
     # Extract identical variable names and only rename the ones who differ
-    invalid_new_names <- new_names[new_names %in% names(data_frame)]
     old_names         <- old_names[!new_names %in% invalid_new_names]
     new_names         <- new_names[!new_names %in% invalid_new_names]
 

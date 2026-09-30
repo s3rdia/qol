@@ -214,6 +214,59 @@ edge_case_result[["x"]] <- as.character(edge_case_result[["x"]])
 expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "A"], 3999, info = "Edge cases in appplied interval formats fall into the correct category")
 expect_equal(edge_case_result[["w_sum"]][edge_case_result[["x"]] == "B"], 5001, info = "Edge cases in appplied interval formats fall into the correct category")
 
+
+# Formats convert numeric labels to numeric by default
+leading_zeros <- discrete_format("00110" = 1, "00120" = 2)
+
+expect_equal(leading_zeros[["label"]], c(110, 120), info = "Formats convert numeric labels to numeric by default")
+expect_equal(interval_format("00110" = 1, "00120" = 2:3)[["label"]], c(110, 120),
+             info = "Interval formats convert numeric labels to numeric by default")
+
+
+# Formats keep labels as character, if as_character is TRUE
+leading_zeros_char <- discrete_format("00110" = 1, "00120" = 2, as_character = TRUE)
+
+expect_equal(leading_zeros_char[["label"]], c("00110", "00120"), info = "Discrete formats keep labels as character with as_character")
+expect_true(is.character(leading_zeros_char[["label"]]), info = "Discrete formats keep labels as character with as_character")
+
+interval_zeros_char <- interval_format("00110" = 1, "00120" = 2:3, as_character = TRUE)
+
+expect_equal(interval_zeros_char[["label"]], c("00110", "00120"), info = "Interval formats keep labels as character with as_character")
+expect_true(is.character(interval_zeros_char[["label"]]), info = "Interval formats keep labels as character with as_character")
+
+
+# Keywords still work when labels are kept as character
+expect_equal(discrete_format("00110" = 1, "99999" = "other", as_character = TRUE)[["label"]],
+             c("00110", "99999"), info = "Other keyword works with as_character")
+expect_true(interval_format("00110" = c("low", 1), "99999" = c(2, "high"), as_character = TRUE)[["label"]][1] == "00110",
+            info = "Low and high keywords work with as_character")
+
+
+# Leading zeros are kept when formats are applied with recode_multi
+zeros_df <- data.frame(codes = c(1, 2, 3, 1))
+
+recode_result <- zeros_df |> recode_multi(codes = leading_zeros_char)
+recode_default <- zeros_df |> recode_multi(codes = leading_zeros)
+
+expect_equal(as.character(recode_result[["codes"]]), c("00110", "00120", "3", "00110"),
+             info = "Leading zeros are kept when applying formats with recode_multi")
+expect_equal(as.character(recode_default[["codes"]])[1], "110",
+             info = "Leading zeros are lost by default when applying formats with recode_multi")
+
+
+# Leading zeros are kept when formats are applied with summarise_plus
+summarise_result <- zeros_df |>
+    summarise_plus(class      = codes,
+                   values     = codes,
+                   statistics = "freq",
+                   formats    = list(codes = leading_zeros_char),
+                   nesting    = "deepest")
+
+expect_true("00110" %in% as.character(summarise_result[["codes"]]),
+            info = "Leading zeros are kept when applying formats with summarise_plus")
+expect_false("110" %in% as.character(summarise_result[["codes"]]),
+             info = "Leading zeros are kept when applying formats with summarise_plus")
+
 ###############################################################################
 # Abort checks
 ###############################################################################

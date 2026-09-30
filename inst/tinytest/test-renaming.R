@@ -44,6 +44,34 @@ expect_true(all(c("var1", "var2") %in% names(new_names_df)), info = "Renaming mu
 expect_true(!all(c("sex", "age")  %in% names(new_names_df)), info = "Renaming multiple variables without quotation marks")
 
 
+# Renaming a single variable and a vector of variables in one call
+old_names <- c("weight", "income")
+new_names <- c("var1", "var2")
+
+new_names_df <- dummy_df |> rename_multi("sex" = "var3", old_names = new_names)
+
+expect_true(all(c("var1", "var2", "var3") %in% names(new_names_df)), info = "Renaming a single variable and a vector of variables in one call")
+
+new_names_df <- dummy_df |> rename_multi(old_names = new_names, "sex" = "var3")
+
+expect_true(all(c("var1", "var2", "var3") %in% names(new_names_df)), info = "Renaming a single variable and a vector of variables in one call")
+
+
+# Renaming multiple vectors and single variables in between
+old_names_1 <- c("weight", "income")
+new_names_1 <- c("var1", "var2")
+old_names_2 <- c("education", "balance")
+new_names_2 <- c("var3", "var4")
+
+new_names_df <- dummy_df |> rename_multi(sex         = var5,
+                                         old_names_1 = new_names_1,
+                                         age         = var6,
+                                         old_names_2 = new_names_2)
+
+expect_true(all(c("var1", "var2", "var3", "var4", "var5", "var6") %in% names(new_names_df)),
+            info = "Renaming multiple vectors and single variables in between")
+
+
 # Renaming based on first row in data frame
 test_df <- data.frame(
               var1 = c("id", 1, 2, 3),
@@ -71,6 +99,15 @@ expect_true(all(c("sex", "edu", "state") %in% names(new_names_df)), info = "Rena
 new_names_df <- dummy_df |> rename_multi("var1" = "var2")
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <old name> '", info = "Renaming aborts if old variable name not found in data frame")
+
+
+# Renaming aborts if old and new name vectors differ in length
+old_names <- c("sex", "age")
+new_names <- "var1"
+
+new_names_df <- dummy_df |> rename_multi(old_names = new_names)
+
+expect_error(print_stack_as_messages("ERROR"), "differ in length", info = "Renaming aborts if old and new name vectors differ in length")
 
 
 set_no_print()
