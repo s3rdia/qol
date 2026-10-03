@@ -41,6 +41,7 @@ Last CRAN release was on 20.09.2026.
 ### Additionally
 
 * `if.()`, `else_if.()`, `else.()`: Now the messages also display the condition and not only target variable and value.
+* `test_package()`, `test_single_file()`: Now print an install diolog instead of just a note if tinytest is not installed.
 
 
 ## R CMD check results

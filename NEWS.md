@@ -40,6 +40,7 @@
 ### Additionally
 
 * `if.()`, `else_if.()`, `else.()`: Now the messages also display the condition and not only target variable and value. (03.10.2026)
+* `test_package()`, `test_single_file()`: Now print an install diolog instead of just a note if tinytest is not installed. (03.10.2026)
 
 # qol 1.3.5
 

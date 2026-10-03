@@ -147,10 +147,8 @@ report_test_results <- function(tiny_results, utf8 = .qol_messages[["format"]][[
 #' @export
 test_package <- function(package_name,
                          multithread = FALSE){
-    if (!requireNamespace("tinytest", quietly = TRUE)){
-        print_message("NOTE", 'To use this function you have to install "tinytest": install.packages("tinytest")')
-
-        return(invisible(NULL))
+    if (!check_required_package("tinytest")){
+        return(invisible(FALSE))
     }
 
     if (multithread){
@@ -177,10 +175,8 @@ test_package <- function(package_name,
 #'
 #' @export
 test_single_file <- function(file_name){
-    if (!requireNamespace("tinytest", quietly = TRUE)){
-        print_message("NOTE", 'To use this function you have to install "tinytest": install.packages("tinytest")')
-
-        return(invisible(NULL))
+    if (!check_required_package("tinytest")){
+        return(invisible(FALSE))
     }
 
     file_name <- tools::file_path_sans_ext(basename(file_name))

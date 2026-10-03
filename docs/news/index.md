@@ -134,6 +134,10 @@
   [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
   the messages also display the condition and not only target variable
   and value. (03.10.2026)
+- [`test_package()`](https://s3rdia.github.io/qol/reference/reporter.md),
+  [`test_single_file()`](https://s3rdia.github.io/qol/reference/reporter.md):
+  Now print an install diolog instead of just a note if tinytest is not
+  installed. (03.10.2026)
 
 ## qol 1.3.5
 
