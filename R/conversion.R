@@ -431,6 +431,9 @@ resolve_custom_function_argument <- function(argument, snapshot){
 get_origin_symbol <- function(symbol){
     symbol <- as.character(symbol)
 
+    # Tracks whether the symbol is bound anywhere inside the call stack.
+    symbol_is_bound <- FALSE
+
     # Loop through the tree of parent environments
     for (i in rev(seq_len(sys.nframe()))){
         env <- sys.frame(i)
@@ -461,6 +464,10 @@ get_origin_symbol <- function(symbol){
                 substitute(sym, env), list(sym = as.name(symbol)))))
         })
 
+        if (!is.null(value)){
+            symbol_is_bound <- TRUE
+        }
+
         if (!is.null(value) && is.character(value)){
             # If the value found is a column of a data frame inside the calling
             # stack, the symbol refers to that column. Return the column name
@@ -474,9 +481,123 @@ get_origin_symbol <- function(symbol){
 
             return(value)
         }
+
+        # The symbol is not bound inside the frame itself. Search the enclosing
+        # environments of the frame as well. This resolves symbols passed down
+        # from a user written wrapper function around other functions.
+        for (parent in enclosing_environments(env)){
+            parent_value <- tryCatch({
+                get0(symbol, envir = parent, inherits = FALSE)
+            }, error = function(e){
+                NULL
+            })
+
+            if (!is.null(parent_value)){
+                symbol_is_bound <- TRUE
+            }
+
+            if (!is.null(parent_value) && is.character(parent_value)){
+                if (symbol_is_data_frame_column(symbol, parent_value)){
+                    return(symbol)
+                }
+
+                return(parent_value)
+            }
+        }
+    }
+
+    # Last resort: search the global environment.
+    #
+    # When functions are called from the console or from a top level script,
+    # the global environment is neither part of the call stack nor a parent of
+    # any of the frames. Walking the call stack and its enclosing environments
+    # therefore never reaches variables which the user defined in the global
+    # environment. They have to be looked up in the global environment explicitly
+    # as a fallback.
+    if (!symbol_is_bound){
+        global_value <- tryCatch({
+            get0(symbol, envir = globalenv(), inherits = FALSE)
+        }, error = function(e){
+            NULL
+        })
+
+        if (!is.null(global_value) && is.character(global_value)){
+            if (symbol_is_data_frame_column(symbol, global_value)){
+                return(symbol)
+            }
+
+            return(global_value)
+        }
     }
 
     symbol
+}
+
+
+#' Get The Enclosing Environments Of A Call Stack Frame
+#'
+#' @description
+#' Returns the environments which enclose a call stack frame, starting at the
+#' enclosure of the frame itself.
+#'
+#' @param frame The call stack frame to get the enclosing environments of.
+#'
+#' @return
+#' Returns a list of environments.
+#'
+#' @noRd
+enclosing_environments <- function(frame){
+    environments <- list()
+
+    parent <- tryCatch(parent.env(frame), error = function(e){
+        NULL
+    })
+
+    while (!is.null(parent) && is_user_environment(parent)){
+        environments[[length(environments) + 1]] <- parent
+
+        parent <- tryCatch(parent.env(parent), error = function(e){
+            NULL
+        })
+    }
+
+    environments
+}
+
+
+#' Check Whether An Environment Can Hold User Provided Variables
+#'
+#' @description
+#' Checks whether an environment can contain variables provided by the user.
+#'
+#' @param environment The environment to check.
+#'
+#' @return
+#' TRUE or FALSE.
+#'
+#' @noRd
+is_user_environment <- function(environment){
+    # The global environment is where variables live when the user works
+    # interactively
+    if (identical(environment, globalenv())){
+        return(TRUE)
+    }
+
+    if (identical(environment, baseenv()) || identical(environment, emptyenv())){
+        return(FALSE)
+    }
+
+    # Namespaces and attached packages do not hold user provided variables
+    if (isNamespace(environment)){
+        return(FALSE)
+    }
+
+    # Attached packages and namespaces carry a name, ordinary environments do not
+    if (!is.null(environmentName(environment))){
+        return(FALSE)
+    }
+
+    TRUE
 }
 
 

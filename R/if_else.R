@@ -147,6 +147,15 @@ if. <- function(data_frame, condition, ...){
         condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
     }
 
+    # Keep the condition as written by the user. It is only used to inform about
+    # the applied condition in the console messages, not for evaluation.
+    if (is.character(condition)){
+        condition_text <- condition
+    }
+    else{
+        condition_text <- gsub("\\s+", " ", paste(deparse(condition), collapse = " "))
+    }
+
     # When the condition is passed as character, then parse it to enable all the
     # SAS like writing styles.
     if (is.character(condition)){
@@ -357,9 +366,10 @@ if. <- function(data_frame, condition, ...){
             # Output info message
             rows_after <- data_frame |> collapse::fnrow()
 
-            print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
-                    removed = format(rows_before - rows_after,
-                                     format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
+            print_step("MAJOR", "[condition]: Removed [removed] observations. Data frame now has [still_there] observations.",
+                    condition = condition_text,
+                    removed   = format(rows_before - rows_after,
+                                       format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
                     still_there = format(rows_after,
                                          format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE))
         }
@@ -443,7 +453,8 @@ if. <- function(data_frame, condition, ...){
                 # Output info message
                 rows_after <- data_frame |> collapse::fnrow()
 
-                print_step("MAJOR", "Removed [removed] observations. Data frame now has [still_there] observations.",
+                print_step("MAJOR", "[condition]: Removed [removed] observations. Data frame now has [still_there] observations.",
+                           condition = condition_text,
                            removed = format(rows_before - rows_after,
                                             format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
                            still_there = format(rows_after,
@@ -454,9 +465,10 @@ if. <- function(data_frame, condition, ...){
 
     # Evaluate calculations conditionally. Making use of hidden parameters.
     if (!flag_filter){
-        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                                  .if_parent_frame = parent_env,
-                                                  .if_suppressed   = TRUE)
+        data_frame <- data_frame |> compute.(..., .if_condition       = condition_list,
+                                                  .if_parent_frame    = parent_env,
+                                                  .if_condition_label = condition_text,
+                                                  .if_suppressed      = TRUE)
     }
 
     print_closing()
@@ -490,6 +502,15 @@ else_if. <- function(data_frame, condition, ...){
 
     while (is.name(condition) && exists(as.character(condition), parent_env)){
         condition <- eval(substitute(substitute(expression, parent_env), list(expression = condition)))
+    }
+
+    # Keep the condition as written by the user. It is only used to inform about
+    # the applied condition in the console messages, not for evaluation.
+    if (is.character(condition)){
+        condition_text <- condition
+    }
+    else{
+        condition_text <- gsub("\\s+", " ", paste(deparse(condition), collapse = " "))
     }
 
     # When the condition is passed as character, then parse it to enable all the
@@ -671,9 +692,10 @@ else_if. <- function(data_frame, condition, ...){
 
         if (length(condition_list) > 0){
             # Evaluate calculations conditionally. Making use of hidden parameters.
-            data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                                      .if_parent_frame = parent_env,
-                                                      .if_suppressed   = TRUE)
+            data_frame <- data_frame |> compute.(..., .if_condition       = condition_list,
+                                                      .if_parent_frame    = parent_env,
+                                                      .if_condition_label = condition_text,
+                                                      .if_suppressed      = TRUE)
         }
         # condition_list can be empty in case the variables to assign values to
         # are not already in the data frame.
@@ -710,6 +732,9 @@ else. <- function(data_frame, ...){
 
     parent_env  <- parent.frame()
     assignments <- as.list(substitute(list(...)))[-1]
+
+    # else.() has no condition of its own, it applies to all remaining rows.
+    condition_text <- "Remaining NA values"
 
     # The condition and the variable assignments are torn apart here, so that
     # only the unique variable and vector names are captured as characters.
@@ -859,9 +884,10 @@ else. <- function(data_frame, ...){
 
     if (length(condition_list) > 0){
         # Evaluate calculations conditionally. Making use of hidden parameters.
-        data_frame <- data_frame |> compute.(..., .if_condition    = condition_list,
-                                                  .if_parent_frame = parent_env,
-                                                  .if_suppressed   = TRUE)
+        data_frame <- data_frame |> compute.(..., .if_condition       = condition_list,
+                                                  .if_parent_frame    = parent_env,
+                                                  .if_condition_label = condition_text,
+                                                  .if_suppressed      = TRUE)
     }
     # condition_list can be empty in case the variables to assign values to
     # are not already in the data frame.
@@ -1754,6 +1780,16 @@ remove_line_breaks <- function(condition){
 }
 
 
+#' German umlauts and the eszett which are allowed inside identifiers in
+#' conditions, in addition to the ASCII characters.
+#'
+#' The characters are written as unicode escape sequences to keep this source file
+#' free of non-ASCII characters.
+#'
+#' @noRd
+umlauts <- "\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF"
+
+
 #' Parses unevaluated character conditions to translate SAS like syntax into
 #' R syntax.
 #'
@@ -1777,8 +1813,10 @@ parse_conditions <- function(condition, na.rm = TRUE){
     condition <- gsub("(?<!<|>|=|!)={1}(?!=)", " == ", condition, perl = TRUE)
 
     # Replace == . and != . with is.na() and !is.na()
-    condition <- gsub("([a-zA-Z0-9_]+)[[:space:]]*==[[:space:]]*\\.", "is.na(\\1)",  condition)
-    condition <- gsub("([a-zA-Z0-9_]+)[[:space:]]*!=[[:space:]]*\\.", "!is.na(\\1)", condition)
+    # Identifiers may contain umlauts and eszett
+    ident <- sprintf("([A-Za-z_%s][A-Za-z0-9_.%s]*)", umlauts, umlauts)
+    condition <- gsub(paste0(ident, "[[:space:]]*==[[:space:]]*\\."), "is.na(\\1)",  condition, perl = TRUE)
+    condition <- gsub(paste0(ident, "[[:space:]]*!=[[:space:]]*\\."), "!is.na(\\1)", condition, perl = TRUE)
 
     # Resolve macro variables
     condition <- macro(condition)
@@ -1797,15 +1835,17 @@ parse_conditions <- function(condition, na.rm = TRUE){
     # bracketed expression or a plain token. Calls and brackets are tried first,
     # otherwise a call like "mean(inc)" would be cut off after "mean".
     inner   <- "(?:[^()]|\\([^()]*\\))*"
-    call    <- sprintf("[a-zA-Z0-9_.]+\\(%s\\)", inner)
-    bracket <- sprintf("\\(%s\\)",               inner)
-    token   <- "[a-zA-Z0-9_.]+"
+    # Identifiers may contain umlauts and eszett
+    call    <- sprintf("[A-Za-z0-9_.%s]+\\(%s\\)", umlauts, inner)
+    bracket <- sprintf("\\(%s\\)",                   inner)
+    token   <- sprintf("[A-Za-z0-9_.%s]+", umlauts)
     term    <- sprintf("(?:%s|%s|%s)", call, bracket, token)
 
     operand <- sprintf("%s(?:\\s*[-+*/]\\s*%s)*", term, term)
 
+    # The middle term may itself be a formula, e.g. "0 <= Jahr - ZugJahr < 5"
     pattern <- sprintf("(%s)\\s*(<=|<|>=|>)\\s*(%s)\\s*(<=|<|>=|>)\\s*(%s)",
-                       operand, term, operand)
+                       operand, operand, operand)
 
     while(grepl(pattern, condition)){
         condition <- gsub(pattern, "(\\1 \\2 \\3 & \\3 \\4 \\5)", condition, perl = TRUE)
@@ -1839,7 +1879,7 @@ parse_in <- function(condition){
     # This regex tackles patterns like:
     # [variable] in ([value], [value], ... / [value] [value] ...)
     # [variable] not in ([value], [value], ... / [value] [value] ...)
-    in_pattern <- paste0("([a-zA-Z_][a-zA-Z0-9_.]*)\\s+",
+    in_pattern <- paste0(sprintf("([A-Za-z_%s][A-Za-z0-9_.%s]*)\\s+", umlauts, umlauts),
                          "(not\\s+)?in\\s*\\(([^)]*)\\)")
 
     bracket_pattern <- '"[^"]*"|\'[^\']*\'|[^[:space:],]+'
@@ -1908,7 +1948,7 @@ parse_in <- function(condition){
 #' @noRd
 parse_colon <- function(condition){
     # Look for variable == "text:" / variable != ":text:" patterns
-    pattern <- paste0("([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(==|!=)\\s*",
+    pattern <- paste0(sprintf("([A-Za-z_%s][A-Za-z0-9_.%s]*)\\s*(==|!=)\\s*", umlauts, umlauts),
                       "(['\"])",
                       "([^'\"]*:[^'\"]*)\\3")
 

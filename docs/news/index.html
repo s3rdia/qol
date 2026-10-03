@@ -94,11 +94,18 @@
 <code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>, <code><a href="../reference/where..html">where.()</a></code>, <code><a href="../reference/do_if.html">do_if()</a></code>: In SAS like patterns like “15 &lt;= age &lt; 65” now formulas are accepted, e.g. “median * 60 / 100 &lt;= income &lt; median * 120 / 100”. (30.09.2026)</li>
 <li>
 <code><a href="../reference/keep_dropp.html">keep()</a></code>, <code><a href="../reference/keep_dropp.html">dropp()</a></code>: Don’t error anymore when duplicate variable names are passed or duplicates are generated in combination with variable ranges. (30.09.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>, <code><a href="../reference/where..html">where.()</a></code>, <code><a href="../reference/do_if.html">do_if()</a></code>: German umlauts and ß should now work within character conditions. (03.10.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-6">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-6"></a></h4>
 <ul><li>
 <code><a href="../reference/multi_join.html">multi_join()</a></code>: Now sorts all variables on the <code>on</code> variables before joining, which has a big impact when joining larger data frames on multiple key variables. Smaller joins might suffer from a small penalty because of that, but this should be neglectable. (29.09.2026)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="additionally-1-3-6">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-6"></a></h4>
+<ul><li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/if_else.html">else.()</a></code>: Now the messages also display the condition and not only target variable and value. (03.10.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">

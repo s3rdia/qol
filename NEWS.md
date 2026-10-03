@@ -31,10 +31,15 @@
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`: Now allow multi line character conditions instead of aborting with an error. (29.09.2026)
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: In SAS like patterns like "15 <= age < 65" now formulas are accepted, e.g. "median * 60 / 100 <= income < median * 120 / 100". (30.09.2026)
 * `keep()`, `dropp()`: Don't error anymore when duplicate variable names are passed or duplicates are generated in combination with variable ranges. (30.09.2026)
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: German umlauts and ß should now work within character conditions. (03.10.2026)
 
 ### Optimization
 
 * `multi_join()`: Now sorts all variables on the `on` variables before joining, which has a big impact when joining larger data frames on multiple key variables. Smaller joins might suffer from a small penalty because of that, but this should be neglectable. (29.09.2026)
+
+### Additionally
+
+* `if.()`, `else_if.()`, `else.()`: Now the messages also display the condition and not only target variable and value. (03.10.2026)
 
 # qol 1.3.5
 

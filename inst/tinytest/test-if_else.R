@@ -447,6 +447,28 @@ test_df <- range_df |> if.("med * 0.75 <= inc and inc < med * 1.25 and inc != ."
 expect_identical(test_df[["inc"]], c(150, 200, 200), info = "SAS like ranges with formulas can be combined with other conditions")
 
 
+# SAS like ranges accept a formula in the middle
+test_df <- dummy_df |> if.("0 <= age - 1 < 5")
+
+expect_true(all(test_df[["age"]] <= 5), info = "SAS like ranges accept a formula in the middle")
+
+test_df <- dummy_df |> if.("0 <= (age - 1) < 5")
+
+expect_true(all(test_df[["age"]] <= 5), info = "SAS like ranges accept a formula in the middle")
+
+
+# SAS like ranges accept formulas on the bounds together with a formula in the middle
+test_df <- range_df |> if.("med * 0 <= inc - med < med")
+
+expect_identical(test_df[["inc"]], c(200, 200, 250, 300), info = "SAS like ranges accept formulas on the bounds together with a formula in the middle")
+
+
+# German umlauts and ß are recognized within character conditions
+test_df <- dummy_df |> rename_multi(age = äöüß) |> if.("0 <= äöüß - 1 < 5")
+
+expect_true(all(test_df[["äöüß"]] <= 5), info = "SAS like ranges accept a formula in the middle")
+
+
 # Abort subset with if., if variable is not part of the data frame
 test_df <- dummy_df |> if.("test")
 

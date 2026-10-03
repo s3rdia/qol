@@ -111,6 +111,13 @@
   Don’t error anymore when duplicate variable names are passed or
   duplicates are generated in combination with variable ranges.
   (30.09.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md),
+  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md): German
+  umlauts and ß should now work within character conditions.
+  (03.10.2026)
 
 #### Optimization
 
@@ -119,6 +126,14 @@
   has a big impact when joining larger data frames on multiple key
   variables. Smaller joins might suffer from a small penalty because of
   that, but this should be neglectable. (29.09.2026)
+
+#### Additionally
+
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
+  the messages also display the condition and not only target variable
+  and value. (03.10.2026)
 
 ## qol 1.3.5
 

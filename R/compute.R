@@ -129,6 +129,12 @@ compute. <- function(data_frame,
     # check, if there are any do_if() conditions active and apply them
     if_condition_list <- NULL
     if_suppressed     <- FALSE
+    condition_label   <- NULL
+
+    # Keep the frame of if.()/else_if.()/else.() around, because the hidden
+    # parameters below arrive as unevaluated symbols and have to be resolved
+    # there, not in the frame of the user code that called the if statement.
+    if_env <- parent_env
 
     if (".if_condition" %in% names(assignments)){
         condition                      <- TRUE
@@ -147,6 +153,11 @@ compute. <- function(data_frame,
     if (".if_suppressed" %in% names(assignments)){
         assignments[[".if_suppressed"]] <- NULL
         if_suppressed <- TRUE
+    }
+
+    if (".if_condition_label" %in% names(assignments)){
+        condition_label                      <- eval(assignments[[".if_condition_label"]], envir = if_env)
+        assignments[[".if_condition_label"]] <- NULL
     }
 
     # The condition and the variable assignments are torn apart here, so that
@@ -201,7 +212,13 @@ compute. <- function(data_frame,
             #-------------------------------------------------------------------------#
             monitor_df <- monitor_df |> monitor_next(paste0(variable, " = ", calc_text), "Non vector")
             #-------------------------------------------------------------------------#
-            print_step("MINOR", "[var] = [calc]", var = variable, calc = calc_text)
+            if (is.null(condition_label)){
+                print_step("MINOR", "[var] = [calc]", var = variable, calc = calc_text)
+            }
+            else{
+                print_step("MINOR", "[condition]: [var] = [calc]",
+                           condition = condition_label, var = variable, calc = calc_text)
+            }
 
             # This step is important to make this function work in a nested situation.
             # Normally variable would be the name of what was last passed as a parameter.
@@ -322,8 +339,15 @@ compute. <- function(data_frame,
                 expression <- get_custom_functions(value_var, parent_env)
                 value      <- suppressMessages(eval(expression, envir = data_frame))
 
-                print_step("MINOR", "{target} = [value]", target = target_variable,
-                           value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
+                if (is.null(condition_label)){
+                    print_step("MINOR", "[target] = [value]", target = target_variable,
+                               value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
+                }
+                else{
+                    print_step("MINOR", "[condition]: [target] = [value]",
+                               condition = condition_label, target = target_variable,
+                               value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
+                }
 
                 # Look up, if single value was passed or vector of values. Only if a
                 # vector of values is passed, which has fewer observations than the
