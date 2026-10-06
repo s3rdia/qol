@@ -186,21 +186,46 @@ df1_3 <- data.frame(key = c(1, 2, 3), a = "a")
 df2_3 <- data.frame(key = c(2, 3, 4), b = "b")
 df3_3 <- data.frame(key = c(3, 4, 5), c = "c")
 
-wide_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right", "left"), monitor = FALSE)
+wide_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right", "left"))
 
 expect_equal(sort(wide_left[["key"]]), 2:4, info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
 
-full_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("full", "left"), monitor = FALSE)
+full_left <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("full", "left"))
 
 expect_equal(sort(full_left[["key"]]), 1:4, info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
 
-outer_outer <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("outer", "outer"), monitor = FALSE)
+outer_outer <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("outer", "outer"))
 
 expect_equal(sort(outer_outer[["key"]]), c(1, 3, 5), info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
 
-right_inner_right_inner <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right_inner", "right_inner"), monitor = FALSE)
+right_inner_right_inner <- multi_join(list(df1_3, df2_3, df3_3), on = "key", how = c("right_inner", "right_inner"))
 
 expect_equal(sort(right_inner_right_inner[["key"]]), c(3, 5), info = "Multi-frame joins where a widening join (right, full, outer) is followed by another join")
+
+
+# A variable provided by the second data frame is used as a join variable for the third data frame
+df1e <- data.frame(key = c(1, 1, 2),
+                   a   = c("a1", "a2", "a3"))
+
+df2e <- data.frame(key = c(1, 2),
+                   sex = c(10, 20),
+                   b   = c("b1", "b2"))
+
+df3e <- data.frame(sex = c(10, 20),
+                   c   = c("c1", "c2"))
+
+provided_key_join <- multi_join(list(df1e, df2e, df3e),
+                                on = list(df1e = list("key", "sex"),
+                                          df2e = "key",
+                                          df3e = "sex"))
+
+expect_equal(as.data.frame(provided_key_join),
+             data.frame(key = c(1, 1, 2),
+                        a   = c("a1", "a2", "a3"),
+                        sex = c(10, 10, 20),
+                        b   = c("b1", "b1", "b2"),
+                        c   = c("c1", "c1", "c2")),
+             info = "A variable provided by the second data frame is used as a join variable for the third data frame")
 
 ###############################################################################
 # Warning checks

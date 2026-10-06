@@ -16,6 +16,7 @@ Last CRAN release was on 20.09.2026.
 * `rename_multi()`: Single variables and vectors of variable names can now be renamed in the same call.
 * `keep()`, `dropp()`: Now also accept vectors.
 * `discrete_format()`, `interval_format()`: Added `as_character` paramter which ensures that the value labels are kept as character. Meaning numbers like "00110" keep their leading zeros instead of beeing converted into numeric value 110.
+* `multi_join()`: When joining more than two data frames the function is now able to join on key variables which are joined to the base data frame in the process. 
 
 ### Fixed
 

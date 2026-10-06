@@ -305,14 +305,16 @@ multi_join <- function(data_frames,
             }
         }
         else{
-            # The first data frame can have different join variables for each
-            # join, so all its combinations have to be checked.
+            # The first data frame can have different join variables for each join.
+            # They are checked inside the join loop instead, because a join variable
+            # can become part of the base data frame through one of the joins and
+            # wouldn't be there at provide time but at join time. Here only the
+            # incoming data frames are checked.
             if (i == 1){
-                variables_to_check <- unique(unlist(base_on))
+                next
             }
-            else{
-                variables_to_check <- on[[i]]
-            }
+
+            variables_to_check <- on[[i]]
 
             if (!all(variables_to_check %in% names(data_frames[[i]]))){
                 print_message("ERROR", c("Not all <on> variables ([on]) appear in data frame [name].",
@@ -453,6 +455,7 @@ multi_join <- function(data_frames,
 
         # On equal names there is just one combination which can be input directly
         if (!unequal_names){
+            base_join_vars <- base_on
             join_variables <- base_on
         }
         # On unequal names each individual variable combination has to be checked on the corresponding data frame
@@ -470,6 +473,18 @@ multi_join <- function(data_frames,
             }
 
             join_variables  <- stats::setNames(to_join_on, base_join_vars)
+        }
+
+        # The base side of the join can receive join variables through earlier joins,
+        # when a key variable is added by the join before this one. Therefore it
+        # is checked here against the join variables of the current join.
+        missing_base_vars <- base_join_vars[!base_join_vars %in% names(joined_df)]
+
+        if (length(missing_base_vars) > 0){
+            print_message("ERROR", c("Not all <on> variables ([on]) are part of the data frame",
+                                     "joined so far. Join will be aborted."),
+                          on = missing_base_vars)
+            return(invisible(NULL))
         }
 
         # Check for intersecting variable names and clear them before the join,

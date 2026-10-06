@@ -15,6 +15,7 @@
 * `rename_multi()`: Single variables and vectors of variable names can now be renamed in the same call. (30.09.2026)
 * `keep()`, `dropp()`: Now also accept vectors. (30.09.2026)
 * `discrete_format()`, `interval_format()`: Added `as_character` paramter which ensures that the value labels are kept as character. Meaning numbers like "00110" keep their leading zeros instead of beeing converted into numeric value 110. (30.09.2026)
+* `multi_join()`: When joining more than two data frames the function is now able to join on key variables which are joined to the base data frame in the process. (06.10.2026)
 
 ### Fixed
 
