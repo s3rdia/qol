@@ -185,7 +185,7 @@ compute. <- function(data_frame,
     duplicate_vars <- duplicated(names(assignments))
 
     if (any(duplicate_vars)){
-        duplicate_vars <- names(assignments)[duplicate_vars]
+        duplicate_vars <- unique(names(assignments)[duplicate_vars])
 
         print_message("NOTE", "Duplicate variable name[?s] '{var}' in compute. The last entry will overwrite the others before.",
                       var = duplicate_vars)

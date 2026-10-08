@@ -16,7 +16,8 @@ Last CRAN release was on 20.09.2026.
 * `rename_multi()`: Single variables and vectors of variable names can now be renamed in the same call.
 * `keep()`, `dropp()`: Now also accept vectors.
 * `discrete_format()`, `interval_format()`: Added `as_character` paramter which ensures that the value labels are kept as character. Meaning numbers like "00110" keep their leading zeros instead of beeing converted into numeric value 110.
-* `multi_join()`: When joining more than two data frames the function is now able to join on key variables which are joined to the base data frame in the process. 
+* `multi_join()`: When joining more than two data frames the function is now able to join on key variables which are joined to the base data frame in the process.
+* `if.()`, `else_if.()`, `else.()`: Are now able to use custom package functions like `recode.()` in the assignment.
 
 ### Fixed
 
@@ -43,6 +44,8 @@ Last CRAN release was on 20.09.2026.
 
 * `if.()`, `else_if.()`, `else.()`: Now the messages also display the condition and not only target variable and value.
 * `test_package()`, `test_single_file()`: Now print an install diolog instead of just a note if tinytest is not installed.
+* `rename_multi()`: Now throws a warning when a new variable name is already in the data frame.
+* `compute.()`: The duplicate variable name note now only displays the unique variable names.
 
 
 ## R CMD check results

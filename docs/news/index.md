@@ -59,6 +59,12 @@
   When joining more than two data frames the function is now able to
   join on key variables which are joined to the base data frame in the
   process. (06.10.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Are
+  now able to use custom package functions like
+  [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md) in the
+  assignment. (08.10.2026)
 
 #### Fixed
 
@@ -142,6 +148,12 @@
   [`test_single_file()`](https://s3rdia.github.io/qol/reference/reporter.md):
   Now print an install diolog instead of just a note if tinytest is not
   installed. (03.10.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Now throws a warning when a new variable name is already in the data
+  frame. (08.10.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  The duplicate variable name note now only displays the unique variable
+  names. (08.10.2026)
 
 ## qol 1.3.5
 

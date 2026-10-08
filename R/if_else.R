@@ -197,13 +197,15 @@ if. <- function(data_frame, condition, ...){
     list_entry_lengths <- lengths(content_list)
 
     # Variables used in the condition or the calculations must either be part of
-    # the data frame or be provided as external vectors. Otherwise the evaluation
-    # would abort. External vectors referenced in the calculations are looked up
-    # separately, so that the content_list keeps on controlling the branch
-    # selection between normal and do over evaluation.
+    # the data frame or resolve to an object in the calling frame. Otherwise the
+    # evaluation would abort. External references are looked up separately, so
+    # that the content_list keeps on controlling the branch selection between
+    # normal and do over evaluation. Anything which is not a vector is a valid
+    # external reference as well.
     variables_used <- unique(c(all.vars(condition),
                                unlist(lapply(assignments, all.vars))))
-    external_content <- Filter(is_valid_vector, mget(variables_used, envir = parent_env, ifnotfound = list(NULL)))
+    external_content <- mget(variables_used, envir = parent_env, ifnotfound = list(NULL))
+    external_content <- Filter(function(entry) !is.null(entry), external_content)
 
     invalid_vars <- variables_used[!variables_used %in% names(data_frame) &
                                    !variables_used %in% names(content_list) &
@@ -546,12 +548,16 @@ else_if. <- function(data_frame, condition, ...){
     content_list <- Filter(is_valid_vector, content_list)
 
     # Variables used in the condition or the calculations must either be part of
-    # the data frame or be provided as external vectors. Otherwise the evaluation
-    # would abort.
+    # the data frame or resolve to an object in the calling frame. Otherwise the
+    # evaluation would abort. This also covers objects which are not vectors.
     invalid_vars <- unique(c(all.vars(condition),
                              unlist(lapply(assignments, all.vars))))
+    external_content <- mget(invalid_vars, envir = parent_env, ifnotfound = list(NULL))
+    external_content <- Filter(function(entry) !is.null(entry), external_content)
+
     invalid_vars <- invalid_vars[!invalid_vars %in% names(data_frame) &
-                                 !invalid_vars %in% names(content_list)]
+                                 !invalid_vars %in% names(content_list) &
+                                 !invalid_vars %in% names(external_content)]
 
     if (length(invalid_vars) > 0){
         print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
@@ -750,10 +756,21 @@ else. <- function(data_frame, ...){
     content_list <- Filter(is_valid_vector, content_list)
 
     # Variables used in the calculations must either be part of the data frame or
-    # be provided as external vectors. Otherwise the evaluation would abort.
+    # resolve to an object in the calling frame. Otherwise the evaluation would
+    # abort. This also covers objects which are not vectors.
     invalid_vars <- unique(unlist(lapply(assignments, all.vars)))
+
+    if (length(invalid_vars) > 0){
+        external_content <- mget(invalid_vars, envir = parent_env, ifnotfound = list(NULL))
+        external_content <- Filter(function(entry) !is.null(entry), external_content)
+    }
+    else{
+        external_content <- list()
+    }
+
     invalid_vars <- invalid_vars[!invalid_vars %in% names(data_frame) &
-                                 !invalid_vars %in% names(content_list)]
+                                 !invalid_vars %in% names(content_list) &
+                                 !invalid_vars %in% names(external_content)]
 
     if (length(invalid_vars) > 0){
         print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",

@@ -346,8 +346,15 @@ rename_multi <- function(data_frame, ...){
         return(data_frame)
     }
 
-    # If any of the new variable names is already part of the data frame abort
+    # If any of the new variable names is already part of the data frame, the
+    # respective renaming is pulled out and reported. All other renames still run.
     invalid_new_names <- new_names[new_names %in% names(data_frame)]
+
+    if (length(invalid_new_names) > 0){
+        print_message("WARNING", c("The new variable name[?s] '[vars]' [?is/are] already part of",
+                                   "the data frame. The respective renaming will be skipped."),
+                      vars = unique(invalid_new_names))
+    }
 
     # Extract identical variable names and only rename the ones who differ
     old_names         <- old_names[!new_names %in% invalid_new_names]
