@@ -128,6 +128,13 @@
   [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md): German
   umlauts and ß should now work within character conditions.
   (03.10.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md),
+  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md):
+  Conditions with the `in` operator can now handle parentheses within
+  quoted strings and line breaks. (09.10.2026)
 
 #### Optimization
 

@@ -1896,8 +1896,13 @@ parse_in <- function(condition){
     # This regex tackles patterns like:
     # [variable] in ([value], [value], ... / [value] [value] ...)
     # [variable] not in ([value], [value], ... / [value] [value] ...)
-    in_pattern <- paste0(sprintf("([A-Za-z_%s][A-Za-z0-9_.%s]*)\\s+", umlauts, umlauts),
-                         "(not\\s+)?in\\s*\\(([^)]*)\\)")
+    #
+    # The values are matched as quoted strings or as single tokens, so that
+    # parentheses (and line breaks) inside quoted values do not terminate the
+    # value list early.
+    value_group <- '(?:"[^"]*"|\'[^\']*\'|[^()\'"])*'
+    in_pattern  <- paste0(sprintf("([A-Za-z_%s][A-Za-z0-9_.%s]*)\\s+", umlauts, umlauts),
+                          "(not\\s+)?in\\s*\\((", value_group, ")\\)")
 
     bracket_pattern <- '"[^"]*"|\'[^\']*\'|[^[:space:],]+'
 

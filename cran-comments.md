@@ -35,6 +35,7 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: In SAS like patterns like "15 <= age < 65" now formulas are accepted, e.g. "median * 60 / 100 <= income < median * 120 / 100".
 * `keep()`, `dropp()`: Don't error anymore when duplicate variable names are passed or duplicates are generated in combination with variable ranges.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: German umlauts and ß should now work within character conditions.
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: Conditions with the `in` operator can now handle parentheses within quoted strings and line breaks. 
 
 ### Optimization
 

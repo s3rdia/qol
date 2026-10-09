@@ -658,6 +658,55 @@ else.   (                   age_group = 0)
 expect_equal(result_df[["age_group"]], c(1, 0, 2, 2, 1), info = "if. and else_if. work with '.' inside IN")
 
 
+# if. works with IN when quoted values contain parentheses
+region_df <- data.table::data.table(test = c("Text with (text in parentheses)",
+                                             "Another text (another parentheses)",
+                                             "Other text"),
+                                    value = 1:3)
+
+result_df <- region_df |>
+    if.("test in ('Text with (text in parentheses)', 'Another text (another parentheses)')", flag = 1)
+
+expect_identical(result_df[["flag"]], c(1, 1, NA), info = "if. works with IN when quoted values contain parentheses")
+
+
+# if. works with IN when quoted values contain parentheses and the condition spans multiple lines
+result_df <- region_df |>
+    if.("test in ('Text with (text in parentheses)',
+                  'Another text (another parentheses)')", flag = 1)
+
+expect_identical(result_df[["flag"]], c(1, 1, NA),
+                 info = "if. works with IN when quoted values contain parentheses and the condition spans multiple lines")
+
+
+# if. works with NOT IN when quoted values contain parentheses and line breaks
+result_df <- region_df |>
+    if.("test not in ('Text with (text in parentheses)',
+                      'Another text (another parentheses)')", flag = 1)
+
+expect_identical(result_df[["flag"]], c(NA, NA, 1),
+                 info = "if. works with NOT IN when quoted values contain parentheses and line breaks")
+
+
+# ifelse_multi works with IN when quoted values contain nested parentheses
+result_df <- data.table::data.table(test = c("a (b (c))", "d", "e (f)"))
+
+result <- result_df |>
+    ifelse_multi("test in ('a (b (c))', 'e (f)')" = "match", else. = "other")
+
+expect_identical(result, c("match", "other", "match"),
+                 info = "ifelse_multi works with IN when quoted values contain nested parentheses")
+
+
+# ifelse_multi works with IN when quoted values contain parentheses and line breaks
+result <- result_df |>
+    ifelse_multi("test in ('a (b (c))',
+                           'e (f)')" = "match", else. = "other")
+
+expect_identical(result, c("match", "other", "match"),
+                 info = "ifelse_multi works with IN when quoted values contain parentheses and line breaks")
+
+
 # ifelse_multi character with spaces works with IN
 result <- ifelse_df |> ifelse_multi("name in ('Hello World' 'Hello Again')" = 1, else. = 0)
 
