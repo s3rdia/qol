@@ -153,6 +153,9 @@ multi_join <- function(data_frames,
         else{
             data_frames[[i]] <- data.table::copy(data_frames[[i]])
         }
+
+        # Remove internal qol attributes so they don't leak into the result
+        data_frames[[i]] <- strip_qol_attributes(data_frames[[i]])
     }
 
     # If the user passed an unnamed list, get the data frame names back and set

@@ -8,10 +8,18 @@ data frame. If there already is a variable with the given name, the existing val
 be overwritten if the condition is TRUE.
 If no new variable is provided, if.() will select observations by the given condition
 instead.
-else_if.() only acts if there already is a variable with the given name. Only NA values
-will get new values if condition is TRUE. The existing values will not be overwritten.
-else.() only acts if there already is a variable with the given name. Sets every
-remaining NA in given variable to the given value."><meta property="og:description" content="These functions make if statements more readable. Especially if an if block becomes bigger
+else_if.() only acts if there already is a variable with the given name. Used as a
+standalone function it only fills NA values if condition is TRUE. Used directly after
+if.() or another else_if.() it forms an if/else-if chain: the branch then acts on
+all rows that match its condition and were not handled by a preceding branch, overwriting
+existing values.
+else.() only acts if there already is a variable with the given name. On its own it sets
+every remaining NA in the given variable to the given value. In a chain after if.() or
+else_if.() it overwrites the values of all rows which were not handled by a previous
+condition.
+end_if.() removes the internal helper attribute that tracks which rows
+have already been handled by an if.() block. Use it to explicitly close
+an if/else-if chain without applying an else.() branch."><meta property="og:description" content="These functions make if statements more readable. Especially if an if block becomes bigger
 it can be hard to read with multiple nested if_else statements. With these new functions
 if blocks can be written like in other languages with a clear and simpler structure. In
 addition not only for one variable can a new value be assigned, but for multiple.
@@ -20,10 +28,18 @@ data frame. If there already is a variable with the given name, the existing val
 be overwritten if the condition is TRUE.
 If no new variable is provided, if.() will select observations by the given condition
 instead.
-else_if.() only acts if there already is a variable with the given name. Only NA values
-will get new values if condition is TRUE. The existing values will not be overwritten.
-else.() only acts if there already is a variable with the given name. Sets every
-remaining NA in given variable to the given value."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
+else_if.() only acts if there already is a variable with the given name. Used as a
+standalone function it only fills NA values if condition is TRUE. Used directly after
+if.() or another else_if.() it forms an if/else-if chain: the branch then acts on
+all rows that match its condition and were not handled by a preceding branch, overwriting
+existing values.
+else.() only acts if there already is a variable with the given name. On its own it sets
+every remaining NA in the given variable to the given value. In a chain after if.() or
+else_if.() it overwrites the values of all rows which were not handled by a previous
+condition.
+end_if.() removes the internal helper attribute that tracks which rows
+have already been handled by an if.() block. Use it to explicitly close
+an if/else-if chain without applying an else.() branch."><meta property="og:image" content="https://s3rdia.github.io/qol/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -71,10 +87,18 @@ data frame. If there already is a variable with the given name, the existing val
 be overwritten if the condition is TRUE.</p>
 <p>If no new variable is provided, <code>if.()</code> will select observations by the given condition
 instead.</p>
-<p><code>else_if.()</code> only acts if there already is a variable with the given name. Only NA values
-will get new values if condition is TRUE. The existing values will not be overwritten.</p>
-<p><code>else.()</code> only acts if there already is a variable with the given name. Sets every
-remaining NA in given variable to the given value.</p>
+<p><code>else_if.()</code> only acts if there already is a variable with the given name. Used as a
+standalone function it only fills NA values if condition is TRUE. Used directly after
+<code>if.()</code> or another <code>else_if.()</code> it forms an if/else-if chain: the branch then acts on
+all rows that match its condition and were not handled by a preceding branch, overwriting
+existing values.</p>
+<p><code>else.()</code> only acts if there already is a variable with the given name. On its own it sets
+every remaining NA in the given variable to the given value. In a chain after <code>if.()</code> or
+<code>else_if.()</code> it overwrites the values of all rows which were not handled by a previous
+condition.</p>
+<p><code>end_if.()</code> removes the internal helper attribute that tracks which rows
+have already been handled by an <code>if.()</code> block. Use it to explicitly close
+an if/else-if chain without applying an <code>else.()</code> branch.</p>
     </div>
 
     <div class="section level2">
@@ -83,7 +107,9 @@ remaining NA in given variable to the given value.</p>
 <span></span>
 <span><span class="fu">else_if.</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">condition</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">else.</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">else.</span><span class="op">(</span><span class="va">data_frame</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">end_if.</span><span class="op">(</span><span class="va">data_frame</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -118,7 +144,7 @@ different vectors and let the function handle the loop inside.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> with multiple conditions and 'SAS' writing style: <code><a href="ifelse_multi.html">ifelse_multi()</a></code></p>
-<p>The following functions can make use of the <code><a href="do_if.html">do_if()</a></code> filter variables:</p>
+<p>The following functions can make use of the <code><a href="do_if.html">do_if()</a></code> conditions:</p>
 <p>Conditions: <code>if.()</code>, <code>else_if.()</code>, <code>else.()</code></p>
 <p>Filter Data Frame: <code><a href="where..html">where.()</a></code></p>
 <p>Create new Variables: <code><a href="compute..html">compute.()</a></code></p></div>

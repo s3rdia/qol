@@ -63,6 +63,9 @@ NULL
 #'
 #' @export
 keep <- function(data_frame, ..., order_vars = FALSE){
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     # Convert to character vectors
     variables_temp <- dots_to_char(...)
 
@@ -125,6 +128,9 @@ keep <- function(data_frame, ..., order_vars = FALSE){
 #'
 #' @export
 dropp <- function(data_frame, ...){
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     # Convert to character vectors
     variables_temp <- dots_to_char(...)
 

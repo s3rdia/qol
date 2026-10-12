@@ -18,6 +18,8 @@ Last CRAN release was on 20.09.2026.
 * `discrete_format()`, `interval_format()`: Added `as_character` paramter which ensures that the value labels are kept as character. Meaning numbers like "00110" keep their leading zeros instead of beeing converted into numeric value 110.
 * `multi_join()`: When joining more than two data frames the function is now able to join on key variables which are joined to the base data frame in the process.
 * `if.()`, `else_if.()`, `else.()`: Are now able to use custom package functions like `recode.()` in the assignment.
+* `if.()`, `else_if.()`, `else.()`: Now add an attribute to the data frame which carries the currently active condition as a logical vector so that follow up statements can catch this and further work with an already handled condition. This enables `else_if.()` and `else.()` to not only work on NA values.
+* `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: Instead of adding variables to the data fame these functions now also handle conditions as attributes attached to the data frame.
 
 ### Fixed
 

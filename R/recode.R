@@ -275,6 +275,9 @@ recode_multi <- function(data_frame, ..., convert = TRUE){
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     # Translate ... into a list if possible
     formats <- tryCatch({
         # Force evaluation to see if it exists

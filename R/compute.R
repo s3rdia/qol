@@ -23,7 +23,7 @@
 #' @return Returns a data frame with newly computed variables.
 #'
 #' @seealso
-#' The following functions can make use of the [do_if()] filter variables:
+#' The following functions can make use of the [do_if()] conditions:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
 #'
@@ -143,6 +143,11 @@ compute. <- function(data_frame,
     }
     else{
         condition <- data_frame |> combined_condition(TRUE)
+
+        if (length(attr(data_frame, ".qol_do_if_select")) > 0){
+            print_message("NOTE", c("A do_if() condition is active. The following computation is",
+                                    "only applied to observations that meet the do_if() condition."))
+        }
     }
 
     if (".if_parent_frame" %in% names(assignments)){
@@ -238,7 +243,7 @@ compute. <- function(data_frame,
             # this function is called on its own or via an if statement.
             if (!is.null(if_condition_list)){
                 for (i in seq_len(length(if_condition_list))){
-                    # Merge the given condition as well as the active filter variables together
+                    # Merge the given condition as well as the active do_if conditions together
                     # into one logical vector
                     full_condition <- condition & unlist(if_condition_list[[i]])
 

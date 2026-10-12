@@ -65,6 +65,22 @@
   now able to use custom package functions like
   [`recode.()`](https://s3rdia.github.io/qol/reference/recode.md) in the
   assignment. (08.10.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md): Now
+  add an attribute to the data frame which carries the currently active
+  condition as a logical vector so that follow up statements can catch
+  this and further work with an already handled condition. This enables
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md) and
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md) to not
+  only work on NA values. (12.10.2026)
+- [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`else_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`end_do()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`end_all_do()`](https://s3rdia.github.io/qol/reference/do_if.md):
+  Instead of adding variables to the data fame these functions now also
+  handle conditions as attributes attached to the data frame.
+  (12.10.2026)
 
 #### Fixed
 

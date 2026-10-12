@@ -45,8 +45,7 @@ let the function handle the loop inside.
 ## See also
 
 The following functions can make use of the
-[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) filter
-variables:
+[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) conditions:
 
 Conditions:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),

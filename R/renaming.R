@@ -278,6 +278,9 @@ rename_multi <- function(data_frame, ...){
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     parent_env <- parent.frame()
 
     # Capture the ellipsis as it was passed in. This keeps quoted, unquoted and

@@ -1,7 +1,7 @@
 # Lock In A Condition
 
-Creates a filter variable based on the given condition. This variable
-can be accessed by
+Locks in a condition and stores it as a hidden attribute of the data
+frame. This condition can be accessed by
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
 [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md),
@@ -10,12 +10,12 @@ can be accessed by
 enabling these functions to work with an overarching condition. This
 function can also be used to nest multiple overarching conditions.
 
-`else_do()`: Checks for existing filter variables and reverses the
-condition of the last filter variable.
+`else_do()`: Checks for existing do_if() conditions and reverses the
+condition of the last one.
 
-`end_do()`: Drops the last filter variable.
+`end_do()`: Drops the last stored condition.
 
-`end_all_do()`: Drops all filter variables.
+`end_all_do()`: Drops all stored conditions.
 
 ## Usage
 
@@ -41,11 +41,11 @@ end_all_do(data_frame)
 
 ## Value
 
-Returns a data frame with a new filter variable.
+Returns a data frame with the condition stored as an attribute.
 
 ## See also
 
-The following functions can make use of the `do_if()` filter variables:
+The following functions can make use of the `do_if()` conditions:
 
 Conditions:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
@@ -94,10 +94,6 @@ do_if_df <- my_data |>
         end_do() |>
     end_do()
 
-# NOTE: Close the do-if-blocks with end_do() to remove the temporary logical
-#       filter variables.
-
-# Probably a logical filter variable is exactly what you want. In this case
-# just run do_if() without closing the block.
-logic_filter_df <- my_data |> do_if(state < 11)
+# NOTE: Close the do-if-blocks with end_do() to remove the stored conditions
+#       again.
 ```

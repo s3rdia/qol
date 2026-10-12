@@ -5,6 +5,7 @@
 \alias{if.}
 \alias{else_if.}
 \alias{else.}
+\alias{end_if.}
 \title{If - Else if - Else Statements}
 \usage{
 if.(data_frame, condition, ...)
@@ -12,6 +13,8 @@ if.(data_frame, condition, ...)
 else_if.(data_frame, condition, ...)
 
 else.(data_frame, ...)
+
+end_if.(data_frame)
 }
 \arguments{
 \item{data_frame}{A data frame on which to apply an if statement.}
@@ -36,11 +39,20 @@ be overwritten if the condition is TRUE.
 If no new variable is provided, \code{\link[=if.]{if.()}} will select observations by the given condition
 instead.
 
-\code{\link[=else_if.]{else_if.()}} only acts if there already is a variable with the given name. Only NA values
-will get new values if condition is TRUE. The existing values will not be overwritten.
+\code{\link[=else_if.]{else_if.()}} only acts if there already is a variable with the given name. Used as a
+standalone function it only fills NA values if condition is TRUE. Used directly after
+\code{\link[=if.]{if.()}} or another \code{\link[=else_if.]{else_if.()}} it forms an if/else-if chain: the branch then acts on
+all rows that match its condition and were not handled by a preceding branch, overwriting
+existing values.
 
-\code{\link[=else.]{else.()}} only acts if there already is a variable with the given name. Sets every
-remaining NA in given variable to the given value.
+\code{\link[=else.]{else.()}} only acts if there already is a variable with the given name. On its own it sets
+every remaining NA in the given variable to the given value. In a chain after \code{\link[=if.]{if.()}} or
+\code{\link[=else_if.]{else_if.()}} it overwrites the values of all rows which were not handled by a previous
+condition.
+
+\code{\link[=end_if.]{end_if.()}} removes the internal helper attribute that tracks which rows
+have already been handled by an \code{\link[=if.]{if.()}} block. Use it to explicitly close
+an if/else-if chain without applying an \code{\link[=else.]{else.()}} branch.
 }
 \details{
 The loop you can use within these functions is based on the 'SAS' do-over-loop. This
@@ -131,7 +143,7 @@ do_if_df <- my_data |>
 \seealso{
 \code{\link[=ifelse]{ifelse()}} with multiple conditions and 'SAS' writing style: \code{\link[=ifelse_multi]{ifelse_multi()}}
 
-The following functions can make use of the \code{\link[=do_if]{do_if()}} filter variables:
+The following functions can make use of the \code{\link[=do_if]{do_if()}} conditions:
 
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 

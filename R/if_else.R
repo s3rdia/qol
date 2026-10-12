@@ -25,7 +25,7 @@
 #' @seealso
 #' [ifelse()] with multiple conditions and 'SAS' writing style: [ifelse_multi()]
 #'
-#' The following functions can make use of the [do_if()] filter variables:
+#' The following functions can make use of the [do_if()] conditions:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
 #'
@@ -215,6 +215,11 @@ if. <- function(data_frame, condition, ...){
         print_message("ERROR", c("The provided variable[?s] '[vars]' [?is/are] not part of",
                                  "the data frame. Evaluation will be aborted."), vars = invalid_vars)
         return(invisible(data_frame))
+    }
+
+    if (length(attr(data_frame, ".qol_do_if_select")) > 0){
+        print_message("NOTE", c("A do_if() condition is active. The following statement is only",
+                                "applied to observations that meet the do_if() condition."))
     }
 
     # If no vector was passed in the condition or the assignments, then evaluate
@@ -471,6 +476,15 @@ if. <- function(data_frame, condition, ...){
                                                   .if_parent_frame    = parent_env,
                                                   .if_condition_label = condition_text,
                                                   .if_suppressed      = TRUE)
+
+        # Remember the rows on which this block acted, so that else_if. and else.
+        # can tell which rows have already been handled by a preceding condition.
+        # This is stored as an attribute so that no extra column leaks into the
+        # resulting data frame.
+        handled_rows <- Reduce("|", condition_list)
+        handled_rows[is.na(handled_rows)] <- FALSE
+
+        attr(data_frame, ".qol_else_condition") <- handled_rows
     }
 
     print_closing()
@@ -480,8 +494,11 @@ if. <- function(data_frame, condition, ...){
 
 
 #' @description
-#' [else_if.()] only acts if there already is a variable with the given name. Only NA values
-#' will get new values if condition is TRUE. The existing values will not be overwritten.
+#' [else_if.()] only acts if there already is a variable with the given name. Used as a
+#' standalone function it only fills NA values if condition is TRUE. Used directly after
+#' [if.()] or another [else_if.()] it forms an if/else-if chain: the branch then acts on
+#' all rows that match its condition and were not handled by a preceding branch, overwriting
+#' existing values.
 #'
 #' @rdname if_else
 #'
@@ -493,6 +510,8 @@ else_if. <- function(data_frame, condition, ...){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Early evaluations
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    force(data_frame)
 
     parent_env  <- parent.frame()
 
@@ -569,6 +588,22 @@ else_if. <- function(data_frame, condition, ...){
     # as normal if statement.
     condition_list <- list()
 
+    # Check whether an earlier if.-statement with variable assignments was called
+    # by checking for the corresponding attribute within the data frame. If so, this
+    # is an else_if block and only rows which were not handled by a previous
+    # condition are tocuhed here.
+    handled_rows <- attr(data_frame, ".qol_else_condition")
+    chain_active <- !is.null(handled_rows)
+
+    if (chain_active){
+        handled_rows[is.na(handled_rows)] <- FALSE
+    }
+
+    if (!chain_active && length(attr(data_frame, ".qol_do_if_select")) > 0){
+        print_message("NOTE", c("A do_if() condition is active. The following statement is only",
+                                "applied to observations that meet the do_if() condition."))
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Variable assignment
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -607,8 +642,15 @@ else_if. <- function(data_frame, condition, ...){
                     next
                 }
 
-                # Check whether there are additional conditions active via do_if
-                full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]) & condition)
+                # Check whether there are additional conditions active via do_if.
+                # Inside an else_if chain the branch overwrites the values of all
+                # rows which were not already handled by a previous condition.
+                if (chain_active){
+                    full_condition <- data_frame |> combined_condition(!handled_rows & condition)
+                }
+                else{
+                    full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]) & condition)
+                }
 
                 # Add to call list
                 condition_list <- c(condition_list, list(full_condition))
@@ -690,7 +732,12 @@ else_if. <- function(data_frame, condition, ...){
 
                     # Check whether there are additional conditions active via do_if and
                     # add to call list
-                    condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & condition_list[[element]])
+                    if (chain_active){
+                        condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & !handled_rows & condition_list[[element]])
+                    }
+                    else{
+                        condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & condition_list[[element]])
+                    }
                     condition_list[[element]][is.na(condition_list[[element]])] <- FALSE
                 }
             }
@@ -702,6 +749,16 @@ else_if. <- function(data_frame, condition, ...){
                                                       .if_parent_frame    = parent_env,
                                                       .if_condition_label = condition_text,
                                                       .if_suppressed      = TRUE)
+
+            # Remember the rows handled by this branch, so that a following
+            # else_if. or else. can tell them apart from the ones which still
+            # need values.
+            if (chain_active){
+                update_rows <- Reduce("|", condition_list)
+                update_rows[is.na(update_rows)] <- FALSE
+
+                attr(data_frame, ".qol_else_condition") <- handled_rows | update_rows
+            }
         }
         # condition_list can be empty in case the variables to assign values to
         # are not already in the data frame.
@@ -722,8 +779,10 @@ else_if. <- function(data_frame, condition, ...){
 
 
 #' @description
-#' [else.()] only acts if there already is a variable with the given name. Sets every
-#' remaining NA in given variable to the given value.
+#' [else.()] only acts if there already is a variable with the given name. On its own it sets
+#' every remaining NA in the given variable to the given value. In a chain after [if.()] or
+#' [else_if.()] it overwrites the values of all rows which were not handled by a previous
+#' condition.
 #'
 #' @rdname if_else
 #'
@@ -735,6 +794,8 @@ else. <- function(data_frame, ...){
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Early evaluations
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    force(data_frame)
 
     parent_env  <- parent.frame()
     assignments <- as.list(substitute(list(...)))[-1]
@@ -782,6 +843,22 @@ else. <- function(data_frame, ...){
     # as normal if statement.
     condition_list <- list()
 
+    # Check whether an earlier if.-statement with variable assignments was called
+    # by checking for the corresponding attribute within the data frame. If so, this
+    # is an else if block and only rows which were not handled by a previous
+    # condition are tocuhed here.
+    handled_rows <- attr(data_frame, ".qol_else_condition")
+    chain_active <- !is.null(handled_rows)
+
+    if (chain_active){
+        handled_rows[is.na(handled_rows)] <- FALSE
+    }
+
+    if (!chain_active && length(attr(data_frame, ".qol_do_if_select")) > 0){
+        print_message("NOTE", c("A do_if() condition is active. The following statement is only",
+                                "applied to observations that meet the do_if() condition."))
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Variable assignment
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -815,8 +892,16 @@ else. <- function(data_frame, ...){
                     next
                 }
 
-                # Check whether there are additional conditions active via do_if
-                full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]))
+                # Check whether there are additional conditions active via do_if.
+                # Inside an else chain the branch overwrites the values of all
+                # rows which were not already handled by a preceding condition,
+                # not only the ones which are still NA.
+                if (chain_active){
+                    full_condition <- data_frame |> combined_condition(!handled_rows)
+                }
+                else{
+                    full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]))
+                }
 
                 # Add to call list
                 condition_list <- c(condition_list, list(full_condition))
@@ -914,7 +999,26 @@ else. <- function(data_frame, ...){
                                    "No computation will be executed."))
     }
 
+    # The else.() statement terminates the chain. Remove the helper attribute
+    # that marks the rows already handled by a preceding condition.
+    attr(data_frame, ".qol_else_condition") <- NULL
+
     print_closing()
+
+    data_frame
+}
+
+
+#' @description
+#' [end_if.()] removes the internal helper attribute that tracks which rows
+#' have already been handled by an [if.()] block. Use it to explicitly close
+#' an if/else-if chain without applying an [else.()] branch.
+#'
+#' @rdname if_else
+#'
+#' @export
+end_if. <- function(data_frame){
+    attr(data_frame, ".qol_else_condition") <- NULL
 
     data_frame
 }
@@ -1031,21 +1135,16 @@ translate_condition <- function(condition){
 #'
 #' @noRd
 combined_condition <- function(data_frame, condition){
-    # Check whether there are any filter variables
-    df_names <- names(data_frame)
-
-    filter_variables <- df_names[startsWith(df_names, ".do_if_select")]
+    # Get the stored do_if() conditions. Every active do_if() block contributes
+    # one logical vector, which is kept as a hidden attribute of the data frame.
+    filter_variables <- attr(data_frame, ".qol_do_if_select")
 
     # If there are no filter variables return a pseudo always TRUE
     if (length(filter_variables) == 0){
         filter_variables <- TRUE
     }
-    # Otherwise get the logical filter variables
-    else{
-        filter_variables <- data_frame |> collapse::fselect(filter_variables)
-    }
 
-    # Merge the given condition as well as the active filter variables together
+    # Merge the given condition as well as the active do_if conditions together
     # into one logical vector
     Reduce(`&`, c(list(condition), filter_variables))
 }
@@ -1068,7 +1167,7 @@ combined_condition <- function(data_frame, condition){
 #' @seealso
 #' [ifelse()] with multiple conditions and 'SAS' writing style: [ifelse_multi()]
 #'
-#' The following functions can make use of the [do_if()] filter variables:
+#' The following functions can make use of the [do_if()] conditions:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
 #'
@@ -1129,6 +1228,11 @@ where. <- function(data_frame,
 
         condition <- translate_condition(condition)
         condition <- eval(condition, envir = data_frame, enclos = parent_env)
+
+        if (length(attr(data_frame, ".qol_do_if_select")) > 0){
+            print_message("NOTE", c("A do_if() condition is active. The following statement is only",
+                                    "applied to observations that meet the do_if() condition."))
+        }
 
         full_condition <- data_frame |> combined_condition(condition)
 
@@ -1293,18 +1397,18 @@ build_html_output <- function(data_frame,df_name){
 #' @name do_if
 #'
 #' @description
-#' Creates a filter variable based on the given condition. This variable can be
-#' accessed by [if.()], [else_if.()], [else.()], [where.()] and [compute.()], enabling these
-#' functions to work with an overarching condition. This function can also be
-#' used to nest multiple overarching conditions.
+#' Locks in a condition and stores it as a hidden attribute of the data frame. This
+#' condition can be accessed by [if.()], [else_if.()], [else.()], [where.()] and
+#' [compute.()], enabling these functions to work with an overarching condition.
+#' This function can also be used to nest multiple overarching conditions.
 #'
 #' @param data_frame A data frame on which to apply filters.
 #' @param condition The condition lock in.
 #'
-#' @return Returns a data frame with a new filter variable.
+#' @return Returns a data frame with the condition stored as an attribute.
 #'
 #' @seealso
-#' The following functions can make use of the [do_if()] filter variables:
+#' The following functions can make use of the [do_if()] conditions:
 #'
 #' Conditions: [if.()], [else_if.()], [else.()]
 #'
@@ -1346,12 +1450,8 @@ build_html_output <- function(data_frame,df_name){
 #'         end_do() |>
 #'     end_do()
 #'
-#' # NOTE: Close the do-if-blocks with end_do() to remove the temporary logical
-#' #       filter variables.
-#'
-#' # Probably a logical filter variable is exactly what you want. In this case
-#' # just run do_if() without closing the block.
-#' logic_filter_df <- my_data |> do_if(state < 11)
+#' # NOTE: Close the do-if-blocks with end_do() to remove the stored conditions
+#' #       again.
 #'
 #' @rdname do_if
 #'
@@ -1381,28 +1481,27 @@ do_if <- function(data_frame, condition){
     condition <- translate_condition(condition)
     condition <- eval(condition, envir = data_frame, enclos = parent_env)
 
-    # Check whether there are already filter variables and add a new one. Every
-    # filter variable receives a running number.
-    filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
-    new_filter       <- paste0(".do_if_select", length(filter_variables) + 1)
+    # Get the active do_if() conditions and stack the new one on top. Every
+    # do_if() block adds one logical vector to the attribute.
+    filter_variables <- attr(data_frame, ".qol_do_if_select")
 
     # Add logical condition vector as new filter variable and return
-    data_frame[[new_filter]] <- condition
+    attr(data_frame, ".qol_do_if_select") <- c(filter_variables, list(condition))
 
     data_frame
 }
 
 
 #' @description
-#' [else_do()]: Checks for existing filter variables and reverses the condition
-#' of the last filter variable.
+#' [else_do()]: Checks for existing do_if() conditions and reverses the condition
+#' of the last one.
 #'
 #' @rdname do_if
 #'
 #' @export
 else_do <- function(data_frame){
     # Get existing filter variables
-    filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
+    filter_variables <- attr(data_frame, ".qol_do_if_select")
 
     if (length(filter_variables) == 0){
         print_message("ERROR", "No active filter variable found. else_do() will be ignored.")
@@ -1410,22 +1509,24 @@ else_do <- function(data_frame){
     }
 
     # Get last filter variable and get the inverse condition
-    last_filter               <- filter_variables[[length(filter_variables)]]
-    data_frame[[last_filter]] <- !data_frame[[last_filter]]
+    last_filter <- length(filter_variables)
+    filter_variables[[last_filter]] <- !filter_variables[[last_filter]]
+
+    attr(data_frame, ".qol_do_if_select") <- filter_variables
 
     data_frame
 }
 
 
 #' @description
-#' [end_do()]: Drops the last filter variable.
+#' [end_do()]: Drops the last stored condition.
 #'
 #' @rdname do_if
 #'
 #' @export
 end_do <- function(data_frame){
     # Get existing filter variables
-    filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
+    filter_variables <- attr(data_frame, ".qol_do_if_select")
 
     if (length(filter_variables) == 0){
         print_message("ERROR", "No active filter variable found. end_do() will be ignored.")
@@ -1433,21 +1534,28 @@ end_do <- function(data_frame){
     }
 
     # Get last filter variable and drop it
-    last_filter <- filter_variables[[length(filter_variables)]]
+    filter_variables[[length(filter_variables)]] <- NULL
 
-    data_frame |> dropp(last_filter)
+    if (length(filter_variables) == 0){
+        attr(data_frame, ".qol_do_if_select") <- NULL
+    }
+    else{
+        attr(data_frame, ".qol_do_if_select") <- filter_variables
+    }
+
+    data_frame
 }
 
 
 #' @description
-#' [end_all_do()]: Drops all filter variables.
+#' [end_all_do()]: Drops all stored conditions.
 #'
 #' @rdname do_if
 #'
 #' @export
 end_all_do <- function(data_frame){
     # Get existing filter variables
-    filter_variables <- grep("^\\.do_if_select", names(data_frame), value = TRUE)
+    filter_variables <- attr(data_frame, ".qol_do_if_select")
 
     if (length(filter_variables) == 0){
         print_message("ERROR", "No active filter variable found. end_all_do() will be ignored.")
@@ -1455,7 +1563,9 @@ end_all_do <- function(data_frame){
     }
 
     # Drop all filter variables
-    data_frame |> dropp(filter_variables)
+    attr(data_frame, ".qol_do_if_select") <- NULL
+
+    data_frame
 }
 
 
@@ -1580,6 +1690,9 @@ ifelse_multi <- function(data_frame,
                          na.rm = TRUE){
     # Measure the time
     print_start_message(suppress = TRUE)
+
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Convert conditions

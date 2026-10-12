@@ -222,3 +222,28 @@ suppress_specific_message <- function(call_function, pattern){
 is_named_list <- function(list_to_check){
     is.list(list_to_check) && !is.null(names(list_to_check)) && all(names(list_to_check) != "")
 }
+
+
+#' Strip Internal Attributes
+#'
+#' @description
+#' Removes the internal helper attributes which [if.()]/[else_if.()]/[else.()] chains
+#' and [do_if()] blocks use to carry condition state.
+#'
+#' @param data_frame A data frame.
+#'
+#' @return
+#' Returns the data frame without the internal attributes.
+#'
+#' @noRd
+strip_qol_attributes <- function(data_frame){
+    if (!is.null(attr(data_frame, ".qol_else_condition"))){
+        data.table::setattr(data_frame, ".qol_else_condition", NULL)
+    }
+
+    if (!is.null(attr(data_frame, ".qol_do_if_select"))){
+        data.table::setattr(data_frame, ".qol_do_if_select", NULL)
+    }
+
+    data_frame
+}

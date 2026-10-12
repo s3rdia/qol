@@ -236,6 +236,9 @@ stack_data <- function(...,
         }
     }
 
+    # Strip internal qol attributes so they don't leak into the stacked result.
+    data_frame <- strip_qol_attributes(data_frame)
+
     print_closing()
 
     data_frame
@@ -307,6 +310,9 @@ save_file <- function(data_frame,
                       ...){
     print_start_message(suppress = TRUE)
     suppress <- ifelse(is.null(unlist(list(...))), FALSE, TRUE)
+
+    # Remove internal qol attributes so they don't leak into the saved file
+    data_frame <- strip_qol_attributes(data_frame)
 
     ###########################################################################
     # Error handling
@@ -929,6 +935,9 @@ load_file <- function(path,
     else{
         print_closing(15, suppress = suppress)
     }
+
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
 
     invisible(data_frame)
 }

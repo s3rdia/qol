@@ -21,20 +21,20 @@ end_all_do(data_frame)
 \item{condition}{The condition lock in.}
 }
 \value{
-Returns a data frame with a new filter variable.
+Returns a data frame with the condition stored as an attribute.
 }
 \description{
-Creates a filter variable based on the given condition. This variable can be
-accessed by \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}} and \code{\link[=compute.]{compute.()}}, enabling these
-functions to work with an overarching condition. This function can also be
-used to nest multiple overarching conditions.
+Locks in a condition and stores it as a hidden attribute of the data frame. This
+condition can be accessed by \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}, \code{\link[=where.]{where.()}} and
+\code{\link[=compute.]{compute.()}}, enabling these functions to work with an overarching condition.
+This function can also be used to nest multiple overarching conditions.
 
-\code{\link[=else_do]{else_do()}}: Checks for existing filter variables and reverses the condition
-of the last filter variable.
+\code{\link[=else_do]{else_do()}}: Checks for existing do_if() conditions and reverses the condition
+of the last one.
 
-\code{\link[=end_do]{end_do()}}: Drops the last filter variable.
+\code{\link[=end_do]{end_do()}}: Drops the last stored condition.
 
-\code{\link[=end_all_do]{end_all_do()}}: Drops all filter variables.
+\code{\link[=end_all_do]{end_all_do()}}: Drops all stored conditions.
 }
 \examples{
 # Example data frame
@@ -70,16 +70,12 @@ do_if_df <- my_data |>
         end_do() |>
     end_do()
 
-# NOTE: Close the do-if-blocks with end_do() to remove the temporary logical
-#       filter variables.
-
-# Probably a logical filter variable is exactly what you want. In this case
-# just run do_if() without closing the block.
-logic_filter_df <- my_data |> do_if(state < 11)
+# NOTE: Close the do-if-blocks with end_do() to remove the stored conditions
+#       again.
 
 }
 \seealso{
-The following functions can make use of the \code{\link[=do_if]{do_if()}} filter variables:
+The following functions can make use of the \code{\link[=do_if]{do_if()}} conditions:
 
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 

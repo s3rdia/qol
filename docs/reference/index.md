@@ -86,8 +86,9 @@
 
 - [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md)
   [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md)
-  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md) : If -
-  Else if - Else Statements
+  [`else.()`](https://s3rdia.github.io/qol/reference/if_else.md)
+  [`end_if.()`](https://s3rdia.github.io/qol/reference/if_else.md) :
+  If - Else if - Else Statements
 - [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md)
   : Do Multiple ifelse At Once
 - [`where.()`](https://s3rdia.github.io/qol/reference/where..md) :

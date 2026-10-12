@@ -34,8 +34,7 @@ conditions and 'SAS' writing style:
 [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md)
 
 The following functions can make use of the
-[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) filter
-variables:
+[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) conditions:
 
 Conditions:
 [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),

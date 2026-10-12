@@ -201,6 +201,9 @@ frequencies <- function(data_frame,
     # Early evaluations
     ###########################################################################
 
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     # First convert data frame to data table
     if (!data.table::is.data.table(data_frame)){
         data_frame <- data.table::as.data.table(data_frame)

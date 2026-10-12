@@ -39,6 +39,9 @@ content_report <- function(data_frame,
     # Measure the time
     print_start_message()
 
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     #-------------------------------------------------------------------------#
     monitor_df <- NULL |> monitor_start("Global information", "Global information")
     #-------------------------------------------------------------------------#

@@ -84,7 +84,7 @@ do_if_df <- my_data |>
 
 }
 \seealso{
-The following functions can make use of the \code{\link[=do_if]{do_if()}} filter variables:
+The following functions can make use of the \code{\link[=do_if]{do_if()}} conditions:
 
 Conditions: \code{\link[=if.]{if.()}}, \code{\link[=else_if.]{else_if.()}}, \code{\link[=else.]{else.()}}
 

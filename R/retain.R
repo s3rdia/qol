@@ -460,6 +460,9 @@ retain_variables <- function(data_frame,
     # Measure the time
     print_start_message(suppress = TRUE)
 
+    # Remove internal qol attributes so they don't leak into the result
+    data_frame <- strip_qol_attributes(data_frame)
+
     # Translate ... into a list if possible
     retain_list <- tryCatch({
         # Force evaluation to see if it exists

@@ -112,6 +112,66 @@ expect_false(identical(state_df_a[["state_a"]], state_df_b[["state_b"]]),
              info = "if. and else_if. are not the same")
 
 
+# else_if. and else. overwrite values which were set before the if-block
+overwrite_df <- dummy_df |>
+    compute.(test_var = 0) |>
+         if.(state == 1, test_var = 1) |>
+    else_if.(state <= 2, test_var = 2)
+
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] == 1)] == 1),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] == 2)] == 2),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] > 2)] == 0),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+
+overwrite_df <- dummy_df |>
+    compute.(test_var = 0) |>
+         if.(state == 1, test_var = 1) |>
+    else_if.(state <= 2, test_var = 2) |>
+    else.(               test_var = 3)
+
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] == 1)] == 1),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] == 2)] == 2),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+expect_true(all(overwrite_df[["test_var"]][which(dummy_df[["state"]] > 2)] == 3),
+            info = "else_if. and else. overwrite values which were set before the if-block")
+
+
+# Multiple else_if. branches accumulate the handled rows
+test_df <- dummy_df |>
+         if.(state <= 3,  state_a = "1-3") |>
+    else_if.(state <  11, state_a = "4-10") |>
+    else_if.(state == 11, state_a = "11") |>
+    else.   (             state_a = "12+")
+
+expect_true(all(test_df[["state_a"]][which(test_df[["state"]] <= 3)] == "1-3"),
+            info = "Multiple else_if. branches accumulate the handled rows")
+expect_true(all(test_df[["state_a"]][which(test_df[["state"]] >= 4 & test_df[["state"]] < 11)] == "4-10"),
+            info = "Multiple else_if. branches accumulate the handled rows")
+expect_true(all(test_df[["state_a"]][which(test_df[["state"]] == 11)] == "11"),
+            info = "Multiple else_if. branches accumulate the handled rows")
+expect_true(all(test_df[["state_a"]][which(test_df[["state"]] >= 12)] == "12+"),
+            info = "Multiple else_if. branches accumulate the handled rows")
+expect_true(is.null(attr(test_df, ".qol_else_condition")),
+            info = "Multiple else_if. branches accumulate the handled rows")
+
+
+# end_if. closes the chain and removes the helper attribute
+end_if_df <- dummy_df |>
+    compute.(test_var = 0) |>
+    if.(state == 1, test_var = 1) |>
+    end_if.()
+
+expect_true(all(end_if_df[["test_var"]][which(dummy_df[["state"]] == 1)] == 1),
+            info = "end_if. closes the chain and removes the helper attribute")
+expect_true(all(end_if_df[["test_var"]][which(dummy_df[["state"]] != 1)] == 0),
+            info = "end_if. closes the chain and removes the helper attribute")
+expect_true(is.null(attr(end_if_df, ".qol_else_condition")),
+            info = "end_if. closes the chain and removes the helper attribute")
+
+
 # if. converts NA values into format of follow up value
 result_df <- dummy_df |>
          if.(state <= 3, var1 = NA, var2 = NA) |>

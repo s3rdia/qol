@@ -15,11 +15,20 @@ If no new variable is provided, `if.()` will select observations by the
 given condition instead.
 
 `else_if.()` only acts if there already is a variable with the given
-name. Only NA values will get new values if condition is TRUE. The
-existing values will not be overwritten.
+name. Used as a standalone function it only fills NA values if condition
+is TRUE. Used directly after `if.()` or another `else_if.()` it forms an
+if/else-if chain: the branch then acts on all rows that match its
+condition and were not handled by a preceding branch, overwriting
+existing values.
 
 `else.()` only acts if there already is a variable with the given name.
-Sets every remaining NA in given variable to the given value.
+On its own it sets every remaining NA in the given variable to the given
+value. In a chain after `if.()` or `else_if.()` it overwrites the values
+of all rows which were not handled by a previous condition.
+
+`end_if.()` removes the internal helper attribute that tracks which rows
+have already been handled by an `if.()` block. Use it to explicitly
+close an if/else-if chain without applying an `else.()` branch.
 
 ## Usage
 
@@ -29,6 +38,8 @@ if.(data_frame, condition, ...)
 else_if.(data_frame, condition, ...)
 
 else.(data_frame, ...)
+
+end_if.(data_frame)
 ```
 
 ## Arguments
@@ -66,8 +77,7 @@ conditions and 'SAS' writing style:
 [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md)
 
 The following functions can make use of the
-[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) filter
-variables:
+[`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md) conditions:
 
 Conditions: `if.()`, `else_if.()`, `else.()`
 
