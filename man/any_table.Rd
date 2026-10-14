@@ -44,7 +44,8 @@ should appear in the table rows. To nest variables use the form:
 should appear in the table rows. To nest variables use the form:
 "var1 + var2 + var3 + ...".}
 
-\item{values}{A vector containing all variables that should be summarised.}
+\item{values}{A vector containing all variables that should be summarised.
+Macro variables can be used.}
 
 \item{statistics}{Available functions:
 \itemize{

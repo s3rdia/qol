@@ -13,6 +13,7 @@
 #' should appear in the table rows. To nest variables use the form:
 #' "var1 + var2 + var3 + ...".
 #' @param values A vector containing all variables that should be summarised.
+#' Macro variables can be used.
 #' @param statistics Available functions:
 #' - "sum"       -> Weighted and unweighted sum
 #' - "sum_wgt"   -> Sum of all weights
@@ -709,6 +710,9 @@ any_table <- function(data_frame,
 
     # Convert to character vectors
     values <- get_origin_as_char(values, substitute(values))
+
+    # Enable the use of macro variables
+    values <- apply_macro(values)
 
     # If no value variables are provided generate them automatically
     if (length(values) <= 1){

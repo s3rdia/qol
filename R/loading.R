@@ -1066,10 +1066,15 @@ load_file_multi <- function(file_list,
         if (by_reference){
             print_message("NOTE", "Stacking files only works when files are not loaded by reference.")
         }
-        else{
+        # Stacking only makes sense if there is more than one data frame
+        else if (length(result_list) > 1){
             print_step("MAJOR", "Stacking files")
 
             result_list <- suppressMessages(stack_data(result_list))
+        }
+        # If there is only one data frame, there is nothing to stack. Return it directly.
+        else if (length(result_list) == 1){
+            result_list <- result_list[[1]]
         }
     }
 

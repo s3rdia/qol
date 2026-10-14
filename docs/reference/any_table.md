@@ -58,7 +58,8 @@ any_table(
 
 - values:
 
-  A vector containing all variables that should be summarised.
+  A vector containing all variables that should be summarised. Macro
+  variables can be used.
 
 - statistics:
 

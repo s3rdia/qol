@@ -81,6 +81,10 @@
   Instead of adding variables to the data fame these functions now also
   handle conditions as attributes attached to the data frame.
   (12.10.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `values` and `class` parameters now support SAS macro variable writing
+  style. (14.10.2026)
 
 #### Fixed
 
@@ -151,6 +155,12 @@
   [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md):
   Conditions with the `in` operator can now handle parentheses within
   quoted strings and line breaks. (09.10.2026)
+- [`macro()`](https://s3rdia.github.io/qol/reference/macro.md): German
+  umlauts and ß should now work within macro variable names.
+  (03.10.2026)
+- [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
+  Multi line messages are now reduced to one liners to make sure they
+  won’t be displayed twice. (14.10.2026)
 
 #### Optimization
 
@@ -177,6 +187,10 @@
 - [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
   The duplicate variable name note now only displays the unique variable
   names. (08.10.2026)
+- [`load_file_multi()`](https://s3rdia.github.io/qol/reference/save_load.md):
+  Doesn’t run into
+  [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md)
+  anymore, if only one file is loaded. (14.10.2026)
 
 ## qol 1.3.5
 

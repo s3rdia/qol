@@ -29,8 +29,9 @@
 #' [crosstabs()], [export_with_style()], [summarise_plus()]
 #'
 #' Within the tabulation functions titles, footnotes, var_labels and stat_labels
-#' can resolve macros. Additionally they can be used in the [any_table()] rows and
-#' columns parameter and in the [summarise_plus()] types parameter.
+#' can resolve macros. Additionally they can be used in the [any_table()] rows,
+#' columns and values parameter and in the [summarise_plus()] class, values and
+#' types parameter.
 #'
 #' @examples
 #' # Resolving macro variable in single character
@@ -60,7 +61,7 @@ macro <- function(text){
 
     # Macro variables start with "&" and consist of alphanumeric characters. There can be a "."
     # at the end of a macro variable to symbolize the end of the variable name.
-    regex_pattern <- "&[a-zA-Z0-9_]+(\\.|\\b)"
+    regex_pattern <- paste0("&[a-zA-Z0-9_", umlauts, "]+(\\.|\\b)")
 
     # Limit the number of iterations to avoid the case of getting stuck in an endless loop
     for (i in 1:5){
@@ -157,5 +158,11 @@ macro <- function(text){
 #'
 #' @export
 apply_macro <- function(character_vector){
+    # Keep NULL and empty vectors untouched, otherwise sapply would turn them
+    # into an empty list.
+    if (length(character_vector) == 0){
+        return(character_vector)
+    }
+
     sapply(character_vector, macro, USE.NAMES = FALSE)
 }

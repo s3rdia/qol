@@ -1110,4 +1110,21 @@ expect_true(all(c("Male", "Female", as.character(3:5)) %in% sum_df[["number_of_p
             info = "summarise_plus keeps original values which are not covered by a format")
 
 
+# Macro variables are resolved in class and values
+class_var <- "sex"
+value_var <- "income"
+
+sum_macro <- dummy_df |>
+    summarise_plus(class   = "&class_var",
+                   values  = "&value_var",
+                   notes   = FALSE)
+
+sum_literal <- dummy_df |>
+    summarise_plus(class   = "sex",
+                   values  = "income",
+                   notes   = FALSE)
+
+expect_equal(sum_macro, sum_literal, info = "Macro variables are resolved in class and values")
+
+
 set_no_print()

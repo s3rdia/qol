@@ -1133,6 +1133,11 @@ convert_square_brackets <- function(text, ...){
                                   paste(values, collapse = ", "),
                                   as.character(values))
 
+            # Replace all line breaks and multiple blanks with a single blank.
+            # Otherwise inserted values containing line breaks would break the
+            # single line message layout (e.g. multi line conditions).
+            replacement <- gsub("\\s+", " ", replacement)
+
             # Insert replacement in the provided text
             text <- gsub(single_match, replacement, text, fixed = TRUE)
         }

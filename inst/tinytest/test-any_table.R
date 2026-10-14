@@ -1652,3 +1652,19 @@ result_list <- pre_summed_df |>
 expect_equal(names(result_list[["table"]])[-(1:2)],
              c("z_sum_m", "z_sum_f", "m_sum_m", "m_sum_f", "q_sum_m", "q_sum_f"),
              info = "Pre summarised value variables appear in the user provided order")
+
+
+# Macro variables are resolved in values
+value_var <- "income"
+
+result_macro <- dummy_df |>
+    any_table(rows   = "sex",
+              values = "&value_var",
+              output = "no")
+
+result_literal <- dummy_df |>
+    any_table(rows   = "sex",
+              values = "income",
+              output = "no")
+
+expect_equal(result_macro, result_literal, info = "Macro variables are resolved in values")

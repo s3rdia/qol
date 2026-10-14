@@ -24,9 +24,10 @@ summarise_plus(
 \arguments{
 \item{data_frame}{A data frame to summarise.}
 
-\item{class}{A vector containing all grouping variables.}
+\item{class}{A vector containing all grouping variables. Macro variables can be used.}
 
-\item{values}{A vector containing all variables that should be summarised.}
+\item{values}{A vector containing all variables that should be summarised.
+Macro variables can be used.}
 
 \item{statistics}{Available functions:
 \itemize{

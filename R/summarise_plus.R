@@ -9,8 +9,9 @@
 #' setting a weight variable.
 #'
 #' @param data_frame A data frame to summarise.
-#' @param class A vector containing all grouping variables.
+#' @param class A vector containing all grouping variables. Macro variables can be used.
 #' @param values A vector containing all variables that should be summarised.
+#' Macro variables can be used.
 #' @param statistics Available functions:
 #' - "sum"       -> Weighted and unweighted sum
 #' - "sum_wgt"   -> Sum of all weights
@@ -428,6 +429,9 @@ summarise_plus <- function(data_frame,
 
     class <- get_origin_as_char(class, substitute(class))
 
+    # Enable the use of macro variables
+    class <- apply_macro(class)
+
     # Make sure that the variables provided are part of the data frame.
     class <- data_frame |> part_of_df(class)
 
@@ -442,6 +446,9 @@ summarise_plus <- function(data_frame,
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     values <- get_origin_as_char(values, substitute(values))
+
+    # Enable the use of macro variables
+    values <- apply_macro(values)
 
     # If no value variables are provided generate them automatically
     if (length(values) <= 1){

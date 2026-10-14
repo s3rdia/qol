@@ -20,6 +20,7 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `else.()`: Are now able to use custom package functions like `recode.()` in the assignment.
 * `if.()`, `else_if.()`, `else.()`: Now add an attribute to the data frame which carries the currently active condition as a logical vector so that follow up statements can catch this and further work with an already handled condition. This enables `else_if.()` and `else.()` to not only work on NA values.
 * `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: Instead of adding variables to the data fame these functions now also handle conditions as attributes attached to the data frame.
+* `summarise_plus()`, `any_table()`: `values` and `class` parameters now support SAS macro variable writing style.
 
 ### Fixed
 
@@ -37,7 +38,9 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: In SAS like patterns like "15 <= age < 65" now formulas are accepted, e.g. "median * 60 / 100 <= income < median * 120 / 100".
 * `keep()`, `dropp()`: Don't error anymore when duplicate variable names are passed or duplicates are generated in combination with variable ranges.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: German umlauts and ß should now work within character conditions.
-* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: Conditions with the `in` operator can now handle parentheses within quoted strings and line breaks. 
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: Conditions with the `in` operator can now handle parentheses within quoted strings and line breaks.
+* `macro()`: German umlauts and ß should now work within macro variable names.
+* `print_step()`: Multi line messages are now reduced to one liners to make sure they won't be displayed twice.
 
 ### Optimization
 
@@ -49,6 +52,7 @@ Last CRAN release was on 20.09.2026.
 * `test_package()`, `test_single_file()`: Now print an install diolog instead of just a note if tinytest is not installed.
 * `rename_multi()`: Now throws a warning when a new variable name is already in the data frame.
 * `compute.()`: The duplicate variable name note now only displays the unique variable names.
+* `load_file_multi()`: Doesn't run into `stack_data()` anymore, if only one file is loaded.
 
 
 ## R CMD check results
