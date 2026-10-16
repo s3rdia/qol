@@ -82,8 +82,20 @@ test_df <- data.frame(
 
 result_df <- test_df |> first_row_as_names()
 
-expect_equal(names(result_df), c("id", "var2", "value", "var4", "var5"), info = "Renaming based on first row in data frame")
+expect_equal(names(result_df), c("id", "var2", "value", "var4", "1"), info = "Renaming based on first row in data frame")
 expect_equal(nrow(test_df) - 1, nrow(result_df), info = "Renaming based on first row in data frame")
+
+
+# Renaming based on first row uses numeric values as names
+numeric_header_df <- data.frame(
+              x1 = c(2017, 1, 3),
+              x2 = c(2018, 2, 4),
+              x3 = c("Min", 5, 6))
+
+result_df <- numeric_header_df |> first_row_as_names()
+
+expect_equal(names(result_df), c("2017", "2018", "Min"),
+             info = "Renaming based on first row uses numeric values as names")
 
 
 # Renaming doesnt overwrite if new variable name is already in data frame

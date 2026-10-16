@@ -121,22 +121,28 @@ freq_g0_qol <- function(values, group){
 #'
 #' @noRd
 percentiles_qol <- function(values, weight, group, probs){
-    if (anyNA(values)){
-        print_message("WARNING", "To calculate percentiles there may be no NA in the value variables.",
-                      always_print = TRUE)
-        return(NULL)
-    }
+    # Percentiles are computed on the non-missing values only. Groups in which all values
+    # of a variable are missing cannot be summarised at all, so they are reported.
+    for (var_name in names(values)){
+        if (anyNA(values[[var_name]])){
+            print_message("NOTE", "Missing values in value variable '[var]' will be dropped to calculate percentiles.",
+                          var = var_name, always_print = TRUE)
+        }
 
-    if (anyNA(weight)){
-        print_message("WARNING", "To calculate percentiles there may be no NA in the weight variable.",
-                      always_print = TRUE)
-        return(NULL)
+        empty_groups <- group[["groups"]][collapse::fsum(!is.na(values[[var_name]]),
+                                                         g = group,
+                                                         use.g.names = FALSE) == 0, , drop = FALSE]
+
+        if (collapse::fnrow(empty_groups) > 0){
+            print_message("WARNING", "Percentiles of variable '[var]' could not be calculated for [groups], because all values are missing.",
+                          var = var_name, groups = apply(empty_groups, 1, paste, collapse = " + "), always_print = TRUE)
+        }
     }
 
     # If weight only consists of one unique value, then the results are unweighted.
     # In this case use the collapse method with Type 7.
     if (length(collapse::funique(weight)) == 1){
-        collapse::BY(values, g = group, collapse::fquantile, w = weight, probs = probs)
+        collapse::BY(values, g = group, weighted_quantiles, w = weight, probs = probs)
     }
     # Otherwise the custom function for Type 2, which is not in collapse package.
     else{
@@ -145,11 +151,47 @@ percentiles_qol <- function(values, weight, group, probs){
 }
 
 
+#' Calculate Weighted Quantiles
+#'
+#' @description
+#' Calculates weighted quantiles of Type 7. Groups in which all values are missing
+#' are handled here.
+#'
+#' @param x The values for which to compute quantiles.
+#' @param w A weighting variable.
+#' @param probs The quantiles that should be computed.
+#'
+#' @return
+#' Returns a weighted quantile vector.
+#'
+#' @noRd
+weighted_quantiles <- function(x, w, probs){
+    if (all(is.na(x))){
+        return(rep(NA_real_, length(probs)))
+    }
+
+    collapse::fquantile(x, probs = probs, w = w)
+}
+
+
 #' @return
 #' Returns a weighted percentile vector.
 #'
 #' @noRd
 calculate_single_percentiles <- function(x, probs, w){
+    # Percentiles are computed on the non-missing values only. Without dropping them
+    # here, order() would sort NA to the end and thereby treat it as the largest
+    # observation of the group, carrying its full weight.
+    keep <- !is.na(x) & !is.na(w)
+
+    x <- x[keep]
+    w <- w[keep]
+
+    # If nothing is left, weighted percentiles are undefined.
+    if (length(x) == 0){
+        return(rep(NA_real_, length(probs)))
+    }
+
     # Sort values in ascending order and apply the same ordering to the weights.
     sort_order <- order(x)
 
@@ -166,11 +208,41 @@ calculate_single_percentiles <- function(x, probs, w){
 
     # Compute the weighted cumulative distribution function (CDF). Values range
     # from 0 to 1.
-    weight_cdf <- collapse::fcumsum(w) / sum_of_weights
+    weight_df <- collapse::fcumsum(w) / sum_of_weights
+
+    # Median is treatet as a special case to put out exactly the middle between
+    # two values and not a value based on the sum of weights.
+    if (probs == 0.5){
+        # Does the cumulative weight hit exactly the 50% point, with a bit of tolerance
+        idx <- which(abs(weight_df - 0.5) < 1e-9)
+
+        # If the 50% point is hit exactly take the middle
+        if (length(idx) > 0){
+            return((x[idx] + x[idx + 1]) / 2)
+        }
+        # Otherwise the next higher value
+        else{
+            return(x[which(weight_df > 0.5)[1]])
+        }
+    }
+
+    # Tolerance for comparing cumulative weights. Rounding the cumulative weights can
+    # move a cumulative weight a few units away from the requested percentile. Without a
+    # tolerance, such a percentile would be treated as lying inside a neighbouring
+    # observation, and one of the two middle values would be returned instead of their
+    # weighted average.
+    tolerance <- sqrt(.Machine[["double.eps"]])
 
     # Find the largest index whose cumulative weight is still
     # less than or equal to the requested percentile.
-    lower <- findInterval(probs, weight_cdf)
+    lower <- findInterval(probs, weight_df)
+
+    # If the percentile falls together with the cumulative weight of the next observation
+    # within tolerance, rounding has placed it one position too low. Move it
+    # up, so that the percentile is handled as lying on the boundary.
+    if (lower < length(x) && abs(weight_df[lower + 1] - probs) <= tolerance){
+        lower <- lower + 1
+    }
 
     # If the percentile lies below the first weighted observation, return the
     # minimum value.
@@ -186,9 +258,9 @@ calculate_single_percentiles <- function(x, probs, w){
         return(x[lower])
     }
 
-    # If the lower observation is still below the requested percentile,
-    # use the next observation.
-    if (weight_cdf[lower] < probs){
+    # If the lower observation is still below the requested percentile by more than
+    # the tolerance, use the next observation.
+    if (weight_df[lower] < probs - tolerance){
         x[upper]
     }
     # Otherwise return a weighted average of the two surrounding
@@ -196,6 +268,32 @@ calculate_single_percentiles <- function(x, probs, w){
     else{
         (w[lower] * x[lower] + w[upper] * x[upper]) / (w[lower] + w[upper])
     }
+}
+
+
+#' Calculate A Weighted Median
+#'
+#' @description
+#' Calculates the median as the 50th percentile, so that the "median" statistic and
+#' the "p50" statistic always return exactly the same value. Without weights the
+#' unweighted median is returned.
+#'
+#' @param values The values for which to compute the median.
+#' @param weight A weighting variable.
+#' @param group Grouping variables.
+#'
+#' @return
+#' Returns an unweighted or weighted median vector.
+#'
+#' @noRd
+median_qol <- function(values,
+                       weight = NULL,
+                       group  = NULL){
+    if (is.null(weight)){
+        return(collapse::fmedian(values))
+    }
+
+    percentiles_qol(values, weight, group, probs = 0.5)
 }
 
 

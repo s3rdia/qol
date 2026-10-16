@@ -21,6 +21,12 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `else.()`: Now add an attribute to the data frame which carries the currently active condition as a logical vector so that follow up statements can catch this and further work with an already handled condition. This enables `else_if.()` and `else.()` to not only work on NA values.
 * `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: Instead of adding variables to the data fame these functions now also handle conditions as attributes attached to the data frame.
 * `summarise_plus()`, `any_table()`: `values` and `class` parameters now support SAS macro variable writing style.
+* `any_table()`: `by`, `box`, `pct_group`, `pct_value` and `pct_block` parameters now support SAS macro variable writing style.
+* `keep()`, `dropp()`: Are now able to keep/drop columns with NA as name.
+
+### Changed functionality
+
+* `first_row_as_names()`: Now also sets numeric values as variable names.
 
 ### Fixed
 
@@ -41,6 +47,7 @@ Last CRAN release was on 20.09.2026.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: Conditions with the `in` operator can now handle parentheses within quoted strings and line breaks.
 * `macro()`: German umlauts and ß should now work within macro variable names.
 * `print_step()`: Multi line messages are now reduced to one liners to make sure they won't be displayed twice.
+* `summarise_plus()`: Now uses a custom median function for the weighted median since collapse::fmedian, which was used before, has a rare edge case bug, which sometimes leads to wrong results.
 
 ### Optimization
 
@@ -53,6 +60,7 @@ Last CRAN release was on 20.09.2026.
 * `rename_multi()`: Now throws a warning when a new variable name is already in the data frame.
 * `compute.()`: The duplicate variable name note now only displays the unique variable names.
 * `load_file_multi()`: Doesn't run into `stack_data()` anymore, if only one file is loaded.
+* `import_multi ()`: Doesn't run into `stack_data()` anymore, if only one file is loaded.
 
 
 ## R CMD check results

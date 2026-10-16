@@ -480,9 +480,17 @@ if. <- function(data_frame, condition, ...){
         # Remember the rows on which this block acted, so that else_if. and else.
         # can tell which rows have already been handled by a preceding condition.
         # This is stored as an attribute so that no extra column leaks into the
-        # resulting data frame.
-        handled_rows <- Reduce("|", condition_list)
-        handled_rows[is.na(handled_rows)] <- FALSE
+        # resulting data frame. In a do over loop each element belongs to its own
+        # target variable, so the handled rows are kept as a list with one entry
+        # per element instead of a single combined vector.
+        handled_rows <- lapply(condition_list, function(x){
+            x[is.na(x)] <- FALSE
+            x
+        })
+
+        if (length(handled_rows) == 0){
+            handled_rows <- NULL
+        }
 
         attr(data_frame, ".qol_else_condition") <- handled_rows
     }
@@ -587,6 +595,7 @@ else_if. <- function(data_frame, condition, ...){
     # If no vector was passed in the condition or the assignments, then evaluate
     # as normal if statement.
     condition_list <- list()
+    flag_do_over    <- FALSE
 
     # Check whether an earlier if.-statement with variable assignments was called
     # by checking for the corresponding attribute within the data frame. If so, this
@@ -596,7 +605,10 @@ else_if. <- function(data_frame, condition, ...){
     chain_active <- !is.null(handled_rows)
 
     if (chain_active){
-        handled_rows[is.na(handled_rows)] <- FALSE
+        handled_rows <- lapply(handled_rows, function(x){
+            x[is.na(x)] <- FALSE
+            x
+        })
     }
 
     if (!chain_active && length(attr(data_frame, ".qol_do_if_select")) > 0){
@@ -646,7 +658,7 @@ else_if. <- function(data_frame, condition, ...){
                 # Inside an else_if chain the branch overwrites the values of all
                 # rows which were not already handled by a previous condition.
                 if (chain_active){
-                    full_condition <- data_frame |> combined_condition(!handled_rows & condition)
+                    full_condition <- data_frame |> combined_condition(!Reduce("|", handled_rows) & condition)
                 }
                 else{
                     full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]) & condition)
@@ -726,14 +738,19 @@ else_if. <- function(data_frame, condition, ...){
 
                     # Check whether there are additional conditions active via do_if
                     # Insert the current variables into the condition
+                    flag_do_over <- TRUE
+
                     current_condition <- do.call(substitute, list(condition, replace_list))
                     current_condition <- translate_condition(current_condition)
                     condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
                     # Check whether there are additional conditions active via do_if and
-                    # add to call list
+                    # add to call list. The handled rows are tracked per element so that
+                    # every target variable only excludes the rows handled for itself.
                     if (chain_active){
-                        condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & !handled_rows & condition_list[[element]])
+                        handled_element <- if (element <= length(handled_rows)) handled_rows[[element]] else handled_rows[[1]]
+
+                        condition_list[[element]] <- data_frame |> combined_condition(!handled_element & condition_list[[element]])
                     }
                     else{
                         condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]) & condition_list[[element]])
@@ -754,10 +771,26 @@ else_if. <- function(data_frame, condition, ...){
             # else_if. or else. can tell them apart from the ones which still
             # need values.
             if (chain_active){
-                update_rows <- Reduce("|", condition_list)
-                update_rows[is.na(update_rows)] <- FALSE
+                if (flag_do_over){
+                    base_handled <- lapply(seq_along(condition_list), function(element){
+                        if (element <= length(handled_rows)) handled_rows[[element]] else handled_rows[[1]]
+                    })
 
-                attr(data_frame, ".qol_else_condition") <- handled_rows | update_rows
+                    for (element in seq_along(condition_list)){
+                        update_rows <- condition_list[[element]]
+                        update_rows[is.na(update_rows)] <- FALSE
+
+                        handled_rows[[element]] <- base_handled[[element]] | update_rows
+                    }
+
+                    attr(data_frame, ".qol_else_condition") <- handled_rows
+                }
+                else{
+                    update_rows <- Reduce("|", condition_list)
+                    update_rows[is.na(update_rows)] <- FALSE
+
+                    attr(data_frame, ".qol_else_condition") <- list(Reduce("|", handled_rows) | update_rows)
+                }
             }
         }
         # condition_list can be empty in case the variables to assign values to
@@ -851,7 +884,10 @@ else. <- function(data_frame, ...){
     chain_active <- !is.null(handled_rows)
 
     if (chain_active){
-        handled_rows[is.na(handled_rows)] <- FALSE
+        handled_rows <- lapply(handled_rows, function(x){
+            x[is.na(x)] <- FALSE
+            x
+        })
     }
 
     if (!chain_active && length(attr(data_frame, ".qol_do_if_select")) > 0){
@@ -897,7 +933,7 @@ else. <- function(data_frame, ...){
                 # rows which were not already handled by a preceding condition,
                 # not only the ones which are still NA.
                 if (chain_active){
-                    full_condition <- data_frame |> combined_condition(!handled_rows)
+                    full_condition <- data_frame |> combined_condition(!Reduce("|", handled_rows))
                 }
                 else{
                     full_condition <- data_frame |> combined_condition(is.na(data_frame[[original_var]]))
@@ -976,8 +1012,16 @@ else. <- function(data_frame, ...){
                     }
 
                     # Check whether there are additional conditions active via do_if and
-                    # add to call list
-                    condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]))
+                    # add to call list. The handled rows are tracked per element so that
+                    # every target variable only excludes the rows handled for itself.
+                    if (chain_active){
+                        handled_element <- if (element <= length(handled_rows)) handled_rows[[element]] else handled_rows[[1]]
+
+                        condition_list[[element]] <- data_frame |> combined_condition(!handled_element)
+                    }
+                    else{
+                        condition_list[[element]] <- data_frame |> combined_condition(is.na(data_frame[[target_variable]]))
+                    }
                     condition_list[[element]][is.na(condition_list[[element]])] <- FALSE
                 }
             }

@@ -73,10 +73,12 @@ Uses the SAS default way of calculating percentiles, which is Type 2 described i
 \item{pct_group}{This option is used to determine which variable of the row and column
 variables should add up to 100 \%. Multiple variables can be specified in a vector to
 generate multiple group percentages. You can also use the keywords "row_pct" or "col_pct"
-to calculate total percentages for rows and columns regardless of the respective other dimension.}
+to calculate total percentages for rows and columns regardless of the respective other dimension.
+Macro variables can be used.}
 
 \item{pct_value}{You can pass a list here, which contains the information for a new
-variable name and between which of the value variables percentages should be computed.}
+variable name and between which of the value variables percentages should be computed.
+Macro variables can be used.}
 
 \item{pct_block}{Can be "rows" or "columns". Calculates percentages for the last
 group of variables inside the individual row or column combinations. To make these work
@@ -90,7 +92,8 @@ see the \code{\link[=compute.]{compute.()}} function.}
 
 \item{formats}{A list in which is specified which formats should be applied to which variables.}
 
-\item{by}{Compute tables stratified by the expressions of the provided variables.}
+\item{by}{Compute tables stratified by the expressions of the provided variables.
+Macro variables can be used.}
 
 \item{weight}{Put in a weight variable to compute weighted results.}
 
@@ -123,7 +126,8 @@ which variable instead of the variable name.}
 \item{stat_labels}{A list in which is specified which label should be printed for
 which statistic instead of the statistic name.}
 
-\item{box}{Provide a text for the upper left box of the table.}
+\item{box}{Provide a text for the upper left box of the table.
+Macro variables can be used.}
 
 \item{workbook}{Insert a previously created workbook to expand the sheets instead of
 creating a new file.}

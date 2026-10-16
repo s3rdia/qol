@@ -14,7 +14,7 @@ Returns a data frame with renamed variables.
 }
 \description{
 Sets the first row of a data frame as variable names and deletes it. In case
-of NA, numeric values or empty characters in the first row, the old names are kept.
+of NA or empty characters in the first row, the old names are kept.
 }
 \examples{
 # Example data frame

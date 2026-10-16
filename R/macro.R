@@ -30,8 +30,8 @@
 #'
 #' Within the tabulation functions titles, footnotes, var_labels and stat_labels
 #' can resolve macros. Additionally they can be used in the [any_table()] rows,
-#' columns and values parameter and in the [summarise_plus()] class, values and
-#' types parameter.
+#' columns, values, by, pct_group, pct_value, pct_block and box parameter and in
+#' the [summarise_plus()] class, values and types parameter.
 #'
 #' @examples
 #' # Resolving macro variable in single character

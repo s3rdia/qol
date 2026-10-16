@@ -937,16 +937,17 @@ expect_true(all(c("year", "income_sum", "income_freq") %in% names(result_df2)),
 expect_identical(result_df1, result_df2, info = "Entering none numeric variable as weight leads to unweighted results")
 
 
-# Percentiles won't be calculated if value variable has NA values
+# Percentiles are calculated on the non-missing values, dropping NA values
 result_df <- dummy_df |>
             summarise_plus(class      = c(year, sex),
                            values     = c(income, probability),
                            statistics = c("p1", "p99"),
                            weight     = weight)
 
-expect_warning(print_stack_as_messages("WARNING"), "To calculate percentiles there may be no NA in the value variables",
-               info = "Percentiles won't be calculated if value variable has NA values")
-expect_equal(collapse::fncol(result_df), 5, info = "Percentiles won't be calculated if value variable has NA values")
+expect_message(print_stack_as_messages("NOTE"), "Missing values in value variable 'income' will be dropped to calculate percentiles",
+               info = "Percentiles are calculated on the non-missing values, dropping NA values")
+
+expect_equal(collapse::fncol(result_df), 9, info = "Percentiles are calculated on the non-missing values, dropping NA values")
 
 
 # Percentiles above 100 not allowed

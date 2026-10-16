@@ -272,6 +272,40 @@ expect_true(all(collapse::funique(do_over_df[["VAR3"]]) %in% c(1, 5, 6)), info =
 expect_true(all(collapse::funique(do_over_df[["VAR4"]]) %in% c(2, 5, 6)), info = "if. as do over loop")
 
 
+# do over loop tracks handled rows separately per target variable
+vars1  <- c("income", "balance")
+vars2  <- c("VAR1", "VAR2")
+
+do_over_df <- data.frame(income  = c(10, 600, 600, 10, 0),
+                         balance = c(600, 10, 600, 10, 0))
+
+do_over_df <- do_over_df |>
+         if.(vars1 > 500, vars2 = 1) |>
+    else_if.(vars1 >   0, vars2 = 2) |>
+    else.   (             vars2 = 3)
+
+expect_equal(do_over_df[["VAR1"]], c(2, 1, 1, 2, 3), info = "do over loop tracks handled rows separately per target variable")
+expect_equal(do_over_df[["VAR2"]], c(1, 2, 1, 2, 3), info = "do over loop tracks handled rows separately per target variable")
+
+
+# do over loop overwrites existing values in else_if. and else., not just NA values
+vars1  <- c("income", "balance")
+vars2  <- c("VAR1", "VAR2")
+
+do_over_df <- data.frame(income  = c(10, 600, 600, 10, 0),
+                         balance = c(600, 10, 600, 10, 0),
+                         VAR1    = 99,
+                         VAR2    = 99)
+
+do_over_df <- do_over_df |>
+         if.(vars1 > 500, vars2 = 1) |>
+    else_if.(vars1 >   0, vars2 = 2) |>
+    else.   (             vars2 = 3)
+
+expect_equal(do_over_df[["VAR1"]], c(2, 1, 1, 2, 3), info = "do over loop overwrites existing values in else_if. and else., not just NA values")
+expect_equal(do_over_df[["VAR2"]], c(1, 2, 1, 2, 3), info = "do over loop overwrites existing values in else_if. and else., not just NA values")
+
+
 # if. as do over loop doesn't overwrite existing values with NA
 vars   <- c("var2", "var2")
 values <- c(2, 3)

@@ -85,6 +85,17 @@
   [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   `values` and `class` parameters now support SAS macro variable writing
   style. (14.10.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  `by`, `box`, `pct_group`, `pct_value` and `pct_block` parameters now
+  support SAS macro variable writing style. (16.10.2026)
+- [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
+  [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md): Are
+  now able to keep/drop columns with NA as name. (16.10.2026)
+
+#### Changed functionality
+
+- [`first_row_as_names()`](https://s3rdia.github.io/qol/reference/first_row_as_names.md):
+  Now also sets numeric values as variable names. (16.10.2026)
 
 #### Fixed
 
@@ -161,6 +172,11 @@
 - [`print_step()`](https://s3rdia.github.io/qol/reference/messages.md):
   Multi line messages are now reduced to one liners to make sure they
   won’t be displayed twice. (14.10.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  Now uses a custom median function for the weighted median since
+  collapse::fmedian, which was used before, has a rare edge case bug
+  (<https://github.com/fastverse/collapse/issues/883>), which sometimes
+  leads to wrong results. (16.10.2026)
 
 #### Optimization
 
@@ -191,6 +207,10 @@
   Doesn’t run into
   [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md)
   anymore, if only one file is loaded. (14.10.2026)
+- [`import_multi ()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  Doesn’t run into
+  [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md)
+  anymore, if only one file is loaded. (16.10.2026)
 
 ## qol 1.3.5
 

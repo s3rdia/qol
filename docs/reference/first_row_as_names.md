@@ -1,8 +1,7 @@
 # Set First Data Frame Row As Variable Names
 
 Sets the first row of a data frame as variable names and deletes it. In
-case of NA, numeric values or empty characters in the first row, the old
-names are kept.
+case of NA or empty characters in the first row, the old names are kept.
 
 ## Usage
 

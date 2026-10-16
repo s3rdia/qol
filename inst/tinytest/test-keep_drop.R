@@ -20,6 +20,9 @@ vector_df <- data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12, e = 13:15)
 vector_names <- c("a", "b")
 other_names  <- c("c", "d")
 
+na_df        <- data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12)
+names(na_df) <- c(NA, "b", NA, "d")
+
 ###############################################################################
 # Keep
 ###############################################################################
@@ -178,6 +181,12 @@ expect_identical(names(vector_df |> keep(vector_names, "a")), c("a", "b"),
 expect_identical(names(vector_df |> keep(vector_names, a:c)), c("a", "b", "c"),
                  info = "Keep does not fail when the same variable is provided multiple times")
 
+
+# NA and '.' act as keywords to keep all variables whose name is NA
+expect_identical(names(na_df |> keep(NA)), c(NA_character_, NA_character_), info = "NA and '.' act as keywords to keep all variables whose name is NA")
+expect_identical(names(na_df |> keep(".")), c(NA_character_, NA_character_), info = "NA and '.' act as keywords to keep all variables whose name is NA")
+expect_identical(names(na_df |> keep(NA, "b")), c(NA_character_, "b", NA_character_), info = "NA and '.' act as keywords to keep all variables whose name is NA")
+
 ###############################################################################
 # Drop
 ###############################################################################
@@ -304,6 +313,12 @@ expect_identical(names(vector_df |> dropp(vector_names, "a")), c("c", "d", "e"),
                  info = "Drop does not fail when the same variable is provided multiple times")
 expect_identical(names(vector_df |> dropp(vector_names, a:c)), c("d", "e"),
                  info = "Drop does not fail when the same variable is provided multiple times")
+
+
+# NA and '.' act as keywords to dropp all variables whose name is NA
+expect_identical(names(na_df |> dropp(NA)), c("b", "d"), info = "NA and '.' act as keywords to dropp all variables whose name is NA")
+expect_identical(names(na_df |> dropp(".")), c("b", "d"), info = "NA and '.' act as keywords to dropp all variables whose name is NA")
+expect_identical(names(na_df |> dropp(NA, "d")), "b", info = "NA and '.' act as keywords to dropp all variables whose name is NA")
 
 
 set_no_print()

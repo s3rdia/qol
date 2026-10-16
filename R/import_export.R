@@ -387,9 +387,16 @@ import_multi <- function(file_list,
 
     # Stack data frames
     if (stack_files){
-        print_step("MAJOR", "Stacking files")
+        # Stacking only makes sense if there is more than one data frame
+        if (length(result_list) > 1){
+            print_step("MAJOR", "Stacking files")
 
-        result_list <- suppressMessages(stack_data(result_list))
+            result_list <- suppressMessages(stack_data(result_list))
+        }
+        # If there is only one data frame, there is nothing to stack. Return it directly.
+        else if (length(result_list) == 1){
+            result_list <- result_list[[1]]
+        }
     }
 
     print_closing(10)

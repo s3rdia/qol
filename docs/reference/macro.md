@@ -57,7 +57,8 @@ Functions that can make use of macro variables:
 Within the tabulation functions titles, footnotes, var_labels and
 stat_labels can resolve macros. Additionally they can be used in the
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
-rows, columns and values parameter and in the
+rows, columns, values, by, pct_group, pct_value, pct_block and box
+parameter and in the
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
 class, values and types parameter.
 

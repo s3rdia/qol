@@ -3,7 +3,7 @@
 #' @name keep_dropp
 #'
 #' @param data_frame A data frame which should be reduced to (keep) or by (drop) the specified variables.
-#' @param ... The variable names to keep/drop.
+#' @param ... The variable names to keep/drop. NA (or ".") selects all variables whose name is NA.
 #' @param order_vars [keep()]: At the end variables are ordered as specified in the command.
 #'
 #' @return Returns a reduced data table.
@@ -49,6 +49,14 @@
 #' contain1 <- my_data |> keep(":on:") # Variable names which contain "on"
 #' contain2 <- my_data |> dropp(":on:")
 #'
+#' # NA (or ".") is a keyword which selects all variables whose name is NA
+#' na_data        <- data.frame(a = 1:3, b = 4:6)
+#' names(na_data) <- c(NA, "b")
+#'
+#' new_dt10 <- na_data |> keep(NA)
+#' new_dt11 <- na_data |> dropp(NA)
+#' new_dt12 <- na_data |> dropp(".")
+#'
 #' @rdname keep_dropp
 #'
 #' @keywords internal
@@ -57,7 +65,8 @@ NULL
 
 #' @description
 #' [keep()] enables you to put in a vector of variable names which then are kept
-#' inside the given data frame. All other variables are dropped.
+#' inside the given data frame. All other variables are dropped. Passing NA (or ".")
+#' keeps all variables whose name is NA.
 #'
 #' @rdname keep_dropp
 #'
@@ -73,7 +82,18 @@ keep <- function(data_frame, ..., order_vars = FALSE){
         return(invisible(data_frame))
     }
 
-    original_order <- names(data_frame)
+    # NA (or ".") acts as a keyword to select all variables whose name is NA
+    na_keyword     <- is.na(variables_temp) | variables_temp == "."
+    variables_temp <- variables_temp[!na_keyword]
+
+    # Positions of all variables with an NA name. They are selected via the NA
+    # keyword because they can't be matched by name reliably.
+    if (any(na_keyword)){
+        na_positions <- which(is.na(names(data_frame)))
+    }
+    else{
+        na_positions <- integer(0)
+    }
 
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
@@ -82,20 +102,18 @@ keep <- function(data_frame, ..., order_vars = FALSE){
     # variable being provided multiple times. Only keep the first occurrence.
     variables <- unique(variables)
 
-    if (length(variables) == 0){
+    if (length(variables) == 0 && length(na_positions) == 0){
         print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")
         return(invisible(data_frame))
     }
 
     # Check if all variables are part of the data frame
-    provided_vars <- variables
-    invalid_vars  <- variables[!variables %in% names(data_frame)]
-    variables     <- variables[variables %in% names(data_frame)]
+    invalid_vars <- variables[!variables %in% names(data_frame)]
+    variables    <- variables[variables %in% names(data_frame)]
 
     if (length(invalid_vars) > 0){
         print_message("WARNING", c("The provided variable to keep '[invalid]' is not part of",
 								   "the data frame. This variable will be omitted."), invalid = invalid_vars)
-        rm(provided_vars, invalid_vars)
     }
 
     # Convert to data.table if necessary
@@ -103,17 +121,16 @@ keep <- function(data_frame, ..., order_vars = FALSE){
         data_frame <- data.table::as.data.table(data_frame)
     }
 
-    # Get the negative vector of variables to keep and every variable name inside
-    # given data frame to produce a vector with the variables to drop
-    name_vector <- names(data_frame)
-    drop_variables <- name_vector[!name_vector %in% variables]
+    # Determine the positions of the variables to keep. NA-named variables are
+    # appended at the end, since they can't be matched by name reliably.
+    keep_positions <- c(match(variables, names(data_frame)), na_positions)
 
-    # Use data.table function set to drop the desired variables
-    data_frame <- data_frame |> collapse::fselect(variables)
+    # Use data.table function set to keep the desired variables
+    data_frame <- data_frame |> collapse::fselect(keep_positions)
 
     # Order variables
     if (!order_vars){
-        data.table::setcolorder(data_frame, original_order, skip_absent = TRUE)
+        data.table::setcolorder(data_frame, order(keep_positions))
     }
 
     data_frame
@@ -122,7 +139,8 @@ keep <- function(data_frame, ..., order_vars = FALSE){
 
 #' @description
 #' [dropp()] enables you to put in a vector of variable names which then are dropped
-#' from the given data frame. All other variables are kept.
+#' from the given data frame. All other variables are kept. Passing NA (or ".")
+#' drops all variables whose name is NA.
 #'
 #' @rdname keep_dropp
 #'
@@ -138,6 +156,19 @@ dropp <- function(data_frame, ...){
         return(invisible(data_frame))
     }
 
+    # NA (or ".") acts as a keyword to select all variables whose name is NA
+    na_keyword     <- is.na(variables_temp) | variables_temp == "."
+    variables_temp <- variables_temp[!na_keyword]
+
+    # Positions of all variables with an NA name. They are selected via the NA
+    # keyword because they can't be matched by name reliably.
+    if (any(na_keyword)){
+        na_positions <- which(is.na(names(data_frame)))
+    }
+    else{
+        na_positions <- integer(0)
+    }
+
     # Check if there are any colons in the selection and deparse variables accordingly
     variables <- data_frame |> deparse_colon(variables_temp)
 
@@ -145,22 +176,21 @@ dropp <- function(data_frame, ...){
     # variable being provided multiple times. Only keep the first occurrence.
     variables <- unique(variables)
 
-    if (length(variables) == 0){
+    if (length(variables) == 0 && length(na_positions) == 0){
         print_message("WARNING", "No variables found with the given pattern. Data frame remains untouched.")
         return(invisible(data_frame))
     }
 
     # Check if all variables are part of the data frame
-    provided_vars <- variables
-    invalid_vars  <- variables[!variables %in% names(data_frame)]
-    variables     <- variables[variables %in% names(data_frame)]
+    invalid_vars <- variables[!variables %in% names(data_frame)]
+    variables    <- variables[variables %in% names(data_frame)]
 
     if (length(invalid_vars) > 0){
         print_message("WARNING", c("The provided variable to drop '[invalid]' is not part of",
 								   "the data frame. This variable will be omitted."),
 								   invalid = invalid_vars)
 
-        if (length(variables) == 0){
+        if (length(variables) == 0 && length(na_positions) == 0){
             return(invisible(data_frame))
         }
     }
@@ -170,8 +200,12 @@ dropp <- function(data_frame, ...){
         data_frame <- data.table::as.data.table(data_frame)
     }
 
+    # Determine the positions of the variables to drop. NA-named variables are
+    # added as positions, since they can't be matched by name reliably.
+    drop_positions <- c(match(variables, names(data_frame)), na_positions)
+
     # Use data.table function set to drop the desired variables
-    collapse::fselect(data_frame, variables) <- NULL
+    collapse::fselect(data_frame, drop_positions) <- NULL
 
     data_frame
 }

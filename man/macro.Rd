@@ -63,6 +63,6 @@ Functions that can make use of macro variables: \code{\link[=any_table]{any_tabl
 
 Within the tabulation functions titles, footnotes, var_labels and stat_labels
 can resolve macros. Additionally they can be used in the \code{\link[=any_table]{any_table()}} rows,
-columns and values parameter and in the \code{\link[=summarise_plus]{summarise_plus()}} class, values and
-types parameter.
+columns, values, by, pct_group, pct_value, pct_block and box parameter and in
+the \code{\link[=summarise_plus]{summarise_plus()}} class, values and types parameter.
 }

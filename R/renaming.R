@@ -378,7 +378,7 @@ rename_multi <- function(data_frame, ...){
 #'
 #' @description
 #' Sets the first row of a data frame as variable names and deletes it. In case
-#' of NA, numeric values or empty characters in the first row, the old names are kept.
+#' of NA or empty characters in the first row, the old names are kept.
 #'
 #' @param data_frame A data frame for which to set new variable names.
 #'
@@ -403,9 +403,7 @@ first_row_as_names <- function(data_frame){
     old_names <- names(data_frame)
 
     # Set up condition on when to keep the old names
-    keep_old <- is.na(new_names) |
-                new_names == "" |
-                !is.na(suppressWarnings(as.numeric(new_names)))
+    keep_old <- is.na(new_names) | new_names == ""
 
     # Rename conditionally
     names(data_frame) <- data.table::fifelse(keep_old, old_names, new_names)

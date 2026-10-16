@@ -113,13 +113,14 @@ any_table(
   variables should add up to 100 %. Multiple variables can be specified
   in a vector to generate multiple group percentages. You can also use
   the keywords "row_pct" or "col_pct" to calculate total percentages for
-  rows and columns regardless of the respective other dimension.
+  rows and columns regardless of the respective other dimension. Macro
+  variables can be used.
 
 - pct_value:
 
   You can pass a list here, which contains the information for a new
   variable name and between which of the value variables percentages
-  should be computed.
+  should be computed. Macro variables can be used.
 
 - pct_block:
 
@@ -147,7 +148,7 @@ any_table(
 - by:
 
   Compute tables stratified by the expressions of the provided
-  variables.
+  variables. Macro variables can be used.
 
 - weight:
 
@@ -199,7 +200,8 @@ any_table(
 
 - box:
 
-  Provide a text for the upper left box of the table.
+  Provide a text for the upper left box of the table. Macro variables
+  can be used.
 
 - workbook:
 

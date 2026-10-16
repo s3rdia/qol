@@ -122,6 +122,12 @@ dots_to_char <- function(...){
 
     # Resolve a single expression into a character vector
     resolve_expression <- function(expression){
+        # A bare logical NA is kept as an NA marker. Functions like keep/dropp
+        # use it as a keyword to select all variables whose name is NA.
+        if (is.logical(expression) && length(expression) == 1L && is.na(expression)){
+            return(NA_character_)
+        }
+
         # Character: Just return as is
         if (is.character(expression)){
             return(expression)

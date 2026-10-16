@@ -20,6 +20,12 @@
 * `if.()`, `else_if.()`, `else.()`: Now add an attribute to the data frame which carries the currently active condition as a logical vector so that follow up statements can catch this and further work with an already handled condition. This enables `else_if.()` and `else.()` to not only work on NA values. (12.10.2026)
 * `do_if()`, `else_do()`, `end_do()`, `end_all_do()`: Instead of adding variables to the data fame these functions now also handle conditions as attributes attached to the data frame. (12.10.2026)
 * `summarise_plus()`, `any_table()`: `values` and `class` parameters now support SAS macro variable writing style. (14.10.2026)
+* `any_table()`: `by`, `box`, `pct_group`, `pct_value` and `pct_block` parameters now support SAS macro variable writing style. (16.10.2026)
+* `keep()`, `dropp()`: Are now able to keep/drop columns with NA as name. (16.10.2026)
+
+### Changed functionality
+
+* `first_row_as_names()`: Now also sets numeric values as variable names. (16.10.2026)
 
 ### Fixed
 
@@ -40,6 +46,7 @@
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`: Conditions with the `in` operator can now handle parentheses within quoted strings and line breaks. (09.10.2026)
 * `macro()`: German umlauts and ß should now work within macro variable names. (03.10.2026)
 * `print_step()`: Multi line messages are now reduced to one liners to make sure they won't be displayed twice. (14.10.2026)
+* `summarise_plus()`: Now uses a custom median function for the weighted median since collapse::fmedian, which was used before, has a rare edge case bug (https://github.com/fastverse/collapse/issues/883), which sometimes leads to wrong results. (16.10.2026)
 
 ### Optimization
 
@@ -52,6 +59,7 @@
 * `rename_multi()`: Now throws a warning when a new variable name is already in the data frame. (08.10.2026)
 * `compute.()`: The duplicate variable name note now only displays the unique variable names. (08.10.2026)
 * `load_file_multi()`: Doesn't run into `stack_data()` anymore, if only one file is loaded. (14.10.2026)
+* `import_multi ()`: Doesn't run into `stack_data()` anymore, if only one file is loaded. (16.10.2026)
 
 # qol 1.3.5
 

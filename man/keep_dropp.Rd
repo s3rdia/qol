@@ -13,7 +13,7 @@ dropp(data_frame, ...)
 \arguments{
 \item{data_frame}{A data frame which should be reduced to (keep) or by (drop) the specified variables.}
 
-\item{...}{The variable names to keep/drop.}
+\item{...}{The variable names to keep/drop. NA (or ".") selects all variables whose name is NA.}
 
 \item{order_vars}{\code{\link[=keep]{keep()}}: At the end variables are ordered as specified in the command.}
 }
@@ -22,10 +22,12 @@ Returns a reduced data table.
 }
 \description{
 \code{\link[=keep]{keep()}} enables you to put in a vector of variable names which then are kept
-inside the given data frame. All other variables are dropped.
+inside the given data frame. All other variables are dropped. Passing NA (or ".")
+keeps all variables whose name is NA.
 
 \code{\link[=dropp]{dropp()}} enables you to put in a vector of variable names which then are dropped
-from the given data frame. All other variables are kept.
+from the given data frame. All other variables are kept. Passing NA (or ".")
+drops all variables whose name is NA.
 }
 \examples{
 # Example data frame
@@ -67,6 +69,14 @@ end2 <- my_data |> dropp(":id")
 
 contain1 <- my_data |> keep(":on:") # Variable names which contain "on"
 contain2 <- my_data |> dropp(":on:")
+
+# NA (or ".") is a keyword which selects all variables whose name is NA
+na_data        <- data.frame(a = 1:3, b = 4:6)
+names(na_data) <- c(NA, "b")
+
+new_dt10 <- na_data |> keep(NA)
+new_dt11 <- na_data |> dropp(NA)
+new_dt12 <- na_data |> dropp(".")
 
 }
 \keyword{internal}

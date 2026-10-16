@@ -38,8 +38,10 @@
 #' variables should add up to 100 %. Multiple variables can be specified in a vector to
 #' generate multiple group percentages. You can also use the keywords "row_pct" or "col_pct"
 #' to calculate total percentages for rows and columns regardless of the respective other dimension.
+#' Macro variables can be used.
 #' @param pct_value You can pass a list here, which contains the information for a new
 #' variable name and between which of the value variables percentages should be computed.
+#' Macro variables can be used.
 #' @param pct_block Can be "rows" or "columns". Calculates percentages for the last
 #' group of variables inside the individual row or column combinations. To make these work
 #' use the writing style: sex + education + (last, combined, group). Additionally these formats
@@ -50,6 +52,7 @@
 #' see the [compute.()] function.
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' @param by Compute tables stratified by the expressions of the provided variables.
+#' Macro variables can be used.
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param full_precision FALSE by default. If TRUE, the rounding of the values according
 #' to the number formats in the style parameter is skipped and all values are output with all
@@ -75,6 +78,7 @@
 #' @param stat_labels A list in which is specified which label should be printed for
 #' which statistic instead of the statistic name.
 #' @param box Provide a text for the upper left box of the table.
+#' Macro variables can be used.
 #' @param workbook Insert a previously created workbook to expand the sheets instead of
 #' creating a new file.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
@@ -629,6 +633,9 @@ any_table <- function(data_frame,
     # Convert to character vectors
     by <- get_origin_as_char(by, substitute(by))
 
+    # Resolve macro variables
+    by <- apply_macro(by)
+
     # Make sure that the variables provided are part of the data frame.
     by <- data_frame |> part_of_df(by)
 
@@ -914,6 +921,15 @@ any_table <- function(data_frame,
 
     pct_group <- get_origin_as_char(pct_group, substitute(pct_group))
 
+    # Resolve macro variables
+    pct_group <- apply_macro(pct_group)
+
+    # Resolve macro variables in the pct_value list (names and expressions)
+    if (is.list(pct_value) && length(pct_value) > 0){
+        names(pct_value) <- apply_macro(names(pct_value))
+        pct_value        <- lapply(pct_value, apply_macro)
+    }
+
     # If pct_group parameter is passed but is not selected as statistic, add it
     if (length(pct_group) > 0 && !"pct_group" %in% tolower(statistics)){
         if (!(length(pct_group) == 1 && pct_group == "")){
@@ -1039,6 +1055,9 @@ any_table <- function(data_frame,
 
     pct_block <- get_origin_as_char(pct_block, substitute(pct_block))
 
+    # Resolve macro variables
+    pct_block <- apply_macro(pct_block)
+
     if (!all(pct_block %in% c("rows", "columns"))){
         print_message("WARNING", c("Invalid option for <pct_block>. <pct_block> can be 'rows' or 'columns', 'rows' will be used."))
         pct_block  <- "rows"
@@ -1064,6 +1083,7 @@ any_table <- function(data_frame,
     footnotes   <- apply_macro(footnotes)
     var_labels  <- apply_macro(var_labels)
     stat_labels <- apply_macro(stat_labels)
+    box         <- apply_macro(box)
 
     ###########################################################################
     # Any tabulation starts

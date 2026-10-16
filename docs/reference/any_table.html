@@ -131,12 +131,14 @@ Uses the SAS default way of calculating percentiles, which is Type 2 described i
 <dd><p>This option is used to determine which variable of the row and column
 variables should add up to 100 %. Multiple variables can be specified in a vector to
 generate multiple group percentages. You can also use the keywords "row_pct" or "col_pct"
-to calculate total percentages for rows and columns regardless of the respective other dimension.</p></dd>
+to calculate total percentages for rows and columns regardless of the respective other dimension.
+Macro variables can be used.</p></dd>
 
 
 <dt id="arg-pct-value">pct_value<a class="anchor" aria-label="anchor" href="#arg-pct-value"></a></dt>
 <dd><p>You can pass a list here, which contains the information for a new
-variable name and between which of the value variables percentages should be computed.</p></dd>
+variable name and between which of the value variables percentages should be computed.
+Macro variables can be used.</p></dd>
 
 
 <dt id="arg-pct-block">pct_block<a class="anchor" aria-label="anchor" href="#arg-pct-block"></a></dt>
@@ -158,7 +160,8 @@ see the <code><a href="compute..html">compute.()</a></code> function.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>Compute tables stratified by the expressions of the provided variables.</p></dd>
+<dd><p>Compute tables stratified by the expressions of the provided variables.
+Macro variables can be used.</p></dd>
 
 
 <dt id="arg-weight">weight<a class="anchor" aria-label="anchor" href="#arg-weight"></a></dt>
@@ -207,7 +210,8 @@ which statistic instead of the statistic name.</p></dd>
 
 
 <dt id="arg-box">box<a class="anchor" aria-label="anchor" href="#arg-box"></a></dt>
-<dd><p>Provide a text for the upper left box of the table.</p></dd>
+<dd><p>Provide a text for the upper left box of the table.
+Macro variables can be used.</p></dd>
 
 
 <dt id="arg-workbook">workbook<a class="anchor" aria-label="anchor" href="#arg-workbook"></a></dt>
