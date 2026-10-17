@@ -9,6 +9,7 @@
 #' @param data_frame A data frame in which are the variables to tabulate.
 #' @param variables A vector of single variables to create frequency tables for.
 #' @param formats A list in which is specified which formats should be applied to which variables.
+#' Macro variables can be used in the variable names and format names.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param means FALSE by default. If TRUE prints a small summarising table which contains mean, sd,
@@ -212,8 +213,11 @@ frequencies <- function(data_frame,
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){
         formats_list <- as.list(substitute(formats))[-1]
-        formats      <- evaluate_formats(formats_list)
+        formats      <- evaluate_formats(formats_list, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats) <- apply_macro(names(formats))
 
     # Remove empty formats and throw a warning. This can happen if there is e.g.
     # a typo in the format.

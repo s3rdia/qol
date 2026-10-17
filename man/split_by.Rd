@@ -19,7 +19,7 @@ split_by(
 data frame should be splitted.}
 
 \item{formats}{A list in which is specified which formats should be applied to which
-variables.}
+variables. Macro variables can be used in the variable names and format names.}
 
 \item{inverse}{Uses the inverse conditions to split up the data frame.}
 

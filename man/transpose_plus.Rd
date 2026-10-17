@@ -59,7 +59,7 @@ Uses the SAS default way of calculating percentiles, which is Type 2 described i
 }}
 
 \item{formats}{A list in which is specified which formats should be applied to which
-variables.}
+variables. Macro variables can be used in the variable names and format names.}
 
 \item{weight}{Put in a weight variable to compute weighted results.}
 

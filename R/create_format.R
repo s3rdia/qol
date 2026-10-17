@@ -326,25 +326,57 @@ shift_bound <- function(bound, direction, single_value){
 #' Get the list of formats with their corresponding data frames.
 #'
 #' @param formats_list A list containing format names.
+#' @param env The environment in which the format expressions should be
+#' evaluated. Defaults to the calling environment.
 #'
 #' @return
 #' Returns a list of format data frames.
 #'
 #' @noRd
-evaluate_formats <- function(formats_list){
+evaluate_formats <- function(formats_list, env = parent.frame()){
     if (length(formats_list) == 0){
         return(c())
     }
 
     # Fetch all the provided formats and get the original data frames and store them into a list
-    formats <- lapply(formats_list, function(format){
-        if (length(format) > 1){
+    formats <- lapply(formats_list, function(current_format){
+        # Already evaluated format objects are used as they are. This happens
+        # e.g. in recode.() where the formats are captured via list(...) and
+        # therefore can be a mix of evaluated format objects and strings.
+        if (data.table::is.data.table(current_format)){
+            return(current_format)
+        }
+
+        if (length(current_format) > 1){
             print_message("WARNING", c("Formats not passed correctly. Create format object first and then",
 									   "pass it to the function parameter like: list(my_variable = my_format)"),
 									   always_print = TRUE)
             return(c())
         }
-        dynGet(as.character(format), ifnotfound = NULL, inherits = TRUE)
+
+        # A character string is interpreted as the name of a format object.
+        # Macro variables in the string are resolved beforehand.
+        if (is.character(current_format)){
+            current_format <- as.name(macro(current_format))
+        }
+
+        # First evaluate the expression in the environment of the caller. This
+        # resolves format objects that are passed through a function parameter
+        # (e.g. `format` in a wrapper function) as well as objects located in
+        # the global environment.
+        value <- tryCatch(eval(current_format, envir = env), error = function(e) NULL)
+
+        # Fall back to a dynamic lookup on the call stack. This is needed if the
+        # format object is only reachable through a calling frame.
+        if (!data.table::is.data.table(value)){
+            dynamic_value <- tryCatch(dynGet(as.character(current_format), ifnotfound = NULL, inherits = FALSE),
+                                      error = function(e) NULL)
+            if (!is.null(dynamic_value)){
+                value <- dynamic_value
+            }
+        }
+
+        value
     })
 
     names(formats) <- names(formats_list)

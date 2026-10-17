@@ -80,6 +80,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: <code>by</code>, <code>box</code>, <code>pct_group</code>, <code>pct_value</code> and <code>pct_block</code> parameters now support SAS macro variable writing style. (16.10.2026)</li>
 <li>
 <code><a href="../reference/keep_dropp.html">keep()</a></code>, <code><a href="../reference/keep_dropp.html">dropp()</a></code>: Are now able to keep/drop columns with NA as name. (16.10.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/recode.html">recode()</a></code>, <code><a href="../reference/sort_plus.html">sort_plus()</a></code>, <code><a href="../reference/split_by.html">split_by()</a></code>, <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: <code>formats</code> parameter now supports SAS macro variable writing style. (17.10.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-3-6">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-6"></a></h4>
@@ -123,6 +125,8 @@
 <code><a href="../reference/messages.html">print_step()</a></code>: Multi line messages are now reduced to one liners to make sure they won’t be displayed twice. (14.10.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>: Now uses a custom median function for the weighted median since collapse::fmedian, which was used before, has a rare edge case bug (<a href="https://github.com/fastverse/collapse/issues/883" class="external-link uri">https://github.com/fastverse/collapse/issues/883</a>), which sometimes leads to wrong results. (16.10.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/recode.html">recode()</a></code>, <code><a href="../reference/sort_plus.html">sort_plus()</a></code>, <code><a href="../reference/split_by.html">split_by()</a></code>, <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: When wrapping the functions inside a custom function, format names passed as parameter are now resolved correctly. (17.10.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-6">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-6"></a></h4>

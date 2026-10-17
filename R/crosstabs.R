@@ -15,6 +15,7 @@
 #' - "pct_column" -> Weighted and unweighted column percentages
 #' - "pct_total"  -> Weighted and unweighted percentages compared to the grand total
 #' @param formats A list in which is specified which formats should be applied to which variables.
+#' Macro variables can be used in the variable names and format names.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' @param weight Put in a weight variable to compute weighted results.
 #' @param full_precision FALSE by default. If TRUE, the rounding of the values according
@@ -233,8 +234,11 @@ crosstabs <- function(data_frame,
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){
         formats_list <- as.list(substitute(formats))[-1]
-        formats      <- evaluate_formats(formats_list)
+        formats      <- evaluate_formats(formats_list, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats) <- apply_macro(names(formats))
 
     # Remove empty formats and throw a warning. This can happen if there is e.g.
     # a typo in the format.

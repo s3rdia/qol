@@ -33,6 +33,10 @@
 #' columns, values, by, pct_group, pct_value, pct_block and box parameter and in
 #' the [summarise_plus()] class, values and types parameter.
 #'
+#' Macros can also be used inside the formats parameter of all functions that
+#' accept it. Both the variable names and the format names can be built with
+#' macros, e.g. list("&variable_name" = "&format_name").
+#'
 #' @examples
 #' # Resolving macro variable in single character
 #' year <- 2026

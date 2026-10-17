@@ -111,8 +111,11 @@ recode. <- function(data_frame,
 
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){
-        formats <- evaluate_formats(formats)
+        formats <- evaluate_formats(formats, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats) <- apply_macro(names(formats))
 
     ###########################################################################
     # Recode
@@ -300,8 +303,11 @@ recode_multi <- function(data_frame, ..., convert = TRUE){
     }
     # Otherwise evaluate formats early
     else if (!is_list_of_dfs(formats)){
-        formats <- evaluate_formats(formats)
+        formats <- evaluate_formats(formats, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats) <- apply_macro(names(formats))
 
     # Get information from ... list
     variables <- names(formats)

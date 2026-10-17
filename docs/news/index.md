@@ -91,6 +91,16 @@
 - [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
   [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md): Are
   now able to keep/drop columns with NA as name. (16.10.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+  [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md),
+  [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  `formats` parameter now supports SAS macro variable writing style.
+  (17.10.2026)
 
 #### Changed functionality
 
@@ -177,6 +187,16 @@
   collapse::fmedian, which was used before, has a rare edge case bug
   (<https://github.com/fastverse/collapse/issues/883>), which sometimes
   leads to wrong results. (16.10.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`recode()`](https://s3rdia.github.io/qol/reference/recode.md),
+  [`sort_plus()`](https://s3rdia.github.io/qol/reference/sort_plus.md),
+  [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md),
+  [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  When wrapping the functions inside a custom function, format names
+  passed as parameter are now resolved correctly. (17.10.2026)
 
 #### Optimization
 

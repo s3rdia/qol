@@ -62,6 +62,10 @@ parameter and in the
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
 class, values and types parameter.
 
+Macros can also be used inside the formats parameter of all functions
+that accept it. Both the variable names and the format names can be
+built with macros, e.g. list("&variable_name" = "&format_name").
+
 ## Examples
 
 ``` r

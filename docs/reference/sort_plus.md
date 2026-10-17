@@ -45,7 +45,8 @@ sort_plus(
 - formats:
 
   A list in which is specified which formats should be used to sort
-  certain variables.
+  certain variables. Macro variables can be used in the variable names
+  and format names.
 
 - na.last:
 

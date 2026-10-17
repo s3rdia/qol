@@ -52,7 +52,7 @@ Uses the SAS default way of calculating percentiles, which is Type 2 described i
 }}
 
 \item{formats}{A list in which is specified which formats should be applied to which
-class variables.}
+class variables. Macro variables can be used in the variable names and format names.}
 
 \item{types}{A character vector specifying the different combinations of group
 variables which should be computed when using nesting = "all". If left empty all

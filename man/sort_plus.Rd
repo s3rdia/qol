@@ -26,7 +26,7 @@ or 'descending'/'d' can be used. If there are less orders given than by variable
 provided, the last given sorting order will be used for the additional by variables.}
 
 \item{formats}{A list in which is specified which formats should be used to sort
-certain variables.}
+certain variables. Macro variables can be used in the variable names and format names.}
 
 \item{na.last}{TRUE by default. Specifies whether NA values should come last or first.}
 }

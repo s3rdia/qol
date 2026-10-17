@@ -51,6 +51,7 @@
 #' @param compute A list in which individual calculations are handled. For the writing style
 #' see the [compute.()] function.
 #' @param formats A list in which is specified which formats should be applied to which variables.
+#' Macro variables can be used in the variable names and format names.
 #' @param by Compute tables stratified by the expressions of the provided variables.
 #' Macro variables can be used.
 #' @param weight Put in a weight variable to compute weighted results.
@@ -227,6 +228,7 @@
 #'                      pct_group = c("row_pct", "col_pct"),
 #'                      formats   = list(sex = sex., age = age.,
 #'                                       education = education.),
+#'                      output    = "excel_nostyle",
 #'                      na.rm     = TRUE)
 #'
 #' # If you want to get a clearer vision of what the result table looks like, in terms
@@ -291,7 +293,7 @@
 #'                                        square_pct  = percent_pct ^ 2),
 #'                      weight     = weight,
 #'                      formats    = list(sex = sex., age = age.),
-#'                      output    = "excel_nostyle",
+#'                      output     = "excel_nostyle",
 #'                      na.rm      = TRUE)
 #'
 #' # Customize the visual appearance by adding variable and statistic labels. Both
@@ -424,7 +426,8 @@
 #' my_data |> any_table(rows    = "sex",
 #'                      columns = "year",
 #'                      values  = weight,
-#'                      formats = list(sex = sex.))
+#'                      formats = list(sex = sex.),
+#'                      output  = "excel_nostyle")
 #'
 #' # Manual cleanup for example
 #' unlink(table_file)
@@ -484,8 +487,11 @@ any_table <- function(data_frame,
     # Evaluate formats early
     if (!is_list_of_dfs(formats)){
         formats_list <- as.list(substitute(formats))[-1]
-        formats      <- evaluate_formats(formats_list)
+        formats      <- evaluate_formats(formats_list, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats) <- apply_macro(names(formats))
 
     # Remove empty formats and throw a warning. This can happen if there is e.g.
     # a typo in the format.

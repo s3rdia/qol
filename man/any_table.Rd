@@ -90,7 +90,8 @@ use the "!" in front of the format expression like "!Total".}
 \item{compute}{A list in which individual calculations are handled. For the writing style
 see the \code{\link[=compute.]{compute.()}} function.}
 
-\item{formats}{A list in which is specified which formats should be applied to which variables.}
+\item{formats}{A list in which is specified which formats should be applied to which variables.
+Macro variables can be used in the variable names and format names.}
 
 \item{by}{Compute tables stratified by the expressions of the provided variables.
 Macro variables can be used.}
@@ -266,6 +267,7 @@ my_data |> any_table(rows      = c("sex + age", "sex", "age"),
                      pct_group = c("row_pct", "col_pct"),
                      formats   = list(sex = sex., age = age.,
                                       education = education.),
+                     output    = "excel_nostyle",
                      na.rm     = TRUE)
 
 # If you want to get a clearer vision of what the result table looks like, in terms
@@ -463,7 +465,8 @@ set_style_options(save_path  = dirname(table_file),
 my_data |> any_table(rows    = "sex",
                      columns = "year",
                      values  = weight,
-                     formats = list(sex = sex.))
+                     formats = list(sex = sex.),
+                     output  = "excel_nostyle")
 
 # Manual cleanup for example
 unlink(table_file)

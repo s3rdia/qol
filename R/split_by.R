@@ -8,7 +8,7 @@
 #' @param ... Pass in one or multiple variables and/or conditions on which the provided
 #' data frame should be splitted.
 #' @param formats A list in which is specified which formats should be applied to which
-#' variables.
+#' variables. Macro variables can be used in the variable names and format names.
 #' @param inverse Uses the inverse conditions to split up the data frame.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the
 #' functions time consumption.
@@ -111,15 +111,18 @@ split_by <- function(data_frame,
 
     if (!is_list_of_dfs(formats)){
         formats_list <- as.list(substitute(formats))[-1]
-        formats_list <- evaluate_formats(formats_list)
+        formats_list <- evaluate_formats(formats_list, env = parent.frame())
     }
+
+    # Resolve macro variables in the variable names of the provided formats
+    names(formats_list) <- apply_macro(names(formats_list))
 
     if (length(formats_list) > 0){
         #-------------------------------------------------------------------------#
         monitor_df <- NULL |> monitor_start("Applying formats", "Formats")
         #-------------------------------------------------------------------------#
 
-        data_frame <- suppressMessages(do.call(recode_multi, c(list(data_frame), formats, list(convert = FALSE))))
+        data_frame <- suppressMessages(do.call(recode_multi, c(list(data_frame), formats_list, list(convert = FALSE))))
     }
 
     for (condition in conditions){

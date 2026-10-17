@@ -88,7 +88,10 @@ and the implementation inside the function resolves the macro variable directly 
 <p>Within the tabulation functions titles, footnotes, var_labels and stat_labels
 can resolve macros. Additionally they can be used in the <code><a href="any_table.html">any_table()</a></code> rows,
 columns, values, by, pct_group, pct_value, pct_block and box parameter and in
-the <code><a href="summarise_plus.html">summarise_plus()</a></code> class, values and types parameter.</p></div>
+the <code><a href="summarise_plus.html">summarise_plus()</a></code> class, values and types parameter.</p>
+<p>Macros can also be used inside the formats parameter of all functions that
+accept it. Both the variable names and the format names can be built with
+macros, e.g. list("&amp;variable_name" = "&amp;format_name").</p></div>
     </div>
 
     <div class="section level2">

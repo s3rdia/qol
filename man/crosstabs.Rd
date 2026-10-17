@@ -42,7 +42,8 @@ crosstabs(
 \item "pct_total"  -> Weighted and unweighted percentages compared to the grand total
 }}
 
-\item{formats}{A list in which is specified which formats should be applied to which variables.}
+\item{formats}{A list in which is specified which formats should be applied to which variables.
+Macro variables can be used in the variable names and format names.}
 
 \item{by}{Compute tables stratified by the expressions of the provided variables.}
 
