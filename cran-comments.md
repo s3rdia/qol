@@ -24,6 +24,7 @@ Last CRAN release was on 20.09.2026.
 * `any_table()`: `by`, `box`, `pct_group`, `pct_value` and `pct_block` parameters now support SAS macro variable writing style.
 * `keep()`, `dropp()`: Are now able to keep/drop columns with NA as name.
 * `frequencies()`, `crosstabs()`, `any_table()`, `recode()`, `sort_plus()`, `split_by()`, `summarise_plus()`, `transpose_plus()`:  `formats` parameter now supports SAS macro variable writing style.
+* `split_by()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`.
 
 ### Changed functionality
 

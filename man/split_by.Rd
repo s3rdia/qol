@@ -42,6 +42,29 @@ data sets.
 
 Instead of subsetting the same data frame multiple times manually, you can subset it
 multiple times at once with this function.
+
+The function can take in conditions as characters to be able to parse the conditions.
+The parsing allows to write conditions in a SAS like way. For example the condition
+
+"age >= 15 & age < 65" can be written as "15 <= age < 65"
+
+Additionally and/or (case insensitive) are recognized keywords which will be translated into &/|.
+
+"age >= 15 and age < 65 or sex == 1" becomes "age >= 15 & age < 65 | sex == 1"
+
+And \code{\link[=macro]{macro()}} variables are allowed in any spot, e.g.:
+
+YEAR <- 2025\
+"year == &YEAR" translates to "year == 2025".
+
+Single = get translated to ==, the SAS not ^= is translated to !=.
+
+In SAS you can write "age in (1 4 7 15 21)" or "age not in (2, 4, 37, 82)" which
+gets translated into "age \%in\% (1, 4, 7, 15, 21)" and "!(age \%in\% (2, 4, 37, 82))".
+
+When using == or != operators you can check if character expressions start with
+(text:), end with (:text) or contain a certain text (:text:). These also get
+translated.
 }
 \examples{
 # Example data frame
@@ -53,6 +76,10 @@ split_var_df <- my_data |> split_by(sex)
 # Split by conditions
 split_cond_df <- my_data |> split_by(sex == 1 & age <  18,
                                      sex == 2 & age >= 18)
+
+# Split by character conditions with 'SAS' like syntax
+split_cond_df <- my_data |> split_by(" 15 <= age < 65 ",
+                                     " education in ('low' 'middle') ")
 
 # Split by condition with inverse group
 split_inv_df <- my_data |> split_by(sex == 1, inverse = TRUE)

@@ -166,8 +166,10 @@ any_table(
   Determine how the columns will be ordered. "values" orders the results
   by the order you provide the variables in values. "stats" orders them
   by the order under statistics. "values_stats" is a combination of
-  both. "columns" keeps the order as given in columns and "interleaved"
-  alternates the stats.
+  both. "columns" keeps the order as given in columns, "interleaved"
+  alternates the stats and "blocks" groups the columns by their root
+  name, so that columns of expanded combinations like "age + (sex,
+  education)" stay together.
 
 - titles:
 
@@ -472,7 +474,7 @@ my_data |> any_table(rows       = c("age + year"),
                                        square_pct  = percent_pct ^ 2),
                      weight     = weight,
                      formats    = list(sex = sex., age = age.),
-                     output    = "excel_nostyle",
+                     output     = "excel_nostyle",
                      na.rm      = TRUE)
 
 # Customize the visual appearance by adding variable and statistic labels. Both

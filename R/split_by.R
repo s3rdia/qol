@@ -22,6 +22,29 @@
 #' Instead of subsetting the same data frame multiple times manually, you can subset it
 #' multiple times at once with this function.
 #'
+#' The function can take in conditions as characters to be able to parse the conditions.
+#' The parsing allows to write conditions in a SAS like way. For example the condition
+#'
+#' "age >= 15 & age < 65" can be written as "15 <= age < 65"
+#'
+#' Additionally and/or (case insensitive) are recognized keywords which will be translated into &/|.
+#'
+#' "age >= 15 and age < 65 or sex == 1" becomes "age >= 15 & age < 65 | sex == 1"
+#'
+#' And [macro()] variables are allowed in any spot, e.g.:
+#'
+#' YEAR <- 2025\
+#' "year == &YEAR" translates to "year == 2025".
+#'
+#' Single = get translated to ==, the SAS not ^= is translated to !=.
+#'
+#' In SAS you can write "age in (1 4 7 15 21)" or "age not in (2, 4, 37, 82)" which
+#' gets translated into "age %in% (1, 4, 7, 15, 21)" and "!(age %in% (2, 4, 37, 82))".
+#'
+#' When using == or != operators you can check if character expressions start with
+#' (text:), end with (:text) or contain a certain text (:text:). These also get
+#' translated.
+#'
 #' @return Returns a list of data frames split by variable expressions and/or conditions.
 #' The lists names are the variable expressions or conditions.
 #'
@@ -35,6 +58,10 @@
 #' # Split by conditions
 #' split_cond_df <- my_data |> split_by(sex == 1 & age <  18,
 #'                                      sex == 2 & age >= 18)
+#'
+#' # Split by character conditions with 'SAS' like syntax
+#' split_cond_df <- my_data |> split_by(" 15 <= age < 65 ",
+#'                                      " education in ('low' 'middle') ")
 #'
 #' # Split by condition with inverse group
 #' split_inv_df <- my_data |> split_by(sex == 1, inverse = TRUE)
@@ -84,24 +111,32 @@ split_by <- function(data_frame,
     monitor_df <- NULL |> monitor_start("Preparation", "Preparation")
     #-------------------------------------------------------------------------#
 
-    # Convert to character in case of single variables
-    conditions <- tryCatch({
-        # Force evaluation to see if it exists
-        dots_to_char(...)
-    }, error = function(e){
-        # Evaluation failed
-        NULL
-    })
+    # Arguments which only consist of characters, symbols and vectors are converted
+    # by dots_to_char(). If it fails, conditions were passed and the raw expressions
+    # are taken instead, of which only the characters are parsed.
+    conditions <- tryCatch(dots_to_char(...), error = function(e) NULL)
 
-    # Get actual condition or a mix of variables and conditions
     if (is.null(conditions)){
-        conditions <- as.list(substitute(list(...)))[-1]
+        conditions <- unlist(lapply(as.list(substitute(list(...)))[-1], function(entry){
+            if (is.character(entry)){
+                lapply(entry, resolve_char, data_frame = data_frame)
+            }
+            else{
+                list(entry)
+            }
+        }), recursive = FALSE)
+    }
+    else{
+        conditions <- lapply(conditions, resolve_char, data_frame = data_frame)
     }
 
-    # If only variables are provided, check if they are part of the data frame
-    if (is.character(conditions)){
-        conditions <- data_frame |> part_of_df(conditions)
-    }
+    # Omit variable names which are not part of the data frame
+    invalid_names <- local({
+        conditions <- vapply(conditions[vapply(conditions, is.name, logical(1))],
+                             as.character, character(1))
+
+        conditions[!conditions %in% (data_frame |> part_of_df(conditions))]
+    })
 
     # Split data frame by conditions and store the split data frames into list
     data_list <- list()
@@ -127,12 +162,17 @@ split_by <- function(data_frame,
 
     for (condition in conditions){
         #-------------------------------------------------------------------------#
-        monitor_df <- monitor_df |> monitor_next(deparse(condition), "Condition")
+        monitor_df <- monitor_df |> monitor_next(paste(deparse(condition), collapse = " "), "Condition")
         #-------------------------------------------------------------------------#
 
         # Split by value if a single variable name is provided
         if (is.name(condition) || is.character(condition)){
             condition <- as.character(condition)
+
+            # Omit variables which are not part of the data frame
+            if (condition %in% invalid_names){
+                next
+            }
 
             # Generate new split list with NA entries
             new_entry <- data_frame |> collapse::rsplit(by = data_frame[[condition]])
@@ -160,12 +200,13 @@ split_by <- function(data_frame,
             # Add the subset or the inverse one as list element. The list element name is the condition iteself.
             if (!inverse){
                 data_list <- c(data_list,
-                               stats::setNames(list(data_frame |> collapse::fsubset(real_condition)), gsub('"', "'", deparse(condition))))
+                               stats::setNames(list(data_frame |> collapse::fsubset(real_condition)),
+                                               gsub('"', "'", paste(deparse(condition), collapse = " "))))
             }
             else{
                 data_list <- c(data_list,
                                stats::setNames(list(data_frame |> collapse::fsubset(!real_condition)),
-                                               paste0("not (", gsub('"', "'", deparse(condition)), ")")))
+                                               paste0("not (", gsub('"', "'", paste(deparse(condition), collapse = " ")), ")")))
             }
         }
         # If something else is given abort
@@ -183,4 +224,40 @@ split_by <- function(data_frame,
     #---------------------------------------------------------------------#
 
     data_list
+}
+
+
+
+#' Detect Character Conditions
+#'
+#' @description
+#' Detect conditions passed as character and parse them.
+#'
+#' @param entry Current entry to check for character condition.
+#' @param data_frame The data frame to split.
+#'
+#' @return
+#' Returns entry as name or the parsed character condition.
+#'
+#' @noRd
+resolve_char <- function(entry, data_frame){
+    if (is.na(entry)){
+        return(as.name(entry))
+    }
+
+    # If the entry is a column name, split by it directly
+    if (entry %in% names(data_frame)){
+        return(as.name(entry))
+    }
+
+    parsed <- parse_conditions(entry, na.rm = FALSE)
+
+    # A bare identifier stays a variable name so that unknown variables
+    # still produce the usual warning.
+    if (is.name(parsed)){
+        as.name(entry)
+    }
+    else{
+        parsed
+    }
 }

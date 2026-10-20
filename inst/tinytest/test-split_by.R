@@ -81,6 +81,44 @@ expect_equal(length(split_list), 4, info = "Split data frame by variable using f
 
 expect_equal(names(split_list), c("Total", "Male", "Female", "NA_sex"), info = "Split data frame by variable using formats")
 
+
+# Split data frame by character condition identically to unevaluated condition
+split_list1 <- dummy_df |> split_by(sex == 1 & age < 50)
+split_list2 <- dummy_df |> split_by(" sex == 1 and age < 50 ")
+
+expect_identical(split_list1, split_list2, info = "Split data frame by character condition identically to unevaluated condition")
+
+
+# Character conditions support SAS like syntax
+split_list <- dummy_df |> split_by(" 15 <= age < 65 ")
+
+expect_true(all(split_list[[1]][["age"]] >= 15 & split_list[[1]][["age"]] < 65), info = "Character conditions support SAS like syntax")
+
+
+# Character conditions support the in operator
+split_list <- dummy_df |> split_by(" education in ('low', 'middle')")
+
+expect_true(all(split_list[[1]][["education"]] %in% c("low", "middle")), info = "Character conditions support the in operator")
+
+
+# Split data frame by variable and character condition
+split_list <- dummy_df |> split_by(state, " age < 18 ")
+
+expect_true(max(split_list[["age < 18"]][["age"]]) < 18, info = "Split data frame by variable and character condition")
+
+
+# Character conditions support macro variables
+age_limit <- 18
+split_list <- dummy_df |> split_by(" age < &age_limit ")
+
+expect_true(max(split_list[[1]][["age"]]) < 18, info = "Character conditions support macro variables")
+
+
+# Split with inverse group using character condition
+split_list <- dummy_df |> split_by(" sex == 1 ", inverse = TRUE)
+
+expect_true(!1 %in% split_list[["not (sex == 1)"]][["sex"]], info = "Split with inverse group using character condition")
+
 ###############################################################################
 # Warning checks
 ###############################################################################

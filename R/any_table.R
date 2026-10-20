@@ -60,8 +60,9 @@
 #' their decimal places.
 #' @param order_by Determine how the columns will be ordered. "values" orders the results by the
 #' order you provide the variables in values. "stats" orders them by the order under statistics.
-#' "values_stats" is a combination of both. "columns" keeps the order as given in columns
-#' and "interleaved" alternates the stats.
+#' "values_stats" is a combination of both. "columns" keeps the order as given in columns,
+#' "interleaved" alternates the stats and "blocks" groups the columns by their root name, so
+#' that columns of expanded combinations like "age + (sex, education)" stay together.
 #' @param titles Specify one or more table titles. If you want to add hyperlinks you
 #' can do so by adding "link:" followed by the hyperlink to the main text. To link to a file
 #' use "file:" and pass the full file path afterwards. Linking to another cell works with "cell:".
@@ -907,8 +908,8 @@ any_table <- function(data_frame,
 
             # No preset and no variable name was passed
             if (length(invalid_order_by) > 0){
-                print_message("WARNING", c("<Order by> option '[order_by]' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns'",
-                                           "and 'interleaved' are available. <Order by> will be set to 'stats'."), order_by = order_by)
+                print_message("WARNING", c("<Order by> option '[order_by]' doesn't exist. Options 'values', 'stats', 'values_stats', 'columns',",
+                                           "'interleaved' and 'blocks' are available. <Order by> will be set to 'stats'."), order_by = order_by)
             }
 
             order_by <- "stats"

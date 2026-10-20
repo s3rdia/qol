@@ -101,6 +101,11 @@
   [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   `formats` parameter now supports SAS macro variable writing style.
   (17.10.2026)
+- [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md): Is
+  now also able to use the new writing style with conditions as
+  characters introduced by
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
+  (20.10.2026)
 
 #### Changed functionality
 

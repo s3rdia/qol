@@ -178,8 +178,9 @@ their decimal places.</p></dd>
 <dt id="arg-order-by">order_by<a class="anchor" aria-label="anchor" href="#arg-order-by"></a></dt>
 <dd><p>Determine how the columns will be ordered. "values" orders the results by the
 order you provide the variables in values. "stats" orders them by the order under statistics.
-"values_stats" is a combination of both. "columns" keeps the order as given in columns
-and "interleaved" alternates the stats.</p></dd>
+"values_stats" is a combination of both. "columns" keeps the order as given in columns,
+"interleaved" alternates the stats and "blocks" groups the columns by their root name, so
+that columns of expanded combinations like "age + (sex, education)" stay together.</p></dd>
 
 
 <dt id="arg-titles">titles<a class="anchor" aria-label="anchor" href="#arg-titles"></a></dt>
@@ -442,7 +443,7 @@ a designed workbook.</p>
 <span>                                       square_pct  <span class="op">=</span> <span class="va">percent_pct</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                     weight     <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>                     formats    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="va">sex.</span>, age <span class="op">=</span> <span class="va">age.</span><span class="op">)</span>,</span>
-<span>                     output    <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
+<span>                     output     <span class="op">=</span> <span class="st">"excel_nostyle"</span>,</span>
 <span>                     na.rm      <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Customize the visual appearance by adding variable and statistic labels. Both</span></span>

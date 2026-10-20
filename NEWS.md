@@ -23,6 +23,7 @@
 * `any_table()`: `by`, `box`, `pct_group`, `pct_value` and `pct_block` parameters now support SAS macro variable writing style. (16.10.2026)
 * `keep()`, `dropp()`: Are now able to keep/drop columns with NA as name. (16.10.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `recode()`, `sort_plus()`, `split_by()`, `summarise_plus()`, `transpose_plus()`:  `formats` parameter now supports SAS macro variable writing style. (17.10.2026)
+* `split_by()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (20.10.2026)
 
 ### Changed functionality
 
