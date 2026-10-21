@@ -176,12 +176,12 @@ stack_data <- function(...,
 
     # Generate an ID variable and order it to the last position which indicates the single data frame
     if (id){
-        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE, idcol = "ID")
+        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE, idcol = "ID", ignore.attr = TRUE)
         data_frame <- data_frame |> data.table::setcolorder("ID", after = collapse::fncol(data_frame))
     }
     # Stack without ID variable
     else{
-        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE)
+        data_frame <- data.table::rbindlist(df_list, use.names = TRUE, fill = TRUE, ignore.attr = TRUE)
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

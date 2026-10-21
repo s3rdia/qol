@@ -50,6 +50,7 @@
 * `print_step()`: Multi line messages are now reduced to one liners to make sure they won't be displayed twice. (14.10.2026)
 * `summarise_plus()`: Now uses a custom median function for the weighted median since collapse::fmedian, which was used before, has a rare edge case bug (https://github.com/fastverse/collapse/issues/883), which sometimes leads to wrong results. (16.10.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `recode()`, `sort_plus()`, `split_by()`, `summarise_plus()`, `transpose_plus()`:  When wrapping the functions inside a custom function, format names passed as parameter are now resolved correctly. (17.10.2026)
+* `summarise_plus()`, `frequencies()`, `any_table()`, `stack_data()`: Functions shouldn't error anymore, if value labels are attached to variables. (21.10.2026)
 
 ### Optimization
 

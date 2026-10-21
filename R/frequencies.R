@@ -393,7 +393,7 @@ frequencies <- function(data_frame,
             all_rows[[variable]] <- var_row
         }
 
-        mean_tab <- data.table::rbindlist(all_rows, use.names = TRUE, fill = TRUE)
+        mean_tab <- data.table::rbindlist(all_rows, use.names = TRUE, fill = TRUE, ignore.attr = TRUE)
     }
     else{
         mean_tab      <- c()
@@ -1236,7 +1236,7 @@ compute_cumulative <- function(freq_tab,
             collapse::fsubset(TYPE %in% variable) |>
             collapse::fsummarise(across(c("var_sum", "var_pct_group", "var_freq"), collapse::fsum))
 
-        var_tab <- data.table::rbindlist(list(freq_tab, total_temp), use.names = TRUE, fill = TRUE)
+        var_tab <- data.table::rbindlist(list(freq_tab, total_temp), use.names = TRUE, fill = TRUE, ignore.attr = TRUE)
         var_tab <- var_tab |>
             collapse::fsubset(TYPE %in% c(variable, NA))
     }

@@ -127,7 +127,7 @@ apply_format <- function(data_frame,
             temp_data <- temp_data |> collapse::frename("label" = current_var, .nse = FALSE)
 
             # Put NAs back into full data frame
-            temp_data <- data.table::rbindlist(list(temp_data, temp_na), fill = TRUE)
+            temp_data <- data.table::rbindlist(list(temp_data, temp_na), fill = TRUE, ignore.attr = TRUE)
 
             all_levels <- format_df[3] |>
                 unlist(use.names = FALSE) |>

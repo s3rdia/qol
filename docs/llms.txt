@@ -19,11 +19,9 @@ fast even with datasets of over a million observations.
 install.packages("qol")
 
 # Development version
-devtools::install_github("s3rdia/qol")
+pak::pak("s3rdia/qol")
 
 install.packages('qol', repos = c('https://s3rdia.r-universe.dev', 'https://cloud.r-project.org'))
-
-pak::pak("s3rdia/qol")
 ```
 
 ## Format Containers

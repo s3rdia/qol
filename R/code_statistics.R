@@ -54,7 +54,7 @@ code_statistics <- function(paths,
     }
 
     # Row bind together all results to one data frame
-    result_df <- data.table::rbindlist(result_list, use.names = TRUE)
+    result_df <- data.table::rbindlist(result_list, use.names = TRUE, ignore.attr = TRUE)
 
     if (collapse::fnrow(result_df) == 1 && result_df[["total"]] == 0){
         return(invisible(NULL))

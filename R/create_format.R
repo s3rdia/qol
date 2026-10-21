@@ -172,7 +172,7 @@ discrete_format <- function(...,
     unwrap_all_groupings <- lapply(names(list_of_groupings), unwrap_grouping)
 
     # Flatten to long format
-    unwrapped_format <- data.table::rbindlist(unwrap_all_groupings)
+    unwrapped_format <- data.table::rbindlist(unwrap_all_groupings, ignore.attr = TRUE)
 
     # If label column is all numeric then convert it to numeric, if there is no
     # overide set.

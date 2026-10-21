@@ -2152,7 +2152,7 @@ any_table <- function(data_frame,
 
     # Put all computed data frames below each other to form a final result data frame.
     if (length(row_expand) == 0){
-        any_tab <- data.table::rbindlist(part_combi_list, fill = TRUE, use.names = TRUE)
+        any_tab <- data.table::rbindlist(part_combi_list, fill = TRUE, use.names = TRUE, ignore.attr = TRUE)
     }
     # If there are expanded brackets in the row combinations, also insert TYPE variable
     # back in to be able to sort the results.
@@ -2164,7 +2164,7 @@ any_table <- function(data_frame,
                 data_part[["TYPE"]] <- combination
 
                 data_part
-            }), fill = TRUE, use.names = TRUE)
+            }), fill = TRUE, use.names = TRUE, ignore.attr = TRUE)
 
         any_tab[["TYPE_ORIG"]] <- as.character(row_expand[[1]][any_tab[["TYPE"]]])
     }
@@ -3045,7 +3045,7 @@ build_multi_header <- function(var_names,
         block_labels <- stats::setNames(block_labels, names(merged_header))
 
         # now rbind
-        merged_header <- data.table::rbindlist(list(block_labels, merged_header), use.names = TRUE)
+          merged_header <- data.table::rbindlist(list(block_labels, merged_header), use.names = TRUE, ignore.attr = TRUE)
     }
 
     merged_header
@@ -3085,7 +3085,7 @@ merge_headers <- function(value_header, variable_header){
     }
 
     # Output as data table
-    data.table::rbindlist(row_list, use.names = FALSE)
+        data.table::rbindlist(row_list, use.names = FALSE, ignore.attr = TRUE)
 }
 
 
@@ -3373,7 +3373,7 @@ format_by_single_table <- function(wb,
         subheading_df <- data.table::as.data.table(c(sub_part1, sub_part2))
 
         # Put subheader above the initial data frame
-        split_list[[i]] <- data.table::rbindlist(list(subheading_df, split_list[[i]]), use.names = FALSE)
+          split_list[[i]] <- data.table::rbindlist(list(subheading_df, split_list[[i]]), use.names = FALSE, ignore.attr = TRUE)
 
         # Insert a helper column which indicates where in the data frame the headline sits.
         # This is later used to identify the subheader rows in the full data frame
@@ -3382,7 +3382,7 @@ format_by_single_table <- function(wb,
     }
 
     # Bind full data frame back together
-    any_tab <- data.table::rbindlist(split_list, use.names = FALSE)
+      any_tab <- data.table::rbindlist(split_list, use.names = FALSE, ignore.attr = TRUE)
 
     names(any_tab) <- c(var_names, ".subheader")
     any_tab <- any_tab |> collapse::fselect(-BY, -by_vars)

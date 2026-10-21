@@ -1185,7 +1185,7 @@ summarise_plus <- function(data_frame,
 
         # Put all computed data frames one below the other and sort the variables
         # in the order: groups -> types -> results
-        result_df <- data.table::rbindlist(all_results, fill = TRUE)
+        result_df <- data.table::rbindlist(all_results, fill = TRUE, ignore.attr = TRUE)
 
         # Reorder new variables in order of requested statistics
         result_df <- result_df |>

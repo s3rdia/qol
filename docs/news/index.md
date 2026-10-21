@@ -202,6 +202,12 @@
   [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
   When wrapping the functions inside a custom function, format names
   passed as parameter are now resolved correctly. (17.10.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
+  Functions shouldn’t error anymore, if value labels are attached to
+  variables. (21.10.2026)
 
 #### Optimization
 
