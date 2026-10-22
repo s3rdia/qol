@@ -84,6 +84,8 @@
 <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/recode.html">recode()</a></code>, <code><a href="../reference/sort_plus.html">sort_plus()</a></code>, <code><a href="../reference/split_by.html">split_by()</a></code>, <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: <code>formats</code> parameter now supports SAS macro variable writing style. (17.10.2026)</li>
 <li>
 <code><a href="../reference/split_by.html">split_by()</a></code>: Is now also able to use the new writing style with conditions as characters introduced by <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>. (20.10.2026)</li>
+<li>
+<code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>: Are now able to handle value labels attached to variables. The result table will now display the labels instead of the plain values. Formats will always win over labels, meaning if a format is applied to a labelled variable, then the format values will be used. (22.10.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-3-6">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-6"></a></h4>
@@ -131,6 +133,8 @@
 <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/crosstabs.html">crosstabs()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/recode.html">recode()</a></code>, <code><a href="../reference/sort_plus.html">sort_plus()</a></code>, <code><a href="../reference/split_by.html">split_by()</a></code>, <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: When wrapping the functions inside a custom function, format names passed as parameter are now resolved correctly. (17.10.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/frequencies.html">frequencies()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/stack_data.html">stack_data()</a></code>: Functions shouldn’t error anymore, if value labels are attached to variables. (21.10.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: Fixed a bug with deduplicating plain values. (22.10.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-6">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-6"></a></h4>

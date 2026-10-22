@@ -24,6 +24,7 @@
 * `keep()`, `dropp()`: Are now able to keep/drop columns with NA as name. (16.10.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `recode()`, `sort_plus()`, `split_by()`, `summarise_plus()`, `transpose_plus()`:  `formats` parameter now supports SAS macro variable writing style. (17.10.2026)
 * `split_by()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (20.10.2026)
+* `frequencies()`, `crosstabs()`, `any_table()`: Are now able to handle value labels attached to variables. The result table will now display the labels instead of the plain values. Formats will always win over labels, meaning if a format is applied to a labelled variable, then the format values will be used. (22.10.2026)
 
 ### Changed functionality
 
@@ -51,6 +52,7 @@
 * `summarise_plus()`: Now uses a custom median function for the weighted median since collapse::fmedian, which was used before, has a rare edge case bug (https://github.com/fastverse/collapse/issues/883), which sometimes leads to wrong results. (16.10.2026)
 * `frequencies()`, `crosstabs()`, `any_table()`, `recode()`, `sort_plus()`, `split_by()`, `summarise_plus()`, `transpose_plus()`:  When wrapping the functions inside a custom function, format names passed as parameter are now resolved correctly. (17.10.2026)
 * `summarise_plus()`, `frequencies()`, `any_table()`, `stack_data()`: Functions shouldn't error anymore, if value labels are attached to variables. (21.10.2026)
+* `any_table()`: Fixed a bug with deduplicating plain values. (22.10.2026)
 
 ### Optimization
 

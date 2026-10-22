@@ -118,6 +118,12 @@
 #' thinking hard about how to calculate where to put a border or to even manually prepare
 #' a designed workbook.
 #'
+#' If a used variable has value labels attached (e.g. through the 'haven' or
+#' 'labelled' packages) these labels are used for the tabulation. If a format is
+#' applied to a labelled variable the format wins and the labels are ignored.
+#' Otherwise the labels are turned into an internal format, so the labelled values
+#' are shown.
+#'
 #' @return
 #' Returns a list with the data table containing the results for the table, the formatted
 #' 'Excel' workbook and the meta information needed for styling the final table.
@@ -662,6 +668,13 @@ any_table <- function(data_frame,
             by <- c()
         }
     }
+
+    # Use value labels attached to the used variables. If a format is applied to
+    # a labelled variable the format wins, otherwise the labels are turned into
+    # an internal format.
+    label_result <- handle_value_labels(data_frame, c(row_vars, col_vars, by), formats)
+    data_frame   <- label_result[["data_frame"]]
+    formats      <- label_result[["formats"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight
@@ -2093,7 +2106,7 @@ any_table <- function(data_frame,
                 combined_id_vars <- id_vars
 
                 # Get data frame variable names
-                col_header_df <- combi_df[0, ]
+                col_header_df <- combi_df[0, , drop = FALSE]
 
                 # Fill header rows with column variable names
                 for (var_index in seq_along(col_combi_vars)){

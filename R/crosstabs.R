@@ -60,6 +60,12 @@
 #' set up in separate, evenly designed tables. For just a quick overview, rather than
 #' fully designed tables, you can also just output the tables in ASCII style format.
 #'
+#' If a used variable has value labels attached (e.g. through the 'haven' or
+#' 'labelled' packages) these labels are used for the tabulation. If a format is
+#' applied to a labelled variable the format wins and the labels are ignored.
+#' Otherwise the labels are turned into an internal format, so the labelled values
+#' are shown.
+#'
 #' @return
 #' Returns a data tables containing the results for the cross table.
 #'
@@ -331,6 +337,13 @@ crosstabs <- function(data_frame,
     # Make sure there is no class variable that is also a value variable.
     variables <- c(rows, columns)
     by        <- resolve_intersection(by, variables)
+
+    # Use value labels attached to the used variables. If a format is applied to
+    # a labelled variable the format wins, otherwise the labels are turned into
+    # an internal format.
+    label_result <- handle_value_labels(data_frame, c(rows, columns, by), formats)
+    data_frame   <- label_result[["data_frame"]]
+    formats      <- label_result[["formats"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight

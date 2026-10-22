@@ -106,6 +106,13 @@
   characters introduced by
   [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md).
   (20.10.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
+  [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Are now able to handle value labels attached to variables. The result
+  table will now display the labels instead of the plain values. Formats
+  will always win over labels, meaning if a format is applied to a
+  labelled variable, then the format values will be used. (22.10.2026)
 
 #### Changed functionality
 
@@ -208,6 +215,8 @@
   [`stack_data()`](https://s3rdia.github.io/qol/reference/stack_data.md):
   Functions shouldn’t error anymore, if value labels are attached to
   variables. (21.10.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Fixed a bug with deduplicating plain values. (22.10.2026)
 
 #### Optimization
 

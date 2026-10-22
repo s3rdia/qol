@@ -138,6 +138,12 @@ evenly designed tables, all at once. For just a quick overview, rather
 than fully designed tables, you can also just output the tables in ASCII
 style format.
 
+If a used variable has value labels attached (e.g. through the 'haven'
+or 'labelled' packages) these labels are used for the tabulation. If a
+format is applied to a labelled variable the format wins and the labels
+are ignored. Otherwise the labels are turned into an internal format, so
+the labelled values are shown.
+
 ## See also
 
 Creating a custom table style:

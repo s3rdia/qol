@@ -259,14 +259,14 @@
 <span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>sheet_name <span class="op">=</span> <span class="st">"sheet4"</span><span class="op">)</span></span>
 <span><span class="va">tab4</span> <span class="op">&lt;-</span> <span class="va">my_data</span>  <span class="op">|&gt;</span> <span class="fu"><a href="reference/any_table.html">any_table</a></span><span class="op">(</span><span class="va">...</span>, print <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"excel_nostyle"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">...</span></span>
-<span></span>
 <span><span class="co"># Every of the above tabs is a list, which contains the data table, an unstyled workbook and the meta</span></span>
 <span><span class="co"># information needed for the individual styling. These tabs can be input into the following function,</span></span>
 <span><span class="co"># which reads the meta information, styles each table individually and combines them as separate sheets</span></span>
 <span><span class="co"># into a single workbook.</span></span>
-<span><span class="fu"><a href="reference/combine_into_workbook.html">combine_into_workbook</a></span><span class="op">(</span><span class="va">tab1</span>, <span class="va">tab2</span>, <span class="va">tab3</span>, <span class="va">tab4</span>, <span class="va">tab5</span>, <span class="va">tab6</span>, <span class="va">tab7</span>, <span class="va">tab8</span>,</span>
-<span>                      file <span class="op">=</span> <span class="st">"C:/My_folder/My_workbook.xlsx"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/style_options.html">set_style_options</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"C:/My_folder/"</span>,</span>
+<span>                  file      <span class="op">=</span> <span class="st">"My_workbook.xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/combine_into_workbook.html">combine_into_workbook</a></span><span class="op">(</span><span class="va">tab1</span>, <span class="va">tab2</span>, <span class="va">tab3</span>, <span class="va">tab4</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="save-with-protection-and-load-as-you-like">Save with protection and load as you like<a class="anchor" aria-label="anchor" href="#save-with-protection-and-load-as-you-like"></a>

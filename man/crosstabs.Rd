@@ -105,6 +105,12 @@ and so on.
 You can not only output sums and frequencies, but also different percentages, all
 set up in separate, evenly designed tables. For just a quick overview, rather than
 fully designed tables, you can also just output the tables in ASCII style format.
+
+If a used variable has value labels attached (e.g. through the 'haven' or
+'labelled' packages) these labels are used for the tabulation. If a format is
+applied to a labelled variable the format wins and the labels are ignored.
+Otherwise the labels are turned into an internal format, so the labelled values
+are shown.
 }
 \examples{
 # NOTE: The global option for printing the output is set to FALSE to save time

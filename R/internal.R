@@ -247,3 +247,54 @@ strip_qol_attributes <- function(data_frame){
 
     data_frame
 }
+
+
+#' Handle Value Labels On Variables
+#'
+#' @description
+#' Enables value labels attached to variables (e.g. via the 'haven' or 'labelled'
+#' packages) to be used in [frequencies()], [crosstabs()] and [any_table()].
+#' For every used variable which carries value labels the following happens:
+#'
+#' - If an explicit format is provided for the variable, the format wins and the
+#'   value labels are ignored.
+#' - If no explicit format is provided, the value labels are converted into an
+#'   internal discrete format so that the variable is treated exactly like a
+#'   formatted variable throughout the tabulation.
+#'
+#' @param data_frame The data frame which is used in the tabulation.
+#' @param variables A character vector of all categorial variables which are used
+#' in the tabulation.
+#' @param formats The already evaluated list of formats.
+#'
+#' @return
+#' Returns a list containing the adjusted data frame and the extended formats.
+#'
+#' @noRd
+handle_value_labels <- function(data_frame,
+                                variables,
+                                formats){
+    # If a format is applied to a variable it wins over the value labels, so
+    # those variables never need to be looked at.
+    candidates <- setdiff(variables, names(formats))
+
+    # Fetch the variable labels and convert them into formats
+    for (variable in candidates){
+        labels <- attr(data_frame[[variable]], "labels")
+
+        # No value labels attached, nothing to do
+        if (length(labels) == 0){
+            next
+        }
+
+        # Build a discrete format container from the value labels
+        label_format <- data.table::data.table(value = unname(labels),
+                                               label = names(labels))
+
+        # If the label column is all numeric convert it to numeric, to match the
+        # behaviour of discrete_format.
+        formats[[variable]] <- label_format |> convert_numeric("label")
+    }
+
+    list(data_frame = data_frame, formats = formats)
+}

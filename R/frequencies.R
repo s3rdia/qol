@@ -56,6 +56,12 @@
 #' tables, all at once. For just a quick overview, rather than fully designed
 #' tables, you can also just output the tables in ASCII style format.
 #'
+#' If a used variable has value labels attached (e.g. through the 'haven' or
+#' 'labelled' packages) these labels are used for the tabulation. If a format is
+#' applied to a labelled variable the format wins and the labels are ignored.
+#' Otherwise the labels are turned into an internal format, so the labelled values
+#' are shown.
+#'
 #' @return
 #' Returns a list of two data tables containing the results for the frequency tables.
 #'
@@ -273,6 +279,13 @@ frequencies <- function(data_frame,
     by <- data_frame |> part_of_df(by)
 
     by <- resolve_intersection(by, variables)
+
+    # Use value labels attached to the used variables. If a format is applied to
+    # a labelled variable the format wins, otherwise the labels are turned into
+    # an internal format.
+    label_result <- handle_value_labels(data_frame, c(variables, by), formats)
+    data_frame   <- label_result[["data_frame"]]
+    formats      <- label_result[["formats"]]
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Weight

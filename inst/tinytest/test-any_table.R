@@ -1014,6 +1014,41 @@ expect_true(all(c("weight_sum_Total.dup1", "weight_sum_Total.dup2") %in% names(r
             info = "any_table can handle duplicate column names without NA values")
 
 
+# any_table uses value labels attached to a variable when no format is applied
+label_df <- dummy_df
+attr(label_df[["sex"]], "labels") <- c(Male = 1, Female = 2)
+attr(label_df[["sex"]], "label")  <- "Sex"
+
+result_list <- label_df |>
+    any_table(rows    = "education",
+              columns = "sex",
+              values  = weight,
+              na.rm   = TRUE,
+              print   = FALSE)
+
+expect_true(all(c("weight_sum_Male", "weight_sum_Female") %in% names(result_list[[1]])),
+            info = "any_table uses value labels attached to a variable when no format is applied")
+
+
+# any_table lets the format win over value labels
+label_df <- dummy_df
+attr(label_df[["sex"]], "labels") <- c(Male = 1, Female = 2)
+attr(label_df[["sex"]], "label")  <- "Sex"
+
+sex_format <- discrete_format("m" = 1, "f" = 2)
+
+result_list <- label_df |>
+    any_table(rows    = "education",
+              columns = "sex",
+              values  = weight,
+              formats = list(sex = sex_format),
+              na.rm   = TRUE,
+              print   = FALSE)
+
+expect_true(all(c("weight_sum_m", "weight_sum_f") %in% names(result_list[[1]])), info = "any_table lets the format win over value labels")
+expect_true(!any(grepl("Male|Female", names(result_list[[1]]))), info = "any_table lets the format win over value labels")
+
+
 # any_table throws a warning with invalid by variable
 result_list <- dummy_df |>
     any_table(rows    = "age",

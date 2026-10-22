@@ -182,6 +182,12 @@ happens automatically.
 With this function you basically can fully concentrate on designing a table, instead of
 thinking hard about how to calculate where to put a border or to even manually prepare
 a designed workbook.
+
+If a used variable has value labels attached (e.g. through the 'haven' or
+'labelled' packages) these labels are used for the tabulation. If a format is
+applied to a labelled variable the format wins and the labels are ignored.
+Otherwise the labels are turned into an internal format, so the labelled values
+are shown.
 }
 \examples{
 # NOTE: Some of the examples use the parameter 'output = "excel_nostyle"' to

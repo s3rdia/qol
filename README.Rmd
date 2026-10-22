@@ -233,14 +233,14 @@ tab3 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 set_style_options(sheet_name = "sheet4")
 tab4 <- my_data  |> any_table(..., print = FALSE, output = "excel_nostyle")
 
-...
-
 # Every of the above tabs is a list, which contains the data table, an unstyled workbook and the meta
 # information needed for the individual styling. These tabs can be input into the following function,
 # which reads the meta information, styles each table individually and combines them as separate sheets
 # into a single workbook.
-combine_into_workbook(tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8,
-                      file = "C:/My_folder/My_workbook.xlsx")
+set_style_options(save_path = "C:/My_folder/",
+                  file      = "My_workbook.xlsx")
+
+combine_into_workbook(tab1, tab2, tab3, tab4)
 ```
 
 ## Save with protection and load as you like
