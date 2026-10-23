@@ -217,7 +217,7 @@ Other:
         else.   (           var = value)
 
     snippet freq
-        frequencies(variables = c(var1, var2, ...),
+        frequencies(var1, var2, ...,
                     weight    = weight_var,
                     formats   = list(var = "format.", ...),
                     titles    = c(),

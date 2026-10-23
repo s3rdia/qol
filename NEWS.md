@@ -1,4 +1,4 @@
-# qol 1.3.6 - DEVELOPMENT
+# qol 1.3.6
 
 ### New functionality
 
@@ -29,6 +29,7 @@
 ### Changed functionality
 
 * `first_row_as_names()`: Now also sets numeric values as variable names. (16.10.2026)
+* `frequencies()`: The `variables` parameter was replaced by an ellipsis `...`. Variables can now be listed separated by commas without wrapping them in c(). The vector writing style still works though. (23.10.2026)
 
 ### Fixed
 

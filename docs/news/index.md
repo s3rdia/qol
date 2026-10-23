@@ -1,6 +1,6 @@
 # Changelog
 
-## qol 1.3.6 - DEVELOPMENT
+## qol 1.3.6
 
 #### New functionality
 
@@ -118,6 +118,10 @@
 
 - [`first_row_as_names()`](https://s3rdia.github.io/qol/reference/first_row_as_names.md):
   Now also sets numeric values as variable names. (16.10.2026)
+- [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md):
+  The `variables` parameter was replaced by an ellipsis `...`. Variables
+  can now be listed separated by commas without wrapping them in c().
+  The vector writing style still works though. (23.10.2026)
 
 #### Fixed
 

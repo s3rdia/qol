@@ -7,7 +7,8 @@
 #' and unweighted frequencies per expression.
 #'
 #' @param data_frame A data frame in which are the variables to tabulate.
-#' @param variables A vector of single variables to create frequency tables for.
+#' @param ... The single variables to create frequency tables for. Just list them
+#' separated by commas.
 #' @param formats A list in which is specified which formats should be applied to which variables.
 #' Macro variables can be used in the variable names and format names.
 #' @param by Compute tables stratified by the expressions of the provided variables.
@@ -109,12 +110,12 @@
 #'
 #' # Output frequencies tables
 #' my_data |> frequencies(sex)
-#' my_data |> frequencies(c(age, education),
+#' my_data |> frequencies(age, education,
 #'                        weight = weight)
 #'
 #' # Also works with characters
 #' my_data |> frequencies("sex")
-#' my_data |> frequencies(c("age", "education"),
+#' my_data |> frequencies("age", "education",
 #'                        weight = "weight")
 #'
 #' # Applying
@@ -181,7 +182,7 @@
 #'
 #' @export
 frequencies <- function(data_frame,
-                        variables,
+                        ...,
                         formats        = c(),
                         by             = c(),
                         weight         = NULL,
@@ -257,7 +258,7 @@ frequencies <- function(data_frame,
     # Variables
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    variables <- get_origin_as_char(variables, substitute(variables))
+    variables <- dots_to_char(...)
 
     # Make sure that the variables provided are part of the data frame.
     variables <- data_frame |> part_of_df(variables)

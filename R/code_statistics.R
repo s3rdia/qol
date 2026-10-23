@@ -85,7 +85,7 @@ code_statistics <- function(paths,
         print_message("NEUTRAL", c("\nPaths that were scanned:", paths))
 
         suppressMessages(transpose_df |>
-                        frequencies(variables = "variable",
+                        frequencies("variable",
                                     weight    = "value",
                                     formats   = list("variable" = categories.),
                                     style     = excel_output_style(number_formats = number_format_style(sum_decimals = 0))))
@@ -97,7 +97,7 @@ code_statistics <- function(paths,
         print_message("NEUTRAL", c("\nPaths that were scanned:", subfolders))
 
         suppressMessages(transpose_df |>
-                        frequencies(variables = "variable",
+                        frequencies("variable",
                                     by        = "path",
                                     weight    = "value",
                                     formats   = list("variable" = categories.),
@@ -112,7 +112,7 @@ code_statistics <- function(paths,
         print_message("NEUTRAL", c("\nFiles that were scanned:", files))
 
         suppressMessages(transpose_df |>
-                        frequencies(variables = "variable",
+                        frequencies("variable",
                                     by        = "file",
                                     weight    = "value",
                                     formats   = list("variable" = categories.),

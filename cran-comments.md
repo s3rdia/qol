@@ -30,6 +30,7 @@ Last CRAN release was on 20.09.2026.
 ### Changed functionality
 
 * `first_row_as_names()`: Now also sets numeric values as variable names.
+* `frequencies()`: The `variables` parameter was replaced by an ellipsis `...`. Variables can now be listed separated by commas without wrapping them in c(). The vector writing style still works though.
 
 ### Fixed
 

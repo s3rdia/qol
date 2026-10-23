@@ -11,7 +11,7 @@ unweighted frequencies per expression.
 ``` r
 frequencies(
   data_frame,
-  variables,
+  ...,
   formats = c(),
   by = c(),
   weight = NULL,
@@ -34,9 +34,10 @@ frequencies(
 
   A data frame in which are the variables to tabulate.
 
-- variables:
+- ...:
 
-  A vector of single variables to create frequency tables for.
+  The single variables to create frequency tables for. Just list them
+  separated by commas.
 
 - formats:
 
@@ -215,12 +216,12 @@ set_footnotes("This is footnote number 1",
 
 # Output frequencies tables
 my_data |> frequencies(sex)
-my_data |> frequencies(c(age, education),
+my_data |> frequencies(age, education,
                        weight = weight)
 
 # Also works with characters
 my_data |> frequencies("sex")
-my_data |> frequencies(c("age", "education"),
+my_data |> frequencies("age", "education",
                        weight = "weight")
 
 # Applying

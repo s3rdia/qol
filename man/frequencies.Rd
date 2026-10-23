@@ -6,7 +6,7 @@
 \usage{
 frequencies(
   data_frame,
-  variables,
+  ...,
   formats = c(),
   by = c(),
   weight = NULL,
@@ -25,7 +25,8 @@ frequencies(
 \arguments{
 \item{data_frame}{A data frame in which are the variables to tabulate.}
 
-\item{variables}{A vector of single variables to create frequency tables for.}
+\item{...}{The single variables to create frequency tables for. Just list them
+separated by commas.}
 
 \item{formats}{A list in which is specified which formats should be applied to which variables.
 Macro variables can be used in the variable names and format names.}
@@ -124,12 +125,12 @@ set_footnotes("This is footnote number 1",
 
 # Output frequencies tables
 my_data |> frequencies(sex)
-my_data |> frequencies(c(age, education),
+my_data |> frequencies(age, education,
                        weight = weight)
 
 # Also works with characters
 my_data |> frequencies("sex")
-my_data |> frequencies(c("age", "education"),
+my_data |> frequencies("age", "education",
                        weight = "weight")
 
 # Applying
