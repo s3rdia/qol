@@ -82,6 +82,9 @@ any_table(
   - "pct_total" -\> Weighted and unweighted percentages compared to the
     grand total
 
+  - "pct_block" -\> Weighted and unweighted percentages inside the last
+    group of row or column combinations
+
   - "mean" -\> Weighted and unweighted mean
 
   - "median" -\> Weighted and unweighted median

@@ -56,6 +56,7 @@ Macro variables can be used.}
 \item "pct_group" -> Weighted and unweighted percentages within the respective group
 \item "pct_value" -> Weighted and unweighted percentages between value variables or of a variable expression
 \item "pct_total" -> Weighted and unweighted percentages compared to the grand total
+\item "pct_block" -> Weighted and unweighted percentages inside the last group of row or column combinations
 \item "mean"      -> Weighted and unweighted mean
 \item "median"    -> Weighted and unweighted median
 \item "mode"      -> Weighted and unweighted mode

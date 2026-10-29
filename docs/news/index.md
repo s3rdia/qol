@@ -1,6 +1,23 @@
 # Changelog
 
+## qol 1.3.7
+
+#### Fixed
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The default `pct_group` now ignores the internal pseudo column
+  variable. With an empty `columns` parameter the percentages are
+  computed within the last real variable instead of every row adding up
+  to 100 %. (29.10.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  The note about missing values being dropped for percentile
+  calculations is now only printed once per value variable instead of
+  once per computed statistic and variable combination. (29.10.2026)
+
 ## qol 1.3.6
+
+CRAN release: 2026-10-25
 
 #### New functionality
 
@@ -35,10 +52,11 @@
 - [`keep()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
   [`dropp()`](https://s3rdia.github.io/qol/reference/keep_dropp.md),
   [`retain_variables()`](https://s3rdia.github.io/qol/reference/retain.md),
-  `add_variable_range`: Are now able to select variable ranges by
-  pattern. When writing e.g. age1-age10 (the hyphen triggers this
-  behaviour) then alle “age” variables from 1 to 10 are selected
-  regardless of where they are located in the data set. (29.09.2026)
+  [`add_variable_range()`](https://s3rdia.github.io/qol/reference/add_variable_range.md):
+  Are now able to select variable ranges by pattern. When writing
+  e.g. age1-age10 (the hyphen triggers this behaviour) all “age”
+  variables from 1 to 10 are selected regardless of where they are
+  located in the data set. (29.09.2026)
 - [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md): Is now
   also able to use the new writing style with conditions as characters
   introduced by

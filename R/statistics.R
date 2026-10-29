@@ -121,14 +121,10 @@ freq_g0_qol <- function(values, group){
 #'
 #' @noRd
 percentiles_qol <- function(values, weight, group, probs){
-    # Percentiles are computed on the non-missing values only. Groups in which all values
-    # of a variable are missing cannot be summarised at all, so they are reported.
+    # Groups in which all values of a variable are missing cannot be summarised
+    # at all, so they are reported. The note about dropped missing values is
+    # printed once in summarise_plus().
     for (var_name in names(values)){
-        if (anyNA(values[[var_name]])){
-            print_message("NOTE", "Missing values in value variable '[var]' will be dropped to calculate percentiles.",
-                          var = var_name, always_print = TRUE)
-        }
-
         empty_groups <- group[["groups"]][collapse::fsum(!is.na(values[[var_name]]),
                                                          g = group,
                                                          use.g.names = FALSE) == 0, , drop = FALSE]

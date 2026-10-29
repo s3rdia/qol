@@ -516,6 +516,18 @@ summarise_plus <- function(data_frame,
         }
     }
 
+    # Median and percentile statistics drop missing values. Print the note once
+    # per affected value variable instead of once for every statistic and
+    # variable combination.
+    if (any(valid_stats == "median" | grepl("^p\\d+$", valid_stats))){
+        for (var_name in values){
+            if (anyNA(data_frame[[var_name]])){
+                print_message("NOTE", "Missing values in value variable '[var]' will be dropped to calculate percentiles.",
+                              var = var_name, always_print = TRUE)
+            }
+        }
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Types
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

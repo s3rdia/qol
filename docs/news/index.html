@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.6" id="qol-136">qol 1.3.6<a class="anchor" aria-label="anchor" href="#qol-136"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.3.7" id="qol-137">qol 1.3.7<a class="anchor" aria-label="anchor" href="#qol-137"></a></h2>
+<div class="section level4">
+<h4 id="fixed-1-3-7">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1-3-7"></a></h4>
+<ul><li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: The default <code>pct_group</code> now ignores the internal pseudo column variable. With an empty <code>columns</code> parameter the percentages are computed within the last real variable instead of every row adding up to 100 %. (29.10.2026)</li>
+<li>
+<code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>: The note about missing values being dropped for percentile calculations is now only printed once per value variable instead of once per computed statistic and variable combination. (29.10.2026)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.3.6" id="qol-136">qol 1.3.6<a class="anchor" aria-label="anchor" href="#qol-136"></a></h2><p class="text-muted">CRAN release: 2026-10-25</p>
 <div class="section level4">
 <h4 id="new-functionality-1-3-6">New functionality<a class="anchor" aria-label="anchor" href="#new-functionality-1-3-6"></a></h4>
 <ul><li>
@@ -57,7 +67,7 @@
 <li>
 <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: If specific <code>statistics</code> are chosen per variable then now the <code>values</code> parameter can be omitted. (26.09.2026)</li>
 <li>
-<code><a href="../reference/keep_dropp.html">keep()</a></code>, <code><a href="../reference/keep_dropp.html">dropp()</a></code>, <code><a href="../reference/retain.html">retain_variables()</a></code>, <code>add_variable_range</code>: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) then alle “age” variables from 1 to 10 are selected regardless of where they are located in the data set. (29.09.2026)</li>
+<code><a href="../reference/keep_dropp.html">keep()</a></code>, <code><a href="../reference/keep_dropp.html">dropp()</a></code>, <code><a href="../reference/retain.html">retain_variables()</a></code>, <code><a href="../reference/add_variable_range.html">add_variable_range()</a></code>: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) all “age” variables from 1 to 10 are selected regardless of where they are located in the data set. (29.09.2026)</li>
 <li>
 <code><a href="../reference/do_if.html">do_if()</a></code>: Is now also able to use the new writing style with conditions as characters introduced by <code><a href="../reference/ifelse_multi.html">ifelse_multi()</a></code>. (30.09.2026)</li>
 <li>

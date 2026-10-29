@@ -1,3 +1,10 @@
+# qol 1.3.7
+
+### Fixed
+
+* `any_table()`: The default `pct_group` now ignores the internal pseudo column variable. With an empty `columns` parameter the percentages are computed within the last real variable instead of every row adding up to 100 %. (29.10.2026)
+* `summarise_plus()`, `any_table()`: The note about missing values being dropped for percentile calculations is now only printed once per value variable instead of once per computed statistic and variable combination. (29.10.2026)
+
 # qol 1.3.6
 
 ### New functionality
@@ -10,7 +17,7 @@
 * `multi_join()`: Single variables passed to the `on` parameter can now be written without quotation marks. (25.09.2026)
 * `any_table()`, `excel_output_style()`: The new `block_borders` style parameter enables to draw borders between statistic blocks within the table area. (25.09.2026)
 * `transpose_plus()`: If specific `statistics` are chosen per variable then now the `values` parameter can be omitted. (26.09.2026)
-* `keep()`, `dropp()`, `retain_variables()`, `add_variable_range`: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) then alle "age" variables from 1 to 10 are selected regardless of where they are located in the data set. (29.09.2026)
+* `keep()`, `dropp()`, `retain_variables()`, `add_variable_range()`: Are now able to select variable ranges by pattern. When writing e.g. age1-age10 (the hyphen triggers this behaviour) all "age" variables from 1 to 10 are selected regardless of where they are located in the data set. (29.09.2026)
 * `do_if()`: Is now also able to use the new writing style with conditions as characters introduced by `ifelse_multi()`. (30.09.2026)
 * `rename_multi()`: Single variables and vectors of variable names can now be renamed in the same call. (30.09.2026)
 * `keep()`, `dropp()`: Now also accept vectors. (30.09.2026)

@@ -22,6 +22,7 @@
 #' - "pct_group" -> Weighted and unweighted percentages within the respective group
 #' - "pct_value" -> Weighted and unweighted percentages between value variables or of a variable expression
 #' - "pct_total" -> Weighted and unweighted percentages compared to the grand total
+#' - "pct_block" -> Weighted and unweighted percentages inside the last group of row or column combinations
 #' - "mean"      -> Weighted and unweighted mean
 #' - "median"    -> Weighted and unweighted median
 #' - "mode"      -> Weighted and unweighted mode
@@ -1122,14 +1123,23 @@ any_table <- function(data_frame,
     # Put together vector of grouping variables
     group_vars <- c(by, variables)
 
+    # If pct_group is specified in statistics but no group is provided set
+    # last variable of group_vars as standard. Internal helper variables must be
+    # ignored here, otherwise an empty columns parameter would make the
+    # pseudo column variable the default and every row would add up to 100 %.
+    if ("pct_group" %in% tolower(statistics) && length(pct_group) == 0){
+        default_vars <- group_vars[group_vars != ".temp.var"]
+
+        if (length(default_vars) == 0){
+            default_vars <- group_vars
+        }
+
+        pct_group <- default_vars[length(default_vars)]
+    }
+
     # In case of group percentages order group variable to the last position
     if ("pct_group" %in% tolower(statistics) && length(pct_group) > 0){
         group_vars <- c(setdiff(group_vars, pct_group[1]), pct_group[1])
-    }
-    # If pct_group is specified in statistics but no group is provided set
-    # last variable of group_vars as standard.
-    else if ("pct_group" %in% tolower(statistics) && length(pct_group) == 0){
-        pct_group <- group_vars[length(group_vars)]
     }
 
     # Put combinations in a single vector
