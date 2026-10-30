@@ -177,12 +177,22 @@ get_origin_as_char <- function(original, substituted){
     tryCatch({
         # Force evaluation to see if it exists
         if (is.character(original)){
+            # If the argument is a c() or list() call, resolve every element on
+            # its own. Inside compute.() the call is evaluated in the data frame,
+            # which turns data frame columns into their values. Resolving the
+            # elements keeps the variable names for columns while character
+            # vectors stored in the calling stack still resolve to their
+            # contents.
+            if (is.call(substituted) && (identical(substituted[[1]], quote(c)) ||
+                                         identical(substituted[[1]], quote(list)))){
+                origin_call_to_char(substituted)
+            }
             # If the value is a column of a data frame inside the calling stack
             # (e.g. when the function is evaluated inside compute.() with the
             # data frame as evaluation environment), the substituted symbol is
             # the variable name. Return the name instead of the column contents.
-            if (is.symbol(substituted) &&
-                symbol_is_data_frame_column(as.character(substituted), original)){
+            else if (is.symbol(substituted) &&
+                     symbol_is_data_frame_column(as.character(substituted), original)){
                 as.character(substituted)
             }
             else{
@@ -199,6 +209,62 @@ get_origin_as_char <- function(original, substituted){
         # function.
         args_to_char_with_params(substituted)
     })
+}
+
+
+#' Resolve The Elements Of A c()/list() Call To Character
+#'
+#' @description
+#' origin_call_to_char() resolves every element of a c() or list() call
+#' to a character value. Data frame columns are returned as their variable name,
+#' while character vectors stored in the calling stack are returned with their
+#' contents.
+#'
+#' @param argument The captured expression of the function argument.
+#'
+#' @return
+#' Returns a character vector.
+#'
+#' @noRd
+origin_call_to_char <- function(argument){
+    # Null: Return as is
+    if (is.null(argument)){
+        return(NULL)
+    }
+
+    # Single Character: Just return as is
+    if (is.character(argument)){
+        return(argument)
+    }
+
+    # Single symbol: Resolve to the variable name for data frame columns or to
+    # the contents for character vectors stored in the calling stack.
+    if (is.symbol(argument)){
+        return(get_origin_symbol(argument))
+    }
+
+    # Nested c()/list(): Resolve every element recursively
+    if (is.call(argument) && (identical(argument[[1]], quote(c)) ||
+                              identical(argument[[1]], quote(list)))){
+        return(unlist(lapply(argument[-1], origin_call_to_char), use.names = FALSE))
+    }
+
+    # Ranges: Keep the call as a range string, like args_to_char() does
+    if (is.call(argument) && identical(argument[[1]], quote(`:`))){
+        return(paste(as.character(argument[[2]]),
+                     as.character(argument[[3]]),
+                     sep = ":"))
+    }
+
+    # Pattern based ranges: Keep the call as a range string, like args_to_char()
+    if (is.call(argument) && identical(argument[[1]], quote(`-`)) &&
+        length(argument) == 3){
+        return(paste(as.character(argument[[2]]),
+                     as.character(argument[[3]]),
+                     sep = "-"))
+    }
+
+    as.character(argument)
 }
 
 

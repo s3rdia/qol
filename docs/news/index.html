@@ -44,6 +44,8 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: The default <code>pct_group</code> now ignores the internal pseudo column variable. With an empty <code>columns</code> parameter the percentages are computed within the last real variable instead of every row adding up to 100 %. (29.10.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>: The note about missing values being dropped for percentile calculations is now only printed once per value variable instead of once per computed statistic and variable combination. (29.10.2026)</li>
+<li>
+<code><a href="../reference/retain.html">retain_stat()</a></code>: Should now work within <code><a href="../reference/compute..html">compute.()</a></code> when using multiple <code>by</code> variables. (30.10.2026)</li>
 </ul></div>
 </div>
     <div class="section level2">
