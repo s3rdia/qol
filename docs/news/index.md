@@ -18,6 +18,9 @@
   Should now work within
   [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md)
   when using multiple `by` variables. (30.10.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Doesn’t error anymore when using the keywords `row_pct` and `col_pct`
+  on their own in the `pct_group` parameter. (02.11.2026)
 
 ## qol 1.3.6
 

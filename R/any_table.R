@@ -1974,36 +1974,16 @@ any_table <- function(data_frame,
             # Main transposition
             #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-            # If there is only one value provided and only one statistic selected
-            # the pivoted variable names below only receive the column expressions
-            # as names. The needed format is "value_stat_expression". In the mentioned
-            # case this format is pre computed.
-            if (length(values) == 1 && length(statistics) == 1){
-                # If only group percentages are selected, but for multiple variables, then
-                # the resulting variables are more than the given values, which isn't detected
-                # with the condition above. This case has to be captured here, because it would
-                # lead to wrong variable names and therefor a wrong header.
-                if ((is.null(pct_group) || length(pct_group) <= 1) && !row_pct && !col_pct){
-                    value_stat <- names(combi_df[collapse::fncol(combi_df)])
+            # If there is only one value column, the pivoted variable names below only
+            # receive the column expressions as names. The needed format is
+            # "value_stat_expression". In this case the format is pre computed.
+            value_columns <- intersect(pivot_values, names(combi_df))
 
-                    combi_df[[col_combi_vars[1]]] <-
-                        paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
-                }
-            }
-            # Fallback check if the user happens to input only wrong statistics but one.
-            # In this case statistics is longer than 1 even though only one statistic was
-            # computed. This leads to the condition above being omitted.
-            else if (collapse::fncol(combi_df) - length(c(id_vars, col_combi_vars, "TYPE")) == 1){
-                # If only group percentages are selected, but for multiple variables, then
-                # the resulting variables are more than the given values, which isn't detected
-                # with the condition above. This case has to be captured here, because it would
-                # lead to wrong variable names and therefor a wrong header.
-                if ((is.null(pct_group) || length(pct_group) <= 1) && !row_pct && !col_pct){
-                    value_stat <- names(combi_df[collapse::fncol(combi_df)])
+            if (length(value_columns) == 1){
+                value_stat <- value_columns
 
-                    combi_df[[col_combi_vars[1]]] <-
-                        paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
-                }
+                combi_df[[col_combi_vars[1]]] <-
+                    paste0(value_stat, "_", combi_df[[col_combi_vars[1]]])
             }
 
             # Pivot to wider format, which basically is the final format to print the data
@@ -2909,6 +2889,14 @@ set_statistic_labels <- function(column_header, stat_labels){
 set_col_variable_labels <- function(column_header, var_labels){
     if (length(var_labels) == 0){
         return(column_header)
+    }
+
+    # A header with only one row is passed as a plain vector. Turn it into a one
+    # row matrix first.
+    if (is.null(dim(column_header))){
+        column_header <- matrix(column_header,
+                                nrow     = 1,
+                                dimnames = list(NULL, names(column_header)))
     }
 
     # Order list by the length of the variable names (descending) to prevent that, if
