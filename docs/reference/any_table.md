@@ -418,6 +418,10 @@ my_data |> any_table(rows      = c("sex + age", "sex", "age"),
                      pct_group = c("row_pct", "col_pct"),
                      formats   = list(sex = sex., age = age.,
                                       education = education.),
+                     var_labels = list(block1 = "Row percentage",
+                                       block2 = "Column percentage",
+                                       block3 = "Row percentage",
+                                       block4 = "Column percentage"),
                      output    = "excel_nostyle",
                      na.rm     = TRUE)
 

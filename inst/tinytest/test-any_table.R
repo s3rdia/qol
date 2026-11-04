@@ -1444,9 +1444,9 @@ result_styled <- dummy_df |>
 
 html_styled <- result_styled[["html"]]
 
-expect_true(grepl('<div class="qol-titles" style="font-size: 10pt; color: #000000; font-weight: bold; text-align: left">Title A</div>',
+expect_true(grepl('<div class="qol-titles" style="font-size: 9pt; color: #000000; font-weight: bold; text-align: left">Title A</div>',
                   html_styled, fixed = TRUE), info = "any_table html render bolds the titles by default")
-expect_true(grepl('<div class="qol-titles" style="font-size: 10pt; color: #000000; font-weight: bold; text-align: left">Title B</div>',
+expect_true(grepl('<div class="qol-titles" style="font-size: 9pt; color: #000000; font-weight: bold; text-align: left">Title B</div>',
                   html_styled, fixed = TRUE), info = "any_table html render bolds every title with the default title_font_bold")
 expect_true(grepl('<div class="qol-footnotes qol-footnotes-first" style="font-size: 8pt; color: #000000; font-weight: normal; text-align: left">Note A</div>',
                   html_styled, fixed = TRUE), info = "any_table html render does not bold the footnotes by default")
@@ -1483,13 +1483,13 @@ expect_true(grepl('<div class="qol-footnotes" style="font-size: 8pt; color: #000
 
 
 # Subheader wrap and cell indents are translated into css
-expect_true(grepl('td.subheader { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: bold; text-align: center; border: 1px solid #000000; white-space: normal; }',
+expect_true(grepl('td.subheader { background: #FFFFFF; color: #000000; font-size: 9pt; font-weight: bold; text-align: center; border: 1px solid #000000; white-space: normal; }',
                   html_styled, fixed = TRUE),
             info = "any_table html render wraps the subheader text by default like excel")
-expect_true(grepl('th.cat { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: normal; text-align: left; border: 1px solid #000000; white-space: normal; padding-left: 0.6em; }',
+expect_true(grepl('th.cat { background: #FFFFFF; color: #000000; font-size: 9pt; font-weight: normal; text-align: left; border: 1px solid #000000; white-space: normal; padding-left: 0.6em; }',
                   html_styled, fixed = TRUE),
             info = "any_table html render indents the category column cells by default like excel")
-expect_true(grepl('td.data { background: #FFFFFF; color: #000000; font-size: 10pt; font-weight: normal; text-align: right; border: none; padding-left: 0.6em; }',
+expect_true(grepl('td.data { background: #FFFFFF; color: #000000; font-size: 9pt; font-weight: normal; text-align: right; border: none; padding-left: 0.6em; }',
                   html_styled, fixed = TRUE),
             info = "any_table html render indents the table cells by default like excel")
 

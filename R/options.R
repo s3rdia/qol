@@ -313,10 +313,10 @@ set_labels <- function(...){
         list(...)
     }, error = function(e){
         # Evaluation failed
-        NULL
+        "ERROR"
     })
 
-    if (is.null(label_list)){
+    if (is.null(label_list[[1]])){
         .qol_options[["var_labels"]]  <- list()
         .qol_options[["stat_labels"]] <- list()
 

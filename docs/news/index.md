@@ -2,6 +2,11 @@
 
 ## qol 1.3.7
 
+#### Changed functionality
+
+- [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
+  Reduced all font sizes which were 10 to 9 to. (04.11.2026)
+
 #### Fixed
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
@@ -21,6 +26,15 @@
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Doesn’t error anymore when using the keywords `row_pct` and `col_pct`
   on their own in the `pct_group` parameter. (02.11.2026)
+- [`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md):
+  When entering NULL the function put out an error instead of resetting
+  the labels. This is fixed now. (04.11.2026)
+
+#### Additionally
+
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Added the `block` keywords within `var_labels` to the first example.
+  (04.11.2026)
 
 ## qol 1.3.6
 
