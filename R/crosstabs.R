@@ -1426,6 +1426,12 @@ format_cross_by_excel <- function(cross_tab,
         monitor_df <- monitor_df |> monitor_start(paste0("Excel prepare (", by_var, ")"), "Format by")
         #---------------------------------------------------------------------#
 
+        # Absolute sheet index of the first sheet in the current by series. The
+        # workbook can already contain sheets from other tables (e.g. in
+        # combine_into_workbook), so the style must be cloned within the series
+        # and not from the first sheet of the whole workbook.
+        first_series_sheet <- NULL
+
         # Select by variables one by one
         cross_by <- cross_tab |>
             collapse::fsubset(cross_tab[["BY"]] == by_var)
@@ -1492,7 +1498,7 @@ format_cross_by_excel <- function(cross_tab,
             # with the exact same table width and height, because all categories are
             # printed, only the first sheet must be formatted. All other sheets can
             # clone the entire style from the first sheet.
-            if (index == 1 || !print_miss){
+            if (is.null(first_series_sheet) || !print_miss){
                 # Generate frequency tables as normal but base is filtered data frame
                 wb_list <- format_cross_excel(wb,
                                               cross_temp,
@@ -1510,6 +1516,9 @@ format_cross_by_excel <- function(cross_tab,
                                               by_info,
                                               index,
                                               NULL)
+
+                # Remember the first sheet of this by series for cloning
+                first_series_sheet <- length(wb_list[[1]]$get_sheet_names())
             }
             # Clone style for follow up iterations
             else{
@@ -1531,8 +1540,10 @@ format_cross_by_excel <- function(cross_tab,
                                               index,
                                               NULL)
 
-                # Clone entire style from first sheet
-                wb_list[[1]]$clone_sheet_style(from = 1, to = index)
+                # Clone entire style from the first sheet of the current by series
+                current_sheet <- length(wb_list[[1]]$get_sheet_names())
+
+                wb_list[[1]]$clone_sheet_style(from = first_series_sheet, to = current_sheet)
             }
 
             index <- index + 1

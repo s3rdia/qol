@@ -1763,6 +1763,12 @@ format_by_excel <- function(mean_tab,
         monitor_df <- monitor_df |> monitor_next(paste0("Excel prepare (", by_var, ")"), "Format by")
         #---------------------------------------------------------------------#
 
+        # Absolute sheet indices of the first value's frequency sheets in the
+        # current by series. The workbook can already contain sheets from other
+        # tables (e.g. in combine_into_workbook), so the style must be cloned
+        # within the series and not from the first sheet of the whole workbook.
+        first_series_sheets <- NULL
+
         # Select by variables one by one
         if (means){
             mean_by <- mean_tab |>
@@ -1870,7 +1876,7 @@ format_by_excel <- function(mean_tab,
             # with the exact same table width and height, because all categories are
             # printed, only the first sheet must be formatted. All other sheets can
             # clone the entire style from the first sheet.
-            if (index == 1 || !print_miss){
+            if (is.null(first_series_sheets) || !print_miss){
                 # Generate frequency tables as normal but base is filtered data frame
                 wb_list <- format_freq_excel(wb_list[[1]],
                                              freq_temp,
@@ -1884,6 +1890,11 @@ format_by_excel <- function(mean_tab,
                                              by_info,
                                              index,
                                              NULL)
+
+                # Remember the frequency sheets of the first value in this series
+                n_sheets <- length(wb_list[[1]]$get_sheet_names())
+
+                first_series_sheets <- (n_sheets - length(variables) + 1):n_sheets
             }
             # Clone style for follow up iterations
             else{
@@ -1901,13 +1912,14 @@ format_by_excel <- function(mean_tab,
                                              index,
                                              NULL)
 
-                # Clone entire style from the corresponding sheet. If multiple variables
-                # are given to produce separate frequency tables, the sheets are produced
-                # one after the other. The following loop manages to copy the sheet style
-                # from the corresponding base to the respective current sheet.
+                # Clone the style from the corresponding sheets of the first value
+                # in the current by series.
+                n_sheets <- length(wb_list[[1]]$get_sheet_names())
+
                 for (sheet_index in seq_along(variables)){
-                    wb_list[[1]]$clone_sheet_style(from = sheet_index,
-                                                   to   = (index * length(variables)) - (length(variables) - sheet_index))
+                    wb_list[[1]]$clone_sheet_style(
+                        from = first_series_sheets[sheet_index],
+                        to   = n_sheets - length(variables) + sheet_index)
                 }
             }
 

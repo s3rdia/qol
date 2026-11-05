@@ -55,6 +55,10 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>: Doesn’t error anymore when using the keywords <code>row_pct</code> and <code>col_pct</code> on their own in the <code>pct_group</code> parameter. (02.11.2026)</li>
 <li>
 <code><a href="../reference/style_options.html">set_labels()</a></code>: When entering NULL the function put out an error instead of resetting the labels. This is fixed now. (04.11.2026)</li>
+<li>
+<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: When the <code>print_miss</code> parameter is used in one of the tables the respective first sheet of this table series is now used to clone the style from instead of the first sheet of the whole workbook. (05.11.2026)</li>
+<li>
+<code><a href="../reference/combine_into_workbook.html">combine_into_workbook()</a></code>: Individual table styles are now fully applied to the respective sheets. (05.11.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="additionally-1-3-7">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-7"></a></h4>

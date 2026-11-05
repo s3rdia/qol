@@ -12,6 +12,8 @@ Last CRAN release was on 25.10.2026.
 * `retain_stat()`: Should now work within `compute.()` when using multiple `by` variables.
 * `any_table()`: Doesn't error anymore when using the keywords `row_pct` and `col_pct` on their own in the `pct_group` parameter.
 * `set_labels()`: When entering NULL the function put out an error instead of resetting the labels. This is fixed now.
+* `combine_into_workbook()`: When the `print_miss` parameter is used in one of the tables the respective first sheet of this table series is now used to clone the style from instead of the first sheet of the whole workbook.
+* `combine_into_workbook()`: Individual table styles are now fully applied to the respective sheets.
 
 ### Additionally
 

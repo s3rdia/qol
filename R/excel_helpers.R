@@ -1234,6 +1234,38 @@ handle_number_styles <- function(wb, style = excel_output_style()){
 }
 
 
+#' Reset Style Names in the Style Manager
+#'
+#' @description
+#' Removes previously registered style names from the workbook's style manager
+#' so that they can be registered again with new style definitions. This is
+#' required when multiple tables are styled one after another in the same
+#' workbook (e.g. in combine_into_workbook).
+#'
+#' @param wb The workbook to modify.
+#' @param style_names Character vector of style names to remove.
+#'
+#' @return
+#' Returns the workbook with removed style name entries.
+#'
+#' @noRd
+reset_style_names <- function(wb, style_names){
+    style_mgr <- wb$styles_mgr
+
+    for (type in c("fill", "font", "border", "numfmt")){
+        styles <- style_mgr[[type]]
+
+        if (is.null(styles) || collapse::fnrow(styles) == 0){
+            next
+        }
+
+        style_mgr[[type]] <- styles[!styles[["name"]] %in% style_names, , drop = FALSE]
+    }
+
+    wb
+}
+
+
 #' Set Up Styles
 #'
 #' @description
@@ -1276,6 +1308,28 @@ prepare_styles <- function(wb,
             style[[paste0(type, "_alignment")]]  <- fill_or_trim(style[[paste0(type, "_alignment")]],  type_length)
         }
     }
+
+    # Reset all style names that are registered below. Without this, when multiple
+    # tables are styled in the same workbook (e.g. in combine_into_workbook), the
+    # style names would resolve to the first registered styles and later tables
+    # would keep the colors of the first table.
+    title_count    <- length(texts[["title"]])
+    footnote_count <- length(texts[["footnote"]])
+
+    style_names <- c(
+        paste0(c("header", "subheader", "box", "cat_col", "table"), "_fill"),
+        paste0(c("header", "subheader", "box", "cat_col", "table"), "_font"),
+        c("header_borders", "subheader_borders", "box_borders", "cat_col_borders",
+          "table_borders", "block_borders", "footnote_borders"),
+        paste0(c("pct", "freq", "freq.g0", "sum", "sum.wgt", "mean", "median",
+                 "mode", "min", "max", "sd", "variance", "first", "last", "p",
+                 "missing"), "_numfmt"),
+        paste0("title",    seq_len(title_count),    "_font"),
+        paste0("title",    seq_len(title_count),    "_link_font"),
+        paste0("footnote", seq_len(footnote_count), "_font"),
+        paste0("footnote", seq_len(footnote_count), "_link_font"))
+
+    wb <- wb |> reset_style_names(style_names)
 
     # Return workbook and adjusted style options
     list(wb |>

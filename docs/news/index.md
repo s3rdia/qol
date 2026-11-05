@@ -29,6 +29,14 @@
 - [`set_labels()`](https://s3rdia.github.io/qol/reference/style_options.md):
   When entering NULL the function put out an error instead of resetting
   the labels. This is fixed now. (04.11.2026)
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  When the `print_miss` parameter is used in one of the tables the
+  respective first sheet of this table series is now used to clone the
+  style from instead of the first sheet of the whole workbook.
+  (05.11.2026)
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
+  Individual table styles are now fully applied to the respective
+  sheets. (05.11.2026)
 
 #### Additionally
 
