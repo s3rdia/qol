@@ -359,6 +359,189 @@ expect_equal(names(result_list[[1]]),
                "income_sum_East"), info = "any_table with columns order")
 
 
+# any_table keeps column order when the first row group misses expressions
+col_order_df <- data.frame(group  = c(1, 2, 2, 2, 2),
+                           choice = c(1, 1, 2, 3, 4),
+                           value  = c(10, 20, 30, 40, 50))
+
+col_order. <- discrete_format(
+    "A"   = 1,
+    "B"   = 2,
+    "C"   = 3,
+    "D"   = 4,
+    "All" = 1:4)
+
+col_order_result <- col_order_df |>
+        any_table(rows    = "group",
+                  columns = "choice",
+                  values  = value,
+                  formats = list(choice = col_order.),
+                  print   = FALSE)
+
+expect_equal(names(col_order_result[[1]]),
+             c("row.label", "var1", "value_sum_A", "value_sum_B", "value_sum_C",
+               "value_sum_D", "value_sum_All"),
+             info = "any_table keeps column order when the first row group misses expressions")
+
+col_order_result_miss <- col_order_df |>
+        any_table(rows       = "group",
+                  columns    = "choice",
+                  values     = value,
+                  formats    = list(choice = col_order.),
+                  print_miss = TRUE,
+                  print      = FALSE)
+
+expect_equal(col_order_result[[1]], col_order_result_miss[[1]],
+             info = "any_table keeps column order when the first row group misses expressions")
+
+
+# any_table keeps multi-layer column order when the first row group misses expressions
+multi_order_df <- data.frame(group  = c(1, 2, 2, 2, 2, 2, 2),
+                             choice = c(1, 1, 2, 3, 4, 1, 2),
+                             extra  = c(2, 1, 2, 1, 2, 1, 1),
+                             year   = c(2020, 2019, 2021, 2020, 2019, 2021, 2020),
+                             value  = c(10, 20, 30, 40, 50, 60, 70))
+
+multi_order_df[["value2"]] <- multi_order_df[["value"]] * 2
+
+multi_order_choice. <- discrete_format(
+    "A"   = 1,
+    "B"   = 2,
+    "C"   = 3,
+    "D"   = 4,
+    "All" = 1:4)
+
+multi_order_extra. <- discrete_format(
+    "X"   = 1,
+    "Y"   = 2,
+    "All" = 1:2)
+
+multi_order_result <- multi_order_df |>
+        any_table(rows    = "group",
+                  columns = "choice + extra",
+                  values  = value,
+                  formats = list(choice = multi_order_choice.,
+                                 extra  = multi_order_extra.),
+                  print   = FALSE)
+
+expect_equal(names(multi_order_result[[1]]),
+             c("row.label", "var1",
+               "value_sum_A_X", "value_sum_A_Y", "value_sum_A_All",
+               "value_sum_B_X", "value_sum_B_Y", "value_sum_B_All",
+               "value_sum_C_X", "value_sum_C_All",
+               "value_sum_D_Y", "value_sum_D_All",
+               "value_sum_All_X", "value_sum_All_Y", "value_sum_All_All"),
+             info = "any_table keeps multi-layer column order when the first row group misses expressions")
+
+
+# any_table orders formatted and unformatted multi-layer columns independently
+multi_order_mixed <- multi_order_df |>
+        any_table(rows    = "group",
+                  columns = "choice + year",
+                  values  = value,
+                  formats = list(choice = multi_order_choice.),
+                  print   = FALSE)
+
+expect_equal(names(multi_order_mixed[[1]]),
+             c("row.label", "var1",
+               "value_sum_A_2019", "value_sum_A_2020", "value_sum_A_2021",
+               "value_sum_B_2020", "value_sum_B_2021",
+               "value_sum_C_2020",
+               "value_sum_D_2019",
+               "value_sum_All_2019", "value_sum_All_2020", "value_sum_All_2021"),
+             info = "any_table orders formatted and unformatted multi-layer columns independently")
+
+multi_order_mixed_rev <- multi_order_df |>
+        any_table(rows    = "group",
+                  columns = "year + choice",
+                  values  = value,
+                  formats = list(choice = multi_order_choice.),
+                  print   = FALSE)
+
+expect_equal(names(multi_order_mixed_rev[[1]]),
+             c("row.label", "var1",
+               "value_sum_2019_A", "value_sum_2019_D", "value_sum_2019_All",
+               "value_sum_2020_A", "value_sum_2020_B", "value_sum_2020_C",
+               "value_sum_2020_All",
+               "value_sum_2021_A", "value_sum_2021_B", "value_sum_2021_All"),
+             info = "any_table orders formatted and unformatted multi-layer columns independently")
+
+
+# any_table keeps multi-layer column order with multiple value variables
+multi_order_values <- multi_order_df |>
+        any_table(rows       = "group",
+                  columns    = "choice + extra",
+                  values     = c(value, value2),
+                  statistics = "sum",
+                  formats    = list(choice = multi_order_choice.,
+                                    extra  = multi_order_extra.),
+                  print      = FALSE)
+
+multi_order_tuples <- c("A_X", "A_Y", "A_All", "B_X", "B_Y", "B_All",
+                        "C_X", "C_All", "D_Y", "D_All",
+                        "All_X", "All_Y", "All_All")
+
+expect_equal(names(multi_order_values[[1]]),
+             c("row.label", "var1",
+               paste0("value_sum_",  multi_order_tuples),
+               paste0("value2_sum_", multi_order_tuples)),
+             info = "any_table keeps multi-layer column order with multiple value variables")
+
+
+# any_table keeps multi-layer column order with three layers
+multi_order_three <- multi_order_df |>
+        any_table(rows    = "group",
+                  columns = "choice + extra + year",
+                  values  = value,
+                  formats = list(choice = multi_order_choice.,
+                                 extra  = multi_order_extra.),
+                  print   = FALSE)
+
+expect_equal(names(multi_order_three[[1]]),
+             c("row.label", "var1",
+               "value_sum_A_X_2019", "value_sum_A_X_2021", "value_sum_A_Y_2020",
+               "value_sum_A_All_2019", "value_sum_A_All_2020", "value_sum_A_All_2021",
+               "value_sum_B_X_2020", "value_sum_B_Y_2021",
+               "value_sum_B_All_2020", "value_sum_B_All_2021",
+               "value_sum_C_X_2020", "value_sum_C_All_2020",
+               "value_sum_D_Y_2019", "value_sum_D_All_2019",
+               "value_sum_All_X_2019", "value_sum_All_X_2020", "value_sum_All_X_2021",
+               "value_sum_All_Y_2019", "value_sum_All_Y_2020", "value_sum_All_Y_2021",
+               "value_sum_All_All_2019", "value_sum_All_All_2020", "value_sum_All_All_2021"),
+             info = "any_table keeps multi-layer column order with three layers")
+
+
+# any_table keeps multi-layer column order with underscores and duplicate expressions
+multi_order_dup_df <- data.frame(group  = c(1, 1, 2, 2),
+                                 var_a  = c("X", "Y", "X", "Y"),
+                                 my_var = c(2, 1, 2, 1),
+                                 value  = c(1, 2, 3, 4))
+
+multi_order_ab. <- discrete_format(
+    "First"  = "X",
+    "Second" = "Y",
+    "All"    = c("X", "Y"))
+
+multi_order_my. <- discrete_format(
+    "One" = 1,
+    "Two" = 2,
+    "All" = 1:2)
+
+multi_order_dup <- multi_order_dup_df |>
+        any_table(rows    = "group",
+                  columns = "my_var + var_a",
+                  values  = value,
+                  formats = list(my_var = multi_order_my., var_a = multi_order_ab.),
+                  print   = FALSE)
+
+expect_equal(names(multi_order_dup[[1]]),
+             c("row.label", "var1",
+               "value_sum_One_Second", "value_sum_One_All",
+               "value_sum_Two_First", "value_sum_Two_All",
+               "value_sum_All_First", "value_sum_All_Second", "value_sum_All_All"),
+             info = "any_table keeps multi-layer column order with underscores and duplicate expressions")
+
+
 # any_table with by variables
 result_list <- dummy_df |>
         any_table(rows       = "age",

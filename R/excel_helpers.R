@@ -1721,6 +1721,8 @@ split_up_ranges <- function(range){
 #' in bold letters.
 #' @param toc_header_alignment Set the text alignment of the table of contents main header.
 #' @param toc_subheader_font_color Table of contents font color of the subheader.
+#' Input a single color to apply to all subheaders, or a vector of colors to apply
+#' a different color to each subheader.
 #' @param toc_subheader_font_size Table of contents font size of the subheader.
 #' @param toc_subheader_font_bold Whether to print the table of contents
 #' @param toc_subheader_alignment Set the text alignment of the table of contents
@@ -2385,9 +2387,25 @@ create_table_of_contents <- function(wb,
     wb$styles_mgr$add(
         openxlsx2::create_font(name  = style[["font"]],
                                sz    = style[["toc_subheader_font_size"]],
-                               color = openxlsx2::wb_color(hex = style[["toc_subheader_font_color"]]),
+                               color = openxlsx2::wb_color(hex = style[["toc_subheader_font_color"]][1]),
                                b     = style[["toc_subheader_font_bold"]]),
         "toc_subheader_font")
+
+    # In case subheader font colors are passed as a vector
+    toc_subheader_font_colors <- style[["toc_subheader_font_color"]]
+
+    if (length(toc_subheader_font_colors) > 1){
+        toc_subheader_font_colors <- fill_or_trim(toc_subheader_font_colors, length(subheaders))
+
+        for (i in seq_along(toc_subheader_font_colors)){
+            wb$styles_mgr$add(
+                openxlsx2::create_font(name  = style[["font"]],
+                                       sz    = style[["toc_subheader_font_size"]],
+                                       color = openxlsx2::wb_color(hex = toc_subheader_font_colors[i]),
+                                       b     = style[["toc_subheader_font_bold"]]),
+                paste0("toc_subheader_color", i, "_font"))
+        }
+    }
 
     wb$styles_mgr$add(
         openxlsx2::create_font(name  = style[["font"]],
@@ -2487,12 +2505,18 @@ create_table_of_contents <- function(wb,
             row      <- subheader_index[i]
             sub_dims <- sprintf("C%d:D%d", row, row)
 
-            # Apply font style
+            # Apply font style.
+            font_id <- wb$styles_mgr$get_font_id("toc_subheader_font")
+
+            if (length(toc_subheader_font_colors) > 1){
+                font_id <- wb$styles_mgr$get_font_id(paste0("toc_subheader_color", i, "_font"))
+            }
+
             wb$add_cell_style(dims       = paste0("C", row),
                               horizontal = style[["toc_subheader_alignment"]],
                               vertical   = "center",
                               apply_font = TRUE,
-                              font_id    = wb$styles_mgr$get_font_id("toc_subheader_font"))
+                              font_id    = font_id)
 
             # Color subheaders, if colors where specified
             if (length(subheader_colors) > 0){

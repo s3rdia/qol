@@ -1,6 +1,10 @@
 # Resubmission qol 1.3.6
 Last CRAN release was on 25.10.2026.
 
+### New functionality
+
+* `combine_into_workbook()`, `create_table_of_contents()`: Are now able to set different colors for the subheader fonts.
+
 ### Changed functionality
 
 * `excel_output_style()`: Reduced all font sizes which were 10 to 9 to.
@@ -14,6 +18,7 @@ Last CRAN release was on 25.10.2026.
 * `set_labels()`: When entering NULL the function put out an error instead of resetting the labels. This is fixed now.
 * `combine_into_workbook()`: When the `print_miss` parameter is used in one of the tables the respective first sheet of this table series is now used to clone the style from instead of the first sheet of the whole workbook.
 * `combine_into_workbook()`: Individual table styles are now fully applied to the respective sheets.
+* `any_table()`: Formatted variables in the column header now have their expressions displayed in order of the format even if an expression is missing at the time of the table pivoting.
 
 ### Additionally
 

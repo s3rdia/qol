@@ -293,7 +293,9 @@ in bold letters.}
 
 \item{toc_header_alignment}{Set the text alignment of the table of contents main header.}
 
-\item{toc_subheader_font_color}{Table of contents font color of the subheader.}
+\item{toc_subheader_font_color}{Table of contents font color of the subheader.
+Input a single color to apply to all subheaders, or a vector of colors to apply
+a different color to each subheader.}
 
 \item{toc_subheader_font_size}{Table of contents font size of the subheader.}
 

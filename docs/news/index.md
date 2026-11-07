@@ -2,6 +2,13 @@
 
 ## qol 1.3.7
 
+#### New functionality
+
+- [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md),
+  [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
+  Are now able to set different colors for the subheader fonts.
+  (07.11.2026)
+
 #### Changed functionality
 
 - [`excel_output_style()`](https://s3rdia.github.io/qol/reference/excel_output_style.md):
@@ -37,6 +44,10 @@
 - [`combine_into_workbook()`](https://s3rdia.github.io/qol/reference/combine_into_workbook.md):
   Individual table styles are now fully applied to the respective
   sheets. (05.11.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  Formatted variables in the column header now have their expressions
+  displayed in order of the format even if an expression is missing at
+  the time of the table pivoting. (07.11.2026)
 
 #### Additionally
 

@@ -1983,6 +1983,17 @@ any_table <- function(data_frame,
             # "value_stat_expression". In this case the format is pre computed.
             value_columns <- intersect(pivot_values, names(combi_df))
 
+            # Determine the desired order of the pivoted columns before the first
+            # column variable is prefixed below. Formatted column variables follow
+            # their format order, unformatted ones keep their appearance order.
+            # This has to be done independently of the row groups, because the first
+            # row group might not contain every column expression.
+            column_order <- order_column_names(
+                combi_df       = combi_df,
+                col_combi_vars = col_combi_vars,
+                value_columns  = value_columns,
+                formats        = formats)
+
             if (length(value_columns) == 1){
                 value_stat <- value_columns
 
@@ -1997,9 +2008,20 @@ any_table <- function(data_frame,
                                 values = pivot_values,
                                 how    = "wider")
 
+            # Put the column expressions back in the order defined by the header
+            # layers. Expressions which are not part of the expected order keep
+            # their position at the end.
+            combi_names <- names(combi_df)
+
+            if (!is.null(column_order)){
+                column_order <- c(intersect(column_order, combi_names),
+                                  setdiff(combi_names, c(id_vars, column_order)))
+                combi_df <- combi_df[, c(id_vars, column_order), with = FALSE]
+            }
+
 			# Remove excess underscore. This is created if no column variables are specified
             if (length(col_combi_vars) == 1 && col_combi_vars == ".temp.var"){
-                names(combi_df) <- gsub("_ $", "", names(combi_df))
+                names(combi_df) <- gsub("_ $", "", combi_names)
             }
 
             combi_df[id_vars] <- lapply(combi_df[id_vars], as.character)
@@ -3972,4 +3994,75 @@ expand_brackets <- function(combinations){
     # Remove duplicate combinations
     names <- result[collapse::funique(names(result))]
     list(names, any(grepl("\\(", unlist(names))))
+}
+
+
+#' Order Pivoted Column Names
+#'
+#' @description
+#' Builds the expected order of the pivoted column names from the column
+#' variable combinations. Formatted column variables are ordered by their
+#' format levels, unformatted ones keep their appearance order. The layers are
+#' processed in the order in which they appear in the column header.
+#'
+#' @param combi_df Data frame which is about to be pivoted.
+#' @param col_combi_vars Column variables of the current combination.
+#' @param value_columns Value variables which are pivoted.
+#' @param formats List of applied formats.
+#'
+#' @return
+#' Returns the expected column names in the desired order or NULL if no
+#' reordering is necessary.
+#'
+#' @noRd
+order_column_names <- function(combi_df, col_combi_vars, value_columns, formats){
+    # The synthetic column variable only produces a single column. There is
+    # nothing to order.
+    if (identical(col_combi_vars, ".temp.var")){
+        return(NULL)
+    }
+
+    # Get unique column expressions in order of first appearance.
+    unique_tuples <- collapse::funique(collapse::get_vars(combi_df, col_combi_vars))
+
+    if (collapse::fnrow(unique_tuples) <= 1){
+        return(NULL)
+    }
+
+    tuples <- as.list(unique_tuples)
+
+    # Variable names in the data frame have their underscores replaced by "!!!"
+    formatted <- gsub("!!!", "_", col_combi_vars, fixed = TRUE) %in% names(formats)
+
+    # Order variable expressions and get their new positions per variable in a list
+    keys <- lapply(seq_along(col_combi_vars), function(i){
+        values <- tuples[[i]]
+
+        # Formatted variables use the format order, unformatted factors use
+        # their appearance order. Both are stored in the factor levels.
+        if (formatted[i] || is.factor(values)){
+            match(as.character(values), levels(values))
+        }
+        # Numeric variables keep their natural order.
+        else if (is.numeric(values)){
+            values
+        }
+        # Character variables keep the order in which they would be sorted as
+        # a single layer.
+        else{
+            values <- as.character(values)
+            match(values, sort(unique(values)))
+        }
+    })
+
+    # Generate a single positional vector for the whole data frame
+    order_index <- do.call(order, c(keys, list(na.last = TRUE)))
+
+    # First get the ordered base expressions based on the concatenated single
+    # variable expressions.
+    tuple_strings <- do.call(paste, c(unname(tuples), sep = "_"))[order_index]
+
+    # Prefix tuples at the end with the value variable names to get the full
+    # pivoted variable names in order.
+    paste0(rep(value_columns, each = length(tuple_strings)), "_", tuple_strings)
 }

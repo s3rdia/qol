@@ -112,7 +112,7 @@ set_style_options <- function(..., save_file = NULL){
             print_message("WARNING", "'[style_option]' must be <character>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
-        else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value)) && value != ""){
+        else if (style_option %in% colors && !all(grepl("^[A-Fa-f0-9]{6}$", value)) && any(value != "")){
             print_message("WARNING", "'[style_option]' must be a 6 character <hex code>. Option will be omitted.", style_option = style_option)
             style_list[[style_option]] <- NULL
         }
