@@ -706,7 +706,16 @@ export_multi <- function(file_list,
     }
 
     if (into_sheets && is.null(separator)){
-        filename <- get_origin_as_char(file_list, substitute(file_list))
+        # Get the list object name as filename
+        filename <- tryCatch(get_origin_as_char(file_list, substitute(file_list)),
+                             error = function(e) NULL)
+
+        # If a list is passed without being stored into an object before, set a
+        # generic filename.
+        if (is.null(filename)){
+            filename <- "Export_File"
+        }
+
         wb$save(file = paste0(out_path, "/", filename, ".xlsx"), overwrite = TRUE)
     }
 

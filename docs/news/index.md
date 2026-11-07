@@ -48,12 +48,22 @@
   Formatted variables in the column header now have their expressions
   displayed in order of the format even if an expression is missing at
   the time of the table pivoting. (07.11.2026)
+- [`export_multi()`](https://s3rdia.github.io/qol/reference/import_export.md):
+  When passing a plain list without storing it into an object first,
+  then now a generic filename is set instead of the function erroring.
+  (07.11.2026)
+- [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
+  Empty titles caused the table of contents page to have a small column
+  width for the title column. This is fixed now. (07.11.2026)
 
 #### Additionally
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
   Added the `block` keywords within `var_labels` to the first example.
   (04.11.2026)
+- [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
+  Now sets the table of contents sheet to active, so the intended view
+  is also achieved with openxlsx2 as of v1.31. (07.11.2026)
 
 ## qol 1.3.6
 

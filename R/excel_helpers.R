@@ -2565,6 +2565,9 @@ create_table_of_contents <- function(wb,
     wb$set_selected(sheet = toc_sheet_name)
     wb$set_order(c(toc_sheet_name, sheet_names))
 
+    # Set the table of contents sheet as the active sheet
+    wb$set_active_sheet(sheet = toc_sheet_name)
+
     # Color the sheets according to subheader colors
     if (colored_tabs && length(subheader_colors) > 0){
         print_step("MINOR", "Color tabs")
@@ -2664,6 +2667,11 @@ get_optimal_width <- function(texts, font_size, font_family = "Arial",
     # mixed-case text. Scale the width by the share of uppercase characters and
     # add a safety margin on top.
     get_text_width <- function(text){
+        # Empty or missing titles must not produce NaN. Give them a minimal width
+        if (is.na(text) || !nzchar(text)){
+            return(7)
+        }
+
         chars      <- strsplit(text, "")[[1]]
         caps_share <- sum(grepl("[A-Z]", chars)) / length(chars)
         factor     <- (0.85 + 0.35 * caps_share) * 1.05

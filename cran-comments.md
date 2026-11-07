@@ -19,10 +19,13 @@ Last CRAN release was on 25.10.2026.
 * `combine_into_workbook()`: When the `print_miss` parameter is used in one of the tables the respective first sheet of this table series is now used to clone the style from instead of the first sheet of the whole workbook.
 * `combine_into_workbook()`: Individual table styles are now fully applied to the respective sheets.
 * `any_table()`: Formatted variables in the column header now have their expressions displayed in order of the format even if an expression is missing at the time of the table pivoting.
+* `export_multi()`: When passing a plain list without storing it into an object first, then now a generic filename is set instead of the function erroring.
+* `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now.
 
 ### Additionally
 
 * `any_table()`: Added the `block` keywords within `var_labels` to the first example.
+* `create_table_of_contents()`: Now sets the table of contents sheet to active, so the intended view is also achieved with openxlsx2 as of v1.31.
 
 
 ## R CMD check results

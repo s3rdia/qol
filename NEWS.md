@@ -18,10 +18,13 @@
 * `combine_into_workbook()`: When the `print_miss` parameter is used in one of the tables the respective first sheet of this table series is now used to clone the style from instead of the first sheet of the whole workbook. (05.11.2026)
 * `combine_into_workbook()`: Individual table styles are now fully applied to the respective sheets. (05.11.2026)
 * `any_table()`: Formatted variables in the column header now have their expressions displayed in order of the format even if an expression is missing at the time of the table pivoting. (07.11.2026)
+* `export_multi()`: When passing a plain list without storing it into an object first, then now a generic filename is set instead of the function erroring. (07.11.2026)
+* `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now. (07.11.2026)
 
 ### Additionally
 
 * `any_table()`: Added the `block` keywords within `var_labels` to the first example. (04.11.2026)
+* `create_table_of_contents()`: Now sets the table of contents sheet to active, so the intended view is also achieved with openxlsx2 as of v1.31. (07.11.2026)
 
 # qol 1.3.6
 
