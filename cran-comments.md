@@ -22,6 +22,11 @@ Last CRAN release was on 25.10.2026.
 * `export_multi()`: When passing a plain list without storing it into an object first, then now a generic filename is set instead of the function erroring.
 * `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now.
 
+### Optimization
+
+* `remove_blanks()`: Blank removal is now only performed on the unique values which are matched back afterwards.
+* `concat()`: Now using a lookup table to determine the paddings instead of building them per observation.
+
 ### Additionally
 
 * `any_table()`: Added the `block` keywords within `var_labels` to the first example.

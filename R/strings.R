@@ -84,71 +84,76 @@ concat <- function(data_frame,
         padding_char <- " "
     }
 
-    # Determine padding lengths. If NULL all given variables will be checked individually
-    # for their maximum length.
-    if (is.null(padding_length)){
-        padding_length <- vapply(data_frame[variables],
+    # Convert all columns to character once. Columns which are already character
+    # are used as they are.
+    columns <- lapply(variables, function(variable){
+        column <- data_frame[[variable]]
+
+        if (is.character(column)){
+            column
+        }
+        else{
+            as.character(column)
+        }
+    })
+
+    number_of_columns  <- length(variables)
+    number_of_paddings <- length(padding_length)
+
+    # If the padding vector is longer than the number of provided variables,
+    # just trim it down.
+    if (number_of_paddings > number_of_columns){
+        print_message("WARNING", c("<Padding length> is longer than the number of variables.",
+                                   "Extra lengths will be ignored."))
+
+        padding_length <- padding_length[seq_len(number_of_columns)]
+    }
+    else if (number_of_paddings > 0 && number_of_paddings < number_of_columns){
+        print_message("WARNING", c("<Padding length> is shorter than the number of variables.",
+                                   "Missing lengths will be filled up using maximum individual variable length."))
+    }
+
+    # Variables without a given padding length receive their individual maximum length
+    if (number_of_paddings < number_of_columns){
+        missing_index  <- (number_of_paddings + 1):number_of_columns
+        missing_length <- vapply(columns[missing_index],
                                  function(variable){
                                      collapse::fmax(nchar(variable), na.rm = TRUE)
                                  },
                                  integer(1))
-    }
-    # With given padding length it has to be checked whether the provided vector
-    # is to long or to short in comparison to the number of provided variables.
-    # Either way it has to be matched to the number of provided variables. Only if
-    # it is of equal length nothing happens here.
-    else{
-        number_of_columns  <- length(variables)
-        number_of_paddings <- length(padding_length)
 
-        # If the padding vector is shorter than the number of provided variables,
-        # the remaining variables will receive the individual maximum length as
-        # padding length like above.
-        if (number_of_paddings < number_of_columns){
-            print_message("WARNING", c("<Padding length> is shorter than the number of variables.",
-                                       "Missing lengths will be filled up using maximum individual variable length."))
-
-            missing_length <- vapply(data_frame[variables[(number_of_paddings + 1):number_of_columns]],
-                                     function(variable){
-                                         collapse::fmax(nchar(variable), na.rm = TRUE)
-                                     },
-                                     integer(1))
-
-            padding_length <- c(padding_length, missing_length)
-        }
-        # If the padding vector is longer than the number of provided variables,
-        # juts trim it down.
-        else if (number_of_paddings > number_of_columns){
-            print_message("WARNING", c("<Padding length> is longer than the number of variables.",
-                                       "Extra lengths will be ignored."))
-
-            padding_length <- padding_length[seq_len(number_of_columns)]
-        }
+        padding_length <- c(padding_length, missing_length)
     }
 
-    # Apply padding to all variables individually
-    padded_variables <- Map(function(variable, padding_length){
-
+    # Build the padding for all variables individually. Every variable returns its
+    # padding and its values as a pair, in the order they are concatenated.
+    pieces <- Map(function(variable, padding_length){
         # NA values are just filled up with padding character
-        variable[is.na(variable)] <- strrep(padding_char, padding_length)
+        if (anyNA(variable)){
+            variable[is.na(variable)] <- strrep(padding_char, padding_length)
+        }
 
         # Get the number of places to fill up with padding character per observation
         pad_per_observation <- pmax(padding_length - collapse::vlengths(variable), 0)
 
-        # Concatenate padding and variable values
+        # Only a handful of different paddings can occur (0 up to the longest
+        # needed). Build each of them once and let every observation pick its
+        # padding from this table.
+        padding_strings <- strrep(padding_char, 0:max(pad_per_observation, 0))
+        padding         <- padding_strings[pad_per_observation + 1]
+
         if (!padding_right){
-            paste0(strrep(padding_char, pad_per_observation), variable)
+            list(padding, variable)
         }
         else{
-            paste0(variable, strrep(padding_char, pad_per_observation))
+            list(variable, padding)
         }
     },
-    data_frame[variables],
-    padding_length
-    )
+    columns,
+    padding_length)
 
-    # Concatenate all padded variables together to one single variable
-    do.call(paste0, padded_variables)
+    # Concatenate all paddings and variables together to one single variable
+    do.call(paste0, unlist(pieces, recursive = FALSE, use.names = FALSE))
 }
 
 
@@ -386,15 +391,16 @@ remove_blanks <- function(data_frame,
     }
 
     # Remove blanks according to selected option
-    variable_vector <- switch(which,
-                              trim      = trimws(variable_vector, which = "both"),
-                              leading   = trimws(variable_vector, which = "left"),
-                              trailing  = trimws(variable_vector, which = "right"),
-                              all       = gsub(" ", "", variable_vector, fixed = TRUE),
-                              normalize = {
-                                  variable_vector <- trimws(variable_vector)
-                                  gsub(" +", " ", variable_vector)
-                              })
+    unique_values <- unique(variable_vector)
+
+    cleaned <- switch(which,
+                      trim      = gsub("^[ \t\r\n]+|[ \t\r\n]+$", "", unique_values, perl = TRUE),
+                      leading   = trimws(unique_values, which = "left"),
+                      trailing  = trimws(unique_values, which = "right"),
+                      all       = gsub(" ", "", unique_values, fixed = TRUE),
+                      normalize = gsub("^[ \t\r\n]+|[ \t\r\n]+$| (?= )", "", unique_values, perl = TRUE))
+
+    variable_vector <- cleaned[match(variable_vector, unique_values)]
 
     variable_vector
 }

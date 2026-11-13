@@ -72,6 +72,13 @@
 <code><a href="../reference/create_table_of_contents.html">create_table_of_contents()</a></code>: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now. (07.11.2026)</li>
 </ul></div>
 <div class="section level4">
+<h4 id="optimization-1-3-7">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-7"></a></h4>
+<ul><li>
+<code><a href="../reference/remove_blanks.html">remove_blanks()</a></code>: Blank removal is now only performed on the unique values which are matched back afterwards. (13.11.2026)</li>
+<li>
+<code><a href="../reference/concat.html">concat()</a></code>: Now using a lookup table to determine the paddings instead of building them per observation. (13.11.2026)</li>
+</ul></div>
+<div class="section level4">
 <h4 id="additionally-1-3-7">Additionally<a class="anchor" aria-label="anchor" href="#additionally-1-3-7"></a></h4>
 <ul><li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: Added the <code>block</code> keywords within <code>var_labels</code> to the first example. (04.11.2026)</li>

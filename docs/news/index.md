@@ -56,6 +56,15 @@
   Empty titles caused the table of contents page to have a small column
   width for the title column. This is fixed now. (07.11.2026)
 
+#### Optimization
+
+- [`remove_blanks()`](https://s3rdia.github.io/qol/reference/remove_blanks.md):
+  Blank removal is now only performed on the unique values which are
+  matched back afterwards. (13.11.2026)
+- [`concat()`](https://s3rdia.github.io/qol/reference/concat.md): Now
+  using a lookup table to determine the paddings instead of building
+  them per observation. (13.11.2026)
+
 #### Additionally
 
 - [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):

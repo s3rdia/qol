@@ -21,6 +21,11 @@
 * `export_multi()`: When passing a plain list without storing it into an object first, then now a generic filename is set instead of the function erroring. (07.11.2026)
 * `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now. (07.11.2026)
 
+### Optimization
+
+* `remove_blanks()`: Blank removal is now only performed on the unique values which are matched back afterwards. (13.11.2026)
+* `concat()`: Now using a lookup table to determine the paddings instead of building them per observation. (13.11.2026)
+
 ### Additionally
 
 * `any_table()`: Added the `block` keywords within `var_labels` to the first example. (04.11.2026)
