@@ -4,6 +4,7 @@
 
 * `combine_into_workbook()`, `create_table_of_contents()`: Are now able to set different colors for the subheader fonts. (07.11.2026)
 * `sub_string()`: New parameters `include_from` and `include_to` control whether the text to find entered in `from` and `to` is included in the substring or not. (15.11.2026)
+* `sub_string()`: New parameter `search_from_end` looks up the text to find entered in `from` and `to` from the end instead of the front to find last occurences. (15.11.2026)
 
 ### Changed functionality
 

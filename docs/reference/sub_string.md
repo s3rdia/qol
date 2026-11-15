@@ -14,7 +14,8 @@ sub_string(
   to = NULL,
   case_sensitive = TRUE,
   include_from = TRUE,
-  include_to = TRUE
+  include_to = TRUE,
+  search_from_end = FALSE
 )
 ```
 
@@ -53,6 +54,11 @@ sub_string(
   TRUE by default. Only applies when a character is passed as to. If
   TRUE the whole matched word is included in the substring, otherwise
   the last place is removed.
+
+- search_from_end:
+
+  FALSE by default. If TRUE the last occurrence of a character
+  expression passed as from or to is looked up instead of the first one.
 
 ## Value
 

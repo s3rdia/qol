@@ -139,6 +139,24 @@ text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", to = "a", inclu
 expect_equal(text_df[["sub_vec"]], c("is is ", "Hello World", "is is "), info = "Substring with include_to = FALSE stops before the matched to word")
 
 
+# Substring uses the last occurrence of from when search_from_end = TRUE
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", search_from_end = TRUE)
+
+expect_equal(text_df[["sub_vec"]], c("is a text", "Hello World", "is a Text"), info = "Substring uses the last occurrence of from when search_from_end = TRUE")
+
+
+# Substring uses the last occurrence of to when search_from_end = TRUE
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = "is", search_from_end = TRUE)
+
+expect_equal(text_df[["sub_vec"]], c("This is", "Hello World", "this is"), info = "Substring uses the last occurrence of to when search_from_end = TRUE")
+
+
+# Substring uses the last occurrence of from and to when search_from_end = TRUE
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", to = "is", search_from_end = TRUE)
+
+expect_equal(text_df[["sub_vec"]], c("is", "Hello World", "is"), info = "Substring uses the last occurrence of from and to when search_from_end = TRUE")
+
+
 # Remove leading blanks
 text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var1, which = "leading")
 

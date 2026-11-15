@@ -177,6 +177,8 @@ concat <- function(data_frame,
 #' @param include_to TRUE by default. Only applies when a character is passed as
 #' to. If TRUE the whole matched word is included in the substring, otherwise the
 #' last place is removed.
+#' @param search_from_end FALSE by default. If TRUE the last occurrence of a
+#' character expression passed as from or to is looked up instead of the first one.
 #'
 #' @return
 #' Returns parts of a character vector.
@@ -213,7 +215,8 @@ sub_string <- function(data_frame,
                        to    = NULL,
                        case_sensitive = TRUE,
                        include_from = TRUE,
-                       include_to   = TRUE){
+                       include_to   = TRUE,
+                       search_from_end = FALSE){
     variable <- get_origin_as_char(variable, substitute(variable))
 
     # If no value variables are provided abort
@@ -280,10 +283,10 @@ sub_string <- function(data_frame,
 
         # If no match is found, to is adjusted to retrieve the whole text
         if (case_sensitive){
-            to <- regexpr(to, variable_vector)
+            to <- find_match(variable_vector, to, search_from_end)
         }
         else{
-            to <- regexpr(tolower(to), tolower(variable_vector))
+            to <- find_match(tolower(variable_vector), tolower(to), search_from_end)
         }
 
         # Include the whole matched word or exclude its last place
@@ -304,10 +307,10 @@ sub_string <- function(data_frame,
 
         # If no match is found, from is adjusted to retrieve the whole text
         if (case_sensitive){
-            from <- regexpr(from, variable_vector)
+            from <- find_match(variable_vector, from, search_from_end)
         }
         else{
-            from <- regexpr(tolower(from), tolower(variable_vector))
+            from <- find_match(tolower(variable_vector), tolower(from), search_from_end)
         }
 
         # Start after the matched word when include_from is FALSE
@@ -340,6 +343,42 @@ sub_string <- function(data_frame,
     }
 
     sub_variable
+}
+
+#' Find Pattern From Start Or End
+#'
+#' @description
+#' Find the first or last match of a pattern in each text.
+#'
+#' @param text The text in which to look for a pattern.
+#' @param pattern The pattern to look up.
+#' @param from_end Whether to return the match from the end of the text.
+#'
+#' @return
+#' Returns the matching place.
+#'
+#' @noRd
+find_match <- function(text, pattern, from_end){
+    # When looking from the start just use a normal regex pattern search
+    if (!from_end){
+        return(regexpr(pattern, text))
+    }
+
+    # Otherwise get all matching places and return the last found matching place
+    matches <- gregexpr(pattern, text)
+
+    vapply(matches, function(match){
+               if (is.na(match[[1]])){
+                   NA_integer_
+               }
+               else if (match[[1]] == -1){
+                   -1L
+               }
+               else{
+                   match[[length(match)]]
+               }
+           },
+           integer(1))
 }
 
 
