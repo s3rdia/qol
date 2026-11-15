@@ -8,6 +8,10 @@
   [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
   Are now able to set different colors for the subheader fonts.
   (07.11.2026)
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
+  New parameters `include_from` and `include_to` control whether the
+  text to find entered in `from` and `to` is included in the substring
+  or not. (15.11.2026)
 
 #### Changed functionality
 

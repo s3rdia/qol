@@ -80,51 +80,63 @@ expect_equal(test_df[["concat_vec"]], c("1001abc", "1000ab0", "1003a00"), info =
 
 
 # Substring from the left with numeric value
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, to = 3)
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = 3)
 
-expect_equal(test_df[["sub_vec"]], c("Thi", "Hel", "thi"), info = "Substring from the left with numeric value")
+expect_equal(text_df[["sub_vec"]], c("Thi", "Hel", "thi"), info = "Substring from the left with numeric value")
 
 
 # Substring from the right with numeric value
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = 5)
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = 5)
 
-expect_equal(test_df[["sub_vec"]], c(" is a text", "o World", " is a Text"), info = "Substring from the right with numeric value")
+expect_equal(text_df[["sub_vec"]], c(" is a text", "o World", " is a Text"), info = "Substring from the right with numeric value")
 
 
 # Substring in the middle with numeric values
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = 5, to = 10)
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = 5, to = 10)
 
-expect_equal(test_df[["sub_vec"]], c(" is a ", "o Worl", " is a "), info = "Substring in the middle with numeric values")
+expect_equal(text_df[["sub_vec"]], c(" is a ", "o Worl", " is a "), info = "Substring in the middle with numeric values")
 
 
 # Substring from the left with character value
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, to = "s")
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = "s")
 
-expect_equal(test_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring from the left with character value")
+expect_equal(text_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring from the left with character value")
 
 
 # Substring from the right with character value
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "s")
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "s")
 
-expect_equal(test_df[["sub_vec"]], c("s is a text", "Hello World", "s is a Text"), info = "Substring from the right with character value")
+expect_equal(text_df[["sub_vec"]], c("s is a text", "Hello World", "s is a Text"), info = "Substring from the right with character value")
 
 
 # Substring in the middle with character values
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s")
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s")
 
-expect_equal(test_df[["sub_vec"]], c("", "Hello World", "this"), info = "Substring in the middle with character values")
-
-
-# Substring in the middle with character values and no case sensitivity
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s", case_sensitive = FALSE)
-
-expect_equal(test_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring in the middle with character values and no case sensitivity")
+expect_equal(text_df[["sub_vec"]], c("", "Hello World", "this"), info = "Substring in the middle with character values")
 
 
 # Substring in the middle with character values and no case sensitivity
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s", case_sensitive = FALSE)
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s", case_sensitive = FALSE)
 
-expect_equal(test_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring in the middle with character values and no case sensitivity")
+expect_equal(text_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring in the middle with character values and no case sensitivity")
+
+
+# Substring in the middle with character values and no case sensitivity
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "t", to = "s", case_sensitive = FALSE)
+
+expect_equal(text_df[["sub_vec"]], c("This", "Hello World", "this"), info = "Substring in the middle with character values and no case sensitivity")
+
+
+# Substring with include_from = FALSE starts after the matched from word
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", to = "a", include_from = FALSE)
+
+expect_equal(text_df[["sub_vec"]], c(" is a", "Hello World", " is a"), info = "Substring with include_from = FALSE starts after the matched from word")
+
+
+# Substring with include_to = FALSE stops before the matched to word
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", to = "a", include_to = FALSE)
+
+expect_equal(text_df[["sub_vec"]], c("is is ", "Hello World", "is is "), info = "Substring with include_to = FALSE stops before the matched to word")
 
 
 # Remove leading blanks
@@ -219,21 +231,21 @@ expect_equal(sub_df[["sub_vec"]], c("Thi", "Hel", "thi"), info = "Substring work
 
 
 # Substring throws a warning when variable is provided as a vector
-test_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3)
+text_df[["sub_vec"]] <- text_df |> sub_string(c(var1, var1), to = 3)
 
 expect_warning(print_stack_as_messages("WARNING"), "<Variable> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when variable is provided as a vector")
 
 
 # Substring throws a warning when to is provided as a vector
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c(3, 5))
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c(3, 5))
 
 expect_warning(print_stack_as_messages("WARNING"), "<To> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when to is provided as a vector")
 
 
 # Substring throws a warning when from is provided as a vector
-test_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(3, 5))
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(3, 5))
 
 expect_warning(print_stack_as_messages("WARNING"), "<From> may only be of length one. The first Element will be used.",
                info = "Substring throws a warning when from is provided as a vector")
@@ -261,7 +273,7 @@ expect_equal(text_df2[["gone_blanks"]], c("Thisisatext", "HelloWorld", "thisisaT
 ###############################################################################
 
 # Substring aborts if variable is not part of the data frame
-test_df[["sub_vec"]] <- text_df |> sub_string(var2, to = 3)
+text_df[["sub_vec"]] <- text_df |> sub_string(var2, to = 3)
 
 expect_error(print_stack_as_messages("ERROR"), "The provided <variable> '", info = "Substring aborts if variable is not part of the data frame")
 
@@ -274,7 +286,7 @@ expect_error(print_stack_as_messages("ERROR"), "<Variable> type must be characte
 
 
 # Substring aborts if neither from nor to are provided
-test_df[["sub_vec"]] <- text_df |> sub_string(var1)
+text_df[["sub_vec"]] <- text_df |> sub_string(var1)
 
 expect_error(print_stack_as_messages("ERROR"), "Neither <from> nor <to> is provided. Substring will be aborted.",
                info = "Substring aborts if neither from nor to are provided")

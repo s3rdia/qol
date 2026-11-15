@@ -4,7 +4,15 @@
 \alias{sub_string}
 \title{Retrieve A Substring From A Character}
 \usage{
-sub_string(data_frame, variable, from = NULL, to = NULL, case_sensitive = TRUE)
+sub_string(
+  data_frame,
+  variable,
+  from = NULL,
+  to = NULL,
+  case_sensitive = TRUE,
+  include_from = TRUE,
+  include_to = TRUE
+)
 }
 \arguments{
 \item{data_frame}{A data frame which contains the variables to concatenate.}
@@ -18,6 +26,14 @@ sub_string(data_frame, variable, from = NULL, to = NULL, case_sensitive = TRUE)
 \item{case_sensitive}{TRUE by default. When a character expression is passed as
 from or to it makes a difference whether a letter is written in upper or lower case.
 Pass FALSE to handle upper and lower case equally.}
+
+\item{include_from}{TRUE by default. Only applies when a character is passed as
+from. If TRUE the matched word is included in the substring, otherwise the
+substring starts after it.}
+
+\item{include_to}{TRUE by default. Only applies when a character is passed as
+to. If TRUE the whole matched word is included in the substring, otherwise the
+last place is removed.}
 }
 \value{
 Returns parts of a character vector.

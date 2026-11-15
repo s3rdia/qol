@@ -171,6 +171,12 @@ concat <- function(data_frame,
 #' @param case_sensitive TRUE by default. When a character expression is passed as
 #' from or to it makes a difference whether a letter is written in upper or lower case.
 #' Pass FALSE to handle upper and lower case equally.
+#' @param include_from TRUE by default. Only applies when a character is passed as
+#' from. If TRUE the matched word is included in the substring, otherwise the
+#' substring starts after it.
+#' @param include_to TRUE by default. Only applies when a character is passed as
+#' to. If TRUE the whole matched word is included in the substring, otherwise the
+#' last place is removed.
 #'
 #' @return
 #' Returns parts of a character vector.
@@ -205,7 +211,9 @@ sub_string <- function(data_frame,
                        variable,
                        from  = NULL,
                        to    = NULL,
-                       case_sensitive = TRUE){
+                       case_sensitive = TRUE,
+                       include_from = TRUE,
+                       include_to   = TRUE){
     variable <- get_origin_as_char(variable, substitute(variable))
 
     # If no value variables are provided abort
@@ -267,6 +275,9 @@ sub_string <- function(data_frame,
 
     # If to is a character, extract the text up until the first match of to
     if (is.character(to)){
+        # Remember the search text to determine the length of the match
+        to_text <- to
+
         # If no match is found, to is adjusted to retrieve the whole text
         if (case_sensitive){
             to <- regexpr(to, variable_vector)
@@ -274,11 +285,23 @@ sub_string <- function(data_frame,
         else{
             to <- regexpr(tolower(to), tolower(variable_vector))
         }
-        to <- data.table::fifelse(to == -1, 9999, to)
+
+        # Include the whole matched word or exclude its last place
+        if (include_to){
+            to_offset <- nchar(to_text) - 1
+        }
+        else{
+            to_offset <- -1
+        }
+
+        to <- data.table::fifelse(to == -1, 9999, to + to_offset)
     }
 
     # If from is a character, extract the text up until the first match of from
     if (is.character(from)){
+        # Remember the search text to determine the length of the match
+        from_text <- from
+
         # If no match is found, from is adjusted to retrieve the whole text
         if (case_sensitive){
             from <- regexpr(from, variable_vector)
@@ -286,7 +309,16 @@ sub_string <- function(data_frame,
         else{
             from <- regexpr(tolower(from), tolower(variable_vector))
         }
-        from <- data.table::fifelse(from == -1, 1, from)
+
+        # Start after the matched word when include_from is FALSE
+        if (include_from){
+            from_offset <- 0
+        }
+        else{
+            from_offset <- nchar(from_text)
+        }
+
+        from <- data.table::fifelse(from == -1, 1, from + from_offset)
     }
 
     # In case no from position is given, substring starts at position 1 up to to-position
