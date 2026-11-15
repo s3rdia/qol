@@ -16,6 +16,9 @@
   New parameter `search_from_end` looks up the text to find entered in
   `from` and `to` from the end instead of the front to find last
   occurences. (15.11.2026)
+- [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
+  `from` and `to` now accept numeric vectors to enable individual
+  positions. (15.11.2026)
 
 #### Changed functionality
 

@@ -31,11 +31,11 @@ sub_string(
 
 - from:
 
-  The names of the variables to concatenate.
+  A single character expression or a numeric vector of start positions.
 
 - to:
 
-  A single character which will be used to fill up the empty places.
+  A single character expression or a numeric vector of end positions.
 
 - case_sensitive:
 

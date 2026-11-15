@@ -20,9 +20,9 @@ sub_string(
 
 \item{variable}{A character variable to extract parts from.}
 
-\item{from}{The names of the variables to concatenate.}
+\item{from}{A single character expression or a numeric vector of start positions.}
 
-\item{to}{A single character which will be used to fill up the empty places.}
+\item{to}{A single character expression or a numeric vector of end positions.}
 
 \item{case_sensitive}{TRUE by default. When a character expression is passed as
 from or to it makes a difference whether a letter is written in upper or lower case.

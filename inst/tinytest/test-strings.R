@@ -157,6 +157,12 @@ text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = "is", to = "is", sear
 expect_equal(text_df[["sub_vec"]], c("is", "Hello World", "is"), info = "Substring uses the last occurrence of from and to when search_from_end = TRUE")
 
 
+# Substring with individual numeric from and to positions
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(1, 7, 6), to = c(4, 11, 7))
+
+expect_equal(text_df[["sub_vec"]], c("This", "World", "is"), info = "Substring with individual numeric from and to positions")
+
+
 # Remove leading blanks
 text_df2[["gone_blanks"]] <- text_df2 |> remove_blanks(var1, which = "leading")
 
@@ -255,18 +261,18 @@ expect_warning(print_stack_as_messages("WARNING"), "<Variable> may only be of le
                info = "Substring throws a warning when variable is provided as a vector")
 
 
-# Substring throws a warning when to is provided as a vector
-text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c(3, 5))
-
-expect_warning(print_stack_as_messages("WARNING"), "<To> may only be of length one. The first Element will be used.",
-               info = "Substring throws a warning when to is provided as a vector")
-
-
-# Substring throws a warning when from is provided as a vector
-text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c(3, 5))
+# Substring throws a warning when a character from is provided as a vector
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, from = c("is", "a"))
 
 expect_warning(print_stack_as_messages("WARNING"), "<From> may only be of length one. The first Element will be used.",
-               info = "Substring throws a warning when from is provided as a vector")
+               info = "Substring throws a warning when a character from is provided as a vector")
+
+
+# Substring throws a warning when a character to is provided as a vector
+text_df[["sub_vec"]] <- text_df |> sub_string(var1, to = c("is", "a"))
+
+expect_warning(print_stack_as_messages("WARNING"), "<To> may only be of length one. The first Element will be used.",
+               info = "Substring throws a warning when a character to is provided as a vector")
 
 
 # Remove all blanks with invalid <which> option

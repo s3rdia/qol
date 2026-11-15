@@ -166,8 +166,8 @@ concat <- function(data_frame,
 #'
 #' @param data_frame A data frame which contains the variables to concatenate.
 #' @param variable A character variable to extract parts from.
-#' @param from The names of the variables to concatenate.
-#' @param to A single character which will be used to fill up the empty places.
+#' @param from A single character expression or a numeric vector of start positions.
+#' @param to A single character expression or a numeric vector of end positions.
 #' @param case_sensitive TRUE by default. When a character expression is passed as
 #' from or to it makes a difference whether a letter is written in upper or lower case.
 #' Pass FALSE to handle upper and lower case equally.
@@ -253,14 +253,15 @@ sub_string <- function(data_frame,
         return(invisible(NULL))
     }
 
-    # Adjust from and length
-    if (length(to) > 1){
+    # Adjust from and to. Numeric vectors are allowed to provide an individual position
+    # per observation.
+    if (is.character(to) && length(to) > 1){
         print_message("WARNING", "<To> may only be of length one. The first Element will be used.")
 
         to <- to[[1]]
     }
 
-    if (length(from) > 1){
+    if (is.character(from) && length(from) > 1){
         print_message("WARNING", "<From> may only be of length one. The first Element will be used.")
 
         from <- from[[1]]
