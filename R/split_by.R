@@ -41,6 +41,9 @@
 #' In SAS you can write "age in (1 4 7 15 21)" or "age not in (2, 4, 37, 82)" which
 #' gets translated into "age %in% (1, 4, 7, 15, 21)" and "!(age %in% (2, 4, 37, 82))".
 #'
+#' Conditions can also be negated with "not (condition)", which gets translated into
+#' "!(condition)", e.g. "not (age >= 15 and age < 65)".
+#'
 #' When using == or != operators you can check if character expressions start with
 #' (text:), end with (:text) or contain a certain text (:text:). These also get
 #' translated.

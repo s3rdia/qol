@@ -7,6 +7,9 @@ Last CRAN release was on 25.10.2026.
 * `sub_string()`: New parameters `include_from` and `include_to` control whether the text to find entered in `from` and `to` is included in the substring or not.
 * `sub_string()`: New parameter `search_from_end` looks up the text to find entered in `from` and `to` from the end instead of the front to find last occurences.
 * `sub_string()`: `from` and `to` now accept numeric vectors to enable individual positions.
+* `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`, `split_by()`: In the SAS like writing style it is now possible to negate conditions with the keyword `not` like `not (age < 18)`.
+* `any_table()`, `export_with_style()`: `var_labels` parameter now converts macro variables passed as character for the list names. In `any_table()` additionally for the `stat_labels`.
+* `summarise_plus()`, `any_table()`, `transpose_plus()`: Macro variables can now be used as variable names, if specific statistics per variable were passed into the `statistics` parameter.
 
 ### Changed functionality
 
@@ -24,6 +27,8 @@ Last CRAN release was on 25.10.2026.
 * `any_table()`: Formatted variables in the column header now have their expressions displayed in order of the format even if an expression is missing at the time of the table pivoting.
 * `export_multi()`: When passing a plain list without storing it into an object first, then now a generic filename is set instead of the function erroring.
 * `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now.
+* `summarise_plus()`: When a list with specific statistics per variable were passed into the `statistics` parameter, the variable names were always converted into lower case names. This could lead to variable names not found in the data frame, if they are not written in all lower case. Now they are kept as they are passed.
+* `discrete_format()`: When the `other` keyword was used, numbers stored as texts were always converted into numeric values. Now they are kept as character, if `as_character` is TRUE.
 
 ### Optimization
 

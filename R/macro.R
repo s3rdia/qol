@@ -26,12 +26,16 @@
 #'
 #' @seealso
 #' Functions that can make use of macro variables: [any_table()], [frequencies()],
-#' [crosstabs()], [export_with_style()], [summarise_plus()]
+#' [crosstabs()], [export_with_style()], [summarise_plus()], [transpose_plus()]
 #'
 #' Within the tabulation functions titles, footnotes, var_labels and stat_labels
-#' can resolve macros. Additionally they can be used in the [any_table()] rows,
-#' columns, values, by, pct_group, pct_value, pct_block and box parameter and in
-#' the [summarise_plus()] class, values and types parameter.
+#' can resolve macros. In var_labels and stat_labels macros can be used in both
+#' the variable names and the labels. Additionally they can be used in the [any_table()] rows,
+#' columns, values, by, pct_group, pct_value, pct_block and box parameter, in
+#' the [summarise_plus()] class, values and types parameter and in the
+#' [transpose_plus()] values parameter. In the statistics parameter of
+#' [any_table()], [summarise_plus()] and [transpose_plus()] macros can be used
+#' in the variable names of a statistics list.
 #'
 #' Macros can also be used inside the formats parameter of all functions that
 #' accept it. Both the variable names and the format names can be built with

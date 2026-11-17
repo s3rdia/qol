@@ -185,8 +185,13 @@ discrete_format <- function(...,
         unwrapped_format[["value"]] <- sub("^other$", .Machine[["integer.max"]], unwrapped_format[["value"]],
                                            ignore.case = TRUE)
 
-        # If value column is all numeric then convert it to numeric
-        unwrapped_format <- unwrapped_format |> convert_numeric("value")
+        # If value column is all numeric then convert it to numeric. When
+        # as_character is TRUE the values are kept as character, so that values
+        # like "01" can still be matched against the original character data
+        # instead of being converted to 1 and falling into the "other" category.
+        if (!as_character){
+            unwrapped_format <- unwrapped_format |> convert_numeric("value")
+        }
     }
 
     print_closing()

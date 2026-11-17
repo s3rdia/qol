@@ -1886,3 +1886,41 @@ result_literal <- dummy_df |>
               output = "no")
 
 expect_equal(result_macro, result_literal, info = "Macro variables are resolved in values")
+
+
+# Macro variables are resolved in var_labels and stat_labels variable names
+label_var  <- "age"
+label_stat <- "sum"
+
+result_macro <- dummy_df |>
+    any_table(rows        = "age",
+              values      = "weight",
+              var_labels  = list("&label_var"  = "Age groups"),
+              stat_labels = list("&label_stat" = "Counts"),
+              output      = "no")
+
+result_literal <- dummy_df |>
+    any_table(rows        = "age",
+              values      = "weight",
+              var_labels  = list(age = "Age groups"),
+              stat_labels = list(sum = "Counts"),
+              output      = "no")
+
+expect_equal(result_macro, result_literal, info = "Macro variables are resolved in var_labels and stat_labels variable names")
+
+
+# Macro variables are resolved in the statistics list variable names
+stat_var <- "income"
+
+result_macro <- dummy_df |>
+    any_table(rows       = "sex",
+              statistics = list("sum" = c("&stat_var")),
+              output     = "no")
+
+result_literal <- dummy_df |>
+    any_table(rows       = "sex",
+              statistics = list("sum" = c(income)),
+              output     = "no")
+
+expect_equal(result_macro, result_literal, info = "Macro variables are resolved in the statistics list variable names")
+

@@ -619,6 +619,20 @@ expect_true(all(c("income_sum", "expenses_sum", "weight_pct_group") %in% names(r
 expect_true(!all(c("income_pct_group", "expenses_pct_group", "weight_sum") %in% names(result_df)),
             info = "Summarise is able to output specific statistics per variable")
 
+
+# Macro variables are resolved in the statistics list variable names
+stat_var <- "income"
+
+result_macro <- dummy_df |>
+    summarise_plus(class      = sex,
+                   statistics = list("sum" = c("&stat_var")))
+
+result_literal <- dummy_df |>
+    summarise_plus(class      = sex,
+                   statistics = list("sum" = c(income)))
+
+expect_equal(result_macro, result_literal, info = "Macro variables are resolved in the statistics list variable names")
+
 ###############################################################################
 # Format checks
 ###############################################################################

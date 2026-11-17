@@ -35,7 +35,8 @@ parts of the output: first_title, last_title, first_footnote, last_footnote, tab
 table_end, table_header.}
 
 \item{var_labels}{A list in which is specified which label should be printed for
-which variable instead of the variable name.}
+which variable instead of the variable name. Macro variables can be used in the
+variable names and labels.}
 
 \item{workbook}{Insert a previously created workbook to expand the sheets instead of
 creating a new file.}

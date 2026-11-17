@@ -59,12 +59,16 @@ text_vector <- apply_macro(char_vector)
 }
 \seealso{
 Functions that can make use of macro variables: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
-\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}
+\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=transpose_plus]{transpose_plus()}}
 
 Within the tabulation functions titles, footnotes, var_labels and stat_labels
-can resolve macros. Additionally they can be used in the \code{\link[=any_table]{any_table()}} rows,
-columns, values, by, pct_group, pct_value, pct_block and box parameter and in
-the \code{\link[=summarise_plus]{summarise_plus()}} class, values and types parameter.
+can resolve macros. In var_labels and stat_labels macros can be used in both
+the variable names and the labels. Additionally they can be used in the \code{\link[=any_table]{any_table()}} rows,
+columns, values, by, pct_group, pct_value, pct_block and box parameter, in
+the \code{\link[=summarise_plus]{summarise_plus()}} class, values and types parameter and in the
+\code{\link[=transpose_plus]{transpose_plus()}} values parameter. In the statistics parameter of
+\code{\link[=any_table]{any_table()}}, \code{\link[=summarise_plus]{summarise_plus()}} and \code{\link[=transpose_plus]{transpose_plus()}} macros can be used
+in the variable names of a statistics list.
 
 Macros can also be used inside the formats parameter of all functions that
 accept it. Both the variable names and the format names can be built with

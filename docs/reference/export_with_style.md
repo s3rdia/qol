@@ -50,7 +50,8 @@ export_with_style(
 - var_labels:
 
   A list in which is specified which label should be printed for which
-  variable instead of the variable name.
+  variable instead of the variable name. Macro variables can be used in
+  the variable names and labels.
 
 - workbook:
 

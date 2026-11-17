@@ -660,7 +660,7 @@ multi_df <- ifelse_df |> where.("age > 18
 expect_identical(multi_df[["age"]], c(20, 70), info = "where. works with multiline character conditions")
 
 ###############################################################################
-# ifelse_multi
+# ifelse_multi and character condition parsing
 ###############################################################################
 
 # ifelse_multi basic recoding works
@@ -709,6 +709,25 @@ expect_equal(result, c(1, 1, 0, 0, 0), info = "ifelse_multi IN works with spaces
 result <- ifelse_df |> ifelse_multi("age not in (10 20)" = 1, else. = 0)
 
 expect_equal(result, c(0, 0, 1, 1, 1), info = "ifelse_multi NOT IN works")
+
+
+# ifelse_multi NOT with parentheses works
+result <- ifelse_df |> ifelse_multi("not (age < 30)" = 1, else. = 0)
+
+expect_equal(result, c(0, 0, 1, 1, 0), info = "ifelse_multi NOT with parentheses works")
+
+
+# ifelse_multi NOT is case insensitive and works combined with other conditions
+result <- ifelse_df |> ifelse_multi("sex == 1 and NOT (age == 10)" = 1, else. = 0)
+
+expect_equal(result, c(0, 0, 1, 0, 0), info = "ifelse_multi NOT is case insensitive and works combined with other conditions")
+
+
+# if. works with NOT around an IN statement
+result_df <- ifelse_df |>
+    if.("not (age in (10, 20))", flag = 1)
+
+expect_equal(result_df[["flag"]], c(NA, NA, 1, 1, 1), info = "if. works with NOT around an IN statement")
 
 
 # ifelse_multi "." inside IN equals == . or == 10

@@ -34,6 +34,22 @@ expect_inherits(result_df, "qol_styled_data", info = "export_with_style with ful
 expect_equal(length(result_df), 3, info = "Simplest form of export_with_style")
 
 
+# Macro variables are resolved in var_labels variable names
+label_var <- "weight_sum"
+
+result_macro <- dummy_df |>
+    export_with_style(var_labels = list("&label_var" = "Test label"), print = FALSE)
+
+result_literal <- dummy_df |>
+    export_with_style(var_labels = list(weight_sum = "Test label"), print = FALSE)
+
+expect_equal(result_macro[["meta"]][["var_labels"]],
+             result_literal[["meta"]][["var_labels"]],
+             info = "Macro variables are resolved in var_labels variable names")
+expect_equal(names(result_macro[["meta"]][["var_labels"]]), "weight_sum",
+             info = "Macro variables are resolved in var_labels variable names")
+
+
 # export_with_style with individual column alignment
 result_df <- dummy_df |> export_with_style(column_align = c("right", "left"), print = FALSE)
 

@@ -19,6 +19,26 @@
 - [`sub_string()`](https://s3rdia.github.io/qol/reference/sub_string.md):
   `from` and `to` now accept numeric vectors to enable individual
   positions. (15.11.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`ifelse_multi()`](https://s3rdia.github.io/qol/reference/ifelse_multi.md),
+  [`where.()`](https://s3rdia.github.io/qol/reference/where..md),
+  [`do_if()`](https://s3rdia.github.io/qol/reference/do_if.md),
+  [`split_by()`](https://s3rdia.github.io/qol/reference/split_by.md): In
+  the SAS like writing style it is now possible to negate conditions
+  with the keyword `not` like `not (age < 18)`. (17.11.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md):
+  `var_labels` parameter now converts macro variables passed as
+  character for the list names. In
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
+  additionally for the `stat_labels`. (17.11.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+  [`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md):
+  Macro variables can now be used as variable names, if specific
+  statistics per variable were passed into the `statistics` parameter.
+  (17.11.2026)
 
 #### Changed functionality
 
@@ -66,6 +86,16 @@
 - [`create_table_of_contents()`](https://s3rdia.github.io/qol/reference/create_table_of_contents.md):
   Empty titles caused the table of contents page to have a small column
   width for the title column. This is fixed now. (07.11.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md):
+  When a list with specific statistics per variable were passed into the
+  `statistics` parameter, the variable names were always converted into
+  lower case names. This could lead to variable names not found in the
+  data frame, if they are not written in all lower case. Now they are
+  kept as they are passed. (17.11.2026)
+- [`discrete_format()`](https://s3rdia.github.io/qol/reference/formats.md):
+  When the `other` keyword was used, numbers stored as texts were always
+  converted into numeric values. Now they are kept as character, if
+  `as_character` is TRUE. (17.11.2026)
 
 #### Optimization
 

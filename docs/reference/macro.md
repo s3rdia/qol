@@ -52,15 +52,25 @@ Functions that can make use of macro variables:
 [`frequencies()`](https://s3rdia.github.io/qol/reference/frequencies.md),
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
 [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md),
-[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
 
 Within the tabulation functions titles, footnotes, var_labels and
-stat_labels can resolve macros. Additionally they can be used in the
+stat_labels can resolve macros. In var_labels and stat_labels macros can
+be used in both the variable names and the labels. Additionally they can
+be used in the
 [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md)
 rows, columns, values, by, pct_group, pct_value, pct_block and box
-parameter and in the
+parameter, in the
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
-class, values and types parameter.
+class, values and types parameter and in the
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
+values parameter. In the statistics parameter of
+[`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md),
+[`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md)
+and
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
+macros can be used in the variable names of a statistics list.
 
 Macros can also be used inside the formats parameter of all functions
 that accept it. Both the variable names and the format names can be

@@ -189,6 +189,22 @@ expect_equal(collapse::funique(round(result_df[["balance_1"]] + result_df[["bala
              info = "Tranpose is able to output specific statistics for multiple variables per statistic")
 
 
+# Macro variables are resolved in the statistics list variable names
+stat_var <- "income"
+
+result_macro <- dummy_df |>
+    transpose_plus(preserve   = year,
+                   pivot      = "sex",
+                   statistics = list("sum" = c("&stat_var")))
+
+result_literal <- dummy_df |>
+    transpose_plus(preserve   = year,
+                   pivot      = "sex",
+                   statistics = list("sum" = c(income)))
+
+expect_equal(result_macro, result_literal, info = "Macro variables are resolved in the statistics list variable names")
+
+
 # Value variables can be provided without quotation marks
 result_df <- dummy_df |>
     transpose_plus(preserve = year,

@@ -18,7 +18,8 @@
 #' parts of the output: first_title, last_title, first_footnote, last_footnote, table_start,
 #' table_end, table_header.
 #' @param var_labels A list in which is specified which label should be printed for
-#' which variable instead of the variable name.
+#' which variable instead of the variable name. Macro variables can be used in the
+#' variable names and labels.
 #' @param workbook Insert a previously created workbook to expand the sheets instead of
 #' creating a new file.
 #' @param style A list of options can be passed to control the appearance of 'Excel' outputs.
@@ -198,6 +199,9 @@ export_with_style <- function(data_frame,
     titles     <- apply_macro(titles)
     footnotes  <- apply_macro(footnotes)
     var_labels <- apply_macro(var_labels)
+
+    # Macro variables can also be used in the variable names the labels are assigned to
+    names(var_labels) <- apply_macro(names(var_labels))
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Prepare table format for output
