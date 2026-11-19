@@ -96,6 +96,17 @@
   When the `other` keyword was used, numbers stored as texts were always
   converted into numeric values. Now they are kept as character, if
   `as_character` is TRUE. (17.11.2026)
+- [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
+  [`retain_value()`](https://s3rdia.github.io/qol/reference/retain.md):
+  There seems to be a rare edge case bug happening when an unknown
+  encoding of a character variable is passed to collapse grouping.
+  Problem is, the bug isn’t reproducable reliable. So now there is an
+  utf8 conversion happeinging before grouping to guarantee that there is
+  always a known encodig. (17.11.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  In case value variables with a statistics extension are passed then
+  they now don’t receive a second extension anymore, which broke the
+  column header. (04.11.2026)
 
 #### Optimization
 

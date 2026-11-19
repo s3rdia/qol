@@ -444,6 +444,12 @@ summarise_plus <- function(data_frame,
     # Make sure that the variables provided are part of the data frame.
     class <- data_frame |> part_of_df(class)
 
+    # There seems to be a rare edge case bug happening when an unknown encoding
+    # of a character variable is passed to collapse grouping. Problem is, the bug
+    # isn't reproducable reliable. So convert to utf8 here to guarantee that there
+    # is always a known encodig there.
+    data_frame <- data_frame |> convert_to_utf8(class)
+
     # If no grouping variables are provided create a pseudo grouping variable
     if (length(class) == 0){
         class <- "pseudo_class"

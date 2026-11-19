@@ -274,6 +274,12 @@ retain_value <- function(data_frame,
     }
     # In case of by variables retain by groups
     else{
+        # There seems to be a rare edge case bug happening when an unknown encoding
+        # of a character variable is passed to collapse grouping. Problem is, the bug
+        # isn't reproducable reliable. So convert to utf8 here to guarantee that there
+        # is always a known encodig there.
+        data_frame <- data_frame |> convert_to_utf8(by)
+
         group      <- collapse::GRP(data_frame, by)
         data_frame <- data_frame[values] |> collapse::ffirst(g = group, TRA = "fill")
     }

@@ -28,6 +28,8 @@
 * `create_table_of_contents()`: Empty titles caused the table of contents page to have a small column width for the title column. This is fixed now. (07.11.2026)
 * `summarise_plus()`: When a list with specific statistics per variable were passed into the `statistics` parameter, the variable names were always converted into lower case names. This could lead to variable names not found in the data frame, if they are not written in all lower case. Now they are kept as they are passed. (17.11.2026)
 * `discrete_format()`: When the `other` keyword was used, numbers stored as texts were always converted into numeric values. Now they are kept as character, if `as_character` is TRUE. (17.11.2026)
+* `summarise_plus()`, `retain_value()`: There seems to be a rare edge case bug happening when an unknown encoding of a character variable is passed to collapse grouping. Problem is, the bug isn't reproducable reliable. So now there is an utf8 conversion happeinging before grouping to guarantee that there is always a known encodig. (17.11.2026)
+* `any_table()`: In case value variables with a statistics extension are passed then they now don't receive a second extension anymore, which broke the column header. (04.11.2026)
 
 ### Optimization
 

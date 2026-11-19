@@ -879,6 +879,55 @@ convert_ordered_factor <- function(data_frame, variables){
 }
 
 
+#' Convert Character Variables To UTF-8
+#'
+#' @description
+#' Converts the given character variables to UTF-8. Collapse can only sort
+#' character variables if their encoding is declared as UTF-8, Latin-1 or bytes.
+#' Character variables created outside of the current session (e.g. data or
+#' format labels loaded from a file) can have non-ASCII characters with an
+#' unknown encoding and would otherwise lead to an error when grouping.
+#'
+#' @param data_frame A data frame containing variables to convert.
+#' @param variables Variables from the data frame which should be converted.
+#'
+#' @return
+#' Returns the same data frame with converted variables.
+#'
+#' @noRd
+convert_to_utf8 <- function(data_frame, variables){
+    variables <- intersect(variables, names(data_frame))
+
+    if (length(variables) == 0){
+        return(data_frame)
+    }
+
+    # Only character variables can carry an encoding. enc2utf8() returns the
+    # exact same object if a variable doesn't need to be converted, so there is
+    # no need to check the encoding upfront.
+    character_vars <- variables[vapply(variables, function(variable){
+        is.character(data_frame[[variable]])
+    }, logical(1))]
+
+    if (length(character_vars) == 0){
+        return(data_frame)
+    }
+
+    # A shallow copy duplicates only the vector of column pointers. This way a
+    # data table passed in by the user is not altered and the unaffected
+    # columns don't have to be copied.
+    if (data.table::is.data.table(data_frame)){
+        data_frame <- data.table::setDT(as.list(data_frame))
+    }
+
+    for (variable in character_vars){
+        data_frame[[variable]] <- enc2utf8(data_frame[[variable]])
+    }
+
+    data_frame
+}
+
+
 #' Convert Color Codes
 #'
 #' @name hex_ansi

@@ -99,6 +99,87 @@ remove_stat_extension <- function(data_frame, statistics){
 }
 
 
+#' Remove Doubled Statistic Extensions from Variable Names
+#'
+#' @description
+#' Variables which already carry a statistic extension (e.g. `income_max`) can
+#' receive a second one when they are passed to [any_table()] with unsummed
+#' data. This removes the newly added extension, so that only the original one
+#' remains. Without this correction the table header would gain an additional
+#' statistic layer.
+#'
+#' @param data_frame The data frame in which variable names should be corrected.
+#'
+#' @return
+#' Returns the data frame with corrected variable names.
+#'
+#' @noRd
+remove_doubled_stat_extension <- function(data_frame){
+    statistics <- c("sum_wgt", "pct_group", "pct_total", "pct_value", "pct_block",
+                    "freq_g0", "variance", "missing", "median", "p[0-9]+",
+                    "freq", "first", "mean", "mode", "last", "min", "max",
+                    "sum", "pct", "sd")
+    statistic  <- paste0("(", paste(statistics, collapse = "|"), ")")
+
+    # In any_table names normally end in a column expression. If no column
+    # variables were provided, the doubled extension is at the very end, so the
+    # expression is optional. Group 3 is the doubled statistic which gets dropped.
+    doubled_extension <- paste0("^(.+?)_", statistic, "_", statistic, "(_.+)?$")
+
+    var_names  <- names(data_frame)
+    candidates <- sub(doubled_extension, "\\1_\\2\\4", var_names, perl = TRUE)
+
+    # Only names which actually have a doubled extension need a look. If there
+    # are none, the names don't have to be touched at all.
+    changed <- which(candidates != var_names)
+
+    if (length(changed) == 0){
+        return(data_frame)
+    }
+
+    # Accept a correction only if the resulting name is still unique. Otherwise
+    # keep the original name. This matters if several statistics were requested
+    # for the same already extended value variable, e.g. "income_max_sum" and
+    # "income_max_freq" can't both become "income_max".
+    result <- var_names
+
+    for (i in changed){
+        if (!(candidates[i] %in% result)){
+            result[i] <- candidates[i]
+        }
+    }
+
+    names(data_frame) <- result
+    data_frame
+}
+
+
+#' Get the Statistic Keyword Used for Number Formatting
+#'
+#' @description
+#' Returns the statistic keyword from a variable name. If the name carries two
+#' statistic extensions in a row, the first one is returned, because that is the
+#' statistic of the original variable. The second one was only appended by the
+#' summarisation and is removed again for the table header.
+#'
+#' @param var_name A variable name.
+#'
+#' @return
+#' Character vector holding the statistic keyword.
+#'
+#' @noRd
+get_format_stat <- function(var_name){
+    # Reuse the same detection as remove_doubled_stat_extension(), so that the
+    # number format always matches the statistic shown in the table header.
+    corrected_name <- stats::setNames(list(NULL), var_name) |>
+        remove_doubled_stat_extension() |>
+        names()
+
+    stat <- strsplit(corrected_name, split = "_")[[1]]
+    stat[length(stat)]
+}
+
+
 #' Add Extensions to Variable Names
 #'
 #' @description

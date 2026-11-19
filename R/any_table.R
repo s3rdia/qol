@@ -2374,6 +2374,15 @@ any_table <- function(data_frame,
                         dropp(":_!:"))
     any_header <- suppressMessages(any_header |> dropp(":_!:"))
 
+    # Value variables which already carried a statistic extension before the
+    # summarisation (e.g. "income_max") received a second one on the not
+    # pre-summed route (e.g. "income_max_sum"). Remove the last extension so
+    # that the table header doesn't gain an additional statistic layer.
+    if (!pre_summed){
+        any_tab    <- any_tab    |> remove_doubled_stat_extension()
+        any_header <- any_header |> remove_doubled_stat_extension()
+    }
+
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,
        combinations, current_combi, index, last_number_of_rows, name, new_row_names,

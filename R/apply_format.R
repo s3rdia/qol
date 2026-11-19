@@ -194,6 +194,14 @@ apply_format <- function(data_frame,
                 collapse::funique()
         }
 
+        # Make sure the labels are declared as UTF-8. Otherwise collapse can't
+        # sort the formatted variable later on.
+        if (is.character(all_levels)){
+            all_levels <- all_levels |>
+                enc2utf8() |>
+                collapse::funique()
+        }
+
         # Make sure that the labels will appear in order of the format when
         # applied to a variable in a data frame
         temp_data[[current_var]] <- factor(
