@@ -58,7 +58,8 @@ names in one go.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Pass in variables to be renamed in the form: "old_var" = "new_var".</p></dd>
+<dd><p>Pass in variables to be renamed in the form: "old_var" = "new_var".
+Macro variables can be used for both sides, e.g. "&amp;old_var" = "&amp;new_var".</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -93,6 +94,12 @@ names in one go.</p>
 <span></span>
 <span><span class="va">new_names_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">rename_multi</span><span class="op">(</span>sex       <span class="op">=</span> <span class="va">var3</span>,</span>
 <span>                                        old_names <span class="op">=</span> <span class="va">new_names</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Macro variables can be used in old and new names</span></span>
+<span><span class="va">old_var</span> <span class="op">&lt;-</span> <span class="st">"sex"</span></span>
+<span><span class="va">new_var</span> <span class="op">&lt;-</span> <span class="st">"gender"</span></span>
+<span></span>
+<span><span class="va">new_names_df</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op">|&gt;</span> <span class="fu">rename_multi</span><span class="op">(</span><span class="st">"&amp;old_var"</span> <span class="op">=</span> <span class="st">"&amp;new_var"</span><span class="op">)</span></span>
 <span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

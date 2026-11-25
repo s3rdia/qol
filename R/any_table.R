@@ -1187,6 +1187,34 @@ any_table <- function(data_frame,
                              print_miss = print_miss)) |>
             rename_pattern("pct_group", paste0("pct_group_", pct_group[1])) |>
             collapse::fsubset(TYPE != "total")
+
+        # Value variables which already carried a statistic extension before the
+        # summarisation (e.g. "income_max") received a second one on the not
+        # pre-summed route (e.g. "income_max_sum"). Remove the last extension so
+        # that the table header doesn't gain an additional statistic layer.
+        any_tab <- any_tab |> remove_doubled_stat_extension()
+
+        # In case if double statistic extensions, those variables can carry extensions
+        # which "statistics" doesn't know about (e.g. "income_max" from "income_max_sum").
+        # In that case use the extensions which are actually present.
+        stat_var_vector <- c(variables, "TYPE", "TYPE_NR", "DEPTH")
+
+        if (length(by) > 0){
+            stat_var_vector <- c(stat_var_vector, "by_vars", "BY")
+        }
+
+        stat_var_names <- any_tab |> inverse(stat_var_vector)
+        stat_pattern   <- paste0("(^|_)(", paste(statistic_extensions(), collapse = "|"), ")(_|$)")
+
+        present_stats <- tolower(gsub("^_|_$", "", unlist(regmatches(stat_var_names,
+                                                                     gregexpr(stat_pattern,
+                                                                              stat_var_names)),
+                                                          use.names = FALSE)))
+        present_stats <- collapse::funique(present_stats)
+
+        if (!all(present_stats %in% statistics)){
+            statistics <- present_stats
+        }
     }
     else{
         # With pre summarised data just take the input data frame
@@ -2373,15 +2401,6 @@ any_table <- function(data_frame,
                         if.(ordered_cols != "!:") |>
                         dropp(":_!:"))
     any_header <- suppressMessages(any_header |> dropp(":_!:"))
-
-    # Value variables which already carried a statistic extension before the
-    # summarisation (e.g. "income_max") received a second one on the not
-    # pre-summed route (e.g. "income_max_sum"). Remove the last extension so
-    # that the table header doesn't gain an additional statistic layer.
-    if (!pre_summed){
-        any_tab    <- any_tab    |> remove_doubled_stat_extension()
-        any_header <- any_header |> remove_doubled_stat_extension()
-    }
 
     # In between clean up to get a better overview
     rm(combi_df, combined_col_df, part_combi_list, col_combi, col_combi_vars,

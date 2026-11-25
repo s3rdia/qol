@@ -23,7 +23,8 @@ vectors has to be provided, with one list entry per data frame. If the first
 data frame should be joined on different variables with each following data
 frame, its list entry can be a list of character vectors with one vector per
 join. If fewer combinations are provided than there are remaining data frames,
-the last combination is repeated.}
+the last combination is repeated. Variable names can also be supplied by
+parameters of an enclosing function, e.g. on = c(year, breakvar).}
 
 \item{how}{A character vector containing the join method names. Available methods are:
 left, right, inner, full, outer, left_inner and right_inner.}

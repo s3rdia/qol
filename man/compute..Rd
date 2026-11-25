@@ -9,7 +9,8 @@ compute.(data_frame, ..., monitor = .qol_options[["monitor"]])
 \arguments{
 \item{data_frame}{A data frame in which to compute new variables.}
 
-\item{...}{The calculations that should be executed.}
+\item{...}{The calculations that should be executed. Macro variables can be
+used in the names of the new variables, e.g. "new_&region" = income.}
 
 \item{monitor}{FALSE by default. If TRUE, outputs two charts to visualize the
 functions time consumption.}
@@ -81,6 +82,11 @@ do_if_df <- my_data |>
         compute.(region    = "East",
                  age_group = recode.(age = age_east.)) |>
     end_do()
+
+# Macro variables can be used within new variable names
+extension <- "new"
+
+macro_df <- my_data |> compute.("income_&extension" = income)
 
 }
 \seealso{

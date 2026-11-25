@@ -99,6 +99,19 @@ remove_stat_extension <- function(data_frame, statistics){
 }
 
 
+#' Statistic extensions which can appear at the end of value variable names.
+#'
+#' @return Returns a character vector.
+#'
+#' @noRd
+statistic_extensions <- function(){
+    c("sum_wgt", "pct_group", "pct_total", "pct_value", "pct_block",
+      "freq_g0", "variance", "missing", "median", "p[0-9]+",
+      "freq", "first", "mean", "mode", "last", "min", "max",
+      "sum", "pct", "sd")
+}
+
+
 #' Remove Doubled Statistic Extensions from Variable Names
 #'
 #' @description
@@ -115,10 +128,7 @@ remove_stat_extension <- function(data_frame, statistics){
 #'
 #' @noRd
 remove_doubled_stat_extension <- function(data_frame){
-    statistics <- c("sum_wgt", "pct_group", "pct_total", "pct_value", "pct_block",
-                    "freq_g0", "variance", "missing", "median", "p[0-9]+",
-                    "freq", "first", "mean", "mode", "last", "min", "max",
-                    "sum", "pct", "sd")
+    statistics <- statistic_extensions()
     statistic  <- paste0("(", paste(statistics, collapse = "|"), ")")
 
     # In any_table names normally end in a column expression. If no column
@@ -323,6 +333,7 @@ replace_except <- function(vector,
 #'
 #' @param data_frame The data frame which contains the variable names to be renamed.
 #' @param ... Pass in variables to be renamed in the form: "old_var" = "new_var".
+#'            Macro variables can be used for both sides, e.g. "&old_var" = "&new_var".
 #'
 #' @return
 #' Returns a data_frame with renamed variables.
@@ -353,6 +364,12 @@ replace_except <- function(vector,
 #'
 #' new_names_df <- my_data |> rename_multi(sex       = var3,
 #'                                         old_names = new_names)
+#'
+#' # Macro variables can be used in old and new names
+#' old_var <- "sex"
+#' new_var <- "gender"
+#'
+#' new_names_df <- my_data |> rename_multi("&old_var" = "&new_var")
 #'
 #' @export
 rename_multi <- function(data_frame, ...){
@@ -411,6 +428,10 @@ rename_multi <- function(data_frame, ...){
             new_names <- c(new_names, new_name)
         }
     }
+
+    # Macro variables written as "&object" can be used in both old and new names
+    old_names <- apply_macro(old_names)
+    new_names <- apply_macro(new_names)
 
     # Old and new names have to match up one to one
     if (length(old_names) != length(new_names)){

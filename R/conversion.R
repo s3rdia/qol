@@ -175,7 +175,20 @@ dots_to_char <- function(...){
 #' @export
 get_origin_as_char <- function(original, substituted){
     tryCatch({
-        # Force evaluation to see if it exists
+        # Resolve a bare symbol which names a parameter of an enclosing custom
+        # function before looking at the evaluated argument. The argument often
+        # contains a column name which isn't an object in the calling
+        # environment. Forcing it would interrupt the promise and cause
+        # "restarting interrupted promise evaluation" warnings when the same
+        # parameter is used by another function afterwards.
+        if (is.symbol(substituted)){
+            resolved <- resolve_custom_function_argument(substituted, build_resolution_cache())
+
+            if (!is.null(resolved)){
+                return(resolved)
+            }
+        }
+
         if (is.character(original)){
             # If the argument is a c() or list() call, resolve every element on
             # its own. Inside compute.() the call is evaluated in the data frame,
@@ -358,6 +371,32 @@ args_to_char_with_params_rec <- function(argument, snapshot){
 }
 
 
+#' Get The Expression Bound To A Symbol Without Forcing Promises
+#'
+#' @description
+#' Returns the expression stored in an environment binding. For unevaluated
+#' function arguments this is the expression handed over by the caller instead
+#' of its evaluated value.
+#'
+#' @param name The name of the binding.
+#' @param env The environment in which to look up the binding.
+#'
+#' @return The bound expression or NULL if the name is not bound in env.
+#'
+#' @noRd
+get_binding_expression <- function(name, env){
+    if (length(name) != 1L || is.na(name) || !nzchar(name)){
+        return(NULL)
+    }
+
+    if (!exists(name, envir = env, inherits = FALSE)){
+        return(NULL)
+    }
+
+    eval(substitute(substitute(sym), list(sym = as.name(name))), envir = env)
+}
+
+
 #' Build A Snapshot Of The Calling Stack
 #'
 #' @description
@@ -460,15 +499,27 @@ resolve_custom_function_argument <- function(argument, snapshot){
         }
 
         # A bare symbol (e.g. a wrapper parameter which was passed on from an
-        # even more outer custom function, or a data frame column name). Try to
-        # force the contained value. If that fails, keep the symbol name.
+        # even more outer custom function, or a data frame column name). Inspect
+        # the binding expression without forcing it and resolve it against the
+        # remaining custom frames. If nothing can be resolved, keep the symbol
+        # name.
         if (is.symbol(arg_expr)){
-            value <- tryCatch(get(as.character(arg_expr), envir = fr$env,
-                                  inherits = FALSE),
-                              error = function(e) NULL)
+            if (!identical(as.character(arg_expr), argument)){
+                nested <- resolve_custom_function_argument(arg_expr, snapshot)
+
+                if (!is.null(nested)){
+                    return(nested)
+                }
+            }
+
+            value <- get_binding_expression(as.character(arg_expr), fr$env)
 
             if (is.character(value) || is.numeric(value)){
                 return(as.character(value))
+            }
+
+            if (!is.null(value)){
+                return(args_to_char_with_params_rec(value, snapshot))
             }
 
             return(as.character(arg_expr))
@@ -495,13 +546,21 @@ resolve_custom_function_argument <- function(argument, snapshot){
 #' the contents.
 #'
 #' @param symbol The symbol to look up in the parent environments.
+#' @param seen Symbols which were already followed while resolving nested
+#'   promises. Used to avoid endless loops for self referencing arguments.
 #'
 #' @return
 #' The original symbols contents or name as character.
 #'
 #' @noRd
-get_origin_symbol <- function(symbol){
+get_origin_symbol <- function(symbol, seen = character()){
     symbol <- as.character(symbol)
+
+    if (symbol %in% seen){
+        return(symbol)
+    }
+
+    seen <- c(seen, symbol)
 
     # Tracks whether the symbol is bound anywhere inside the call stack.
     symbol_is_bound <- FALSE
@@ -522,19 +581,41 @@ get_origin_symbol <- function(symbol){
             next
         }
 
-        # If the symbol is found in the current parent environment return it
-        value <- tryCatch({
-            # Force evaluation to see if it exists
-            get0(substitute(symbol), envir = env, inherits = FALSE)
-        }, error = function(e){
-            # Nested substitute:
-            # 1. Inner: substitute(substitute(sym, env), list(sym = symbol))
-            #    This builds the expression "substitute(var_name, env)"
-            # 2. Outer: eval(...)
-            #    This gets the expression in the correct context
-            as.character(eval(substitute(
-                substitute(sym, env), list(sym = as.name(symbol)))))
-        })
+        # If the symbol is found in the current parent environment return it.
+        # Inspect the binding expression instead of forcing it, because a
+        # function parameter often holds a column name which isn't an object in
+        # the calling environment. Forcing it once would interrupt the promise
+        # and lead to "restarting interrupted promise evaluation" warnings as
+        # soon as another function tries to use the same parameter.
+        value <- get_binding_expression(symbol, env)
+
+        # A promise stores the expression handed over by the caller. Resolve that
+        # expression instead of the original parameter name.
+        if (is.symbol(value)){
+            nested_symbol <- as.character(value)
+
+            if (nzchar(nested_symbol) && !identical(nested_symbol, symbol)){
+                resolved <- tryCatch(get_origin_symbol(nested_symbol, seen),
+                                     error = function(e) NULL)
+
+                if (!is.null(resolved)){
+                    return(resolved)
+                }
+            }
+        }
+        else if (is.call(value)){
+            resolved <- tryCatch(origin_call_to_char(value),
+                                 error = function(e) NULL)
+
+            if (is.null(resolved)){
+                resolved <- tryCatch(args_to_char_with_params_rec(value, build_resolution_cache()),
+                                     error = function(e) NULL)
+            }
+
+            if (!is.null(resolved)){
+                return(resolved)
+            }
+        }
 
         if (!is.null(value)){
             symbol_is_bound <- TRUE

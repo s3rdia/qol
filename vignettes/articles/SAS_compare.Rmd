@@ -232,8 +232,8 @@ my_style <- excel_output_style(header_back_color = "0000FF")
 my_style <- my_style |> modify_output_style(header_font_color = "FF0000")
 
 # Another font and individual column width? Why not.
-my_style <- my_style |> modify_output_style(font         = "Times New Roman",
-											column_width = c(20, 12, 15, 9))
+my_style <- my_style |> modify_output_style(font          = "Times New Roman",
+											column_widths = c(20, 12, 15, 9))
 
 # Change the font size for the titles and remove borders around the row header? Absolutely.
 my_style <- my_style |> modify_output_style(title_font_size = 20,

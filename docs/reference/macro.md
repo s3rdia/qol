@@ -53,7 +53,9 @@ Functions that can make use of macro variables:
 [`crosstabs()`](https://s3rdia.github.io/qol/reference/crosstabs.md),
 [`export_with_style()`](https://s3rdia.github.io/qol/reference/export_with_style.md),
 [`summarise_plus()`](https://s3rdia.github.io/qol/reference/summarise_plus.md),
-[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md)
+[`transpose_plus()`](https://s3rdia.github.io/qol/reference/transpose_plus.md),
+[`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md),
+[compute.](https://s3rdia.github.io/qol/reference/compute.)
 
 Within the tabulation functions titles, footnotes, var_labels and
 stat_labels can resolve macros. In var_labels and stat_labels macros can
@@ -75,6 +77,15 @@ macros can be used in the variable names of a statistics list.
 Macros can also be used inside the formats parameter of all functions
 that accept it. Both the variable names and the format names can be
 built with macros, e.g. list("&variable_name" = "&format_name").
+
+In
+[`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md)
+macros can be used in both the old and the new names, e.g.
+rename_multi("&old_var" = "&new_var").
+
+In [compute.](https://s3rdia.github.io/qol/reference/compute.) macros
+can be used in the names of the variables to be created, e.g.
+compute.("income\_&region" = income).
 
 ## Examples
 

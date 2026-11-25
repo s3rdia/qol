@@ -13,7 +13,8 @@
 #' data frame should be joined on different variables with each following data
 #' frame, its list entry can be a list of character vectors with one vector per
 #' join. If fewer combinations are provided than there are remaining data frames,
-#' the last combination is repeated.
+#' the last combination is repeated. Variable names can also be supplied by
+#' parameters of an enclosing function, e.g. on = c(year, breakvar).
 #' @param how A character vector containing the join method names. Available methods are:
 #' left, right, inner, full, outer, left_inner and right_inner.
 #' @param keep_indicators FALSE by default. If TRUE, a variable for each data frame
@@ -190,8 +191,13 @@ multi_join <- function(data_frames,
     # and evaluation will be different.
     if (is.null(on)){
         # Capture the complete "on" argument
-        on_call <- match.call()
+        on_call          <- match.call()
+        resolution_cache <- build_resolution_cache()
 
+        # Symbols can be parameters of an enclosing custom function, e.g. a
+        # variable name handed over to a wrapper function. Resolve those to the
+        # provided variables.
+        #
         # If there are no quotation marks around a single variable then wrap it up
         if (is.symbol(on_call[["on"]])){
             on_call <- list(on_call[["on"]])
@@ -200,31 +206,8 @@ multi_join <- function(data_frames,
             on_call <- as.list(on_call[["on"]])[-1]
         }
 
-        # Convert list elements to characters
-        on <- lapply(on_call, function(element){
-            if (is.symbol(element)){
-                as.character(element)
-            }
-            # A nested list means the first data frame is joined on different
-            # variables with each following data frame. Each list entry is one
-            # join variable combination.
-            else if (is.call(element) && identical(element[[1]], quote(list))){
-                lapply(as.list(element)[-1], function(inner_element){
-                    if (is.symbol(inner_element)){
-                        as.character(inner_element)
-                    }
-                    else if (is.call(inner_element) && identical(inner_element[[1]], quote(c))){
-                        as.character(as.list(inner_element)[-1])
-                    }
-                    else{
-                        as.character(inner_element)
-                    }
-                })
-            }
-            else{
-                sapply(as.list(element)[-1], as.character)
-            }
-        })
+        # Convert list and c() calls to characters
+        on <- lapply(on_call, resolve_node, snapshot = resolution_cache)
     }
 
     if (is.list(on)){
@@ -627,4 +610,79 @@ get_duplicate_expressions <- function(data_frame, on){
     }, character(1))
 
     paste(combo_strings, collapse = "; ")
+}
+
+
+#' Convert A Symbol To Character With Parameter Resolution
+#'
+#' @description
+#' Converts a symbol to character. If the symbol names a parameter of an
+#' enclosing custom function, the value provided by the user is returned instead
+#' of the symbol name.
+#'
+#' @param symbol A symbol to convert.
+#' @param snapshot A resolution snapshot created with build_resolution_cache().
+#'
+#' @return Returns a character vector.
+#'
+#' @noRd
+symbol_as_char <- function(symbol, snapshot = build_resolution_cache()){
+    value <- resolve_custom_function_argument(symbol, snapshot)
+
+    if (is.null(value)){
+        as.character(symbol)
+    }
+    else{
+        value
+    }
+}
+
+
+#' Convert An On-Argument Atom To Character
+#'
+#' @description
+#' Converts one element of an "on" argument to character. Symbols which name a
+#' parameter of an enclosing custom function are resolved to the value provided
+#' by the user. All other elements are converted with as.character.
+#'
+#' @param x An element of an on argument.
+#' @param snapshot A resolution snapshot created with build_resolution_cache().
+#'
+#' @return Returns a character vector.
+#'
+#' @noRd
+resolve_atom <- function(x, snapshot = build_resolution_cache()){
+    if (is.symbol(x)){
+        return(symbol_as_char(x, snapshot))
+    }
+
+    as.character(x)
+}
+
+
+#' Recursively Convert An On-Argument Node To Character
+#'
+#' @description
+#' Walks list() and c() calls inside an "on" argument and converts all
+#' leaves with resolve_atom(). list() calls stay lists of character vectors,
+#' all other calls are flattened into character vectors.
+#'
+#' @param node An element of an "on" argument.
+#' @param snapshot A resolution snapshot created with build_resolution_cache().
+#'
+#' @return Returns a character vector or a list of character vectors.
+#'
+#' @noRd
+resolve_node <- function(node, snapshot = build_resolution_cache()){
+    if (is.call(node)){
+        args <- as.list(node)[-1]
+
+        if (identical(node[[1]], quote(list))){
+            return(lapply(args, resolve_node, snapshot = snapshot))
+        }
+
+        return(unlist(lapply(args, resolve_atom, snapshot = snapshot), use.names = FALSE))
+    }
+
+    resolve_atom(node, snapshot)
 }

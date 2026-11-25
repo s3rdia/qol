@@ -84,6 +84,19 @@ MyData_AgeGr <- MyData |>
     else.   (                      AgeGr = 5)
 ```
 
+Conditions can also be written as character strings in SAS like style.
+This brings the R version even closer to the SAS code above:
+
+``` r
+
+MyData_AgeGr <- MyData |>
+         if.("      Age < 18", AgeGr = 1) |>
+    else_if.("18 <= Age < 25", AgeGr = 2) |>
+    else_if.("25 <= Age < 55", AgeGr = 3) |>
+    else_if.("55 <= Age < 65", AgeGr = 4) |>
+    else.   (                  AgeGr = 5)
+```
+
 In SAS you can do more than just conditionally assigning a value to a
 variable with an if-statement. If you use the condition with ‘Then Do’,
 you can generate multiple variables like this:
@@ -172,7 +185,7 @@ Run;
 ```
 
 Now you can do the same in R with
-[`recode()`](https://s3rdia.github.io/qol/reference/recode.md) just as
+[`recode.()`](https://s3rdia.github.io/qol/reference/recode.md) just as
 easy:
 
 ``` r
@@ -184,7 +197,7 @@ AgeGroup. <- discrete_format(
     "55 to under 65" = 55:64,
     "65 and older"   = 65:99)
 
-MyData[["AgeGr"]] <- MyData |> recode(Age = "AgeGroup.")
+MyData[["AgeGr"]] <- MyData |> recode.(Age = "AgeGroup.")
 ```
 
 ## The World Of Retain
@@ -212,8 +225,10 @@ Run;
 qol doesn’t mimic the behavior of ‘Retain’, but rather the result:
 
 ``` r
-MyData[["run_nr"]]           <- MyData |> running_number() |> 
-MyData[["CumulativeIncome"]] <- MyData |> retain_sum(values = income)
+
+MyData[["run_nr"]]           <- MyData |> running_number()
+MyData[["CumulativeIncome"]] <- MyData |> retain_stat(values = income,
+                                                      statistics = "cum_sum")
 ```
 
 In it’s simplest form it can remember a value from the first observation
@@ -302,8 +317,9 @@ function also makes use of the Proc SQL possibility to join datasets on
 different variable names:
 
 ``` r
+
 MyData_Merged <- multi_join(data_frames = list(MyData_A, MyData_B, MyData_C),
-                            on  = c("a", "b", "c", "d", "e")
+                            on  = c("a", "b", "c", "d", "e"),
                             how = "left")
 
 # Instead of "left" you can assign any of the above join methods.
@@ -570,8 +586,9 @@ Run;
 The R versions concentrate on importing CSV and XLSX files:
 
 ``` r
-csv_file  <- import_data("C:\MyFile.csv")
-xlsx_file <- import_data("C:\MyFile.xlsx")
+
+csv_file  <- import_data("C:/MyFile.csv")
+xlsx_file <- import_data("C:/MyFile.xlsx")
 ```
 
 Note: There is also an export function which can export CSV and XLSX
@@ -635,13 +652,13 @@ additionally, have a look at the reference on
 
 ``` r
 
-# Wide to long
+# Long to wide
 wide <- long |>
     transpose_plus(preserve = age,
                    pivot    = "sex",
                    values   = income)
 
-# Long to wide
+# Wide to long
 long <- wide |>
     transpose_plus(preserve = age,
                    pivot    = list(sex = c("Male", "Female")))

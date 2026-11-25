@@ -54,6 +54,12 @@
 <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/export_with_style.html">export_with_style()</a></code>: <code>var_labels</code> parameter now converts macro variables passed as character for the list names. In <code><a href="../reference/any_table.html">any_table()</a></code> additionally for the <code>stat_labels</code>. (17.11.2026)</li>
 <li>
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/any_table.html">any_table()</a></code>, <code><a href="../reference/transpose_plus.html">transpose_plus()</a></code>: Macro variables can now be used as variable names, if specific statistics per variable were passed into the <code>statistics</code> parameter. (17.11.2026)</li>
+<li>
+<code><a href="../reference/rename_multi.html">rename_multi()</a></code>: Macro variables can now be used in both the old and the new variable names. (25.11.2026)</li>
+<li>
+<code><a href="../reference/compute..html">compute.()</a></code>: Macro variables can now be used in the names of newly created variables. (25.11.2026)</li>
+<li>
+<code><a href="../reference/multi_join.html">multi_join()</a></code>: Unquoted variables in the <code>on</code> parameter can now refer to parameters of an enclosing custom function. (25.11.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="changed-functionality-1-3-7">Changed functionality<a class="anchor" aria-label="anchor" href="#changed-functionality-1-3-7"></a></h4>
@@ -90,6 +96,11 @@
 <code><a href="../reference/summarise_plus.html">summarise_plus()</a></code>, <code><a href="../reference/retain.html">retain_value()</a></code>: There seems to be a rare edge case bug happening when an unknown encoding of a character variable is passed to collapse grouping. Problem is, the bug isn’t reproducable reliable. So now there is an utf8 conversion happeinging before grouping to guarantee that there is always a known encodig. (17.11.2026)</li>
 <li>
 <code><a href="../reference/any_table.html">any_table()</a></code>: In case value variables with a statistics extension are passed then they now don’t receive a second extension anymore, which broke the column header. (04.11.2026)</li>
+<li>
+<code><a href="../reference/if_else.html">if.()</a></code>, <code><a href="../reference/if_else.html">else_if.()</a></code>, <code><a href="../reference/compute..html">compute.()</a></code>: In a do-over-loop situation the conditions printed in the console displayed the vector names instead of the vector elements. This is fixed now. (25.11.2026)</li>
+<li>
+<code><a href="../reference/any_table.html">any_table()</a></code>: If variables in not pre summed datasets already had statistic extensions in their variable names, the column order was corrupted. This is fixed now. (25.11.2026)</li>
+<li>Argument conversion: Unevaluated function parameters are now inspected without forcing promises, preventing promise evaluation warnings. (25.11.2026)</li>
 </ul></div>
 <div class="section level4">
 <h4 id="optimization-1-3-7">Optimization<a class="anchor" aria-label="anchor" href="#optimization-1-3-7"></a></h4>

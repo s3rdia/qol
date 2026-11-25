@@ -18,6 +18,8 @@ rename_multi(data_frame, ...)
 - ...:
 
   Pass in variables to be renamed in the form: "old_var" = "new_var".
+  Macro variables can be used for both sides, e.g. "&old_var" =
+  "&new_var".
 
 ## Value
 
@@ -51,4 +53,10 @@ new_names <- c("var1", "var2")
 
 new_names_df <- my_data |> rename_multi(sex       = var3,
                                         old_names = new_names)
+
+# Macro variables can be used in old and new names
+old_var <- "sex"
+new_var <- "gender"
+
+new_names_df <- my_data |> rename_multi("&old_var" = "&new_var")
 ```

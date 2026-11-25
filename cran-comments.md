@@ -10,6 +10,9 @@ Last CRAN release was on 25.10.2026.
 * `if.()`, `else_if.()`, `ifelse_multi()`, `where.()`, `do_if()`, `split_by()`: In the SAS like writing style it is now possible to negate conditions with the keyword `not` like `not (age < 18)`.
 * `any_table()`, `export_with_style()`: `var_labels` parameter now converts macro variables passed as character for the list names. In `any_table()` additionally for the `stat_labels`.
 * `summarise_plus()`, `any_table()`, `transpose_plus()`: Macro variables can now be used as variable names, if specific statistics per variable were passed into the `statistics` parameter.
+* `rename_multi()`: Macro variables can now be used in both the old and the new variable names.
+* `compute.()`: Macro variables can now be used in the names of newly created variables.
+* `multi_join()`: Unquoted variables in the `on` parameter can now refer to parameters of an enclosing custom function.
 
 ### Changed functionality
 
@@ -31,6 +34,9 @@ Last CRAN release was on 25.10.2026.
 * `discrete_format()`: When the `other` keyword was used, numbers stored as texts were always converted into numeric values. Now they are kept as character, if `as_character` is TRUE.
 * `summarise_plus()`, `retain_value()`: There seems to be a rare edge case bug happening when an unknown encoding of a character variable is passed to collapse grouping. Problem is, the bug isn't reproducable reliable. So now there is an utf8 conversion happeinging before grouping to guarantee that there is always a known encodig.
 * `any_table()`: In case value variables with a statistics extension are passed then they now don't receive a second extension anymore, which broke the column header.
+* `if.()`, `else_if.()`: In a do-over-loop situation the conditions printed in the console displayed the vector names instead of the vector elements. This is fixed now.
+* `any_table()`: If variables in not pre summed datasets already had statistic extensions in their variable names, the column order was corrupted. This is fixed now.
+* Argument conversion: Unevaluated function parameters are now inspected without forcing promises, preventing promise evaluation warnings.
 
 ### Optimization
 

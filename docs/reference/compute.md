@@ -21,7 +21,8 @@ compute.(data_frame, ..., monitor = .qol_options[["monitor"]])
 
 - ...:
 
-  The calculations that should be executed.
+  The calculations that should be executed. Macro variables can be used
+  in the names of the new variables, e.g. "new\_&region" = income.
 
 - monitor:
 
@@ -108,4 +109,9 @@ do_if_df <- my_data |>
         compute.(region    = "East",
                  age_group = recode.(age = age_east.)) |>
     end_do()
+
+# Macro variables can be used within new variable names
+extension <- "new"
+
+macro_df <- my_data |> compute.("income_&extension" = income)
 ```

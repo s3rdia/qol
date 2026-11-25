@@ -34,7 +34,7 @@ install.packages("qol")
 # Development version
 pak::pak("s3rdia/qol")
 
-install.packages('qol', repos = c('https://s3rdia.r-universe.dev', 'https://cloud.r-project.org'))
+install.packages("qol", repos = c("https://s3rdia.r-universe.dev", "https://cloud.r-project.org"))
 ```
 
 ## Format Containers

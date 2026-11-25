@@ -39,6 +39,15 @@
   Macro variables can now be used as variable names, if specific
   statistics per variable were passed into the `statistics` parameter.
   (17.11.2026)
+- [`rename_multi()`](https://s3rdia.github.io/qol/reference/rename_multi.md):
+  Macro variables can now be used in both the old and the new variable
+  names. (25.11.2026)
+- [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md):
+  Macro variables can now be used in the names of newly created
+  variables. (25.11.2026)
+- [`multi_join()`](https://s3rdia.github.io/qol/reference/multi_join.md):
+  Unquoted variables in the `on` parameter can now refer to parameters
+  of an enclosing custom function. (25.11.2026)
 
 #### Changed functionality
 
@@ -107,6 +116,19 @@
   In case value variables with a statistics extension are passed then
   they now don’t receive a second extension anymore, which broke the
   column header. (04.11.2026)
+- [`if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`else_if.()`](https://s3rdia.github.io/qol/reference/if_else.md),
+  [`compute.()`](https://s3rdia.github.io/qol/reference/compute..md): In
+  a do-over-loop situation the conditions printed in the console
+  displayed the vector names instead of the vector elements. This is
+  fixed now. (25.11.2026)
+- [`any_table()`](https://s3rdia.github.io/qol/reference/any_table.md):
+  If variables in not pre summed datasets already had statistic
+  extensions in their variable names, the column order was corrupted.
+  This is fixed now. (25.11.2026)
+- Argument conversion: Unevaluated function parameters are now inspected
+  without forcing promises, preventing promise evaluation warnings.
+  (25.11.2026)
 
 #### Optimization
 

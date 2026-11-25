@@ -117,6 +117,17 @@ NULL
 
 
 #' @description
+#' Converts a condition call into a single line of text for console messages.
+#'
+#' @return Returns a character string.
+#'
+#' @noRd
+condition_as_text <- function(condition){
+    gsub("\\s+", " ", paste(deparse(condition), collapse = " "))
+}
+
+
+#' @description
 #' [if.()] always creates a new variable if the given variable name is not part of the given
 #' data frame. If there already is a variable with the given name, the existing values will
 #' be overwritten if the condition is TRUE.
@@ -153,8 +164,12 @@ if. <- function(data_frame, condition, ...){
         condition_text <- condition
     }
     else{
-        condition_text <- gsub("\\s+", " ", paste(deparse(condition), collapse = " "))
+        condition_text <- condition_as_text(condition)
     }
+
+    # In a do over loop every element gets its own label, showing the values
+    # which were substituted into the condition for that element.
+    condition_labels <- condition_text
 
     # When the condition is passed as character, then parse it to enable all the
     # SAS like writing styles.
@@ -262,6 +277,8 @@ if. <- function(data_frame, condition, ...){
         # Do over evaluation
         #---------------------------------------------------------------------#
         else{
+            condition_labels <- rep(condition_text, list_entry_lengths[1])
+
             # Do over loop per element
             for (element in seq_len(list_entry_lengths[1])){
                 # Get the respective first elements as symbols in a new list
@@ -297,9 +314,10 @@ if. <- function(data_frame, condition, ...){
                 })
 
                 # Insert the current variables into the condition
-                current_condition <- do.call(substitute, list(condition, replace_list))
-                current_condition <- translate_condition(current_condition)
-                condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
+                current_condition           <- do.call(substitute, list(condition, replace_list))
+                condition_labels[[element]] <- condition_as_text(current_condition)
+                current_condition           <- translate_condition(current_condition)
+                condition_list[[element]]   <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
                 # Check whether there are additional conditions active via do_if and
                 # add to call list
@@ -388,6 +406,7 @@ if. <- function(data_frame, condition, ...){
         # simultaneously one after another.
         else{
             original_condition <- condition
+            condition_labels   <- rep(condition_text, list_entry_lengths[1])
 
             for (element in seq_len(list_entry_lengths[1])){
                 # Get the respective first elements as symbols in a new list
@@ -412,6 +431,7 @@ if. <- function(data_frame, condition, ...){
 
                 # Evaluate complete assignment first without condition
                 condition  <- do.call(substitute, list(original_condition, replace_list))
+                condition_labels[[element]] <- condition_as_text(condition)
 
                 condition <- translate_condition(condition)
                 condition <- eval(condition, envir = data_frame, enclos = parent_env)
@@ -461,7 +481,7 @@ if. <- function(data_frame, condition, ...){
                 rows_after <- data_frame |> collapse::fnrow()
 
                 print_step("MAJOR", "[condition]: Removed [removed] observations. Data frame now has [still_there] observations.",
-                           condition = condition_text,
+                           condition = condition_labels[[element]],
                            removed = format(rows_before - rows_after,
                                             format = "d", decimal.mark = ",", big.mark = ".", scientific = FALSE),
                            still_there = format(rows_after,
@@ -474,7 +494,7 @@ if. <- function(data_frame, condition, ...){
     if (!flag_filter){
         data_frame <- data_frame |> compute.(..., .if_condition       = condition_list,
                                                   .if_parent_frame    = parent_env,
-                                                  .if_condition_label = condition_text,
+                                                  .if_condition_label = condition_labels,
                                                   .if_suppressed      = TRUE)
 
         # Remember the rows on which this block acted, so that else_if. and else.
@@ -539,8 +559,12 @@ else_if. <- function(data_frame, condition, ...){
         condition_text <- condition
     }
     else{
-        condition_text <- gsub("\\s+", " ", paste(deparse(condition), collapse = " "))
+        condition_text <- condition_as_text(condition)
     }
+
+    # In a do over loop every element gets its own label, showing the values
+    # which were substituted into the condition for that element.
+    condition_labels <- condition_text
 
     # When the condition is passed as character, then parse it to enable all the
     # SAS like writing styles.
@@ -741,8 +765,14 @@ else_if. <- function(data_frame, condition, ...){
                     flag_do_over <- TRUE
 
                     current_condition <- do.call(substitute, list(condition, replace_list))
-                    current_condition <- translate_condition(current_condition)
-                    condition_list[[element]] <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
+
+                    if (length(condition_labels) != list_entry_lengths[1]){
+                        condition_labels <- rep(condition_text, list_entry_lengths[1])
+                    }
+
+                    condition_labels[[element]] <- condition_as_text(current_condition)
+                    current_condition           <- translate_condition(current_condition)
+                    condition_list[[element]]   <- eval(substitute(current_condition), envir = data_frame, enclos = parent_env)
 
                     # Check whether there are additional conditions active via do_if and
                     # add to call list. The handled rows are tracked per element so that
@@ -764,7 +794,7 @@ else_if. <- function(data_frame, condition, ...){
             # Evaluate calculations conditionally. Making use of hidden parameters.
             data_frame <- data_frame |> compute.(..., .if_condition       = condition_list,
                                                       .if_parent_frame    = parent_env,
-                                                      .if_condition_label = condition_text,
+                                                      .if_condition_label = condition_labels,
                                                       .if_suppressed      = TRUE)
 
             # Remember the rows handled by this branch, so that a following

@@ -8,7 +8,8 @@
 #' In addition it can be used in a conditional [do_if()] block.
 #'
 #' @param data_frame A data frame in which to compute new variables.
-#' @param ... The calculations that should be executed.
+#' @param ... The calculations that should be executed. Macro variables can be
+#'            used in the names of the new variables, e.g. "new_&region" = income.
 #' @param monitor FALSE by default. If TRUE, outputs two charts to visualize the
 #' functions time consumption.
 #'
@@ -81,6 +82,11 @@
 #'                  age_group = recode.(age = age_east.)) |>
 #'     end_do()
 #'
+#' # Macro variables can be used within new variable names
+#' extension <- "new"
+#'
+#' macro_df <- my_data |> compute.("income_&extension" = income)
+#'
 #' @export
 compute. <- function(data_frame,
                      ...,
@@ -118,6 +124,9 @@ compute. <- function(data_frame,
             })
         }
     }
+
+    # Macro variables written as "&object" can be used in assignment names
+    names(assignments) <- apply_macro(names(assignments))
 
     if (length(assignments) == 0){
         print_message("ERROR", "No assignments. Evaluation will be aborted.")
@@ -339,6 +348,10 @@ compute. <- function(data_frame,
                     target_variable <- content_list[[target_variable]][element]
                 }
 
+                if (is.character(target_variable)){
+                    target_variable <- apply_macro(target_variable)
+                }
+
                 # Evaluate complete assignment first without condition
                 value_var  <- do.call(substitute, list(calculation, replace_list))
                 expression <- get_custom_functions(value_var, parent_env)
@@ -349,8 +362,9 @@ compute. <- function(data_frame,
                                value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
                 }
                 else{
+                    label_index <- min(element, length(condition_label))
                     print_step("MINOR", "[condition]: [target] = [value]",
-                               condition = condition_label, target = target_variable,
+                               condition = condition_label[[label_index]], target = target_variable,
                                value = gsub("\\s+", " ", paste(deparse(value_var), collapse = " ")))
                 }
 

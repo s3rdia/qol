@@ -33,7 +33,8 @@ multi_join(
   variables with each following data frame, its list entry can be a list
   of character vectors with one vector per join. If fewer combinations
   are provided than there are remaining data frames, the last
-  combination is repeated.
+  combination is repeated. Variable names can also be supplied by
+  parameters of an enclosing function, e.g. on = c(year, breakvar).
 
 - how:
 

@@ -59,7 +59,8 @@ text_vector <- apply_macro(char_vector)
 }
 \seealso{
 Functions that can make use of macro variables: \code{\link[=any_table]{any_table()}}, \code{\link[=frequencies]{frequencies()}},
-\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=transpose_plus]{transpose_plus()}}
+\code{\link[=crosstabs]{crosstabs()}}, \code{\link[=export_with_style]{export_with_style()}}, \code{\link[=summarise_plus]{summarise_plus()}}, \code{\link[=transpose_plus]{transpose_plus()}},
+\code{\link[=rename_multi]{rename_multi()}}, \url{compute.}
 
 Within the tabulation functions titles, footnotes, var_labels and stat_labels
 can resolve macros. In var_labels and stat_labels macros can be used in both
@@ -73,4 +74,10 @@ in the variable names of a statistics list.
 Macros can also be used inside the formats parameter of all functions that
 accept it. Both the variable names and the format names can be built with
 macros, e.g. list("&variable_name" = "&format_name").
+
+In \code{\link[=rename_multi]{rename_multi()}} macros can be used in both the old and the new names,
+e.g. rename_multi("&old_var" = "&new_var").
+
+In \url{compute.} macros can be used in the names of the variables to be created,
+e.g. compute.("income_&region" = income).
 }
